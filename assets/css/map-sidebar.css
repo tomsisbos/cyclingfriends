@@ -1,0 +1,87 @@
+/* Transform popups to sidebar on larger devices */
+
+@media (min-width: 800px) {
+
+    .marker-popup {
+        height: 100%;
+        flex-direction: column !important;
+        transform: none !important;
+        max-width: 350px !important;
+        width: 350px !important;
+    }
+    .mapboxgl-popup-tip {
+        display: none;
+    }
+    .popup-head {
+        display: block;
+        text-align: center;
+        font-weight: bold;
+        font-size: 20px;
+        font-family: Gaegu;
+        width: 100%;
+    }
+    #mkpointAdminPanel {        
+        padding: 10px 0px 5px 0px;
+    }
+    .marker-popup .mapboxgl-popup-content {
+        border-radius: 0px !important;
+        height: 100%;
+        padding: 10px 10px 15px;
+        opacity: 1 !important;
+        overflow: auto;
+        border-radius: 0px !important;
+    }
+    .mapboxgl-popup-content::-webkit-scrollbar {
+        height: 5px;
+        width: 5px;
+    }
+    .mapboxgl-popup-content::-webkit-scrollbar-track {
+        border-radius: 10px;
+    }
+    .mapboxgl-popup-content::-webkit-scrollbar-thumb {
+        background: #5c9999;
+        border-radius: 10px;
+    }
+    .mapboxgl-popup-content::-webkit-scrollbar-thumb:hover {
+        background: #c1c1c1; 
+    }
+    .popup-content {
+        max-height: inherit !important;
+    }
+    .chat-box {
+        border-radius: 0px !important;
+    }
+    .marker-popup .chat-message-block {
+        line-height: auto;
+    }
+    .popup-img-container {
+        height: 200px !important;
+    }
+    .popup-img-background {
+        background: #5c9999;
+        height: 100%;
+        position: relative;
+        color: white;
+        text-align: center;
+        margin-bottom: 10px;
+        border-radius: 0px !important;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 2s font-size;
+    }
+    .popup-img {
+        border-radius: 0px !important;
+    }
+    
+    #showComments {
+        display: none;
+    }
+    .chat-box {
+        visibility: visible !important;
+        height: 120px;
+    }
+
+}

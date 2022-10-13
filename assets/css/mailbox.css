@@ -1,0 +1,241 @@
+.mbx-main {
+	height: calc(100% - 80px - 80px);
+	display: flex;
+}
+
+/* MBX static */
+
+.mbx {
+    height: 100%;
+    background-color: #e9ecef;
+}
+
+.mbx-header {
+    display: flex;
+    height: 80px;
+}
+
+.mbx-search {
+    height: 50px;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fccddd;
+    box-shadow: 0px -2px 2px lightgrey;
+}
+
+.mbx-searchbox {
+    width: 75%;
+    display: block;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem 0 0 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.mbx-searchbox-label {
+    color: lightgrey;
+}
+
+.mbx-search-button {
+    display: flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #5c9999;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.mbx-inner {
+    height: calc(100% - 50px - 50px);
+    overflow: auto;
+    padding: 20px;
+	background-color: white;
+}
+
+.mbx-main .round-propic-img:hover {
+    box-shadow: none;
+}
+
+.mbx-tabs {
+    height: 50px;
+    display: flex;
+}
+
+.mbx-tab {
+	cursor: pointer;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Gaegu';
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.bg-high-friend {
+    background-color: #fccddd;
+}
+
+.bg-high-public {
+    background-color: #e9ecef;
+}
+
+.top {
+	z-index: 2;
+    box-shadow: 0px -2px 2px lightgrey;	
+}
+
+/* MBX dynamic */
+
+.mbx-queryresult {
+    display: flex;
+    flex-direction: column;
+	padding: 0;
+}
+
+.mbx-queryresult li {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+	background-color: #ffe6ee;
+    padding: 10px;
+    gap: 10px;
+}
+.mbx-queryresult li:hover {
+	box-shadow: 1px 1px 3px black;
+}
+.mbx-queryresult li:active {
+	box-shadow: 0px 0px 2px black;
+}
+
+.mbx-queryresult-column {
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100% - 80px);
+}
+
+.mbx-queryresult-login {
+    font-weight: bold;
+}
+
+.mbx-queryresult-time {
+    font-size: 12px;
+}
+
+.mbx-queryresult-msg {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	color: grey;
+}
+
+.mbx-new-message {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    gap: 10px;
+}
+.mbx-new-message:hover {
+	box-shadow: 1px 1px 3px black;
+}
+.mbx-new-message:active {
+	box-shadow: 0px 0px 2px black;
+}
+
+/* CHAT static */
+
+.chat {
+    height: 100%;	
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 20px;
+    height: 80px;
+	background-color: #f9f9f9;
+}
+
+.chat-inner {
+	background-color: #ffffff;
+	height: calc(100% - 80px);
+    display: block;
+    padding: 20px;
+    overflow: auto;
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    margin: 0px 20px;
+}
+
+.chat-footer {
+    height: 80px;
+	background-color: #f9f9f9;
+	padding: 10px 20px;
+	display: block;
+}
+
+.chat-input {
+	display: none;
+	gap: 10px;
+}
+
+/* CHAT dynamic */
+
+.bubble {
+    display: block;
+}
+
+.sender {
+	text-align: right;
+}
+.sender .content {
+	background-color: #fffa9c;
+    border-radius: 20px 20px 0px 20px;
+}
+
+.receiver-friend {
+	text-align: left;
+}
+.receiver-friend .content {
+    background-color: #fccddd;
+    border-radius: 20px 20px 20px 0px;
+}
+
+.receiver-public {
+	text-align: left;
+}
+.receiver-public .content {
+    background-color: #f9f9f9;
+    border-radius: 20px 20px 20px 0px;
+}
+
+.content {
+    padding: 10px 20px;
+    display: inline-block;
+    color: black;
+}
+
+.bubble-time {
+	color: darkgrey;
+}
+
+    

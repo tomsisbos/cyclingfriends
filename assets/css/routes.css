@@ -1,0 +1,213 @@
+#routePageMapContainer {
+    height: 55vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    position: sticky;
+    top: 0px;
+}
+#routePageMap {
+    height: 100%
+}
+
+/* My routes */
+
+.rt-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.rt-card {
+    min-width: 280px;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.rt-thumbnail-container {
+    height: 160px;
+    width: 100%;
+}
+
+.rt-thumbnail {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    background-color: #5c9999;
+}
+
+.rt-name {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    background-color: #ebf1f1;
+}
+
+.rt-posting-date {
+    font-weight: normal;
+    padding-left: 6px;
+    color: grey;
+}
+
+.rt-specs {
+    font-weight: normal;
+    text-align: left;
+    padding: 6px 12px;
+}
+
+.rt-description {
+    text-align: justify;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.rt-card::-webkit-scrollbar-thumb:hover {
+    background: #c1c1c1;
+}
+
+.rt-card::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #5c9999;
+}
+.rt-card::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+.rt-card::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+@media (max-width: 1400px) {
+
+    .rt-container {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 1000px) {
+
+    .rt-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+
+    .rt-container {
+        grid-template-columns: 1fr;
+    }
+
+    .rt-card {
+        min-width: 100%;
+    }
+}
+
+/* route */
+
+.rt-slider {
+    display: flex;
+    overflow: auto;
+    margin: 6px 0px;
+    padding: 8px 4px;
+    gap: 10px;
+}
+
+.rt-slider img {
+    height: 100%;
+    width: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.rt-preview-photo {
+    height: 100px;
+    cursor: pointer;
+}
+
+.rt-preview-photos-distance {
+    position: relative;
+    text-align: center;
+    bottom: 30px;
+    color: white;
+    text-shadow: 1px 1px 3px black;
+}
+
+.rt-slider > svg {
+    min-width: 10px;
+    fill: #5c9999;
+    align-self: center;
+}
+
+.rt-mkpoint-on {
+    font-weight: bold;
+    color: #5c9999;
+}
+
+/* Others */
+
+.grabber {
+    margin: 0;
+    border-top: 1px solid #FFF;
+    border-bottom: 1px solid #dfdfe8;
+    height: 8px;
+    background: #f7f7fa url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGAgMAAACHnudVAAAACVBMVEWmpqb%2F%2F%2F%2F%2B%2Fv7DQT26AAAAFUlEQVQI12MAgdDIAAgdCqHDIicAAB4GAziOJ42xAAAAAElFTkSuQmCC) no-repeat center;
+    cursor: row-resize;
+}
+
+.spec-table tr {
+    cursor: default;
+}
+
+.spec-table .offroute {
+    color: darkgrey;
+}
+
+.spec-table tr:hover {
+    background-color: #f3f3f3;
+}
+
+.spec-table tr.selected-entry {
+    background-color: #ff5555;
+    color: white;
+}
+
+#createSegmentForm {
+    margin: 20px 0px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.rt-section {
+    padding: 6px;
+    margin: 10px 0px;
+    border-radius: 6px;
+    background-color: #fffdd8;
+    position: relative;
+}
+
+.rt-checkbox {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+/* width */
+.rt-slider::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+  
+/* Track */
+.rt-slider::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+/* Handle */
+.rt-slider::-webkit-scrollbar-thumb {
+    background: #5c9999;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+.rt-slider::-webkit-scrollbar-thumb:hover {
+    background: #c1c1c1; 
+}

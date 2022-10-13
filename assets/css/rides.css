@@ -1,0 +1,121 @@
+.rd-card {
+    border-radius: 10px;
+    display: flex;
+    background-color: #ffffff;
+    height: 140px;
+    margin: 20px 0px;
+}
+.rd-card:hover {
+	box-shadow: 2px 2px 5px darkgrey;
+}
+
+.rd-card a {
+    text-decoration: none;
+    color: black;
+}
+
+.rd-container-left {
+    width: 28%;
+    height: 100%;
+}
+
+.rd-image {
+    height: 100%;
+    background-size: cover;
+    border-radius: 10px 0px 0px 10px;
+}
+.rd-image:active {
+	box-shadow: inset 0px 0px 5px black;
+}
+
+.rd-ride-name {
+    font-family: 'Gaegu';
+	font-weight: bold;
+    color: black;
+    position: relative;
+    left: 20px;
+    top: 100px;
+    font-size: 24px;
+}
+
+.rd-ride-name-shadow {
+    font-family: 'Gaegu';
+	font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 2px black;
+    position: relative;
+    left: 20px;
+    top: 100px;
+    font-size: 24px;
+}
+
+.rd-ride-date {
+    position: relative;
+    left: 20px;
+    top: -20px;
+}
+
+.rd-ride-date-shadow {
+    position: relative;
+    left: 20px;
+    top: -20px;
+    color: white;
+	text-shadow: 2px 2px 6px black;
+}
+
+.rd-container-center {
+	width: 50%;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    line-height: 1.2;
+    flex-direction: column;
+}
+
+.rd-section-address {
+    display: flex;
+    gap: 10px;
+}
+
+.rd-distance {
+    display: flex;
+    gap: 10px;
+}
+
+.rd-distance img {
+    object-fit: cover;
+    object-position: 0% 80%;
+    height: 1em;
+    width: 40px;
+    align-self: self-start;
+    border: 1px dashed;
+}
+
+.rd-container-right {
+	flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    width: 22%;
+    display: flex;
+}
+
+.rd-section-organizer {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 0px 10px 0px 0px;
+    height: 60%;
+}
+
+.rd-section-entry {
+    height: 40%;
+    padding: 0px 20px;
+    width: 100%;
+    display: flex;
+    line-height: 1.2;
+    align-items: center;
+    margin: auto 0px 0px 0px;
+    border-radius: 0px 0px 10px 0px;
+}

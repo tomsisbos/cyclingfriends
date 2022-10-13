@@ -1,0 +1,81 @@
+.rdr-card {
+	border-radius: 99px;
+	height: 100px;
+	margin: 20px 0px;
+}
+.rdr-card:hover {
+	box-shadow: 2px 2px 5px darkgrey;
+}
+
+.rdr-card-inner {
+	padding: 10px;
+	display: flex;
+	gap: 20px;
+}
+
+/* Left container */
+
+.rdr-container-left {
+    display: flex;
+    gap: 5px;
+    width: 40%;
+    flex-flow: column;
+}
+
+.rdr-login-section {
+    display: flex;
+    padding: 0px 20px;
+    align-items: center;
+    gap: 8px;
+    border-radius: 99px;
+    background-color: white;
+    height: 2em;
+	width: 100%;
+}
+
+.rdr-gender {
+	font-weight: bold;
+	font-size: 26px;
+}
+
+.rdr-login {
+	display: inline;
+	font-size: 30px;
+	font-family: gaegu;
+	font-weight: bold;
+    line-height: 0.7em;
+}
+
+.rdr-maininfos-section {
+    display: flex;
+    gap: 30px;
+}
+
+/* Right container */
+
+.rdr-container-right {
+    display: flex;
+    gap: 5px;
+    width: 25%;
+    flex-flow: column;
+}
+
+/* Buttons */
+
+.rdr-container-buttons {
+	margin-left: auto;
+}
+
+.rdr-button {
+    height: 80px;
+    width: 80px;
+    border-radius: 80px;
+	font-weight: bold;
+    line-height: 1em;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    border: none;
+    padding: 3px !important;
+	background-color: #5C9999;
+}

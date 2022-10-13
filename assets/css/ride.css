@@ -1,0 +1,305 @@
+/* Course */
+
+.rd-course-map-container {
+	position: relative;
+}
+.rd-course-map {
+    position: absolute !important;
+    height: 400px;
+    width: calc(100% + 80px);
+    top: 0px;
+    left: -40px;
+}
+.newpickmap-controller {
+    position: absolute;
+    display: flex;
+    gap: 10px;
+    bottom: calc(10px - 400px);
+    right: calc(10px - 40px);
+    padding: 6px 10px;
+}
+.newpickmap-controller-label {
+    position: absolute;
+    top: 10px;
+    left: -30px;
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: default;
+}
+.newpickmap-controller-label #edit, .newpickmap-controller-label #set{
+    color: white;
+}
+.newpickmap-controller-label.mouseover {
+	background-color: white;
+    padding: 3px 8px;
+} 
+.mouseover, .mouseover #edit, .mouseover #set {
+	color: black;
+    transition: color 0.5s, background-color 0.5s;
+}
+.mouseover ul {
+    padding: 0px 20px;
+    margin: 0px;
+}
+.mouseover li {
+    margin: 0px;
+}
+.newpickmap-container .newpickmap-controller-label {
+	transition: visibility 0.5s, color 0.5s, background-color 0.5s;
+}
+.blue-twinkle {
+	animation: bluetwinkle 1s;
+}
+@keyframes bluetwinkle {
+	0% {
+    	color: #bbbbff;
+	}
+	100% {
+		color: white;
+	}
+}
+.red-twinkle {
+	animation: redtwinkle 1s;
+}
+@keyframes redtwinkle {
+	0% {
+		color: #ffbbbb;
+	}
+	100% {
+		color: white;
+	}
+}
+.newpickmap-controller-button {
+    background-color: white;
+    padding: 5px 15px;
+    font-weight: bold;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
+    font-size: 12px;
+    cursor: pointer;
+}
+.newpickmap-controller-checkbox {
+    background-color: white;
+    padding: 5px 15px;
+    font-weight: bold;
+    box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
+    font-size: 12px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 6px;
+}
+.newpickmap-controller-button:hover {
+	background-color: #f2f2f2;
+}
+.mapboxgl-popup-content {
+    padding: 0px !important;
+}
+.checkpointMarkerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 10px 15px;
+}
+.checkpointMarkerForm input[type="file" i] {
+    display: none;
+}
+.checkpointMarkerForm #name {
+    width: 100%;
+}
+.checkpointMarkerForm #description {
+    width: 100%;
+}
+.checkpointMarkerForm label {
+    color: grey;
+    cursor: pointer;
+}
+.checkpointMarkerForm label:hover {
+    color: black;
+}
+.checkpoint-popup-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 100%;
+}
+.checkpoint-popup-img-container {
+    height: 100px;
+    width: 100%;
+    position: relative;
+}
+.checkpoint-popup-img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px 10px 0px 0px;
+}
+.checkpoint-popup-img-error {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px 10px 0px 0px;
+}
+.rd-course-fields {
+	padding-top: 420px;
+}
+.rd-automatic-field {
+    display: inline;
+}
+.rd-course-profile {
+    height: 15vh !important;
+    background-color: white !important;
+    position: absolute !important;
+    width: calc(100% + 80px) !important;
+    top: 400px;
+    left: -40px;
+    display: none;
+}
+.rd-course-thumbnail {
+    float: right;
+    width: 60%;
+    max-width: 800px;
+    margin: 0 0 12px 12px;
+}
+.rd-course-thumbnail img {
+    width: 100%;
+    object-fit: cover;
+    opacity: 100%;
+    transition: opacity 0.2s;  
+}
+.rd-course-thumbnail img:hover {
+    opacity: 80%;
+    transition: opacity 0.2s;  
+}
+@media only screen and (max-width: 992px) {
+    .rd-course-thumbnail {
+        float: none;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+
+/* Summary */
+
+.summary-checkpoints {
+    gap: 10px;
+    overflow: auto;
+    margin: 20px;
+    padding-bottom: 10px;
+    background-color: #ebf1f100;
+    display: flex;
+    margin-bottom: 8px;
+}
+.summary-checkpoint {
+    background-color: #f9f9f9;
+    display: flex;
+    padding: 10px;
+    min-width: 240px;
+    overflow: auto;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+.summary-checkpoint-image {
+    height: 120px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+.summary-checkpoint-number {
+    position: absolute;
+    height: 25px;
+    width: 25px;
+    line-height: 23px;
+    left: 10px;
+    top: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    border: 2px solid white;
+    border-radius: 99px;
+    text-shadow: 0 0 3px black;
+}
+.summary-checkpoint-tag {
+    position: absolute;
+    padding: 0px 5px;
+    line-height: 23px;
+    left: 10px;
+    top: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 3px black;
+}
+.tag-start {
+    background-color: #00e06e;
+}
+.tag-goal {
+    background-color: #ff5555;
+}
+.summary-checkpoint-name {
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    padding: 0px 10px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 0 5px black;
+}
+.summary-checkpoint-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+.summary-checkpoint-image img:hover {
+    opacity: 90%;
+}
+.photo-selected {
+    outline: 3px solid yellow !important;
+}
+.summary-checkpoint-description {
+    max-height: 100px;
+    width: 100%;
+    padding-top: 6px;
+}
+.summary-checkpoint-description p {
+    padding: 0px 4px 10px 4px;
+    text-align: justify;
+}
+.summary-checkpoints > svg {
+    height: 120px;
+    min-width: 10px;
+    fill: #5c9999;
+}
+.summary-checkpoints img {
+    border-radius: 0px !important;
+}
+
+
+/* width */
+.summary-checkpoints::-webkit-scrollbar, .summary-checkpoint::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+  
+/* Track */
+.summary-checkpoints::-webkit-scrollbar-track, .summary-checkpoint::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+/* Handle */
+.summary-checkpoints::-webkit-scrollbar-thumb, .summary-checkpoint::-webkit-scrollbar-thumb {
+    background: #5c9999;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+.summary-checkpoints::-webkit-scrollbar-thumb:hover, .summary-checkpoint::-webkit-scrollbar-thumb:hover {
+    background: #c1c1c1; 
+}

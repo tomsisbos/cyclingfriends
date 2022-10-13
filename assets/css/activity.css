@@ -1,0 +1,431 @@
+
+/* New */
+
+#activityMapContainer {
+    height: 70vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+#activityMap {
+    height: 100%
+}
+
+#divCheckpoints {
+    margin: 20px 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.new-ac-properties-container {
+    display: flex;
+    padding: 1rem !important;
+    gap: 10px;
+    border-top: 1px dashed #ced4da;
+}
+
+
+.new-ac-checkpoint {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.new-ac-checkpoint svg {
+    fill: #5c9999;
+}
+.new-ac-checkpoint-topline {
+    display: flex;
+    gap: 20px;
+    max-height: 2.5rem;
+}
+.new-ac-checkpoint-properties {
+    display: flex;
+    min-width: 120px;
+}
+
+.new-ac-save-container {
+    display: flex;
+    padding-top: 1rem;
+    border-top: 1px dashed #ced4da;
+}
+
+.ac-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.ac-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: white;
+}
+.ac-main-container {
+    display: flex;
+}
+.ac-thumbnail-container {
+    margin-left: auto;
+    min-width: 260px;
+    max-width: 400px;
+}
+.ac-map-thumbnail {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.ac-map-thumbnail:hover, .ac-name:hover {
+    opacity: 0.8;
+}
+.ac-infos-container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.ac-user-details {
+    display: flex;
+    gap: 10px;
+}
+.ac-name {
+    font-weight: bold;
+    font-size: 18px;
+    color: #5c9999;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.ac-user-name a {
+    color: inherit;
+    text-decoration: inherit;
+}
+.ac-name a {
+    color: inherit;
+    text-decoration: inherit;
+}
+.ac-posting-date {
+    color: darkgrey;
+}
+.ac-place {
+    height: 60px;
+}
+.ac-specs {
+    justify-items: center;
+    text-align: center;
+    display: flex;
+    padding: 5px 0px;
+    margin-top: auto;
+    gap: 2px;
+}
+.ac-spec {
+    padding: 4px;
+    background-color: #f9f9f9;
+    width: 100%;
+    max-width: 120px;
+}
+.ac-spec-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: grey;
+}
+.ac-spec-unit {
+    font-size: 14px;
+    display: inline;
+}
+.ac-photos-container {
+    display: flex;
+    gap: 2px;
+}
+.ac-photo-container {
+    min-height: fit-content;
+}
+.ac-photo {
+    width: 100%;
+}
+
+.my-ac-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.my-ac-card {
+    display: flex;
+    height: 180px;
+    gap: 2px;
+    background-color: white;
+    box-shadow: 1px 1px 3px lightgrey;
+}
+.card-reverse {
+    flex-direction: row-reverse;
+}
+.my-ac-photos-container {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 270px;
+    background-color: lightgrey;
+}
+.my-ac-photo-container {
+    width: 90px;
+    height: 90px;
+    border: 1px solid white;
+    flex-grow: 4;
+}
+.my-ac-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.my-ac-infos-container {
+    padding: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 992px) {
+    .my-ac-photos-container {
+        display: none;
+    }
+    .ac-specs {
+        display: grid;
+        grid-template-columns: repeat(2, 50%);
+    }
+    .ac-spec-unit {
+        font-size: 11px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .ac-spec-value {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .ac-thumbnail-container {
+        max-width: 140px;
+        min-width: 140px;
+    }
+    .ac-spec-label {
+        font-size: 7px;
+    }
+    .ac-name {
+        font-size: 14px;
+        white-space: normal;
+    }
+    .ac-posting-date, .ac-place {
+        font-size: 11px;
+        height: auto;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .my-ac-card {
+        height: auto;
+        min-height: 180px;
+    }
+}
+
+.pg-ac-header {
+    height: 350px;
+    background-position: center;
+}
+.pg-ac-header h1, .pg-ac-header p {
+    color: white;
+}
+.pg-ac-specs-container {
+    display: flex;
+    align-items: center;
+    height: 80px;
+}
+.pg-ac-spec-container {
+    width: 120px;
+    background-color: #e8e8e8;
+    border-left: 2px solid white;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 10;
+    height: 100%;
+    display: flex;
+    cursor: default;
+}
+.pg-ac-spec-label {
+    color: grey;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.pg-ac-spec-value {
+    font-size: 22px;
+}
+.pg-ac-spec-unit {
+    display: inline;
+    font-size: 14px;
+}
+
+.pg-ac-summary-container {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    position: relative;
+}
+.pg-ac-timeline {
+    background-color: blue;
+    border-radius: 10px;
+    min-width: 10px;
+    margin-top: 15px;
+}
+.pg-ac-checkpoints-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.pg-ac-checkpoint-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pg-ac-checkpoint-topline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+}
+.pg-ac-checkpoint-topline svg {
+    cursor: pointer;
+    position: absolute;
+    left: 33px;
+    background-color: white;
+    border-radius: 99px;
+    border: 3px solid blue;
+    padding: 1px;
+}
+.pg-ac-checkpoint-time {
+    color: grey;
+}
+.pg-ac-photos-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+.pg-ac-photo-container {
+    position: relative;
+    display: inline-block;
+    padding: 5px;
+    height: 150px;
+    width: 175px;
+    flex-grow: 4;
+}
+.pg-ac-photo {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.pg-ac-photo:hover {
+    opacity: 0.8;
+}
+
+.pg-ac-map-img-container {
+    width: 35px;
+    height: 20px;
+    top: -15px !important;
+    cursor: pointer;
+    transition: height 0.5s, width 0.5s, top 0.5s, z-index 0.5s;
+}
+.pg-ac-map-img-container:hover img {
+    border-color: yellow;
+}
+.pg-ac-map-img-container:hover::after img {
+    color: yellow;
+}
+.pg-ac-map-img-container::after {
+    content: '▼';
+    height: 0px;
+    bottom: 12px;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 21px;
+    position: absolute;
+    z-index: -1;
+    text-shadow: 0px 10px 4px #00000033;
+    color: #ffffff;
+}
+.pg-ac-map-img-container.grown {
+    width: 700px;
+    height: 400px;
+    z-index: 3;
+    top: -220px;
+    transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s, z-index 0.5s;
+}
+.pg-ac-map-img-container.grown:hover {
+    opacity: 0.7 !important;
+    transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s;
+}
+.pg-ac-map-img-container.grown::after {
+    font-size: 50px;
+    color: #ff5555;
+}
+.pg-ac-map-img-container.grown img {
+    border-color: #ff5555;
+}
+
+.pg-ac-map-img-container.half-grown {
+    width: 350px;
+    height: 200px;
+    z-index: 1;
+    top: -160px;
+    transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s, z-index 0.5s;
+}
+.pg-ac-map-img-container.half-grown:hover {
+    opacity: 0.7 !important;
+    transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s;
+}
+.pg-ac-map-img-container.half-grown::after {
+    font-size: 50px;
+    color: #ff5555;
+}
+.pg-ac-map-img-container.half-grown img {
+    border-color: #ff5555;
+}
+.pg-ac-map-img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border: 2px solid white;
+}
+
+.logo-checkpoint-marker {
+    background-color: white;
+    z-index: 3;
+    border: 3px solid blue;
+}
+.logo-checkpoint-marker img {
+    padding: 2px;
+    height: 100%;
+}
+.logo-checkpoint-marker::after {
+    bottom: 6px !important;
+}
+
+.pg-ac-checkpoint-popup {
+    padding: 10px;
+    border-radius: 6px;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .pg-ac-specs-container {
+        flex-direction: column;
+        height: auto;
+    }
+    .pg-ac-spec-container {
+        width: 100%
+    }
+    .pg-ac-timeline {
+        min-width: 6px;
+    }
+    .pg-ac-checkpoint-topline svg {
+        left: 31px;
+    }
+}
