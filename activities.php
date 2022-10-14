@@ -15,7 +15,7 @@ include 'actions/users/securityAction.php';
 	
 	<h2 class="top-title">Activities</h2>
 	
-	<div class="container end">
+	<div class="container container-transparent end">
 		
 		<div class="ac-container"> <?php
 

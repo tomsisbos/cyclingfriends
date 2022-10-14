@@ -218,7 +218,9 @@ class Activity extends Model {
             if ($photo->featured) return $photo;
         }
         // If no featured photo, return the last one
-        return $photos[count($photos) - 1]; 
+        if ($photos) return $photos[count($photos) - 1];
+        // If no photo, return a default picture
+        else return false;
     }
 
     public function hasAccess ($user) {

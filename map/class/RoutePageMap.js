@@ -184,7 +184,7 @@ export default class RoutePageMap extends GlobalMap {
                                 document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.add('selected-marker')
                                 // To clicked thumbnail
                                 document.querySelector('.rt-slider #' + entry.type + entry.id).querySelector('img').classList.add('selected-marker')
-                            } else { // If click on goal on a ride with same start and finish
+                            } else if (entry.id == 0) { // If click on goal on a ride with same start and finish
                                 // To clicked marker
                                 document.querySelector('.mapboxgl-canvas-container #' + entry.type + 0).classList.add('selected-marker')
                                 // To clicked thumbnail
@@ -220,7 +220,10 @@ export default class RoutePageMap extends GlobalMap {
                 } else {
                     // Unselect
                     target.classList.remove('selected-entry')
-                    document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.remove('selected-marker')
+                    console.log(entry.type + entry.id)
+                    if ((this.ride.options.sf == true && entry.type == 'checkpoint' && entry.id == this.ride.checkpoints.length - 1)) { // Unselect start marker if click on goal
+                        document.querySelector('.mapboxgl-canvas-container #' + entry.type + 0).classList.remove('selected-marker')
+                    } else document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.remove('selected-marker')
                     // Focus
                     this.focus(this.map.getSource('route')._data)
                     // Close corresponding popup
@@ -230,7 +233,7 @@ export default class RoutePageMap extends GlobalMap {
                         }
                     } )
                 }
-                /*this.generateProfile()*/
+                ///this.generateProfile()
             } )
         } )
     }

@@ -1430,38 +1430,57 @@ export default class GlobalMap extends Model {
                             img.height = 24
                             img.width = 24
                         }
+                        // Prepare profile drawing variables
                         var width  = 15
                         var height = 15
                         const positionX = poi.position - width / 2
                         const positionY = dataY - cursorLength - height
-                        if (img.classList.contains('admin-marker')) {
-                            ctx.strokeStyle = 'yellow'
-                            ctx.lineWidth = 3
+                        // If first loading, wait for img to load
+                        if (!document.querySelector('canvas#offscreenCanvas' + poi.number)) {
+                            img.addEventListener('load', () => {
+                                if (img.classList.contains('admin-marker')) {
+                                    ctx.strokeStyle = 'yellow'
+                                    ctx.lineWidth = 3
+                                }
+                                if (img.classList.contains('selected-marker')) {
+                                    ctx.strokeStyle = '#ff5555'
+                                    ctx.lineWidth = 3
+                                }
+        
+                                var abstract = {}
+                                abstract.offscreenCanvas = document.createElement("canvas")
+                                abstract.offscreenCanvas.width = width
+                                abstract.offscreenCanvas.height = height
+                                abstract.offscreenContext = abstract.offscreenCanvas.getContext("2d")
+                                const ctx2 = abstract.offscreenContext
+                                ctx2.drawImage(img, 0, 0, width, height)
+                                ctx2.globalCompositeOperation = 'destination-atop'
+                                ctx2.arc(0 + width/2, 0 + height/2, width/2, 0, Math.PI * 2)
+                                ctx2.closePath()
+                                ctx2.fillStyle = "#fff"
+                                ctx2.fill()
+                                // Keep offscreenCanvas 'in cache' for next profile generating 
+                                abstract.offscreenCanvas.style.display = 'none'
+                                abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
+                                document.body.appendChild(abstract.offscreenCanvas)
+        
+                                // Draw icon
+                                ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
+                                ctx.beginPath()
+                                ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
+                                ctx.closePath()
+                                ctx.stroke()
+                            } )
+                        // If img has already been loaded, direcly use it for preventing unnecessary loading time
+                        } else {
+                            var offscreenCanvas = document.querySelector('canvas#offscreenCanvas' + poi.number)
+                            // Draw icon on profile
+                            ctx.drawImage(offscreenCanvas, positionX, positionY)
+                            ctx.beginPath()
+                            ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
+                            ctx.closePath()
+                            ctx.stroke()
                         }
-                        if (img.classList.contains('selected-marker')) {
-                            ctx.strokeStyle = '#ff5555'
-                            ctx.lineWidth = 3
-                        }
-
-                        var abstract = {}
-                        abstract.offscreenCanvas = document.createElement("canvas")
-                        abstract.offscreenCanvas.width = width
-                        abstract.offscreenCanvas.height = height
-                        abstract.offscreenContext = abstract.offscreenCanvas.getContext("2d")
-                        const ctx2 = abstract.offscreenContext
-                        ctx2.drawImage(img, 0, 0, width, height)
-                        ctx2.globalCompositeOperation = 'destination-atop'
-                        ctx2.arc(0 + width/2, 0 + height/2, width/2, 0, Math.PI * 2)
-                        ctx2.closePath()
-                        ctx2.fillStyle = "#fff"
-                        ctx2.fill()
-
-                        // Draw icon
-                        ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
-                        ctx.beginPath()
-                        ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
-                        ctx.closePath()
-                        ctx.stroke()
                     }
                     // For mkpoints
                     if (this.mkpoints) this.mkpoints.forEach( (mkpoint) => {

@@ -53,13 +53,15 @@
 .ac-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 40px;
 }
 .ac-card {
     display: flex;
     flex-direction: column;
-    gap: 2px;
     background-color: white;
+    box-shadow: 0px 0px 4px lightgrey;
+    border-radius: 5px;
+    overflow: hidden;
 }
 .ac-main-container {
     display: flex;
@@ -78,9 +80,13 @@
     opacity: 0.8;
 }
 .ac-infos-container {
-    padding: 10px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    width: 100%;
+}
+.ac-details {
+    overflow: auto;
 }
 .ac-user-details {
     display: flex;
@@ -119,8 +125,7 @@
 .ac-spec {
     padding: 4px;
     background-color: #f9f9f9;
-    width: 100%;
-    max-width: 120px;
+    width: -webkit-fill-available;
 }
 .ac-spec-label {
     font-size: 10px;
@@ -137,9 +142,11 @@
 }
 .ac-photo-container {
     min-height: fit-content;
+    margin-top: 2px;
 }
 .ac-photo {
     width: 100%;
+    height: 100%;
 }
 
 .my-ac-container {
@@ -199,12 +206,21 @@
 }
 
 @media only screen and (max-width: 768px) {
+    .ac-main-container {
+        flex-direction: column;
+    }
+    .ac-infos-container {
+        padding: 10px;
+    }
     .ac-thumbnail-container {
-        max-width: 140px;
-        min-width: 140px;
+        max-width: unset;
+        min-width: unset;
     }
     .ac-spec-label {
         font-size: 7px;
+    }
+    .ac-spec {
+        min-width: 100%;
     }
     .ac-name {
         font-size: 14px;
@@ -213,9 +229,20 @@
     .ac-posting-date, .ac-place {
         font-size: 11px;
         height: auto;
-        text-overflow: ellipsis;
+        /*text-overflow: ellipsis;
         white-space: nowrap;
-        overflow: hidden;
+        overflow: hidden;*/
+    }
+    .ac-photos-container {
+        flex-wrap: wrap;
+        gap: 0px;
+        margin: 0px;
+    }
+    .ac-photo-container {
+        width: 50%;
+        max-height: 140px;
+        flex-grow: 4;
+        margin: 0px
     }
     .my-ac-card {
         height: auto;
@@ -289,9 +316,9 @@
     align-items: center;
     gap: 6px;
     font-weight: bold;
+    cursor: pointer;
 }
 .pg-ac-checkpoint-topline svg {
-    cursor: pointer;
     position: absolute;
     left: 33px;
     background-color: white;

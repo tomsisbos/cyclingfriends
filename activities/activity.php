@@ -28,9 +28,10 @@ include '../actions/activities/activityAction.php'; ?>
 	if (isset($errormessage)) { echo '<div class="error-block m-0"><p class="error-message">' .$errormessage. '</p></div>'; }
 	if (isset($successmessage)) { echo '<div class="success-block m-0"><p class="success-message">' .$successmessage. '</p></div>'; } ?>
 	
-	<div class="container-fluid">
+	<div class="container-fluid"> <?php 
 
-		<div class="container pg-ac-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$activity->getFeaturedImage()->blob. ')'?>;">
+		if ($activity->getFeaturedImage()) { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$activity->getFeaturedImage()->blob. ')'?>;"> <?php
+		} else { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(/includes/media/default-photo-' . rand(1,9) .'.svg)'?>; background-size: cover;"> <?php } ?>
 			<div class="tr-row gap">
 				<div class="td-row">
 					<a href="/riders/profile.php?id=<?= $activity->user->id ?>"><?php $activity->user->displayPropic(60, 60, 60); ?></a>

@@ -58,8 +58,8 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
     activityMap.displayCheckpointMarkers()
     activityMap.displayPhotos()
 
-    // Focus on checkpoint on icon click
-    document.querySelectorAll('.pg-ac-checkpoint-topline svg').forEach( (icon) => {
+    // Focus on checkpoint on icon or checkpoint topline click
+    document.querySelectorAll('.pg-ac-checkpoint-topline').forEach( (icon) => {
         icon.addEventListener('click', (e) => {
             var checkpoint = activityMap.data.checkpoints[e.target.closest('.pg-ac-checkpoint-container').dataset.number]
             window.scrollTo(0, $map.offsetTop)
