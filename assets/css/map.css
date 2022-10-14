@@ -93,7 +93,7 @@
     -webkit-transition: all .1s;
     -moz-transition: all .1s;
     transition: all .1s;
-    z-index: 2;
+    z-index: 3;
     padding: 0px !important;
     opacity: 1 !important;
 }
