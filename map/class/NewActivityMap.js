@@ -56,8 +56,9 @@ export default class NewActivityMap extends ActivityMap {
                     // Build max speed
                     let distance = 0
                     for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
-                    let time = (trackpoints[i].time - trackpoints[i - precision].time) / 1000 / 60 / 60
-                    var speed = distance / time
+                    let seconds = (trackpoints[i].time - trackpoints[i - precision].time) / 1000
+                    let hours = seconds / 60 / 60
+                    var speed = distance / hours
                     if (speed > speed_max) speed_max = Math.round(speed * 10) / 10
                     // Build max slope
                     let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
@@ -65,6 +66,7 @@ export default class NewActivityMap extends ActivityMap {
                     if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
                     // Build time running
                     if (distance > 0.015) duration_running += (trackpoints[i].time.getTime() - trackpoints[i - precision].time.getTime())
+                    if (seconds > precision) duration_running -= (seconds - precision) * 1000 // Substact auto pause
                 }
             }
             console.log('slope max : ' + slope_max)
@@ -313,101 +315,114 @@ export default class NewActivityMap extends ActivityMap {
     }
 
     // Treat user photos upload
-    loadPhotos (uploadedFiles) {
-        const acceptedFormats = ['image/jpeg', 'image/png']
-        var acceptedFormatsString = acceptedFormats.join(', ')
+    async loadPhotos (uploadedFiles) {
+        return new Promise( (resolve, reject) => {
+            const acceptedFormats = ['image/jpeg', 'image/png']
+            var acceptedFormatsString = acceptedFormats.join(', ')
 
-        // Get files into an array
-        var files = []
-        for (var property in uploadedFiles) {
-            if (Number.isInteger(parseInt(property))) files.push(uploadedFiles[property])
-        }
-        // Filter photos in double
-        var filesLength = files.length
-        var filesInDouble = []
-        this.data.photos.forEach(photo => {
-            for (let i = 0 ; i < filesLength; i++) {
-                if (files[i]) {
-                    if (photo.datetime == files[i].lastModified && photo.name == files[i].name) {
-                        filesInDouble.push(files[i].name)
-                        files.splice(i, 1)
-                        filesLength--
-                        i--
+            // Get files into an array
+            var files = []
+            for (var property in uploadedFiles) {
+                if (Number.isInteger(parseInt(property))) files.push(uploadedFiles[property])
+            }
+            // Filter photos in double
+            var filesLength = files.length
+            var currentPhotosNumber = this.data.photos.length
+            var filesInDouble = []
+            this.data.photos.forEach(photo => {
+                for (let i = 0 ; i < filesLength; i++) {
+                    if (files[i]) {
+                        if (photo.size == files[i].size && photo.name == files[i].name) {
+                            filesInDouble.push(files[i].name)
+                            files.splice(i, 1)
+                            filesLength--
+                            i--
+                        }
                     }
                 }
+            } )
+            if (filesInDouble.length > 0) {
+                var filesInDoubleString = filesInDouble.join(', ')
+                showResponseMessage({success: '\"' + filesInDoubleString + '\" have already been uploaded. You can\'t upload it twice.'})
             }
-        } )
-        if (filesInDouble.length > 0) {
-            var filesInDoubleString = filesInDouble.join(', ')
-            showResponseMessage({success: '\"' + filesInDoubleString + '\" have already been uploaded. You can\'t upload it twice.'})
-        }
-        // Sort files by date
-        files.sort( (a, b) => {
-            return a.lastModified - b.lastModified
-        } )
+            // Sort files by date
+            files.sort( (a, b) => {
+                return a.lastModified - b.lastModified
+            } )
 
-        // Loop through each file
-        var number = this.data.photos.length
-        for (let i = 0; i < filesLength; i++) {
+            // Loop through each file
+            var number = this.data.photos.length
+            for (let i = 0; i < filesLength; i++) {
 
-            // If the photo format is accepted
-            if (acceptedFormats.includes(files[i].type)) {
+                // If the photo format is accepted
+                if (acceptedFormats.includes(files[i].type)) {
 
-                // Extract Exif data and start image treatment
-                var blobUrl = URL.createObjectURL(files[i])
-                let img = new Image()
-                img.src = blobUrl
-                img.addEventListener('load', () => {
+                    // Extract Exif data and start image treatment
+                    var blobUrl = URL.createObjectURL(files[i])
+                    let img = new Image()
+                    img.src = blobUrl
+                    img.addEventListener('load', () => {
 
-                    EXIF.getData(img, async() => {
-                        // Extract date data
-                        var exifDateTimeOriginal = EXIF.getTag(img, 'DateTimeOriginal')
-                        var exifDateTime         = EXIF.getTag(img, 'DateTime')
+                        EXIF.getData(img, async() => {
+                            // Extract date data
+                            var exifDateTimeOriginal = EXIF.getTag(img, 'DateTimeOriginal')
+                            var exifDateTime         = EXIF.getTag(img, 'DateTime')
 
-                        // If photo has valid date data
-                        if (exifDateTimeOriginal || exifDateTime) {
+                            // If photo has valid date data
+                            if (exifDateTimeOriginal || exifDateTime) {
 
-                            const [dateValues, timeValues] = exifDateTimeOriginal.split(' ')
-                            const [year, month, day] = dateValues.split(':')
-                            const [hours, minutes, seconds] = timeValues.split(':')
-                            var dateOriginal = new Date(year, month - 1, day, hours, minutes, seconds)
+                                const [dateValues, timeValues] = exifDateTimeOriginal.split(' ')
+                                const [year, month, day] = dateValues.split(':')
+                                const [hours, minutes, seconds] = timeValues.split(':')
+                                var dateOriginal = new Date(year, month - 1, day, hours, minutes, seconds)
 
-                            // If the photo has been taken during the activity
-                            if (dateOriginal.getDay() == new Date(this.data.checkpoints[0].datetime).getDay()) {
+                                // If the photo has been taken during the activity
+                                if (dateOriginal.getDay() == new Date(this.data.checkpoints[0].datetime).getDay()) {
 
-                                // Resize and compress photo
-                                let blob = await resizeAndCompress(img, 1600, 900, 0.7)
+                                    // Resize and compress photo
+                                    let blob = await resizeAndCompress(img, 1600, 900, 0.7)
 
-                                // Add photo to map instance
-                                this.data.photos.push( {
-                                    blob,
-                                    size: files[i].size,
-                                    name: files[i].name,
-                                    type: files[i].type,
-                                    datetime: dateOriginal.getTime(),
-                                    featured: false,
-                                    number
-                                } )
+                                    // Add photo to map instance
+                                    this.data.photos.push( {
+                                        blob,
+                                        size: files[i].size,
+                                        name: files[i].name,
+                                        type: files[i].type,
+                                        datetime: dateOriginal.getTime(),
+                                        featured: false,
+                                        number
+                                    } )
+                                    
+                                    number++
 
-                                // Load image on the page
-                                this.updatePhotoElement(this.data.photos[number])
-                                
-                                number++
+                                    // Resolve promise after last file has been treated
+                                    if (number == filesLength + currentPhotosNumber) resolve(true)
 
-                            } else showResponseMessage({error: '\"' + files[i].name + '\" has not been taken during the activity.'})
+                                } else showResponseMessage({error: '\"' + files[i].name + '\" has not been taken during the activity.'})
 
-                        } else  showResponseMessage({error: '\"' + files[i].name + '\" does not have valid time data. Please upload raw photo data taken during the activity.'})
+                            } else  showResponseMessage({error: '\"' + files[i].name + '\" does not have valid time data. Please upload raw photo data taken during the activity.'})
+
+                        } )
 
                     } )
+                    
+                } else showResponseMessage({error: '\"' + files[i].name + '\" is not of an accepted format. Please upload images from following formats : ' + acceptedFormatsString + '.'})
+            }
+        } )
+    }
 
-                } )
-                
-            } else showResponseMessage({error: '\"' + files[i].name + '\" is not of an accepted format. Please upload images from following formats : ' + acceptedFormatsString + '.'})
-        }
+    sortPhotos () {
+        // Sort photos by datetime
+        this.data.photos.sort((a, b) => {
+            return a.datetime - b.datetime
+        } )
+        // Update photos numbers
+        for (let number = 0; number < this.data.photos.length; number++) this.data.photos[number].number = number
     }
     
     // Reorder photo elements within checkpoints according to date
     updatePhotos () {
+        this.sortPhotos()
         this.removePhotoElements()
         this.data.photos.forEach(photo => {
             this.updatePhotoElement(photo)
@@ -431,15 +446,47 @@ export default class NewActivityMap extends ActivityMap {
                     closestCheckpointDatetime = checkpoint.datetime
                 }
             } )
-
+            
             // Create and append elements to the DOM
-            var $container = document.createElement('div')
-            $container.className = 'pg-ac-photo-container'
+            photo.thumbnailElement = document.createElement('div')
+            photo.thumbnailElement.className = 'pg-ac-photo-container'
+            photo.thumbnailElement.style.cursor = 'default'
             var $img = document.createElement('img')
             $img.className = 'pg-ac-photo'
             $img.src = dataUrl
-            $container.appendChild($img)
-            document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container').appendChild($container)
+            photo.thumbnailElement.appendChild($img)
+            var $deleteButton = document.createElement('div')
+            $deleteButton.className = 'pg-ac-close-button'
+            $deleteButton.innerText = 'x'
+            photo.thumbnailElement.appendChild($deleteButton)
+            // If first photo of this checkpoint, append to parent, else find previous child and insert if after
+            var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
+            var $previousChildNumber = 0
+            var $previousChild = false
+            if ($parent.children.length > 0) {
+                for (let i = photo.number - 1; i >= 0; i--) {
+                    if (this.data.photos[i].thumbnailElement && this.data.photos[i].thumbnailElement.closest('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container') == $parent) {
+                        if (this.data.photos[i].number > $previousChildNumber && this.data.photos[i].number < photo.number) {
+                            $previousChildNumber = this.data.photos[i].number
+                            $previousChild = this.data.photos[i].thumbnailElement
+                        }
+                    }
+                }
+                if ($previousChild) $previousChild.after(photo.thumbnailElement)
+                else $parent.appendChild(photo.thumbnailElement)
+            } else $parent.appendChild(photo.thumbnailElement)
+
+            // Delete photo listener
+            $deleteButton.addEventListener('click', () => {
+                photo.thumbnailElement.remove()
+                this.data.photos.splice(photo.number, 1)
+                // Update other photos number
+                for (let i = 0; i < this.data.photos.length; i++) {
+                    if (this.data.photos[i].number > photo.number) {
+                        this.data.photos[i].number--
+                    }
+                }
+            } )
 
         }, false)        
     }

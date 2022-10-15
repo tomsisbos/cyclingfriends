@@ -37,7 +37,7 @@
     border-radius: 99px;
 }
 .mkpoint-marker::after {
-    content: '▼';
+    content: '\25BC';
     height: 0px;
     bottom: 12px;
     left: 50%;
@@ -458,7 +458,7 @@ form#mkpointForm input[type="file" i] {
     text-align: center;
 }
 .mp-ride-popup::after, .mp-segment-popup::after, .amenity-popup::after {
-    content: '▼';
+    content: '\25BC';
     height: 0px;
     bottom: 20px;
     left: 50%;

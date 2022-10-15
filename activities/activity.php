@@ -157,7 +157,7 @@ include '../actions/activities/activityAction.php'; ?>
 									$time = $checkpoint->datetime->diff($activity->getCheckpoints()[0]->datetime);
 									if ($time->h != 0 AND $time->i != 0) {
 										echo ' (';
-										if ($time->h > 1) {
+										if ($time->h > 0) {
 											if (substr($time->h, 0, 1) == '0') echo substr($time->h, 1, strlen($time->h)) . 'h' . $time->i;
 											else echo $time->h . 'h' . $time->i;
 										} else {

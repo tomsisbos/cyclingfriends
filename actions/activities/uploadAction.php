@@ -14,6 +14,7 @@ if (isset($_FILES['activity'])) {
     if ($ext) {
 
         // Create temp folder if necessary
+        if (!is_dir($_SERVER["DOCUMENT_ROOT"] . '/activities/data')) mkdir($_SERVER["DOCUMENT_ROOT"] . '/activities/data');
         if (!is_dir($_SERVER["DOCUMENT_ROOT"] . '/activities/data/temp')) mkdir($_SERVER["DOCUMENT_ROOT"] . '/activities/data/temp');
         
         // Move uploaded file to activity temp folder

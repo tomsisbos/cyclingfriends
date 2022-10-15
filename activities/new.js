@@ -108,8 +108,10 @@ $upload.addEventListener('change', async (e) => {
                 newActivityMap.focus(newActivityMap.data.routeData)
 
                 // Add photos treatment
-                document.querySelector('#uploadPhotos').addEventListener('change', (e) => {
-                    newActivityMap.loadPhotos(e.target.files)
+                document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
+                    newActivityMap.loadPhotos(e.target.files).then( () => {
+                        newActivityMap.updatePhotos()
+                    } )
                 } )
 
                 // Save activity treatment

@@ -352,7 +352,20 @@
 .pg-ac-photo:hover {
     opacity: 0.8;
 }
-
+.pg-ac-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 16px;
+    border-radius: 0px 20px;
+    color: white;
+    margin: 5px;
+    cursor: pointer;
+    z-index: 3;
+}
+.pg-ac-close-button:hover {
+    background-color: #ffffff44;
+}
 .pg-ac-map-img-container {
     width: 35px;
     height: 20px;
@@ -367,7 +380,7 @@
     color: yellow;
 }
 .pg-ac-map-img-container::after {
-    content: '▼';
+    content: '\25BC';
     height: 0px;
     bottom: 12px;
     left: 50%;
