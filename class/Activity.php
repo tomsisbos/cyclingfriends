@@ -35,6 +35,7 @@ class Activity extends Model {
         $this->speed_max        = $data['speed_max'];
         $this->altitude_max     = $data['altitude_max'];
         $this->slope_max        = $data['slope_max'];
+        $this->bike             = $data['bike_id'];
         //$this->bike = new Bike($data['bike_id']);
         $this->privacy          = $data['privacy'];
         $this->notes            = $data['notes'];
@@ -91,7 +92,7 @@ class Activity extends Model {
 
     public function getPhotoIds () {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getPhotos = $db->prepare('SELECT id FROM activity_photos WHERE activity_id = ? ORDER BY datetime');
+        $getPhotos = $db->prepare('SELECT id FROM activity_photos WHERE activity_id = ? ORDER BY featured DESC, datetime ASC');
         $getPhotos->execute(array($this->id));
         return $getPhotos->fetchAll(PDO::FETCH_ASSOC);
     }

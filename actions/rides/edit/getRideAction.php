@@ -44,4 +44,3 @@ if (isset($_GET['id']) AND !empty($_GET['id'])) {
 	} else header('location: myrides.php');
 
 } else header('location: myrides.php'); ?>
-

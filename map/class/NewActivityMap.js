@@ -421,74 +421,116 @@ export default class NewActivityMap extends ActivityMap {
     }
     
     // Reorder photo elements within checkpoints according to date
-    updatePhotos () {
-        this.sortPhotos()
-        this.removePhotoElements()
-        this.data.photos.forEach(photo => {
-            this.updatePhotoElement(photo)
+    async updatePhotos () {
+        (async () => {
+            return new Promise(async (resolve, reject) => {
+                this.sortPhotos()
+                this.removePhotoElements()
+                for (let i = 0; i < this.data.photos.length; i++) {
+                    await this.updatePhotoElement(this.data.photos[i])
+                    if (i == this.data.photos.length - 1) resolve(true)
+                }
+            })}
+        ) ().then( () => {
+            this.highlightFeaturedPhoto()
         } )
     }
 
-    // Append photo element before the next checkpoint
-    updatePhotoElement (photo) {        
-        const reader = new FileReader()
-        reader.readAsDataURL(photo.blob)
-        reader.addEventListener("load", () => {
-            var dataUrl = reader.result
-
-            // Search for closest checkpoint to append
-            var closestCheckpointNumber = 0
-            var closestCheckpointDatetime = 0
-            this.data.checkpoints.forEach(checkpoint => {
-                if (checkpoint.datetime > closestCheckpointDatetime && checkpoint.datetime < photo.datetime) {
-                    if (checkpoint.number + 1 > this.data.checkpoints.length - 1) closestCheckpointNumber = checkpoint.number
-                    else closestCheckpointNumber = checkpoint.number + 1
-                    closestCheckpointDatetime = checkpoint.datetime
-                }
+    setFeatured (photoToFeature) {
+        if (!photoToFeature.featured) {
+            this.data.photos.forEach((photo) => {
+                if (photo == photoToFeature) photo.featured = true
+                else photo.featured = false
             } )
-            
-            // Create and append elements to the DOM
-            photo.thumbnailElement = document.createElement('div')
-            photo.thumbnailElement.className = 'pg-ac-photo-container'
-            photo.thumbnailElement.style.cursor = 'default'
-            var $img = document.createElement('img')
-            $img.className = 'pg-ac-photo'
-            $img.src = dataUrl
-            photo.thumbnailElement.appendChild($img)
-            var $deleteButton = document.createElement('div')
-            $deleteButton.className = 'pg-ac-close-button'
-            $deleteButton.innerText = 'x'
-            photo.thumbnailElement.appendChild($deleteButton)
-            // If first photo of this checkpoint, append to parent, else find previous child and insert if after
-            var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
-            var $previousChildNumber = 0
-            var $previousChild = false
-            if ($parent.children.length > 0) {
-                for (let i = photo.number - 1; i >= 0; i--) {
-                    if (this.data.photos[i].thumbnailElement && this.data.photos[i].thumbnailElement.closest('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container') == $parent) {
-                        if (this.data.photos[i].number > $previousChildNumber && this.data.photos[i].number < photo.number) {
-                            $previousChildNumber = this.data.photos[i].number
-                            $previousChild = this.data.photos[i].thumbnailElement
+        } else photoToFeature.featured = false
+        this.highlightFeaturedPhoto()
+    }
+
+    // Append photo element before the next checkpoint
+    async updatePhotoElement (photo) {
+        return new Promise( (resolve, reject) => {
+            const reader = new FileReader()
+            reader.readAsDataURL(photo.blob)
+            reader.addEventListener("load", () => {
+                var dataUrl = reader.result
+    
+                // Search for closest checkpoint to append
+                var closestCheckpointNumber = 0
+                var closestCheckpointDatetime = 0
+                this.data.checkpoints.forEach(checkpoint => {
+                    if (checkpoint.datetime > closestCheckpointDatetime && checkpoint.datetime < photo.datetime) {
+                        if (checkpoint.number + 1 > this.data.checkpoints.length - 1) closestCheckpointNumber = checkpoint.number
+                        else closestCheckpointNumber = checkpoint.number + 1
+                        closestCheckpointDatetime = checkpoint.datetime
+                    }
+                } )
+                
+                // Create and append elements to the DOM
+                photo.$thumbnail = document.createElement('div')
+                photo.$thumbnail.className = 'pg-ac-photo-container'
+                photo.$thumbnail.style.cursor = 'default'
+                var $img = document.createElement('img')
+                $img.className = 'pg-ac-photo'
+                $img.src = dataUrl
+                photo.$thumbnail.appendChild($img)
+                var $deleteButton = document.createElement('div')
+                $deleteButton.className = 'pg-ac-close-button'
+                $deleteButton.innerText = 'x'
+                photo.$thumbnail.appendChild($deleteButton)
+                // If first photo of this checkpoint, append to parent, else find previous child and insert if after
+                var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
+                var $previousChildNumber = 0
+                var $previousChild = false
+                if ($parent.children.length > 0) {
+                    for (let i = photo.number - 1; i >= 0; i--) {
+                        if (this.data.photos[i].$thumbnail && this.data.photos[i].$thumbnail.closest('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container') == $parent) {
+                            if (this.data.photos[i].number > $previousChildNumber && this.data.photos[i].number < photo.number) {
+                                $previousChildNumber = this.data.photos[i].number
+                                $previousChild = this.data.photos[i].$thumbnail
+                            }
                         }
                     }
-                }
-                if ($previousChild) $previousChild.after(photo.thumbnailElement)
-                else $parent.appendChild(photo.thumbnailElement)
-            } else $parent.appendChild(photo.thumbnailElement)
+                    if ($previousChild) $previousChild.after(photo.$thumbnail)
+                    else $parent.appendChild(photo.$thumbnail)
+                } else $parent.appendChild(photo.$thumbnail)
 
-            // Delete photo listener
-            $deleteButton.addEventListener('click', () => {
-                photo.thumbnailElement.remove()
-                this.data.photos.splice(photo.number, 1)
-                // Update other photos number
-                for (let i = 0; i < this.data.photos.length; i++) {
-                    if (this.data.photos[i].number > photo.number) {
-                        this.data.photos[i].number--
+                // Set as featured photo listener
+                photo.$thumbnail.addEventListener('click', () => {
+                    this.setFeatured(photo)
+                } )
+    
+                // Delete photo listener
+                $deleteButton.addEventListener('click', () => {
+                    photo.$thumbnail.remove()
+                    this.data.photos.splice(photo.number, 1)
+                    // Update other photos number
+                    for (let i = 0; i < this.data.photos.length; i++) {
+                        if (this.data.photos[i].number > photo.number) {
+                            this.data.photos[i].number--
+                        }
                     }
-                }
-            } )
+                } )
 
-        }, false)        
+                resolve(true)
+    
+            }, false) 
+        } )       
+    }
+
+    // Automatically highlight featured photo
+    highlightFeaturedPhoto () {
+        var isSetFeatured = false
+        this.data.photos.forEach(photo => {
+            if (photo.featured) {
+                photo.$thumbnail.firstChild.classList.add('selected-marker')
+                isSetFeatured = true
+            } else photo.$thumbnail.firstChild.classList.remove('selected-marker')
+        } )/*
+        // Set first photo as featured if no featured photo found
+        if (!isSetFeatured) {
+            this.data.photos[0].featured = true
+            this.data.photos[0].$thumbnail.firstChild.classList.add('selected-marker')
+        }*/
     }
 
     // Remove all photo elements from the DOM
