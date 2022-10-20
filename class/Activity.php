@@ -107,9 +107,9 @@ class Activity extends Model {
         return $photos;
     }
 
-    public function getPreviewPhotos () {
+    public function getPreviewPhotos ($quantity) {
         $photos = $this->getPhotos();
-        return array_slice($photos, 0, 5);
+        return array_slice($photos, 0, $quantity);
     }
 
     public function getAverageSpeed () {

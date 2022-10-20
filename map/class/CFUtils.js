@@ -35,6 +35,13 @@ export default class CFUtils {
         else return this.closestLocation(coordinates, routeCoordinates, options)
     }
 
+    // Find index of a specified coordinate among a coordinates array
+    static getCoordIndex (lngLat, coordinates) {
+        for (let i = 0; i < coordinates.length; i++) {
+            if (coordinates[i] == lngLat) return i
+        }
+    }
+
     // Find the other distance number corresponding to a point where route passes twice
     static findDistanceWithTwins (routeData, lngLat) {
 
@@ -242,6 +249,5 @@ static reverseGeocoding (response) {
             var lat = Math.round(lngLat[1] * multiplicator) / multiplicator
             return [lng, lat]
         }
-        
     }
 }

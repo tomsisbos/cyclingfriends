@@ -9,6 +9,7 @@ export default class ActivityMap extends GlobalMap {
         this.activityId = getParam('id')
     }
 
+    pageType = 'activity'
     apiUrl = '/actions/activities/activityApi.php'
     data
     cursor = 0
@@ -59,19 +60,30 @@ export default class ActivityMap extends GlobalMap {
 
         // Get corresponding datetime and temperature
 
-        // If new activity
-        if (!this.activityId) {
-            var correspondingTrackpoint
-            var bestCloseness = 9999
-            this.data.trackpoints.forEach(trackpoint => {
-                let closeness = turf.distance(turf.point([lngLat.lng, lngLat.lat]), turf.point([trackpoint.lngLat.lng, trackpoint.lngLat.lat]))
-                if (closeness < bestCloseness) {
-                    bestCloseness = closeness
-                    correspondingTrackpoint = trackpoint
-                }
-            } )
-            var datetime = correspondingTrackpoint.time.getTime()
-            var temperature = parseInt(correspondingTrackpoint.temperature)
+        // If adding a new checkpoint
+        if (!type) {
+
+            // If working with an extacted log file
+            if (this.data.trackpoints) {
+                var correspondingTrackpoint
+                var bestCloseness = 9999
+                this.data.trackpoints.forEach(trackpoint => {
+                    let closeness = turf.distance(turf.point([lngLat.lng, lngLat.lat]), turf.point([trackpoint.lngLat.lng, trackpoint.lngLat.lat]))
+                    if (closeness < bestCloseness) {
+                        bestCloseness = closeness
+                        correspondingTrackpoint = trackpoint
+                    }
+                } )
+                var datetime = correspondingTrackpoint.time.getTime()
+                var temperature = parseInt(correspondingTrackpoint.temperature)
+            // If working with a previously saved cyclingfriends activity data
+            } else {
+                var correspondingPoint = CFUtils.replaceOnRoute([lngLat.lng, lngLat.lat], this.data.routeData)
+                var index = CFUtils.getCoordIndex(correspondingPoint, this.data.routeData.geometry.coordinates)
+                console.log(index)
+                var datetime = this.data.routeData.properties.time[index]
+                var temperature = 0 /// Temperature data not saved in coords table data
+            }
 
             // Update data
             this.data.checkpoints[this.cursor] = {
@@ -91,30 +103,32 @@ export default class ActivityMap extends GlobalMap {
                 marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
             }
 
-        // If activity page
-        } else {
-            /*
-            const routeCoordinates = this.data.routeData.geometry.coordinates
-            var correspondingCoordNumber = 0
-            var bestCloseness = 9999
-            var i = 0
-            while (i < routeCoordinates.length) {
-                let closeness = turf.distance(turf.point([lngLat.lng, lngLat.lat]), turf.point([routeCoordinates[i][0], routeCoordinates[i][1]]))
-                if (closeness < bestCloseness) {
-                    bestCloseness = closeness
-                    correspondingCoordNumber = i
-                }
-                i++
-            }
-            var datetime = this.data.routeData.properties.time[i]
-            */
-            var checkpoint = this.data.checkpoints[this.cursor]
+        // If displaying default number markers
+        } else if (type == 'default') {
 
+            var checkpoint = this.data.checkpoints[number]
             var content = this.setCheckpointPopupContent(checkpoint)
             let checkpointPopup = new Popup({className: 'pg-ac-checkpoint-popup'})
             let popup = checkpointPopup.popup
             popup.setHTML(content)
             marker.setPopup(popup)
+
+            // Add remove listener on click (except for start and goal markers)
+            const routeCoordinates = this.data.routeData.geometry.coordinates
+            if (lngLat != routeCoordinates[0] && lngLat != routeCoordinates[routeCoordinates.length - 1]) {
+                marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
+            }
+
+        // If displaying default type markers
+        } else {
+
+            var checkpoint = this.data.checkpoints[this.cursor]
+            var content = this.setCheckpointPopupContent(checkpoint)
+            let checkpointPopup = new Popup({className: 'pg-ac-checkpoint-popup'})
+            let popup = checkpointPopup.popup
+            popup.setHTML(content)
+            marker.setPopup(popup)
+
         }
         
         // Set cursor pointer on mouse hover
@@ -126,7 +140,7 @@ export default class ActivityMap extends GlobalMap {
     }
 
     createCheckpointElement (i, type = false) {
-        if (type == false) {
+        if (type == false || type == 'default') {
             var element = document.createElement('div')
             element.className = 'checkpoint-marker'
             element.id = i
@@ -143,7 +157,7 @@ export default class ActivityMap extends GlobalMap {
     }
 
     setCheckpointPopupContent (checkpoint) {
-        var checkpointTime = new Date(checkpoint.datetime.date).getTime()///getFormattedDurationFromTimestamp()
+        var checkpointTime = new Date(checkpoint.datetime.date).getTime()
         var startTime = new Date(this.data.checkpoints[0].datetime.date).getTime()
         return `
             <div class="pg-ac-checkpoint-topline">
@@ -252,7 +266,4 @@ export default class ActivityMap extends GlobalMap {
             checkpoint.marker = this.addMarker(checkpoint.lngLat, checkpoint.type)
         } )
     }
-
-
-
 }

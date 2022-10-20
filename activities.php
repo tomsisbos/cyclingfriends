@@ -5,6 +5,7 @@
 session_start();
 include 'includes/head.php';
 include 'actions/users/securityAction.php';
+define("PREVIEW_PHOTOS_QUANTITY", 5);
 ?>
 
 <link rel="stylesheet" href="/assets/css/activity.css">
@@ -84,12 +85,19 @@ include 'actions/users/securityAction.php';
 
 						</div>
 
-						<div class="ac-photos-container"><?php
-							$preview_photos = $activity->getPreviewPhotos();
+						<div class="ac-photos-container"> <?php
+							$i = 1;
+							$preview_photos = $activity->getPreviewPhotos(PREVIEW_PHOTOS_QUANTITY);
 							foreach ($preview_photos as $photo) { ?>
-								<div class="ac-photo-container<?php if ($photo->featured) echo ' featured'; ?>">
-									<img class="ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>">
-								</div> <?php
+								<a href="/activities/activity.php?id=<?= $activity->id ?>">
+									<div class="ac-photo-container<?php if ($photo->featured) echo ' featured'; ?>">
+										<img class="ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>"> <?php
+										if ($i == PREVIEW_PHOTOS_QUANTITY AND count($activity->getPhotoIds()) > PREVIEW_PHOTOS_QUANTITY) { ?>
+											<div class="ac-photos-others"><div>+ <?= count($activity->getPhotoIds()) - PREVIEW_PHOTOS_QUANTITY + 1 ?></div></div> <?php
+										} ?>
+									</div>
+								</a> <?php
+								$i++;
 							} ?>
 						</div>
 

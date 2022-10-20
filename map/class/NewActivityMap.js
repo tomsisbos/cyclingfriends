@@ -7,6 +7,7 @@ export default class NewActivityMap extends ActivityMap {
         super()
     }
 
+    pageType = 'new'
     apiUrl = '/actions/activities/saveApi.php'
     data
     cursor = 2
@@ -215,17 +216,26 @@ export default class NewActivityMap extends ActivityMap {
                 var $distance = document.createElement('div')
                 $distance.innerHTML = '<strong>km ' + (Math.ceil(checkpoint.distance * 10) / 10) + '</strong>'
                 var $datetime = document.createElement('div')
-                $datetime.innerHTML = '\u00a0- ' + getFormattedDurationFromTimestamp(checkpoint.datetime - this.data.checkpoints[0].datetime)
+                // Get correct datetime depending on data value type
+                if (checkpoint.datetime.date) {
+                    var thisCheckpointDatetime = new Date(checkpoint.datetime.date).getTime()
+                    var startDatetime = new Date(this.data.checkpoints[0].datetime.date).getTime()
+                } else {
+                    var thisCheckpointDatetime = checkpoint.datetime
+                    var startDatetime = this.data.checkpoints[0].datetime
+                }
+                $datetime.innerHTML = '\u00a0- ' + getFormattedDurationFromTimestamp(thisCheckpointDatetime - startDatetime)
                 if (checkpoint.type == 'Start' || checkpoint.type == 'Goal') {
                     var $type = document.createElement('div')
-                    $type.innerHTML = checkpoint.type
+                    if (checkpoint.type) $type.innerHTML = checkpoint.type
                     $type.setAttribute('readonly', true)
                     $type.className = 'form-control-plaintext'
                 } else {
-                    var $type = buildCheckpointSelectType()
+                    var $type = buildCheckpointSelectType(checkpoint.type)
                     $type.className = 'form-select'
                 }
                 var $story = document.createElement('textarea')
+                if (checkpoint.story) $story.innerText = checkpoint.story
                 $story.className = 'form-control'
                 $story.placeholder = 'Story...'
                 $properties.appendChild($distance)
@@ -262,37 +272,43 @@ export default class NewActivityMap extends ActivityMap {
             }
         } )
 
-        function buildCheckpointSelectType () {
+        function buildCheckpointSelectType (type) {
             var $type = document.createElement('select')
             // Landscape
             let $landscape = document.createElement('option')
             $landscape.value = 'Landscape'
             $landscape.text = 'Landscape'
+            if (type == 'Landscape') $landscape.setAttribute('selected', true)
             $type.add($landscape)
             // Break
             let $break = document.createElement('option')
             $break.value = 'Break'
             $break.text = 'Break'
+            if (type == 'Break') $break.setAttribute('selected', true)
             $type.add($break)
             // Restaurant
             let $restaurant = document.createElement('option')
             $restaurant.value = 'Restaurant'
             $restaurant.text = 'Restaurant'
+            if (type == 'Restaurant') $restaurant.setAttribute('selected', true)
             $type.add($restaurant)
             // Cafe
-            let $coffee = document.createElement('option')
-            $coffee.value = 'Cafe'
-            $coffee.text = 'Cafe'
-            $type.add($coffee)
+            let $cafe = document.createElement('option')
+            $cafe.value = 'Cafe'
+            $cafe.text = 'Cafe'
+            if (type == 'Cafe') $cafe.setAttribute('selected', true)
+            $type.add($cafe)
             // Attraction
             let $attraction = document.createElement('option')
             $attraction.value = 'Attraction'
             $attraction.text = 'Attraction'
+            if (type == 'Attraction') $attraction.setAttribute('selected', true)
             $type.add($attraction)
             // Event
             let $event = document.createElement('option')
             $event.value = 'Event'
             $event.text = 'Event'
+            if (type == 'Event') $event.setAttribute('selected', true)
             $type.add($event)
             return $type
         }
@@ -448,73 +464,80 @@ export default class NewActivityMap extends ActivityMap {
 
     // Append photo element before the next checkpoint
     async updatePhotoElement (photo) {
-        return new Promise( (resolve, reject) => {
-            const reader = new FileReader()
-            reader.readAsDataURL(photo.blob)
-            reader.addEventListener("load", () => {
-                var dataUrl = reader.result
-    
-                // Search for closest checkpoint to append
-                var closestCheckpointNumber = 0
-                var closestCheckpointDatetime = 0
-                this.data.checkpoints.forEach(checkpoint => {
-                    if (checkpoint.datetime > closestCheckpointDatetime && checkpoint.datetime < photo.datetime) {
-                        if (checkpoint.number + 1 > this.data.checkpoints.length - 1) closestCheckpointNumber = checkpoint.number
-                        else closestCheckpointNumber = checkpoint.number + 1
-                        closestCheckpointDatetime = checkpoint.datetime
-                    }
-                } )
-                
-                // Create and append elements to the DOM
-                photo.$thumbnail = document.createElement('div')
-                photo.$thumbnail.className = 'pg-ac-photo-container'
-                photo.$thumbnail.style.cursor = 'default'
-                var $img = document.createElement('img')
-                $img.className = 'pg-ac-photo'
-                $img.src = dataUrl
-                photo.$thumbnail.appendChild($img)
-                var $deleteButton = document.createElement('div')
-                $deleteButton.className = 'pg-ac-close-button'
-                $deleteButton.innerText = 'x'
-                photo.$thumbnail.appendChild($deleteButton)
-                // If first photo of this checkpoint, append to parent, else find previous child and insert if after
-                var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
-                var $previousChildNumber = 0
-                var $previousChild = false
-                if ($parent.children.length > 0) {
-                    for (let i = photo.number - 1; i >= 0; i--) {
-                        if (this.data.photos[i].$thumbnail && this.data.photos[i].$thumbnail.closest('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container') == $parent) {
-                            if (this.data.photos[i].number > $previousChildNumber && this.data.photos[i].number < photo.number) {
-                                $previousChildNumber = this.data.photos[i].number
-                                $previousChild = this.data.photos[i].$thumbnail
-                            }
+
+        return new Promise(async (resolve, reject) => {
+
+            if (photo.blob instanceof Blob) var dataUrl = await getDataURLFromBlob(photo.blob)
+            else var dataUrl = 'data:' + photo.type + ';base64,' + photo.blob
+
+            // Search for closest checkpoint to append
+            var closestCheckpointNumber = this.findCheckpointNumberToAppend(photo)
+            
+            // Create and append elements to the DOM
+            photo.$thumbnail = document.createElement('div')
+            photo.$thumbnail.className = 'pg-ac-photo-container'
+            photo.$thumbnail.style.cursor = 'default'
+            var $img = document.createElement('img')
+            $img.className = 'pg-ac-photo'
+            $img.src = dataUrl
+            photo.$thumbnail.appendChild($img)
+            var $deleteButton = document.createElement('div')
+            $deleteButton.className = 'pg-ac-close-button'
+            $deleteButton.innerText = 'x'
+            photo.$thumbnail.appendChild($deleteButton)
+            // If first photo of this checkpoint, append to parent, else find previous child and insert if after
+            var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
+            var $previousChildNumber = 0
+            var $previousChild = false
+            if ($parent.children.length > 0) {
+                for (let i = photo.number - 1; i >= 0; i--) {
+                    if (this.data.photos[i].$thumbnail && this.data.photos[i].$thumbnail.closest('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container') == $parent) {
+                        if (this.data.photos[i].number > $previousChildNumber && this.data.photos[i].number < photo.number) {
+                            $previousChildNumber = this.data.photos[i].number
+                            $previousChild = this.data.photos[i].$thumbnail
                         }
                     }
-                    if ($previousChild) $previousChild.after(photo.$thumbnail)
-                    else $parent.appendChild(photo.$thumbnail)
-                } else $parent.appendChild(photo.$thumbnail)
+                }
+                if ($previousChild) $previousChild.after(photo.$thumbnail)
+                else $parent.appendChild(photo.$thumbnail)
+            } else $parent.appendChild(photo.$thumbnail)
 
-                // Set as featured photo listener
-                photo.$thumbnail.addEventListener('click', () => {
-                    this.setFeatured(photo)
-                } )
-    
-                // Delete photo listener
-                $deleteButton.addEventListener('click', () => {
-                    photo.$thumbnail.remove()
-                    this.data.photos.splice(photo.number, 1)
-                    // Update other photos number
-                    for (let i = 0; i < this.data.photos.length; i++) {
-                        if (this.data.photos[i].number > photo.number) {
-                            this.data.photos[i].number--
-                        }
+            // Set as featured photo listener
+            photo.$thumbnail.addEventListener('click', () => {
+                this.setFeatured(photo)
+            } )
+
+            // Delete photo listener
+            $deleteButton.addEventListener('click', () => {
+                photo.$thumbnail.remove()
+                this.data.photos.splice(photo.number, 1)
+                // Update other photos number
+                for (let i = 0; i < this.data.photos.length; i++) {
+                    if (this.data.photos[i].number > photo.number) {
+                        this.data.photos[i].number--
                     }
-                } )
+                }
+            } )
 
-                resolve(true)
-    
-            }, false) 
-        } )       
+            resolve(true)
+        })
+    }
+
+    findCheckpointNumberToAppend (photo) {
+        var closestCheckpointNumber = 0
+        var closestCheckpointDatetime = 0
+        if (photo.datetime.date) var photoDatetime = new Date(photo.datetime.date).getTime()
+        else var photoDatetime = photo.datetime
+        this.data.checkpoints.forEach(checkpoint => {
+            if (checkpoint.datetime.date) var checkpointDatetime = new Date(checkpoint.datetime.date).getTime()
+            else var checkpointDatetime = checkpoint.datetime
+            if (checkpointDatetime > closestCheckpointDatetime && checkpointDatetime < photoDatetime) {
+                if (checkpoint.number + 1 > this.data.checkpoints.length - 1) closestCheckpointNumber = checkpoint.number
+                else closestCheckpointNumber = checkpoint.number + 1
+                closestCheckpointDatetime = checkpointDatetime
+            }
+        } )
+        return closestCheckpointNumber
     }
 
     // Automatically highlight featured photo

@@ -1,11 +1,12 @@
 import NewActivityMap from "/map/class/NewActivityMap.js"
-import GPX from '/node_modules/gpx-parser-builder/src/gpx.js';
 
 export default class EditActivityMap extends NewActivityMap {
 
     constructor () {
         super()
     }
+
+    pageType = 'edit'
 
     updateForm () {
         const $form = document.querySelector('#activityForm')
@@ -28,6 +29,12 @@ export default class EditActivityMap extends NewActivityMap {
         $avgTemperature.innerHTML = '<strong>Avg. Temperature : </strong>' + this.data.temperature_avg + '°C'
         $maxTemperature.innerHTML = '<strong>Max. Temperature : </strong>' + this.data.temperature_max + '°C'
         this.updateCheckpointForms()
+    }
+
+    displayCheckpointMarkers () {
+        for (let i = 1; i < this.data.checkpoints.length - 1; i++) {
+            this.data.checkpoints[i].marker = this.addMarkerOnRoute(this.data.checkpoints[i].lngLat, 'default')
+        }
     }
 
 }

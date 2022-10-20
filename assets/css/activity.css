@@ -140,17 +140,37 @@
     display: flex;
     gap: 2px;
 }
-.ac-photo-container {
+.ac-photos-container a {
     min-height: fit-content;
     margin-top: 2px;
+    position: relative;
+}
+.ac-photo-container {
+    height: 100%;
 }
 .ac-photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
+.ac-photo:hover {
+    opacity: 0.8;
+}
 .ac-photo-container.featured {
-    width: 260px;
+    min-width: 260px;
+}
+.ac-photos-others {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 30px;
+    color: white;
+    height: 100%;
+    width: 100%;
+    background-color: #00000055;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .my-ac-container {
@@ -344,6 +364,7 @@
     padding: 5px;
     height: 150px;
     width: 175px;
+    max-width: 50%;
     flex-grow: 4;
 }
 .pg-ac-photo {

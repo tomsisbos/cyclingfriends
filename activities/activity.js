@@ -52,7 +52,7 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
     activityMap.addLayers()
     activityMap.addRouteLayer(activityMap.data.routeData)
     activityMap.generateProfile()
-    //activityMap.displayStartGoalMarkers(activityMap.data.routeData)
+    ///activityMap.displayStartGoalMarkers(activityMap.data.routeData)
     activityMap.updateDistanceMarkers()
     activityMap.focus(activityMap.data.routeData)
     activityMap.displayCheckpointMarkers()

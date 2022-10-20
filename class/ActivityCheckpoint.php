@@ -21,7 +21,7 @@ class ActivityCheckpoint extends Model {
         $this->id          = $id;
         $data = $this->getData($this->table);
         $this->activity_id = $data['activity_id'];
-        $this->number      = $data['number'];
+        $this->number      = intval($data['number']);
         $this->name        = $data['name'];
         $this->type        = $data['type'];
         $this->story       = $data['story'];

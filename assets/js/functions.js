@@ -357,3 +357,13 @@ async function resizeAndCompress (img, max_width, max_height, compressionIndicat
 	} )
 
 }
+
+async function getDataURLFromBlob (blob) {
+	return new Promise( (resolve, reject) => {
+		const reader = new FileReader()
+		reader.readAsDataURL(blob)
+		reader.addEventListener("load", () => {
+			resolve(reader.result)
+		} )
+	} )
+}

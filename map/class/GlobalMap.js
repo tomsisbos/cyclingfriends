@@ -2446,9 +2446,6 @@ export default class GlobalMap extends Model {
     async flyAlong (routeData) {
         return new Promise ((resolve, reject) => {
 
-            console.log(this.data.checkpoints)
-            console.log(this.data.photos)
-
             var startFlying = () => {
 
                 var clearAlongRoute = async (routeData) => {
@@ -2919,7 +2916,7 @@ export default class GlobalMap extends Model {
         // If situated at the very beginning of the route, return 0 (as start)
         if (currentDistance == 0) return 0
         // If situated at the very end of the route, return last checkpoint number (as goal)
-        else if (currentDistance == routeDistance) return checkpoints.length
+        else if (Math.round(currentDistance * 10) / 10 == Math.round(routeDistance * 10) / 10) return checkpoints.length - 1
         // Else, return current position on the route among other checkpoints
         else {
             var number

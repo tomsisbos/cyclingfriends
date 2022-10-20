@@ -10,14 +10,12 @@ var editActivityMap = new EditActivityMap()
 editActivityMap.clearForm()
 
 // Get activity data from server
-console.log(editActivityMap.activityId)
-console.log(editActivityMap.apiUrl)
 ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + editActivityMap.activityId, async (activityData) => {
     
     // Load activity data into map instance
     editActivityMap.data = activityData
 
-    // Clean route data architecture to match geojson format
+    // Clean data architecture to match instance data format
     editActivityMap.data.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
@@ -33,6 +31,7 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
     hideResponseMessage()
     $form.style.display = 'block'
     editActivityMap.updateForm()
+    editActivityMap.updatePhotos()
     document.querySelector('#selectBikes').addEventListener('change', e => editActivityMap.data.bike_id = e.target.value)
     document.querySelector('#selectPrivacy').addEventListener('change', e => editActivityMap.data.privacy = e.target.value)
 
@@ -51,6 +50,8 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
     editActivityMap.displayStartGoalMarkers(editActivityMap.data.routeData)
     editActivityMap.updateDistanceMarkers()
     editActivityMap.focus(editActivityMap.data.routeData)
+    editActivityMap.displayCheckpointMarkers()
+    editActivityMap.displayPhotos()
 
     // Add photos treatment
     document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
@@ -69,6 +70,7 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
     editActivityMap.map.on('mouseleave', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'grab')
     editActivityMap.map.on('click', 'route', (e) => {
         editActivityMap.addMarkerOnRoute(e.lngLat)
+        console.log(editActivityMap.data.checkpoints)
         editActivityMap.updatePhotos()
     } )
 
