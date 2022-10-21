@@ -80,8 +80,7 @@ export default class ActivityMap extends GlobalMap {
             } else {
                 var correspondingPoint = CFUtils.replaceOnRoute([lngLat.lng, lngLat.lat], this.data.routeData)
                 var index = CFUtils.getCoordIndex(correspondingPoint, this.data.routeData.geometry.coordinates)
-                console.log(index)
-                var datetime = this.data.routeData.properties.time[index]
+                var datetime = new Date(this.data.routeData.properties.time[index].date).getTime()
                 var temperature = 0 /// Temperature data not saved in coords table data
             }
 
@@ -237,9 +236,8 @@ export default class ActivityMap extends GlobalMap {
         // Get closest route coordinate by looping through them
         for (let i = 0; i < routeCoordinates.length; i++) {
             const coordTime = new Date(routeTime[i].date).getTime()
-            const photoTime = new Date(photo.datetime.date).getTime()
-            if (Math.abs(coordTime - photoTime) < smallestGap) {
-                smallestGap = Math.abs(coordTime - photoTime)
+            if (Math.abs(coordTime - photo.datetime) < smallestGap) {
+                smallestGap = Math.abs(coordTime - photo.datetime)
                 closestCoordinate = routeCoordinates[i]
             }
         }

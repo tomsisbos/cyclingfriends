@@ -20,16 +20,16 @@ class ActivityCheckpoint extends Model {
     function __construct ($id = NULL) {
         $this->id          = $id;
         $data = $this->getData($this->table);
-        $this->activity_id = $data['activity_id'];
+        $this->activity_id = intval($data['activity_id']);
         $this->number      = intval($data['number']);
         $this->name        = $data['name'];
         $this->type        = $data['type'];
         $this->story       = $data['story'];
         $this->datetime    = new DateTime($data['datetime']);
         $this->geolocation = new Geolocation($data['city'], $data['prefecture']);
-        $this->elevation   = $data['elevation'];
+        $this->elevation   = intval($data['elevation']);
         $this->distance    = floatval($data['distance']);
-        $this->temperature = $data['temperature'];
+        $this->temperature = floatval($data['temperature']);
         $this->lngLat      = new LngLat($data['lng'], $data['lat']);
         $this->special     = $data['special'];
     }

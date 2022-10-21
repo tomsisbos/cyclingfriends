@@ -7,13 +7,13 @@
 
 <?php 
 session_start();
-include '../includes/head.php';
-include '../actions/users/securityAction.php';
+include 'includes/head.php';
+include 'actions/users/securityAction.php';
 ?>
 
 <body>
 
-	<?php include '../includes/navbar.php';
+	<?php include 'includes/navbar.php';
     
 	// Get id from URL
 	if (isset($_GET['id'])) {
@@ -32,7 +32,7 @@ include '../actions/users/securityAction.php';
                     </div>
                         <div class="d-flex gap push"> <?php
                             if ($route->author == $connected_user) { ?>
-                                <a href="/map/routes/edit.php?id=<?= $route->id ?>">
+                                <a href="/routes/edit.php?id=<?= $route->id ?>">
                                     <button class="btn button" type="button" name="edit">Edit</button>
                                 </a>
                                 <button class="btn button" id="deleteRoute" type="button" name="delete">Delete</button> <?php
@@ -89,7 +89,7 @@ include '../actions/users/securityAction.php';
 
 <script src="/map/vendor.js"></script>
 <script type="module" src="/map/class/CFUtils.js"></script>
-<script type="module" src="/map/routes/routePageMap.js"></script>
+<script type="module" src="/routes/routePageMap.js"></script>
 
 </body>
 </html>

@@ -7,6 +7,7 @@ export default class EditActivityMap extends NewActivityMap {
     }
 
     pageType = 'edit'
+    apiUrl = '/actions/activities/editApi.php'
 
     updateForm () {
         const $form = document.querySelector('#activityForm')
@@ -35,6 +36,78 @@ export default class EditActivityMap extends NewActivityMap {
         for (let i = 1; i < this.data.checkpoints.length - 1; i++) {
             this.data.checkpoints[i].marker = this.addMarkerOnRoute(this.data.checkpoints[i].lngLat, 'default')
         }
+    }
+
+    async saveActivity () {
+        return new Promise( async (resolve, reject) => {
+            
+            // Remove trackpoints and photos data
+            var cleanData = {}
+            for (var key in this.data) {
+                if (key != 'trackpoints' && key != 'photos' && key != 'route' && key != 'routeData') cleanData[key] = this.data[key]
+            }
+            // Remove marker data
+            cleanData.checkpoints.forEach(checkpoint => {
+                delete checkpoint.marker
+            } )
+
+            // Prepare photo blobs upload
+            const photos = this.data.photos
+            cleanData.photos = []
+            // Count the number of blobs to treat
+            var numberOfBlobs = 0
+            photos.forEach( (photo) => {
+                if (photo.blob instanceof Blob) {
+                    numberOfBlobs++
+                }
+            } )
+            var numberOfBlobsTreated = 0;
+            (async () => {
+                return new Promise(async (resolve, reject) => {
+                    photos.forEach(async (photo) => {
+                        if (photo.blob instanceof Blob) {
+                            await (async () => {
+                                return new Promise(async (resolve, reject) => {
+                                    cleanData.photos.push( {
+                                        blob: await blobToBase64(photo.blob),
+                                        size: photo.size,
+                                        name: photo.name,
+                                        type: photo.type,
+                                        datetime: photo.datetime,
+                                        featured: photo.featured
+                                    } )
+                                    numberOfBlobsTreated++
+                                    if (numberOfBlobs == numberOfBlobsTreated) resolve()
+                                } )
+                            } ) ()
+                            resolve()
+                        } else {
+                            cleanData.photos.push( {
+                                blob: photo.blob,
+                                size: photo.size,
+                                name: photo.name,
+                                type: photo.type,
+                                datetime: photo.datetime,
+                                featured: photo.featured
+                            } )
+                        }
+                        if (numberOfBlobs == 0) resolve()
+                    } )
+                } )
+            } ) ().then(
+                () => {
+                    console.log(cleanData)
+                    // Send data to server
+                    ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
+                        resolve(response)
+                        window.location.replace('/activities/myactivities.php')
+                    } )
+                }
+            )
+
+            
+
+        } )
     }
 
 }

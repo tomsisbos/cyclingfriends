@@ -26,6 +26,12 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
         },
         type: 'Feature'
     }
+    editActivityMap.data.checkpoints.forEach( (checkpoint) => {
+        checkpoint.datetime = new Date(checkpoint.datetime.date).getTime()
+    } )
+    editActivityMap.data.photos.forEach( (photo) => {
+        photo.datetime = new Date(photo.datetime.date).getTime()
+    } )
 
     // Display and prefill form
     hideResponseMessage()
@@ -60,11 +66,6 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
         } )
     } )
 
-    // Save activity treatment
-    document.querySelector('#saveActivity').addEventListener('click', async () => {
-        editActivityMap.saveActivity()
-    } )
-
     // Create new checkpoint on click on route
     editActivityMap.map.on('mouseenter', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'crosshair')
     editActivityMap.map.on('mouseleave', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'grab')
@@ -72,6 +73,11 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
         editActivityMap.addMarkerOnRoute(e.lngLat)
         console.log(editActivityMap.data.checkpoints)
         editActivityMap.updatePhotos()
+    } )
+    
+    // Save activity treatment
+    document.querySelector('#saveActivity').addEventListener('click', async () => {
+        editActivityMap.saveActivity()
     } )
 
 } )

@@ -33,6 +33,12 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
         },
         type: 'Feature'
     }
+    activityData.checkpoints.forEach( (checkpoint) => {
+        checkpoint.datetime = new Date(checkpoint.datetime.date).getTime()
+    } )
+    activityData.photos.forEach( (photo) => {
+        photo.datetime = new Date(photo.datetime.date).getTime()
+    } )
 
     // Load activity data into map instance
     activityMap.data = activityData

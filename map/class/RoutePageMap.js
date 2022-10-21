@@ -10,7 +10,7 @@ export default class RoutePageMap extends GlobalMap {
     }
 
     mkpointsOnRouteNumber = 0
-    apiUrl = '/map/routes/api.php'
+    apiUrl = '/actions/routes/api.php'
     data
     mkpoints
     ride
@@ -369,7 +369,7 @@ export default class RoutePageMap extends GlobalMap {
     loadRide () {
         return new Promise ( async (resolve, reject) => {
 
-            ajaxGetRequest ('/map/routes/api.php' + "?ride-load=" + this.rideId, async (ride) => {
+            ajaxGetRequest (this.apiUrl + "?ride-load=" + this.rideId, async (ride) => {
 
                 // Store ride properties inside map instance
                 if (Math.round(ride.checkpoints[0].lngLat.lng * 1000) / 1000 == Math.round(ride.checkpoints[ride.checkpoints.length - 1].lngLat.lng * 1000) / 1000 && Math.round(ride.checkpoints[0].lngLat.lat * 1000) / 1000 == Math.round(ride.checkpoints[ride.checkpoints.length - 1].lngLat.lat * 1000) / 1000) {

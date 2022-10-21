@@ -14,18 +14,8 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item">
-						<a class="nav-link" href="/dashboard.php">Dashboard</a>
-					</li>
 					<li class="nav-item dropdown">
-						<a class="nav-link nav-dropdown-link" href="/map.php">Map</a>
-						<a class="nav-link dropdown-toggle nav-dropdown-toggle" href="#" id="mapDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
-						<div class="dropdown-menu" aria-labelledby="mapDropdownMenuLink">
-							<a class="dropdown-item" href="/map/routes.php">Routes</a>
-							<div class="dropdown-item" aria-labelledby="ridesDropdownMenuLink">
-								<a class="dropdown-item" href="/map/routes/new.php">Build</a>
-							</div>
-						</div>
+						<a class="nav-link" href="/map.php">Map</a>
 					</li>
 					<li class="nav-item dropdown">
 						<a class="nav-link nav-dropdown-link" href="/activities.php">Activities</a>
@@ -36,17 +26,24 @@
 						</div>
 					</li>
 					<li class="nav-item dropdown">
+						<a class="nav-link nav-dropdown-link" href="/routes.php">Routes</a>
+						<a class="nav-link dropdown-toggle nav-dropdown-toggle" href="#" id="routesDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+						<div class="dropdown-menu" aria-labelledby="routesDropdownMenuLink">
+							<a class="dropdown-item" href="/routes/new.php">Build</a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link nav-dropdown-link" href="/rides.php">Rides</a>
+						<a class="nav-link dropdown-toggle nav-dropdown-toggle" href="#" id="ridesDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+						<div class="dropdown-menu" aria-labelledby="ridesDropdownMenuLink">
+								<a class="dropdown-item" href="/rides/new.php">Organize</a>
+								<a class="dropdown-item" href="/rides/myrides.php">My Rides</a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
 						<a class="nav-link nav-dropdown-link" href="/community.php">Community</a>
 						<a class="nav-link dropdown-toggle nav-dropdown-toggle" href="#" id="communityDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
 						<div class="dropdown-menu" aria-labelledby="communityDropdownMenuLink">
-							<div class="nav-item dropdown">
-								<a class="dropdown-item" href="/rides.php">Rides</a>
-								<div class="dropdown-item" aria-labelledby="ridesDropdownMenuLink">
-									<a class="dropdown-item" href="/rides/new.php">Organize</a>
-									<a class="dropdown-item" href="/rides/myrides.php">My Rides</a>
-								</div>
-							</div>
-          					<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="/riders/neighbours.php">Neighbours</a>
 							<a class="dropdown-item" href="/riders/friends.php">Friends</a>
 						</div>

@@ -5,27 +5,27 @@
 
 <?php 
 session_start();
-include '../../includes/head.php';
-include '../../actions/users/securityAction.php';
+include '../includes/head.php';
+include '../actions/users/securityAction.php';
 ?>
 
 <body>
 
-	<?php include '../../includes/navbar.php';
+	<?php include '../includes/navbar.php';
 	
 	// Space for error messages
 	displayMessage(); ?>
 	
 	<div class="container-fluid mp-container">
 
-		<div id="EditRouteMap" class="mp-map"></div>
+		<div id="BuildRouteMap" class="mp-map"></div>
 
 	</div>
 	
 </body>
 
 <script src="/map/vendor.js"></script>
-<script src="/map/class/CFUtils.js"></script>
-<script src="/map/routes/edit.js"></script>
+<script type="module" src="/map/class/CFUtils.js"></script>
+<script type="module" src="/routes/new.js"></script>
 
 </html>

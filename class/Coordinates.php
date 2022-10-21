@@ -45,7 +45,7 @@ class Coordinates {
     }
 
     // Create a route from these coordinates
-    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels) {
+    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         
         // Prepare start and goal place strings
@@ -89,8 +89,13 @@ class Coordinates {
         // If update
         } else {
             // Update route summary
-            $updateRoute = $db->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ?, thumbnail = ? WHERE id = ?');
-            $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $route_id));
+            if ($thumbnail) {
+                $updateRoute = $db->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ?, thumbnail = ? WHERE id = ?');
+                $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $route_id));
+            } else {
+                $updateRoute = $db->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ? WHERE id = ?');
+                $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $route_id));
+            }
             // Update route coords
             $deletePreviousCoords = $db->prepare('DELETE FROM coords WHERE segment_id = ?');
             $deletePreviousCoords->execute(array($route_id));

@@ -72,7 +72,7 @@ include '../actions/users/securityAction.php';
 					</div>
 
 					<div class="my-ac-photos-container"><?php
-						$preview_photos = $activity->getPreviewPhotos();
+						$preview_photos = $activity->getPreviewPhotos(5);
 						foreach ($preview_photos as $photo) { ?>
 							<div class="my-ac-photo-container"> 
 								<img class="my-ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>">

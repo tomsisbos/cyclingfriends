@@ -15,7 +15,7 @@ class ActivityPhoto extends Image {
         $this->id       = $id;
         $data = $this->getData($this->table);
         $this->blob     = $data['img_blob'];
-        $this->size     = $data['img_size'];
+        $this->size     = intval($data['img_size']);
         $this->name     = $data['img_name'];
         $this->type     = $data['img_type'];
         $this->datetime = new DateTime($data['datetime']);

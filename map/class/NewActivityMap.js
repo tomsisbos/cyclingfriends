@@ -216,15 +216,7 @@ export default class NewActivityMap extends ActivityMap {
                 var $distance = document.createElement('div')
                 $distance.innerHTML = '<strong>km ' + (Math.ceil(checkpoint.distance * 10) / 10) + '</strong>'
                 var $datetime = document.createElement('div')
-                // Get correct datetime depending on data value type
-                if (checkpoint.datetime.date) {
-                    var thisCheckpointDatetime = new Date(checkpoint.datetime.date).getTime()
-                    var startDatetime = new Date(this.data.checkpoints[0].datetime.date).getTime()
-                } else {
-                    var thisCheckpointDatetime = checkpoint.datetime
-                    var startDatetime = this.data.checkpoints[0].datetime
-                }
-                $datetime.innerHTML = '\u00a0- ' + getFormattedDurationFromTimestamp(thisCheckpointDatetime - startDatetime)
+                $datetime.innerHTML = '\u00a0- ' + getFormattedDurationFromTimestamp(checkpoint.datetime - this.data.checkpoints[0].datetime)
                 if (checkpoint.type == 'Start' || checkpoint.type == 'Goal') {
                     var $type = document.createElement('div')
                     if (checkpoint.type) $type.innerHTML = checkpoint.type
@@ -327,6 +319,7 @@ export default class NewActivityMap extends ActivityMap {
         this.data.checkpoints.splice(number, 1)
         this.sortCheckpoints(this.data.routeData)
         this.updateMarkers()
+        this.updatePhotos()
         this.cursor--
     }
 
@@ -393,7 +386,9 @@ export default class NewActivityMap extends ActivityMap {
                                 var dateOriginal = new Date(year, month - 1, day, hours, minutes, seconds)
 
                                 // If the photo has been taken during the activity
-                                if (dateOriginal.getDay() == new Date(this.data.checkpoints[0].datetime).getDay()) {
+                                if (this.data.checkpoints[0].datetime.date) var checkpointDatetime = new Date(this.data.checkpoints[0].datetime.date)
+                                else var checkpointDatetime = new Date(this.data.checkpoints[0].datetime)
+                                if (dateOriginal.getMonth() == checkpointDatetime.getMonth() && dateOriginal.getDay() == checkpointDatetime.getDay()) {
 
                                     // Resize and compress photo
                                     let blob = await resizeAndCompress(img, 1600, 900, 0.7)
@@ -526,15 +521,11 @@ export default class NewActivityMap extends ActivityMap {
     findCheckpointNumberToAppend (photo) {
         var closestCheckpointNumber = 0
         var closestCheckpointDatetime = 0
-        if (photo.datetime.date) var photoDatetime = new Date(photo.datetime.date).getTime()
-        else var photoDatetime = photo.datetime
         this.data.checkpoints.forEach(checkpoint => {
-            if (checkpoint.datetime.date) var checkpointDatetime = new Date(checkpoint.datetime.date).getTime()
-            else var checkpointDatetime = checkpoint.datetime
-            if (checkpointDatetime > closestCheckpointDatetime && checkpointDatetime < photoDatetime) {
+            if (checkpoint.datetime > closestCheckpointDatetime && checkpoint.datetime < photo.datetime) {
                 if (checkpoint.number + 1 > this.data.checkpoints.length - 1) closestCheckpointNumber = checkpoint.number
                 else closestCheckpointNumber = checkpoint.number + 1
-                closestCheckpointDatetime = checkpointDatetime
+                closestCheckpointDatetime = checkpoint.datetime
             }
         } )
         return closestCheckpointNumber

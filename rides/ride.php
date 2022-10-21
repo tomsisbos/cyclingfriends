@@ -122,7 +122,7 @@ include '../actions/rides/edit/galleryAction.php';
 				
 				if (isset($ride->route)) { ?>
 					<div class="rd-course-thumbnail">
-						<a href="http://cyclingfriends.co/map/route.php?id=<?= $ride->route->id ?>&ride=<?= $ride->id ?>"><img src="<?= $ride->getMapThumbnail() ?>"></img></a>
+						<a href="http://cyclingfriends.co/route.php?id=<?= $ride->route->id ?>&ride=<?= $ride->id ?>"><img src="<?= $ride->getMapThumbnail() ?>"></img></a>
 					</div> <?php
 				} ?>
 			

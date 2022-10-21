@@ -7,6 +7,7 @@ export default class BuildRouteMap extends GlobalMap {
         super ()
     }
 
+    apiUrl = '/actions/routes/api.php'
     waypointNumber = 0
     preparedWaypoint = 0
     start = 0
@@ -1291,7 +1292,7 @@ export default class BuildRouteMap extends GlobalMap {
             } )
 
             // If user has administation rights, display create segment button 
-            ajaxGetRequest (this.apiUrl + "?get-session=true", async (session) => {
+            ajaxGetRequest ('/map/api.php' + "?get-session=true", async (session) => {
                 if (session.rights == 'administrator') {
                     var createSegmentButton = document.createElement('button')
                     createSegmentButton.id = 'createSegment'
@@ -1783,10 +1784,10 @@ export default class BuildRouteMap extends GlobalMap {
                 tags: details.tags
             }
         }
-        ajaxJsonPostRequest('/map/routes/api.php', route, (response) => {
+        ajaxJsonPostRequest(this.apiUrl, route, (response) => {
             console.log(response)
             if (route.category == 'segment') window.location.replace('/map.php')
-            else window.location.replace('/map/routes.php')
+            else window.location.replace('/routes.php')
         } )
     }
 

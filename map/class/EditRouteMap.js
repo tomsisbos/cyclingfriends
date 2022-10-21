@@ -106,8 +106,8 @@ export default class EditRouteMap extends BuildRouteMap {
                 tags: details.tags
             }
         }*/
-        ajaxJsonPostRequest('/map/routes/api.php', route, (response) => {
-            window.location.replace('/map/routes.php')
+        ajaxJsonPostRequest(this.apiUrl, route, (response) => {
+            window.location.replace('/routes.php')
         } )
     }
 

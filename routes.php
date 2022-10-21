@@ -3,13 +3,13 @@
 
 <?php 
 session_start();
-include '../includes/head.php';
-include '../actions/users/securityAction.php';
+include 'includes/head.php';
+include 'actions/users/securityAction.php';
 ?>
 
 <body>
 
-	<?php include '../includes/navbar.php'; ?>
+	<?php include 'includes/navbar.php'; ?>
 	
 	<h2 class="top-title">My Routes</h2>
 	
@@ -28,13 +28,13 @@ include '../actions/users/securityAction.php';
 
 				<div class="rt-card">
 					<div class="rt-thumbnail-container">
-						<a href="/map/route.php?id=<?= $route->id ?>">
+						<a href="route.php?id=<?= $route->id ?>">
 							<img class="rt-thumbnail" src="<?= $route->thumbnail ?>">
 						</a>
 					</div>
 					<div class="rt-infos-container">
 						<div class="rt-name">
-						<a href="/map/route.php?id=<?= $route->id ?>">
+						<a href="route.php?id=<?= $route->id ?>">
 								<?= $route->name ?>
 							</a>
 							<div class="rt-posting-date"> <?php

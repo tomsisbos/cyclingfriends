@@ -226,7 +226,7 @@ map.addControl(
 
 
 // Get and display route information from the server
-ajaxGetRequest ('api.php' + "?route-load=" + editRouteMap.routeId, async (response) => {
+ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, async (response) => {
     editRouteMap.routeData = response
     console.log(response)
     // Add route layer
