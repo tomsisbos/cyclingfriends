@@ -1,5 +1,8 @@
 {
     "require": {
         "mjaschen/phpgeo": "4.0"
+    },
+    "require": {
+        "adriangibbons/php-fit-file-analysis": "^3.2.0"
     }
 }

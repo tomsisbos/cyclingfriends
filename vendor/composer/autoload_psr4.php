@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Location\\' => array($vendorDir . '/mjaschen/phpgeo/src'),
+    'adriangibbons\\' => array($vendorDir . '/adriangibbons/php-fit-file-analysis/src'),
 );

@@ -20,8 +20,24 @@ if (isset($_FILES['activity'])) {
         // Move uploaded file to activity temp folder
         $url = $_SERVER["DOCUMENT_ROOT"] . '/activities/data/temp/temp.' . $ext;
         move_uploaded_file($_FILES['activity']['tmp_name'], $url);
-        echo json_encode(['success' => 'File has been correctly uploaded.', 'file' => file_get_contents($url)]);
-        exit;
+
+        if ($ext == 'gpx') {
+
+            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'gpx', 'file' => file_get_contents($url)]);
+            exit;
+        
+        } else if ($ext == 'fit') {
+
+            require $_SERVER["DOCUMENT_ROOT"] . '/vendor/autoload.php';  // this file is in the project's root folder
+            $pFFA = new adriangibbons\phpFITFileAnalysis($url);
+
+            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'fit', 'file' => $pFFA->data_mesgs]);
+
+        } else if ($ext == 'tcx') {
+
+            echo json_encode(['error' => 'Sorry, we don\'t support *.tcx files yet.']);
+
+        }
 
     } else {
 

@@ -11,6 +11,7 @@ $upload.addEventListener('change', async (e) => {
     new UploadFile(e.target, e.target.files[0], displayData)
 
     function UploadFile (element, file, callback) {
+
         var reader = new FileReader()
         this.ctrl = createThrobber(element)
         var xhr = new XMLHttpRequest()
@@ -42,6 +43,7 @@ $upload.addEventListener('change', async (e) => {
         }
 
         reader.readAsBinaryString(file)
+
     }
 
     // Create loading throbber element
@@ -81,8 +83,11 @@ $upload.addEventListener('change', async (e) => {
             // Clear data and elements if necessary
             newActivityMap.clearForm()
 
+            // Format data from parsed js object
+            if (response.filetype == 'fit') var response = await newActivityMap.importDataFromFit(response.file)
+            else if (response.filetype == 'gpx') var response = await newActivityMap.importDataFromGpx(response.file)
+
             // Get activity data
-            var response = await newActivityMap.importDataFromGpx(response.file) // Format data from parsed js object
             if (response.success) {
                 // Display and prefill form
                 hideResponseMessage()

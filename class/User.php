@@ -1,5 +1,10 @@
 <?php
 
+use Location\Coordinate;
+use Location\Polyline;
+use Location\Distance\Vincenty;
+use Location\Utility\PointToLineDistance;
+
 class User extends Model {
 
     public $id;
@@ -478,6 +483,17 @@ class User extends Model {
         return $getActivities->rowCount();
     }
 
+    public function getActivityRouteIds () {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $getActivities = $db->prepare("SELECT route_id FROM activities WHERE user_id = ? ORDER BY datetime DESC");
+	    $getActivities->execute(array($this->id));
+        $route_ids = [];
+        while ($entry = $getActivities->fetch(PDO::FETCH_ASSOC)) {
+            array_push($route_ids, intval($entry['route_id']));
+        };
+        return $route_ids;
+    }
+
     // Get all messages between two users
     public function getConversation ($user) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
@@ -539,6 +555,38 @@ class User extends Model {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';        
         $addMessage = $db->prepare('INSERT INTO messages (sender_id, sender_login, receiver_id, receiver_login, message, time) VALUES (?, ?, ?, ?, ?, ?)');
         $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
+    }
+
+    public function updateViewedMkpoints () {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+
+        $activity_route_ids = $this->getActivityRouteIds();
+
+        // Get coordinates of all mkpoints registered in database and build point from it
+        $mkpoints_list = [];
+        $getMkpoints = $db->prepare('SELECT id, lat, lng FROM map_mkpoint');
+        $getMkpoints->execute(array($this->id));
+        while ($mkpoint = $getMkpoints->fetch(PDO::FETCH_ASSOC)) {
+            array_push($mkpoints_list, [intval($mkpoint['id']), new Coordinate($mkpoint['lat'], $mkpoint['lng'])]);
+        }
+        var_dump($mkpoints_list);
+
+        // For each activity route
+        foreach ($activity_route_ids as $id) {
+
+            // Get route coordinates and build polyline
+            $getCoords = $db->prepare('SELECT lat, lng FROM coords WHERE segment_id = ? ORDER BY number ASC');
+            $getCoords->execute(array($id));
+            $coords = $getCoords->fetchAll();
+            $routeLine = new Polyline();
+            foreach ($coords as $coord) {
+                $routeLine->addPoint(new Coordinate(floatval($coord[0]), floatval($coord[1])));
+            }
+
+            // Compare coordinates to mkpoints and add mkpoint to list if coordinates matches
+            var_dump($routeLine);
+        }
+        
     }
 
 }

@@ -7,16 +7,16 @@ namespace Composer\Autoload;
 class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
 {
     public static $prefixLengthsPsr4 = array (
-        'L' => 
+        'a' => 
         array (
-            'Location\\' => 9,
+            'adriangibbons\\' => 14,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Location\\' => 
+        'adriangibbons\\' => 
         array (
-            0 => __DIR__ . '/..' . '/mjaschen/phpgeo/src',
+            0 => __DIR__ . '/..' . '/adriangibbons/php-fit-file-analysis/src',
         ),
     );
 

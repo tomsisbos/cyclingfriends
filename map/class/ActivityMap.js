@@ -156,15 +156,13 @@ export default class ActivityMap extends GlobalMap {
     }
 
     setCheckpointPopupContent (checkpoint) {
-        var checkpointTime = new Date(checkpoint.datetime.date).getTime()
-        var startTime = new Date(this.data.checkpoints[0].datetime.date).getTime()
+        var checkpointTime = checkpoint.datetime
+        var startTime = this.data.checkpoints[0].datetime
         return `
             <div class="pg-ac-checkpoint-topline">
-                km ` + checkpoint.distance + `
-                <div class="pg-ac-checkpoint-time">
-                     (` + getFormattedDurationFromTimestamp(checkpointTime - startTime) + `) 
-                </div>` +
-                checkpoint.name + `
+                <div>km ` + checkpoint.distance + `</div>
+                <div class="pg-ac-checkpoint-time">(` + getFormattedDurationFromTimestamp(checkpointTime - startTime) + `)</div> - 
+                <div>` + checkpoint.name + `</div>
             </div>
             <div class="pg-ac-checkpoint-story">
                 ` + checkpoint.story + `

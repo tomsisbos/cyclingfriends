@@ -367,3 +367,8 @@ async function getDataURLFromBlob (blob) {
 		} )
 	} )
 }
+
+function getExtension(filename) {
+	var parts = filename.split('.')
+	return parts[parts.length - 1]
+}

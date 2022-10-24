@@ -1,5 +1,5 @@
 import ActivityMap from "/map/class/ActivityMap.js"
-import GPX from '/node_modules/gpx-parser-builder/src/gpx.js';
+import GPX from '/node_modules/gpx-parser-builder/src/gpx.js'
 
 export default class NewActivityMap extends ActivityMap {
 
@@ -30,10 +30,10 @@ export default class NewActivityMap extends ActivityMap {
                         lat: trkpt[i].$.lat
                     },
                     elevation: trkpt[i].ele,
-                    time: trkpt[i].time,
+                    time: trkpt[i].time.getTime(),
                 }
                 routeCoords.push([trkpt[i].$.lon, trkpt[i].$.lat])
-                routeTime.push(trackpoint.time.getTime())
+                routeTime.push(trackpoint.time)
                 if (trkpt[i].extensions) {
                     if (trkpt[i].extensions['gpxtpx:TrackPointExtension']['gpxtpx:atemp']) trackpoint.temperature = trkpt[i].extensions['gpxtpx:TrackPointExtension']['gpxtpx:atemp']
                     if (trkpt[i].extensions['gpxtpx:TrackPointExtension']['gpxtpx:cad']) trackpoint.cadence = trkpt[i].extensions['gpxtpx:TrackPointExtension']['gpxtpx:cad']
@@ -66,7 +66,7 @@ export default class NewActivityMap extends ActivityMap {
                     if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
                     if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
                     // Build time running
-                    if (distance > 0.015) duration_running += (trackpoints[i].time.getTime() - trackpoints[i - precision].time.getTime())
+                    if (distance > 0.015) duration_running += (trackpoints[i].time - trackpoints[i - precision].time)
                     if (seconds > precision) duration_running -= (seconds - precision) * 1000 // Substact auto pause
                 }
             }
@@ -99,8 +99,8 @@ export default class NewActivityMap extends ActivityMap {
             }
 
             // Build duration
-            const endDate = trackpoints[trackpoints.length - 1].time.getTime()
-            const startDate = trackpoints[0].time.getTime()
+            const endDate = trackpoints[trackpoints.length - 1].time
+            const startDate = trackpoints[0].time
             var duration = getDurationFromTimestamp(endDate - startDate)
             // If no time data, display an error message
             if (endDate - startDate <= 60) resolve({error: 'This file doesn\'t have time data. It can\'t be saved as an activity.'})
@@ -161,6 +161,151 @@ export default class NewActivityMap extends ActivityMap {
         } )
     }
 
+    // Parse file data and store it inside map instance
+    async importDataFromFit (fit) {
+        console.log(fit)
+
+        // Build trackpoints and routeCoords
+        const record = fit.record
+        var trackpoints = []
+        var routeCoords = []
+        var routeTime = []
+        const position_long = Object.values(record.position_long)
+        const position_lat = Object.values(record.position_lat)
+        const altitude = Object.values(record.altitude)
+        if (record.temperature) var temperature = Object.values(record.temperature)
+        if (record.cadence) var cadence = Object.values(record.cadence)
+        if (record.power) var power = Object.values(record.power)
+        for (let i = 0; i < record.timestamp.length; i++) {
+            let trackpoint = {
+                lngLat: {
+                    lng: position_long[i],
+                    lat: position_lat[i],
+                },
+                elevation: altitude[i],
+                time: record.timestamp[i] * 1000
+            }
+            if (record.temperature) trackpoint.temperature = temperature[i]
+            if (record.cadence) trackpoint.cadence = cadence[i]
+            if (record.power) trackpoint.power = power[i]
+            trackpoints.push(trackpoint)
+            routeCoords.push([position_long[i], position_lat[i]])
+            routeTime.push(record.timestamp[i])
+        }
+
+        // Build max altitude
+        const session = fit.session
+        var altitude_max = altitude.reduce((a, b) => Math.max(a, b), -Infinity)
+        console.log(altitude)
+        // Build max speed
+        var speed_max = Math.floor(session.max_speed * 10) / 10
+        // Build max slope
+        var slope_max = 0
+        const precision = 10 // Calcul interval in seconds
+        for (let i = 0; i < routeCoords.length; i += precision) {
+            if (routeCoords[i - precision]) {
+                // Build distance
+                let distance = 0
+                for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
+                // Build max slope
+                let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
+                if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
+                if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
+            }
+        }
+        // Build time running
+        var duration_running = session.total_timer_time * 1000
+        console.log(duration_running)
+        console.log('slope max : ' + slope_max)
+        console.log('altitude max : ' + altitude_max)
+        console.log('duration running : ' + getFormattedDurationFromTimestamp(duration_running))
+
+        // Dynamically simplify routeCoords and routeTime
+        if (trackpoints.length < 6000) var simplificationMultiplicator = 3
+        else simplificationMultiplicator = 4
+        for (let i = 0; i < routeCoords.length; i++) {
+            routeCoords.splice(i, simplificationMultiplicator)
+            routeTime.splice(i, simplificationMultiplicator)
+        }
+        // Build route geojson
+        var routeData = turf.lineString(routeCoords)
+        routeData.properties.time = routeTime
+
+        // Build temperature
+        if (trackpoints[0].temperature) {
+            var sumTemperature = 0
+            var minTemperature = 100
+            var maxTemperature = -100
+            for (let i = 0; i < trackpoints.length; i++) {
+                sumTemperature += parseInt(trackpoints[i].temperature)
+                if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
+                if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
+            }
+            var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
+        }
+
+        // Build duration
+        const endDate = trackpoints[trackpoints.length - 1].time
+        const startDate = trackpoints[0].time
+        var duration = getDurationFromTimestamp(endDate - startDate)
+        // If no time data, display an error message
+        if (endDate - startDate <= 60) resolve({error: 'This file doesn\'t have time data. It can\'t be saved as an activity.'})
+        else {
+            // Build start and end checkpoints
+            var checkpoints = []
+            var startPoint = {
+                name: 'Start',
+                type: 'Start',
+                story: '',
+                number: 0,
+                lngLat: trackpoints[0].lngLat,
+                datetime: startDate,
+                geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
+                elevation: Math.floor(trackpoints[0].elevation),
+                distance: 0,
+                temperature: parseInt(trackpoints[0].temperature)
+            }
+            var goalPoint = {
+                name: 'Goal',
+                type: 'Goal',
+                story: '',
+                number: 1,
+                lngLat: trackpoints[trackpoints.length - 1].lngLat,
+                datetime: endDate,
+                geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
+                elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
+                distance: Math.floor(turf.length(routeData) * 10) / 10,
+                temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
+            }
+            checkpoints.push(startPoint)
+            checkpoints.push(goalPoint)
+
+            // Build data
+            this.data = {
+                title: startPoint.geolocation.city + ' ride',
+                distance: Math.ceil(turf.length(routeData) * 10) / 10,
+                duration,
+                duration_running: getDurationFromTimestamp(duration_running),
+                bike_id: document.querySelector('#selectBikes').value,
+                privacy: document.querySelector('#selectPrivacy').value,
+                elevation: Math.floor(this.calculateElevation(trackpoints)),
+                speed_max,
+                altitude_max,
+                slope_max,
+                temperature: {
+                    min: minTemperature,
+                    avg: avgTemperature,
+                    max: maxTemperature
+                },
+                routeData,
+                checkpoints,
+                photos: [],
+                trackpoints
+            }
+            return {success: true}
+        }
+    }
+
     updateForm () {
         const $form = document.querySelector('#activityForm')
         var $title = $form.querySelector('#inputTitle')
@@ -176,7 +321,7 @@ export default class NewActivityMap extends ActivityMap {
         $start.innerHTML = '<strong>Start : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
         $goal.innerHTML = '<strong>Goal : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
         $distance.innerHTML = '<strong>Distance : </strong>' + this.data.distance + 'km'
-        $duration.innerHTML = '<strong>Duration : </strong>' + getFormattedDurationFromTimestamp(this.data.trackpoints[this.data.trackpoints.length - 1].time.getTime() - this.data.trackpoints[0].time.getTime())
+        $duration.innerHTML = '<strong>Duration : </strong>' + getFormattedDurationFromTimestamp(this.data.trackpoints[this.data.trackpoints.length - 1].time - this.data.trackpoints[0].time)
         $elevation.innerHTML = '<strong>Elevation : </strong>' + this.data.elevation + 'm'
         $minTemperature.innerHTML = '<strong>Min. Temperature : </strong>' + this.data.temperature.min + '°C'
         $avgTemperature.innerHTML = '<strong>Avg. Temperature : </strong>' + this.data.temperature.avg + '°C'
