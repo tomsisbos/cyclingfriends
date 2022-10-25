@@ -9,6 +9,9 @@ export default class MapMap extends GlobalMap {
 
     constructor (session) {
         super(session)
+        ajaxGetRequest (this.apiUrl + "?get-user-viewed-mkpoints=true", (response) => {
+            this.viewedMkpoints = response
+        } )
     }
 
     type = 'mapMap'
@@ -56,11 +59,14 @@ export default class MapMap extends GlobalMap {
 
     setMkpoint (mkpoint) {        
         // Add marker to the map and to markers collection
-        var content = this.setMkpointPopupContent(mkpoint)
+        let mkpointPopup = new MkpointPopup()
+        if (this.inViewedMkpointsList(mkpoint)) mkpointPopup.activity_id = this.inViewedMkpointsList(mkpoint)
+        var content = mkpointPopup.setPopupContent(mkpoint)
         let element = document.createElement('div')
         let icon = document.createElement('img')
         icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
         icon.classList.add('mkpoint-icon')
+        if (mkpointPopup.activity_id) element.classList.add('moving-marker') // Highlight if visited
         element.appendChild(icon)
         this.map.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
@@ -85,10 +91,10 @@ export default class MapMap extends GlobalMap {
             content = content.slice(0, index) + mkpointAdminPanel + content.slice(index)
         }
 
-        let mkpointPopup = new MkpointPopup()
         let popup = mkpointPopup.popup
         popup.setHTML(content)
         mkpointPopup.data = mkpoint
+        if (this.inViewedMkpointsList(mkpoint)) mkpointPopup.visited = true
         marker.setPopup(popup)
         marker.setLngLat([mkpoint.lng, mkpoint.lat])
         marker.addTo(this.map)

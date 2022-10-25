@@ -65,7 +65,7 @@
     box-shadow: 0 0 1px 3px #ff5555 !important;
 }
 .moving-marker img {
-    box-shadow: 0 0 1px 3px green !important;
+    box-shadow: 0 0 1px 3px green;
 }
 .oncourse-marker {
     box-shadow: 0 0 1px 3px blue;
@@ -166,6 +166,10 @@ form#mkpointForm input[type="file" i] {
 
 .liked {
 	color: red !important;
+}
+
+#visited-icon {
+    color: lightgreen;
 }
 
 .mkpoint-img-meta {

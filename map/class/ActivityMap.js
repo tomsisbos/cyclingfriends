@@ -74,13 +74,13 @@ export default class ActivityMap extends GlobalMap {
                         correspondingTrackpoint = trackpoint
                     }
                 } )
-                var datetime = correspondingTrackpoint.time.getTime()
+                var datetime = correspondingTrackpoint.time
                 var temperature = parseInt(correspondingTrackpoint.temperature)
             // If working with a previously saved cyclingfriends activity data
             } else {
                 var correspondingPoint = CFUtils.replaceOnRoute([lngLat.lng, lngLat.lat], this.data.routeData)
                 var index = CFUtils.getCoordIndex(correspondingPoint, this.data.routeData.geometry.coordinates)
-                var datetime = new Date(this.data.routeData.properties.time[index].date).getTime()
+                var datetime = this.data.routeData.properties.time[index]
                 var temperature = 0 /// Temperature data not saved in coords table data
             }
 
@@ -229,11 +229,11 @@ export default class ActivityMap extends GlobalMap {
     getPhotoLocation (photo) {
         const routeCoordinates = this.data.routeData.geometry.coordinates
         const routeTime = this.data.routeData.properties.time
-        var smallestGap = new Date(routeTime[0].date).getTime()
+        var smallestGap = routeTime[0]
         var closestCoordinate
         // Get closest route coordinate by looping through them
         for (let i = 0; i < routeCoordinates.length; i++) {
-            const coordTime = new Date(routeTime[i].date).getTime()
+            const coordTime = routeTime[i]
             if (Math.abs(coordTime - photo.datetime) < smallestGap) {
                 smallestGap = Math.abs(coordTime - photo.datetime)
                 closestCoordinate = routeCoordinates[i]
@@ -245,8 +245,7 @@ export default class ActivityMap extends GlobalMap {
     getFormattedTimeFromLngLat (lngLat) {
         var routeClosestCoordinate = CFUtils.replaceOnRoute(lngLat, this.data.routeData)
         var index = this.data.routeData.geometry.coordinates.findIndex((element) => element == routeClosestCoordinate)
-        var datetime = new Date(this.data.routeData.properties.time[index].date)
-        var timestamp = datetime.getTime() - new Date(this.data.routeData.properties.time[0].date).getTime()
+        var timestamp = this.data.routeData.properties.time[index] - this.data.routeData.properties.time[0]
         return getFormattedDurationFromTimestamp(timestamp)
     }
 

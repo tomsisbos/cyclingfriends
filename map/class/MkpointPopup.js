@@ -10,6 +10,68 @@ export default class MkpointPopup extends Popup {
     type = 'mkpoint'
     data
     photos
+    activity_id = false
+
+    setPopupContent (mkpoint) {
+        var visitedIcon = ''
+        if (this.activity_id) {
+            visitedIcon = `
+                <div id="visited-icon" title="You have visited this mkpoint.">
+                    <a href="/activities/activity.php?id=` + this.activity_id + `" target="_blank">
+                        <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
+                    </a>
+                </div>
+            `
+        }
+
+        return `
+        <div class="popup-img-container">
+            <div class="popup-icons">
+                <div id="target-button" title="Click to fly to this spot">
+                    <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
+                </div>
+                <form enctype="multipart/form-data" method="post" id="addphoto-button-form">
+                    <label for="addphoto-button" title="Click to add a photo to this spot">
+                        <span class="iconify" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"></span>
+                    </label>
+                    <input id="addphoto-button" type="file" name="file" />
+                    <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
+                </form>
+                <div id="like-button" title="Click to like this photo">
+                    <span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>
+                </div>` + 
+                visitedIcon + `
+            </div>
+        </div>
+        <div id="popup-content" class="popup-content">
+            <div class="d-flex gap">
+                <div class="round-propic-container">
+                    <a href="http://cyclingfriends.co/riders/profile.php?id=` + mkpoint.user_id + `">
+                        <img class="round-propic-img" />
+                    </a>
+                </div>
+                <div class="popup-properties">
+                    <div class="popup-properties-reference">
+                        <div class="popup-properties-name">` + mkpoint.name + `</div>
+                        <div class="popup-properties-location">` + mkpoint.city + ` (` + mkpoint.prefecture + `) - ` + mkpoint.elevation + `m</div>
+                        <div class="popup-rating"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="popup-description">` + mkpoint.description + `</div>
+        </div>
+        <div class="popup-buttons">
+            <button id="showComments" class="mp-button bg-button text-white">Show reviews</button>
+        </div>
+        <div class="chat-box">
+            <div class="msgbox-label">Reviews</div>
+            <div class="chat-comments"></div>
+            <div class="chat-msgbox">
+                <textarea id="mkpointComment" class="fullwidth"></textarea>
+                <button id="mkpointCommentSend" class="mp-button bg-button text-white">Post review</button>
+            </div>
+        </div>`
+    }
 
     comments = () => {
         if (document.querySelector('#mkpointComment')) {

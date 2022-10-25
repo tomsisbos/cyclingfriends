@@ -23,7 +23,7 @@ if (isset($_FILES['activity'])) {
 
         if ($ext == 'gpx') {
 
-            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'gpx', 'file' => file_get_contents($url)]);
+            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'gpx', 'file' => file_get_contents($url)], JSON_INVALID_UTF8_SUBSTITUTE);
             exit;
         
         } else if ($ext == 'fit') {
@@ -31,7 +31,9 @@ if (isset($_FILES['activity'])) {
             require $_SERVER["DOCUMENT_ROOT"] . '/vendor/autoload.php';  // this file is in the project's root folder
             $pFFA = new adriangibbons\phpFITFileAnalysis($url);
 
-            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'fit', 'file' => $pFFA->data_mesgs]);
+            $data = new FitData($pFFA->data_mesgs);
+
+            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'fit', 'file' => $data], JSON_INVALID_UTF8_SUBSTITUTE);
 
         } else if ($ext == 'tcx') {
 

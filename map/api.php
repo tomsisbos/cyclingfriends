@@ -560,10 +560,19 @@ if (isAjax()) {
     if (isset($_GET['segment-mkpoints'])) {
         $segment = new Segment($_GET['segment-mkpoints']);
         $close_mkpoints = $segment->route->getCloseMkpoints(500);
-        foreach ($close_mkpoints as $mkpoint) {
-            $mkpoint->photos = $mkpoint->getImages();
-        }
+        foreach ($close_mkpoints as $mkpoint) $mkpoint->photos = $mkpoint->getImages();
         echo json_encode($close_mkpoints);
+    }
+
+    if (isset($_GET['get-user-viewed-mkpoints'])) {
+        $entries = $connected_user->getViewedMkpoints();
+        $viewed_mkpoints = [];
+        foreach ($entries as $entry) {
+            $mkpoint = new Mkpoint($entry['mkpoint_id']);
+            $mkpoint->activity_id = intval($entry['activity_id']);
+            array_push($viewed_mkpoints, $mkpoint);
+        }
+        echo json_encode($viewed_mkpoints);
     }
 
 }

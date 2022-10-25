@@ -483,7 +483,7 @@ class User extends Model {
         return $getActivities->rowCount();
     }
 
-    public function getActivityRouteIds () {
+    /*public function getActivityRouteIds () {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $getActivities = $db->prepare("SELECT route_id FROM activities WHERE user_id = ? ORDER BY datetime DESC");
 	    $getActivities->execute(array($this->id));
@@ -492,7 +492,7 @@ class User extends Model {
             array_push($route_ids, intval($entry['route_id']));
         };
         return $route_ids;
-    }
+    }*/
 
     // Get all messages between two users
     public function getConversation ($user) {
@@ -557,36 +557,55 @@ class User extends Model {
         $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
     }
 
-    public function updateViewedMkpoints () {
+    // Get currently saved viewed mkpoints list
+    public function getViewedMkpoints () {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $getViewedMkpoints = $db->prepare('SELECT mkpoint_id, activity_id FROM user_mkpoints');
+        $getViewedMkpoints->execute();
+        return $getViewedMkpoints->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Update viewed mkpoints list in the database according to newly uploaded activities
+    public function updateViewedMkpoints ($activity = false) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
 
-        $activity_route_ids = $this->getActivityRouteIds();
+        $activities = $this->getActivities();
 
-        // Get coordinates of all mkpoints registered in database and build point from it
-        $mkpoints_list = [];
-        $getMkpoints = $db->prepare('SELECT id, lat, lng FROM map_mkpoint');
-        $getMkpoints->execute(array($this->id));
-        while ($mkpoint = $getMkpoints->fetch(PDO::FETCH_ASSOC)) {
-            array_push($mkpoints_list, [intval($mkpoint['id']), new Coordinate($mkpoint['lat'], $mkpoint['lng'])]);
-        }
-        var_dump($mkpoints_list);
-
-        // For each activity route
-        foreach ($activity_route_ids as $id) {
-
-            // Get route coordinates and build polyline
-            $getCoords = $db->prepare('SELECT lat, lng FROM coords WHERE segment_id = ? ORDER BY number ASC');
-            $getCoords->execute(array($id));
-            $coords = $getCoords->fetchAll();
-            $routeLine = new Polyline();
-            foreach ($coords as $coord) {
-                $routeLine->addPoint(new Coordinate(floatval($coord[0]), floatval($coord[1])));
+        // For each activity route, get close mkpoints and add them to viewed mkpoints
+        if ($activity) {
+            $viewed_mkpoints = $activity->route->getCloseMkpoints(500, false);
+            foreach ($viewed_mkpoints as $viewed_mkpoint) $viewed_mkpoint->activity_id = $activity->id;
+        } else {
+            $viewed_mkpoints = [];
+            foreach ($activities as $activity) {
+                $activity = new Activity($activity['id']);
+                $mkpoints = $activity->route->getCloseMkpoints(500, false);
+                foreach ($mkpoints as $mkpoint) {
+                    $mkpoint['activity_id'] = $activity->id;
+                    if (!in_array_r($mkpoint['id'], $viewed_mkpoints, true)) array_push($viewed_mkpoints, $mkpoint);
+                }
             }
-
-            // Compare coordinates to mkpoints and add mkpoint to list if coordinates matches
-            var_dump($routeLine);
         }
-        
+        var_dump($viewed_mkpoints);
+
+        // Filter mkpoints to add
+        $saved_mkpoints = $this->getViewedMkpoints();
+        $mkpoints_to_add = [];
+        foreach ($viewed_mkpoints as $viewed_mkpoint) {
+            $already_saved = false;
+            foreach ($saved_mkpoints as $saved_mkpoint) {
+                if ($saved_mkpoint['mkpoint_id'] == $viewed_mkpoint['id'] && $saved_mkpoint['activity_id'] == $viewed_mkpoint['activity_id']) $already_saved = true;
+            }
+            if (!$already_saved) array_push($mkpoints_to_add, $viewed_mkpoint);
+        }
+
+        if (count($mkpoints_to_add) > 0) var_dump($mkpoints_to_add);///
+
+        // Add relevant mkpoints to user mkpoints table
+        foreach ($mkpoints_to_add as $mkpoint) {
+            $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
+            $addMkpoint->execute(array($this->id, $mkpoint['id'], $mkpoint['activity_id']));
+        }
     }
 
 }

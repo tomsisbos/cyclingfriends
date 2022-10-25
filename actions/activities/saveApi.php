@@ -22,8 +22,6 @@ $data = json_decode($json, true);
 
 if (is_array($data)) {
 
-    //var_dump($data);
-
     // Build route data
     $author_id   = $connected_user->id;
     $route_id    = 'new';
@@ -136,6 +134,9 @@ if (is_array($data)) {
         $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?)');
         $insert_photos -> execute(array($activity_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
     }
+
+    // Update user's viewed mkpoints
+    $connected_user->updateViewedMkpoints(new Activity($activity_id));
 
     echo json_encode(true);
 

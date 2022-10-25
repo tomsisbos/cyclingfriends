@@ -305,10 +305,8 @@ ajaxGetRequest (mapMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
 
     // Display rides and segments on first loading of the map
     if (map.getZoom() > mapMap.ridesZoomRoof) {
-        //map.once('idle', () => {
-            mapMap.updateRides()
-            mapMap.updateSegments()
-        //} )
+        mapMap.updateRides()
+        mapMap.updateSegments()
     }
 
     // Update mkpoints, rides and segments display on ending moving the map

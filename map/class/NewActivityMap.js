@@ -170,33 +170,28 @@ export default class NewActivityMap extends ActivityMap {
         var trackpoints = []
         var routeCoords = []
         var routeTime = []
-        const position_long = Object.values(record.position_long)
-        const position_lat = Object.values(record.position_lat)
-        const altitude = Object.values(record.altitude)
-        if (record.temperature) var temperature = Object.values(record.temperature)
-        if (record.cadence) var cadence = Object.values(record.cadence)
-        if (record.power) var power = Object.values(record.power)
-        for (let i = 0; i < record.timestamp.length; i++) {
+        for (let i = 0; i < record.position_long.length; i++) {
             let trackpoint = {
                 lngLat: {
-                    lng: position_long[i],
-                    lat: position_lat[i],
+                    lng: record.position_long[i],
+                    lat: record.position_lat[i],
                 },
-                elevation: altitude[i],
+                elevation: record.altitude[i],
                 time: record.timestamp[i] * 1000
             }
-            if (record.temperature) trackpoint.temperature = temperature[i]
-            if (record.cadence) trackpoint.cadence = cadence[i]
-            if (record.power) trackpoint.power = power[i]
+            if (record.temperature) trackpoint.temperature = record.temperature[i]
+            if (record.cadence) trackpoint.cadence = record.cadence[i]
+            if (record.power) trackpoint.power = record.power[i]
             trackpoints.push(trackpoint)
-            routeCoords.push([position_long[i], position_lat[i]])
+            routeCoords.push([record.position_long[i], record.position_lat[i]])
             routeTime.push(record.timestamp[i])
         }
 
+        console.log(trackpoints)
+
         // Build max altitude
         const session = fit.session
-        var altitude_max = altitude.reduce((a, b) => Math.max(a, b), -Infinity)
-        console.log(altitude)
+        var altitude_max = record.altitude.reduce((a, b) => Math.max(a, b), -Infinity)
         // Build max speed
         var speed_max = Math.floor(session.max_speed * 10) / 10
         // Build max slope
@@ -215,7 +210,6 @@ export default class NewActivityMap extends ActivityMap {
         }
         // Build time running
         var duration_running = session.total_timer_time * 1000
-        console.log(duration_running)
         console.log('slope max : ' + slope_max)
         console.log('altitude max : ' + altitude_max)
         console.log('duration running : ' + getFormattedDurationFromTimestamp(duration_running))
