@@ -23,6 +23,9 @@ var activityMap = new ActivityMap()
 ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId, async (activityData) => {
 
     // Clean route data architecture to match geojson format
+    for (let i = 0; i < activityData.route.time.length; i++) {
+        activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime()
+    }
     activityData.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
@@ -43,6 +46,10 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
     // Load activity data into map instance
     activityMap.data = activityData
     console.log(activityMap.data)
+
+    // Set month property to activity month
+    activityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
+    activityMap.setSeason()
     
     // Set default layer according to current season
     var map = await activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.data.routeData.geometry.coordinates[0])

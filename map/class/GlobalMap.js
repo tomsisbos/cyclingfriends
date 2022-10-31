@@ -274,43 +274,49 @@ export default class GlobalMap extends Model {
         // Toilets
         this.map.addSource('toilets', {
             'type': 'geojson',
-            'data': '/map/sources/toilets.geojson',
+            'data': '/map/sources/compressed_sources/toilets.geojson',
             'generateId': true
         } )
-        // Drinks
-        this.map.addSource('drinking', {
+        // Drinking
+        this.map.addSource('drinking-water', {
             'type': 'geojson',
-            'data': '/map/sources/drinking.geojson',
+            'data': '/map/sources/compressed_sources/drinking.geojson',
             'generateId': true
         } )
-        // Konbinis
-        this.map.addSource('konbinis', {
+        // Vending machines
+        this.map.addSource('vending-machine-drinks', {
             'type': 'geojson',
-            'data': '/map/sources/konbinis.geojson',
+            'data': '/map/sources/compressed_sources/vending-machine-drinks.geojson',
             'generateId': true
         } )
         // Onsens
         this.map.addSource('onsens', {
             'type': 'geojson',
-            'data': '/map/sources/onsens.geojson',
+            'data': '/map/sources/compressed_sources/onsens.geojson',
+            'generateId': true
+        } )
+        // Konbinis
+        this.map.addSource('konbinis', {
+            'type': 'geojson',
+            'data': '/map/sources/compressed_sources/konbinis.geojson',
             'generateId': true
         } )
         // Rindos
         this.map.addSource('rindos', {
-            'type': 'geojson',
-            'data': '/map/sources/rindos.geojson',
+            'type': 'vector',
+            'url': 'mapbox://sisbos.c9kguqvi',
             'generateId': true
         } )
         // Cycling
         this.map.addSource('cycling', {
-            'type': 'geojson',
-            'data': '/map/sources/cycling.geojson',
+            'type': 'vector',
+            'url': 'mapbox://sisbos.9to38xqk',
             'generateId': true
         } )
         // No bicycle
         this.map.addSource('no-bicycle', {
-            'type': 'geojson',
-            'data': '/map/sources/no-bicycle.geojson',
+            'type': 'vector',
+            'url': 'mapbox://sisbos.5qhdcfue',
             'generateId': true
         } )
     }
@@ -320,52 +326,6 @@ export default class GlobalMap extends Model {
         this.addAmenityLayers()
         // Konbinis
         this.addKonbiniLayers()
-        // Michi no Eki
-        this.map.addLayer( {
-            'id': 'michi-no-eki',
-            'type': 'symbol',
-            'source': "composite",
-            'source-layer': "poi_label",
-            'minzoom': 11.5,
-            'layout': {
-                'icon-image': '_icon-michi-no-eki',
-                'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    11.5,
-                    0.8,
-                    20,
-                    3
-                ]
-            },
-            'paint': {
-                'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
-                    0.5,
-                    1
-                ]
-            },
-            'filter': [
-                "match",
-                    [
-                        "slice",
-                        ["get", "name"],
-                        0,
-                        3
-                    ],
-                    [
-                        "any",
-                        "道の駅",
-                        "mic",
-                        "Mic",
-                        "MIC"
-                    ],
-                true,
-                false
-                ]
-        } )
         // Onsens
         this.map.addLayer( {
             'id': 'onsens',
@@ -375,9 +335,9 @@ export default class GlobalMap extends Model {
             'layout': {
                 'icon-image': '_icon-onsen',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     13,
                     1,
                     20,
@@ -386,8 +346,8 @@ export default class GlobalMap extends Model {
             },
             'paint': {
                 'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
@@ -426,433 +386,8 @@ export default class GlobalMap extends Model {
             ],
         } )
         
-        // Rindos
-        this.map.addLayer( {
-            'id': 'rindos',
-            'type': 'line',
-            'source': 'rindos',
-            'minzoom': 11,
-            'paint': {
-                'line-color': '#fff',
-                'line-opacity': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    11,
-                    0,
-                    12,
-                    1
-                ],
-                'line-width': [
-                    'interpolate',
-                    ['exponential', 1.5],
-                    ['zoom'],
-                    11,
-                    1,
-                    20,
-                    6
-                ],
-                'line-dasharray': [4, 1, 2, 1]
-            }
-        } )
-        this.map.addLayer( {
-            'id': 'rindos-cap',
-            'type': 'line',
-            'source': 'rindos',
-            'minzoom': 11,
-            'paint': {
-                'line-color': '#fff',
-                'line-width': 5,
-                'line-color': '#ff5555'
-            },
-            'filter': ['in', 'name', '']
-        } )
-        this.map.addLayer( {
-            'id': 'rindo-labels',
-            'type': 'symbol',
-            'source': 'rindos',
-            'minzoom': 9,
-            'layout': {
-                'text-field': ["to-string", ["get", "name"]],
-                'text-size': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    10,
-                    10,
-                    20,
-                    20
-                ],
-                'text-line-height': 1.2,
-                'symbol-placement': 'line',
-                'symbol-spacing': 30,
-                'text-max-angle': 30,
-                //'text-padding': 2
-            },
-            'paint': {
-                'text-color': "#000",
-                'text-halo-color': "#d6d6d6",
-                'text-halo-width': 1,
-                'text-halo-blur': 2
-            }
-        } )
-
-        // Cycling
-        this.map.addLayer( {
-            'id': 'cycle-lane',
-            'type': 'line',
-            'source': 'cycling',
-            'minzoom': 7,
-            'paint': {
-                'line-color': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    "#6198ff",
-                    22,
-                    "#0d53d3"
-                ],
-                'line-width': [
-                    "interpolate",
-                    ["exponential", 1],
-                    ["zoom"],
-                    9,
-                    1,
-                    22,
-                    5
-                ],
-                'line-dasharray': [1, 1]
-            },
-            'layout': {
-                'line-cap': 'butt',
-                'line-miter-limit': 2
-            },
-            'filter': [
-                "any", 
-                ["match",
-                    ["get", "bicycle"],
-                    ["lane"],
-                    true,
-                    false
-                ],
-                ["match",
-                    ["get", "cycleway"],
-                    ["lane"],
-                    true,
-                    false
-                ]
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'walk-path',
-            'type': 'line',
-            'source': 'cycling',
-            'minzoom': 7,
-            'paint': {
-                'line-color': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    "hsl(219, 34%, 79%)",
-                    22,
-                    "hsl(221, 63%, 62%)"
-                ],
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    1,
-                    22,
-                    5
-                ]
-            },
-            'filter': [
-                "all",
-                [
-                    "match",
-                    ["get", "highway"],
-                    ["cycleway"],
-                    false,
-                    true
-                ],
-                [
-                    "match",
-                    ["get", "cycleway"],
-                    ["lane"],
-                    false,
-                    true
-                ],
-                [
-                    "match",
-                    ["get", "bicycle"],
-                    ["lane"],
-                    false,
-                    true
-                ]
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'walk-path-case',
-            'type': 'line',
-            'source': 'cycling',
-            'minzoom': 7,
-            'paint': {
-                'line-color': '#f2f0ee',
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    1,
-                    22,
-                    2
-                ],
-                'line-gap-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    1,
-                    22,
-                    5
-                ]
-            },
-            'filter': [
-                "all",
-                [
-                    "match",
-                    ["get", "highway"],
-                    ["cycleway"],
-                    false,
-                    true
-                ],
-                [
-                    "match",
-                    ["get", "cycleway"],
-                    ["lane"],
-                    false,
-                    true
-                ],
-                [
-                    "match",
-                    ["get", "bicycle"],
-                    ["lane"],
-                    false,
-                    true
-                ]
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'cycle-path',
-            'type': 'line',
-            'source': 'cycling',
-            'minzoom': 7,
-            'paint': {
-                'line-color': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    "#6198ff",
-                    22,
-                    "#0d53d3"
-                ],
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    1,
-                    22,
-                    5
-                ]
-            },
-            'filter': [
-                "match",
-                ["get", "highway"],
-                ["cycleway"],
-                true,
-                false
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'cycle-path-case',
-            'type': 'line',
-            'source': 'cycling',
-            'minzoom': 7,
-            'paint': {
-                'line-color': "#f2f0ee",
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    0.5,
-                    22,
-                    2.5
-                ],
-                'line-gap-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    9,
-                    1,
-                    22,
-                    2
-                ]
-            },
-            'filter': [
-                "match",
-                ["get", "highway"],
-                ["cycleway"],
-                true,
-                false
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'cycle-path-cap',
-            'type': 'line',
-            'source': 'cycling',
-            'minzoom': 11,
-            'paint': {
-                'line-color': '#fff',
-                'line-width': 5,
-                'line-color': '#ff5555'
-            },
-            'filter': ['in', 'name', '']
-        } )
-
-        // No bicycle
-        this.map.addLayer( {
-            'id': 'no-bicycle-motorways',
-            'type': 'line',
-            'source': 'no-bicycle',
-            'minzoom': 11,
-            'paint': {
-                'line-color': "#c8ebc6",
-                'line-width': [
-                    "interpolate",
-                    ["exponential", 1.5],
-                    ["zoom"],
-                    5,
-                    0.75,
-                    18,
-                    32
-                ]
-            },
-            'filter': [
-                "match",
-                ["get", "highway"],
-                ["motorway"],
-                true,
-                false
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'no-bicycle-case',
-            'type': 'line',
-            'source': 'no-bicycle',
-            'minzoom': 11,
-            'paint': {
-                'line-color': "#fff",
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    8,
-                    1,
-                    22,
-                    5
-                ]
-            },
-            'filter': [
-                "match",
-                ["get", "highway"],
-                ["motorway"],
-                false,
-                true
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'no-bicycle',
-            'type': 'line',
-            'source': 'no-bicycle',
-            'minzoom': 11,
-            'paint': {
-                'line-color': "#99ffca",
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    8,
-                    1,
-                    22,
-                    5
-                ],
-                'line-dasharray': [2, 2]
-            },
-            'filter': [
-                "match",
-                ["get", "highway"],
-                ["motorway"],
-                false,
-                true
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'no-bicycle-rindos-case',
-            'type': 'line',
-            'source': 'rindos',
-            'minzoom': 11,
-            'paint': {
-                'line-color': "#fff",
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    8,
-                    1,
-                    22,
-                    5
-                ]
-            },
-            'filter': [
-                "match",
-                ["get", "bicycle"],
-                ["no"],
-                true,
-                false
-            ]
-        } )
-        this.map.addLayer( {
-            'id': 'no-bicycle-rindos',
-            'type': 'line',
-            'source': 'rindos',
-            'minzoom': 11,
-            'paint': {
-                'line-color': "#99ffca",
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    8,
-                    1,
-                    22,
-                    5
-                ],
-                'line-dasharray': [2, 2]
-            },
-            'filter': [
-                "match",
-                ["get", "bicycle"],
-                ["no"],
-                true,
-                false
-            ]
-        } )
+        this.addRindoLayers()
+        this.addCyclingLayers()
     }
 
     addAmenityLayers () {
@@ -865,9 +400,9 @@ export default class GlobalMap extends Model {
             'layout': {
                 'icon-image': '_icon-toilets',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     12,
                     0.6,
                     22,
@@ -876,8 +411,8 @@ export default class GlobalMap extends Model {
             },
             'paint': {
                 'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
@@ -887,14 +422,14 @@ export default class GlobalMap extends Model {
         this.map.addLayer( {
             'id': 'drinking-water',
             'type': 'symbol',
-            'source': 'drinking',
+            'source': 'drinking-water',
             'minzoom': 12.5,
             'layout': {
                 'icon-image': '_icon-water',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     12.5,
                     0.6,
                     22.5,
@@ -903,8 +438,8 @@ export default class GlobalMap extends Model {
             },
             'paint': {
                 'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
@@ -920,14 +455,14 @@ export default class GlobalMap extends Model {
         this.map.addLayer( {
             'id': 'vending-machine-drinks',
             'type': 'symbol',
-            'source': 'drinking',
+            'source': 'vending-machine-drinks',
             'minzoom': 13.5,
             'layout': {
                 'icon-image': '_icon-vending-machine',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     13.5,
                     0.6,
                     22,
@@ -936,8 +471,8 @@ export default class GlobalMap extends Model {
             },
             'paint': {
                 'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
@@ -967,9 +502,9 @@ export default class GlobalMap extends Model {
             'layout': {
                 'icon-image': '_icon-seven-eleven',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     12.5,
                     0.8,
                     20,
@@ -977,9 +512,9 @@ export default class GlobalMap extends Model {
                 ]
             },
             'paint': {
-                'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                "icon-opacity": [
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
@@ -1010,9 +545,9 @@ export default class GlobalMap extends Model {
             'layout': {
                 'icon-image': '_icon-family-mart',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     12.5,
                     0.8,
                     20,
@@ -1020,15 +555,15 @@ export default class GlobalMap extends Model {
                 ]
             },
             'paint': {
-                'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                "icon-opacity": [
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
             },
             'filter': 
-                ['all',
+                ["all",
                     ["match",
                         ["slice",
                             ["get", "name"],
@@ -1048,7 +583,7 @@ export default class GlobalMap extends Model {
                     ],
                     ["match",
                         ["get", "name"],
-                        ['any',
+                        ["any",
                             "ロッジ",
                             "lodge"
                         ],
@@ -1121,9 +656,9 @@ export default class GlobalMap extends Model {
             'layout': {
                 'icon-image': '_icon-lawson',
                 'icon-size': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
                     12.5,
                     0.8,
                     20,
@@ -1132,8 +667,8 @@ export default class GlobalMap extends Model {
             },
             'paint': {
                 'icon-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
                     0.5,
                     1
                 ]
@@ -1246,11 +781,528 @@ export default class GlobalMap extends Model {
                 false
             ]
         } )
+    
+        // Michi no Eki
+        this.map.addLayer( {
+            'id': 'michi-no-eki',
+            'type': 'symbol',
+            'source': "composite",
+            'source-layer': "poi_label",
+            'minzoom': 11.5,
+            'layout': {
+                'icon-image': '_icon-michi-no-eki',
+                'icon-size': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    11.5,
+                    0.8,
+                    20,
+                    3
+                ]
+            },
+            'paint': {
+                'icon-opacity': [
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
+                    0.5,
+                    1
+                ]
+            },
+            'filter': [
+                "match",
+                    [
+                        "slice",
+                        ["get", "name"],
+                        0,
+                        3
+                    ],
+                    [
+                        "any",
+                        "道の駅",
+                        "mic",
+                        "Mic",
+                        "MIC"
+                    ],
+                true,
+                false
+            ]
+        } )
     }
 
     hideKonbiniLayers () {
-        var konbiniLayerNames = ['seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki']
+        var konbiniLayerNames = ['seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki']
         konbiniLayerNames.forEach( (layerName) => this.map.removeLayer(layerName))
+    }
+
+    addCyclingLayers () {
+
+    }
+
+    // Rindos
+    addRindoLayers () {
+        this.map.addLayer( {
+            'id': 'rindos-case',
+            'type': 'line',
+            'source': 'rindos',
+            'source-layer': 'rindos-b4dkbp',
+            'minzoom': 11,
+            'paint': {
+                'line-opacity': 0,
+                'line-width': [
+                    'interpolate',
+                    ['exponential', 1.5],
+                    ['zoom'],
+                    11,
+                    5,
+                    20,
+                    15
+                ]
+            }
+        } )
+        this.map.addLayer( {
+            'id': 'rindos',
+            'type': 'line',
+            'source': 'rindos',
+            'source-layer': 'rindos-b4dkbp',
+            'minzoom': 11,
+            'paint': {
+                'line-color': '#fff',
+                'line-opacity': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    11,
+                    0,
+                    12,
+                    1
+                ],
+                'line-width': [
+                    'interpolate',
+                    ['exponential', 1.5],
+                    ['zoom'],
+                    11,
+                    1,
+                    20,
+                    6
+                ],
+                'line-dasharray': [4, 1, 2, 1]
+            }
+        } )
+        this.map.addLayer( {
+            'id': 'rindos-cap',
+            'type': 'line',
+            'source': 'rindos',
+            'source-layer': 'rindos-b4dkbp',
+            'minzoom': 11,
+            'paint': {
+                'line-color': '#fff',
+                'line-width': 5,
+                'line-color': '#ff5555'
+            },
+            'filter': ['in', 'name', 'default']
+        } )
+        this.map.addLayer( {
+            'id': 'rindo-labels',
+            'type': 'symbol',
+            'source': 'rindos',
+            'source-layer': 'rindos-b4dkbp',
+            'minzoom': 9,
+            'layout': {
+                'text-field': ["to-string", ["get", "name"]],
+                'text-size': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    10,
+                    10,
+                    20,
+                    20
+                ],
+                'text-line-height': 1.2,
+                'symbol-placement': 'line',
+                'symbol-spacing': 30,
+                'text-max-angle': 30,
+                //'text-padding': 2
+            },
+            'paint': {
+                'text-color': "#000",
+                'text-halo-color': "#d6d6d6",
+                'text-halo-width': 1,
+                'text-halo-blur': 2
+            }
+        } )
+    }
+
+    addCyclingLayers () {
+        
+        // Cycling
+        this.map.addLayer( {
+            'id': 'cycle-lane',
+            'type': 'line',
+            'source': 'cycling',
+            'source-layer': 'cycling-dpgl4s',
+            'minzoom': 7,
+            'paint': {
+                'line-color': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    "#6198ff",
+                    22,
+                    "#0d53d3"
+                ],
+                'line-width': [
+                    "interpolate",
+                    ["exponential", 1],
+                    ["zoom"],
+                    9,
+                    1,
+                    22,
+                    5
+                ],
+                'line-dasharray': [1, 1]
+            },
+            'layout': {
+                'line-cap': 'butt',
+                'line-miter-limit': 2
+            },
+            'filter': [
+                "any", 
+                ["match",
+                    ["get", "bicycle"],
+                    ["lane"],
+                    true,
+                    false
+                ],
+                ["match",
+                    ["get", "cycleway"],
+                    ["lane"],
+                    true,
+                    false
+                ]
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'walk-path',
+            'type': 'line',
+            'source': 'cycling',
+            'source-layer': 'cycling-dpgl4s',
+            'minzoom': 7,
+            'paint': {
+                'line-color': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    "hsl(219, 34%, 79%)",
+                    22,
+                    "hsl(221, 63%, 62%)"
+                ],
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    1,
+                    22,
+                    5
+                ]
+            },
+            'filter': [
+                "all",
+                [
+                    "match",
+                    ["get", "highway"],
+                    ["cycleway"],
+                    false,
+                    true
+                ],
+                [
+                    "match",
+                    ["get", "cycleway"],
+                    ["lane"],
+                    false,
+                    true
+                ],
+                [
+                    "match",
+                    ["get", "bicycle"],
+                    ["lane"],
+                    false,
+                    true
+                ]
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'walk-path-case',
+            'type': 'line',
+            'source': 'cycling',
+            'source-layer': 'cycling-dpgl4s',
+            'minzoom': 7,
+            'paint': {
+                'line-color': '#f2f0ee',
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    1,
+                    22,
+                    2
+                ],
+                'line-gap-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    1,
+                    22,
+                    5
+                ]
+            },
+            'filter': [
+                "all",
+                [
+                    "match",
+                    ["get", "highway"],
+                    ["cycleway"],
+                    false,
+                    true
+                ],
+                [
+                    "match",
+                    ["get", "cycleway"],
+                    ["lane"],
+                    false,
+                    true
+                ],
+                [
+                    "match",
+                    ["get", "bicycle"],
+                    ["lane"],
+                    false,
+                    true
+                ]
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'cycle-path',
+            'type': 'line',
+            'source': 'cycling',
+            'source-layer': 'cycling-dpgl4s',
+            'minzoom': 7,
+            'paint': {
+                'line-color': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    "#6198ff",
+                    22,
+                    "#0d53d3"
+                ],
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    1,
+                    22,
+                    5
+                ]
+            },
+            'filter': [
+                "match",
+                ["get", "highway"],
+                ["cycleway"],
+                true,
+                false
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'cycle-path-case',
+            'type': 'line',
+            'source': 'cycling',
+            'source-layer': 'cycling-dpgl4s',
+            'minzoom': 7,
+            'paint': {
+                'line-color': "#f2f0ee",
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    0.5,
+                    22,
+                    2.5
+                ],
+                'line-gap-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    9,
+                    1,
+                    22,
+                    2
+                ]
+            },
+            'filter': [
+                "match",
+                ["get", "highway"],
+                ["cycleway"],
+                true,
+                false
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'cycle-path-cap',
+            'type': 'line',
+            'source': 'cycling',
+            'source-layer': 'cycling-dpgl4s',
+            'minzoom': 11,
+            'paint': {
+                'line-color': '#fff',
+                'line-width': 5,
+                'line-color': '#ff5555'
+            },
+            'filter': ['in', 'name', 'default']
+        } )
+
+        // No bicycle
+        this.map.addLayer( {
+            'id': 'no-bicycle-motorways',
+            'type': 'line',
+            'source': 'no-bicycle',
+            'source-layer': 'no-bicycle-2drz45',
+            'minzoom': 11,
+            'paint': {
+                'line-color': "#c8ebc6",
+                'line-width': [
+                    "interpolate",
+                    ["exponential", 1.5],
+                    ["zoom"],
+                    5,
+                    0.75,
+                    18,
+                    32
+                ]
+            },
+            'filter': [
+                "match",
+                ["get", "highway"],
+                ["motorway"],
+                true,
+                false
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'no-bicycle-case',
+            'type': 'line',
+            'source': 'no-bicycle',
+            'source-layer': 'no-bicycle-2drz45',
+            'minzoom': 11,
+            'paint': {
+                'line-color': "#fff",
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    8,
+                    1,
+                    22,
+                    5
+                ]
+            },
+            'filter': [
+                "match",
+                ["get", "highway"],
+                ["motorway"],
+                false,
+                true
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'no-bicycle',
+            'type': 'line',
+            'source': 'no-bicycle',
+            'source-layer': 'no-bicycle-2drz45',
+            'minzoom': 11,
+            'paint': {
+                'line-color': "#99ffca",
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    8,
+                    1,
+                    22,
+                    5
+                ],
+                'line-dasharray': [2, 2]
+            },
+            'filter': [
+                "match",
+                ["get", "highway"],
+                ["motorway"],
+                false,
+                true
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'no-bicycle-rindos-cap',
+            'type': 'line',
+            'source': 'rindos',
+            'source-layer': 'rindos-b4dkbp',
+            'minzoom': 11,
+            'paint': {
+                'line-color': "#fff",
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    8,
+                    1,
+                    22,
+                    5
+                ]
+            },
+            'filter': [
+                "match",
+                ["get", "bicycle"],
+                ["no"],
+                true,
+                false
+            ]
+        } )
+        this.map.addLayer( {
+            'id': 'no-bicycle-rindos',
+            'type': 'line',
+            'source': 'rindos',
+            'source-layer': 'rindos-b4dkbp',
+            'minzoom': 11,
+            'paint': {
+                'line-color': "#99ffca",
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    8,
+                    1,
+                    22,
+                    5
+                ],
+                'line-dasharray': [2, 2]
+            },
+            'filter': [
+                "match",
+                ["get", "bicycle"],
+                ["no"],
+                true,
+                false
+            ]
+        } )
     }
 
     styleSeason () {
@@ -1315,7 +1367,30 @@ export default class GlobalMap extends Model {
         else if (this.season == 'summer') var colors = summer
         else if (this.season == 'fall') var colors = fall
 
-        if (this.season != 'undefined') this.map.setPaintProperty('landcover-custom', 'fill-color', colors)
+        this.map.addLayer( {
+            'id': 'landcover-season',
+            'type': 'fill',
+            'source': 'composite',
+            'source-layer': 'landcover',
+            'minzoom': 0,
+            'maxzoom': 22,
+            'paint': {
+                'fill-color': colors,
+                'fill-opacity': [
+                    "interpolate",
+                    ["exponential", 1.5],
+                    ["zoom"],
+                    2,
+                    0.3,
+                    12,
+                    0.15,
+                    16,
+                    0
+                ]
+            }
+        }, 'landcover-custom')
+
+        ///if (this.season != 'undefined') this.map.setPaintProperty('landcover-custom', 'fill-color', colors)
     }
 
     // Add media
@@ -2005,7 +2080,8 @@ export default class GlobalMap extends Model {
     addMkpoints (mkpoints) {
         mkpoints.forEach( async (mkpoint) => {
             let mkpointPopup = new MkpointPopup(mkpoint)
-            mkpointPopup.setContent()
+            console.log(mkpointPopup)
+            var content = mkpointPopup.setPopupContent(mkpoint)
 
             let element = document.createElement('div')
             let icon = document.createElement('img')

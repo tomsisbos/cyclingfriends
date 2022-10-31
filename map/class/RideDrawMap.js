@@ -16,7 +16,7 @@ export default class RideDrawMap extends RideMap {
     async loadRoute (routeId) {
         
         return new Promise ( async (resolve, reject) => {
-            ajaxGetRequest ('/map/routes/api.php' + "?route-load=" + routeId, async (route) => {
+            ajaxGetRequest ('/actions/routes/api.php' + "?route-load=" + routeId, async (route) => {
                 this.route = route
                 // Update labels and values
                 var distanceDiv = document.querySelector('#distanceDiv')

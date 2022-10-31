@@ -22,7 +22,7 @@ class Activity extends Model {
     public $route;
     
     function __construct($id = NULL, $lngLatFormat = true) {
-        $this->id = $id;
+        $this->id = intval($id);
         $data = $this->getData($this->table);
         $this->user             = new User($data['user_id']);
         $this->datetime         = new Datetime($data['datetime']);

@@ -566,7 +566,7 @@ class User extends Model {
     }
 
     // Update viewed mkpoints list in the database according to newly uploaded activities
-    public function updateViewedMkpoints ($activity = false) {
+    /*public function updateViewedMkpoints ($activity = false) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
 
         $activities = $this->getActivities();
@@ -574,7 +574,7 @@ class User extends Model {
         // For each activity route, get close mkpoints and add them to viewed mkpoints
         if ($activity) {
             $viewed_mkpoints = $activity->route->getCloseMkpoints(500, false);
-            foreach ($viewed_mkpoints as $viewed_mkpoint) $viewed_mkpoint->activity_id = $activity->id;
+            foreach ($viewed_mkpoints as $viewed_mkpoint) $viewed_mkpoint['activity_id'] = $activity->id;
         } else {
             $viewed_mkpoints = [];
             foreach ($activities as $activity) {
@@ -586,7 +586,6 @@ class User extends Model {
                 }
             }
         }
-        var_dump($viewed_mkpoints);
 
         // Filter mkpoints to add
         $saved_mkpoints = $this->getViewedMkpoints();
@@ -599,13 +598,11 @@ class User extends Model {
             if (!$already_saved) array_push($mkpoints_to_add, $viewed_mkpoint);
         }
 
-        if (count($mkpoints_to_add) > 0) var_dump($mkpoints_to_add);///
-
         // Add relevant mkpoints to user mkpoints table
         foreach ($mkpoints_to_add as $mkpoint) {
             $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
             $addMkpoint->execute(array($this->id, $mkpoint['id'], $mkpoint['activity_id']));
         }
-    }
+    }*/
 
 }

@@ -61,7 +61,8 @@ class Route extends Model {
         $timedata = $getTime->fetchAll();
         $time = [];
         forEach($timedata as $data) {
-            array_push($time, new DateTime($data['datetime']));
+            $datetime = new DateTime($data['datetime']);
+            array_push($time, $datetime);
         }
         return $time;
     }

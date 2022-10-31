@@ -7,6 +7,7 @@ var map = await buildRouteMap.load(document.getElementById('BuildRouteMap'), 'ma
 buildRouteMap.addSources()
 buildRouteMap.addAmenityLayers()
 buildRouteMap.addKonbiniLayers()
+buildRouteMap.addCyclingLayers()
 
 const canvas = map.getCanvasContainer()
 

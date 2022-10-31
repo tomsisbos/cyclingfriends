@@ -179,7 +179,7 @@ export default class RoutePageMap extends GlobalMap {
                             document.querySelector('#routeTable #' + entry.type + entry.id).classList.add('selected-entry')
                             // Add selected-marker class
                             console.log(entry.type + entry.id)
-                            if ((this.ride.options.sf == false && entry.remoteness == 'On route') || (this.ride.options.sf == true && entry.remoteness == 'On route' && entry.id != this.ride.checkpoints.length - 1)) {
+                            if (this.ride && ((this.ride.options.sf == false && entry.remoteness == 'On route') || (this.ride.options.sf == true && entry.remoteness == 'On route' && entry.id != this.ride.checkpoints.length - 1))) {
                                 // To clicked marker
                                 document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.add('selected-marker')
                                 // To clicked thumbnail
@@ -198,7 +198,7 @@ export default class RoutePageMap extends GlobalMap {
                     } )
                     // Remove selected class from other thumbnails and table entries
                     document.querySelectorAll('.rt-preview-photo').forEach( (thumbnail) => {
-                        if (thumbnail.id != entry.type + entry.id && !(this.ride.options.sf == true && entry.id == this.ride.checkpoints.length - 1)) thumbnail.querySelector('img').classList.remove('selected-marker')
+                        if (thumbnail.id != entry.type + entry.id && (!this.ride || !(this.ride.options.sf == true && entry.id == this.ride.checkpoints.length - 1))) thumbnail.querySelector('img').classList.remove('selected-marker')
                     } )
                     document.querySelectorAll('#routeTable tr').forEach( (tableEntry) => {
                         if (tableEntry != target) tableEntry.classList.remove('selected-entry')

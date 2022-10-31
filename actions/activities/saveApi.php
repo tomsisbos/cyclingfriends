@@ -136,7 +136,7 @@ if (is_array($data)) {
     }
 
     // Update user's viewed mkpoints
-    $connected_user->updateViewedMkpoints(new Activity($activity_id));
+    ///$connected_user->updateViewedMkpoints(new Activity($activity_id));
 
     echo json_encode(true);
 

@@ -7,4 +7,4 @@
 	<button class="btn button box-shadow" type="button" name="delete" id="deleteButton">Delete</button>
 </div>
 	
-<script src="/includes/activities/delete.js" defer></script>
+<script src="/includes/activities/delete.js"></script>

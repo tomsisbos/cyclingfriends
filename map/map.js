@@ -313,19 +313,7 @@ ajaxGetRequest (mapMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
     map.on('moveend', mapMap.updateMapDataListener)
 } )
 
-
-map.on('click', (e) => {
-    console.log(e.point)
-    var features = map.queryRenderedFeatures(e.point)
-    features.forEach( (feature) => {
-        if (feature.layer.id == 'rindo') {
-            console.log(feature.properties.name)
-            console.log(feature)
-        }
-    } )
-} )
-
-var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos', 'cycle-path-case']
+var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']
 amenities.forEach( (amenity) => {
     let hoveredFeatureId = null
     let feature
@@ -341,7 +329,6 @@ amenities.forEach( (amenity) => {
                 amenityPopup.data = feature.properties
             }
         } )
-        console.log(amenityPopup.data)
 
         // Add hover style to this feature
         map.getCanvas().style.cursor = 'pointer'
@@ -349,11 +336,11 @@ amenities.forEach( (amenity) => {
         if (hoveredFeatureId !== null) map.setFeatureState({source: feature.source, id: hoveredFeatureId}, {hover: false})
         hoveredFeatureId = feature.id
         var state = {source: feature.source, id: hoveredFeatureId}
-        if (feature.source == 'composite') state.sourceLayer = feature.sourceLayer
+        if (feature.sourceLayer) state.sourceLayer = feature.sourceLayer
         map.setFeatureState(state, {hover: true})
         if (!feature.properties.name) feature.properties.name = ''
-        if (amenity == 'rindos') map.setFilter('rindos-cap', ['in', 'name', feature.properties.name]) // Display rindo cap on rindo hovering
-        if (amenity == 'cycle-path-case') map.setFilter('cycle-path-cap', ['in', 'name', feature.properties.name]) // Display rindo cap on rindo hovering
+        if (amenity == 'rindos-case') map.setFilter('rindos-cap', ['in', 'name', feature.properties.name]) // Display rindo cap on rindo hovering
+        if (amenity == 'cycle-path') map.setFilter('cycle-path-cap', ['in', 'name', feature.properties.name]) // Display rindo cap on rindo hovering
 
         // Define popup content
         if (amenity == 'onsens' || amenity == 'michi-no-eki') {
@@ -366,7 +353,7 @@ amenities.forEach( (amenity) => {
             else text = CFUtils.getAmenityName(amenity)
             if (text.includes('<br>') && !text.includes('店')) text += '店'
 
-        } else if (amenity == 'rindos') {
+        } else if (amenity == 'rindos-case') {
             // Build title
             var text = '<div class="pb-2"><div class="popup-properties-name">' + amenityPopup.data.name + '</div>'
             if (amenityPopup.data['name:en']) text += amenityPopup.data['name:en']
@@ -400,7 +387,7 @@ amenities.forEach( (amenity) => {
             }
             else if (amenityPopup.data.highway == 'path') text += '<br>This road is not accessible by bicycle.'
 
-        } else if (amenity == 'cycle-path-case') {
+        } else if (amenity == 'cycle-path') {
             // Build title
             if (amenityPopup.data.name) var text = '<div class="pb-2"><div class="popup-properties-name">' + amenityPopup.data.name + '</div>'
             else var text = '<div class="pb-2"><div class="popup-properties-name">' + CFUtils.getAmenityName(amenity) + '</div>'
@@ -427,11 +414,11 @@ amenities.forEach( (amenity) => {
         } )
 
         // Remove hover style from this feature
-        if (amenity == 'rindos') map.setFilter('rindos-cap', ['in', 'name', ''])
-        if (amenity == 'cycle-path-case') map.setFilter('cycle-path-cap', ['in', 'name', ''])
+        if (amenity == 'rindos-case') map.setFilter('rindos-cap', ['in', 'name', 'default'])
+        if (amenity == 'cycle-path') map.setFilter('cycle-path-cap', ['in', 'name', 'default'])
         if (hoveredFeatureId !== null) {
             var state = {source: feature.source, id: hoveredFeatureId}
-            if (feature.source == 'composite') state.sourceLayer = feature.sourceLayer
+            if (feature.sourceLayer) state.sourceLayer = feature.sourceLayer
             map.setFeatureState(state, {hover: false})
         }
         hoveredFeatureId = null

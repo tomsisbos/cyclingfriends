@@ -6,10 +6,26 @@ var editRouteMap = new EditRouteMap ()
 // Set default layer according to current season
 var map = await editRouteMap.load(document.getElementById('EditRouteMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
 
+editRouteMap.addSources()
+editRouteMap.addAmenityLayers()
+editRouteMap.addKonbiniLayers()
+editRouteMap.addCyclingLayers()
+
 const canvas = map.getCanvasContainer()
 
 
 /* -- Controls -- */
+
+editRouteMap.addOptionsControl()
+editRouteMap.addBuildRouteControl()
+
+
+/*
+
+const canvas = map.getCanvasContainer()
+
+
+// -- Controls -- 
 
 
 // Controller
@@ -219,7 +235,7 @@ map.addControl(
         maxWidth: 80,
         unit: 'metric'
     } )
-)
+)*/
 
 
 /* -- Route initialization -- */

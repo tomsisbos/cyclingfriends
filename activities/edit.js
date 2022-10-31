@@ -16,6 +16,9 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
     editActivityMap.data = activityData
 
     // Clean data architecture to match instance data format
+    for (let i = 0; i < activityData.route.time.length; i++) {
+        activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime()
+    }
     editActivityMap.data.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
