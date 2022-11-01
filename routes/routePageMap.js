@@ -93,7 +93,10 @@ ajaxGetRequest (routePageMap.apiUrl + "?route-load=" + routePageMap.routeId, asy
     if (!routePageMap.rideId) routePageMap.displayStartGoalMarkers(geojson)
 
     // Request and display mkpoints close to the route
-    routePageMap.loadCloseMkpoints(2).then( async () => {
+    routePageMap.loadCloseMkpoints(2).then( async (mkpoints) => {
+
+        // Load mkpoints into map instance
+        routePageMap.mkpoints = mkpoints
 
         // If ride ID is found insite query string parameters, get ride data from server
         if (routePageMap.rideId) await routePageMap.loadRide()

@@ -37,7 +37,7 @@ include '../actions/rides/edit/galleryAction.php';
 	include '../actions/rides/convertIntToStringValuesAction.php'; ?>
 	
 	<div class="container-fluid">
-		<div class="container ride-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$ride->getFeaturedImage()['img']. ')'?>;">
+		<div class="container ride-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$ride->getFeaturedImage()['img']. '); background-size: cover;">'; ?>
 			<div class="tr-row gap">
 				<div class="td-row">
 					<a href="/riders/profile.php?id=<?= $ride->author->id ?>"><?php $ride->author->displayPropic(60, 60, 60); ?></a>

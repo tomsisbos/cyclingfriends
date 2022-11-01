@@ -182,7 +182,7 @@ export default class MkpointPopup extends Popup {
                     for (let i = 1; i < number + 1; i++) {
                         let star = document.createElement('div')
                         star.innerText = '★'
-                        star.className = 'star selected-star'
+                        star.className = 'd-inline selected-star'
                         document.getElementById('comment-author-' + comment.user_id).querySelector('.chat-time').after(star)
                     }
                 }

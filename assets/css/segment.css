@@ -1,0 +1,70 @@
+.pg-sg-header {
+    height: 350px;
+    background-position: center;
+}
+.pg-sg-header h1, .pg-sg-header p {
+    color: white;
+}
+.pg-sg-section-infos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #fff;
+}
+.pg-sg-infos-main {
+    display: grid;
+    grid-template-columns: 60% 40%;
+}
+.pg-sg-generalinfos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.pg-sg-section-infos-topline {
+    display: flex;
+    gap: 20px;
+}
+.pg-sg-location {
+    font-weight: bold;
+}
+.pg-sg-specs-container {
+    display: flex;
+}
+.pg-sg-specs {
+    min-width: 200px;
+}
+.pg-sg-description {
+    text-align: justify;
+}
+.pg-sg-point {
+    padding: 0px 20px;
+}
+
+.pg-sg-map-box {
+    height: 400px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60% 40%;
+}
+.pg-sg-itinerary {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.pg-sg-itinerary-title {
+    font-weight: bold;
+}
+.pg-sg-itinerary-spot {
+    gap: 10px;
+    display: flex;
+}
+.pg-sg-spot-icon {
+    width: 24px;
+}
+.pg-sg-spot-distance {
+    width: 60px;
+    min-width: 60px;
+}
+.pg-sg-spot-name {
+    width: 100%;
+}

@@ -11,15 +11,15 @@ class Segment extends Model {
         $this->rank               = $data['rank'];
         $this->name               = $data['name'];
         $this->description        = $data['description'];
-        $this->favourite          = $data['favourite'];
+        $this->favourite          = intval($data['favourite']);
         $this->advice             = new SegmentAdvice($this->id);
         $this->seasons            = $this->getSeasons();
         $this->specs              = new SegmentSpecs($this->id);
         $this->tags               = new SegmentTags($this->id);
-        $this->rating             = $data['rating'];
-        $this->grades_number      = $data['grades_number'];
-        $this->popularity         = $data['popularity'];
-        $this->views              = $data['views'];
+        $this->rating             = intval($data['rating']);
+        $this->grades_number      = intval($data['grades_number']);
+        $this->popularity         = intval($data['popularity']);
+        $this->views              = intval($data['views']);
     }
 
     private function getSeasons () {
@@ -33,15 +33,10 @@ class Segment extends Model {
         }
         return $seasons;
     }
-
-    private function getMkpoints () {
-        // Get mkpoints on route
-        $mkpoints = $this->route->getCloseMkpoints();
-        // Get corresponding photos
-        foreach ($mkpoints as $mkpoint) {
-            $mkpoint->photos = $mkpoint->getImages();
-        }
-        return $mkpoints;
+    
+    public function exists () {
+        if (!empty($this->name)) return true;
+        else return false;
     }
 
     // Get connected user's vote information
@@ -53,6 +48,35 @@ class Segment extends Model {
             $vote_infos = $checkUserVote->fetch(PDO::FETCH_ASSOC);
             return $vote_infos['grade'];
         } else return false;
+    }
+
+    public function getFeaturedImage () {
+
+        // Get all photos in an array
+        $photos = [];
+        foreach ($this->route->getMkpointsWithPhotos() as $mkpoint) {
+            foreach ($mkpoint->photos as $photo) {
+                array_push($photos, $photo);
+            }
+        }
+
+        // If at least one photo has been found, return the one with the most likes number
+        if (count($photos) > 0) {
+
+            function compare ($a, $b) {
+                return strcmp($b->likes, $a->likes);
+            }
+            usort($photos, "compare");
+
+            return 'url(data:image/jpeg;base64,' .$photos[0]->blob. ')';
+        
+        // If no photo has been found, return default image
+        } else {
+
+            return 'url(/includes/media/default-photo-' . rand(1,9) .'.svg) ';
+
+        }
+
     }
 
 }

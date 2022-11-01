@@ -56,7 +56,7 @@ ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + edit
     editActivityMap.addSources()
     editActivityMap.addLayers()
     editActivityMap.addRouteLayer(editActivityMap.data.routeData)
-    editActivityMap.displayStartGoalMarkers(editActivityMap.data.routeData)
+    ///editActivityMap.displayStartGoalMarkers(editActivityMap.data.routeData)
     editActivityMap.updateDistanceMarkers()
     editActivityMap.focus(editActivityMap.data.routeData)
     editActivityMap.displayCheckpointMarkers()

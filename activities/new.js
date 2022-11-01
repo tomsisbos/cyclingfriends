@@ -89,6 +89,7 @@ $upload.addEventListener('change', async (e) => {
 
             // Get activity data
             if (response.success) {
+                console.log(newActivityMap.data)
                 // Display and prefill form
                 hideResponseMessage()
                 $form.style.display = 'block'

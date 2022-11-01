@@ -311,4 +311,38 @@ class Route extends Model {
         }
         return $terrain_value;
     }
+
+    public function getMkpointsWithPhotos () {
+        // Get mkpoints on route
+        $mkpoints = $this->getCloseMkpoints();
+        // Get corresponding photos
+        foreach ($mkpoints as $mkpoint) {
+            $mkpoint->photos = $mkpoint->getImages();
+        }
+        return $mkpoints;
+    }
+
+    public function getItinerary () {
+
+        $spots = [];
+        $connected_user = new User($_SESSION['id']);
+        $viewed_mkpoints = $connected_user->getViewedMkpoints();
+
+        foreach ($this->getCloseMkpoints() as $mkpoint) {
+            $spot = ['type' => 'mkpoint', 'on_route' => $mkpoint->on_route, 'distance' => $mkpoint->distance, 'name' => $mkpoint->name, 'city' => $mkpoint->city, 'prefecture' => $mkpoint->prefecture, 'elevation' => $mkpoint->elevation, 'viewed' => false];
+            if (isset($mkpoint->remoteness)) $spot['remoteness'] = $mkpoint->remoteness;
+            var_dump($mkpoint->id);
+            var_dump($viewed_mkpoints);
+            if (in_array_r($mkpoint->id, $viewed_mkpoints)) $spot['viewed'] = true;
+            array_push($spots, $spot);
+        }
+
+        function compareDistance ($a, $b) {
+            return strcmp($a['distance'], $b['distance']);
+        }
+        usort($spots, "compareDistance");
+
+        return $spots;
+    }
+
 }

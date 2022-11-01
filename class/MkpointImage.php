@@ -19,17 +19,17 @@ class MkpointImage extends Image {
     function __construct ($id = NULL) {
         parent::__construct($id);
         $data = $this->getData($this->table);
-        $this->mkpoint    = new Mkpoint($data['mkpoint_id']);
-        $this->user_id    = $data['user_id'];
+        $this->mkpoint_id = intval($data['mkpoint_id']);
+        $this->user_id    = intval($data['user_id']);
         $this->user_login = $data['user_login'];
         $this->date       = $data['date'];
-        $this->month      = $data['month'];
+        $this->month      = intval($data['month']);
         $this->period     = $data['period'];
         $this->blob       = $data['file_blob'];
-        $this->size       = $data['file_size'];
+        $this->size       = intval($data['file_size']);
         $this->name       = $data['file_name'];
         $this->type       = $data['file_type'];
-        $this->likes      = $data['likes'];
+        $this->likes      = intval($data['likes']);
     }
 
 }

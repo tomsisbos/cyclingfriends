@@ -84,6 +84,7 @@ export default class NewActivityMap extends ActivityMap {
             // Build route geojson
             var routeData = turf.lineString(routeCoords)
             routeData.properties.time = routeTime
+            this.data = { routeData }
 
             // Build temperature
             if (trackpoints[0].temperature) {
@@ -153,6 +154,7 @@ export default class NewActivityMap extends ActivityMap {
                     },
                     routeData,
                     checkpoints,
+                    mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
                     photos: [],
                     trackpoints
                 }
@@ -224,6 +226,7 @@ export default class NewActivityMap extends ActivityMap {
         // Build route geojson
         var routeData = turf.lineString(routeCoords)
         routeData.properties.time = routeTime
+        this.data = { routeData }
 
         // Build temperature
         if (trackpoints[0].temperature) {
@@ -293,6 +296,7 @@ export default class NewActivityMap extends ActivityMap {
                 },
                 routeData,
                 checkpoints,
+                mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
                 photos: [],
                 trackpoints
             }
@@ -542,21 +546,31 @@ export default class NewActivityMap extends ActivityMap {
                                         featured: false,
                                         number
                                     } )
+                                    console.log(this.data.photos)
                                     
                                     number++
 
                                     // Resolve promise after last file has been treated
                                     if (number == filesLength + currentPhotosNumber) resolve(true)
 
-                                } else showResponseMessage({error: '\"' + files[i].name + '\" has not been taken during the activity.'})
+                                } else {
+                                    showResponseMessage({error: '\"' + files[i].name + '\" has not been taken during the activity.'})
+                                    filesLength--
+                                }
 
-                            } else  showResponseMessage({error: '\"' + files[i].name + '\" does not have valid time data. Please upload raw photo data taken during the activity.'})
+                            } else {
+                                showResponseMessage({error: '\"' + files[i].name + '\" does not have valid time data. Please upload raw photo data taken during the activity.'})
+                                filesLength--
+                            }
 
                         } )
 
                     } )
                     
-                } else showResponseMessage({error: '\"' + files[i].name + '\" is not of an accepted format. Please upload images from following formats : ' + acceptedFormatsString + '.'})
+                } else {
+                    showResponseMessage({error: '\"' + files[i].name + '\" is not of an accepted format. Please upload images from following formats : ' + acceptedFormatsString + '.'})
+                    filesLength--
+                }
             }
         } )
     }

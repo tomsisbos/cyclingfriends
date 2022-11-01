@@ -98,8 +98,6 @@ if (is_array($data)) {
         $insert_checkpoints -> execute(array($activity_id, $number, $name, $type, $story, $datetime->format('Y-m-d H:i:s'), $city, $prefecture, $elevation, $distance, $temperature, $lng, $lat, $special));
     }
 
-    
-
     // For each photo
     foreach ($data['photos'] as $photo) {
 
@@ -136,7 +134,10 @@ if (is_array($data)) {
     }
 
     // Update user's viewed mkpoints
-    ///$connected_user->updateViewedMkpoints(new Activity($activity_id));
+    foreach ($data['mkpoints'] as $mkpoint) {
+        $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
+        $addMkpoint->execute(array($connected_user->id, $mkpoint['id'], $activity_id));
+    }
 
     echo json_encode(true);
 

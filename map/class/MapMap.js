@@ -9,9 +9,6 @@ export default class MapMap extends GlobalMap {
 
     constructor (session) {
         super(session)
-        ajaxGetRequest (this.apiUrl + "?get-user-viewed-mkpoints=true", (response) => {
-            this.viewedMkpoints = response
-        } )
     }
 
     type = 'mapMap'

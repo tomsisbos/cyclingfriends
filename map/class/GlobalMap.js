@@ -8,6 +8,9 @@ export default class GlobalMap extends Model {
     constructor () {
         super()
         this.setSeason()
+        ajaxGetRequest (this.apiUrl + "?get-user-viewed-mkpoints=true", (response) => {
+            this.viewedMkpoints = response
+        } )
     }
 
     map
@@ -1994,34 +1997,34 @@ export default class GlobalMap extends Model {
         }
     }
 
-    async loadCloseMkpoints (range) {
+    async loadCloseMkpoints (range, options = {displayOnMap: true, generateProfile: true, getFileBlob: true}) {
         return new Promise ( async (resolve, reject) => {
 
             // Display close mkpoints inside the map
             ajaxGetRequest ('/map/api.php' + "?display-mkpoints=" + this.route_id, async (response) => {
 
-                if (!this.mkpoints) this.mkpoints = await this.getClosestMkpoints(response, range)
+                var mkpoints = await this.getClosestMkpoints(response, range)
 
                 // Display on map
-                this.addMkpoints(this.mkpoints)
+                if (options.displayOnMap) this.addMkpoints(mkpoints)
 
                 // Update mkpoints cursors on profile
-                this.generateProfile()
+                if (options.generateProfile) this.generateProfile()
                 
                 // Display thumbnails
                 // Get mkpoints on route number
-                this.mkpoints.forEach( (mkpoint) => {
+                mkpoints.forEach( (mkpoint) => {
                     if (mkpoint.on_route) this.mkpointsOnRouteNumber++
                 } )
 
                 // For each mkpoint
-                for (let i = 0; i < this.mkpoints.length; i++) {
-                    // Get images if needed
-                    if (!this.mkpoints[i].file_blob) {
-                        this.mkpoints[i].file_blob = await this.getFileBlob(this.mkpoints[i])
+                if (options.getFileBlob) {
+                    for (let i = 0; i < mkpoints.length; i++) {
+                        // Get images if needed
+                        mkpoints[i].file_blob = await this.getFileBlob(mkpoints[i])
                     }
                 }
-                resolve()
+                resolve(mkpoints)
             } )
         } )
     }
@@ -2042,8 +2045,7 @@ export default class GlobalMap extends Model {
             var closeMkpoints = []
 
             // Get route
-            var route = await this.getRoute()
-            const routeData = route._data
+            const routeData = await this.getRouteData()
 
             // Build a simplified line for rough filtering
             var coreLine = turf.simplify(routeData, {tolerance: 0.02, highQuality: false, mutate: false})
@@ -2124,14 +2126,16 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    getRoute () {
+    getRouteData () {
         return new Promise ( (resolve, reject) => {
-            if (this.map.getSource('route')) {
-                resolve(this.map.getSource('route'))
+            if (this.data && this.data.routeData) {
+                resolve(this.data.routeData)
+            } else if (this.map.getSource('route')) {
+                resolve(this.map.getSource('route')._data)
             } else {
                 this.map.once('sourcedata', 'route', (e) => {
                     if (e.isSourceLoaded == true) {
-                        resolve(this.map.getSource('route'))
+                        resolve(this.map.getSource('route')._data)
                     }
                 } )
             }

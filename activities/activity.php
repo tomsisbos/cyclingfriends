@@ -30,7 +30,7 @@ include '../actions/activities/activityAction.php'; ?>
 	
 	<div class="container-fluid"> <?php 
 
-		if ($activity->getFeaturedImage()) { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$activity->getFeaturedImage()->blob. ')'?>;"> <?php
+		if ($activity->getFeaturedImage()) { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$activity->getFeaturedImage()->blob. '); background-size: cover;'?>;"> <?php
 		} else { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(/includes/media/default-photo-' . rand(1,9) .'.svg)'?>; background-size: cover;"> <?php } ?>
 			<div class="tr-row gap">
 				<div class="td-row">

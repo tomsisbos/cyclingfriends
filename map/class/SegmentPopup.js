@@ -597,7 +597,7 @@ export default class SegmentPopup extends Popup {
                 slides[cursor].appendChild(numberText)
                 // Create image
                 imgs[cursor] = document.createElement('img')
-                imgs[cursor].src = 'data:image/jpeg;base64,' + photo.file_blob
+                imgs[cursor].src = 'data:image/jpeg;base64,' + photo.blob
                 imgs[cursor].id = 'mkpoint-img-' + photo.id
                 imgs[cursor].classList.add('fullwidth')
                 slides[cursor].appendChild(imgs[cursor])
@@ -667,7 +667,7 @@ export default class SegmentPopup extends Popup {
                 demos[cursor] = document.createElement('img')
                 demos[cursor].className = 'demo cursor fullwidth'
                 demos[cursor].setAttribute('demoId', cursor + 1)
-                demos[cursor].src = 'data:' + photo.file_type + ';base64,' + photo.file_blob
+                demos[cursor].src = 'data:' + photo.type + ';base64,' + photo.blob
                 column.appendChild(demos[cursor])
                 demosBox.appendChild(column)
             } )
@@ -734,7 +734,7 @@ export default class SegmentPopup extends Popup {
             newPhoto.setAttribute('id', photo.id)
             newPhoto.setAttribute('thumbnailId', number)
             newPhoto.setAttribute('author', photo.user_id)
-            newPhoto.src = 'data:image/jpeg;base64,' + photo.file_blob
+            newPhoto.src = 'data:image/jpeg;base64,' + photo.blob
             photoContainer.firstChild.before(newPhoto)
             var newPhotoPeriod = document.createElement('div')
             newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo))

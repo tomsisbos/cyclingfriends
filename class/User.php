@@ -562,7 +562,20 @@ class User extends Model {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $getViewedMkpoints = $db->prepare('SELECT mkpoint_id, activity_id FROM user_mkpoints');
         $getViewedMkpoints->execute();
-        return $getViewedMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        $viewed_mkpoints = $getViewedMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($viewed_mkpoints as $viewed_mkpoint) {
+            $checkIfActivityExists = $db->prepare('SELECT id FROM activities WHERE id = ?');
+            $checkIfActivityExists->execute(array($viewed_mkpoint['activity_id']));
+            // If activity in which mkpoint has been viewed has been deleted, remove from viewed mkpoints list
+            if ($checkIfActivityExists->rowCount() == 0) {
+                if (($key = array_search($viewed_mkpoint, $viewed_mkpoints)) !== false) {
+                    unset($viewed_mkpoints[$key]);
+                    $removeViewedMkpoint = $db->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
+                    $removeViewedMkpoint->execute(array($viewed_mkpoint['mkpoint_id']));
+                }
+            }
+        }
+        return $viewed_mkpoints;
     }
 
     // Update viewed mkpoints list in the database according to newly uploaded activities

@@ -48,9 +48,12 @@ class Mkpoint extends Model {
     // Get mkpoint images
     public function getImages () {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getImages = $db->prepare('SELECT * FROM img_mkpoint WHERE mkpoint_id = ?');
+        $getImages = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ?');
         $getImages->execute(array($this->id));
-        return $getImages->fetchAll(PDO::FETCH_ASSOC);
+        $images_data = $getImages->fetchAll(PDO::FETCH_ASSOC);
+        $images = [];
+        for ($i = 0; $i < count($images_data); $i++) array_push($images, new MkpointImage($images_data[$i]['id']));
+        return $images;
     }
 
 }
