@@ -37,9 +37,6 @@ export default class MapMap extends GlobalMap {
             max: 20
         }
     }
-    segmentLocalColor = '#8bffff'
-    segmentRegionalColor = '#2bffff'
-    segmentNationalColor = '#2bc8ff'
     segmentCapColor = 'white'
     rideColor = 'yellow'
     rideCapColor = 'white'

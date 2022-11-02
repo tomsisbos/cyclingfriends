@@ -12,8 +12,7 @@
     background-color: #fff;
 }
 .pg-sg-infos-main {
-    display: grid;
-    grid-template-columns: 60% 40%;
+    display: flex;
 }
 .pg-sg-generalinfos {
     display: flex;
@@ -46,6 +45,9 @@
     display: grid;
     grid-template-columns: 60% 40%;
 }
+#segmentMap {
+    overflow: visible;
+}
 .pg-sg-itinerary {
     padding: 10px;
     display: flex;
@@ -67,4 +69,55 @@
 }
 .pg-sg-spot-name {
     width: 100%;
+}
+
+.pg-sg-photos-container {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-around;
+    gap: 10px;
+}
+.pg-sg-photo {
+    height: 120px;
+    width: 180px;
+}
+.pg-sg-photo img {
+    border-radius: 10px;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.map-tooltip {
+    min-width: max-content !important;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .pg-sg-infos-main {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .pg-sg-photo {
+        width: 160px;
+        flex-grow: 4;
+    }
+    .pg-sg-map-box {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    #segmentMap {
+        width: 100%;
+        height: 100%;
+        overflow: unset;
+    }
+    .map-tooltip {
+        min-width: fit-content !important;
+    }
+}
+
+@media only screen and (max-width: 520px) {
+    .pg-sg-specs-container {
+        display: block;
+    }
 }

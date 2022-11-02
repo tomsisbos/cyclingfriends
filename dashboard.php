@@ -9,12 +9,6 @@ include 'actions/users/securityAction.php';
 
 <body>
 
-<?php
-
-	$connected_user->updateViewedMkpoints();
-
-?>
-
 <?php include 'includes/navbar.php'; ?>
 
 <!--Page container-->

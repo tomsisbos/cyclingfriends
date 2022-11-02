@@ -7,6 +7,7 @@ include '../includes/head.php';
 include '../actions/users/securityAction.php';
 include '../actions/segments/segmentAction.php'; ?>
 
+<link rel="stylesheet" href="/assets/css/lightbox-style.css" />
 <link rel="stylesheet" href="/assets/css/segment.css">
 
 <body> <?php
@@ -30,12 +31,15 @@ include '../actions/segments/segmentAction.php'; ?>
 					</div> <?php
 				} ?>
 				<div class="td-row">
-					<div class="tag-light tag-blue"><?= $segment->rank ?></div>
+					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 				</div>
 				<div class="td-row push">
 					<div class="td-row">
 						<button class="btn button box-shadow" type="button">Add to favorites</button>
 					</div>
+					<a id="export" download>
+						<button class="btn button" type="button">Export as *.gpx</button>
+					</a>
 				</div>
 			</div>
 		</div>
@@ -68,26 +72,40 @@ include '../actions/segments/segmentAction.php'; ?>
 					<div class="pg-sg-description">
 						<?= $segment->description ?>
 					</div>
-				</div>
-				<div class="pg-sg-point">
-					<div class="popup-advice">
-						<div class="popup-advice-name">
-							<iconify-icon icon="el:idea" width="20" height="20"></iconify-icon>
-							<?= $segment->advice->name ?>
-						</div>
-						<div class="popup-advice-description">
-							<?= $segment->advice->description ?>
-						</div>
-					</div>
-				</div>
+				</div> <?php
+					if (!empty($segment->advice->name)) { ?>
+						<div class="pg-sg-point">
+							<div class="popup-advice">
+								<div class="popup-advice-name">
+									<iconify-icon icon="el:idea" width="20" height="20"></iconify-icon>
+									<?= $segment->advice->name ?>
+								</div>
+								<div class="popup-advice-description">
+									<?= $segment->advice->description ?>
+								</div>
+							</div>
+						</div> <?php
+					} ?>
 			</div>
-		</div>
+		</div> <?php
+
+		// If scenery photos have been found on this route, display them
+		$photos = $segment->route->getPhotos();
+		if (count($photos) > 0) { ?>
+			<div class="container pg-sg-photos-container"> <?php
+				foreach ($photos as $photo) { ?>
+					<div class="pg-sg-photo">
+						<img src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>"></img>
+					</div>
+					<?php ///var_dump($photo);
+				} ?>
+			</div> <?php
+		} ?>	
 
 		<div class="container p-0">
 
 			<div class="pg-sg-map-box">
-				<div id="segmentMapContainer">
-					<div id="segmentMap"></div>
+				<div id="segmentMap">
 				</div>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">Itinerary</div> <?php
@@ -106,48 +124,10 @@ include '../actions/segments/segmentAction.php'; ?>
 					
 		</div>
 
-		<div class="container pg-ac-summary-container">
-				<div class="pg-ac-timeline">
-				</div>
-				<div class="pg-ac-checkpoints-container"> <?php
-					foreach ($activity->getCheckpoints() as $checkpoint) { ?>
-						<div class="pg-ac-checkpoint-container" id="checkpoint<?= $checkpoint->number ?>" data-number="<?= $checkpoint->number ?>">
-							<div class="pg-ac-photos-container"> <?php
-								foreach ($activity->getCheckpointPhotos($checkpoint) as $photo) { ?>
-									<div class="pg-ac-photo-container">
-										<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="data:image/jpeg;base64,<?= $photo->blob ?>" />
-									</div> <?php
-								} ?>
-							</div>
-							<div class="pg-ac-checkpoint-topline">
-								<?= $checkpoint->getIcon() . ' km ' . $checkpoint->distance; ?>
-								<span class="pg-ac-checkpoint-time"> <?php
-									$time = $checkpoint->datetime->diff($activity->getCheckpoints()[0]->datetime);
-									if ($time->h != 0 AND $time->i != 0) {
-										echo ' (';
-										if ($time->h > 0) {
-											if (substr($time->h, 0, 1) == '0') echo substr($time->h, 1, strlen($time->h)) . 'h' . $time->i;
-											else echo $time->h . 'h' . $time->i;
-										} else {
-											echo $time->i . ' min'; 
-										}
-										echo ') ';
-									} ?>
-								</span>
-								<?= ' - ' . $checkpoint->name ?>
-							</div>
-							<div class="pg-ac-checkpoint-story">
-								<?= $checkpoint->story ?>
-							</div>
-						</div> <?php
-					} ?>
-				</div>
-			</div>	
 	</div>
 
 </body>
 </html>
 
 <script src="/map/vendor.js"></script>
-<script src="/node_modules/exif-js/exif.js"></script>
-<script type="module" src="/activities/activity.js"></script>
+<script type="module" src="/segments/segment.js"></script>

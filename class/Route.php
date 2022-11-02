@@ -312,9 +312,9 @@ class Route extends Model {
         return $terrain_value;
     }
 
-    public function getMkpointsWithPhotos () {
+    public function getMkpointsWithPhotos ($tolerance = 300) {
         // Get mkpoints on route
-        $mkpoints = $this->getCloseMkpoints();
+        $mkpoints = $this->getCloseMkpoints($tolerance);
         // Get corresponding photos
         foreach ($mkpoints as $mkpoint) {
             $mkpoint->photos = $mkpoint->getImages();
@@ -322,23 +322,34 @@ class Route extends Model {
         return $mkpoints;
     }
 
-    public function getItinerary () {
+    // Return all scenery point photos found on the route
+    public function getPhotos ($tolerance = 300) {
+        $photos = [];
+        foreach ($this->getMkpointsWithPhotos($tolerance) as $mkpoint) {
+            foreach ($mkpoint->photos as $photo) {
+                array_push($photos, $photo);
+            }
+        }
+        return $photos;
+    }
+
+    public function getItinerary ($tolerance = 300) {
 
         $spots = [];
         $connected_user = new User($_SESSION['id']);
         $viewed_mkpoints = $connected_user->getViewedMkpoints();
 
-        foreach ($this->getCloseMkpoints() as $mkpoint) {
+        foreach ($this->getCloseMkpoints($tolerance) as $mkpoint) {
             $spot = ['type' => 'mkpoint', 'on_route' => $mkpoint->on_route, 'distance' => $mkpoint->distance, 'name' => $mkpoint->name, 'city' => $mkpoint->city, 'prefecture' => $mkpoint->prefecture, 'elevation' => $mkpoint->elevation, 'viewed' => false];
             if (isset($mkpoint->remoteness)) $spot['remoteness'] = $mkpoint->remoteness;
-            var_dump($mkpoint->id);
-            var_dump($viewed_mkpoints);
+            ///var_dump($mkpoint->id);
+            ///var_dump($viewed_mkpoints);
             if (in_array_r($mkpoint->id, $viewed_mkpoints)) $spot['viewed'] = true;
             array_push($spots, $spot);
         }
 
         function compareDistance ($a, $b) {
-            return strcmp($a['distance'], $b['distance']);
+            return $a['distance'] > $b['distance'];
         }
         usort($spots, "compareDistance");
 

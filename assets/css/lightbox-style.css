@@ -39,7 +39,7 @@
   background-color: #000000bb;
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 4;
   padding: 20px 0px;
   left: 0;
   top: 0;

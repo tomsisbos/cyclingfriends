@@ -4,12 +4,13 @@
 	
 	// Get id from URL
 	if (isset($_GET['id'])) {
+
+        $getSeasons = $db->prepare('SELECT id FROM segments WHERE id = ?');
+        $getSeasons->execute(array($_GET['id']));
 		
-		$segment = new Segment($_GET['id']);
-		
-		if ($segment->exists()) {
+		if ($getSeasons->rowCount() > 0) {
 			
-			///
+			$segment = new Segment($_GET['id']);
 
         } else {
 			

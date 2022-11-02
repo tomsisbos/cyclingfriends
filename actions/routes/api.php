@@ -27,6 +27,11 @@ if (isAjax()) {
             $ride = new Ride($_GET['ride-load']);
             echo json_encode($ride);
         }
+    
+        if (isset($_GET['segment-load'])) {
+            $segment = new Segment($_GET['segment-load']);
+            echo json_encode($segment);
+        }
 
     }
 

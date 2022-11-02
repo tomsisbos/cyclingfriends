@@ -24,6 +24,9 @@ export default class GlobalMap extends Model {
     routeColor = 'blue'
     routeCapColor = 'white'
     routeWidth = 5
+    segmentLocalColor = '#8bffff'
+    segmentRegionalColor = '#2bffff'
+    segmentNationalColor = '#2bc8ff'
 
     setSeason () {
         if (this.month == 12 || this.month == 1 || this.month == 2) {
@@ -1499,8 +1502,10 @@ export default class GlobalMap extends Model {
                         ctx.closePath()
 
                         // Format icon
-                        if (type == 'mkpoint') var img = document.querySelector('#' + type + poi.id).querySelector('img')
-                        else if (type == 'rideCheckpoint') var img = document.querySelector('#' + 'checkpointPoiIcon' + poi.number)
+                        if (type == 'mkpoint') {
+                            poi.number = poi.id
+                            var img = document.querySelector('#' + type + poi.number).querySelector('img')
+                        } else if (type == 'rideCheckpoint') var img = document.querySelector('#' + 'checkpointPoiIcon' + poi.number)
                         else if (type == 'activityCheckpoint') {
                             var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
                             var img = new Image()
@@ -1513,9 +1518,12 @@ export default class GlobalMap extends Model {
                         var height = 15
                         const positionX = poi.position - width / 2
                         const positionY = dataY - cursorLength - height
-                        // If first loading, wait for img to load
+                        // If first loading, wait for img to load if not loaded yet, else use it directly
                         if (!document.querySelector('canvas#offscreenCanvas' + poi.number)) {
-                            img.addEventListener('load', () => {
+                            if (img.complete) drawOnCanvas(img)
+                            else img.addEventListener('load', (img) => drawOnCanvas(img))
+
+                            function drawOnCanvas (img) {
                                 if (img.classList.contains('admin-marker')) {
                                     ctx.strokeStyle = 'yellow'
                                     ctx.lineWidth = 3
@@ -1548,7 +1556,7 @@ export default class GlobalMap extends Model {
                                 ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
                                 ctx.closePath()
                                 ctx.stroke()
-                            } )
+                            }
                         // If img has already been loaded, direcly use it for preventing unnecessary loading time
                         } else {
                             var offscreenCanvas = document.querySelector('canvas#offscreenCanvas' + poi.number)
@@ -1829,6 +1837,9 @@ export default class GlobalMap extends Model {
                         geometry: distanceMarkerPoint.geometry
                     } )
                 }
+                // Set distance markers color property
+                if (this.routeColor == 'blue') var color = 'blue'
+                else var color = 'black'
                 // Add to map
                 if (this.map.getSource('distanceMarkers')) {
                     this.hideDistanceMarkers()
@@ -1851,7 +1862,7 @@ export default class GlobalMap extends Model {
                         'symbol-sort-key': 1
                     },
                     paint: {
-                        'text-color': 'blue',
+                        'text-color': color,
                         'text-halo-color': 'white',
                         'text-halo-width': 1
                     }
@@ -2082,14 +2093,13 @@ export default class GlobalMap extends Model {
     addMkpoints (mkpoints) {
         mkpoints.forEach( async (mkpoint) => {
             let mkpointPopup = new MkpointPopup(mkpoint)
-            console.log(mkpointPopup)
             var content = mkpointPopup.setPopupContent(mkpoint)
 
             let element = document.createElement('div')
             let icon = document.createElement('img')
             icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
             icon.classList.add('mkpoint-icon')
-            if (mkpoint.on_route === true) icon.classList.add('oncourse-marker')
+            if (mkpoint.on_route === true) icon.style.boxShadow = '0 0 1px 3px ' + this.routeColor
             element.appendChild(icon)
             this.map.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
             var marker = new mapboxgl.Marker ( {
@@ -2184,14 +2194,16 @@ export default class GlobalMap extends Model {
             var slope = profileData.averagedPointsElevation[Math.floor(distance * 10)] - profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
         }
 
-        // Build new tooltip
+        // Build tooltip element
         var tooltip = document.createElement('div')
         tooltip.className = 'map-tooltip'
-        tooltip.style.left = 10 + pointX + 'px'
+        // Position tooltip on the map
+        tooltip.style.left = /*10 + */pointX + 'px'
         if (pointY && this.activityId) tooltip.style.top = 'calc(' + (10 - 20 + pointY) + 'px)'
         else if (pointY) tooltip.style.top = 'calc(' + (10 + pointY) + 'px)'
         else if (document.querySelector('.profile-inside-map #elevationProfile')) tooltip.style.bottom = 10 + document.querySelector('#profileBox').offsetHeight + 'px'
         else tooltip.style.bottom = '10px'
+        // Build tooltip html
         if (twinDistance) {
             if (distance < twinDistance) {
                 var dst1 = distance
@@ -2215,7 +2227,7 @@ export default class GlobalMap extends Model {
         this.$map.appendChild(tooltip)
 
         // Prevent tooltip from overflowing at the end of the profile
-        if ((pointX + tooltip.offsetWidth + 30) > this.$map.offsetWidth - 10) {
+        if ((pointX + tooltip.offsetWidth + 30) > document.querySelector('#elevationProfile').offsetWidth - 10) {
             tooltip.style.left = pointX - tooltip.offsetWidth - 30 + 'px'
         }
 
@@ -3067,3 +3079,10 @@ export default class GlobalMap extends Model {
         return activity_id
     }
 }
+
+
+/*
+// Correct left offset depending on whether closest container will be counted or not
+if (this.type = "route") var pointX = e.x + document.querySelector('#profileBox').offsetLeft
+else var pointX = e.x - document.querySelector('#profileBox').offsetLeft
+*/

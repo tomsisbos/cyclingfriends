@@ -33,11 +33,6 @@ class Segment extends Model {
         }
         return $seasons;
     }
-    
-    public function exists () {
-        if (!empty($this->name)) return true;
-        else return false;
-    }
 
     // Get connected user's vote information
     public function getUserVote ($user) {
@@ -53,12 +48,7 @@ class Segment extends Model {
     public function getFeaturedImage () {
 
         // Get all photos in an array
-        $photos = [];
-        foreach ($this->route->getMkpointsWithPhotos() as $mkpoint) {
-            foreach ($mkpoint->photos as $photo) {
-                array_push($photos, $photo);
-            }
-        }
+        $photos = $this->route->getPhotos();
 
         // If at least one photo has been found, return the one with the most likes number
         if (count($photos) > 0) {
