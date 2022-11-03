@@ -566,8 +566,9 @@ form#mkpointForm input[type="file" i] {
 .map-tooltip {
     position: absolute;
     width: auto;
-    min-width: fit-content;
+    min-width: max-content;
     background-color: #ffffffbb;
+    font-size: 12px;
     box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
     border: 3px solid #ffffff00;
     padding: 4px 10px;
@@ -582,6 +583,10 @@ form#mkpointForm input[type="file" i] {
 
 
 /* Profile */
+
+#profileBox {
+    position: relative;
+}
 
 .profile-inside-map#elevationProfile {    
     box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);

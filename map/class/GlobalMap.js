@@ -1641,7 +1641,7 @@ export default class GlobalMap extends Model {
                             }
                             // Display tooltip
                             this.clearTooltip()
-                            this.drawTooltip(this.map.getSource('route')._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, this.$map.offsetHeight - 90, {backgroundColor: '#ffffff'})
+                            this.drawTooltip(this.map.getSource('route')._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
                             // Highlight corresponding mkpoint data
                             if (this.mkpoints && (!document.querySelector('#boxShowMkpoints') || document.querySelector('#boxShowMkpoints').checked)) {
                                 this.mkpoints.forEach( (mkpoint) => {
@@ -2177,6 +2177,8 @@ export default class GlobalMap extends Model {
 
     // Prepare data of [lng, lat] route point and draw tooltip at pointX/pointY position
     async drawTooltip (routeData, lng, lat, pointX, pointY = false, options) {
+        var $profileBox = document.querySelector('#profileBox')
+        var $elevationProfile = document.querySelector('#elevationProfile')
         
         // Distance and twin distance if there is one
         var result = CFUtils.findDistanceWithTwins(routeData, {lng, lat})
@@ -2197,13 +2199,6 @@ export default class GlobalMap extends Model {
         // Build tooltip element
         var tooltip = document.createElement('div')
         tooltip.className = 'map-tooltip'
-        // Position tooltip on the map
-        tooltip.style.left = /*10 + */pointX + 'px'
-        if (pointY && this.activityId) tooltip.style.top = 'calc(' + (10 - 20 + pointY) + 'px)'
-        else if (pointY) tooltip.style.top = 'calc(' + (10 + pointY) + 'px)'
-        else if (document.querySelector('.profile-inside-map #elevationProfile')) tooltip.style.bottom = 10 + document.querySelector('#profileBox').offsetHeight + 'px'
-        else tooltip.style.bottom = '10px'
-        // Build tooltip html
         if (twinDistance) {
             if (distance < twinDistance) {
                 var dst1 = distance
@@ -2224,14 +2219,33 @@ export default class GlobalMap extends Model {
         }
         // In case of an activity, add time data
         if (this.activityId) tooltip.innerHTML += '<br>Time : ' + this.getFormattedTimeFromLngLat([lng, lat])
-        this.$map.appendChild(tooltip)
-
-        // Prevent tooltip from overflowing at the end of the profile
-        if ((pointX + tooltip.offsetWidth + 30) > document.querySelector('#elevationProfile').offsetWidth - 10) {
-            tooltip.style.left = pointX - tooltip.offsetWidth - 30 + 'px'
+        /*
+        if (pointY && this.activityId) tooltip.style.top = 'calc(' + (10 - 20 + pointY) + 'px)'
+        else if (pointY) tooltip.style.top = 'calc(' + (10 + pointY) + 'px)'
+        else if (document.querySelector('.profile-inside-map #elevationProfile')) tooltip.style.bottom = 10 + document.querySelector('#profileBox').offsetHeight + 'px'
+        else tooltip.style.bottom = '10px'*/
+        
+        // Position tooltip on the page
+        // If height argument has been given, display on the map
+        if (pointY) {
+            this.$map.appendChild(tooltip)
+            tooltip.style.left = pointX + 10 + 'px'
+            tooltip.style.top = pointY + 10 + 'px'
+            tooltip.style.borderRadius = '0px 10px 10px 10px'
+        // Else, display on top of the profile by default
+        } else {
+            $profileBox.appendChild(tooltip)
+            tooltip.style.left = pointX + 'px'
+            tooltip.style.top = 0 - tooltip.offsetHeight + 'px'
+            tooltip.style.borderRadius = '10px 10px 10px 0px'
+            // Prevent tooltip from overflowing at the end of the profile
+            if ((pointX + tooltip.offsetWidth) > $elevationProfile.offsetWidth - 10) {
+                var corrector = (pointX + tooltip.offsetWidth) - ($elevationProfile.offsetWidth)
+                tooltip.style.left = pointX - corrector + 'px'
+            }
         }
 
-        // Styling
+        // Dynamic styling
         var slopeStyle = document.querySelector('.map-slope')
         slopeStyle.style.color = this.setSlopeStyle(slope).color
         slopeStyle.style.fontWeight = this.setSlopeStyle(slope).weight
