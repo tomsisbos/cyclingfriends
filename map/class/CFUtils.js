@@ -250,4 +250,28 @@ static reverseGeocoding (response) {
             return [lng, lat]
         }
     }
+
+    static getPeriodString (period) {
+        var first, second
+        switch (period['detail']) {
+            case 1: first = 'early '; break;
+            case 2: first = 'mid '; break;
+            case 3: first = 'late '; break;
+        }
+        switch (period['month']) {
+            case 1: second = 'january'; break;
+            case 2: second = 'february'; break;
+            case 3: second = 'march'; break;
+            case 4: second = 'april'; break;
+            case 5: second = 'may'; break;
+            case 6: second = 'june'; break;
+            case 7: second = 'july'; break;
+            case 8: second = 'august'; break;
+            case 9: second = 'september'; break;
+            case 10: second = 'october'; break;
+            case 11: second = 'november'; break;
+            case 12: second = 'december'; break;
+        }
+        return first + second
+    }
 }

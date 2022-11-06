@@ -45,7 +45,7 @@ export default class SegmentPopup extends Popup {
                 seasonBox += `
                 <div class="popup-season">
                     <div class="popup-season-period">
-                        From ` + season.period_start + ` to ` + season.period_end + `
+                        From ` + CFUtils.getPeriodString(season.period_start) + ` to ` + CFUtils.getPeriodString(season.period_end) + `
                     </div>
                     <div class="popup-season-description">` +
                         season.description + `

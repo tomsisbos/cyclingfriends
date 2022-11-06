@@ -3,16 +3,16 @@
 
 <?php 
 session_start();
-include '../includes/head.php';
-include '../actions/users/securityAction.php';
-include '../actions/segments/segmentAction.php'; ?>
+include 'includes/head.php';
+include 'actions/users/securityAction.php';
+include 'actions/segments/segmentAction.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/lightbox-style.css" />
 <link rel="stylesheet" href="/assets/css/segment.css">
 
 <body> <?php
 
-	include '../includes/navbar.php';
+	include 'includes/navbar.php';
 
 	// Space for general error messages
 	if (isset($errormessage)) echo '<div class="error-block m-0"><p class="error-message">' .$errormessage. '</p></div>';
@@ -44,19 +44,20 @@ include '../actions/segments/segmentAction.php'; ?>
 			</div>
 		</div>
 		
-		<div class="container pg-sg-section-infos">
-			<div class="pg-sg-section-infos-topline">
-				<div class="pg-sg-location">
-					<?= $segment->route->startplace ?>
-				</div>
-				<div class="pg-sg-tags"> <?php 
-					foreach ($segment->tags as $tag => $set) {
-						if ($tag != 'id' AND $set == 1) { ?>
-							<div class="popup-tag tag-dark"> <?= '#' .$tag ?> </div> <?php
-						}
-					} ?>
-				</div>
+		<div class="container pg-sg-topline">
+			<div class="pg-sg-location">
+				<?= $segment->route->startplace ?>
 			</div>
+			<div class="pg-sg-tags"> <?php 
+				foreach ($segment->tags as $tag => $set) {
+					if ($tag != 'id' AND $set == 1) { ?>
+						<div class="popup-tag tag-dark"> <?= '#' .$tag ?> </div> <?php
+					}
+				} ?>
+			</div>
+		</div>
+
+		<div class="container pg-sg-section-infos">
 			<div class="pg-sg-infos-main">
 				<div class="pg-sg-generalinfos">
 					<div class="pg-sg-specs-container">
@@ -88,6 +89,62 @@ include '../actions/segments/segmentAction.php'; ?>
 					} ?>
 			</div>
 		</div> <?php
+
+		// Display timeline if seasonal information exist
+		if (!empty($segment->seasons)) {
+
+			function getPeriodDetailClass ($number) {
+				if ($number == 1) return 'early';
+				if ($number == 2) return 'mid';
+				if ($number == 3) return 'late';
+			} ?>
+
+			<div class="container bg-white">
+				<div class="pg-sg-timeline-container">
+					<div class="pg-sg-timeline"></div> <?php
+					$seasons = $segment->seasons;
+					$prepared_seasons = [];
+					$season_descriptions = [];
+					// For each month of the year
+					for ($month = 1; $month <= 12; $month++) { ?>
+						<div class="pg-sg-timeline-month">
+							<div class="pg-sg-timeline-month-name"><?= $month ?></div>
+							<div class="pg-sg-timeline-season"> <?php
+								// .. and for each period of these months
+								for ($detail = 1; $detail <= 3; $detail++) {
+									$advised_season = ['is_now' => false, 'starts_now' => false, 'description' => ''];
+									// Iterate seasons data and check if any corresponds to current period
+									foreach ($seasons as $season) {
+										if (($season->period_start['month'] < $month || ($season->period_start['month'] == $month && $season->period_start['detail'] <= $detail)) && ($season->period_end['month'] > $month || ($season->period_end['month'] == $month && $season->period_end['detail'] >= $detail))) {
+											$advised_season['is_now'] = true;
+											$advised_season['number'] = $season->number;
+											$advised_season['description'] = $season->description;
+										}
+									}
+									// If it does, build season segment and prepare data to display in the description block
+									if ($advised_season['is_now'] == true) { ?>
+										<div class="pg-sg-seasonline on <?= getPeriodDetailClass($detail) ?>"></div> <?php
+										if (!in_array($advised_season['number'], $prepared_seasons)) {
+											array_push($season_descriptions, ['month' => $month, 'detail' => $detail, 'description' => $advised_season['description']]);
+											array_push($prepared_seasons, $advised_season['number']);
+										}
+									}/* else ?> <div class="pg-sg-seasonline off"></div> <?php*/
+								} ?>
+							</div>
+						</div> <?php
+					} ?>
+				</div> <?php 
+
+				// Write season descriptions in front of relevant period segment ?>
+				<div class="pg-sg-season-descriptions"> <?php
+					for ($month = 1; $month <= 12; $month++) { 
+						foreach ($season_descriptions as $season) {
+							if ($month == $season['month']) echo '<div class="pg-sg-season-description" style="left: calc((100% / 12 * ' . ($season['month'] - 1) . ') + ' . (($season['detail'] * 33 - 33) / 12) . '%)"><p>' . $season['description'] . '</p></div>';
+						} 
+					} ?>
+				</div>
+			</div> <?php
+		}
 
 		// If scenery photos have been found on this route, display them
 		$photos = $segment->route->getPhotos();

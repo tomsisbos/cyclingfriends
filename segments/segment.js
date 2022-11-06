@@ -8,6 +8,10 @@ console.log(segmentMap)
 var $map = document.getElementById('segmentMap')
 const exportButton = document.querySelector('#export')
 
+// Set timeline container height
+var timelineContainer = document.querySelector('.pg-sg-season-descriptions')
+if (timelineContainer) timelineContainer.style.height = (timelineContainer.querySelector('p').offsetHeight) + 'px'
+
 // Get route data from server
 ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, async (segment) => {
     

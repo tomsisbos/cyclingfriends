@@ -1521,9 +1521,10 @@ export default class GlobalMap extends Model {
                         // If first loading, wait for img to load if not loaded yet, else use it directly
                         if (!document.querySelector('canvas#offscreenCanvas' + poi.number)) {
                             if (img.complete) drawOnCanvas(img)
-                            else img.addEventListener('load', (img) => drawOnCanvas(img))
+                            else img.addEventListener('load', () => drawOnCanvas(img))
 
                             function drawOnCanvas (img) {
+                                console.log(img)
                                 if (img.classList.contains('admin-marker')) {
                                     ctx.strokeStyle = 'yellow'
                                     ctx.lineWidth = 3
@@ -2252,7 +2253,7 @@ export default class GlobalMap extends Model {
         if (options) {
             if (options.backgroundColor) tooltip.style.backgroundColor = options.backgroundColor
             if (options.mergeWithCursor) tooltip.style.borderRadius = '4px 4px 4px 0px'
-        }
+        }console.log(tooltip)
     }
 
     clearTooltip () {

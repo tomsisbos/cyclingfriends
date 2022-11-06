@@ -20,30 +20,6 @@ class Coordinates {
         }
     }
 
-    // Build period string from an array containing period of the month and number of the month
-    private function getPeriod($array) {
-        switch ($array[0]) {
-            case 1: $first = 'early '; break;
-            case 2: $first = 'mid '; break;
-            case 3: $first = 'late '; break;
-        }
-        switch ($array[1]) {
-            case 1: $second = 'january'; break;
-            case 2: $second = 'february'; break;
-            case 3: $second = 'march'; break;
-            case 4: $second = 'april'; break;
-            case 5: $second = 'may'; break;
-            case 6: $second = 'june'; break;
-            case 7: $second = 'july'; break;
-            case 8: $second = 'august'; break;
-            case 9: $second = 'september'; break;
-            case 10: $second = 'october'; break;
-            case 11: $second = 'november'; break;
-            case 12: $second = 'december'; break;
-        }
-        return $first . $second;
-    }
-
     // Create a route from these coordinates
     public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
@@ -157,10 +133,8 @@ class Coordinates {
         // Save seasons
         if (!empty($seasons)) {
             forEach($seasons as $key => $season) {
-                $season_start = $this->getPeriod($season['start']);
-                $season_end = $this->getPeriod($season['end']);
-                $insertSeason = $db->prepare('INSERT INTO segment_seasons(segment_id, number, period_start, period_end, description) VALUES (?, ?, ?, ?, ?)');
-                $insertSeason->execute(array($segment_id, $key + 1, $season_start, $season_end, $season['description']));
+                $insertSeason = $db->prepare('INSERT INTO segment_seasons(segment_id, number, period_start_month, period_start_detail, period_end_month, period_end_detail, description) VALUES (?, ?, ?, ?, ?, ?, ?)');
+                $insertSeason->execute(array($segment_id, $key + 1, $season['start'][1], $season['start'][0], $season['end'][1], $season['end'][0], $season['description']));
             }
         }
 
