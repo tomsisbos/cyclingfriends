@@ -1,6 +1,6 @@
 <?php
  
-	require '../actions/databaseAction.php';
+	require 'actions/databaseAction.php';
 	
 	// Get id from URL
 	if (isset($_GET['id'])) {
@@ -23,21 +23,21 @@
 			} else {
 
 				// If id doesn't exist, redirect to myactivities.php
-				header('location: ../activities/myactivities.php');
+				header('location: activities/myactivities.php');
 
 			}            
 
         } else {
 			
             // If id doesn't exist, redirect to myactivities.php
-            header('location: ../activities/myactivities.php');
+            header('location: activities/myactivities.php');
 		
 		}
 	
 	} else {
 		
 	// If id is not set, redirect to myactivities.php
-	header('location: ../activities/myactivities.php');
+	header('location: activities/myactivities.php');
 		
 	}
 ?>

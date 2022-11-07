@@ -46,7 +46,7 @@ define("PREVIEW_PHOTOS_QUANTITY", 5);
 											<a href="/riders/profile.php?id=<?= $activity->user->id ?>"><?= $activity->user->login ?></a>
 										</div>
 										<div class="ac-name">
-											<a href="/activities/activity.php?id=<?= $activity->id ?>">
+											<a href="/activity.php?id=<?= $activity->id ?>">
 												<?= $activity->title ?>
 											</a>
 										</div>
@@ -78,7 +78,7 @@ define("PREVIEW_PHOTOS_QUANTITY", 5);
 							</div>
 
 							<div class="ac-thumbnail-container">
-								<a href="/activities/activity.php?id=<?= $activity->id ?>">
+								<a href="/activity.php?id=<?= $activity->id ?>">
 									<img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
 								</a>
 							</div>
@@ -89,7 +89,7 @@ define("PREVIEW_PHOTOS_QUANTITY", 5);
 							$i = 1;
 							$preview_photos = $activity->getPreviewPhotos(PREVIEW_PHOTOS_QUANTITY);
 							foreach ($preview_photos as $photo) { ?>
-								<a href="/activities/activity.php?id=<?= $activity->id ?>">
+								<a href="/activity.php?id=<?= $activity->id ?>">
 									<div class="ac-photo-container<?php if ($photo->featured) echo ' featured'; ?>">
 										<img class="ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>"> <?php
 										if ($i == PREVIEW_PHOTOS_QUANTITY AND count($activity->getPhotoIds()) > PREVIEW_PHOTOS_QUANTITY) { ?>

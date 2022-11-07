@@ -3,9 +3,9 @@
 
 <?php 
 session_start();
-include '../includes/head.php';
-include '../actions/users/securityAction.php';
-include '../actions/activities/activityAction.php'; ?>
+include 'includes/head.php';
+include 'actions/users/securityAction.php';
+include 'actions/activities/activityAction.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/activity.css">
 
@@ -14,19 +14,19 @@ include '../actions/activities/activityAction.php'; ?>
 <?php
 	// If set as private and connected user does not have admin rights on this activity, redirect to the dashboard
 	if ($activity->privacy == 'Private' AND $activity->user != $connected_user) {
-		header('Location: ../dashboard.php');
+		header('Location: dashboard.php');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the activity author, redirect to the dashboard
 	if ($activity->privacy == 'Friends only' AND $activity->user != $connected_user AND $activity->user->isFriend($connected_user) == false) {
-		header('Location: ../dashboard.php');
+		header('Location: dashboard.php');
 	}
 
-	include '../includes/navbar.php';
+	include 'includes/navbar.php';
 
 	// Space for general error messages
-	if (isset($errormessage)) { echo '<div class="error-block m-0"><p class="error-message">' .$errormessage. '</p></div>'; }
-	if (isset($successmessage)) { echo '<div class="success-block m-0"><p class="success-message">' .$successmessage. '</p></div>'; } ?>
+	if (isset($errormessage)) echo '<div class="error-block m-0"><p class="error-message">' .$errormessage. '</p></div>';
+	if (isset($successmessage)) echo '<div class="success-block m-0"><p class="success-message">' .$successmessage. '</p></div>'; ?>
 	
 	<div class="container-fluid"> <?php 
 
@@ -52,9 +52,9 @@ include '../actions/activities/activityAction.php'; ?>
 				</div>
 				<div class="td-row push"> <?php
 					// Include admin buttons if the user has admin rights on this activity
-					if ($activity->user == $connected_user) include '../includes/activities/admin-buttons.php'; /*
-					// Else, include participation buttons
-					else include '../includes/activities/user-buttons.php'; */?>
+					if ($activity->user == $connected_user) include 'includes/activities/admin-buttons.php'; /*
+					// Else, include user buttons
+					else include 'includes/activities/user-buttons.php'; */?>
 				</div>
 			</div>
 		</div> <?php
@@ -62,7 +62,7 @@ include '../actions/activities/activityAction.php'; ?>
         /*
         // Include admin panel if the user has admin rights on this activity
         if ($ride->author == $connected_user) {
-            include '../includes/activity/admin-panel.php';
+            include 'includes/activity/admin-panel.php';
         }*/ ?>
 
 		<div class="container p-0 pg-ac-specs-container">

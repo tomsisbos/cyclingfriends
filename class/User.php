@@ -558,10 +558,10 @@ class User extends Model {
     }
 
     // Get currently saved viewed mkpoints list
-    public function getViewedMkpoints () {
+    public function getViewedMkpoints ($limit = 99999) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getViewedMkpoints = $db->prepare('SELECT mkpoint_id, activity_id FROM user_mkpoints');
-        $getViewedMkpoints->execute();
+        $getViewedMkpoints = $db->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
+        $getViewedMkpoints->execute(array($this->id));
         $viewed_mkpoints = $getViewedMkpoints->fetchAll(PDO::FETCH_ASSOC);
         foreach ($viewed_mkpoints as $viewed_mkpoint) {
             $checkIfActivityExists = $db->prepare('SELECT id FROM activities WHERE id = ?');

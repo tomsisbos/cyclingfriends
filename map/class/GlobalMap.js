@@ -44,7 +44,7 @@ export default class GlobalMap extends Model {
 
     addController () {
         var controller = document.createElement('div')
-        controller.className = 'map-controller map-controller-left flex-column-reverse'
+        controller.className = 'map-controller map-controller-left'
         this.$map.appendChild(controller)
         return controller
     }
@@ -91,7 +91,7 @@ export default class GlobalMap extends Model {
         // Add style control
         // Map options container
         var mapContainer = document.createElement('div')
-        mapContainer.className = 'map-controller-block fullwidth flex-column'
+        mapContainer.className = 'map-controller-block flex-column'
         controller.appendChild(mapContainer)
         // Label
         var mapOptionsLabel = document.createElement('div')
@@ -100,7 +100,7 @@ export default class GlobalMap extends Model {
         mapContainer.appendChild(mapOptionsLabel)
         // Line 1
         let line1 = document.createElement('div')
-        line1.className = 'map-controller-line'
+        line1.className = 'map-controller-line hide-on-mobiles'
         mapContainer.appendChild(line1)
         this.dislayKonbinisBox = document.createElement('input')
         this.dislayKonbinisBox.id = 'dislayKonbinisBox'
@@ -117,7 +117,7 @@ export default class GlobalMap extends Model {
         line1.appendChild(dislayKonbinisBoxLabel)
         // Line 2
         let line2 = document.createElement('div')
-        line2.className = 'map-controller-line'
+        line2.className = 'map-controller-line hide-on-mobiles'
         mapContainer.appendChild(line2)
         this.displayAmenitiesBox = document.createElement('input')
         this.displayAmenitiesBox.id = 'dislayKonbinisBox'
@@ -132,6 +132,16 @@ export default class GlobalMap extends Model {
         displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
         displayAmenitiesBoxLabel.innerText = 'Display amenities'
         line2.appendChild(displayAmenitiesBoxLabel)
+        
+        // Hide and open on click on mobile display
+        mapOptionsLabel.addEventListener('click', () => {
+            mapContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    mapOptionsLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
     }
 
     addRouteControl () {
@@ -140,7 +150,7 @@ export default class GlobalMap extends Model {
         else var controller = this.addController()
         // Container
         var routeContainer = document.createElement('div')
-        routeContainer.className = 'map-controller-block fullwidth flex-column'
+        routeContainer.className = 'map-controller-block flex-column'
         controller.appendChild(routeContainer)
         // Label
         var routeOptionsLabel = document.createElement('div')
@@ -149,7 +159,7 @@ export default class GlobalMap extends Model {
         routeContainer.appendChild(routeOptionsLabel)
         // Line 3
         let line3 = document.createElement('div')
-        line3.className = 'map-controller-line'
+        line3.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line3)
         var boxShowDistanceMarkers = document.createElement('input')
         boxShowDistanceMarkers.id = 'boxShowDistanceMarkers'
@@ -164,7 +174,7 @@ export default class GlobalMap extends Model {
         } )
         // Line 4
         let line4 = document.createElement('div')
-        line4.className = 'map-controller-line'
+        line4.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line4)
         var boxSet3D = document.createElement('input')
         boxSet3D.setAttribute('type', 'checkbox')
@@ -182,7 +192,7 @@ export default class GlobalMap extends Model {
         } )
         // Line 5
         let line5 = document.createElement('div')
-        line5.className = 'map-controller-line'
+        line5.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line5)
         var boxShowMkpoints = document.createElement('input')
         boxShowMkpoints.id = 'boxShowMkpoints'
@@ -205,7 +215,7 @@ export default class GlobalMap extends Model {
         } )
         // Camera buttons
         let line6 = document.createElement('div')
-        line6.className = 'map-controller-line'
+        line6.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line6)
         // Focus button
         var buttonFocus = document.createElement('button')
@@ -229,8 +239,18 @@ export default class GlobalMap extends Model {
         } )
         // Edition buttons
         let line7 = document.createElement('div')
-        line7.className = 'map-controller-line'
+        line7.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line7)
+
+        // Hide and open on click on mobile display
+        routeOptionsLabel.addEventListener('click', () => {
+            routeContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    routeOptionsLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
     }
 
     async load (element, style, center = [138.924, 35.582]) {
@@ -1524,7 +1544,6 @@ export default class GlobalMap extends Model {
                             else img.addEventListener('load', () => drawOnCanvas(img))
 
                             function drawOnCanvas (img) {
-                                console.log(img)
                                 if (img.classList.contains('admin-marker')) {
                                     ctx.strokeStyle = 'yellow'
                                     ctx.lineWidth = 3
@@ -2253,7 +2272,7 @@ export default class GlobalMap extends Model {
         if (options) {
             if (options.backgroundColor) tooltip.style.backgroundColor = options.backgroundColor
             if (options.mergeWithCursor) tooltip.style.borderRadius = '4px 4px 4px 0px'
-        }console.log(tooltip)
+        }
     }
 
     clearTooltip () {
@@ -2668,26 +2687,28 @@ export default class GlobalMap extends Model {
 
                     /// Set data events
                     // Checkpoints
-                    if (this.data.checkpoints) {
-                        const displayRange = 1.5 // km
-                        this.data.checkpoints.forEach( (checkpoint) => {
-                            if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) < displayRange && !checkpoint.marker.getPopup().isOpen()) {
-                                checkpoint.marker.togglePopup()
-                            } else if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) > displayRange && checkpoint.marker.getPopup().isOpen()) {
-                                checkpoint.marker.togglePopup()
-                            }
-                        } )
-                    }
-                    // Photos
-                    if (this.data.photos) {
-                        const displayRange = 0.8 // km
-                        this.data.photos.forEach( (photo) => {
-                            if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) < displayRange && !photo.marker.getElement().classList.contains('half-grown')) {
-                                photo.marker.getElement().classList.add('half-grown')
-                            } else if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) > displayRange && photo.marker.getElement().classList.contains('half-grown')) {
-                                photo.marker.getElement().classList.remove('half-grown')
-                            }
-                        } )
+                    if (this.data) {
+                        if (this.data.checkpoints) {
+                            const displayRange = 1.5 // km
+                            this.data.checkpoints.forEach( (checkpoint) => {
+                                if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) < displayRange && !checkpoint.marker.getPopup().isOpen()) {
+                                    checkpoint.marker.togglePopup()
+                                } else if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) > displayRange && checkpoint.marker.getPopup().isOpen()) {
+                                    checkpoint.marker.togglePopup()
+                                }
+                            } )
+                        }
+                        // Photos
+                        if (this.data.photos) {
+                            const displayRange = 0.8 // km
+                            this.data.photos.forEach( (photo) => {
+                                if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) < displayRange && !photo.marker.getElement().classList.contains('half-grown')) {
+                                    photo.marker.getElement().classList.add('half-grown')
+                                } else if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) > displayRange && photo.marker.getElement().classList.contains('half-grown')) {
+                                    photo.marker.getElement().classList.remove('half-grown')
+                                }
+                            } )
+                        }
                     }
                 }
 

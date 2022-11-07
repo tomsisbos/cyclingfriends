@@ -55,9 +55,9 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
     var map = await activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.data.routeData.geometry.coordinates[0])
 
     // Build controls
-    activityMap.addRouteControl()
-    activityMap.addOptionsControl()
     activityMap.addStyleControl()
+    activityMap.addOptionsControl()
+    activityMap.addRouteControl()
 
     // Add route layer and paint route properties
     activityMap.setGrabber()

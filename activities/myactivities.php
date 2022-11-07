@@ -32,14 +32,14 @@ include '../actions/users/securityAction.php';
 				<div class="my-ac-card<?php ///if ($number % 2 == 0) echo ' card-reverse' ?>">
 
 					<div class="ac-thumbnail-container">
-						<a href="/activities/activity.php?id=<?= $activity->id ?>">
+						<a href="/activity.php?id=<?= $activity->id ?>">
 							<img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
 						</a>
 					</div>
 
 					<div class="my-ac-infos-container">
 						<div class="ac-name">
-							<a href="/activities/activity.php?id=<?= $activity->id ?>">
+							<a href="/activity.php?id=<?= $activity->id ?>">
 								<?= $activity->title ?>
 							</a>
 						</div>

@@ -1,0 +1,75 @@
+.dashboard-title {
+    font-weight: bold;
+    display: inline-block;
+}
+.dashboard-title-block {
+    color: #fff;
+    padding: 15px;
+    background-color: #bbbbbb;
+}
+
+.dashboard-block {
+    background-color: #fff;
+    padding: 10px;
+}
+.dashboard-block::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+.dashboard-block::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #f0f0f0;
+}
+.dashboard-block::-webkit-scrollbar-thumb {
+    background: #bbbbbb;
+    border-radius: 10px;
+}
+.dashboard-block::-webkit-scrollbar-thumb:hover {
+    background: #c1c1c1; 
+}
+
+.viewed-mkpoints-list {
+    max-height: 200px;
+    overflow: auto;
+}
+.viewed-mkpoints {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.viewed-mkpoint-activity-date {
+    color: #bbbbbb;
+}
+.viewed-mkpoint-name {
+    font-weight: bold;
+}
+.viewed-mkpoint {
+    display: flex;
+    gap: 10px;
+}
+.viewed-mkpoint-thumbnail {
+    width: 2em;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.viewed-mkpoint-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.viewed-mkpoint-block {
+    display: flex;
+    gap: 4px;
+    margin: 10px 0px;
+}
+.viewed-mkpoint-prefecture-block {
+    padding: 10px;
+    background-color: #bbb;
+    color: #fff;
+    cursor: pointer;
+}
+.viewed-mkpoint-city-container {
+    padding: 6px 10px;
+    background-color: #fff;
+}

@@ -128,7 +128,7 @@ export default class BuildRouteMap extends GlobalMap {
         } )
         // Camera buttons
         let line8 = document.createElement('div')
-        line8.className = 'map-controller-line'
+        line8.className = 'map-controller-buttons'
         routeContainer.appendChild(line8)
         // Focus button
         var buttonFocus = document.createElement('button')
@@ -154,7 +154,7 @@ export default class BuildRouteMap extends GlobalMap {
         buttonFly.setAttribute('disabled', 'disabled')
         // Edition buttons
         let line9 = document.createElement('div')
-        line9.className = 'map-controller-line'
+        line9.className = 'map-controller-buttons'
         routeContainer.appendChild(line9)
         // Clear button
         var buttonClear = document.createElement('button')
@@ -204,6 +204,16 @@ export default class BuildRouteMap extends GlobalMap {
             }
         } )
         buttonSave.setAttribute('disabled', 'disabled')
+        
+        // Hide and open on click on mobile display
+        routeOptionsLabel.addEventListener('click', () => {
+            routeContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    routeOptionsLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
     }
 
     async draw (end) {

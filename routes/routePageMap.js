@@ -61,8 +61,8 @@ ajaxGetRequest (routePageMap.apiUrl + "?route-load=" + routePageMap.routeId, asy
 
     /* -- Controls -- */
 
-    routePageMap.addRouteControl()
     routePageMap.addStyleControl()
+    routePageMap.addRouteControl()
 
     // Controls
     document.querySelector('.mapboxgl-ctrl-logo').style.display = 'none'

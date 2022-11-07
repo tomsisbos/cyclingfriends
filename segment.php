@@ -38,7 +38,7 @@ include 'actions/segments/segmentAction.php'; ?>
 						<button class="btn button box-shadow" type="button">Add to favorites</button>
 					</div>
 					<a id="export" download>
-						<button class="btn button" type="button">Export as *.gpx</button>
+						<button class="btn button box-shadow" type="button">Export as *.gpx</button>
 					</a>
 				</div>
 			</div>
@@ -139,7 +139,7 @@ include 'actions/segments/segmentAction.php'; ?>
 				<div class="pg-sg-season-descriptions"> <?php
 					for ($month = 1; $month <= 12; $month++) { 
 						foreach ($season_descriptions as $season) {
-							if ($month == $season['month']) echo '<div class="pg-sg-season-description" style="left: calc((100% / 12 * ' . ($season['month'] - 1) . ') + ' . (($season['detail'] * 33 - 33) / 12) . '%)"><p>' . $season['description'] . '</p></div>';
+							if ($month == $season['month']) echo '<div class="pg-sg-season-description" style="margin-left: calc((100% / 12 * ' . ($season['month'] - 1) . ') + ' . (($season['detail'] * 33 - 33) / 12) . '%); --margin-left: calc((100% / 12 * ' . ($season['month'] - 1) . ') + ' . (($season['detail'] * 33 - 33) / 12) . '%)"><p>' . $season['description'] . '</p></div>';
 						} 
 					} ?>
 				</div>

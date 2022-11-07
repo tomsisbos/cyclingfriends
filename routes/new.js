@@ -4,18 +4,19 @@ import BuildRouteMap from "/map/class/BuildRouteMap.js"
 var buildRouteMap = new BuildRouteMap ()
 
 var map = await buildRouteMap.load(document.getElementById('BuildRouteMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+
+// Controls
+buildRouteMap.addStyleControl()
+buildRouteMap.addBuildRouteControl()
+buildRouteMap.addOptionsControl()
+
+// Layers
 buildRouteMap.addSources()
 buildRouteMap.addAmenityLayers()
 buildRouteMap.addKonbiniLayers()
 buildRouteMap.addCyclingLayers()
 
 const canvas = map.getCanvasContainer()
-
-
-/* -- Controls -- */
-
-buildRouteMap.addOptionsControl()
-buildRouteMap.addBuildRouteControl()
 
 // On map style change
 map.on('styledata', (e) => {
@@ -35,8 +36,6 @@ map.on('styledata', (e) => {
         buttonFly.removeAttribute('disabled')
     }
 } )
-
-buildRouteMap.addStyleControl()
 
 // Controls
 map.addControl(

@@ -51,6 +51,157 @@ export default class MapMap extends GlobalMap {
         if (this.displaySegmentsBox.checked) this.updateSegments()
     }
 
+    addOptionsControl () {
+        // Get (or add) controller container
+        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        else var controller = this.addController()
+        // Map options
+        var optionsContainer = document.createElement('div')
+        optionsContainer.className = 'map-controller-block flex-column'
+        controller.appendChild(optionsContainer)
+        // Label
+        var optionsLabel = document.createElement('div')
+        optionsLabel.innerText = 'Options'
+        optionsLabel.className = 'map-controller-label'
+        optionsContainer.appendChild(optionsLabel)
+        // Line 1
+        let line1 = document.createElement('div')
+        line1.className = 'map-controller-line'
+        optionsContainer.appendChild(line1)
+        this.displayMkpointsBox = document.createElement('input')
+        this.displayMkpointsBox.id = 'displayMkpointsBox'
+        this.displayMkpointsBox.setAttribute('type', 'checkbox')
+        this.displayMkpointsBox.setAttribute('checked', 'checked')
+        line1.appendChild(this.displayMkpointsBox)
+        var displayMkpointsBoxLabel = document.createElement('label')
+        displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBox')
+        displayMkpointsBoxLabel.innerText = 'Show scenery points'
+        line1.appendChild(displayMkpointsBoxLabel)
+        this.displayMkpointsBox.addEventListener('change', () => {
+            if (this.displayMkpointsBox.checked) this.updateMkpoints()
+            else this.hideMkpoints()
+        } )
+        // Line 2
+        let line2 = document.createElement('div')
+        line2.className = 'map-controller-line'
+        optionsContainer.appendChild(line2)
+        this.displayRidesBox = document.createElement('input')
+        this.displayRidesBox.id = 'displayRidesBox'
+        this.displayRidesBox.setAttribute('type', 'checkbox')
+        this.displayRidesBox.setAttribute('checked', 'true')
+        line2.appendChild(this.displayRidesBox)
+        this.displayRidesBox.addEventListener('click', () => {
+            if (this.displayRidesBox.checked) this.updateRides()
+            else this.ridesCollection.forEach( (ride) => {
+                if (map.getLayer('ride' + ride.id)) this.hideRide(ride)
+            } )
+            this.ridesCollection = []
+        } )
+        var displayRidesBoxLabel = document.createElement('label')
+        displayRidesBoxLabel.setAttribute('for', 'displayRidesBox')
+        displayRidesBoxLabel.innerText = 'Display rides'
+        line2.appendChild(displayRidesBoxLabel)
+        // Line 3
+        let line3 = document.createElement('div')
+        line3.className = 'map-controller-line'
+        optionsContainer.appendChild(line3)
+        this.displaySegmentsBox = document.createElement('input')
+        this.displaySegmentsBox.id = 'displaySegmentsBox'
+        this.displaySegmentsBox.setAttribute('type', 'checkbox')
+        this.displaySegmentsBox.setAttribute('checked', 'true')
+        line3.appendChild(this.displaySegmentsBox)
+        this.displaySegmentsBox.addEventListener('click', () => {
+            if (this.displaySegmentsBox.checked) this.updateSegments()
+            else this.segmentsCollection.forEach( (segment) => {
+                if (map.getLayer('segment' + segment.id)) this.hideSegment(segment)
+            } )
+            this.segmentsCollection = []
+        } )
+        var displaySegmentsBoxLabel = document.createElement('label')
+        displaySegmentsBoxLabel.setAttribute('for', 'displaySegmentsBox')
+        displaySegmentsBoxLabel.innerText = 'Display segments'
+        line3.appendChild(displaySegmentsBoxLabel)
+        // Line 4
+        let line4 = document.createElement('div')
+        line4.className = 'map-controller-line'
+        optionsContainer.appendChild(line4)
+        this.dislayKonbinisBox = document.createElement('input')
+        this.dislayKonbinisBox.id = 'dislayKonbinisBox'
+        this.dislayKonbinisBox.setAttribute('type', 'checkbox')
+        this.dislayKonbinisBox.setAttribute('checked', 'true')
+        line4.appendChild(this.dislayKonbinisBox)
+        this.dislayKonbinisBox.addEventListener('click', () => {
+            if (this.dislayKonbinisBox.checked) this.addKonbiniLayers()
+            else this.hideKonbiniLayers()
+        } )
+        var dislayKonbinisBoxLabel = document.createElement('label')
+        dislayKonbinisBoxLabel.setAttribute('for', 'dislayKonbinisBox')
+        dislayKonbinisBoxLabel.innerText = 'Display konbinis'
+        line4.appendChild(dislayKonbinisBoxLabel)
+        // Line 5
+        let line5 = document.createElement('div')
+        line5.className = 'map-controller-line'
+        optionsContainer.appendChild(line5)
+        this.displayAmenitiesBox = document.createElement('input')
+        this.displayAmenitiesBox.id = 'dislayKonbinisBox'
+        this.displayAmenitiesBox.setAttribute('type', 'checkbox')
+        this.displayAmenitiesBox.setAttribute('checked', 'true')
+        line5.appendChild(this.displayAmenitiesBox)
+        this.displayAmenitiesBox.addEventListener('click', () => {
+            if (this.displayAmenitiesBox.checked) this.addAmenityLayers()
+            else this.hideAmenityLayers()
+        } )
+        var displayAmenitiesBoxLabel = document.createElement('label')
+        displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
+        displayAmenitiesBoxLabel.innerText = 'Display amenities'
+        line5.appendChild(displayAmenitiesBoxLabel)
+    }
+
+    addEditorControl () {
+        // Get (or add) controller container
+        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        else var controller = this.addController()
+        // Container
+        var editorContainer = document.createElement('div')
+        editorContainer.className = 'map-controller-block flex-column bg-admin'
+        controller.appendChild(editorContainer)
+        // Label
+        var editorLabel = document.createElement('div')
+        editorLabel.innerText = 'Editor'
+        editorLabel.className = 'map-controller-label'
+        editorContainer.appendChild(editorLabel)
+        // Line 1
+        let line1 = document.createElement('div')
+        line1.className = 'map-controller-line'
+        editorContainer.appendChild(line1)
+        var editModeBox = document.createElement('input')
+        editModeBox.id = 'editModeBox'
+        editModeBox.setAttribute('type', 'checkbox')
+        line1.appendChild(editModeBox)
+        editModeBox.addEventListener('click', () => {
+            this.editMode()
+        } ) // Data treatment
+        var editModeBoxLabel = document.createElement('label')
+        editModeBoxLabel.setAttribute('for', 'editModeBox')
+        editModeBoxLabel.innerText = 'Edit scenery points'
+        line1.appendChild(editModeBoxLabel)
+        // Line 2
+        let line2 = document.createElement('div')
+        line2.className = 'map-controller-line'
+        editorContainer.appendChild(line2)
+        var highlightMyMkpointsBox = document.createElement('input')
+        highlightMyMkpointsBox.id = 'highlightMyMkpointsBox'
+        highlightMyMkpointsBox.setAttribute('type', 'checkbox')
+        line2.appendChild(highlightMyMkpointsBox)
+        highlightMyMkpointsBox.addEventListener('click', () => {
+            this.highlightMyMkpointsMode()
+        } ) // Data treatment
+        var highlightMyMkpointsBoxLabel = document.createElement('label')
+        highlightMyMkpointsBoxLabel.setAttribute('for', 'highlightMyMkpointsBox')
+        highlightMyMkpointsBoxLabel.innerText = 'Highlight my scenery points'
+        line2.appendChild(highlightMyMkpointsBoxLabel)
+    }
+
     setMkpoint (mkpoint) {        
         // Add marker to the map and to markers collection
         let mkpointPopup = new MkpointPopup()
@@ -60,7 +211,7 @@ export default class MapMap extends GlobalMap {
         let icon = document.createElement('img')
         icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
         icon.classList.add('mkpoint-icon')
-        if (mkpointPopup.activity_id) element.classList.add('moving-marker') // Highlight if visited
+        if (mkpointPopup.activity_id) element.classList.add('visited-marker') // Highlight if visited
         element.appendChild(icon)
         this.map.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
@@ -715,5 +866,95 @@ export default class MapMap extends GlobalMap {
         // Remove segments
         this.segmentsCollection.forEach( (segment) => this.hideSegment(segment))
         this.segmentsCollection = []
+    }
+
+    // Create a numeral marker that can be deleted on right click
+    editMode () {
+
+        var editModeBox = document.querySelector('#editModeBox')
+
+        // If box is checked
+        if (editModeBox.checked) {
+            this.map.on('click', (e) => {
+                this.addNewTempMarker(e)
+            } )
+            this.mode = 'edit'
+            // Enable removing temp marker on left click
+            this.tempMarkerCollection.forEach((existingMarker) => {
+                let $existingMarker = existingMarker.getElement()
+                let popup = existingMarker.getPopup()
+                popup.options.className = 'hidden' // Hide popup in edit mode
+                $existingMarker.addEventListener('contextmenu', this.removeOnClick)
+            } )
+            // Disable opening popup on click on mkpoint markers
+            this.mkpointsMarkerCollection.forEach((mkpoint) => mkpoint.getPopup().options.className = 'marker-popup, hidden')
+            // Highlight mkpoints
+            this.mkpointsMarkerCollection.forEach((mkpoint) => {
+                if (mkpoint._popup.user_id == this.session.id) mkpoint._element.firstChild.classList.add('admin-marker')
+            } )
+            // Change cursor style
+            this.map.getCanvas().style.cursor = 'crosshair'
+            // Enable dragging on temp markers
+            this.tempMarkerCollection.forEach((marker) => marker.setDraggable(true))
+            console.log('editModeMarker has been enabled.')
+
+        // If box is not checked
+        } else {
+            this.map.off('click', (e) => {
+                this.addNewTempMarker(e)
+            } )
+            this.mode = 'default'
+            // Disable removing temp marker on left click
+            this.tempMarkerCollection.forEach((existingMarker) => {
+                let $existingMarker = existingMarker.getElement()
+                let popup = existingMarker.getPopup()
+                popup.options.className = 'marker-popup' // Display popup outside edit mode
+                popup.id = $existingMarker.id // Attributes an ID to popup
+                popup.elevation = existingMarker.elevation // Pass elevation data to the popup
+                $existingMarker.removeEventListener('contextmenu', this.removeOnClick)
+            } )
+            // Enable opening popup on click on mkpoint markers
+            this.mkpointsMarkerCollection.forEach((mkpoint) => mkpoint.getPopup().options.className = 'marker-popup')
+            // Remove highlighting from markers
+            this.mkpointsMarkerCollection.forEach((mkpoint) =>  {
+                if (mkpoint._popup.user_id == this.session.id) mkpoint._element.firstChild.classList.remove('admin-marker')
+            } )
+            // Change cursor style
+            this.map.getCanvas().style.cursor = 'grab'
+            // Disable dragging on temp markers
+            this.tempMarkerCollection.forEach((marker) => marker.setDraggable(false))
+            console.log('editModeMarker has been disabled.')
+        }
+    }
+
+    // On edit mode, user can add markers by clicking on the map and removing them by right clicking on the marker
+    addNewTempMarker (e) {
+        var elevation = Math.floor(this.map.queryTerrainElevation(e.lngLat))
+        var marker = this.addTempMarker(e.lngLat, elevation)
+        marker.getElement().addEventListener('contextmenu', this.removeOnClick)
+    }
+
+    // Highlighting connected user markers 
+    highlightMyMkpointsMode () {
+
+        var highlightMyMkpointsBox = document.querySelector('#highlightMyMkpointsBox')
+
+        if (highlightMyMkpointsBox.checked) {
+            this.highlight = true
+            document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
+                if ($icon.parentElement.dataset.user_id === this.session.id) {
+                    $icon.classList.add('admin-marker')
+                }
+            } )
+        } else {
+            this.highlight = false
+            if (this.mode != 'edit') {
+                document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
+                    if ($icon.parentElement.dataset.user_id === this.session.id) {
+                        $icon.classList.remove('admin-marker')
+                    }
+                } )
+            }
+        }
     }
 }

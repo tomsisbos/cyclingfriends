@@ -93,10 +93,17 @@
 .pg-sg-seasonline.late {
     left: 66%;
 }
-.pg-sg-season-descriptions {
+/*.pg-sg-season-descriptions {
     display: flex;
     position: relative;
     max-height: 180px;
+}*/
+.pg-sg-season-descriptions {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    max-height: 180px;
+    min-width: 100%;
 }
 .pg-sg-season-description::before {
     content: '';
@@ -107,11 +114,21 @@
     border-left: 1px solid #ff5555;
     height: 14px;
 }
-.pg-sg-season-description {
+/*.pg-sg-season-description {
     width: calc(100% / 12 * 3);
     top: 0px;
     position: absolute;
     height: inherit;
+    padding-top: 0px;
+    border-radius: 0px 10px 10px 10px;
+}*/
+.pg-sg-season-description {
+    width: calc(100% / 12 * 3);
+    max-width: fit-content;
+    top: 0px;
+    position: absolute;
+    height: inherit;
+    max-height: 100%;
     padding-top: 0px;
     border-radius: 0px 10px 10px 10px;
 }
@@ -119,7 +136,8 @@
     background-color: #ffffff;
     padding: 10px;
     overflow: auto;
-    height: 100%;
+    height: auto;
+    max-height: 100%;
     border: 1px solid #ff5555;
     border-radius: 0px 10px 10px 10px;
     text-align: justify;
@@ -219,13 +237,12 @@
         display: block;
         height: 100% !important;
         max-height: 100%;
-        padding-top: 10px;
     }
     .pg-sg-season-description {
         position: relative;
-        left: inherit !important;
         height: auto;
-        width: auto;
+        min-width: 100%;
+        margin-left: 0px !important;
     }
     .pg-sg-season-description p {
         border: none;
@@ -242,6 +259,7 @@
         background-color: #ff5555;
         display: inline-block;
         top: auto;
+        margin-left: calc(var(--margin-left)) !important;
     }
 }
 

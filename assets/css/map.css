@@ -65,7 +65,10 @@
     box-shadow: 0 0 1px 3px #ff5555 !important;
 }
 .moving-marker img {
-    box-shadow: 0 0 1px 3px green;
+    box-shadow: 0 0 1px 3px #bbbbff;
+}
+.visited-marker img {
+    box-shadow: 0 0 1px 3px #00e06e;
 }
 .oncourse-marker {
     box-shadow: 0 0 1px 3px blue;
@@ -628,6 +631,7 @@ form#mkpointForm input[type="file" i] {
 .map-controller {
     position: absolute;
     display: flex;
+    flex-direction: column;
     align-items: end;
     gap: 10px;
     bottom: 10px;
@@ -667,6 +671,7 @@ form#mkpointForm input[type="file" i] {
     gap: 6px;
     align-self: flex-end;
     pointer-events: auto;
+    width: 100%;
 }
 .map-controller-left .map-controller-block {
     align-self: flex-start;
@@ -680,6 +685,34 @@ form#mkpointForm input[type="file" i] {
     align-items: center;
     gap: 6px;
 }
+.map-controller-buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 .map-controller-button:hover {
 	background-color: #f2f2f2;
+}
+
+@media (max-width: 800px) {
+    .map-controller {
+        flex-direction: row;
+        flex-flow: wrap;
+        padding-right: 38px;
+    }
+    .map-controller-label::after {
+        content: ' \25BE';
+    }
+    .map-controller-label.up::after {
+        content: ' \25B4';
+    }
+    .map-controller-label {
+        cursor: pointer;
+    }
+    .hide-on-mobiles {
+        display: none;
+    }
+    .map-controller-block {
+        width: initial;
+    }
 }

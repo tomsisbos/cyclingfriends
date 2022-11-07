@@ -73,6 +73,13 @@ legend {
 
 a {
 	color: #5C9999;
+	text-decoration: none;
+}
+a:visited, a:target, a:active {
+	color: #00e06e;
+}
+a:hover {
+	color: pink;
 }
 
 /* Font */
@@ -1044,7 +1051,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .error-block {
-    background: #FE0C0B;
+    background: #ff5555;
 	padding: 20px;
 	margin: 20px 0px;
 }
@@ -1055,7 +1062,7 @@ input[type="range"]::-webkit-slider-thumb {
 	color: white;
 }
 .success-block {
-    background: green;
+    background: #00e06e;
 	padding: 20px;
 	margin: 20px 0px;
 }

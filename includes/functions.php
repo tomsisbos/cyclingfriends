@@ -41,13 +41,34 @@ function getCurrentPageUrl () {
 	return $url; 
 }
 
-// Function for checking whether a value is found in a multidimensionnal array or not
+// Function for checking whether a value is found in a multidimensional array or not
 function in_array_r ($needle, $haystack, $strict = false) {
     foreach ($haystack as $item) {
         if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
             return true;
         }
     }
+    return false;
+}
+
+// Function for checking whether a key is found in a multidimensional array or not
+function in_array_key_r($needle, $haystack) {
+
+    // is in base array?
+    if (array_key_exists($needle, $haystack)) {
+        return true;
+    }
+
+    // check arrays contained in this array
+    foreach ($haystack as $element) {
+        if (is_array($element)) {
+            if (in_array_key_r($needle, $element)) {
+                return true;
+            }
+        }
+
+    }
+
     return false;
 }
 

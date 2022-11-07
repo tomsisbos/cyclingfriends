@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<?php 
+	
+<link rel="stylesheet" href="/assets/css/lightbox-style.css" /> <?php 
 
 session_start();
 include '../../includes/head.php';
@@ -65,7 +65,7 @@ include '../../actions/riders/profile/profileInfosAction.php';
 	</div>
 	
 	<?php // Include friends
-	include '../../includes/riders/profile/friends.php'; ?>
+	include '../../includes/riders/profile/friends-list.php'; ?>
 	
 	<div class="container d-flex flex-column gap end">
 	

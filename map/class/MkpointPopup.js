@@ -17,7 +17,7 @@ export default class MkpointPopup extends Popup {
         if (this.activity_id) {
             visitedIcon = `
                 <div id="visited-icon" title="You have visited this mkpoint.">
-                    <a href="/activities/activity.php?id=` + this.activity_id + `" target="_blank">
+                    <a href="/activity.php?id=` + this.activity_id + `" target="_blank">
                         <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
                     </a>
                 </div>

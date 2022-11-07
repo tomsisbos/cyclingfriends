@@ -73,17 +73,18 @@ export default class SegmentPopup extends Popup {
         // Set content
         this.popup.setHTML(`
         <div class="popup-img-container">
-            ` // <a target="_blank" href="/segments/segment.php?id=` + this.data.id + `">
-            + `<div class="popup-img-background">
-                Check details
-                <img id="segmentFeaturedImage` + this.data.id + `" class="popup-img popup-img-with-background" />
-            </div>
-            <div class="popup-icons"></div>` +
-            // </a>
-        `</div>
+            <a target="_blank" href="/segment.php?id=` + this.data.id + `">
+                <div class="popup-img-background">
+                    Check details
+                    <img id="segmentFeaturedImage` + this.data.id + `" class="popup-img popup-img-with-background" />
+                </div>
+            </a>
+            <div class="popup-icons"></div>
+        </div>
         <div class="popup-content">
             <div class="popup-properties">
-                <div class="popup-properties-name">` + this.data.name + 
+                <div class="popup-properties-name">
+                    <a target="_blank" style="text-decoration: none" href="/segment.php?id=` + this.data.id + `">` + this.data.name + `</a>` +
                     favourite + `
                     <div class="popup-tag ` + tagColor + `" >`+ capitalizeFirstLetter(this.data.rank) + `</div>
                 </div>
@@ -102,7 +103,10 @@ export default class SegmentPopup extends Popup {
                 + tags + `
             </div>`
             + adviceBox + ``
-            + seasonBox + `            
+            + seasonBox + `
+            <a target="_blank" href="/segment.php?id=` + this.data.id + `">
+                <button class="mp-button bg-button text-white">Check details</div>
+            </a>
         </div>`)
     }
 

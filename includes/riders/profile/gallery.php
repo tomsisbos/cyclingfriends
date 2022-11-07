@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/assets/css/lightbox-style.css" /> <?php 
+<?php 
 
 $photos = $user->getProfileGallery(); ?>
 
@@ -14,7 +14,7 @@ Only display the picture if a corresponding blob exists in the database -->
     <div class="column">
       <img src="<?= 'data:image/jpeg;base64,' . base64_encode($photo->blob) ?>" style="width:100%" thumbnailId="<?= $i+1 ?>" class="js-clickable-thumbnail hover-shadow cursor">
     </div> <?php
-  }?>
+  } ?>
 
 </div>
 
