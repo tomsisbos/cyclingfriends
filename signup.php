@@ -12,9 +12,9 @@ require 'actions/users/signupAction.php';
 	}
 </style>
 
-<body style="position: relative">
+<body style="position: relative"> <?php
 
-<?php include 'includes/navbar.php'; ?>
+include 'includes/navbar.php'; ?>
 	
 <!--Page container-->
 <div class="with-background-img">

@@ -17,7 +17,7 @@
 					<input type="checkbox" name="filter_bike" onChange="this.form.submit();" <?php if(isset($_POST['filter_bike'])){echo 'checked';} ?>>
 				</div>
 				<div class="td-row">
-					<label>Only display rides accepting <a href="/users/profile.php?id=<?= $_SESSION['id']; ?>#addBike1">my bikes</a> type</label>
+					<label>Only display rides accepting <a href="/riders/profile/edit.php?id=<?= $_SESSION['id']; ?>#addBike">my bikes</a> type</label>
 				</div>
 			</div>
 			<!-- Needs to implement friends system and maps system

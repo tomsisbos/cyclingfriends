@@ -12,7 +12,6 @@
 		<link rel="stylesheet" href="/assets/css/style.css" />
 		<link rel="stylesheet" href="/assets/css/global-map.css" />
 		<link rel="stylesheet" href="/assets/css/sidebars.css">
-		<link rel="stylesheet" href="/assets/css/rides.css" />
 		<link rel="stylesheet" href="/assets/css/riders.css" />
 		<link rel="stylesheet" href="/assets/css/routes.css" />
 		<link rel="stylesheet" href="/assets/css/mailbox.css" />
@@ -49,14 +48,9 @@
 			<script src="/assets/js/animated-background.js" defer></script>
 		<!-- togpx -->
         	<script src='/node_modules/togpx/togpx.js'></script>
-		<!-- importmap 
-			<script type="importmap">
-			{
-				"imports": {
-					"isomorphic-xml2js": "/node_modules/isomorphic-xml2js/xml2jsBundle.js",
-					"gpx-parser-builder": "/node_modules/gpx-parser-builder/src/gpx.js"
-				}
-			}
-			</script>-->
+	
+	<!-- Polyfills -->
+		<!-- container queries -->
+		<script src="https://cdn.jsdelivr.net/npm/container-query-polyfill@1/dist/container-query-polyfill.modern.js"></script>
 		
 </head>

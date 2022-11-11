@@ -66,7 +66,7 @@ export default class MapMap extends GlobalMap {
         optionsContainer.appendChild(optionsLabel)
         // Line 1
         let line1 = document.createElement('div')
-        line1.className = 'map-controller-line'
+        line1.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line1)
         this.displayMkpointsBox = document.createElement('input')
         this.displayMkpointsBox.id = 'displayMkpointsBox'
@@ -83,7 +83,7 @@ export default class MapMap extends GlobalMap {
         } )
         // Line 2
         let line2 = document.createElement('div')
-        line2.className = 'map-controller-line'
+        line2.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line2)
         this.displayRidesBox = document.createElement('input')
         this.displayRidesBox.id = 'displayRidesBox'
@@ -103,7 +103,7 @@ export default class MapMap extends GlobalMap {
         line2.appendChild(displayRidesBoxLabel)
         // Line 3
         let line3 = document.createElement('div')
-        line3.className = 'map-controller-line'
+        line3.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line3)
         this.displaySegmentsBox = document.createElement('input')
         this.displaySegmentsBox.id = 'displaySegmentsBox'
@@ -123,7 +123,7 @@ export default class MapMap extends GlobalMap {
         line3.appendChild(displaySegmentsBoxLabel)
         // Line 4
         let line4 = document.createElement('div')
-        line4.className = 'map-controller-line'
+        line4.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line4)
         this.dislayKonbinisBox = document.createElement('input')
         this.dislayKonbinisBox.id = 'dislayKonbinisBox'
@@ -140,7 +140,7 @@ export default class MapMap extends GlobalMap {
         line4.appendChild(dislayKonbinisBoxLabel)
         // Line 5
         let line5 = document.createElement('div')
-        line5.className = 'map-controller-line'
+        line5.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line5)
         this.displayAmenitiesBox = document.createElement('input')
         this.displayAmenitiesBox.id = 'dislayKonbinisBox'
@@ -155,6 +155,16 @@ export default class MapMap extends GlobalMap {
         displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
         displayAmenitiesBoxLabel.innerText = 'Display amenities'
         line5.appendChild(displayAmenitiesBoxLabel)
+        
+        // Hide and open on click on mobile display
+        optionsLabel.addEventListener('click', () => {
+            optionsContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    optionsLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
     }
 
     addEditorControl () {
@@ -172,7 +182,7 @@ export default class MapMap extends GlobalMap {
         editorContainer.appendChild(editorLabel)
         // Line 1
         let line1 = document.createElement('div')
-        line1.className = 'map-controller-line'
+        line1.className = 'map-controller-line hide-on-mobiles'
         editorContainer.appendChild(line1)
         var editModeBox = document.createElement('input')
         editModeBox.id = 'editModeBox'
@@ -187,7 +197,7 @@ export default class MapMap extends GlobalMap {
         line1.appendChild(editModeBoxLabel)
         // Line 2
         let line2 = document.createElement('div')
-        line2.className = 'map-controller-line'
+        line2.className = 'map-controller-line hide-on-mobiles'
         editorContainer.appendChild(line2)
         var highlightMyMkpointsBox = document.createElement('input')
         highlightMyMkpointsBox.id = 'highlightMyMkpointsBox'
@@ -200,6 +210,16 @@ export default class MapMap extends GlobalMap {
         highlightMyMkpointsBoxLabel.setAttribute('for', 'highlightMyMkpointsBox')
         highlightMyMkpointsBoxLabel.innerText = 'Highlight my scenery points'
         line2.appendChild(highlightMyMkpointsBoxLabel)
+        
+        // Hide and open on click on mobile display
+        editorLabel.addEventListener('click', () => {
+            editorContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    editorLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
     }
 
     setMkpoint (mkpoint) {        

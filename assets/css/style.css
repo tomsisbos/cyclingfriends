@@ -26,6 +26,12 @@ body {
 	background-attachment: fixed !important;
 }
 
+.main {
+    position: absolute;
+    width: 100%;
+    top: 80px;
+}
+
 p, h3, h4, h5, h6, li {
 	font-family: 'Noto Sans', sans-serif;
 	margin-bottom: 0.5rem;
@@ -388,6 +394,10 @@ img.site-logo {
 
 .navbar {
     z-index: 1;
+	position: fixed;
+	top: 0;
+	height: 80px;
+	width: 100%;
 }
 
 nav button {
@@ -448,7 +458,6 @@ li.nav-item {
     display: inline-block;
 	border: none;
 	flex: auto;
-    padding: 18px;
 }
 
 .smallbutton {
@@ -633,8 +642,10 @@ li.nav-item {
 
 .tr-row {
     width: 100%;
-    display: flex;
     padding: 5px 0px;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 5px;
 }
 
 .two-line-ellipsis {
@@ -647,8 +658,10 @@ li.nav-item {
 .td-row {
     margin: 0px 3px;
     padding: 0px 10px;
-    display: flex;
     align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .element-8 {

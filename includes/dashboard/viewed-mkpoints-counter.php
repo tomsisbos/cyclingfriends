@@ -11,5 +11,5 @@ $viewed_mkpoints = $connected_user->getViewedMkpoints();
 $viewed_mkpoints_number = count($viewed_mkpoints); ?>
 
 <div class="dashboard-title-block">
-    <strong>Recently viewed scenery spots</strong> (<?= $viewed_mkpoints_number . ' / ' . $mkpoints_number ?>)
+    Recently viewed scenery spots <div class="viewed-mkpoint-counter">(<?= $viewed_mkpoints_number . ' / ' . $mkpoints_number ?>)</div>
 </div>

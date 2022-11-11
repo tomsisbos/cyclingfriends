@@ -1,75 +1,56 @@
+
+
+.rd-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
 .rd-card {
     border-radius: 10px;
-    display: flex;
-    background-color: #ffffff;
-    height: 140px;
-    margin: 20px 0px;
+    overflow: hidden;
 }
 .rd-card:hover {
-	box-shadow: 2px 2px 5px darkgrey;
+    box-shadow: 1px 1px 8px #bbb;
 }
 
-.rd-card a {
-    text-decoration: none;
-    color: black;
-}
-
-.rd-container-left {
-    width: 28%;
-    height: 100%;
+.rd-top-container {
+    height: 240px;
+    display: flex;
 }
 
 .rd-image {
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+    align-items: baseline;
     height: 100%;
     background-size: cover;
-    border-radius: 10px 0px 0px 10px;
-}
-.rd-image:active {
-	box-shadow: inset 0px 0px 5px black;
+    background-position: center;
 }
 
-.rd-ride-name {
-    font-family: 'Gaegu';
-	font-weight: bold;
-    color: black;
-    position: relative;
-    left: 20px;
-    top: 100px;
-    font-size: 24px;
+.rd-image > div {
+    text-shadow: 1px 1px 3px black;
 }
 
-.rd-ride-name-shadow {
-    font-family: 'Gaegu';
-	font-weight: bold;
+.rd-ride-title {
+    font-family: Yu Mincho;
+    font-weight: bold;
     color: white;
-    text-shadow: 2px 2px 2px black;
-    position: relative;
-    left: 20px;
-    top: 100px;
-    font-size: 24px;
+    font-size: 32px;
 }
 
 .rd-ride-date {
-    position: relative;
-    left: 20px;
-    top: -20px;
-}
-
-.rd-ride-date-shadow {
-    position: relative;
-    left: 20px;
-    top: -20px;
     color: white;
-	text-shadow: 2px 2px 6px black;
 }
 
-.rd-container-center {
-	width: 50%;
-    border-radius: 10px;
-    padding: 20px;
+.rd-route-thumbnail {
+    width: 400px;
+    object-fit: cover;
+}
+
+.rd-bottom-container {
     display: flex;
-    line-height: 1.2;
-    flex-direction: column;
 }
 
 .rd-section-address {
@@ -77,9 +58,16 @@
     gap: 10px;
 }
 
+.rd-details {
+    background-color: #fff;
+    width: 100%;
+    padding: 20px !important;
+    line-height: 1.2;
+}
+
 .rd-distance {
     display: flex;
-    gap: 10px;
+    gap: 20px;
 }
 
 .rd-distance img {
@@ -91,31 +79,110 @@
     border: 1px dashed;
 }
 
-.rd-container-right {
-	flex-direction: column;
-    height: 100%;
-    justify-content: space-between;
-    width: 22%;
+.rd-checkpoints {
     display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 5px;
+}
+.rd-checkpoint {
+    position: relative;
+    width: 100px;
+    min-width: 100px;
+    font-size: 14px;
+}
+.rd-checkpoint.arrow::after {
+    content: '';
+    clip-path: polygon(0% 100%, 100% 50%, 0% 0%);
+    background-color: #bbb;
+    height: 60px;
+    width: 10px;
+    position: absolute;
+    bottom: 0px;
+    right: -15px;
+}
+.rd-cpt-details {
+    margin: 5px 0px;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rd-cpt-header {
+    display: flex;
+    gap: 5px;
+}
+.rd-cpt-number {
+    background-color: #000;
+    color: #fff;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+}
+.rd-cpt-distance {
+    display: inline;
+}
+.rd-cpt-name {
+    display: inline;
+}
+.rd-cpt-thumbnail {
+    height: 60px;
+}
+.rd-cpt-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .rd-section-organizer {
+    min-width: 200px;
     display: flex;
-    align-items: center;
-    background-color: #f2f2f2;
+    flex-grow: 3;
     gap: 10px;
-    padding: 10px;
-    border-radius: 0px 10px 0px 0px;
-    height: 60%;
+    background-color: #f2f2f2;
 }
 
 .rd-section-entry {
-    height: 40%;
-    padding: 0px 20px;
-    width: 100%;
+    min-width: 200px;
+    flex-grow: 4;
     display: flex;
-    line-height: 1.2;
-    align-items: center;
-    margin: auto 0px 0px 0px;
-    border-radius: 0px 0px 10px 0px;
+}
+
+.rd-bottom-container > div {
+    padding: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+    .rd-route-thumbnail {
+        display: none;
+    }
+    .rd-checkpoints {
+        column-gap: 40px;
+    }
+    .rd-checkpoint {
+        width: auto !important;
+        min-width: unset;
+    }
+    .rd-cpt-details {
+        display: inline-block;
+        margin: 5px 0px 0px 0px;
+        white-space: unset;
+    }
+    .rd-cpt-thumbnail {
+        display: none;
+    }
+    .rd-checkpoint.arrow::after {
+        height: 20px;
+        right: -25px;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .rd-bottom-container {
+        flex-wrap: wrap;
+    }
 }

@@ -16,9 +16,9 @@ console.log(mapMap.session)
 
 /* -- Controls -- */
 
-if (mapMap.session.rights === 'administrator' || mapMap.session.rights === 'editor') mapMap.addEditorControl()
-mapMap.addOptionsControl()
 mapMap.addStyleControl()
+mapMap.addOptionsControl()
+if (mapMap.session.rights === 'administrator' || mapMap.session.rights === 'editor') mapMap.addEditorControl()
 
 // Controls
 const mapStyleSelect = document.querySelector('.js-map-styles')
