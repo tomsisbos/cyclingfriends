@@ -11,15 +11,18 @@ include '../actions/users/securityAction.php';
 
 <body>
 
-	<?php include '../includes/navbar.php';
-	
-	// Space for error messages
-	displayMessage(); ?>
-	
-	<div class="container-fluid mp-container">
+	<?php include '../includes/navbar.php'; ?>
 
-		<div id="BuildRouteMap" class="mp-map"></div>
+	<div class="main"> <?php
+		
+		// Space for error messages
+		displayMessage(); ?>
+		
+		<div class="container-fluid mp-container">
 
+			<div id="BuildRouteMap" class="mp-map"></div>
+
+		</div>
 	</div>
 	
 </body>

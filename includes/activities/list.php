@@ -7,7 +7,7 @@ forEach ($connected_user->getPublicActivities($offset, $limit) as $activity) {
     
     if ($activity->hasAccess($connected_user)) { ?>
 
-        <div class="ac-card<?php ///if ($number % 2 == 0) echo ' card-reverse' ?>">
+        <div class="ac-card">
 
             <div class="ac-main-container">
 

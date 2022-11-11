@@ -35,6 +35,8 @@ else define('CFG_STAGE_ID', intval($_GET['stage']));
 // Sets the session variable with an array that will contain all form infos
 if (empty($_SESSION['forms'])) $_SESSION['forms'] = array();
 
-include '../includes/navbar.php';
-include '../actions/rides/new/dataProcessAction.php'; ?>
+include '../includes/navbar.php'; ?>
+<div class="main"> <?php
+    include '../actions/rides/new/dataProcessAction.php'; ?>
+</div>
 </html>

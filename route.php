@@ -13,15 +13,15 @@ include 'actions/users/securityAction.php';
 
 <body>
 
-	<?php include 'includes/navbar.php';
-    
-	// Get id from URL
-	if (isset($_GET['id'])) {
-		
-		$route = new Route ($_GET['id']); ?>
+	<?php include 'includes/navbar.php'; ?>
 
-        <div>
-	
+    <div class="main"> <?php
+    
+        // Get id from URL
+        if (isset($_GET['id'])) {
+            
+            $route = new Route ($_GET['id']); ?>
+        
             <div class="container">
                 <div class="d-flex gap align-items-center">
                     <h2 class="top-title"><?= $route->name ?></h2>
@@ -82,10 +82,9 @@ include 'actions/users/securityAction.php';
                         </tbody>
                     </table>
                 </div>
-            </div>
-
-        </div> <?php
-    } ?>
+            </div> <?php
+        } ?>
+    </div>
 
 <script src="/map/vendor.js"></script>
 <script type="module" src="/map/class/CFUtils.js"></script>

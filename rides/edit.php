@@ -22,6 +22,8 @@ else define('CFG_STAGE_ID', intval($_GET['stage']));
 
 include '../actions/rides/edit/getRideAction.php';
 require '../actions/rides/edit/editAction.php'; 
-include '../includes/navbar.php';
-include '../actions/rides/edit/dataProcessAction.php'; ?>
+include '../includes/navbar.php'; ?>
+<div class="main"> <?php
+    include '../actions/rides/edit/dataProcessAction.php'; ?>
+</div>
 </html>

@@ -118,6 +118,7 @@
     justify-items: center;
     text-align: center;
     display: flex;
+    flex-wrap: wrap;
     padding: 5px 0px;
     margin-top: auto;
     gap: 2px;
@@ -125,7 +126,8 @@
 .ac-spec {
     padding: 4px;
     background-color: #f9f9f9;
-    width: -webkit-fill-available;
+    width: 80px;
+    flex-grow: 2;
 }
 .ac-spec-label {
     font-size: 10px;
@@ -217,11 +219,11 @@
 @media only screen and (max-width: 992px) {
     .my-ac-photos-container {
         display: none;
-    }
+    }/*
     .ac-specs {
         display: grid;
         grid-template-columns: repeat(2, 50%);
-    }
+    }*/
     .ac-spec-unit {
         font-size: 11px;
         text-overflow: ellipsis;
