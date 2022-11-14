@@ -13,6 +13,7 @@ infiniteScrollElement.addEventListener('scroll', function (event) {
     // When scroll to the bottom of the dashboard
     if (Math.ceil((element.scrollHeight - element.scrollTop) / 10) === Math.ceil(element.clientHeight / 10)) {
         ajaxGetRequest('actions/dashboard/api.php?getActivities=' + limit + ',' + offset + ',' + photosquantity, (response) => {
+            console.log(response)
             offset += limit
             response.forEach( (activity) => {
                 var $card = buildActivityCard(activity)
@@ -32,7 +33,7 @@ function buildActivityCard (activity) {
         <div class="ac-infos-container">
             <div class="ac-user-details">
                 <div class="ac-user-propic">
-                    <a href="/riders/profile.php?id=` + activity.user.id + `"></a>
+                    <a href="/riders/profile.php?id=` + activity.user.id + `">` + activity.propic + `</a>
                 </div>
                 <div class="ac-details">
                     <div class="ac-user-name">
@@ -78,14 +79,17 @@ function buildActivityCard (activity) {
     // Build photos container
     var $photosContainer = document.createElement('div')
     $photosContainer.className = 'ac-photos-container'
+    var i = 1
     activity.photos.forEach( (photo) => {
         $a = document.createElement('a')
         $a.setAttribute('href', '/activity.php?id=' + activity.id)
         // Build variables
         if (photo.featured) var featured = ' featured'
         else var featured = ''
-        if (activity.photosNumber > photosquantity) var $photosOthers = `<div class="ac-photos-others"><div>` + (activity.photosNumber - photosquantity + 1) + `</div></div>`
-        else var $photosOthers = ''
+        if (i == photosquantity) {
+            if (activity.photosNumber > photosquantity) var $photosOthers = `<div class="ac-photos-others"><div> + ` + (activity.photosNumber - photosquantity + 1) + `</div></div>`
+            else var $photosOthers = ''
+        } else var $photosOthers = ''
         // Build inner html and append
         $a.innerHTML = `
             <div class="ac-photo-container` + featured + `">
@@ -93,6 +97,7 @@ function buildActivityCard (activity) {
                 ` + $photosOthers + `
             </div>`
         $photosContainer.appendChild($a)
+        i++
     } )
 
     // Build activity card

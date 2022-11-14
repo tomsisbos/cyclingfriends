@@ -30,16 +30,16 @@ include 'actions/users/securityAction.php';
                             <strong><?= $route->author->login ?></strong>
                         </a>
                     </div>
-                        <div class="d-flex gap push"> <?php
-                            if ($route->author == $connected_user) { ?>
-                                <a href="/routes/edit.php?id=<?= $route->id ?>">
-                                    <button class="btn button" type="button" name="edit">Edit</button>
-                                </a>
-                                <button class="btn button" id="deleteRoute" type="button" name="delete">Delete</button> <?php
-                            } ?>
-                            <a id="export" download>
-                                <button class="btn button" type="button">Export as *.gpx</button>
+                    <div class="d-flex gap push"> <?php
+                        if ($route->author == $connected_user) { ?>
+                            <a href="/routes/edit.php?id=<?= $route->id ?>">
+                                <button class="btn button" type="button" name="edit">Edit</button>
                             </a>
+                            <button class="btn button" id="deleteRoute" data-id="<?= $route->id ?>" type="button" name="delete">Delete</button> <?php
+                        } ?>
+                        <a id="export" download>
+                            <button class="btn button" type="button">Export as *.gpx</button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -89,6 +89,7 @@ include 'actions/users/securityAction.php';
 <script src="/map/vendor.js"></script>
 <script type="module" src="/map/class/CFUtils.js"></script>
 <script type="module" src="/routes/routePageMap.js"></script>
+<script src="/includes/routes/delete.js"></script>
 
 </body>
 </html>

@@ -16,27 +16,6 @@ buildRouteMap.addAmenityLayers()
 buildRouteMap.addKonbiniLayers()
 buildRouteMap.addCyclingLayers()
 
-const canvas = map.getCanvasContainer()
-
-// On map style change
-map.on('styledata', (e) => {
-    // Disable clear, save and focus buttons if no route data displayed
-    if (!e.target.style._layers.startPoint) {
-        buttonClear.setAttribute('disabled', 'disabled')
-        buttonFocus.setAttribute('disabled', 'disabled')
-    } else {
-        buttonClear.removeAttribute('disabled')
-        buttonFocus.removeAttribute('disabled')
-    }
-    if (!e.target.style._layers.endPoint) {
-        buttonSave.setAttribute('disabled', 'disabled')
-        buttonFly.setAttribute('disabled', 'disabled')
-    } else {
-        buttonSave.removeAttribute('disabled')
-        buttonFly.removeAttribute('disabled')
-    }
-} )
-
 // Controls
 map.addControl(
     new mapboxgl.GeolocateControl( {
@@ -90,7 +69,7 @@ profileTag.addEventListener('click', () => {
 
 map.once('idle', () => {
 
-    canvas.style.cursor = 'crosshair'
+    map.getCanvas().style.cursor = 'crosshair'
 
     // When route is updated and loaded
     map.on('sourcedata', async (e) => {

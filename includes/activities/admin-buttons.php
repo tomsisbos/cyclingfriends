@@ -4,7 +4,7 @@
 	</a>
 </div>	
 <div class="td-row">
-	<button class="btn button box-shadow" type="button" name="delete" id="deleteButton">Delete</button>
+	<button class="btn button box-shadow" data-id="<?= $activity->id ?>" type="button" name="delete" id="deleteButton">Delete</button>
 </div>
 	
 <script src="/includes/activities/delete.js"></script>

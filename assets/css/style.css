@@ -392,12 +392,18 @@ img.site-logo {
 
 /* Navbar */
 
-.navbar {
-    z-index: 1;
-	position: fixed;
-	top: 0;
-	height: 80px;
-	width: 100%;
+nav {
+    z-index: 4;
+    position: fixed;
+    top: 0;
+    height: 80px;
+    width: 100%;
+    padding: 0px 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
 }
 
 nav button {
@@ -437,6 +443,22 @@ li.nav-item {
 
 .push {
 	margin-left: auto !important;
+}
+
+.navbar-toggler {
+    margin: auto;
+}
+
+.nav-link {	
+    display: inline-flex;
+    vertical-align: middle;
+    padding-left: 0px !important;
+}
+
+.navbar-collapse.show, .navbar-collapse.collapsing {
+    position: absolute;
+    top: 80px;
+    width: 100%;
 }
 
 /* Button */

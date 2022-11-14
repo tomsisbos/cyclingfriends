@@ -198,30 +198,49 @@ class User extends Model {
             $getImage = $db->prepare('SELECT * FROM profile_pictures WHERE user_id = ?');
             $getImage->execute(array($this->id));
             return $getImage->fetch(PDO::FETCH_ASSOC);	
-        } else {
-            return 'couldn\'t get image data from database.';
-        }
+        } else return 'couldn\'t get image data from database.';
     }
 
-    // Function for downloading & displaying user's profile picture with defined height, width and border-radius attributes
-    public function displayPropic($height = 60, $width = 60, $borderRadius = 60){
+    // Function for getting user's profile picture element with defined height, width and border-radius attributes
+    public function getPropicElement ($height = 60, $width = 60, $borderRadius = 60) {
         $propic = $this->downloadPropic();
         
         // If the user has uploaded a picture, use it as profile picture
-        if(isset($propic['img'])){
-            echo '<div style="height: ' .$height. 'px; width: ' .$width. 'px;" class="free-propic-container">';
-                echo '<img style="border-radius: ' .$borderRadius. 'px;" class="free-propic-img" src="data:image/jpeg;base64,' .base64_encode($propic['img']). '" />';
-            echo '</div>';
+        if (isset($propic['img'])) {
+            return '<div style="height: ' .$height. 'px; width: ' .$width. 'px;" class="free-propic-container"><img style="border-radius: ' .$borderRadius. 'px;" class="free-propic-img" src="data:image/jpeg;base64,' .base64_encode($propic['img']). '" /></div>';
             
         // Else, use a profile picture corresponding to user's randomly attribuated icon
-        }else{
+        } else {
             require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
             $getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
             $getImage->execute(array($this->id));
             $picture = $getImage->fetch();
-            echo '<div style="height: ' .$height. 'px; width: ' .$width. 'px;" class="free-propic-container">';
-                echo '<img style="border-radius: ' .$borderRadius. 'px;" class="free-propic-img" src="\includes\media\default-profile-' .$picture['default_profilepicture_id']. '.jpg" />';
-            echo '</div>';
+            return `
+            <div style="height: ` .$height. `px; width: ` .$width. `px;" class="free-propic-container">
+                <img style="border-radius: ` .$borderRadius. `px;" class="free-propic-img" src="\includes\media\default-profile-` .$picture['default_profilepicture_id']. `.jpg" />
+            </div>`;
+        }
+    }
+
+    // Function for downloading & displaying user's profile picture with defined height, width and border-radius attributes
+    public function displayPropic ($height = 60, $width = 60, $borderRadius = 60) {
+        $propic = $this->downloadPropic();
+        
+        // If the user has uploaded a picture, use it as profile picture
+        if (isset($propic['img'])) { ?>
+            <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
+                <img style="border-radius: <?= $borderRadius ?>px;" class="free-propic-img" src="data:image/jpeg;base64,<?= base64_encode($propic['img']) ?>" />
+            </div> <?php
+            
+        // Else, use a profile picture corresponding to user's randomly attribuated icon
+        } else {
+            require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+            $getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
+            $getImage->execute(array($this->id));
+            $picture = $getImage->fetch(); ?>
+            <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
+                <img style="border-radius: <?= $borderRadius ?>px;" class="free-propic-img" src="\includes\media\default-profile-<?= $picture['default_profilepicture_id'] ?>.jpg" />
+            </div> <?php
         }
     }
 

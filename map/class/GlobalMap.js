@@ -2433,6 +2433,7 @@ export default class GlobalMap extends Model {
     }
 
     async calculateElevation (routeData) {
+        console.log(routeData)
         var profileData = await this.getProfileData(routeData)
         var elevation = 0
         for (let i = 1; i < profileData.averagedPointsElevation.length - 1; i++) {

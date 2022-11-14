@@ -26,8 +26,10 @@ if (isAjax()) {
                 $activity->photosNumber = count($activity->getPhotoIds());
                 $activity->checkpoints = $activity->getCheckpoints();
                 $activity->photos = $activity->getPreviewPhotos($preview_photos_quantity);
-                if (substr($activity->duration->format('H'), 0, 1) == '0') $activity->formattedDuration = substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
+                if (substr($activity->duration->format('H'), 0, 1) == '0') $activity->formattedDuration = substr($activity->duration->format('H'), 1, strlen($activity->duration->format('i'))) . '<span class="ac-spec-unit"> h </span>' . $activity->duration->format('i');
                 else $activity->formattedDuration = $activity->duration->format('H') . '<span class="ac-spec-unit"> h </span>' . $activity->duration->format('i');
+                $activity->averagespeed = $activity->getAverageSpeed();
+                $activity->propic = $activity->user->getPropicElement();
                 array_push($activities, $activity);
             }
 

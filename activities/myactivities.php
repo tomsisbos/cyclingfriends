@@ -31,60 +31,70 @@ include '../actions/users/securityAction.php';
 
 					$activity = new Activity($activity['id']); ?>
 
-					<div class="my-ac-card<?php ///if ($number % 2 == 0) echo ' card-reverse' ?>">
+					<div class="my-ac-panel">
 
-						<div class="ac-thumbnail-container">
-							<a href="/activity.php?id=<?= $activity->id ?>">
-								<img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
-							</a>
-						</div>
+						<div class="my-ac-card">
 
-						<div class="my-ac-infos-container">
-							<div class="ac-name">
+							<div class="ac-thumbnail-container">
 								<a href="/activity.php?id=<?= $activity->id ?>">
-									<?= $activity->title ?>
+									<img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
 								</a>
 							</div>
-							<div class="ac-posting-date">
-								<?= $activity->datetime->format('Y/m/d') . ' from ' . $activity->datetime->format('H\hi') . ' to ' . $activity->getEndDateTime()->format('H\hi') ; ?>
+
+							<div class="my-ac-infos-container">
+								<div class="ac-name">
+									<a href="/activity.php?id=<?= $activity->id ?>">
+										<?= $activity->title ?>
+									</a>
+								</div>
+								<div class="ac-posting-date">
+									<?= $activity->datetime->format('Y/m/d') . ' from ' . $activity->datetime->format('H\hi') . ' to ' . $activity->getEndDateTime()->format('H\hi') ; ?>
+								</div>
+								<div class="ac-place">
+									<?= 'From ' . $activity->getPlace()['start']->getString() . ' to ' . $activity->getPlace()['goal']->getString(); ?>
+								</div>
+								<div class="ac-specs">
+									<div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">
+										<div class="ac-spec-label"><strong>Distance : </strong></div>
+										<div class="ac-spec-value"><?= round($activity->route->distance, 1) ?><span class="ac-spec-unit"> km</span></div>
+									</div>
+									<div class="ac-spec <?= $activity->setBackgroundColor('duration')?> ">
+										<div class="ac-spec-label"><strong>Duration : </strong></div>
+										<div class="ac-spec-value"> <?php
+											if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
+											else echo $activity->duration->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration->format('i') ?></div>
+									</div>
+									<div class="ac-spec <?= $activity->setBackgroundColor('elevation')?> ">
+										<div class="ac-spec-label"><strong>Elevation : </strong></div>
+										<div class="ac-spec-value"><?= $activity->route->elevation ?><span class="ac-spec-unit"> m</span></div>
+									</div>
+									<div class="ac-spec <?= $activity->setBackgroundColor('speed')?> ">
+										<div class="ac-spec-label"><strong>Avg. Speed : </strong></div>
+										<div class="ac-spec-value"><?= $activity->getAverageSpeed() ?><span class="ac-spec-unit"> km/h</span></div>
+									</div>
+								</div>
 							</div>
-							<div class="ac-place">
-								<?= 'From ' . $activity->getPlace()['start']->getString() . ' to ' . $activity->getPlace()['goal']->getString(); ?>
+
+							<div class="my-ac-photos-container"><?php
+								$preview_photos = $activity->getPreviewPhotos(5);
+								foreach ($preview_photos as $photo) { ?>
+									<div class="my-ac-photo-container"> 
+										<img class="my-ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>">
+									</div> <?php
+								} ?>
 							</div>
-							<div class="ac-specs">
-								<div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">
-									<div class="ac-spec-label"><strong>Distance : </strong></div>
-									<div class="ac-spec-value"><?= round($activity->route->distance, 1) ?><span class="ac-spec-unit"> km</span></div>
-								</div>
-								<div class="ac-spec <?= $activity->setBackgroundColor('duration')?> ">
-									<div class="ac-spec-label"><strong>Duration : </strong></div>
-									<div class="ac-spec-value"> <?php
-										if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
-										else echo $activity->duration->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration->format('i') ?></div>
-								</div>
-								<div class="ac-spec <?= $activity->setBackgroundColor('elevation')?> ">
-									<div class="ac-spec-label"><strong>Elevation : </strong></div>
-									<div class="ac-spec-value"><?= $activity->route->elevation ?><span class="ac-spec-unit"> m</span></div>
-								</div>
-								<div class="ac-spec <?= $activity->setBackgroundColor('speed')?> ">
-									<div class="ac-spec-label"><strong>Avg. Speed : </strong></div>
-									<div class="ac-spec-value"><?= $activity->getAverageSpeed() ?><span class="ac-spec-unit"> km/h</span></div>
-								</div>
-							</div>
+
+						</div>
+						
+						<div class="my-ac-buttons">
+							<a href="/activities/edit.php?id=<?= $activity->id ?>">
+								<div class="mp-button btn bg-darkgreen text-white">Edit</div>
+							</a>
+							<div class="mp-button btn bg-darkred text-white" data-id="<?= $activity->id ?>" id="deleteButton">Delete</div>
 						</div>
 
-						<div class="my-ac-photos-container"><?php
-							$preview_photos = $activity->getPreviewPhotos(5);
-							foreach ($preview_photos as $photo) { ?>
-								<div class="my-ac-photo-container"> 
-									<img class="my-ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>">
-								</div> <?php
-							} ?>
-						</div>
+					</div><?php
 
-					</div> <?php
-					
-					///$number++;
 				} ?>
 			</div> <?php
 			
@@ -141,3 +151,5 @@ include '../actions/users/securityAction.php';
 	
 </body>
 </html>
+
+<script src="/includes/activities/delete.js"></script>

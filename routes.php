@@ -50,6 +50,15 @@ include 'actions/users/securityAction.php';
 								</div>
 							</div>
 						</div>
+						<div class="rt-buttons">
+							<a href="/routes/edit.php?id=<?= $route->id ?>">
+								<div class="mp-button btn bg-darkgreen text-white" type="button" name="edit">Edit</div>
+							</a>
+							<a id="export" data-id="<?= $route->id ?>" download>
+								<div class="mp-button btn bg-darkgreen text-white" type="button">Export</div>
+							</a>
+							<div class="mp-button btn bg-darkred text-white" data-id="<?= $route->id ?>" id="deleteRoute" type="button" name="delete">Delete</div>
+						</div>
 					</div> <?php
 					
 				} ?>
@@ -109,3 +118,6 @@ include 'actions/users/securityAction.php';
 	
 </body>
 </html>
+
+<script type="module" src="/includes/routes/export.js"></script>
+<script src="/includes/routes/delete.js"></script>

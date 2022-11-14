@@ -1,7 +1,9 @@
 import CFUtils from "/map/class/CFUtils.js"
 import EditRouteMap from "/map/class/EditRouteMap.js"
 
-var editRouteMap = new EditRouteMap ()
+var editRouteMap = new EditRouteMap()
+
+console.log(editRouteMap)
 
 // Set default layer according to current season
 var map = await editRouteMap.load(document.getElementById('EditRouteMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')

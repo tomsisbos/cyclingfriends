@@ -72,19 +72,19 @@ export default class BuildRouteMap extends GlobalMap {
         boxAddWaypoints.addEventListener('change', () => {
             console.log('boxAddWaypoints changed')
             if (boxAddWaypoints.checked) {
-                canvas.style.cursor = 'grab'
+                this.map.getCanvas().style.cursor = 'grab'
                 this.map.on('mouseenter', 'route', () => {
-                    canvas.style.cursor = 'crosshair'
+                    this.map.getCanvas().style.cursor = 'crosshair'
                 } )
                 this.map.on('mouseleave', 'route', () => {
                     if (boxAddWaypoints.checked) {
-                        canvas.style.cursor = 'grab'
+                        this.map.getCanvas().style.cursor = 'grab'
                     }
                 } )
                 this.map.off('click', this.routeBuilding)
                 this.map.on('click', 'route', this.routeEditing)
             } else {
-                canvas.style.cursor = 'crosshair'
+                this.map.getCanvas().style.cursor = 'crosshair'
                 this.map.off('click', 'route', this.routeEditing)
                 this.map.on('click', this.routeBuilding)
             }
@@ -187,7 +187,7 @@ export default class BuildRouteMap extends GlobalMap {
             var answer = await this.openSavePopup()
             if (answer) {
                 // Save canvas as a picture
-                html2canvas(document.querySelector('.mapboxgl-canvas'), {windowWidth: 1800, windowHeight: 960, width: 1100, height: 640, x: 150}).then( (canvas) => {
+                html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
                     canvas.toBlob( async (blob) => {
                         answer.thumbnail = await blobToBase64(blob)
                         // When treatment is done, redirect to my routes page
@@ -213,6 +213,25 @@ export default class BuildRouteMap extends GlobalMap {
                     line.classList.toggle('hide-on-mobiles')
                 }
             } )
+        } )
+
+        // On map style change
+        this.map.on('styledata', (e) => {
+            // Disable clear, save and focus buttons if no route data displayed
+            if (!e.target.style._layers.startPoint) {
+                buttonClear.setAttribute('disabled', 'disabled')
+                buttonFocus.setAttribute('disabled', 'disabled')
+            } else {
+                buttonClear.removeAttribute('disabled')
+                buttonFocus.removeAttribute('disabled')
+            }
+            if (!e.target.style._layers.endPoint) {
+                buttonSave.setAttribute('disabled', 'disabled')
+                buttonFly.setAttribute('disabled', 'disabled')
+            } else {
+                buttonSave.removeAttribute('disabled')
+                buttonFly.removeAttribute('disabled')
+            }
         } )
     }
 

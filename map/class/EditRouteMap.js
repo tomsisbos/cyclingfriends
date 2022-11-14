@@ -79,34 +79,16 @@ export default class EditRouteMap extends BuildRouteMap {
                 category: 'route',
                 name: details.name,
                 description: details.description,
-                distance: turf.length(this.map.getSource('route')._data),
-                elevation: await this.calculateElevation(this.map.getSource('route')),
-                startplace: await this.getCourseGeolocation(this.map.getSource('route')._data.geometry.coordinates[0]),
-                goalplace: await this.getCourseGeolocation(this.map.getSource('route')._data.geometry.coordinates[this.map.getSource('route')._data.geometry.coordinates.length - 1]),
+                distance: turf.length(routeData),
+                elevation: await this.calculateElevation(routeData),
+                startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
+                goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
                 thumbnail: details.thumbnail
             }
-        }/* else if (details.category == 'segment') {
-            var route = {
-                id: parseInt(this.routeId),
-                type: this.map.getSource('route')._data.geometry.type,
-                coordinates: routeData.geometry.coordinates,
-                tunnels: routeData.properties.tunnels,
-                category: 'segment',
-                name: details.name,
-                description: details.description,
-                distance: turf.length(this.map.getSource('route')._data),
-                elevation: await this.calculateElevation(this.map.getSource('route')),
-                startplace: await this.getCourseGeolocation(this.map.getSource('route')._data.geometry.coordinates[0]),
-                goalplace: await this.getCourseGeolocation(this.map.getSource('route')._data.geometry.coordinates[this.map.getSource('route')._data.geometry.coordinates.length - 1]),
-                thumbnail: details.thumbnail,
-                rank: details.rank,
-                seasons: details.seasons,
-                advice: details.advice,
-                specs: details.specs,
-                tags: details.tags
-            }
-        }*/
+        }
+        console.log(route)
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
+            console.log(response)
             window.location.replace('/routes.php')
         } )
     }

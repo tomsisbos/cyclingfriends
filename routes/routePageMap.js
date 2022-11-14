@@ -1,24 +1,12 @@
 import CFUtils from "/map/class/CFUtils.js"
 import RoutePageMap from "/map/class/RoutePageMap.js"
 
-// Button handlers
-if (document.getElementById('deleteRoute')) {
-    document.getElementById('deleteRoute').addEventListener('click', async () => {
-        var answer = await openConfirmationPopup('Do you really want to delete this route ?')
-        if (answer) {
-            ajaxGetRequest (routePageMap.apiUrl + "?route-delete=" + routePageMap.routeId, async (response) => {
-                console.log(response)
-                window.location.replace('/routes.php')
-            } )
-        }
-    } )
-}
-
 var routePageMap = new RoutePageMap()
 
 console.log(routePageMap)
 
 var $map = document.getElementById('routePageMap')
+
 const exportButton = document.querySelector('#export')
 
 // Get route data from server
@@ -41,13 +29,12 @@ ajaxGetRequest (routePageMap.apiUrl + "?route-load=" + routePageMap.routeId, asy
         }
     }
 
+    exportButton.href = CFUtils.loadGpx(geojson)
+    exportButton.download = route.name + '.gpx'
+
     // Populate instance route property
     routePageMap.data = route
     routePageMap.data.routeData = geojson
-
-    // Load gpx file
-    exportButton.href = CFUtils.loadGpx(geojson)
-    exportButton.download = route.name + '.gpx'
     
     // Set default layer according to current season
     var map = await routePageMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', coordinates[0])

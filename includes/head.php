@@ -7,8 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
 	<!-- CSS -->
-		<link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.css" />
-		<link rel="stylesheet" href="/assets/css/bootstrap/bootstrap-reboot.css" />
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 		<link rel="stylesheet" href="/assets/css/style.css" />
 		<link rel="stylesheet" href="/assets/css/global-map.css" />
 		<link rel="stylesheet" href="/assets/css/sidebars.css">
@@ -31,7 +30,7 @@
 		<!-- Ajax -->
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 		<!-- Bootstrap -->
-			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 		<!-- Iconify framework -->
 			<script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script>
 		<!-- Mapbox GL JS : mapping library -->
@@ -45,12 +44,8 @@
 		<!-- functions -->
 			<script src="/assets/js/functions.js"></script>
 		<!-- Animated background -->
-			<script src="/assets/js/animated-background.js" defer></script>
+			<script defer src="/assets/js/animated-background.js"></script>
 		<!-- togpx -->
         	<script src='/node_modules/togpx/togpx.js'></script>
-	
-	<!-- Polyfills -->
-		<!-- container queries -->
-		<script src="https://cdn.jsdelivr.net/npm/container-query-polyfill@1/dist/container-query-polyfill.modern.js"></script>
 		
 </head>

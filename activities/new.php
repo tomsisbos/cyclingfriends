@@ -21,7 +21,7 @@ include '../actions/users/securityAction.php'; ?>
 
             <div id="topContainer" class="container inner">
 
-                <div class="mb-4 gap d-flex align-items-center">
+                <div class="new-ac-upload-container">
                     <label for="uploadActivity">
                         <div class="btn smallbutton">Upload activity</div>
                     </label>
@@ -40,15 +40,13 @@ include '../actions/users/securityAction.php'; ?>
                             <input type="text" id="inputTitle" class="form-control bold" />
                         </div>
 
-                        <div class="mb-3 gap d-flex">
-                            <div class="col-6 gap d-flex align-items-center">
-                                <label for="uploadPhotos">
-                                    <div class="btn smallbutton">Upload photos</div>
-                                </label>
-                                <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple />
-                                <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
-                            </div>
-                            <div class="col-3">
+                        <div class="new-ac-upload-photos-container">
+                            <label for="uploadPhotos">
+                                <div class="btn smallbutton">Upload photos</div>
+                            </label>
+                            <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple />
+                            <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
+                            <div class="new-ac-inputgroup">
                                 <label class="form-label">Bike</label>
                                 <select id="selectBikes" class="form-select"> <?php
                                     $bikes = $connected_user->getBikes();
@@ -58,7 +56,7 @@ include '../actions/users/securityAction.php'; ?>
                                     } ?>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="new-ac-inputgroup">
                                 <label class="form-label">Privacy</label>
                                 <select id="selectPrivacy" class="form-select">
                                     <option value="private">Private</option>
