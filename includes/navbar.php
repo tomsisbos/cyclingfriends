@@ -12,7 +12,7 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="collapsedMenu">
-			<ul class="navbar-nav bg-white">
+			<ul class="navbar-nav cf-navbar">
 				<li class="nav-item dropdown">
 					<a class="nav-link" href="/map.php">Map</a>
 				</li>
