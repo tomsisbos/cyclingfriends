@@ -21,23 +21,15 @@ include 'actions/segments/segmentAction.php'; ?>
 		
 		<div class="container-fluid">
 
-			<div class="container pg-sg-header" style="background-image: <?= $segment->getFeaturedImage() ?>; background-size: cover;">
-				<div class="tr-row gap">
+			<div class="container pg-sg-header" style="background-image: <?= $segment->getFeaturedImage() ?>;">
+				<div class="header">
 					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
 						<h1><?= $segment->name ?></h1>
 					</div> <?php 
-					if ($segment->favourite) { ?>
-						<div class="td-row">
-							<span class="popup-favourite">★</span>
-						</div> <?php
-					} ?>
-					<div class="td-row">
-						<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
-					</div>
-					<div class="td-row push">
-						<div class="td-row">
-							<button class="btn button box-shadow" type="button">Add to favorites</button>
-						</div>
+					if ($segment->favourite) ?> <span class="popup-favourite">★</span>
+					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
+					<div class="header-buttons">
+						<button class="btn button box-shadow" type="button">Add to favorites</button>
 						<a id="export" download>
 							<button class="btn button box-shadow" type="button">Export as *.gpx</button>
 						</a>

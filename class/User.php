@@ -52,8 +52,8 @@ class User extends Model {
         $this->login                     = $login;
         // Insert data into database
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $register = $db->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date) VALUES (?, ?, ?, ?, ?)');
-        $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d')));
+        $register = $db->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
+        $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 'Beginner'));
         // Get id
         $this->id                        = $this->getData()['id'];
     }
@@ -156,11 +156,8 @@ class User extends Model {
     public function isFriend ($friend) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $friendslist = $this->getFriends();
-        if (in_array_r($friend->id, $friendslist)) {
-            return true;
-        } else {
-            return false;
-        }
+        if (in_array_r($friend->id, $friendslist)) return true;
+        else return false;
     }
 
     public function getRequesters () {
@@ -470,11 +467,11 @@ class User extends Model {
         else $period = 5;
         // Request activities
         $getActivities = $db->prepare("SELECT * FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND ((privacy = 'private' AND user_id = ?) OR privacy = 'friends_only') ORDER BY datetime, posting_date DESC LIMIT " .$offset. ", " .$limit);
-	    $getActivities->execute(array($period, $_SESSION['id']));
+	    $getActivities->execute(array($period, $this->id));
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
         // Substract all activities with privacy set to friends_only for which user is not friend with connected user
         foreach ($activities as $number => $activity) {
-            if ($activity['privacy'] == 'friends_only' AND !$connected_user->isFriend(new User($activity['user']))) {
+            if ($activity['privacy'] == 'friends_only' AND !$this->isFriend(new User($activity['user_id']))) {
                 array_splice($activities, $number, 1);
             }
         }
@@ -501,17 +498,6 @@ class User extends Model {
 	    $getActivities->execute(array($this->id));
         return $getActivities->rowCount();
     }
-
-    /*public function getActivityRouteIds () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getActivities = $db->prepare("SELECT route_id FROM activities WHERE user_id = ? ORDER BY datetime DESC");
-	    $getActivities->execute(array($this->id));
-        $route_ids = [];
-        while ($entry = $getActivities->fetch(PDO::FETCH_ASSOC)) {
-            array_push($route_ids, intval($entry['route_id']));
-        };
-        return $route_ids;
-    }*/
 
     // Get all messages between two users
     public function getConversation ($user) {

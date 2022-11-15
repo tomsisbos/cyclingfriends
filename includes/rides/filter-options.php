@@ -14,21 +14,21 @@
 			</div>
 			<div class="tr-row">
 				<div class="td-row">
-					<input type="checkbox" name="filter_bike" onChange="this.form.submit();" <?php if(isset($_POST['filter_bike'])){echo 'checked';} ?>>
+					<input type="checkbox" id="filter_bike" name="filter_bike" onChange="this.form.submit();" <?php if(isset($_POST['filter_bike'])){echo 'checked';} ?>>
 				</div>
 				<div class="td-row">
-					<label>Only display rides accepting <a href="/riders/profile/edit.php?id=<?= $_SESSION['id']; ?>#addBike">my bikes</a> type</label>
+					<label for="filter_bike">Only display rides accepting <a href="/riders/profile/edit.php?id=<?= $_SESSION['id']; ?>#addBike">my bikes</a> type</label>
 				</div>
 			</div>
-			<!-- Needs to implement friends system and maps system
 			<div class="tr-row">
 				<div class="td-row">
-					<input type="checkbox" name="filter_friends_only" onChange="this.form.submit();">
+					<input type="checkbox" id="filter_friends_only" name="filter_friends_only" onChange="this.form.submit();" <?php if(isset($_POST['filter_friends_only'])){echo 'checked';} ?>>
 				</div>
 				<div class="td-row">
-					<label>Only display my friends ride</label>
+					<label for="filter_friends_only">Only display my friends ride</label>
 				</div>
 			</div>
+			<!-- Needs to implement maps system
 			<div class="tr-row">
 				<div class="td-row">
 					<input type="checkbox" name="filter_closest_first" onChange="this.form.submit();">
@@ -71,7 +71,7 @@
 					<label class="form-label">Ride name<label/>
 				</div>
 				<div class="td-row element-50">
-					<input class="form-control" type="text" name="filter_ride_name" value="<?php if(isset($_POST['filter_ride_name'])){echo $_POST['filter_ride_name'];} ?>" onfocusout="this.form.submit();" />
+					<input class="form-control" type="text" name="filter_name" value="<?php if(isset($_POST['filter_name'])){echo $_POST['filter_name'];} ?>" onfocusout="this.form.submit();" />
 				</div>
 			</div>
 		</div>

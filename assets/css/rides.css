@@ -232,8 +232,6 @@
         border-bottom: 1px dashed #bbbbbb;
     }
     .my-rd-th {
-        /*border-bottom: 1px solid #bbb;
-        flex-wrap: wrap;*/
         display: none;
     }
     .my-rd-tr .my-rd-td, .my-rd-th .my-rd-td {

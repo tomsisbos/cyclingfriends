@@ -32,7 +32,7 @@ include 'actions/users/securityAction.php';
 			if (!isset($is_ride)) $errormessage = 'There is no ride to display.';
 
 			// If no bike is displaying, filter bike is checked and connected user doesn't have any bike set, display a message advising to register bikes
-			if (isset($errormessage) AND $errormessage == 'There is no ride to display.' AND isset($_POST['filter_bike']) AND !$connected_user->isBike(1) AND !$connected_user->isBike(2) AND !$connected_user->isBike(3)){
+			if (isset($errormessage) AND $errormessage == 'There is no ride to display.' AND isset($_POST['filter_bike']) AND is_array($connected_user->getBikes())){
 				$submessage = 'You should first register your bike in <a href="/riders/profile.php?id=' .$connected_user->id. '#addBike1">your profile settings</a>.';
 			} ?>
 			

@@ -1,6 +1,7 @@
 .pg-sg-header {
     height: 350px;
     background-position: center;
+    background-size: cover;
 }
 .pg-sg-header h1, .pg-sg-header p {
     color: white;
