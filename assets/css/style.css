@@ -108,6 +108,51 @@ a:hover {
 	font-weight: bold;
 }
 
+/* Single page */
+
+.header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.header-buttons {
+    margin-left: auto;
+}
+@media only screen and (max-width: 768px) {
+    .header {
+        justify-content: center;
+        gap: unset;
+        column-gap: 10px;
+    }
+    .header-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-left: unset;
+    }
+    .header-buttons .btn {
+        font-weight: unset;
+        height: fit-content;
+        width: 100%;
+    }
+}
+
+.specs {
+    display: flex;
+    margin: 20px;
+    gap: 20px;
+}
+.spec-column {
+    flex-grow: 3;
+}
+@media only screen and (max-width: 768px) {
+    .specs {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
 /* Images */
 
 img.site-logo {
@@ -230,15 +275,6 @@ img.site-logo {
 .square-gallery-container {
     height: 150px;
     width: 200px;
-}
-
-.ride-header {
-    margin-bottom: 0px !important;
-    background-color: #555555 !important;
-    height: 350px;
-    color: white;
-    background-size: cover !important;
-    background-position: center !important;
 }
 
 .button-with-background {
@@ -389,6 +425,13 @@ img.site-logo {
 
 .nav {
 	align-items: center;
+}
+
+@media only screen and (max-width: 768px) {
+    .container-shrink .container, .container-shrink .container-fluid {
+        max-width: unset;
+        margin: unset;
+    }
 }
 
 /* Navbar */
@@ -573,6 +616,10 @@ li.nav-item {
     color: rgba(0, 0, 0, 0.55);
 }
 
+.dropdown-item.active, .dropdown-item:active {
+    --bs-dropdown-link-active-bg: #f6b9cd ;
+}
+
 /* chat */
 
 .chat-line {
@@ -700,63 +747,38 @@ li.nav-item {
     gap: 10px;
 }
 
-.element-8 {
+.table-element.e8 {
 	width: 8%;
 }
-.element-10 {
+.table-element.e10 {
 	width: 10%;
 }
-.element-12 {
+.table-element.e12 {
 	width: 12%;
 }
-.element-15 {
+.table-element.e15 {
 	width: 15%;
 }
-.element-20 {
+.table-element.e20 {
 	width: 20%;
 }
-.element-25 {
+.table-element.e25 {
 	width: 25%;
 }
-.element-30 {
+.table-element.e30 {
 	width: 30%;
 }
-.element-35 {
+.table-element.e35 {
 	width: 35%;
 }
-.element-40 {
+.table-element.e40 {
 	width: 40%;
 }
-.element-50 {
+.table-element.e50 {
 	width: 50%;
 }
-.element-60 {
+.table-element.e60 {
 	width: 60%;
-}
-
-.spec-table {
-	display: block;
-	width: 100%;
-}
-
-.spec-table table {
-	table-layout: fixed;
-    width: inherit;
-}
-
-.spec-table-th {
-    text-align: center;
-    font-weight: bold;
-    background-color: #f3f3f3;
-    height: 2.5em !important;
-}
-
-.spec-table tr {
-	width: 100%;
-}
-
-.spec-table td {
-	padding: 0px 10px;
 }
 
 /* Overflow */

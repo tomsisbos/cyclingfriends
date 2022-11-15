@@ -16,6 +16,8 @@ if (isset($_SESSION['forms']['created'])) {
 	unset($_SESSION['forms']['created']);
 } ?>
 
+<link rel="stylesheet" href="/assets/css/rides.css">
+
 <body> <?php
 	
 	include '../includes/navbar.php'; ?>
@@ -28,23 +30,23 @@ if (isset($_SESSION['forms']['created'])) {
 		<h2 class="top-title">My rides</h2>
 
 		<div class="container end">
-			<div class="tr-row justify th-row">
-				<div class="td-row element-10 flex-sm-fill justify-center">
+			<div class="my-rd-th justify">
+				<div class="my-rd-td table-element e10 justify-center">
 					Created on
 				</div>
-				<div class="td-row element-10 flex-sm-fill justify-center">
+				<div class="my-rd-td table-element e10 justify-center">
 					Start date
 				</div>
-				<div class="td-row element-30 flex-sm-fill">
+				<div class="my-rd-td table-element e30">
 					Ride name
 				</div>
-				<div class="td-row element-15 flex-sm-fill justify-center">
+				<div class="my-rd-td table-element e15 justify-center">
 					Status
 				</div>
-				<div class="td-row element-10 flex-sm-fill justify-center">
+				<div class="my-rd-td table-element e10 justify-center">
 					Applicants
 				</div>
-				<div class="td-row element-10 flex-sm-fill">
+				<div class="my-rd-td table-element e10">
 				</div>
 			</div>
 		
@@ -56,30 +58,30 @@ if (isset($_SESSION['forms']['created'])) {
 				forEach ($rides as $ride) {
 					$ride = new Ride ($ride['id']); ?> 
 				
-					<div class="tr-row justify">
-						<div class="td-row element-10 flex-sm-fill bg-white justify-center">
-							<?= $ride->posting_date ?>
+					<div class="my-rd-tr justify">
+						<div class="my-rd-td table-element e10 bg-white">
+							<div class="my-rd-responsive-label">Created on : </div><?= $ride->posting_date ?>
 						</div>
-						<div class="td-row element-10 flex-sm-fill bg-white justify-center">
-							<?= $ride->date ?>
+						<div class="my-rd-td table-element e10 bg-white">
+						<div class="my-rd-responsive-label">Start date : </div><?= $ride->date ?>
 						</div>
-						<div class="td-row element-30 flex-sm-fill bg-grey">
+						<div class="my-rd-td table-element e30 bg-grey">
 							<?= truncate($ride->name, 0, 50) ?>
 						</div>
 						<?php // Set text color depending on the status
 						$status_color = colorStatus($ride->status)[0]; ?>
-						<div class="td-row element-15 flex-sm-fill text-center justify-center" style="background-color: <?= $status_color ?>;">
+						<div class="my-rd-td table-element e15 text-center" style="background-color: <?= $status_color ?>;">
 							<?= $ride->status;
 							// Only add substatus if there is one
 							if (!empty($ride->substatus)) { echo ' (' .$ride->substatus. ')'; } ?>
 						</div>
 						<?php $participation = $ride->setParticipationInfos() ?>
-						<div class="td-row element-10 flex-sm-fill bg-white justify-center">
-							<?= '<span style="color:' .$participation['participation_color']. '">' .$participation['participants_number']. '</span>&nbsp;/&nbsp;' .$ride->nb_riders_max. ' (min. ' .$ride->nb_riders_min. ')'; ?>
+						<div class="my-rd-td table-element e10 bg-white my-rd-participants-number">
+							<?= '<div><span style="color:' .$participation['participation_color']. '">' .$participation['participants_number']. '</span>&nbsp;/&nbsp;' .$ride->nb_riders_max. '</div> (min. ' .$ride->nb_riders_min. ')'; ?>
 						</div>
-						<div class="td-row element-10 flex-sm-fill" style="padding-top: 0px; padding-bottom: 0px;">
+						<div class="my-rd-td table-element e10 my-rd-button" style="padding-top: 0px; padding-bottom: 0px;">
 							<a href="ride.php?id=<?= $ride->id ?>">
-								<button class="btn button" style="height: 100% !important; width: 100% !important" type="button">check</button>
+								<button class="btn button" type="button">check</button>
 							</a>
 						</div>
 					</div> <?php

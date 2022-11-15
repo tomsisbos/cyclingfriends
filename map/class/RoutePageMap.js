@@ -153,15 +153,13 @@ export default class RoutePageMap extends GlobalMap {
             td[4].innerHTML = entry.elevation
             td[5].innerHTML = entry.remoteness
             // Style tds
-            td[1].style.textAlign = 'left'
-            td[2].style.textAlign = 'left'
-            td[3].style.textAlign = 'center'
-            td[4].style.textAlign = 'center'
-            td[5].style.textAlign = 'center'
+            td[1].className = 'text-left'
+            td[2].className = 'text-left'
+            td[3].className = 'text-center'
+            td[4].className = 'text-center'
+            td[5].className = 'text-center'
             // Append tds
-            for (let i = 1; i <= 5; i++) {
-                tr.appendChild(td[i])
-            }
+            for (let i = 1; i <= 5; i++) tr.appendChild(td[i])
             if (!ignore) tbody.appendChild(tr)
             previousEntry = entry
 

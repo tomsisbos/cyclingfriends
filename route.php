@@ -15,7 +15,7 @@ include 'actions/users/securityAction.php';
 
 	<?php include 'includes/navbar.php'; ?>
 
-    <div class="main"> <?php
+    <div class="main container-shrink"> <?php
     
         // Get id from URL
         if (isset($_GET['id'])) {
@@ -23,14 +23,14 @@ include 'actions/users/securityAction.php';
             $route = new Route ($_GET['id']); ?>
         
             <div class="container">
-                <div class="d-flex gap align-items-center">
+                <div class="header">
                     <h2 class="top-title"><?= $route->name ?></h2>
                     <div>by 
                         <a href="/riders/profile.php?id=<?= $route->author->id ?>">
                             <strong><?= $route->author->login ?></strong>
                         </a>
                     </div>
-                    <div class="d-flex gap push"> <?php
+                    <div class="header-buttons"> <?php
                         if ($route->author == $connected_user) { ?>
                             <a href="/routes/edit.php?id=<?= $route->id ?>">
                                 <button class="btn button" type="button" name="edit">Edit</button>
@@ -43,18 +43,18 @@ include 'actions/users/securityAction.php';
                     </div>
                 </div>
             </div>
-            <div class="container bg-white">
+            <div class="container bg-white text-justify">
                 <?= $route->description ?>
-                <div class="d-flex gap-20">
-                    <div class="rt-specs d-flex flex-column col-4">
+                <div class="specs">
+                    <div class="spec-column">
                         <div><strong>Start : </strong><?= $route->startplace ?></div>
                         <div><strong>Goal : </strong><?= $route->goalplace ?></div>
                     </div>
-                    <div class="rt-specs d-flex flex-column col-4">
+                    <div class="spec-column">
                     <div><strong>Distance : </strong><?= round($route->distance, 1) ?>km</div>
                         <div><strong>Elevation : </strong><?= $route->elevation ?>m</div>
                     </div>
-                    <div class="rt-specs d-flex flex-column col-4">
+                    <div class="spec-column">
                         <div><strong>Estimated time : </strong><?= $route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
                         <div><strong>Difficulty : </strong><?= $route->getStars($route->calculateDifficulty()) ?></div>
                     </div>
@@ -68,16 +68,16 @@ include 'actions/users/securityAction.php';
             <div id="profileBox" class="container p-0" style="height: 20vh; background-color: white;">
                 <canvas id="elevationProfile"></canvas>
             </div>
-            <div class="container">
+            <div class="container spec-table-container">
                 <div class="spec-table">
                     <table id="routeTable">
                         <tbody>
                             <tr class="spec-table-th">
-                                <th class="element-10 text-left">Distance</th>
-                                <th class="element-40 text-left">Name</th>
-                                <th class="element-20 text-center">Place</th>
-                                <th class="element-15 text-center">Elevation</th>
-                                <th class="element-25 text-center">Distance from route</th>
+                                <th class="table-element e10 text-left">Distance</th>
+                                <th class="table-element e40 text-left">Name</th>
+                                <th class="table-element e20 text-center">Place</th>
+                                <th class="table-element e15 text-center">Elevation</th>
+                                <th class="table-element e25 text-center">Distance from route</th>
                             </tr>
                         </tbody>
                     </table>

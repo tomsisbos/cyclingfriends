@@ -1,3 +1,13 @@
+.rd-header {
+    margin-bottom: 0px !important;
+    background-color: #555555 !important;
+    min-height: 350px;
+    height: fit-content;
+    color: white;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
 /* Course */
 
 .rd-course-map-container {

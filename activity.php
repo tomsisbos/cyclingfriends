@@ -24,7 +24,7 @@ include 'actions/activities/activityAction.php'; ?>
 
 	include 'includes/navbar.php'; ?>
 	
-	<div class="main"> <?php
+	<div class="main container-shrink"> <?php
 	
 		// Space for error messages
 		displayMessage(); ?>
@@ -51,7 +51,7 @@ include 'actions/activities/activityAction.php'; ?>
 							<p style="background-color: #ff5555" class="tag-light text-light">Friends only</p> <?php
 						} ?>
 					</div>
-					<div class="td-row push"> <?php
+					<div class="header-buttons"> <?php
 						// Include admin buttons if the user has admin rights on this activity
 						if ($activity->user == $connected_user) include 'includes/activities/admin-buttons.php'; /*
 						// Else, include user buttons

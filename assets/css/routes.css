@@ -158,12 +158,33 @@
     cursor: row-resize;
 }
 
+
+
+.spec-table {
+    background-color: #f9f9f9;
+    margin: 0px 20px;
+    width: 100%;
+    padding: 20px;
+}
+
+.spec-table table {
+	table-layout: fixed;
+    width: inherit;
+}
+
+.spec-table-th {
+    text-align: center;
+    font-weight: bold;
+    background-color: #f3f3f3;
+    height: 2.5em !important;
+}
+
 .spec-table tr {
     cursor: default;
 }
 
-.spec-table .offroute {
-    color: darkgrey;
+.spec-table td {
+	padding: 0px 10px;
 }
 
 .spec-table tr:hover {
@@ -173,6 +194,10 @@
 .spec-table tr.selected-entry {
     background-color: #ff5555;
     color: white;
+}
+
+.spec-table .offroute {
+    color: darkgrey;
 }
 
 #createSegmentForm {
@@ -214,4 +239,31 @@
 /* Handle on hover */
 .rt-slider::-webkit-scrollbar-thumb:hover {
     background: #c1c1c1; 
+}
+
+@media only screen and (max-width: 768px) {
+    .spec-table-container {
+        padding: unset !important;
+    }
+    .spec-table {
+        font-size: 12px;
+        word-break: break-word;
+        margin: unset;
+        padding: unset;
+    }
+    .table-element {
+        width: auto !important;
+    }
+    .spec-table td {
+        padding: 10px 3px;
+    }
+    .spec-table .text-left, .spec-table .text-center {
+        text-align: center;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .table-element.e40 {
+        width: 100px !important;
+    }
 }
