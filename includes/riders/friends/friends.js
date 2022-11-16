@@ -1,5 +1,5 @@
 var currentPage = window.location.href.toString()
-var apiUrl = '/actions/riders/friends/friendsApi.php'
+const friendsApiUrl = '/actions/riders/friends/api.php'
 
 /* Add button */
 
@@ -71,5 +71,5 @@ if (removeButtons = document.querySelectorAll('.js-remove')) {
 
 // Shows a confirm box on click on button
 function friendAction (action, friend_id, callback) {
-	ajaxGetRequest (apiUrl + "?" + action + "=" + friend_id, callback)
+	ajaxGetRequest (friendsApiUrl + "?" + action + "=" + friend_id, callback)
 }

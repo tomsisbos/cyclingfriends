@@ -120,5 +120,6 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/assets/js/friends-list.js"></script>
 <script src="/includes/riders/friends/friends.js"></script>
+<script src="/includes/riders/followers/followers.js"></script>
 <script src="/includes/riders/profile/gallery.js"></script>
 <script src="/assets/js/send-message.js"></script>	

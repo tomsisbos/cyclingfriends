@@ -2,7 +2,7 @@
 		
 	$requesters = $connected_user->getRequesters();
 		
-	if($requesters){ ?>
+	if ($requesters) { ?>
 		
 		<div class="container">
 			<h3>Requests list</h2>
@@ -10,7 +10,7 @@
 			
 		<div class="container bg-white"> <?php
 		
-			forEach($requesters as $requester){
+			forEach ($requesters as $requester) {
 				
 				$rider = new User ($requester) ?>
 	
@@ -26,7 +26,7 @@
 						<div class="rdr-container-left">
 							<a class="normal" href="/riders/profile.php?id=<?= $rider->id ?>">
 								<div class="rdr-login-section"> <?php 
-									if(!empty($rider->gender)){ ?>
+									if (!empty($rider->gender)) { ?>
 										<div class="rdr-gender">	<?php
 											echo getGenderAsIcon($rider->gender); ?>
 										</div> <?php
@@ -57,33 +57,31 @@
 									<?php } ?>
 									</div>
 								</div>
-								<div class="rdr-sub">
-									<?php if(!empty($rider->place)){ ?>
+								<div class="rdr-sub"> <?php
+									if (!empty($rider->place)) { ?>
 										<div class="d-flex gap">
 											<span class="iconify" data-icon="gis:poi-map" data-width="20"></span>
 											<?= $rider->place; ?>
-										</div>
-									<?php } 
-									if(!empty($rider->birthdate)){ ?>
-									<div>
-										<strong>Age : </strong>
-										<?= $rider->calculateAge(). ' years old'; ?>
-									</div>
-									<?php } ?>
+										</div> <?php
+									} 
+									if (!empty($rider->birthdate)) { ?>
+										<div>
+											<strong>Age : </strong>
+											<?= $rider->calculateAge(). ' years old'; ?>
+										</div> <?php
+									} ?>
 								</div>
 							</div>
 						</div>
 				
 						<!-- Right container -->
-						<div class="rdr-container-right">
-							<?php if(!empty($rider->level)){ ?>
-								<div>
-									<strong>Level : </strong>
-									<span class="tag-<?= colorLevel($rider->level); ?>">
-										<?= $rider->level; ?>
-									</span>
-								</div>
-							<?php } 
+						<div class="rdr-container-right"> <?php
+							if (!empty($rider->level)) { ?>
+								<strong>Level : </strong>
+								<span class="tag-<?= colorLevel($rider->level); ?>">
+									<?= $rider->level; ?>
+								</span> <?php
+							} 
 							// If bike is set and bike type is filled
 							if ($rider->getBikes()) { ?>
 								<div class="mt-1 mb-1">
@@ -93,8 +91,8 @@
 											<div class="tag"><?= $bike['bike_type']; ?></div>
 										<?php } 
 									} ?>
-								</div>
-							<?php } ?>
+								</div> <?php
+							} ?>
 						</div>
 				
 				
@@ -114,8 +112,7 @@
 				</div>
 				
 			<?php
-			}
+			} ?>
+		</div> <?php
 	} ?>
-		
-	</div>
 	

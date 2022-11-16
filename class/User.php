@@ -139,18 +139,70 @@ class User extends Model {
         return $user_infos = $getUserInfos->fetch();
     }
 
-    public function getFriends () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getFriends = $db->prepare('SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
-        $getFriends->execute(array(":user_id" => $this->id));
-        return array_column($getFriends->fetchAll(PDO::FETCH_NUM), 0);
-    }
-
     // Function calculating an age from birthdate
     public function calculateAge () {
         $today = date("Y-m-d");
         $diff = date_diff(date_create($this->birthdate), date_create($today));
         return $diff->format('%y');
+    }
+
+    // Register a friend request
+    public function sendFriendRequest ($friend) {
+        
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        // Check if an entry exists with inviter and receiver id
+        $checkIfAlreadySentARequest = $db->prepare('SELECT * FROM friends WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter)');
+        $checkIfAlreadySentARequest->execute([":inviter" => $this->id, ":receiver" => $friend->id]);
+        $friendship = $checkIfAlreadySentARequest->fetch();
+        
+        // If there is one, return false with an error message depending on if the friends request has already been accepted by receiver or not
+        if ($checkIfAlreadySentARequest->rowCount() > 0) {
+            // If accepted is set to true
+            if ($friendship['accepted']) {
+                $error = "You already are friend with " .$friend->login. ".";
+                return array(false, $error);
+            // If accepted is set to false and current user is the inviter
+            } else if ($friendship['inviter_id'] == $_SESSION['id']) {
+                $error = "You already sent an invitation to " .$friend->login. ".";
+                return array(false, $error);
+            // else (If accepted is set to false and current user is the receiver)
+            } else {
+                $error = $friend->login. ' has already sent you an invitation. You can accept or dismiss it on <a href="/riders/friends.php">your friends page</a>.';
+                return array(false, $error);
+            }
+            
+        // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
+        } else {
+            $createNewFriendship = $db->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
+            $createNewFriendship->execute(array($this->id, $this->login, $friend->id, $friend->login, date('Y-m-d')));
+            return array(true, ['success' => "Your friends request has been sent to " .$friend->login. " !"]);
+        }
+    }
+
+    // Set a friend request to accepted
+    public function acceptFriendRequest ($friend) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        // Set friendship status to "accepted"
+        $acceptFriendsRequest = $db->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
+        $acceptFriendsRequest->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
+        if ($acceptFriendsRequest->rowCount() > 0) return array('success' => $friend->login .' has been added to your friends list !');
+        else return array('error' => 'You already are friends with ' .$friend->login. '.');
+    }
+
+    // Remove a friendship relation
+    public function removeFriend ($friend) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+		$removeFriends = $db->prepare('DELETE FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend WHEN receiver_id = :user_id THEN inviter_id = :friend END');
+		$removeFriends->execute([":user_id" => $this->id, ":friend" => $friend->id]);
+        if ($removeFriends->rowCount() > 0) return array('success' =>  $friend->login .' has been removed from your friends list.');
+        else return array('error' =>  'You are not friends with ' .$friend->login. '.');
+    }
+
+    public function getFriends () {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $getFriends = $db->prepare('SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
+        $getFriends->execute(array(":user_id" => $this->id));
+        return array_column($getFriends->fetchAll(PDO::FETCH_NUM), 0);
     }
 
     public function isFriend ($friend) {
@@ -181,6 +233,42 @@ class User extends Model {
         $getApprovalDate->execute(array(":user_id" => $friend_id));
         $approval_date = $getApprovalDate->fetch();
         return $approval_date[0];
+    }
+
+    // Insert a new entry in followers table
+    public function follow ($user) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $follow = $db->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
+        $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
+        if ($follow->rowCount() > 0) return array('success' => 'You now are following ' . $user->login . '!');
+        else return array('error' => 'You are already following ' . $user->login . '.');
+    }
+
+    // Removes an entry in followers table
+    public function unfollow ($user) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $unfollow = $db->prepare('DELETE FROM followers WHERE following_id = ? AND followed_id = ?');
+        $unfollow->execute(array($this->id, $user->id));
+        if ($unfollow->rowCount() > 0) return array('success' => 'You are no more following ' . $user->login . '.');
+        else return array('error' => 'You have already unfollowed ' . $user->login . '.');
+    }
+
+    // Checks if follows a specific user
+    public function follows ($user) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $checkIfFollows = $db->prepare('SELECT id FROM followers WHERE following_id = ? AND followed_id = ?');
+        $checkIfFollows->execute(array($this->id, $user->id));
+        if ($checkIfFollows->rowCount() > 0) return true;
+        else return false;
+    }
+
+    // Checks if is followed by a specific user
+    public function isFollowed ($user) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $checkIfIsFollowed = $db->prepare('SELECT id FROM followers WHERE following_id = ? AND followed_id = ?');
+        $checkIfIsFollowed->execute(array($user->id, $this->id));
+        if ($checkIfIsFollowed->rowCount() > 0) return true;
+        else return false;
     }
 
     // Function for downloading users's profile picture
@@ -367,65 +455,6 @@ class User extends Model {
         $getProfileGallery = $db->prepare('SELECT * FROM user_photos WHERE user_id = ? ORDER BY img_id');
         $getProfileGallery->execute(array($this->id));
         return $getProfileGallery->fetchAll();
-    }
-
-    // Register a friend request
-    public function sendFriendRequest ($friend) {
-        
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        // Check if an entry exists with inviter and receiver id
-        $checkIfAlreadySentARequest = $db->prepare('SELECT * FROM friends WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter)');
-        $checkIfAlreadySentARequest->execute([":inviter" => $this->id, ":receiver" => $friend->id]);
-        $friendship = $checkIfAlreadySentARequest->fetch();
-        
-        // If there is one, return false with an error message depending on if the friends request has already been accepted by receiver or not
-        if ($checkIfAlreadySentARequest->rowCount() > 0) {
-            // If accepted is set to true
-            if ($friendship['accepted']) {
-                $error = "You already are friend with " .$friend->login. ".";
-                return array(false, $error);
-            // If accepted is set to false and current user is the inviter
-            } else if ($friendship['inviter_id'] == $_SESSION['id']) {
-                $error = "You already sent an invitation to " .$friend->login. ".";
-                return array(false, $error);
-            // else (If accepted is set to false and current user is the receiver)
-            } else {
-                $error = $friend->login. ' has already sent you an invitation. You can accept or dismiss it on <a href="/riders/friends.php">your friends page</a>.';
-                return array(false, $error);
-            }
-            
-        // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
-        } else {
-            $createNewFriendship = $db->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
-            $createNewFriendship->execute(array($this->id, $this->login, $friend->id, $friend->login, date('Y-m-d')));
-            $success = "Your friends request has been sent to " .$friend->login. " !";
-            return array(true, $success);
-        }
-    }
-
-    // Set a friend request to accepted
-    public function acceptFriendRequest ($friend) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        // Set friendship status to "accepted"
-        $acceptFriendsRequest = $db->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
-        $acceptFriendsRequest->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
-        if ($acceptFriendsRequest->rowCount() > 0) {
-            return array(true, $friend->login .' has been added to your friends list !');
-        } else {
-            return array(false, 'You already are friends with ' .$friend->login. '.');
-        }
-    }
-
-    // Remove a friendship relation
-    public function removeFriend ($friend) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-		$removeFriends = $db->prepare('DELETE FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend WHEN receiver_id = :user_id THEN inviter_id = :friend END');
-		$removeFriends->execute([":user_id" => $this->id, ":friend" => $friend->id]);
-        if ($removeFriends->rowCount() > 0) {
-            return array(true, $friend->login .' has been removed from your friends list.');
-        } else {
-            return array(false, 'You are not friends with ' .$friend->login. '.');
-        }
     }
 
     public function getRides () {

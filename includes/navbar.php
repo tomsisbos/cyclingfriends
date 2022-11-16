@@ -78,15 +78,19 @@
 	
 	// If the user is connected and is on the signin page, displays the sign up button 
 	if (!isset($_SESSION['auth']) AND (strpos($url,'signin') == true)) { ?>
-		<a href="/signup.php">
-			<button class="btn button" name="validate">Sign up</button>
-		</a> <?php
+		<div class="header-buttons">
+			<a href="/signup.php">
+				<button class="btn button" name="validate">Sign up</button>
+			</a>
+		</div> <?php
 
 	// Else, displays the sign in button 
 	} else if (!isset($_SESSION['auth'])) { ?>
-		<a href="/signin.php">
-			<button class="btn button" name="validate">Sign in</button>
-		</a> <?php
+		<div class="header-buttons">
+			<a href="/signin.php">
+				<button class="btn button" name="validate">Sign in</button>
+			</a>
+		</div> <?php
 	} ?>
 		
 </nav>

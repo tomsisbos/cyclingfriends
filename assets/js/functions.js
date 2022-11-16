@@ -240,7 +240,9 @@ async function openConfirmationPopup (question) {
 
 // Show corresponding message after request
 function showResponseMessage (response) {
+	const $navbar = document.querySelector('nav')
 	console.log(response)
+	console.log($navbar)
 	hideResponseMessage()
 	// If success, show a success message
 	if (response.success) {
@@ -249,7 +251,7 @@ function showResponseMessage (response) {
 		var successMessage = document.createElement('p')
 		successMessage.className = 'success-message'
 		successMessage.innerHTML = response.success
-		document.querySelector('nav').after(successBlock)
+		$navbar.nextElementSibling.prepend(successBlock)
 		successBlock.appendChild(successMessage)
 	// Else, show an error message
 	} else if (response.error) {
@@ -258,10 +260,10 @@ function showResponseMessage (response) {
 		var errorMessage = document.createElement('p')
 		errorMessage.className = 'error-message'
 		errorMessage.innerHTML = response.error
-		document.querySelector('nav').after(errorBlock)
+		$navbar.nextElementSibling.prepend(errorBlock)
 		errorBlock.appendChild(errorMessage)
 	}
-	window.scroll( {top: 80, behavior: 'smooth'} )
+	window.scroll( {top: $navbar.offsetHeight, behavior: 'smooth'} )
 }
 
 function hideResponseMessage () {

@@ -877,6 +877,7 @@ li.nav-item {
 
 .tag {
 	display: inline-block;
+    width: fit-content;
     background-color: #ffffff;
     padding: 0px 8px;
     border-radius: 5px;
@@ -885,6 +886,7 @@ li.nav-item {
 
 .tag-green {
 	display: inline-block;
+    width: fit-content;
     background-color: #afffaa;
     padding: 0px 8px;
     border-radius: 5px;
@@ -893,6 +895,7 @@ li.nav-item {
 
 .tag-blue {
 	display: inline-block;
+    width: fit-content;
     background-color: #bbbbff;
     padding: 0px 8px;
     border-radius: 5px;
@@ -901,6 +904,7 @@ li.nav-item {
 
 .tag-red {
 	display: inline-block;
+    width: fit-content;
     background-color: #ffbbbb;
     padding: 0px 8px;
     border-radius: 5px;
@@ -909,6 +913,7 @@ li.nav-item {
 
 .tag-lightblue {
 	display: inline-block;
+    width: fit-content;
     background-color: #bbffff;
     padding: 0px 8px;
     border-radius: 5px;
@@ -917,6 +922,7 @@ li.nav-item {
 
 .tag-darkblue {
 	display: inline-block;
+    width: fit-content;
     background-color: #6f6fff;
     padding: 0px 8px;
     border-radius: 5px;

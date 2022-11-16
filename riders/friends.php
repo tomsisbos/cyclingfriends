@@ -19,18 +19,18 @@ include '../actions/users/securityAction.php';
 		<h2 class="top-title">Friends</h2>
 		
 		<!-- Upper section -->
-		<div class="container">
+		<div class="container"> <?php
 		
-			<!-- Filter options --->
-			<?php include '../includes/riders/friends/filter-options.php'; 
+			// Filter options
+			include '../includes/riders/friends/filter-options.php'; 
 			
 			// Select friends from database according to filter queries
 			include '../actions/riders/friends/displayFriendsAction.php'; ?>
 		
-		</div>
+		</div> <?php
 		
-			<!-- Friend requests --->
-			<?php include '../includes/riders/friends/requests-list.php'; ?>
+			// Friend requests
+			include '../includes/riders/friends/requests-list.php'; ?>
 		
 		<div class="container">
 			<h3>Friends list</h2>

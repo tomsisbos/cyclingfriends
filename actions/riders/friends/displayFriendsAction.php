@@ -23,7 +23,14 @@
 				id IN ('".implode("','",$friends)."')
 		ORDER BY
 			CASE
-				WHEN :index = 'level' THEN level END DESC,
+				WHEN :index = 'level' THEN 
+					(CASE 
+						WHEN level = 'Athlete' THEN 0
+						WHEN level = 'Intermediate' THEN 1
+						WHEN level = 'Beginner' THEN 2
+						ELSE 3
+					END)
+				END ASC,
 			CASE 
 				WHEN :index = 'login' THEN login
 				WHEN :index = 'last_name' THEN last_name

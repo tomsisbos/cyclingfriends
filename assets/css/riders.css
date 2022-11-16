@@ -1,5 +1,5 @@
 .rdr-card {
-	border-radius: 99px;
+    border-radius: 50px;
 	height: 100px;
 	margin: 20px 0px;
 }
@@ -64,6 +64,8 @@
 
 .rdr-container-buttons {
 	margin-left: auto;
+    text-align: right;
+    min-width: fit-content;
 }
 
 .rdr-button {
@@ -78,4 +80,21 @@
     border: none;
     padding: 3px !important;
 	background-color: #5C9999;
+}
+
+@media only screen and (max-width: 992px) {
+    .rdr-container-buttons {
+        flex-wrap: wrap;
+        gap: 5px;
+        min-width: unset !important;
+    }
+    
+    .rdr-card {
+        height: unset !important;
+    }
+    
+    .rdr-maininfos-section {
+        flex-direction: column;
+        gap: 0px !important;
+    }
 }
