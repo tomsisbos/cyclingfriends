@@ -822,7 +822,7 @@ export default class MapMap extends GlobalMap {
 
     /* Edit mode */
 
-    addTempMarker (lngLat, elevation) {
+    addTempMarker (lngLat) {
         var marker = new mapboxgl.Marker(
             {
                 color: '#f6b9cd',
@@ -830,7 +830,7 @@ export default class MapMap extends GlobalMap {
                 scale: 0.8
             }
         )
-        marker.elevation = elevation
+        marker.elevation = Math.floor(this.map.queryTerrainElevation(lngLat))
         marker.setLngLat(lngLat)
 
         var tempPopup = new TempPopup()
@@ -888,6 +888,13 @@ export default class MapMap extends GlobalMap {
         this.segmentsCollection = []
     }
 
+    onClickBound = this.onClick.bind(this)
+    onClick (e) {
+        var marker = this.addTempMarker(e.lngLat)
+        console.log('onClick')
+        marker.getElement().addEventListener('contextmenu', this.removeOnClick)
+    }
+
     // Create a numeral marker that can be deleted on right click
     editMode () {
 
@@ -895,9 +902,7 @@ export default class MapMap extends GlobalMap {
 
         // If box is checked
         if (editModeBox.checked) {
-            this.map.on('click', (e) => {
-                this.addNewTempMarker(e)
-            } )
+            this.map.on('click', this.onClickBound)
             this.mode = 'edit'
             // Enable removing temp marker on left click
             this.tempMarkerCollection.forEach((existingMarker) => {
@@ -920,9 +925,8 @@ export default class MapMap extends GlobalMap {
 
         // If box is not checked
         } else {
-            this.map.off('click', (e) => {
-                this.addNewTempMarker(e)
-            } )
+            this.map.off('click', this.onClickBound)
+            console.log(this.map)
             this.mode = 'default'
             // Disable removing temp marker on left click
             this.tempMarkerCollection.forEach((existingMarker) => {
@@ -931,6 +935,7 @@ export default class MapMap extends GlobalMap {
                 popup.options.className = 'marker-popup' // Display popup outside edit mode
                 popup.id = $existingMarker.id // Attributes an ID to popup
                 popup.elevation = existingMarker.elevation // Pass elevation data to the popup
+                console.log($existingMarker)
                 $existingMarker.removeEventListener('contextmenu', this.removeOnClick)
             } )
             // Enable opening popup on click on mkpoint markers
@@ -945,13 +950,6 @@ export default class MapMap extends GlobalMap {
             this.tempMarkerCollection.forEach((marker) => marker.setDraggable(false))
             console.log('editModeMarker has been disabled.')
         }
-    }
-
-    // On edit mode, user can add markers by clicking on the map and removing them by right clicking on the marker
-    addNewTempMarker (e) {
-        var elevation = Math.floor(this.map.queryTerrainElevation(e.lngLat))
-        var marker = this.addTempMarker(e.lngLat, elevation)
-        marker.getElement().addEventListener('contextmenu', this.removeOnClick)
     }
 
     // Highlighting connected user markers 
