@@ -223,11 +223,11 @@ export default class MkpointPopup extends Popup {
             var addArrows = () => {
                 if (!photoContainer.querySelector('.small-prev')) {
                     var minusPhotoButton = document.createElement('a')
-                    minusPhotoButton.classList.add('small-prev', 'nav-link')
+                    minusPhotoButton.classList.add('small-prev', 'lightbox-arrow')
                     minusPhotoButton.innerText = '<'
                     photoContainer.appendChild(minusPhotoButton)
                     var plusPhotoButton = document.createElement('a')
-                    plusPhotoButton.classList.add('small-next', 'nav-link')
+                    plusPhotoButton.classList.add('small-next', 'lightbox-arrow')
                     plusPhotoButton.innerText = '>'
                     photoContainer.appendChild(plusPhotoButton)
                 }
@@ -443,15 +443,15 @@ export default class MkpointPopup extends Popup {
             modalBaseContent.innerHTML =
                     `<span class="close cursor" onclick="closeModal()">&times;</span>
                     <div class="modal-block">
-                        <a class="prev nav-link">&#10094;</a>
-                        <a class="next nav-link">&#10095;</a>
+                        <a class="prev lightbox-arrow">&#10094;</a>
+                        <a class="next lightbox-arrow">&#10095;</a>
                     </div>`
             document.querySelector('.mapboxgl-map').after(modalBaseContent)
         // Else, clear modal window content
         } else {
             document.querySelector('.modal-block').innerHTML =
-            `<a class="prev nav-link">&#10094;</a>
-            <a class="next nav-link">&#10095;</a>`
+            `<a class="prev lightbox-arrow">&#10094;</a>
+            <a class="next lightbox-arrow">&#10095;</a>`
         }
         
         // Slides display

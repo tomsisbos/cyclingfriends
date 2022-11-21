@@ -265,7 +265,8 @@ form#mkpointForm input[type="file" i] {
 
 .small-prev, .small-next {
     cursor: pointer;
-    position: absolute;
+    position: absolute;    
+    padding: 10px;
     top: 40%;
     z-index: 2;
     width: auto;

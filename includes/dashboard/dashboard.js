@@ -1,6 +1,6 @@
 // Infinite scroll
 
-const $cardsContainer = document.querySelector('#recentActivities')
+const $cardsContainer = document.querySelector('#cardsContainer')
 const photosquantity = parseInt($cardsContainer.dataset.photosquantity)
 const limit = parseInt($cardsContainer.dataset.limit)
 var offset = limit

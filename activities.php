@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<link rel="stylesheet" href="/assets/css/activity.css"> 
+
 <?php 
 session_start();
 include 'includes/head.php';
@@ -15,7 +17,7 @@ include 'actions/users/securityAction.php';
 	
 		<h2 class="top-title">Activities</h2>
 		
-		<div class="container container-transparent end">
+		<div class="container container-transparent end"> 
 			
 			<div class="ac-container"> <?php
 			
@@ -23,10 +25,15 @@ include 'actions/users/securityAction.php';
 				define("PREVIEW_PHOTOS_QUANTITY", 5);
 				$limit = 20;
 				if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
-				else $offset = 0;
-				
-				include 'includes/activities/list.php'; ?>
+				else $offset = 0; 
 
+				forEach ($connected_user->getPublicActivities($offset, $limit) as $activity) {
+					$activity = new Activity($activity['id']);
+					if ($activity->hasAccess($connected_user)) {
+						include 'includes/activities/card.php';
+					}
+				} ?>
+			
 			</div> <?php
 			
 			// Set pagination system

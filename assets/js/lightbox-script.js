@@ -89,15 +89,15 @@ function showSlides(n) {
 }
 
 // Set keyboard navigation
-var prev = document.querySelector('.prev.nav-link')
+var prev = document.querySelector('.prev.lightbox-arrow')
 if (prev) {
   prev.addEventListener('click', function () { plusSlides(-1) } )
 }
-var next = document.querySelector('.next.nav-link')
+var next = document.querySelector('.next.lightbox-arrow')
 if (next) {
   next.addEventListener('click', function () { plusSlides(1) } )
 }
-var nav = document.querySelector('.nav-link')
+var nav = document.querySelector('.lightbox-arrow')
 if (nav) {
   document.onkeydown = changeOnArrows // Using onkeydown property rather than addEventListener prevents from adding a new listener on document each time a popup is opened.
 }

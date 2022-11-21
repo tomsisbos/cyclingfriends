@@ -34,24 +34,25 @@ if (isAjax()) {
                 }
                 
                 // Preparing variables
-                $mkpoint['user_id']     = $_SESSION['id'];
-                $mkpoint['user_login']  = $_SESSION['login'];
-                $mkpoint['category']    = 'marker';
-                $mkpoint['name']        = htmlspecialchars($_POST['name']);
-                $mkpoint['city']        = $_POST['city'];
-                $mkpoint['prefecture']  = $_POST['prefecture'];
-                $mkpoint['elevation']   = $_POST['elevation'];
-                $mkpoint['date']        = exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'];
-                $mkpoint['month']       = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
-                $mkpoint['period']      = getPeriod($mkpoint['date']);
-                $mkpoint['description'] = htmlspecialchars($_POST['description']);
-                $mkpoint['file_size']   = $_FILES['file']['size'];
-                $mkpoint['file_name']   = $_FILES['file']['name'];
-                $mkpoint['file_type']   = $_FILES['file']['type'];
-                $mkpoint['lng']         = $_POST['lng'];
-                $mkpoint['lat']         = $_POST['lat'];
-                $mkpoint['error']       = $_FILES['file']['error'];
-                $mkpoint['popularity']  = 30;
+                $mkpoint['user_id']          = $_SESSION['id'];
+                $mkpoint['user_login']       = $_SESSION['login'];
+                $mkpoint['category']         = 'marker';
+                $mkpoint['name']             = htmlspecialchars($_POST['name']);
+                $mkpoint['city']             = $_POST['city'];
+                $mkpoint['prefecture']       = $_POST['prefecture'];
+                $mkpoint['elevation']        = $_POST['elevation'];
+                $mkpoint['date']             = exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'];
+                $mkpoint['month']            = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
+                $mkpoint['period']           = getPeriod($mkpoint['date']);
+                $mkpoint['description']      = htmlspecialchars($_POST['description']);
+                $mkpoint['file_size']        = $_FILES['file']['size'];
+                $mkpoint['file_name']        = $_FILES['file']['name'];
+                $mkpoint['file_type']        = $_FILES['file']['type'];
+                $mkpoint['lng']              = $_POST['lng'];
+                $mkpoint['lat']              = $_POST['lat'];
+                $mkpoint['publication_date'] = date('Y-m-d H:i:s');
+                $mkpoint['error']            = $_FILES['file']['error'];
+                $mkpoint['popularity']       = 30;
 
                 /* Photo treatment */
                 $img_name = 'temp.'.$ext; // Set image name
@@ -60,19 +61,17 @@ if (isAjax()) {
                 move_uploaded_file($_FILES['file']['tmp_name'], $temp);
                 // Get the file into $img thanks to imagecreatefromjpeg
                 $img = imagecreatefromjpegexif($temp);
-                if(imagesx($img) > 1600){
-                    $img = imagescale($img, 1600); // Only scale if img is wider than 1600px
-                }
+                // Only scale if img is wider than 1600px
+                if (imagesx($img) > 1600) $img = imagescale($img, 1600);
                 // Correct image gamma and contrast
                 imagegammacorrect($img, 1.0, 1.1);
                 imagefilter($img, IMG_FILTER_CONTRAST, -5);
                 // Compress it and move it into a new folder
                 $path = $_SERVER["DOCUMENT_ROOT"]. "/includes/media/map/temp/photo_" .$img_name; // Set path variable
-                if($_FILES['file']['size'] > 3000000){ // If uploaded file size exceeds 3Mb, set new quality to 15
-                    imagejpeg($img, $path, 75);
-                }else{ // If uploaded file size is between 1Mb and 3Mb set new quality to 30
-                    imagejpeg($img, $path, 90); 
-                }
+                // If uploaded file size exceeds 3Mb, set new quality to 15
+                if ($_FILES['file']['size'] > 3000000) imagejpeg($img, $path, 75);
+                // If uploaded file size is between 1Mb and 3Mb set new quality to 30
+                else imagejpeg($img, $path, 90);
                 // Get variable ready
                 $mkpoint['file_blob'] = base64_encode(file_get_contents($path));
                 
@@ -83,7 +82,6 @@ if (isAjax()) {
                 // Correct image gamma and contrast
                 imagegammacorrect($thumbnail, 1.0, 1.275);
                 imagefilter($thumbnail, IMG_FILTER_CONTRAST, -12);
-                // 
                 $thumbpath = $_SERVER["DOCUMENT_ROOT"]. "/includes/media/map/temp/thumb_" .$img_name; // Set path variable
                 imagejpeg($thumbnail, $thumbpath);
                 // Get variable ready
@@ -106,16 +104,16 @@ if (isAjax()) {
         $checkLngLat = $db->prepare('SELECT id, lng, lat FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
         $checkLngLat->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
         // If there is one, update it
-        if($checkLngLat->rowCount() > 0){
+        if ($checkLngLat->rowCount() > 0) {
             $isMkpoint = $checkLngLat->fetch();
             $updateMapMkpoint = $db->prepare('UPDATE map_mkpoint SET user_id = ?, user_login = ?, category = ?, name = ?, city = ?, prefecture = ?, elevation = ?, date = ?, month = ?, period = ?, description = ?, thumbnail = ?, popularity = ? WHERE ROUND(lng, 3) = ROUND(?, 3) AND ROUND(lat, 3) = ROUND(?, 3)');
             $updateMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat']));
             $updateImgMkpoint = $db->prepare('UPDATE img_mkpoint SET user_id = ?, user_login = ?, date = ?, month = ?, period = ?, file_blob = ?, file_size = ?, file_name = ?, file_type = ? WHERE mkpoint_id = ?');
             $updateImgMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], $isMkpoint['id']));
         // Else, create it
-        }else{
-		    $insertMapMkpoint = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, period, description, thumbnail, popularity, lng, lat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-		    $insertMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat']));
+        } else {
+		    $insertMapMkpoint = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, period, description, thumbnail, popularity, lng, lat, publication_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+		    $insertMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date']));
             $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
             $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
             $mkpointId = $getMkpointId->fetch();
@@ -134,11 +132,11 @@ if (isAjax()) {
                 // Get extension from file name
                 $ext = strtolower(substr($_FILES['file']['name'], -3));
 
-                if($_FILES['file']['error'] == 2) { // If error is file_exceed_limit
+                if ($_FILES['file']['error'] == 2) { // If error is file_exceed_limit
                     throw new Exception('The file you uploaded exceeds size limit (10Mb). Please reduce the size and try again.');
-                }else if(!getimagesize($_FILES["file"]["tmp_name"])){
+                } else if (!getimagesize($_FILES["file"]["tmp_name"])) {
                     throw new Exception('The file you uploaded is not an image file.');
-                }else if(@!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])){ // If image header doesn't contain DateTimeOriginal
+                } else if (@!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
                     throw new Exception('This file is not a raw photography taken with a camera device.');
                 }
                 

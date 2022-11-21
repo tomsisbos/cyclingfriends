@@ -28,7 +28,8 @@ include 'actions/users/securityAction.php'; ?>
 	<div class="sidebar-main">
 
 		<div class="dashboard-container"> <?php
-			include 'includes/dashboard/recent-activities.php'; ?>
+			var_dump($connected_user->getPublicMkpoints());
+			include 'includes/dashboard/infinite-scroll.php'; ?>
 		</div>
 
 	</div>

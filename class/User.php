@@ -158,24 +158,17 @@ class User extends Model {
         // If there is one, return false with an error message depending on if the friends request has already been accepted by receiver or not
         if ($checkIfAlreadySentARequest->rowCount() > 0) {
             // If accepted is set to true
-            if ($friendship['accepted']) {
-                $error = "You already are friend with " .$friend->login. ".";
-                return array(false, $error);
+            if ($friendship['accepted']) return array('error' => "You already are friend with " .$friend->login. ".");
             // If accepted is set to false and current user is the inviter
-            } else if ($friendship['inviter_id'] == $_SESSION['id']) {
-                $error = "You already sent an invitation to " .$friend->login. ".";
-                return array(false, $error);
+            else if ($friendship['inviter_id'] == $_SESSION['id']) return array('error' => "You already sent an invitation to " .$friend->login. ".");
             // else (If accepted is set to false and current user is the receiver)
-            } else {
-                $error = $friend->login. ' has already sent you an invitation. You can accept or dismiss it on <a href="/riders/friends.php">your friends page</a>.';
-                return array(false, $error);
-            }
+            else return array('error' => $friend->login. ' has already sent you an invitation. You can accept or dismiss it on <a href="/riders/friends.php">your friends page</a>.');
             
         // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
         } else {
             $createNewFriendship = $db->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
             $createNewFriendship->execute(array($this->id, $this->login, $friend->id, $friend->login, date('Y-m-d')));
-            return array(true, ['success' => "Your friends request has been sent to " .$friend->login. " !"]);
+            return array('success' => "Your friends request has been sent to " .$friend->login. " !");
         }
     }
 
@@ -195,7 +188,7 @@ class User extends Model {
 		$removeFriends = $db->prepare('DELETE FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend WHEN receiver_id = :user_id THEN inviter_id = :friend END');
 		$removeFriends->execute([":user_id" => $this->id, ":friend" => $friend->id]);
         if ($removeFriends->rowCount() > 0) return array('success' =>  $friend->login .' has been removed from your friends list.');
-        else return array('error' =>  'You are not friends with ' .$friend->login. '.');
+        else return array('error' => 'You are not friends with ' .$friend->login. '.');
     }
 
     public function getFriends () {
@@ -240,7 +233,7 @@ class User extends Model {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $follow = $db->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
         $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
-        if ($follow->rowCount() > 0) return array('success' => 'You now are following ' . $user->login . '!');
+        if ($follow->rowCount() > 0) return array('success' => 'You now are following ' . $user->login . ' !');
         else return array('error' => 'You are already following ' . $user->login . '.');
     }
 
@@ -269,6 +262,20 @@ class User extends Model {
         $checkIfIsFollowed->execute(array($user->id, $this->id));
         if ($checkIfIsFollowed->rowCount() > 0) return true;
         else return false;
+    }
+
+    public function getFollowedList () {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $getFollowedList = $db->prepare('SELECT following_id FROM followers WHERE followed_id = ?');
+        $getFollowedList->execute(array($this->id));
+        return array_column($getFollowedList->fetchAll(PDO::FETCH_NUM), 0);
+    }
+
+    public function getFollowingList () {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        $getFollowingList = $db->prepare('SELECT followed_id FROM followers WHERE following_id = ?');
+        $getFollowingList->execute(array($this->id));
+        return array_column($getFollowingList->fetchAll(PDO::FETCH_NUM), 0);
     }
 
     // Function for downloading users's profile picture
@@ -488,14 +495,15 @@ class User extends Model {
     public function getPublicActivities ($offset = 0, $limit = 20) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Get period of rides to display
-        $friends_number = count($this->getFriends());
-        if ($friends_number < 3) $period = 999;
-        else if ($friends_number < 8) $period = 14;
-        else if ($friends_number < 18) $period = 10;
-        else if ($friends_number < 25) $period = 7;
-        else $period = 5;
+        $following_list = $this->getFollowingList();
+        $following_number = count($following_list);
+        if ($following_number < 3) $period = 999;
+        else if ($following_number < 8) $period = 28;
+        else if ($following_number < 18) $period = 20;
+        else if ($following_number < 25) $period = 14;
+        else $period = 10;
         // Request activities
-        $getActivities = $db->prepare("SELECT * FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND ((privacy = 'private' AND user_id = ?) OR privacy = 'friends_only') ORDER BY datetime, posting_date DESC LIMIT " .$offset. ", " .$limit);
+        $getActivities = $db->prepare("SELECT id, user_id, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND ((privacy = 'private' AND user_id = ?) OR privacy = 'friends_only') AND user_id IN ('".implode("','",$following_list)."') ORDER BY datetime, posting_date DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($period, $this->id));
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
         // Substract all activities with privacy set to friends_only for which user is not friend with connected user
@@ -610,6 +618,22 @@ class User extends Model {
             }
         }
         return $viewed_mkpoints;
+    }
+
+    public function getPublicMkpoints ($offset = 0, $limit = 20) {
+        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+        // Get period of mkpoints to display
+        $following_list = $this->getFollowingList();
+        $following_number = count($following_list);
+        if ($following_number < 3) $period = 999;
+        else if ($following_number < 8) $period = 28;
+        else if ($following_number < 18) $period = 20;
+        else if ($following_number < 25) $period = 14;
+        else $period = 10;
+        // Request mkpoints
+        $getMkpoints = $db->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$following_list)."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints->execute(array($period));
+        return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Update viewed mkpoints list in the database according to newly uploaded activities

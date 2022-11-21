@@ -36,11 +36,27 @@ include '../actions/users/securityAction.php';
 			<h3>Friends list</h2>
 		</div>
 		
-		<?php include '../includes/riders/friends/friends-list.php'; ?> 
+		<div class="container end bg-white"> <?php 
+		
+			if ($getFriendsData->rowCount() > 0) {
+
+				while ($friend = $getFriendsData->fetch()) {
+					$rider = new User ($friend['id']);
+					include '../includes/riders/rider-card.php';
+				}
+
+			} else {
+				
+				$suberrormessage = 'No friend has been found. You can add friends by clicking on the "Become friends" button on user\'s profile page.'; 
+				if (isset($suberrormessage)) echo '<div class="error-block fullwidth text-center"><p class="error-message">' .$suberrormessage. '</p></div>';
+			
+			} ?>
+			
+		</div>
 	
 	</div>
 	
 </body>
 </html>
 
-<script src="../includes/riders/friends/friends.js"></script>
+<script src="/includes/riders/friends.js"></script>

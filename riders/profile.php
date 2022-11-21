@@ -49,8 +49,22 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 					</div>
 				</div> <?php
 				
-				// Include buttons
-				include '../includes/riders/profile/buttons.php'; ?>
+				// Buttons ?>
+				<div class="td-row push gap-30"> <?php
+					if ($_SESSION['id'] != $user->id) { ?>	
+						<a href="#">
+							<button id="sendMessageButton" class="btn button" name="send_message">Send message</button>
+						</a> <?php
+						include '../includes/riders/friends/buttons.php';
+						include '../includes/riders/profile/send-message.php'; 
+					} else { ?>
+						<a href="/riders/profile/edit.php">
+							<button class="button btn">
+								Edit my profile
+							</button>
+						</a> <?php
+					} ?>
+				</div>
 
 			</div>
 		</div> <?php
@@ -118,8 +132,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 </body>
 
 <script src="/assets/js/lightbox-script.js"></script>
+<script src="/includes/riders/friends.js"></script>
 <script src="/assets/js/friends-list.js"></script>
-<script src="/includes/riders/friends/friends.js"></script>
-<script src="/includes/riders/followers/followers.js"></script>
 <script src="/includes/riders/profile/gallery.js"></script>
 <script src="/assets/js/send-message.js"></script>	

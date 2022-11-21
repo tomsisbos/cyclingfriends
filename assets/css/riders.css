@@ -1,6 +1,6 @@
 .rdr-card {
     border-radius: 50px;
-	height: 100px;
+    min-height: 100px;
 	margin: 20px 0px;
 }
 .rdr-card:hover {
@@ -13,24 +13,35 @@
 	gap: 20px;
 }
 
+.rdr-card-main {
+    display: flex;
+    gap: 10px;
+}
+
+.rdr-card-top {
+    display: flex;
+    gap: 10px;
+}
+
 /* Left container */
 
 .rdr-container-left {
     display: flex;
     gap: 5px;
-    width: 40%;
     flex-flow: column;
 }
 
 .rdr-login-section {
     display: flex;
+    flex-wrap: wrap;
+    height: fit-content;
     padding: 0px 20px;
     align-items: center;
-    gap: 8px;
+    column-gap: 8px;
     border-radius: 99px;
     background-color: white;
-    height: 2em;
-	width: 100%;
+    min-height: 2em;
+    width: fit-content;
 }
 
 .rdr-gender {
@@ -49,15 +60,6 @@
 .rdr-maininfos-section {
     display: flex;
     gap: 30px;
-}
-
-/* Right container */
-
-.rdr-container-right {
-    display: flex;
-    gap: 5px;
-    width: 25%;
-    flex-flow: column;
 }
 
 /* Buttons */
@@ -82,19 +84,34 @@
 	background-color: #5C9999;
 }
 
+.no-click {
+    cursor: default !important;
+}
+
 @media only screen and (max-width: 992px) {
+    .rdr-card-inner {
+        flex-direction: column;
+    }
+    .rdr-card-inner > * {
+        flex-direction: row;
+    }
     .rdr-container-buttons {
         flex-wrap: wrap;
         gap: 5px;
-        min-width: unset !important;
+        text-align: unset;
+        min-width: unset;
     }
-    
     .rdr-card {
-        height: unset !important;
+        height: unset;
     }
-    
     .rdr-maininfos-section {
         flex-direction: column;
-        gap: 0px !important;
+        gap: 0px;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .rdr-card-main {
+        flex-direction: column;
     }
 }
