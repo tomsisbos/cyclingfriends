@@ -72,7 +72,7 @@
     background: #c1c1c1; 
 }
 
-.dashboard-main-cards {
+.dashboard-thread-container {
     gap: 20px;
     display: flex;
     flex-direction: column;

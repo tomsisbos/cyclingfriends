@@ -636,6 +636,33 @@ class User extends Model {
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getThread () {
+        $activities_data = $this->getPublicActivities();
+        $mkpoint_data = $this->getPublicMkpoints();
+        // Build thread data
+        $thread_data = [];
+        foreach ($activities_data as $data) {
+            $activity = new Activity($data['id']);
+            $activity->type = 'activity';
+            array_push($thread_data, $activity);
+        }
+        foreach ($mkpoint_data as $data) {
+            $mkpoint = new Mkpoint($data['id']);
+            $mkpoint->type = 'mkpoint';
+            array_push($thread_data, $mkpoint);
+        }
+        // Sort thread data by date
+        function sort_by_date ($a, $b) {
+            if (isset($a->publication_date)) $a->date = $a->publication_date;
+            else if (isset($a->datetime)) $a->date = $a->datetime;
+            if (isset($b->publication_date)) $b->date = $b->publication_date;
+            else if (isset($b->datetime)) $b->date = $b->datetime;
+            return $a->date < $b->date;
+        }
+        usort($thread_data, 'sort_by_date');
+        return $thread_data;
+    }
+
     // Update viewed mkpoints list in the database according to newly uploaded activities
     /*public function updateViewedMkpoints ($activity = false) {
         require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';

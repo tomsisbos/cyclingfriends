@@ -5,24 +5,26 @@ class Mkpoint extends Model {
     protected $table = 'map_mkpoint';
     
     function __construct($id = NULL) {
-        $this->id            = $id;
+        $this->id               = $id;
         $data = $this->getData($this->table);
-        $this->user          = new User ($data['user_id']);
-        $this->category      = $data['category'];
-        $this->name          = $data['name'];
-        $this->city          = $data['city'];
-        $this->prefecture    = $data['prefecture'];
-        $this->elevation     = $data['elevation'];
-        $this->date          = $data['date'];
-        $this->month         = $data['month'];
-        $this->period        = $data['period'];
-        $this->description   = $data['description'];
-        $this->thumbnail     = $data['thumbnail'];
-        $this->lngLat        = new LngLat($data['lng'], $data['lat']);
-        $this->rating        = $data['rating'];
-        $this->grades_number = $data['grades_number'];
-        $this->popularity    = $data['popularity'];
-        $this->likes         = $data['likes'];
+        $this->user             = new User($data['user_id']);
+        $this->category         = $data['category'];
+        $this->name             = $data['name'];
+        $this->city             = $data['city'];
+        $this->prefecture       = $data['prefecture'];
+        $this->elevation        = $data['elevation'];
+        $this->date             = $data['date'];
+        $this->month            = $data['month'];
+        $this->period           = $data['period'];
+        $this->description      = $data['description'];
+        $this->thumbnail        = $data['thumbnail'];
+        $this->lngLat           = new LngLat($data['lng'], $data['lat']);
+        $this->publication_date = new Datetime($data['publication_date']);
+        $this->rating           = $data['rating'];
+        $this->grades_number    = $data['grades_number'];
+        $this->popularity       = $data['popularity'];
+        $this->likes            = $data['likes'];
+
     }
 
     public function getComments () {
