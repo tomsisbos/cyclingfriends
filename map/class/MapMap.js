@@ -21,6 +21,8 @@ export default class MapMap extends GlobalMap {
     displayRidesBox
     displaySegmentsBox
     mkpointsZoomRoof = 7 // Mkpoint display minimum zoom level
+    mkpointsMinNumber = 10 // Number of mkpoints displayed to try to reach at minimum
+    mkpointsMaxNumber = 20 // Maximum number of mkpoints displayed at the same time
     ridesZoomRoof = 6 // rides display minimum zoom level
     segmentsZoomRoof = 5 // segments display minimum zoom level
     segmentsZoomRange = {
@@ -297,6 +299,9 @@ export default class MapMap extends GlobalMap {
             const bounds = this.map.getBounds()
             ajaxGetRequest (this.apiUrl + "?display-mkpoints=true", (mkpoints) => {
 
+                // Sort mkpoints in popularity order
+                mkpoints.sort((a, b) => a.popularity - b.popularity)
+
                 // First, remove all mkpoints that have left bounds
                 var collection = this.mkpointsMarkerCollection
                 let i = 0
@@ -311,18 +316,32 @@ export default class MapMap extends GlobalMap {
                 }
 
                 // Second, add all mkpoints that have entered bounds
-                mkpoints.forEach( (mkpoint) => {
+                let mkpointsSet = collection.length
+                let keepMkpoints = []
+                let j = 0
+                while (j < mkpoints.length && mkpointsSet <= this.mkpointsMaxNumber) {
                     // If mkpoint is inside bounds
-                    if ((mkpoint.lat < bounds._ne.lat && mkpoint.lat > bounds._sw.lat) && (mkpoint.lng < bounds._ne.lng && mkpoint.lng > bounds._sw.lng)) {
+                    if ((mkpoints[j].lat < bounds._ne.lat && mkpoints[j].lat > bounds._sw.lat) && (mkpoints[j].lng < bounds._ne.lng && mkpoints[j].lng > bounds._sw.lng)) {
                         // Verify it has not already been loaded
-                        if (!document.querySelector('#mkpoint' + mkpoint.id)) {
+                        if (!document.querySelector('#mkpoint' + mkpoints[j].id)) {
                             // Filter through zoom popularity algorithm
-                            if (this.zoomPopularityFilter(mkpoint.popularity) == true) {
-                                this.setMkpoint(mkpoint)
+                            if (this.zoomPopularityFilter(mkpoints[j].popularity) == true) {
+                                this.setMkpoint(mkpoints[j])
+                                mkpointsSet++
+                            } else {
+                                keepMkpoints.push(mkpoints[j])
                             }
                         }
                     }
-                } )
+                    j++
+                }
+
+                // Third, if overall number of mkpoints is still less than mkpointsMinNumber, add other mkpoints inside bounds up to a total number of mkpointsMinNumber
+                if (mkpointsSet < this.mkpointsMinNumber) {
+                    for (let mkpointsToSet = 0; mkpointsToSet < this.mkpointsMinNumber - mkpointsSet && mkpointsToSet < keepMkpoints.length; mkpointsToSet++) {
+                        this.setMkpoint(keepMkpoints[mkpointsToSet])
+                    }
+                }
 
                 // Update mkpoints scale
                 document.querySelectorAll('.mkpoint-icon').forEach((mkpointIcon) => this.map.scaleMarkerAccordingToZoom(mkpointIcon))
