@@ -173,7 +173,7 @@ amenities.forEach( (amenity) => {
             map.setFeatureState(state, {hover: false})
         }
         hoveredFeatureId = null
-        map.getCanvas().style.cursor = 'grab'
+        map.getCanvas().style.cursor = 'unset'
 
         // Remove popup
         amenityPopup.popup.remove()

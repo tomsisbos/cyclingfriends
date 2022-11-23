@@ -695,6 +695,10 @@ form#mkpointForm input[type="file" i] {
 	background-color: #f2f2f2;
 }
 
+.edit-mode {
+    cursor: crosshair !important;
+}
+
 @media (max-width: 800px) {
     .map-controller {
         flex-direction: row;

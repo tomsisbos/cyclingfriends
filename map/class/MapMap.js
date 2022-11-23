@@ -937,7 +937,7 @@ export default class MapMap extends GlobalMap {
                 if (mkpoint._popup.user_id == this.session.id) mkpoint._element.firstChild.classList.add('admin-marker')
             } )
             // Change cursor style
-            this.map.getCanvas().style.cursor = 'crosshair'
+            this.map.getCanvas().classList.add('edit-mode')
             // Enable dragging on temp markers
             this.tempMarkerCollection.forEach((marker) => marker.setDraggable(true))
             console.log('editModeMarker has been enabled.')
@@ -964,7 +964,7 @@ export default class MapMap extends GlobalMap {
                 if (mkpoint._popup.user_id == this.session.id) mkpoint._element.firstChild.classList.remove('admin-marker')
             } )
             // Change cursor style
-            this.map.getCanvas().style.cursor = 'grab'
+            this.map.getCanvas().classList.remove('edit-mode')
             // Disable dragging on temp markers
             this.tempMarkerCollection.forEach((marker) => marker.setDraggable(false))
             console.log('editModeMarker has been disabled.')
