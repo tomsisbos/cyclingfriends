@@ -1,6 +1,6 @@
 <?php
 
-require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+require '../actions/databaseAction.php';
 
 // Get viewed mkpoints location
 $getViewedMkpointsData = $db->prepare("SELECT city, prefecture FROM map_mkpoint INNER JOIN user_mkpoints ON map_mkpoint.id = user_mkpoints.mkpoint_id WHERE user_mkpoints.user_id = ?");
@@ -47,4 +47,4 @@ $cities_total = []; ?>
     } ?>
 </div>
 
-<script src="/includes/dashboard/viewed-mkpoints-stats.js"></script>
+<script src="/scripts/dashboard/viewed-mkpoints-stats.js"></script>

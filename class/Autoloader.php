@@ -15,11 +15,15 @@ class Autoloader {
      * @param $class string name of the Class to load
      */
     static function autoload ($class) {
-        require_once $_SERVER["DOCUMENT_ROOT"] . '/class/'. $class . '.php';
+        $parent_directory = basename($_SERVER['DOCUMENT_ROOT']);
+        $class_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen($parent_directory)) . '/class/';
+        require_once $class_folder . $class . '.php';
     }
 
     static function phpgeo ($class) {
-        require_once $_SERVER["DOCUMENT_ROOT"] . '/class/Location/'. $class . '.php';
+        $parent_directory = basename($_SERVER['DOCUMENT_ROOT']);
+        $class_folder = substr($_SERVER['DOCUMENT_ROOT'], - strlen($parent_directory)) . '/class/';
+        require_once $class_folder . 'Location/' . $class . '.php';
     }
 
 }

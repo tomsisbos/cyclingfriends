@@ -9,6 +9,7 @@ class RideCheckpoint extends Model {
     public $img;
     
     function __construct ($id = NULL) {
+        parent::__construct();
         $this->id            = $id;
         $data = $this->getData($this->table);
         $this->number        = intval($data['checkpoint_id']);

@@ -2,17 +2,17 @@
 require '../actions/databaseAction.php';
 
 // Check if a ride id is correctly displayed in the URL
-if (isset($_GET['id']) AND !empty($_GET['id'])) {
+if (isset($ride_slug) AND !empty($ride_slug)) {
 	
 	// Check if ride exists and if connected user has administration rights
 	$checkIfExists = $db->prepare('SELECT * FROM rides WHERE id = ?');
-	$checkIfExists->execute(array($_GET['id']));
+	$checkIfExists->execute(array($ride_slug));
 	if ($checkIfExists->rowcount() > 0) {
 
 		// If first access on edit page, store editable ride infos in session edit-forms variable
-		if (!isset($_GET['stage'])) {
+		if (!isset($stage_slug)) {
 
-			$ride = new Ride($_GET['id']);
+			$ride = new Ride($ride_slug);
 
 			$_SESSION['edit-forms'][1]['ride-name'] = $ride->name;
 			$_SESSION['edit-forms'][1]['date'] = $ride->date;
@@ -35,12 +35,13 @@ if (isset($_GET['id']) AND !empty($_GET['id'])) {
 			if (round($ride->checkpoints[0]->lngLat->lng, 2) == round($ride->checkpoints[count($ride->checkpoints) - 1]->lngLat->lng, 2) && round($ride->checkpoints[0]->lngLat->lat, 2) == round($ride->checkpoints[count($ride->checkpoints) - 1]->lngLat->lat, 2)) {
 				$_SESSION['edit-forms'][2]['options'] = ['sf' => true]; } // If coordinates rounded to 0,02 of the first and of the last road waypoint are equal, then set options SF to true
 			else $_SESSION['edit-forms'][2]['options'] = ['sf' => false]; // If route start coordinates equals route end coordinates, set SF options to true, else set to false
+			///var_dump($ride->checkpoints);die();
 			$_SESSION['edit-forms'][2]['checkpoints'] = $ride->checkpoints;
 			if (isset($ride->route)) $_SESSION['edit-forms'][2]['route-id'] = $ride->route->id;
 			// If not, redirect to my rides pages
-			if ($ride->author != $connected_user) header('location: myrides.php');
+			if ($ride->author->id != $connected_user->id) header('location: /' . $connected_user->login . '/rides');
 		}
 
-	} else header('location: myrides.php');
+	} else header('location: /' . $connected_user->login . '/rides');
 
-} else header('location: myrides.php'); ?>
+} else header('location: /' . $connected_user->login . '/rides'); ?>

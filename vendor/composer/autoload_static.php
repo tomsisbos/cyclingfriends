@@ -11,6 +11,10 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
         array (
             'adriangibbons\\' => 14,
         ),
+        'L' => 
+        array (
+            'Location\\' => 9,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -18,9 +22,14 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
         array (
             0 => __DIR__ . '/..' . '/adriangibbons/php-fit-file-analysis/src',
         ),
+        'Location\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mjaschen/phpgeo/src',
+        ),
     );
 
     public static $classMap = array (
+        'AltoRouter' => __DIR__ . '/..' . '/altorouter/altorouter/AltoRouter.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 

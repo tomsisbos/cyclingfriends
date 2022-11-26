@@ -5,6 +5,7 @@ class Segment extends Model {
     protected $table = 'segments';
     
     function __construct($id = NULL, $lngLatFormat = true) {
+        parent::__construct();
         $this->id = $id;
         $data = $this->getData($this->table);
         $this->route              = new Route($data['route_id'], $lngLatFormat);
@@ -23,8 +24,7 @@ class Segment extends Model {
     }
 
     private function getSeasons () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getSeasons = $db->prepare('SELECT id FROM segment_seasons WHERE segment_id = ? ORDER BY number');
+        $getSeasons = $this->getPdo()->prepare('SELECT id FROM segment_seasons WHERE segment_id = ? ORDER BY number');
         $getSeasons->execute(array($this->id));
         $seasons_data = $getSeasons->fetchAll(PDO::FETCH_ASSOC);
         $seasons = [];
@@ -36,8 +36,7 @@ class Segment extends Model {
 
     // Get connected user's vote information
     public function getUserVote ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkUserVote = $db->prepare('SELECT grade FROM segment_grade WHERE segment_id = ? AND user_id = ?');
+        $checkUserVote = $this->getPdo()->prepare('SELECT grade FROM segment_grade WHERE segment_id = ? AND user_id = ?');
         $checkUserVote->execute(array($this->id, $user->id));
         if ($checkUserVote->rowCount() > 0) {
             $vote_infos = $checkUserVote->fetch(PDO::FETCH_ASSOC);

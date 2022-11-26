@@ -35,4 +35,4 @@ if (!empty($user->getBikes())) { ?>
 } ?>
 
 
-<script src="/includes/riders/profile/bikes.js"></script>
+<script src="/scripts/riders/bikes.js"></script>

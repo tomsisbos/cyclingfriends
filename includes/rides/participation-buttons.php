@@ -16,9 +16,9 @@
 			
 		// If entries are not open, display a text message instead of button
 		} else if ($ride->isOpen() == 'not yet') { ?>
-			<div class="<?php if (!is_null($checkpoints)) { echo 'tag-dark'; } ?>"><p class="bold text-danger">Entries are not open yet ! You will be able to apply for this ride starting <?= $ride->entry_start ?>.</p></div> <?php
+			<div class="tag-light"><div class="bold text-danger">Entries are not open yet ! You will be able to apply for this ride starting <?= $ride->entry_start ?>.</div></div> <?php
 		} else if ($ride->isOpen() == 'closed') { ?>
-			<div class="<?php if (!is_null($checkpoints)) { echo 'tag-dark'; } ?>"><p class="bold text-danger">Entries are now closed. Try to find <a href="/rides.php">another ride</a> to join !</p></div> <?php
+			<div class="tag-light"><div class="bold text-danger">Entries are now closed. Try to find <a href="/rides">another ride</a> to join !</div></div> <?php
 		} 
 		
 	// Else, display Quit button
@@ -28,7 +28,7 @@
 	
 // Script ?>
 
-<script src="/includes/rides/join.js"></script> <?php /*
+<script src="/scripts/rides/join.js"></script> <?php /*
 
 	// If no accepted bike type matches with connected user's bike list
 	if ($ride->isBikeAccepted($connected_user)) { ?>

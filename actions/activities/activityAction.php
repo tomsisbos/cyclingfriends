@@ -1,11 +1,12 @@
 <?php
  
-	require 'actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	// Get id from URL
-	if (isset($_GET['id'])) {
+	$slug = basename($_SERVER['REQUEST_URI']);
+	if (is_numeric($slug)) {
 		
-		$activity = new Activity($_GET['id']);
+		$activity = new Activity($slug);
 		
 		if ($activity->exists()) {
 
@@ -23,21 +24,21 @@
 			} else {
 
 				// If id doesn't exist, redirect to myactivities.php
-				header('location: activities/myactivities.php');
+				header('location: ' . $connected_user->login . '/activities');
 
 			}            
 
         } else {
 			
             // If id doesn't exist, redirect to myactivities.php
-            header('location: activities/myactivities.php');
+			header('location: ' . $connected_user->login . '/activities');
 		
 		}
 	
 	} else {
 		
-	// If id is not set, redirect to myactivities.php
-	header('location: activities/myactivities.php');
+		// If id is not set, redirect to myactivities.php
+		header('location: ' . $connected_user->login . '/activities');
 		
 	}
 ?>

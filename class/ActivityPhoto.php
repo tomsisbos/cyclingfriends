@@ -12,6 +12,7 @@ class ActivityPhoto extends Image {
     public $featured;
 
     function __construct ($id = NULL) {
+        parent::__construct($id);
         $this->id       = $id;
         $data = $this->getData($this->table);
         $this->blob     = $data['img_blob'];

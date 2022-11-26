@@ -1,28 +1,29 @@
 <?php
  
-	require 'actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	// Get id from URL
-	if (isset($_GET['id'])) {
+	$slug = basename($_SERVER['REQUEST_URI']);
+	if (is_numeric($slug)) {
 
         $getSeasons = $db->prepare('SELECT id FROM segments WHERE id = ?');
-        $getSeasons->execute(array($_GET['id']));
+        $getSeasons->execute(array($slug));
 		
 		if ($getSeasons->rowCount() > 0) {
 			
-			$segment = new Segment($_GET['id']);
+			$segment = new Segment($slug);
 
         } else {
 			
             // If id doesn't exist, redirect to dashboard.php
-            header('location: dashboard.php');
+            header('location: /');
 		
 		}
 	
 	} else {
 		
 		// If id is not set, redirect to dashboard.php
-		header('location: dashboard.php');
+		header('location: /');
 		
 	}
 ?>

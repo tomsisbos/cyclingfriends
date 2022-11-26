@@ -1,7 +1,7 @@
 <?php
 
 // Get total mkpoints number
-require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+require '../actions/databaseAction.php';
 $countMkpoints = $db->prepare("SELECT id FROM map_mkpoint");
 $countMkpoints->execute();
 $mkpoints_number = $countMkpoints->rowCount();

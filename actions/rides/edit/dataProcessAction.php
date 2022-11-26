@@ -39,7 +39,7 @@ switch(CFG_STAGE_ID)
         // var_dump($course_infos);
  
         // Displays summary page
-        require('edit/summary.php');
+        require('../includes/rides/edit/summary.php');
     break;
  
     case 2:
@@ -75,7 +75,7 @@ switch(CFG_STAGE_ID)
 			);
 		}
 		
-		require('edit/course.php');
+		require('../includes/rides/edit/course.php');
     break;
  
     case 1:
@@ -96,6 +96,6 @@ switch(CFG_STAGE_ID)
             );
         }
  
-        require('edit/infos.php');
+        require('../includes/rides/edit/infos.php');
     break;
 } ?>

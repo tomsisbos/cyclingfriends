@@ -20,8 +20,8 @@
 	<!-- php -->
 		<?php
 			require 'functions.php';
-			require $_SERVER["DOCUMENT_ROOT"] . '/class/Autoloader.php';
-			Autoloader::register();
+			///require $_SERVER["DOCUMENT_ROOT"] . '/class/Autoloader.php';
+			///Autoloader::register();
 		 ?>
 	
 	<!-- js -->

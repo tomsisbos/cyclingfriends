@@ -5,6 +5,7 @@ class Bike extends Model {
     protected $table = 'bikes';
 
     function __construct($id = NULL) {
+        parent::__construct();
         $this->id               = $id;
         $data = $this->getData($this->table);
         $this->user             = new User ($data['user_id']);
@@ -36,7 +37,6 @@ class Bike extends Model {
 
     // Function for uploading a bike image
     public function uploadImage() {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         
         // Declaration of variables
         $return        = false;
@@ -78,7 +78,7 @@ class Bike extends Model {
             }
                 
             // Update data
-            $updateImage = $db->prepare('UPDATE bikes SET img_blob = ?, img_size = ?, img_name = ?, img_type = ? WHERE id = ?');
+            $updateImage = $this->getPdo()->prepare('UPDATE bikes SET img_blob = ?, img_size = ?, img_name = ?, img_type = ? WHERE id = ?');
             $updateImage->execute(array($img_blob, $img_size, $img_name, $img_type, $id));
             
             $success = 'Bike image has been correctly updated !';		

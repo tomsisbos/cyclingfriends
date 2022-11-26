@@ -10,12 +10,12 @@ define("PREVIEW_PHOTOS_QUANTITY", 5); ?>
         if ($entry->type == 'activity') {
             $activity = $entry;
             if ($activity->hasAccess($connected_user)) {
-                include 'includes/activities/card.php';
+                include '../includes/activities/card.php';
             }
         // Get mkpoint card if entry type is mkpoint
         } else if ($entry->type == 'mkpoint') {
             $mkpoint = $entry;
-            include 'includes/mkpoints/card.php';
+            include '../includes/mkpoints/card.php';
         }
     } ?>
 

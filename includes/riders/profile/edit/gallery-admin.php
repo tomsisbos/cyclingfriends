@@ -2,7 +2,7 @@
 
 <h2>My profile gallery</h2> <?php
 
-include '../../includes/riders/profile/gallery.php'; ?>
+include '../includes/riders/profile/gallery.php'; ?>
 
 	<?php
 	if (isset($_GET)) ?>

@@ -1,6 +1,6 @@
 <?php
  
-require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+require '../actions/databaseAction.php';
  
 // Signup form validation
 if (isset($_POST['validate'])) {
@@ -33,7 +33,7 @@ if (isset($_POST['validate'])) {
 				$user->setSession();
 
 				// Redirect authentified user to the Dashboard	
-				header('location: dashboard.php');
+				header('location: /');
 			
 			} else {
 				$errormessage = "Your password is incorrect.";

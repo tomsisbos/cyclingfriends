@@ -53,7 +53,7 @@ if (isset($_POST['validate'])) {
 			else $route_id = NULL;
 				
 			// Other data
-			$ride_id = $_GET['id'];
+			$ride_id = $ride_slug;
 		
 			// Edit data from 'rides' table
 			$edit_ride = $db->prepare('UPDATE rides SET name = ?, date = ?, meeting_time = ?, departure_time = ?, finish_time = ?, nb_riders_min = ?, nb_riders_max = ?, level_beginner = ?, level_intermediate = ?, level_athlete = ?, citybike = ?, roadbike = ?, mountainbike = ?, gravelcxbike = ?, description = ?, meeting_place = ?, distance_about = ?, distance = ?, finish_place = ?, terrain = ?, course_description = ?, route_id = ? WHERE id = ?');
@@ -127,7 +127,7 @@ if (isset($_POST['validate'])) {
 			unset($_SESSION['edit-course']);
 
 			// Redirect to ride page
-			header('location: ride.php?id=' . $ride_id);
+			header('location: /ride/' . $ride_id);
 
 		}
 				

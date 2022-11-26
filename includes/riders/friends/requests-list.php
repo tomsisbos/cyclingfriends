@@ -19,12 +19,12 @@
 			
 						<!-- Profile picture -->
 						<div class="rdr-propic">
-							<a href="/riders/profile.php?id=<?= $rider->id ?>"><?php $rider->displayPropic(80, 80, 80); ?></a>
+							<a href="/rider/<?= $rider->id ?>"><?php $rider->displayPropic(80, 80, 80); ?></a>
 						</div>
 				
 						<!-- Left container -->
 						<div class="rdr-container-left">
-							<a class="normal" href="/riders/profile.php?id=<?= $rider->id ?>">
+							<a class="normal" href="/rider/<?= $rider->id ?>">
 								<div class="rdr-login-section"> <?php 
 									if (!empty($rider->gender)) { ?>
 										<div class="rdr-gender">	<?php

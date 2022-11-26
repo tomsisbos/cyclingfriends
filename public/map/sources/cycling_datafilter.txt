@@ -1,0 +1,3 @@
+way["cycleway"="lane"]({{bbox}});
+way["bicycle"="designated"]["highway"!="cycleway"]({{bbox}});
+way["highway"="cycleway"]({{bbox}});

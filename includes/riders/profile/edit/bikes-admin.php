@@ -10,7 +10,7 @@
 
 		<div class="container container-admin js-bike-container d-flex flex-column gap" bike_id="<?= $bike->id ?>" >
 			<div class="d-flex gap-20">
-				<form title="Upload image" class="js-bike-image-form col-4" name="bike-image-form" enctype="multipart/form-data" method="post" action="\actions\riders\profile\bikeImageAction.php">
+				<form title="Upload image" class="js-bike-image-form col-4" name="bike-image-form" enctype="multipart/form-data" method="post" action="..\actions\riders\profile\bikeImageAction.php">
 					<div class="bike-image-container">
 						<?php $bike->displayImage(); ?>
 						<div class="image-icon-container">

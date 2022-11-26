@@ -118,7 +118,7 @@ if (isset($_POST['validate'])) {
 			}
 
 			$_SESSION['forms']['created'] = $ride_id;
-			header('location: myrides.php');
+			header('location: /' . $connected_user->login . '/rides');
 
 		}
 				

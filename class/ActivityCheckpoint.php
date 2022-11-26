@@ -18,6 +18,7 @@ class ActivityCheckpoint extends Model {
     public $special;
     
     function __construct ($id = NULL) {
+        parent::__construct();
         $this->id          = $id;
         $data = $this->getData($this->table);
         $this->activity_id = intval($data['activity_id']);

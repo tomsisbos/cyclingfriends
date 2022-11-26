@@ -1,6 +1,9 @@
 <?php
 
-include $_SERVER["DOCUMENT_ROOT"] . '/includes/functions/api.php';
+// Check for an AJAX request
+function isAjax () {
+	return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+}
 
 // Converts a date from 'Y-m-d H:i:s' format to 'Y-m-d' format
 function datetimeToDate($date){
@@ -95,7 +98,7 @@ function checkPasswordStrength($password){
 
 // Function for getting connected user info from user table
 function getConnectedUserInfo() {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getUser = $db->prepare('SELECT * FROM users WHERE id = ?');
 	$getUser->execute(array($_SESSION['id']));
 	return $getUser->fetch();
@@ -103,7 +106,7 @@ function getConnectedUserInfo() {
 
 // Function for getting connected user settings from settings table
 function getConnectedUserSettings() {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getSettings = $db->prepare('SELECT * FROM settings WHERE user_id = ?');
 	$getSettings->execute(array($_SESSION['id']));
 	return $getSettings->fetch(PDO::FETCH_ASSOC);
@@ -111,7 +114,7 @@ function getConnectedUserSettings() {
 
 // Function for getting connected user rights from users table
 function getConnectedUserRights() {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getRights = $db->prepare('SELECT rights FROM users WHERE id = ?');
 	$getRights->execute(array($_SESSION['id']));
 	return $getRights->fetch(PDO::FETCH_NUM)[0];
@@ -119,7 +122,7 @@ function getConnectedUserRights() {
 
 // Check if there is an entry in settings table matching a specific user ID
 function checkIfUserHasSettingsEntry($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	// Check if the user has already joined the ride
 	$checkIfUserHasSettingsEntry = $db->prepare('SELECT user_id FROM settings WHERE user_id = ?');
@@ -133,21 +136,21 @@ function checkIfUserHasSettingsEntry($user_id){
 }
 
 function getUserInfos($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getUserInfos = $db->prepare('SELECT * FROM users WHERE id = ?');
 	$getUserInfos->execute(array($user_id));
 	return $getUserInfos->fetch();
 }
 
 function getLoginById($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getLogin = $db->prepare('SELECT login FROM users WHERE id = ?');
 	$getLogin->execute(array($user_id));
 	return $getLogin->fetch()[0];
 }
 
 function getInscriptionDate($user){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getUserInfos = $db->prepare('SELECT * FROM users WHERE id = ?');
 	$getUserInfos->execute(array($user));
 	return $user_infos = $getUserInfos->fetch();
@@ -155,7 +158,7 @@ function getInscriptionDate($user){
 
 // Get friends list of a specific user
 function getFriendsList($friend_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getFriends = $db->prepare('SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
 	$getFriends->execute(array(":user_id" => $friend_id));
 	return array_column($getFriends->fetchAll(PDO::FETCH_NUM), 0);
@@ -163,7 +166,7 @@ function getFriendsList($friend_id){
 
 // Get requesters list of a specific user
 function getRequestersList($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	// Get all infos about friends of connected user from database in a multidimensionnal array
 	$getRequesters = $db->prepare('SELECT inviter_id FROM friends WHERE receiver_id = :user AND accepted = false');
 	$getRequesters->execute([":user" => $user_id]);
@@ -178,7 +181,7 @@ function getRequestersList($user_id){
 
 // Check whether two users are friends or not
 function checkIfFriends($friend1, $friend2){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$friend1_friendslist = getFriendsList($friend1);
 	if(in_array_r($friend2, $friend1_friendslist)){
 		return true;
@@ -188,7 +191,7 @@ function checkIfFriends($friend1, $friend2){
 }
 
 function getInvitationDate($friend_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getInvitationDate = $db->prepare('SELECT invitation_date FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id)');
 	$getInvitationDate->execute(array(":user_id" => $friend_id));
 	$invitation_date = $getInvitationDate->fetch();
@@ -206,7 +209,7 @@ function ageFromBirthdate($birthdate){
 function downloadProfilePicture($user_id){
 	
 	// Check if there is an image that corresponds to connected user in the database
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$checkUserId = $db->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
 	$checkUserId->execute(array($user_id));
 	$checkUserId->fetch();
@@ -234,7 +237,7 @@ function displaysProfilePictureFreesize($user_id, $height, $width, $borderRadius
 		
 	// Else, use a profile picture corresponding to user's randomly attribuated icon
 	}else{
-		require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+		require '../actions/databaseAction.php';
 		$getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
 		$getImage->execute(array($user_id));
 		$picture = $getImage->fetch();
@@ -262,7 +265,7 @@ function displaysProfilePictureIcon($user_id){
 
 // Get bikes infos of a specific user from the bikes table
 function getBikes($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	// Set the bike variables to NULL in case of no data
 	$bike[1] = NULL; $bike[2] = NULL; $bike[3] = NULL;
 	// Prepare request of user data
@@ -301,7 +304,7 @@ function becomeFriends($inviter, $receiver){
 	$receiver_id    = $receiver;
 	$receiver_login = getLoginById($receiver);
 	
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	// Check if an entry exists with inviter and receiver id
 	$checkIfAlreadySentARequest = $db->prepare('SELECT * FROM friends WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter)');
 	$checkIfAlreadySentARequest->execute([":inviter" => $inviter_id, ":receiver" => $receiver_id]);
@@ -334,7 +337,7 @@ function becomeFriends($inviter, $receiver){
 
 // Get default profile picture of an user
 function getDefaultProfilePicture($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
 	$getImage->execute(array($user_id));
 	return $getImage->fetch();
@@ -343,7 +346,7 @@ function getDefaultProfilePicture($user_id){
 // Check if a bike is set in the database users table
 function checkIfBikeIsSet($user_id, $bike_number = 1){
 	// Check for data into users table
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$checkIfBikeIsSet = $db->prepare('SELECT bike_type FROM bikes WHERE user_id = ? AND bike_number = ?');
 	$checkIfBikeIsSet->execute(array($user_id, $bike_number));
 	$isSetBike = $checkIfBikeIsSet->fetch();
@@ -356,7 +359,7 @@ function checkIfBikeIsSet($user_id, $bike_number = 1){
 }
 
 function getFeaturedImage($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getFeaturedImage = $db->prepare('SELECT img, img_size, img_name, img_type FROM ride_checkpoints WHERE ride_id = ? AND featured = true');
     $getFeaturedImage->execute(array($ride_id));
     $featuredImage = $getFeaturedImage->fetch(PDO::FETCH_ASSOC);
@@ -365,7 +368,7 @@ function getFeaturedImage($ride_id){
 
 // Get accepted level list of a specific ride from the database
 function getAcceptedLevelTags($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	// Get ride infos
 	$getAcceptedLevelInfos = $db->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
 	$getAcceptedLevelInfos->execute(array($ride_id));
@@ -389,7 +392,7 @@ function getAcceptedLevelTags($ride_id){
 
 // Get accepted level list of a specific ride from the database
 function getAcceptedLevelList($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	// Get ride infos
 	$getAcceptedLevelInfos = $db->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
 	$getAcceptedLevelInfos->execute(array($ride_id));
@@ -417,7 +420,7 @@ function getAcceptedLevelList($ride_id){
 }
 
 function defineStatus($ride, $privacy){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$substatus = NULL; // Set substatus to NULL for preventing errors in case of no substatus set
 	
 	// If ride date is passed
@@ -474,7 +477,7 @@ function defineStatus($ride, $privacy){
 
 // Check if a ride is full or not
 function checkIfRideIsFull($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	// Get current number of participants
 	$checkParticipation = checkParticipation($ride_id);
@@ -499,7 +502,7 @@ function checkIfRideIsFull($ride_id){
 
 // Function for getting an array with participants list and the total number of them
 function checkParticipation($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$checkParticipation = $db->prepare('SELECT user_id FROM participation WHERE ride_id = ?');
 	$checkParticipation->execute(array($ride_id));
 	if($checkParticipation->rowCount() > 0){
@@ -512,7 +515,7 @@ function checkParticipation($ride_id){
 }
 
 function checkIfParticipate($user_id, $ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	// Check if the user has already joined the ride
 	$checkIfParticipate = $db->prepare('SELECT ride_id FROM participation WHERE user_id = ? AND ride_id = ?');
@@ -526,7 +529,7 @@ function checkIfParticipate($user_id, $ride_id){
 }
 
 function checkIfPrivate($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$checkIfPrivate = $db->prepare('SELECT privacy FROM rides WHERE id = ?');
 	$checkIfPrivate->execute(array($ride_id));
 	$privacy = $checkIfPrivate->fetch()['privacy'];
@@ -551,7 +554,7 @@ function checkIfAllParticipantsAreInFriendsList($user_id, $ride_id){
 }
 
 function checkIfEntriesAreOpen($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$entry_period = getEntryPeriod($ride_id);
 	
 	if(date('Y-m-d') < $entry_period['entry_start']){
@@ -566,7 +569,7 @@ function checkIfEntriesAreOpen($ride_id){
 }
 
 function checkIfAcceptedBikesMatches($user_id, $ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	// Get accepted bikes info
 	$getAcceptedBikesInfos = $db->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
@@ -597,7 +600,7 @@ function checkIfAcceptedBikesMatches($user_id, $ride_id){
 function downloadBikeImage($user_id, $bike_number){
 	
 	// Check if there is an image that corresponds to connected user in the database
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getImage = $db->prepare('SELECT user_id, bike_number, img, size, name, type FROM bikes WHERE user_id = ? AND bike_number = ?');
 	$getImage->execute(array($user_id, $bike_number));
 			
@@ -623,7 +626,7 @@ function displayBikeImageSquare($user_id, $bike_number){
 		
 	// Else, use a profile picture corresponding to user's randomly attribuated icon
 	}else{
-		require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+		require '../actions/databaseAction.php';
 		$getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
 		$getImage->execute(array($user_id));
 		$picture = $getImage->fetch();
@@ -637,7 +640,7 @@ function displayBikeImageSquare($user_id, $bike_number){
 function downloadProfileGallery($user_id){
 	
 	// Check if there is an image that corresponds to this user in the database
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	for($i = 0; $i < 5; $i++){
 		$getFile = $db->prepare('SELECT img'.$i.' FROM users WHERE id = ? AND img'.$i.' IS NOT NULL');
 		$getFile->execute(array($user_id));
@@ -681,7 +684,7 @@ function uploadProfileGallery(){
 	$img_type   = '';
 						
 	// Count files and start the loop if there are from 1 to 5 files
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$countfiles = count($_FILES['file']['name']);
 	if($countfiles > 5){
 		$error = 'You can\'t upload more than 5 files. Please try again with 5 files or less.';
@@ -727,7 +730,7 @@ function uploadProfileGallery(){
 // Function for deleting profile gallery
 function deleteProfileGallery(){
 	$user_id = $_GET['id'];
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$CheckIfGallerySet = $db->prepare('SELECT img0 FROM users WHERE id = ? AND img0 IS NOT NULL');
 	$CheckIfGallerySet->execute(array($user_id));
 	if($CheckIfGallerySet->rowCount() > 0){	
@@ -781,7 +784,7 @@ function uploadBikeImage($bike_number){
 		$img_blob = file_get_contents($_FILES[$bikeimagefile]['tmp_name']);
 						
 		// Check if connected user has already uploaded a picture
-		require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+		require '../actions/databaseAction.php';
 		$checkUserId = $db->prepare('SELECT user_id FROM bikes WHERE user_id = ? AND bike_number = ?');
 		$checkUserId->execute(array($_SESSION['id'], $bike_number));
 			
@@ -803,14 +806,14 @@ function uploadBikeImage($bike_number){
 
 // Get all messages between two users
 function getConversation($user1, $user2){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getConversation = $db->prepare('SELECT * FROM messages WHERE sender_id = :user1 AND receiver_id = :user2 UNION SELECT * FROM messages WHERE sender_id = :user2 AND receiver_id = :user1 ORDER BY id');
 	$getConversation->execute(array(":user1" => $user1, ":user2" => $user2));
 	return $getConversation->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getExistingConversationsUsersList ($user_id) {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getExistingConversations = $db->prepare('SELECT DISTINCT CASE WHEN sender_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN sender_id END FROM messages WHERE (sender_id = :user_id OR receiver_id = :user_id) ORDER BY id DESC');
 	$getExistingConversations->execute([':user_id' => $user_id]);
 	return array_column($getExistingConversations->fetchAll(PDO::FETCH_NUM), 0);
@@ -818,7 +821,7 @@ function getExistingConversationsUsersList ($user_id) {
 
 // Insert a new message in the message table
 function addMessage($receiver_id, $message){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	
 	$sender_id      = $_SESSION['id'];
 	$sender_login   = $_SESSION['login'];
@@ -869,7 +872,7 @@ function uploadProfilePicture(){
 		$img_blob = file_get_contents($_FILES['propicfile']['tmp_name']);
 						
 		// Check if connected user has already uploaded a picture
-		require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+		require '../actions/databaseAction.php';
 		$checkUserId = $db->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
 		$checkUserId->execute(array($_SESSION['id']));
 			
@@ -891,7 +894,7 @@ function uploadProfilePicture(){
 
 // Function for finding ride ID from ride name
 function getRideIdFromRideName ($ride_name) {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getRideId = $db->prepare('SELECT id FROM rides WHERE name = ?');
 	$getRideId->execute(array($ride_name));
 	$result = $getRideId->fetch(PDO::FETCH_ASSOC);
@@ -900,7 +903,7 @@ function getRideIdFromRideName ($ride_name) {
 
 // Function for getting ride privacy and ride status into an array
 function getPrivacyAndStatus($ride_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getPrivacyStatus = $db->prepare('SELECT privacy, status, substatus FROM rides WHERE id = ?');
 	$getPrivacyStatus->execute(array($ride_id));
 	$privacyStatus = $getPrivacyStatus->fetch();
@@ -913,7 +916,7 @@ function getPrivacyAndStatus($ride_id){
 
 // Check if ride name is already set in the database
 function checkIfRideIsAlreadySet($ride_name) {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	// Get all ride_names from the database
 	$getRideInfos = $db->prepare('SELECT name FROM rides');
 	$getRideInfos->execute();
@@ -1081,7 +1084,7 @@ function getBikesFromColumnName($bike) {
 
 // Delete a bike from the users table
 function deleteBike ($bike_number, $user_id) {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	if (checkIfBikeIsSet($bike_number, $user_id)) {
 		$deleteBike = $db->prepare('DELETE FROM bikes WHERE user_id = ? AND bike_number = ?');
 		$deleteBike->execute(array($user_id, $bike_number));
@@ -1092,7 +1095,7 @@ function deleteBike ($bike_number, $user_id) {
 
 // Add a bike into the users table
 function addBike ($bike_number, $user_id) {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	if (!checkIfBikeIsSet($bike_number, $user_id)) {
 		$addBike = $db->prepare('INSERT INTO bikes (user_id, bike_number) VALUES (?, ?)');
 		$addBike->execute(array($user_id, $bike_number));
@@ -1155,7 +1158,7 @@ function colorLevel($level){
 
 // Get the gender of an user and return it as an icon
 function getGenderAsIcon($user_id){
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getGender = $db->prepare('SELECT gender FROM users WHERE id = ?');
 	$getGender->execute(array($user_id));
 	$gender = $getGender->fetch();
@@ -1219,7 +1222,7 @@ function truncate($string, $offset, $length) {
 
 // Get a list of users having the 'hide_on_chat' settings option activated
 function getUsersDisablingPublicChat() {
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 	$getUsersDisablingPublicChat = $db->prepare('SELECT user_id FROM settings WHERE hide_on_chat = 1');
 	$getUsersDisablingPublicChat->execute();
 	return array_column($getUsersDisablingPublicChat->fetchAll(PDO::FETCH_NUM), 0);

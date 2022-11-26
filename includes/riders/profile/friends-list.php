@@ -40,7 +40,7 @@
 							$friend = new User ($friend); ?>
 							<div class="tr-row justify">
 								<div class="td-row element-30">
-									<a style="text-decoration: none;" href="/riders/profile.php?id=<?= $friend->id ?>"><?php $friend->displayPropic(60, 60, 60); ?></a>
+									<a style="text-decoration: none;" href="/rider/<?= $friend->id ?>"><?php $friend->displayPropic(60, 60, 60); ?></a>
 								</div>
 								<div class="td-row element-30">
 									<?= $friend->login ?>

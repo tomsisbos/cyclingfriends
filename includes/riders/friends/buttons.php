@@ -1,17 +1,20 @@
 <div class="rdr-container-buttons"> <?php
 
-	// If connected user don't already follow the rider
-	if (!$connected_user->follows($user)) { ?>
-		<button data-action="follow" data-id="<?= $user->id ?>" class="btn rdr-button success js-follower">
-			<span class="iconify-inline" data-icon="mdi:eye-arrow-right-outline" style="color: white;" data-width="20" data-height="20"></span>
-			Follow
-		</button> <?php
-	// If connected user already follows the rider
-	} else { ?>
-		<button data-action="unfollow" data-id="<?= $user->id ?>" class="btn rdr-button danger js-follower">
-			<span class="iconify-inline" data-icon="mdi:eye-remove-outline" style="color: white;" data-width="20" data-height="20"></span>
-			Unfollow
-		</button> <?php
+	// If rider and connected user are not the same
+	if ($connected_user->id !== $user->id) {
+		// If connected user don't already follow the rider
+		if (!$connected_user->follows($user)) { ?>
+			<button data-action="follow" data-id="<?= $user->id ?>" class="btn rdr-button success js-follower">
+				<span class="iconify-inline" data-icon="mdi:eye-arrow-right-outline" style="color: white;" data-width="20" data-height="20"></span>
+				Follow
+			</button> <?php
+		// If connected user already follows the rider
+		} else { ?>
+			<button data-action="unfollow" data-id="<?= $user->id ?>" class="btn rdr-button danger js-follower">
+				<span class="iconify-inline" data-icon="mdi:eye-remove-outline" style="color: white;" data-width="20" data-height="20"></span>
+				Unfollow
+			</button> <?php
+		}
 	}
 
 	// If the rider is friend with connected user

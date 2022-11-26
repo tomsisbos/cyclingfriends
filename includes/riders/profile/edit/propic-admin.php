@@ -8,4 +8,4 @@
 	<input type="hidden" name="MAX_FILE_SIZE" value="500000" />
 </form>
 
-<script src="/includes/riders/profile/edit/propic-admin.js"></script>
+<script src="/scripts/riders/propic-admin.js"></script>

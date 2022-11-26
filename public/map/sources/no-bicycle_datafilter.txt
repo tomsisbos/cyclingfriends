@@ -1,0 +1,1 @@
+way["highway"!="steps"]["highway"!="path"]["bicycle"="no"]({{bbox}})

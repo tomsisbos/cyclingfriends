@@ -1,6 +1,6 @@
 <?php 
 
-if(isset($ride) AND !empty($ride)){
+if (isset($ride) AND !empty($ride)) {
 	
 // Converts select form int values to string values
 
@@ -35,7 +35,7 @@ if(isset($ride) AND !empty($ride)){
 		default : $terrain_value = 'unknown'; 
 	}
 	
-}else{
+} else {
 	
 	$errormessage = 'We have a problem with the file : actions/rides/convertInToStringValuesAction.php';
 	

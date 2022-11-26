@@ -5,6 +5,7 @@ class Ride extends Model {
     protected $table = 'rides';
     
     function __construct($id = NULL, $lngLatFormat = true) {
+        parent::__construct();
         $this->id = $id;
         $data = $this->getData($this->table);
         $this->name                                 = $data['name'];
@@ -41,15 +42,13 @@ class Ride extends Model {
     }
 
     public function getFeaturedImage () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getFeaturedImage = $db->prepare('SELECT img, img_size, img_name, img_type FROM ride_checkpoints WHERE ride_id = ? AND featured = true');
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT img, img_size, img_name, img_type FROM ride_checkpoints WHERE ride_id = ? AND featured = true');
         $getFeaturedImage->execute(array($this->id));
         return $getFeaturedImage->fetch(PDO::FETCH_ASSOC);
     }
 
     function getAcceptedLevels () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getAcceptedLevels = $db->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
+        $getAcceptedLevels = $this->getPdo()->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
         $getAcceptedLevels->execute(array($this->id));
         $accepted_levels = $getAcceptedLevels->fetch(PDO::FETCH_NUM);
         return $accepted_levels;
@@ -58,8 +57,7 @@ class Ride extends Model {
     // Get accepted levels infos of a specific ride in values
     public function getAcceptedLevelsValues () {
 
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getAcceptedLevels = $db->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
+        $getAcceptedLevels = $this->getPdo()->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
         $getAcceptedLevels->execute(array($this->id));
         $accepted_levels = $getAcceptedLevels->fetch(PDO::FETCH_NUM);
 
@@ -118,8 +116,7 @@ class Ride extends Model {
 
     // Get accepted bikes infos of a specific ride from the rides table
     public function getAcceptedBikes () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getAcceptedBikes = $db->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
+        $getAcceptedBikes = $this->getPdo()->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
         $getAcceptedBikes->execute(array($this->id));
         $accepted_bikes = $getAcceptedBikes->fetch();
         return $accepted_bikes;
@@ -128,8 +125,7 @@ class Ride extends Model {
     // Get accepted bikes infos of a specific ride in values
     public function getAcceptedBikesValues () {
 
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getAcceptedBikes = $db->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
+        $getAcceptedBikes = $this->getPdo()->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
         $getAcceptedBikes->execute(array($this->id));
         $accepted_bikes = $getAcceptedBikes->fetch(PDO::FETCH_NUM);
 
@@ -198,21 +194,18 @@ class Ride extends Model {
     }
 
     public function join ($participant) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Add a line into participation database
-        $joinRide = $db->prepare('INSERT INTO participation(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
+        $joinRide = $this->getPdo()->prepare('INSERT INTO participation(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
         $joinRide->execute(array($participant->id, $this->id, date('Y-m-d H:i:s')));	
     }
 
     public function quit ($participant) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Remove an user from participation database
-		$quitRide = $db->prepare('DELETE FROM participation WHERE user_id = ? AND ride_id = ?');
+		$quitRide = $this->getPdo()->prepare('DELETE FROM participation WHERE user_id = ? AND ride_id = ?');
 		$quitRide->execute(array($_SESSION['id'], $this->id));	
     }
 
     public function isOpen () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         if (date('Y-m-d') < $this->entry_start) {
             return 'not yet';
         } else if (date('Y-m-d') > $this->entry_end) {
@@ -225,10 +218,9 @@ class Ride extends Model {
     }
 
     public function isParticipating ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         
         // Check if the user has already joined the ride
-        $checkIfParticipate = $db->prepare('SELECT ride_id FROM participation WHERE user_id = ? AND ride_id = ?');
+        $checkIfParticipate = $this->getPdo()->prepare('SELECT ride_id FROM participation WHERE user_id = ? AND ride_id = ?');
         $checkIfParticipate->execute(array($user->id, $this->id));
     
         if ($checkIfParticipate->rowCount() > 0) {
@@ -240,8 +232,7 @@ class Ride extends Model {
 
     // Function for getting an array with participants list and the total number of them
     public function getParticipants () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getParticipants = $db->prepare('SELECT user_id FROM participation WHERE ride_id = ?');
+        $getParticipants = $this->getPdo()->prepare('SELECT user_id FROM participation WHERE ride_id = ?');
         $getParticipants->execute(array($this->id));
         if ($getParticipants->rowCount() > 0) {
             // Regroup user ids in one array
@@ -254,7 +245,6 @@ class Ride extends Model {
 
     // Check if a ride is full or not
     public function isFull () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         
         // Get current number of participants
         $participants = $this->getParticipants();
@@ -291,7 +281,6 @@ class Ride extends Model {
     }
 
     public function defineStatus ($privacy){
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $substatus = NULL; // Set substatus to NULL for preventing errors in case of no substatus set
         
         // If ride date is passed
@@ -340,7 +329,7 @@ class Ride extends Model {
             
         }
     
-        $updateStatus = $db->prepare('UPDATE rides SET status = ?, substatus = ? WHERE id = ?');
+        $updateStatus = $this->getPdo()->prepare('UPDATE rides SET status = ?, substatus = ? WHERE id = ?');
         $updateStatus->execute(array($status, $substatus, $this->id));
 
         $this->status    = $status;
@@ -384,12 +373,11 @@ class Ride extends Model {
     }
 
     public function delete () {      
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $deleteCheckpoints = $db->prepare('DELETE FROM ride_checkpoints WHERE ride_id = ?');
+        $deleteCheckpoints = $this->getPdo()->prepare('DELETE FROM ride_checkpoints WHERE ride_id = ?');
         $deleteCheckpoints->execute(array($this->id));
-        $deleteChat = $db->prepare('DELETE FROM ride_chat WHERE ride_id = ?');
+        $deleteChat = $this->getPdo()->prepare('DELETE FROM ride_chat WHERE ride_id = ?');
         $deleteChat->execute(array($this->id));
-        $deleteRide = $db->prepare('DELETE FROM rides WHERE id = ?');
+        $deleteRide = $this->getPdo()->prepare('DELETE FROM rides WHERE id = ?');
         $deleteRide->execute(array($this->id));
         return true;
     }
@@ -406,7 +394,6 @@ class Ride extends Model {
         $img_type   = '';
                             
         // Count files and start the loop if there are from 1 to 5 files
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $countfiles = count($_FILES['file']['name']);
         if($countfiles > 5){
             $error = 'You can\'t upload more than 5 files. Please try again with 5 files or less.';
@@ -416,7 +403,7 @@ class Ride extends Model {
         }else if($countfiles <= 5 AND $countfiles > 0){
 
             // Delete all photos previously uploaded
-            $resetImage = $db->prepare('DELETE FROM ride_photos WHERE ride_id = ?');
+            $resetImage = $this->getPdo()->prepare('DELETE FROM ride_photos WHERE ride_id = ?');
             $resetImage->execute(array($this->id));
 
             for($i = 0; $i < $countfiles; $i++){
@@ -441,7 +428,7 @@ class Ride extends Model {
                         return array(false, $error);
                                 
                     }else{		
-                        $insertImage = $db->prepare('INSERT INTO ride_photos (ride_id, img_id, img, size, name, type) VALUES (?, ?, ?, ?, ?, ?)');
+                        $insertImage = $this->getPdo()->prepare('INSERT INTO ride_photos (ride_id, img_id, img, size, name, type) VALUES (?, ?, ?, ?, ?, ?)');
                         $insertImage->execute(array($this->id, $img_id, $img_blob, $img_size, $img_name, $img_type));
                         $checksuccess = true;
                     }
@@ -456,11 +443,10 @@ class Ride extends Model {
     }
 
     function deleteRideGallery(){
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $CheckIfGallerySet = $db->prepare('SELECT * FROM ride_photos WHERE ride_id = ?');
+        $CheckIfGallerySet = $this->getPdo()->prepare('SELECT * FROM ride_photos WHERE ride_id = ?');
         $CheckIfGallerySet->execute(array($this->id));
         if($CheckIfGallerySet->rowCount() > 0){	
-            $deleteGallery = $db->prepare('DELETE FROM ride_photos WHERE ride_id = ?');
+            $deleteGallery = $this->getPdo()->prepare('DELETE FROM ride_photos WHERE ride_id = ?');
             $deleteGallery->execute(array($this->id));
             $success = 'Current gallery has been successfully deleted.';
             return array(true, $success);
@@ -472,8 +458,7 @@ class Ride extends Model {
 
     // Get all checkpoints info of a specific ride
     public function getCheckpoints () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getCheckpoints = $db->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? ORDER BY checkpoint_id');
+        $getCheckpoints = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? ORDER BY checkpoint_id');
         $getCheckpoints->execute(array($this->id));
         $checkpoints_ids = $getCheckpoints->fetchAll(PDO::FETCH_ASSOC);
         $checkpoints = array();
@@ -494,15 +479,13 @@ class Ride extends Model {
     }
 
     public function getChat () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getChat = $db->prepare('SELECT * FROM ride_chat WHERE ride_id = ?');
+        $getChat = $this->getPdo()->prepare('SELECT * FROM ride_chat WHERE ride_id = ?');
         $getChat->execute(array($this->id));
         return $getChat->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getMapThumbnail () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getMapThumbnail = $db->prepare('SELECT thumbnail FROM routes WHERE id = ?');
+        $getMapThumbnail = $this->getPdo()->prepare('SELECT thumbnail FROM routes WHERE id = ?');
         $getMapThumbnail->execute(array($this->route->id));
         return $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
     }

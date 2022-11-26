@@ -1,6 +1,6 @@
 <?php
  
-	require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
+	require '../actions/databaseAction.php';
 		
 	// If no value, set friend_search to '%' in order to select all entries
 	if (empty($_POST['friend_search'])) {

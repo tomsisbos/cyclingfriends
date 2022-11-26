@@ -7,7 +7,7 @@
                 if (isset($checkpoint->img->blob)) { ?>
                     <img thumbnailId="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="<?= 'data:' .$checkpoint->img->type.  ';base64,' .$checkpoint->img->blob ?>"> <?php
                 } else { ?>		
-                    <img thumbnailId="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="\includes\media\default-photo-<?= $rand[$i] ?>.svg"> <?php
+                    <img thumbnailId="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="\media\default-photo-<?= $rand[$i] ?>.svg"> <?php
                 }
                 if ($i > 0 AND $i < count($ride->checkpoints) - 1) { ?>
                     <div class="summary-checkpoint-number"> 
@@ -77,7 +77,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
                 if (isset($checkpoint->img->blob)) { ?>
                     <img src="<?= 'data:image/jpeg;base64,' . $checkpoint->img->blob; ?>" style="width:100%"> <?php
                 } else { ?>
-                    <img src="\includes\media\default-photo-<?= $rand[$i]; ?>.svg"> <?php
+                    <img src="\media\default-photo-<?= $rand[$i]; ?>.svg"> <?php
                 } ?>
             </div> <?php
         } ?>
@@ -86,7 +86,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
         <a class="next nav-link">&#10095;</a>
 
         <?php // Display name as an input if current user have ride admin rights
-        if ($connected_user == $ride->author) { ?>
+        if ($connected_user->id == $ride->author->id) { ?>
             <div class="lightbox-admin-panel container-admin name-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>
@@ -110,7 +110,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             for ($i = 0; $i < count($ride->checkpoints); $i++) {
                 $checkpoint = $ride->checkpoints[$i]; ?>
                 <div class="column">
-                    <img class="demo cursor" src="<?php if (isset($checkpoint->img->blob)) { echo 'data:image/jpeg;base64,' . $checkpoint->img->blob; } else { echo '\includes\media\default-photo-' .$rand[$i]. '.svg'; } ?>" style="width:100%" demoId="<?= $i + 1 ?>" alt="<?= $checkpoint->description ?>">
+                    <img class="demo cursor" src="<?php if (isset($checkpoint->img->blob)) { echo 'data:image/jpeg;base64,' . $checkpoint->img->blob; } else { echo '\media\default-photo-' .$rand[$i]. '.svg'; } ?>" style="width:100%" demoId="<?= $i + 1 ?>" alt="<?= $checkpoint->description ?>">
                 </div> <?php
             } ?>
         </div>

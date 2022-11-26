@@ -46,7 +46,7 @@ $getRideChatParents->execute(array($ride->id));
 			} else {
 				echo '<div class="chat-line">';
 			}
-				?><a href="/users/profile.php?id=<?= $rideMessage->id ?>"><?php $rideMessage->author->displayPropic(); ?></a><?php
+				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->displayPropic(); ?></a><?php
 				echo '<div class="chat-message-block">';
 					echo '<div class="chat-login">' . $rideMessage->author->login . '</div>';
 					echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
@@ -59,7 +59,7 @@ $getRideChatParents->execute(array($ride->id));
 			} else {
 				echo '<div class="chat-line child">';
 			}
-				?><a href="/users/profile.php?id=<?= $rideMessage->id ?>"><?php $rideMessage->author->displayPropic(); ?></a><?php
+				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->displayPropic(); ?></a><?php
 				echo '<div class="chat-message-block">';
 					echo '<div class="chat-login">' . $rideMessage->login . '</div>';
 					echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';

@@ -21,7 +21,8 @@ class Activity extends Model {
     public $notes_privacy;
     public $route;
     
-    function __construct($id = NULL, $lngLatFormat = true) {
+    function __construct($id = NULL, $lngLatFormat = true) {        
+        parent::__construct();
         $this->id = intval($id);
         $data = $this->getData($this->table);
         $this->user             = new User($data['user_id']);
@@ -44,8 +45,7 @@ class Activity extends Model {
     }
 
     public function getCheckpoints () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getCheckpoints = $db->prepare('SELECT id FROM activity_checkpoints WHERE activity_id = ? ORDER BY number');
+        $getCheckpoints = $this->getPdo()->prepare('SELECT id FROM activity_checkpoints WHERE activity_id = ? ORDER BY number');
         $getCheckpoints->execute(array($this->id));
         $checkpoints_ids = $getCheckpoints->fetchAll(PDO::FETCH_ASSOC);
         $checkpoints = array();
@@ -58,8 +58,7 @@ class Activity extends Model {
 
     public function getCheckpointPhotos ($current_checkpoint) {
         // Get all activity photos id with datetime
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getPhotos = $db->prepare('SELECT id, datetime FROM activity_photos WHERE activity_id = ? ORDER BY datetime');
+        $getPhotos = $this->getPdo()->prepare('SELECT id, datetime FROM activity_photos WHERE activity_id = ? ORDER BY datetime');
         $getPhotos->execute(array($this->id));
         $photo_ids = $getPhotos->fetchAll(PDO::FETCH_ASSOC);
 
@@ -91,8 +90,7 @@ class Activity extends Model {
     }
 
     public function getPhotoIds () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getPhotos = $db->prepare('SELECT id FROM activity_photos WHERE activity_id = ? ORDER BY featured DESC, datetime ASC');
+        $getPhotos = $this->getPdo()->prepare('SELECT id FROM activity_photos WHERE activity_id = ? ORDER BY featured DESC, datetime ASC');
         $getPhotos->execute(array($this->id));
         return $getPhotos->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -235,14 +233,13 @@ class Activity extends Model {
     }
 
     public function delete () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $deleteCheckpoints = $db->prepare('DELETE FROM activity_checkpoints WHERE activity_id = ?');
+        $deleteCheckpoints = $this->getPdo()->prepare('DELETE FROM activity_checkpoints WHERE activity_id = ?');
         $deleteCheckpoints->execute(array($this->id));
-        $deletePhotos = $db->prepare('DELETE FROM activity_photos WHERE activity_id = ?');
+        $deletePhotos = $this->getPdo()->prepare('DELETE FROM activity_photos WHERE activity_id = ?');
         $deletePhotos->execute(array($this->id));
-        $deleteLikeData = $db->prepare('DELETE FROM activity_islike WHERE activity_id = ?');
+        $deleteLikeData = $this->getPdo()->prepare('DELETE FROM activity_islike WHERE activity_id = ?');
         $deleteLikeData->execute(array($this->id));
-        $deleteActivity = $db->prepare('DELETE FROM activities WHERE id = ?');
+        $deleteActivity = $this->getPdo()->prepare('DELETE FROM activities WHERE id = ?');
         $deleteActivity->execute(array($this->id));
         return true;
     }

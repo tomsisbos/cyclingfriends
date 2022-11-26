@@ -5,14 +5,14 @@
         <div class="ac-infos-container">
             <div class="ac-user-details">
                 <div class="ac-user-propic">
-                <a href="/riders/profile.php?id=<?= $activity->user->id ?>"><?php $activity->user->displayPropic() ?></a>
+                <a href="/rider/<?= $activity->user->id ?>"><?php $activity->user->displayPropic() ?></a>
                 </div>
                 <div class="ac-details">
                     <div class="ac-user-name">
-                        <a href="/riders/profile.php?id=<?= $activity->user->id ?>"><?= $activity->user->login ?></a>
+                        <a href="/rider/<?= $activity->user->id ?>"><?= $activity->user->login ?></a>
                     </div>
                     <div class="ac-name">
-                        <a href="/activity.php?id=<?= $activity->id ?>">
+                        <a href="/activity/<?= $activity->id ?>">
                             <?= $activity->title ?>
                         </a>
                     </div>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="ac-thumbnail-container">
-            <a href="/activity.php?id=<?= $activity->id ?>">
+            <a href="/activity/<?= $activity->id ?>">
                 <img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
             </a>
         </div>
@@ -55,7 +55,7 @@
         $i = 1;
         $preview_photos = $activity->getPreviewPhotos(PREVIEW_PHOTOS_QUANTITY);
         foreach ($preview_photos as $photo) { ?>
-            <a href="/activity.php?id=<?= $activity->id ?>">
+            <a href="/activity/<?= $activity->id ?>">
                 <div class="ac-photo-container<?php if ($photo->featured) echo ' featured'; ?>">
                     <img class="ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>"> <?php
                     if ($i == PREVIEW_PHOTOS_QUANTITY AND count($activity->getPhotoIds()) > PREVIEW_PHOTOS_QUANTITY) { ?>

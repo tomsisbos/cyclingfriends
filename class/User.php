@@ -26,6 +26,7 @@ class User extends Model {
     protected $table = 'users';
     
     function __construct($id = NULL) {
+        parent::__construct();
         $this->id                        = $id;
         $data = $this->getData($this->table);
         $this->login                     = $data['login'];
@@ -51,8 +52,7 @@ class User extends Model {
         $this->email                     = $email;
         $this->login                     = $login;
         // Insert data into database
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $register = $db->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
+        $register = $this->getPdo()->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
         $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 'Beginner'));
         // Get id
         $this->id                        = $this->getData()['id'];
@@ -72,25 +72,22 @@ class User extends Model {
 
     // Get user settings from settings table
     public function getSettings() {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getSettings = $db->prepare('SELECT * FROM settings WHERE user_id = ?');
+        $getSettings = $this->getPdo()->prepare('SELECT * FROM settings WHERE user_id = ?');
         $getSettings->execute(array($this->id));
         return $getSettings->fetch(PDO::FETCH_ASSOC);
     }
 
     // Get user rights from users table
     public function getRights() {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getRights = $db->prepare('SELECT rights FROM users WHERE id = ?');
+        $getRights = $this->getPdo()->prepare('SELECT rights FROM users WHERE id = ?');
         $getRights->execute(array($this->id));
         return $getRights->fetch(PDO::FETCH_NUM)[0];
     }
 
     // Check if there is an entry in settings table matching a specific user ID
     public function checkIfUserHasSettingsEntry(){
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         
-        $checkIfUserHasSettingsEntry = $db->prepare('SELECT user_id FROM settings WHERE user_id = ?');
+        $checkIfUserHasSettingsEntry = $this->getPdo()->prepare('SELECT user_id FROM settings WHERE user_id = ?');
         $checkIfUserHasSettingsEntry->execute(array($user_id));
 
         if($checkIfUserHasSettingsEntry->rowCount() > 0){
@@ -101,8 +98,7 @@ class User extends Model {
     }
 
     public function checkIfLoginAlreadyExists ($login) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkIfUserAlreadyExists = $db->prepare('SELECT login FROM users WHERE login = ?');
+        $checkIfUserAlreadyExists = $this->getPdo()->prepare('SELECT login FROM users WHERE login = ?');
         $checkIfUserAlreadyExists->execute(array($login));
         if($checkIfUserAlreadyExists->rowCount() > 0){
             return true;
@@ -112,8 +108,7 @@ class User extends Model {
     }
 
     public function checkIfEmailAlreadyExists ($email) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkIfEmailAlreadyExists = $db->prepare('SELECT email FROM users WHERE email = ?');
+        $checkIfEmailAlreadyExists = $this->getPdo()->prepare('SELECT email FROM users WHERE email = ?');
         $checkIfEmailAlreadyExists->execute(array($email));
         if($checkIfEmailAlreadyExists->rowCount() > 0){
             return true;
@@ -133,8 +128,7 @@ class User extends Model {
     }
     
     public function getInscriptionDate($user){
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getUserInfos = $db->prepare('SELECT * FROM users WHERE id = ?');
+        $getUserInfos = $this->getPdo()->prepare('SELECT * FROM users WHERE id = ?');
         $getUserInfos->execute(array($user));
         return $user_infos = $getUserInfos->fetch();
     }
@@ -149,9 +143,8 @@ class User extends Model {
     // Register a friend request
     public function sendFriendRequest ($friend) {
         
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Check if an entry exists with inviter and receiver id
-        $checkIfAlreadySentARequest = $db->prepare('SELECT * FROM friends WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter)');
+        $checkIfAlreadySentARequest = $this->getPdo()->prepare('SELECT * FROM friends WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter)');
         $checkIfAlreadySentARequest->execute([":inviter" => $this->id, ":receiver" => $friend->id]);
         $friendship = $checkIfAlreadySentARequest->fetch();
         
@@ -166,7 +159,7 @@ class User extends Model {
             
         // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
         } else {
-            $createNewFriendship = $db->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
+            $createNewFriendship = $this->getPdo()->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
             $createNewFriendship->execute(array($this->id, $this->login, $friend->id, $friend->login, date('Y-m-d')));
             return array('success' => "Your friends request has been sent to " .$friend->login. " !");
         }
@@ -174,9 +167,8 @@ class User extends Model {
 
     // Set a friend request to accepted
     public function acceptFriendRequest ($friend) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Set friendship status to "accepted"
-        $acceptFriendsRequest = $db->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
+        $acceptFriendsRequest = $this->getPdo()->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
         $acceptFriendsRequest->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
         if ($acceptFriendsRequest->rowCount() > 0) return array('success' => $friend->login .' has been added to your friends list !');
         else return array('error' => 'You already are friends with ' .$friend->login. '.');
@@ -184,31 +176,27 @@ class User extends Model {
 
     // Remove a friendship relation
     public function removeFriend ($friend) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-		$removeFriends = $db->prepare('DELETE FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend WHEN receiver_id = :user_id THEN inviter_id = :friend END');
+		$removeFriends = $this->getPdo()->prepare('DELETE FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend WHEN receiver_id = :user_id THEN inviter_id = :friend END');
 		$removeFriends->execute([":user_id" => $this->id, ":friend" => $friend->id]);
         if ($removeFriends->rowCount() > 0) return array('success' =>  $friend->login .' has been removed from your friends list.');
         else return array('error' => 'You are not friends with ' .$friend->login. '.');
     }
 
     public function getFriends () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getFriends = $db->prepare('SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
+        $getFriends = $this->getPdo()->prepare('SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
         $getFriends->execute(array(":user_id" => $this->id));
         return array_column($getFriends->fetchAll(PDO::FETCH_NUM), 0);
     }
 
     public function isFriend ($friend) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $friendslist = $this->getFriends();
         if (in_array_r($friend->id, $friendslist)) return true;
         else return false;
     }
 
     public function getRequesters () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Get all infos about friends of connected user from database in a multidimensionnal array
-        $getRequesters = $db->prepare('SELECT inviter_id FROM friends WHERE receiver_id = :user AND accepted = false');
+        $getRequesters = $this->getPdo()->prepare('SELECT inviter_id FROM friends WHERE receiver_id = :user AND accepted = false');
         $getRequesters->execute([":user" => $this->id]);
         $combinedData = $getRequesters->fetchAll();
         // Get requesters ids into a simple array
@@ -220,9 +208,8 @@ class User extends Model {
     }
 
     public function friendsSince ($friend_id) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $friendslist = $this->getFriends();
-        $getApprovalDate = $db->prepare('SELECT approval_date FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id)');
+        $getApprovalDate = $this->getPdo()->prepare('SELECT approval_date FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id)');
         $getApprovalDate->execute(array(":user_id" => $friend_id));
         $approval_date = $getApprovalDate->fetch();
         return $approval_date[0];
@@ -230,8 +217,7 @@ class User extends Model {
 
     // Insert a new entry in followers table
     public function follow ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $follow = $db->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
+        $follow = $this->getPdo()->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
         $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
         if ($follow->rowCount() > 0) return array('success' => 'You now are following ' . $user->login . ' !');
         else return array('error' => 'You are already following ' . $user->login . '.');
@@ -239,8 +225,7 @@ class User extends Model {
 
     // Removes an entry in followers table
     public function unfollow ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $unfollow = $db->prepare('DELETE FROM followers WHERE following_id = ? AND followed_id = ?');
+        $unfollow = $this->getPdo()->prepare('DELETE FROM followers WHERE following_id = ? AND followed_id = ?');
         $unfollow->execute(array($this->id, $user->id));
         if ($unfollow->rowCount() > 0) return array('success' => 'You are no more following ' . $user->login . '.');
         else return array('error' => 'You have already unfollowed ' . $user->login . '.');
@@ -248,8 +233,7 @@ class User extends Model {
 
     // Checks if follows a specific user
     public function follows ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkIfFollows = $db->prepare('SELECT id FROM followers WHERE following_id = ? AND followed_id = ?');
+        $checkIfFollows = $this->getPdo()->prepare('SELECT id FROM followers WHERE following_id = ? AND followed_id = ?');
         $checkIfFollows->execute(array($this->id, $user->id));
         if ($checkIfFollows->rowCount() > 0) return true;
         else return false;
@@ -257,23 +241,20 @@ class User extends Model {
 
     // Checks if is followed by a specific user
     public function isFollowed ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkIfIsFollowed = $db->prepare('SELECT id FROM followers WHERE following_id = ? AND followed_id = ?');
+        $checkIfIsFollowed = $this->getPdo()->prepare('SELECT id FROM followers WHERE following_id = ? AND followed_id = ?');
         $checkIfIsFollowed->execute(array($user->id, $this->id));
         if ($checkIfIsFollowed->rowCount() > 0) return true;
         else return false;
     }
 
     public function getFollowedList () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getFollowedList = $db->prepare('SELECT following_id FROM followers WHERE followed_id = ?');
+        $getFollowedList = $this->getPdo()->prepare('SELECT following_id FROM followers WHERE followed_id = ?');
         $getFollowedList->execute(array($this->id));
         return array_column($getFollowedList->fetchAll(PDO::FETCH_NUM), 0);
     }
 
     public function getFollowingList () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getFollowingList = $db->prepare('SELECT followed_id FROM followers WHERE following_id = ?');
+        $getFollowingList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = ?');
         $getFollowingList->execute(array($this->id));
         return array_column($getFollowingList->fetchAll(PDO::FETCH_NUM), 0);
     }
@@ -281,13 +262,12 @@ class User extends Model {
     // Function for downloading users's profile picture
     public function downloadPropic () {
         // Check if there is an image that corresponds to connected user in the database
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkUserId = $db->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
+        $checkUserId = $this->getPdo()->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
         $checkUserId->execute(array($this->id));
         $checkUserId->fetch();
         // If there is one, execute the code
         if ($checkUserId->rowCount() > 0) {	
-            $getImage = $db->prepare('SELECT * FROM profile_pictures WHERE user_id = ?');
+            $getImage = $this->getPdo()->prepare('SELECT * FROM profile_pictures WHERE user_id = ?');
             $getImage->execute(array($this->id));
             return $getImage->fetch(PDO::FETCH_ASSOC);	
         } else return 'couldn\'t get image data from database.';
@@ -303,13 +283,13 @@ class User extends Model {
             
         // Else, use a profile picture corresponding to user's randomly attribuated icon
         } else {
-            require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-            $getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
+            require '../actions/databaseAction.php';
+            $getImage = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
             $getImage->execute(array($this->id));
             $picture = $getImage->fetch();
             return `
             <div style="height: ` .$height. `px; width: ` .$width. `px;" class="free-propic-container">
-                <img style="border-radius: ` .$borderRadius. `px;" class="free-propic-img" src="\includes\media\default-profile-` .$picture['default_profilepicture_id']. `.jpg" />
+                <img style="border-radius: ` .$borderRadius. `px;" class="free-propic-img" src="\media\default-profile-` .$picture['default_profilepicture_id']. `.jpg" />
             </div>`;
         }
     }
@@ -326,26 +306,24 @@ class User extends Model {
             
         // Else, use a profile picture corresponding to user's randomly attribuated icon
         } else {
-            require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-            $getImage = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
+            require '../actions/databaseAction.php';
+            $getImage = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
             $getImage->execute(array($this->id));
             $picture = $getImage->fetch(); ?>
             <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
-                <img style="border-radius: <?= $borderRadius ?>px;" class="free-propic-img" src="\includes\media\default-profile-<?= $picture['default_profilepicture_id'] ?>.jpg" />
+                <img style="border-radius: <?= $borderRadius ?>px;" class="free-propic-img" src="/media/default-profile-<?= $picture['default_profilepicture_id'] ?>.jpg" />
             </div> <?php
         }
     }
 
     // Get default profile picture of an user
     public function getDefaultPropicId () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getDefaultPropicId = $db->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
+        $getDefaultPropicId = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
         $getDefaultPropicId->execute(array($this->id));
         return $getDefaultPropicId->fetch()[0];
     }
 
     public function getPropicSrc () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $profile_picture = $this->downloadPropic();
         if (!is_string($profile_picture)) {
             return 'data:image/jpeg;base64,' . base64_encode($profile_picture['img']);
@@ -357,18 +335,16 @@ class User extends Model {
 
     // Get bikes infos of a specific user from the bikes table
     public function getBikes () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getBikes = $db->prepare('SELECT id FROM bikes WHERE user_id = ? ORDER BY number');
+        $getBikes = $this->getPdo()->prepare('SELECT id FROM bikes WHERE user_id = ? ORDER BY number');
         $getBikes->execute(array($this->id));
         return $getBikes->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Check if user bikes and ride accepted bikes correspond or not
     public function checkIfAcceptedBikesMatches ($ride) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         
         // Get accepted bikes info
-        $getAcceptedBikesInfos = $db->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
+        $getAcceptedBikesInfos = $this->getPdo()->prepare('SELECT citybike, roadbike, mountainbike, gravelcxbike FROM rides WHERE id = ?');
         $getAcceptedBikesInfos->execute(array($ride->id));
         $ride_accepted_bikes = $getAcceptedBikesInfos->fetch(PDO::FETCH_ASSOC);
         
@@ -405,7 +381,6 @@ class User extends Model {
         $img_type   = '';
                             
         // Count files and start the loop if there are from 1 to 5 files
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $countfiles = count($_FILES['file']['name']);
         if ($countfiles > 5) {
             $error = 'You can\'t upload more than 5 files. Please try again with 5 files or less.';
@@ -434,7 +409,7 @@ class User extends Model {
             // If everything have been tested fine
             if ($checksuccess == true) {
                 // First, delete current photos
-                $deleteCurrentPhotos = $db->prepare('DELETE FROM user_photos WHERE user_id = ?');
+                $deleteCurrentPhotos = $this->getPdo()->prepare('DELETE FROM user_photos WHERE user_id = ?');
                 $deleteCurrentPhotos->execute(array($this->id));
                 // Then, upload new photos
                 for ($i = 0; $i < $countfiles; $i++) {
@@ -448,7 +423,7 @@ class User extends Model {
                     $img_name = $_FILES['file']['name'][$i];
                     $img_type = $_FILES['file']['type'][$i];
                     // Upload photo
-                    $insertImage = $db->prepare('INSERT INTO user_photos(user_id, img_id, img, size, name, type) VALUES (?, ?, ?, ?, ?, ?)');
+                    $insertImage = $this->getPdo()->prepare('INSERT INTO user_photos(user_id, img_id, img, size, name, type) VALUES (?, ?, ?, ?, ?, ?)');
                     $insertImage->execute(array($this->id, $i, $img_blob, $img_size, $img_name, $img_type));
                 }
                 return array(true, $countfiles . ' pictures have been successfully uploaded ! Click <a href="' .$_SERVER['HTTP_REFERER']. '">here</a> to refresh the page and display your changes.');
@@ -458,42 +433,36 @@ class User extends Model {
 
     // Function for downloading profile gallery
     public function getProfileGallery () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getProfileGallery = $db->prepare('SELECT * FROM user_photos WHERE user_id = ? ORDER BY img_id');
+        $getProfileGallery = $this->getPdo()->prepare('SELECT * FROM user_photos WHERE user_id = ? ORDER BY img_id');
         $getProfileGallery->execute(array($this->id));
         return $getProfileGallery->fetchAll();
     }
 
     public function getRides () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getRides = $db->prepare('SELECT * FROM rides WHERE author_id = ? ORDER BY posting_date DESC');
+        $getRides = $this->getPdo()->prepare('SELECT * FROM rides WHERE author_id = ? ORDER BY posting_date DESC');
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getRoutes ($offset = 0, $limit = 20) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getRoutes = $db->prepare("SELECT * FROM routes WHERE author_id = ? AND category = 'route' ORDER BY posting_date DESC LIMIT " .$offset. ", " .$limit);
+        $getRoutes = $this->getPdo()->prepare("SELECT * FROM routes WHERE author_id = ? AND category = 'route' ORDER BY posting_date DESC LIMIT " .$offset. ", " .$limit);
 	    $getRoutes->execute(array($this->id));
         return $getRoutes->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getRoutesNumber () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getRoutes = $db->prepare("SELECT name FROM routes WHERE author_id = ? AND category = 'route'");
+        $getRoutes = $this->getPdo()->prepare("SELECT name FROM routes WHERE author_id = ? AND category = 'route'");
 	    $getRoutes->execute(array($this->id));
         return $getRoutes->rowCount();
     }
 
     public function getActivities ($offset = 0, $limit = 20) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getActivities = $db->prepare("SELECT * FROM activities WHERE user_id = ? ORDER BY datetime DESC LIMIT " .$offset. ", " .$limit);
+        $getActivities = $this->getPdo()->prepare("SELECT * FROM activities WHERE user_id = ? ORDER BY datetime DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($this->id));
         return $getActivities->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getPublicActivities ($offset = 0, $limit = 20) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Get period of rides to display
         $following_list = $this->getFollowingList();
         $following_number = count($following_list);
@@ -503,7 +472,7 @@ class User extends Model {
         else if ($following_number < 25) $period = 14;
         else $period = 10;
         // Request activities
-        $getActivities = $db->prepare("SELECT id, user_id, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND ((privacy = 'private' AND user_id = ?) OR privacy = 'friends_only') AND user_id IN ('".implode("','",$following_list)."') ORDER BY datetime, posting_date DESC LIMIT " .$offset. ", " .$limit);
+        $getActivities = $this->getPdo()->prepare("SELECT id, user_id, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND ((privacy = 'private' AND user_id = ?) OR privacy = 'friends_only') AND user_id IN ('".implode("','",$following_list)."') ORDER BY datetime, posting_date DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($period, $this->id));
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
         // Substract all activities with privacy set to friends_only for which user is not friend with connected user
@@ -514,14 +483,14 @@ class User extends Model {
         }
         // If resulted array if shorter than [limit], complete with most liked public activities of last [period] days
         if ($results_number = count($activities) < $limit) {
-            $getFurtherActivities = $db->prepare("SELECT * FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
+            $getFurtherActivities = $this->getPdo()->prepare("SELECT * FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
             $getFurtherActivities->execute(array($period));
             $further_activities = $getFurtherActivities->fetchAll(PDO::FETCH_ASSOC);
             $activities = array_merge($activities, $further_activities);
         }
         // If still shorter than [limit], complete with other most liked public activities, regardless of [period]
         if (count($activities) < $limit) {
-            $getFurtherActivities2 = $db->prepare("SELECT * FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
+            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT * FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
             $getFurtherActivities2->execute();
             $further_activities2 = $getFurtherActivities2->fetchAll(PDO::FETCH_ASSOC);
             $activities = array_merge($activities, $further_activities2);
@@ -530,16 +499,14 @@ class User extends Model {
     }
 
     public function getActivitiesNumber () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getActivities = $db->prepare("SELECT title FROM activities WHERE user_id = ?");
+        $getActivities = $this->getPdo()->prepare("SELECT title FROM activities WHERE user_id = ?");
 	    $getActivities->execute(array($this->id));
         return $getActivities->rowCount();
     }
 
     // Get all messages between two users
     public function getConversation ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getConversation = $db->prepare('SELECT id FROM messages WHERE sender_id = :user1 AND receiver_id = :user2 UNION SELECT id FROM messages WHERE sender_id = :user2 AND receiver_id = :user1 ORDER BY id');
+        $getConversation = $this->getPdo()->prepare('SELECT id FROM messages WHERE sender_id = :user1 AND receiver_id = :user2 UNION SELECT id FROM messages WHERE sender_id = :user2 AND receiver_id = :user1 ORDER BY id');
         $getConversation->execute(array(":user1" => $this->id, ":user2" => $user->id));
         $log = $getConversation->fetchAll(PDO::FETCH_ASSOC);
         return new Log($log);
@@ -547,8 +514,7 @@ class User extends Model {
 
     // Get last message between two users
     public function getLastMessage ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getLastMessage = $db->prepare('SELECT id FROM messages WHERE sender_id = :user1 AND receiver_id = :user2 UNION SELECT id FROM messages WHERE sender_id = :user2 AND receiver_id = :user1 ORDER BY id DESC');
+        $getLastMessage = $this->getPdo()->prepare('SELECT id FROM messages WHERE sender_id = :user1 AND receiver_id = :user2 UNION SELECT id FROM messages WHERE sender_id = :user2 AND receiver_id = :user1 ORDER BY id DESC');
         $getLastMessage->execute(array(":user1" => $this->id, ":user2" => $user->id));
         $lastmessage = $getLastMessage->fetch(PDO::FETCH_ASSOC);
         if (!empty($lastmessage)) {
@@ -560,8 +526,7 @@ class User extends Model {
 
     // Get all conversations
     public function getUsersWithMessages () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getUsersWithMessages = $db->prepare('SELECT DISTINCT CASE WHEN sender_id = :user THEN receiver_id WHEN receiver_id = :user THEN sender_id END FROM messages WHERE sender_id = :user UNION SELECT DISTINCT CASE WHEN sender_id = :user THEN receiver_id WHEN receiver_id = :user THEN sender_id END FROM messages WHERE receiver_id = :user');
+        $getUsersWithMessages = $this->getPdo()->prepare('SELECT DISTINCT CASE WHEN sender_id = :user THEN receiver_id WHEN receiver_id = :user THEN sender_id END FROM messages WHERE sender_id = :user UNION SELECT DISTINCT CASE WHEN sender_id = :user THEN receiver_id WHEN receiver_id = :user THEN sender_id END FROM messages WHERE receiver_id = :user');
         $getUsersWithMessages->execute(array(":user" => $this->id));
         return array_column($getUsersWithMessages->fetchAll(PDO::FETCH_NUM), 0);
     }
@@ -593,26 +558,24 @@ class User extends Model {
     }
 
     // Insert a new message in the message table
-    public function sendMessage ($receiver, $message){
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';        
-        $addMessage = $db->prepare('INSERT INTO messages (sender_id, sender_login, receiver_id, receiver_login, message, time) VALUES (?, ?, ?, ?, ?, ?)');
+    public function sendMessage ($receiver, $message){        
+        $addMessage = $this->getPdo()->prepare('INSERT INTO messages (sender_id, sender_login, receiver_id, receiver_login, message, time) VALUES (?, ?, ?, ?, ?, ?)');
         $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
     }
 
     // Get currently saved viewed mkpoints list
     public function getViewedMkpoints ($limit = 99999) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getViewedMkpoints = $db->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
+        $getViewedMkpoints = $this->getPdo()->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
         $getViewedMkpoints->execute(array($this->id));
         $viewed_mkpoints = $getViewedMkpoints->fetchAll(PDO::FETCH_ASSOC);
         foreach ($viewed_mkpoints as $viewed_mkpoint) {
-            $checkIfActivityExists = $db->prepare('SELECT id FROM activities WHERE id = ?');
+            $checkIfActivityExists = $this->getPdo()->prepare('SELECT id FROM activities WHERE id = ?');
             $checkIfActivityExists->execute(array($viewed_mkpoint['activity_id']));
             // If activity in which mkpoint has been viewed has been deleted, remove from viewed mkpoints list
             if ($checkIfActivityExists->rowCount() == 0) {
                 if (($key = array_search($viewed_mkpoint, $viewed_mkpoints)) !== false) {
                     unset($viewed_mkpoints[$key]);
-                    $removeViewedMkpoint = $db->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
+                    $removeViewedMkpoint = $this->getPdo()->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
                     $removeViewedMkpoint->execute(array($viewed_mkpoint['mkpoint_id']));
                 }
             }
@@ -621,7 +584,6 @@ class User extends Model {
     }
 
     public function getPublicMkpoints ($offset = 0, $limit = 20) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Get period of mkpoints to display
         $following_list = $this->getFollowingList();
         $following_number = count($following_list);
@@ -631,7 +593,7 @@ class User extends Model {
         else if ($following_number < 25) $period = 14;
         else $period = 10;
         // Request mkpoints
-        $getMkpoints = $db->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$following_list)."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints = $this->getPdo()->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$following_list)."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
         $getMkpoints->execute(array($period));
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -665,7 +627,6 @@ class User extends Model {
 
     // Update viewed mkpoints list in the database according to newly uploaded activities
     /*public function updateViewedMkpoints ($activity = false) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
 
         $activities = $this->getActivities();
 
@@ -698,7 +659,7 @@ class User extends Model {
 
         // Add relevant mkpoints to user mkpoints table
         foreach ($mkpoints_to_add as $mkpoint) {
-            $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
+            $addMkpoint = $this->getPdo()->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
             $addMkpoint->execute(array($this->id, $mkpoint['id'], $mkpoint['activity_id']));
         }
     }*/

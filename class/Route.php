@@ -22,6 +22,7 @@ class Route extends Model {
     public $tunnels;
     
     function __construct($id = NULL, $lngLatFormat = true) {
+        parent::__construct();
         $this->id = $id;
         $data = $this->getData($this->table);
         $this->author = new User($data['author_id']);
@@ -41,8 +42,7 @@ class Route extends Model {
     }
 
     private function getCoordinates ($lngLatFormat) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getCoords = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
+        $getCoords = $this->getPdo()->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
         $getCoords->execute(array($this->id));
         $coords = $getCoords->fetchAll();
         $coordinates = [];
@@ -55,8 +55,7 @@ class Route extends Model {
     }
 
     private function getTime () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getTime = $db->prepare('SELECT datetime FROM coords WHERE segment_id = ? ORDER BY number ASC');
+        $getTime = $this->getPdo()->prepare('SELECT datetime FROM coords WHERE segment_id = ? ORDER BY number ASC');
         $getTime->execute(array($this->id));
         $timedata = $getTime->fetchAll();
         $time = [];
@@ -68,13 +67,12 @@ class Route extends Model {
     }
 
     public function getTunnels () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         $tunnels = [];
-        $getTunnelsNumber = $db->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
+        $getTunnelsNumber = $this->getPdo()->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
         $getTunnelsNumber->execute(array($this->id));
         $tunnels_number = $getTunnelsNumber->rowCount();
         for ($i = 0 ; $i < $tunnels_number; $i++) {
-            $getTunnelCoords = $db->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
+            $getTunnelCoords = $this->getPdo()->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
             $getTunnelCoords->execute(array($i, $this->id));
             $tunnels[$i] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
         }
@@ -169,10 +167,9 @@ class Route extends Model {
 
     // Get Mkpoints that are less than [basis] km from the route
     public function getCloseMkpoints ($tolerance = 3000, $classFormat = true) { // m
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
 
         // Get all Mkpoints registered in the database
-        $getMkpoints = $db->prepare('SELECT id, name, lng, lat FROM map_mkpoint');
+        $getMkpoints = $this->getPdo()->prepare('SELECT id, name, lng, lat FROM map_mkpoint');
         $getMkpoints->execute(array($this->id));
         $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         $mkpoints_in_range = [];
@@ -270,19 +267,18 @@ class Route extends Model {
     }
 
     public function delete () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
         // Get route name
-        $getRouteName = $db->prepare('SELECT name FROM routes WHERE id = ?');
+        $getRouteName = $this->getPdo()->prepare('SELECT name FROM routes WHERE id = ?');
         $getRouteName->execute(array($this->id));
         $route_name = $getRouteName->fetch(PDO::FETCH_NUM)[0];
         // Delete route summary
-        $deleteRoute = $db->prepare('DELETE FROM routes WHERE id = ?');
+        $deleteRoute = $this->getPdo()->prepare('DELETE FROM routes WHERE id = ?');
         $deleteRoute->execute(array($this->id));
         // Delete route coords
-        $deleteCoords = $db->prepare('DELETE FROM coords WHERE segment_id = ?');
+        $deleteCoords = $this->getPdo()->prepare('DELETE FROM coords WHERE segment_id = ?');
         $deleteCoords->execute(array($this->id));
         // Delete route tunnels
-        $deleteTunnels = $db->prepare('DELETE FROM tunnels WHERE segment_id = ?');
+        $deleteTunnels = $this->getPdo()->prepare('DELETE FROM tunnels WHERE segment_id = ?');
         $deleteTunnels->execute(array($this->id));
         return $route_name. ' has been successfully deleted.';
     }

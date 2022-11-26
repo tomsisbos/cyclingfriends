@@ -5,6 +5,7 @@ class DirectMessage extends Model {
     protected $table = 'messages';
 
     function __construct($id = NULL) {
+        parent::__construct();
         $this->id                        = $id;
         $data = $this->getData($this->table);
         $this->sender                    = new User ($data['sender_id']);

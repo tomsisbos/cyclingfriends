@@ -49,7 +49,7 @@ if (!empty($participation)) { ?>
 					$participant = new User ($participant_id); ?>
 					<div class="tr-row justify">
 						<div class="td-row element-30">
-							<a style="text-decoration: none;" href="/riders/profile.php?id=<?= $participant->id; ?>"><?php $participant->displayPropic(60, 60, 60); ?></a>
+							<a style="text-decoration: none;" href="/rider/<?= $participant->id; ?>"><?php $participant->displayPropic(60, 60, 60); ?></a>
 						</div>
 						<div class="td-row element-30">
 							<?= $participant->login; ?>
@@ -66,4 +66,4 @@ if (!empty($participation)) { ?>
 	</div>
 </div>
 
-<script src="/includes/rides/participants-list.js"></script>
+<script src="/scripts/rides/participants-list.js"></script>

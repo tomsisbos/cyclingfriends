@@ -35,11 +35,11 @@ switch(CFG_STAGE_ID)
 		}
         $ride_infos = $_SESSION['forms'][1];
 		$course_infos = $_SESSION['forms'][2];
-        // var_dump($ride_infos);
-        // var_dump($course_infos);
+        var_dump($ride_infos);
+        var_dump($course_infos);
  
         // Displays summary page
-        require('new/summary.php');
+        require('../includes/rides/new/summary.php');
     break;
  
     case 2:
@@ -75,7 +75,7 @@ switch(CFG_STAGE_ID)
 			);
 		}
 		
-		require('new/course.php');
+		require('../includes/rides/new/course.php');
     break;
  
     case 1:
@@ -96,7 +96,7 @@ switch(CFG_STAGE_ID)
             );
         }
  
-        require('new/infos.php');
+        require('../includes/rides/new/infos.php');
     break;
 }
 

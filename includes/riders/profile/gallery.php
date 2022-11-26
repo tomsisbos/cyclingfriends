@@ -59,7 +59,3 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
     
   </div>
 </div>
-
-<script>
-
-</script>

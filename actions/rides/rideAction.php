@@ -3,9 +3,19 @@
 	require '../actions/databaseAction.php';
 	
 	// Get id from URL
-	if (isset($_GET['id'])) {
+	$slug = basename($_SERVER['REQUEST_URI']);
+
+	if ($slug === 'join' || $slug === 'quit') {
+
+		$url_fragments = explode('/', $_SERVER['REQUEST_URI']);
+		$slug = array_slice($url_fragments, -2)[0];
+
+	}
+	
+	// Instantiate Ride class
+	if (is_numeric($slug)) {
 		
-		$ride = new Ride ($_GET['id']);
+		$ride = new Ride($slug);
 		
 		if ($ride->exists()) {
 		
@@ -21,15 +31,15 @@
 		
 		} else {
 			
-		// If id doesn't exist, redirect to myrides.php
-		header('location: ../rides/myrides.php');
+		// If id doesn't exist, redirect to my rides page
+		header('location: /' . $connected_user->login . '/rides');
 		
 		}
 	
 	} else {
 		
-	// If id is not set, redirect to myrides.php
-	header('location: ../rides/myrides.php');
+	// If id is not set, redirect to my rides page
+		header('location: /' . $connected_user->login . '/rides');
 		
 	}
 ?>

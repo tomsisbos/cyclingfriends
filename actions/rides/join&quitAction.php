@@ -1,6 +1,6 @@
 <?php
 
-if (isset($_GET['join'])) {
+if (basename($_SERVER['REQUEST_URI']) == 'join') {
 	require '../actions/databaseAction.php';	
 	// If connected user has not already joined,
 	if (!$ride->isParticipating($connected_user)) {
@@ -16,7 +16,7 @@ if (isset($_GET['join'])) {
 	}	
 }
 
-if (isset($_GET['quit'])) {
+if (basename($_SERVER['REQUEST_URI']) == 'quit') {
 	require '../actions/databaseAction.php';	
 	// If rider is on the ride,
 	if ($ride->isParticipating($connected_user)) {

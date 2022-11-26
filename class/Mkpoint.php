@@ -5,6 +5,7 @@ class Mkpoint extends Model {
     protected $table = 'map_mkpoint';
     
     function __construct($id = NULL) {
+        parent::__construct();
         $this->id               = $id;
         $data = $this->getData($this->table);
         $this->user             = new User($data['user_id']);
@@ -24,20 +25,17 @@ class Mkpoint extends Model {
         $this->grades_number    = $data['grades_number'];
         $this->popularity       = $data['popularity'];
         $this->likes            = $data['likes'];
-
     }
 
     public function getComments () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getComments = $db->prepare('SELECT * FROM chat_mkpoint WHERE mkpoint_id = ? ORDER BY time ASC');
+        $getComments = $this->getPdo()->prepare('SELECT * FROM chat_mkpoint WHERE mkpoint_id = ? ORDER BY time ASC');
         $getComments->execute(array($this->id));
         return $getComments->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Get connected user's vote information
     public function getUserVote ($user) {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $checkUserVote = $db->prepare('SELECT grade FROM grade_mkpoint WHERE mkpoint_id = ? AND user_id = ?');
+        $checkUserVote = $this->getPdo()->prepare('SELECT grade FROM grade_mkpoint WHERE mkpoint_id = ? AND user_id = ?');
         $checkUserVote->execute(array($this->id, $user->id));
         if ($checkUserVote->rowCount() > 0) {
             $vote_infos = $checkUserVote->fetch(PDO::FETCH_ASSOC);
@@ -49,8 +47,7 @@ class Mkpoint extends Model {
 
     // Get mkpoint images
     public function getImages () {
-        require $_SERVER["DOCUMENT_ROOT"] . '/actions/databaseAction.php';
-        $getImages = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ?');
+        $getImages = $this->getPdo()->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ?');
         $getImages->execute(array($this->id));
         $images_data = $getImages->fetchAll(PDO::FETCH_ASSOC);
         $images = [];

@@ -9,7 +9,7 @@
             if (!(isset($_POST['filter_bike']) AND !$connected_user->checkIfAcceptedBikesMatches($ride))) {
             
                 // Only display 'Friends only' rides if connected user is on the ride author's friends list
-                if ($ride->privacy != 'Friends only' OR ($ride->privacy == 'Friends only' AND ($ride->author == $connected_user OR $ride->author->isFriend($connected_user)))) {
+                if ($ride->privacy != 'Friends only' OR ($ride->privacy == 'Friends only' AND ($ride->author->id == $connected_user->id OR $ride->author->isFriend($connected_user)))) {
 
                     $is_ride = true; // Set "is_ride" variable to true as long as one ride to display has been found ?>
             
@@ -17,7 +17,7 @@
             
                         <!-- Left container -->
                         <div class="rd-top-container">
-                            <a href="<?= 'rides/ride.php?id=' .$ride->id;?>" class="fullwidth">
+                            <a href="<?= 'ride/' .$ride->id;?>" class="fullwidth">
                                 <?php // Truncate ride name if more than 60 characters
                                 $ride_name_truncated = truncate($ride->name, 0, 25);
                                 $featuredImage = $ride->getFeaturedImage(); ?>
@@ -42,10 +42,10 @@
                                     <p><?= $ride->getAcceptedLevelTags(). ' (' .$ride->getAcceptedBikesString(). ')'; ?></p>
                                     <div class="rd-distance">
                                         <p><strong>Distance : </strong><?php if ($ride->distance_about === 'about') { echo $ride->distance_about. ' '; } echo $ride->distance. 'km'; ?></p> <?php
-                                        if ($ride->terrain == 1) echo '<img src="\includes\media\flat.svg" />';
-                                        else if ($ride->terrain == 2) echo '<img src="\includes\media\smallhills.svg" />';
-                                        else if ($ride->terrain == 3) echo '<img src="\includes\media\hills.svg" />';
-                                        else if ($ride->terrain == 4) echo '<img src="\includes\media\mountain.svg" />'; ?>
+                                        if ($ride->terrain == 1) echo '<img src="\media\flat.svg" />';
+                                        else if ($ride->terrain == 2) echo '<img src="\media\smallhills.svg" />';
+                                        else if ($ride->terrain == 3) echo '<img src="\media\hills.svg" />';
+                                        else if ($ride->terrain == 4) echo '<img src="\media\mountain.svg" />'; ?>
                                     </div>
                                     <div class="rd-checkpoints"> <?php
                                         if (isset($ride->checkpoints)) {
@@ -60,7 +60,13 @@
                                                     </div>
                                                     <div class="rd-cpt-name"><?= $checkpoint->name ?></div>
                                                 </div>
-                                                <div class="rd-cpt-thumbnail"><img src="data:<?= $checkpoint->img->type ?>;base64,<?= $checkpoint->img->blob ?>"></div>
+                                                <div class="rd-cpt-thumbnail"> <?php
+                                                    if ($checkpoint->img->blob !== null) { ?>
+                                                        <img src="data:<?= $checkpoint->img->type ?>;base64,<?= $checkpoint->img->blob ?>"> <?php
+                                                    } else { ?>
+                                                        <img src="/media/default-photo-<?= rand(1, 9) ?>.svg"> <?php
+                                                    } ?>
+                                                </div>
                                             </div> <?php
                                             }
                                         } ?>
@@ -68,7 +74,7 @@
                                 </div>
                             </div>
                             <div class="rd-section-organizer">
-                                <a href="<?= 'riders/profile.php?id=' .$ride->author->id; ?>">
+                                <a href="<?= 'rider/' .$ride->author->id; ?>">
                                     <?= $ride->author->displayPropic(60, 60, 60); ?>
                                 </a>
                                 <div class="rd-organizer">
@@ -106,4 +112,4 @@
 
 </div>
 
-<script src="/includes/rides/display-rides.js"></script>
+<script src="/scripts/rides/display-rides.js"></script>
