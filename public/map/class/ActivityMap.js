@@ -6,11 +6,11 @@ export default class ActivityMap extends GlobalMap {
 
     constructor () {
         super()
-        this.activityId = getParam('id')
+        this.activityId = getIdFromString(location.pathname)
     }
 
     pageType = 'activity'
-    apiUrl = '/api/activities.php'
+    apiUrl = '/api/activity.php'
     data
     cursor = 0
     activityId

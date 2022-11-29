@@ -1,6 +1,6 @@
 <?php
 
-require '../../includes/api-head.php';
+require '../../../includes/api-head.php';
 
 // In case an Ajax request have been detected
 if (isAjax()) {
@@ -99,7 +99,7 @@ if (is_array($data)) {
         // Photo treatment
         $ext = strtolower(substr($photo['name'], -3));
         $img_name = 'temp.'.$ext;
-        $temp = $_SERVER["DOCUMENT_ROOT"]. '/includes/media/activities/temp/' .$img_name; // Set temp path
+        $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
         // Temporary upload raw file on the server
         base64_to_jpeg($photo['blob'], $temp);
         // Get the file into $img thanks to imagecreatefromjpeg
@@ -109,7 +109,7 @@ if (is_array($data)) {
         imagegammacorrect($img, 1.0, 1.1);
         imagefilter($img, IMG_FILTER_CONTRAST, -5);
         // Compress it and move it into a new folder
-        $path = $_SERVER["DOCUMENT_ROOT"]. "/includes/media/activities/temp/photo_" .$img_name; // Set path variable
+        $path = $_SERVER["DOCUMENT_ROOT"]. "/media/activities/temp/photo_" .$img_name; // Set path variable
         imagejpeg($img, $path, 75); // Set new quality to 75
 
         // Build photo data

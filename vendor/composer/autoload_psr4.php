@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'phpGPX\\' => array($vendorDir . '/sibyx/phpgpx/src/phpGPX'),
     'adriangibbons\\' => array($vendorDir . '/adriangibbons/php-fit-file-analysis/src'),
     'Location\\' => array($vendorDir . '/mjaschen/phpgeo/src'),
 );

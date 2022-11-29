@@ -1464,7 +1464,7 @@ export default class GlobalMap extends Model {
         if (route) {
 
             // Prepare profile data
-            if (!this.profileData) this.profileData = await this.getProfileData(route._data, {remote: true})
+            /*if (!this.profileData)*/ this.profileData = await this.getProfileData(route._data, {remote: true})
             
             // Draw profile inside elevationProfile element
 
@@ -1474,7 +1474,8 @@ export default class GlobalMap extends Model {
             const flat = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 2 ? value : undefined
             const uptwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 6 ? value : undefined
             const upsix = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 10 ? value : undefined
-            const upten = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined                    
+            const upten = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined
+            console.log(this.profileData)
             const data = {
                 labels: this.profileData.labels,
                 datasets: [ {
@@ -2220,6 +2221,16 @@ export default class GlobalMap extends Model {
         } else { // Only calculate on previous 100m for the last index (because no next index)
             var slope = profileData.averagedPointsElevation[Math.floor(distance * 10)] - profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
         }
+        /*
+        if (!this.profileData) this.profileData = await this.getProfileData(routeData, {remote: false})
+        var altitude = this.profileData.averagedPointsElevation[Math.floor(distance * 10)]
+
+        // Slope
+        if (this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
+            var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.profileData.averagedPointsElevation[Math.floor(distance * 10)]
+        } else { // Only calculate on previous 100m for the last index (because no next index)
+            var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10)] - this.profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
+        }*/
 
         // Build tooltip element
         var tooltip = document.createElement('div')
@@ -2244,11 +2255,6 @@ export default class GlobalMap extends Model {
         }
         // In case of an activity, add time data
         if (this.activityId) tooltip.innerHTML += '<br>Time : ' + this.getFormattedTimeFromLngLat([lng, lat])
-        /*
-        if (pointY && this.activityId) tooltip.style.top = 'calc(' + (10 - 20 + pointY) + 'px)'
-        else if (pointY) tooltip.style.top = 'calc(' + (10 + pointY) + 'px)'
-        else if (document.querySelector('.profile-inside-map #elevationProfile')) tooltip.style.bottom = 10 + document.querySelector('#profileBox').offsetHeight + 'px'
-        else tooltip.style.bottom = '10px'*/
         
         // Position tooltip on the page
         // If height argument has been given, display on the map
@@ -2438,7 +2444,6 @@ export default class GlobalMap extends Model {
     }
 
     async calculateElevation (routeData) {
-        console.log(routeData)
         var profileData = await this.getProfileData(routeData)
         var elevation = 0
         for (let i = 1; i < profileData.averagedPointsElevation.length - 1; i++) {

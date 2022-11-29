@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
 {
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'phpGPX\\' => 7,
+        ),
         'a' => 
         array (
             'adriangibbons\\' => 14,
@@ -18,6 +22,10 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
     );
 
     public static $prefixDirsPsr4 = array (
+        'phpGPX\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sibyx/phpgpx/src/phpGPX',
+        ),
         'adriangibbons\\' => 
         array (
             0 => __DIR__ . '/..' . '/adriangibbons/php-fit-file-analysis/src',

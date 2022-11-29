@@ -20,7 +20,7 @@ var $map = document.querySelector('#activityMap')
 var activityMap = new ActivityMap()
 
 // Get activity data from server
-ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId, async (activityData) => {
+ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (activityData) => {
 
     // Clean route data architecture to match geojson format
     for (let i = 0; i < activityData.route.time.length; i++) {
@@ -78,7 +78,7 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
             window.scrollTo(0, $map.offsetTop)
             map.flyTo( {
                 center: checkpoint.lngLat,
-                zoom: 14,
+                zoom: 12,
                 pitch: 0,
                 bearing: 0
             } )
@@ -98,7 +98,7 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
             map.easeTo( {
                 offset: [0, $map.offsetHeight / 2 - 40],
                 center: activityMap.getPhotoLocation(photo),
-                zoom: 14
+                zoom: 12
             } )
             photo.marker.grow()
         } )
@@ -115,7 +115,7 @@ ajaxGetRequest (activityMap.apiUrl + "?activity-load=" + activityMap.activityId,
             map.easeTo( {
                 offset: [0, $map.offsetHeight / 2 - 40],
                 center: activityMap.getPhotoLocation(photo),
-                zoom: 14
+                zoom: 12
             } )
             photo.marker.grow()
         } )

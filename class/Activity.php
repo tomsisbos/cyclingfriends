@@ -56,7 +56,7 @@ class Activity extends Model {
         return $checkpoints;
     }
 
-    public function getCheckpointPhotos ($current_checkpoint) {
+    public function getCheckpointPhotos ($current_checkpoint_number) {
         // Get all activity photos id with datetime
         $getPhotos = $this->getPdo()->prepare('SELECT id, datetime FROM activity_photos WHERE activity_id = ? ORDER BY datetime');
         $getPhotos->execute(array($this->id));
@@ -81,7 +81,7 @@ class Activity extends Model {
         // If checkpoint correspond to the one passed in argument, add it to the list to return
         $photos_to_append = [];
         foreach ($photo_ids as $photo_id) {
-            if ($photo_id['checkpoint_number'] == $current_checkpoint->number) {
+            if ($photo_id['checkpoint_number'] == $current_checkpoint_number) {
                 array_push($photos_to_append, new ActivityPhoto($photo_id['id']));
             }
         }

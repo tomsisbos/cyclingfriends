@@ -32,7 +32,7 @@ $upload.addEventListener('change', async (e) => {
                 var canvas = self.ctrl.ctx.canvas
                 canvas.parentNode.removeChild(canvas)
             }, false)
-        xhr.open("POST", "../actions/activities/uploadAction.php")
+        xhr.open("POST", "/api/activities/upload.php")
         // xhr.overrideMimeType('text/plain; charset=x-user-defined-binary')
 
         reader.onload = () => xhr.send(formData)

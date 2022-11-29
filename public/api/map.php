@@ -227,7 +227,7 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-mkpoints'])) {
-        $getMkpoints = $db->prepare('SELECT * FROM map_mkpoint');
+        $getMkpoints = $db->prepare('SELECT * FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
         $getMkpoints->execute();
         $mkpointsList = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($mkpointsList);

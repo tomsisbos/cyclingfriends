@@ -7,15 +7,15 @@ if (isAjax()) {
 
     if (isset($_GET)) {
 
-        if (isset($_GET['activity-load'])) {
-            $activity = new Activity($_GET['activity-load'], false);
+        if (isset($_GET['load'])) {
+            $activity = new Activity($_GET['load'], false);
             $activity->checkpoints = $activity->getCheckpoints();
             $activity->photos = $activity->getPhotos();
             echo json_encode($activity);
         }
 
-        if (isset($_GET['activity-delete'])) {
-            $activity = new Activity($_GET['activity-delete']);
+        if (isset($_GET['delete'])) {
+            $activity = new Activity($_GET['delete']);
             if ($connected_user == $activity->user) $activity->delete();
             else "You don't have necessary rights to delete this activity.";
             echo json_encode(true);

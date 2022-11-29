@@ -702,7 +702,7 @@ form#mkpointForm input[type="file" i] {
     cursor: crosshair !important;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 992px) {
     .map-controller {
         flex-direction: row;
         flex-flow: wrap;

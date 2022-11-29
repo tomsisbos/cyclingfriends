@@ -6,9 +6,9 @@ document.querySelectorAll('#deleteButton').forEach( (element) => {
     element.addEventListener('click', async () => {
         var answer = await openConfirmationPopup('Do you really want to delete this activity ?')
         if (answer) {
-            ajaxGetRequest ('/actions/activities/activityApi.php' + "?activity-delete=" + activityId, async (response) => {
+            ajaxGetRequest ('/api/activity.php' + "?delete=" + activityId, async (response) => {
                 console.log(response)
-                window.location.replace('/activities/myactivities.php')
+                window.location.replace('/activities')
             } )
         }
     } )

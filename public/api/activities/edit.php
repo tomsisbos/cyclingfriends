@@ -1,6 +1,6 @@
 <?php
 
-require '../../includes/api-head.php';
+require '../../../includes/api-head.php';
 
 // In case an Ajax request have been detected
 if (isAjax()) {

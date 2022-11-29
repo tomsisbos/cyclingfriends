@@ -37,7 +37,7 @@ include '../actions/users/securityAction.php';
                         </a>
                     </div>
                     <div class="header-buttons"> <?php
-                        if ($ride) { ?>
+                        if (isset($ride)) { ?>
                             <a href="/ride/<?= $ride->id ?>">
                                 <button class="btn button" type="button">Back to ride page</button>
                             </a> <?php

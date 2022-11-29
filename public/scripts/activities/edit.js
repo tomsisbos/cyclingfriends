@@ -10,7 +10,7 @@ var editActivityMap = new EditActivityMap()
 editActivityMap.clearForm()
 
 // Get activity data from server
-ajaxGetRequest ("/actions/activities/activityApi.php" + "?activity-load=" + editActivityMap.activityId, async (activityData) => {
+ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, async (activityData) => {
     
     // Load activity data into map instance
     editActivityMap.data = activityData
