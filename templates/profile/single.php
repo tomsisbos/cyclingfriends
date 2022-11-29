@@ -120,7 +120,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 			</div> <?php
 					
 			// Include profile gallery
-			include '../includes/riders/profile/gallery.php';
+			/*include '../includes/riders/profile/gallery.php';*/
 
 			// Include bikes
 			include '../includes/riders/profile/bikes.php'; ?>	
@@ -134,5 +134,5 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/riders/friends.js"></script>
 <script src="/assets/js/friends-list.js"></script>
-<script src="/scripts/riders/gallery.js"></script>
+<!--<script src="/scripts/riders/gallery.js"></script>-->
 <script src="/assets/js/send-message.js"></script>	

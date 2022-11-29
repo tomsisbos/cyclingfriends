@@ -1,30 +1,42 @@
 // Infinite scroll
 
+const toleranceZone = 40 // Zone for infinite scroll to react in pixels
+var isInside = false
 const $cardsContainer = document.querySelector('#threadContainer')
 const photosquantity = parseInt($cardsContainer.dataset.photosquantity)
 const limit = parseInt($cardsContainer.dataset.limit)
-var offset = limit
-
+var offset = 0
 if (document.querySelector('#infiniteScrollElement')) var infiniteScrollElement = document.querySelector('#infiniteScrollElement')
 else var infiniteScrollElement = document
-infiniteScrollElement.addEventListener('scroll', function (event) {
 
-    var element = event.target
-    // When scroll to the bottom of the dashboard
-    if (Math.ceil((element.scrollHeight - element.scrollTop) / 10) === Math.ceil(element.clientHeight / 10)) {
-        ajaxGetRequest('/api/dashboard.php?getActivities=' + limit + ',' + offset + ',' + photosquantity, (response) => {
+infiniteScrollElement.addEventListener('scroll', function (e) {
+
+    var element = e.target
+
+    // When scroll to the bottom zone of the dashboard, get next elements from dashboard api and display cards
+    console.log('scroll position : ' + (element.scrollHeight - element.scrollTop))
+    console.log('zone : ' + (element.clientHeight + toleranceZone))
+    if (isInside) console.log('inside')
+    else console.log('outside')
+
+    if (!isInside && ((element.scrollHeight - element.scrollTop) <= (element.clientHeight + toleranceZone))) {
+        isInside = true
+        offset += limit
+        ajaxGetRequest('/api/dashboard.php?getThread=' + limit + ',' + offset + ',' + photosquantity, (response) => {
             console.log(response)
-            offset += limit
+            console.log(offset)
             response.forEach( (activity) => {
-                var $card = buildActivityCard(activity)
+                var $link = buildLink(activity)
+                var $card = buildCard(activity)
+                $cardsContainer.appendChild($link)
                 $cardsContainer.appendChild($card)
             } )
         } )
-    }
+    } else isInside = false
 
 } )
 
-function buildActivityCard (activity) {
+function buildCard (activity) {
 
     // Build main container
     var $mainContainer = document.createElement('div')
@@ -107,4 +119,18 @@ function buildActivityCard (activity) {
     $card.appendChild($photosContainer)
 
     return $card
+}
+
+function buildLink (entry) {
+    if (entry.type === 'activity') {
+        var title = 'Activity'
+        var url = 'activities'
+    } else if (entry.type === 'mkpoint') {
+        var title = 'Scenery point'
+        var url = 'world'
+    }
+    var $link = document.createElement('div')
+    $link.className = 'top-link'
+    $link.innerHTML = '<a href="/' + url + '">' + title + '</a>'
+    return $link
 }

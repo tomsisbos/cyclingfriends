@@ -1085,6 +1085,16 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 
+/* Links */
+
+.top-link {
+    margin-top: 6px;
+}
+
+.top-link a::after {
+    content: ' ▾';
+}
+
 /* Others */
 
 .modal {

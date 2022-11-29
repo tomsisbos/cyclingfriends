@@ -463,7 +463,9 @@ class User extends Model {
     }
 
     public function getPublicActivities ($offset = 0, $limit = 20) {
+
         // Get period of rides to display
+        $friends_list = $this->getFriends();
         $following_list = $this->getFollowingList();
         $following_number = count($following_list);
         if ($following_number < 3) $period = 999;
@@ -471,30 +473,62 @@ class User extends Model {
         else if ($following_number < 18) $period = 20;
         else if ($following_number < 25) $period = 14;
         else $period = 10;
+
         // Request activities
-        $getActivities = $this->getPdo()->prepare("SELECT id, user_id, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND ((privacy = 'private' AND user_id = ?) OR privacy = 'friends_only') AND user_id IN ('".implode("','",$following_list)."') ORDER BY datetime, posting_date DESC LIMIT " .$offset. ", " .$limit);
+        $getActivities = $this->getPdo()->prepare(
+            "SELECT
+            id, user_id, title, privacy
+            FROM
+            activities
+        WHERE 
+            datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)
+            AND
+                (
+                    (privacy = 'private' AND user_id = ?)
+                    OR
+                    (privacy = 'friends_only' AND user_id IN ('".implode("','",$friends_list)."'))
+                    OR
+                    (privacy = 'public' AND (
+                        user_id IN ('".implode("','",$friends_list)."') OR
+                        user_id IN ('".implode("','",$following_list)."')
+                    )
+                )
+            )
+        ORDER BY
+            datetime DESC
+        LIMIT " .$offset. ", " .$limit);
+
 	    $getActivities->execute(array($period, $this->id));
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
-        // Substract all activities with privacy set to friends_only for which user is not friend with connected user
-        foreach ($activities as $number => $activity) {
-            if ($activity['privacy'] == 'friends_only' AND !$this->isFriend(new User($activity['user_id']))) {
-                array_splice($activities, $number, 1);
-            }
-        }
+
         // If resulted array if shorter than [limit], complete with most liked public activities of last [period] days
         if ($results_number = count($activities) < $limit) {
-            $getFurtherActivities = $this->getPdo()->prepare("SELECT * FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
+            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
             $getFurtherActivities->execute(array($period));
             $further_activities = $getFurtherActivities->fetchAll(PDO::FETCH_ASSOC);
-            $activities = array_merge($activities, $further_activities);
+            foreach ($further_activities as $further_activity) {
+                $already_listed = false;
+                foreach ($activities as $activity) {
+                    if ($activity['id'] == $further_activity['id']) $already_listed = true;
+                }
+                if (!$already_listed) array_push($activities, $further_activity);
+            }
         }
+
         // If still shorter than [limit], complete with other most liked public activities, regardless of [period]
         if (count($activities) < $limit) {
-            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT * FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
+            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
             $getFurtherActivities2->execute();
             $further_activities2 = $getFurtherActivities2->fetchAll(PDO::FETCH_ASSOC);
-            $activities = array_merge($activities, $further_activities2);
+            foreach ($further_activities2 as $further_activity) {
+                $already_listed = false;
+                foreach ($activities as $activity) {
+                    if ($activity['id'] == $further_activity['id']) $already_listed = true;
+                }
+                if (!$already_listed) array_push($activities, $further_activity);
+            }
         }
+
         return $activities;
     }
 
@@ -598,7 +632,7 @@ class User extends Model {
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getThread () {
+    public function getThread ($offset = 0, $limit = null) {
         $activities_data = $this->getPublicActivities();
         $mkpoint_data = $this->getPublicMkpoints();
         // Build thread data
@@ -622,7 +656,7 @@ class User extends Model {
             return $a->date < $b->date;
         }
         usort($thread_data, 'sort_by_date');
-        return $thread_data;
+        return array_slice($thread_data, $offset, $limit);
     }
 
     // Update viewed mkpoints list in the database according to newly uploaded activities
