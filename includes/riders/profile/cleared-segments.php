@@ -10,7 +10,7 @@ $segments_number = $countSegments->rowCount();
 $cleared_segments_number = $user->countClearedSegments(); ?>
 
 <div class="profile-title-block">
-    <h2>Recently cleared scenery spots</h2> <div class="cleared-segment-counter">(<?= $cleared_segments_number . ' / ' . $segments_number ?>)</div>
+    <h2>Recently cleared segments</h2> <div class="cleared-counter">(<?= $cleared_segments_number . ' / ' . $segments_number ?>)</div>
 </div>
 
 <div class="dashboard-block cleared-segments-list"> <?php
@@ -32,11 +32,16 @@ $cleared_segments_number = $user->countClearedSegments(); ?>
                 $cleared_segment = new Segment ($entry['segment_id']);
                 $cleared_segment->activity = new Activity ($entry['activity_id']); ?>
                 <div class="cleared-segment">
-                    <div class="cleared-segment-thumbnail"><img src="<?= $cleared_segment->getFeaturedImage() ?>"></div>
-                    <div class="cleared-segment-activity-date"><?= $cleared_segment->activity->datetime->format('Y/m/d'); ?></div>
-                    <div class="cleared-segment-name"><?= $cleared_segment->name ?></div>
-                    <div class="cleared-segment-place">From <?= $cleared_segment->route->startplace ?> to <?= $cleared_segment->route->goalplace ?></div>
-                    <div class="cleared-segment-activity-title">(<a target="_blank" href="/activity/<?= $cleared_segment->activity->id ?>"><?= $cleared_segment->activity->title ?></a>)</div>
+                    <a class="overlay" href="/segment/<?= $cleared_segment->id ?>" target="_blank"></a>
+                    <div class="inside">
+                        <div class="cleared-segment-thumbnail"><img src="<?= $cleared_segment->getFeaturedImage() ?>"></div>
+                        <div class="cleared-segment-infos">
+                            <div class="cleared-segment-activity-date"><?= $cleared_segment->activity->datetime->format('Y/m/d'); ?><div class="cleared-segment-activity-title"> (<a target="_blank" href="/activity/<?= $cleared_segment->activity->id ?>"><?= $cleared_segment->activity->title ?></a>)</div></div> 
+                            <div class="cleared-segment-name"><?= $cleared_segment->name ?></div>
+                            <div class="cleared-segment-place">From <?= $cleared_segment->route->startplace ?> to <?= $cleared_segment->route->goalplace ?></div>
+                        </div>
+                    </div>
+                    </a>
                 </div> <?php
             } ?>
         </div> <?php
@@ -51,18 +56,29 @@ $segments_data = $getClearedSegmentsData->fetchAll(PDO::FETCH_ASSOC);
 
 // Get number of cleared segments per prefecture and city
 $locations = [];
-foreach ($segments_data as $entry) { var_dump($entry);/* /// Treat location string
-    if (!in_array_key_r($entry['prefecture'], $locations)) $locations[$entry['prefecture']] = ['number' => 1, 'cities' => [$entry['city'] => 1]];
-    else {
-        $locations[$entry['prefecture']]['number']++;
-        if (!isset($locations[$entry['prefecture']]['cities'][$entry['city']])) $locations[$entry['prefecture']]['cities'][$entry['city']] = 1;
-        else $locations[$entry['prefecture']]['cities'][$entry['city']]++;
-    }*/
-}/*
+foreach ($segments_data as $entry) {
+    preg_match('#\((.*?)\)#', $entry['startplace'], $match);
+    $prefecture = $match[1];
+    if (!in_array_key_r($prefecture, $locations)) $locations[$prefecture] = 1;
+    else $locations[$prefecture]++;
+} ?>
 
-// Get total number of mkpoints for each prefecture found and write it
-$prefectures_total = [];
-$cities_total = []; ?>
+<div class="cleared-segment-block"> <?php
+    $prefectures_total = [];
+    foreach ($locations as $prefecture => $number) { 
+        $getPrefectureTotalSegments = $db->prepare("SELECT routes.id FROM routes JOIN segments ON routes.id = segments.route_id WHERE routes.startplace LIKE ?");
+        $getPrefectureTotalSegments->execute(array('%' .$prefecture. '%'));
+        $prefectures_total[$prefecture] = $getPrefectureTotalSegments->rowCount();?>
+        <div class="cleared-segment-prefecture-container">
+            <div class="cleared-segment-prefecture-block"> 
+                <strong><?= $prefecture ?></strong> : <?= $number ?> / <?= $prefectures_total[$prefecture] ?>
+            </div>
+        </div> <?php
+    } ?>
+</div>
+
+<?php
+/*
 <div class="cleared-mkpoint-block"> <?php
     foreach ($locations as $prefecture => $data) {
         $getPrefectureTotalMkpoints = $db->prepare("SELECT id FROM map_mkpoint WHERE prefecture = ?");

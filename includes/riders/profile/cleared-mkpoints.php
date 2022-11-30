@@ -10,7 +10,7 @@ $mkpoints_number = $countMkpoints->rowCount();
 $cleared_mkpoints_number = $user->countClearedMkpoints(); ?>
 
 <div class="profile-title-block">
-    <h2>Recently cleared scenery spots</h2> <div class="cleared-mkpoint-counter">(<?= $cleared_mkpoints_number . ' / ' . $mkpoints_number ?>)</div>
+    <h2>Recently cleared scenery spots</h2> <div class="cleared-counter">(<?= $cleared_mkpoints_number . ' / ' . $mkpoints_number ?>)</div>
 </div>
 
 <div class="dashboard-block cleared-mkpoints-list"> <?php

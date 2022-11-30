@@ -74,18 +74,8 @@
     gap: 20px;
 }
 
-.profile-title-block {
-    padding: 20px 40px;
-    align-items: center;
-    background-color: #f9f9f9;
-    display: flex;
-    column-gap: 6px;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.viewed-mkpoint-counter {
-    margin-bottom: 0.5rem;
+.pf-column {
+    width: 50%;
 }
 
 @media only screen and (max-width: 576px) {
@@ -98,4 +88,74 @@
     .pf-column {
         width: 100%;
     }
+}
+
+.profile-title-block {
+    padding: 20px 40px;
+    align-items: center;
+    background-color: #f9f9f9;
+    display: flex;
+    column-gap: 6px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cleared-counter {
+    margin-bottom: 0.5rem;
+}
+
+.cleared-segment {
+    position: relative;
+    border-bottom: 1px dashed #f0f0f0;
+    padding: 10px;
+}
+.cleared-segment .overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+.cleared-segment .inside {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    pointer-events: none;
+    z-index: 1;
+}
+.cleared-segment .inside a {
+    pointer-events: all;
+}
+.cleared-segment:hover {
+    background-color: #f9f9f9;
+}
+.cleared-segment-thumbnail {
+    height: 80px;
+    width: 150px;
+}
+.cleared-segment-thumbnail img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    float: left;
+}
+.cleared-segment-activity-date {
+    color: #bbbbbb;
+}
+.cleared-segment-activity-title {
+    display: inline;
+}
+.cleared-segment-name {
+    font-weight: bold;
+}
+.cleared-segment-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 3px;
+}
+.cleared-segment-prefecture-block {
+    padding: 10px;
+    background-color: #bbb;
+    color: #fff;
 }
