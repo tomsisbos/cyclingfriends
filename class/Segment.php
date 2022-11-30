@@ -51,18 +51,17 @@ class Segment extends Model {
 
         // If at least one photo has been found, return the one with the most likes number
         if (count($photos) > 0) {
-
-            function compare ($a, $b) {
+            
+            usort($photos, (function ($a, $b) {
                 return strcmp($b->likes, $a->likes);
-            }
-            usort($photos, "compare");
+            } ) );
 
-            return 'url(data:image/jpeg;base64,' .$photos[0]->blob. ')';
+            return 'data:image/jpeg;base64,' .$photos[0]->blob;
         
         // If no photo has been found, return default image
         } else {
 
-            return 'url(/includes/media/default-photo-' . rand(1,9) .'.svg) ';
+            return '/media/default-photo-' . rand(1,9) .'.svg';
 
         }
 

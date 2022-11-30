@@ -1,16 +1,16 @@
 var showButton = document.getElementById('showBike')
-var bikes = document.getElementById('bikes')
+var bikes = document.querySelectorAll('.pf-bike-container.hidden')
+var showText = showButton.innerText
+
+// Display other bikes and change button text on click
 showButton.addEventListener('click', () => {
-    bikes.classList.toggle('show')
-    if (showButton.innerText === 'Show') {
-        showButton.innerText = 'Hide'
-    } else {
-        showButton.innerText = 'Show'
-    }
+    bikes.forEach( (bike) => bike.classList.toggle('bike-displayed'))
+    if (showButton.innerText === 'Hide') showButton.innerText = showText
+    else showButton.innerText = 'Hide'
 } )
 
 // Open modal on bike image click
-document.querySelectorAll('.bike-image-img').forEach( (bikeImage) => {
+document.querySelectorAll('.pf-bike-image').forEach( (bikeImage) => {
     bikeImage.addEventListener('click', (e) => {
         openSingleModal(e.target.src)
     } )

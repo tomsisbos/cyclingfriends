@@ -26,13 +26,14 @@ class Bike extends Model {
     public function displayImage () {
         
         // If the user has uploaded an image, use it as bike image
-        if (isset($this->img_blob)) {
-            echo '<img class="bike-image-img" src="data:image/jpeg;base64,' . base64_encode($this->img_blob) . '" />';
+        if (isset($this->img_blob)) { ?>
+            <img class="pf-bike-image" src="data:image/jpeg;base64,<?= base64_encode($this->img_blob) ?>" /> <?php
             
         // Else, use a profile picture corresponding to user's randomly attribuated icon
-        }else {
-            echo '<img class="bike-image-img" src="\includes\media\default-bike-' .$this->user->getDefaultPropicId(). '.svg" />';
+        } else { ?>
+            <img class="pf-bike-image" src="\includes\media\default-bike-' .$this->user->getDefaultPropicId(). '.svg" /> <?php
         }
+
     }
 
     // Function for uploading a bike image

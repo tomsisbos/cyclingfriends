@@ -39,7 +39,6 @@ export default class MapMap extends GlobalMap {
             max: 20
         }
     }
-    segmentCapColor = 'white'
     rideColor = 'yellow'
     rideCapColor = 'white'
     capColorHover = '#ff5555'

@@ -333,14 +333,14 @@ class Route extends Model {
 
         $spots = [];
         $connected_user = new User($_SESSION['id']);
-        $viewed_mkpoints = $connected_user->getViewedMkpoints();
+        $cleared_mkpoints = $connected_user->getClearedMkpoints();
 
         foreach ($this->getCloseMkpoints($tolerance) as $mkpoint) {
             $spot = ['type' => 'mkpoint', 'on_route' => $mkpoint->on_route, 'distance' => $mkpoint->distance, 'name' => $mkpoint->name, 'city' => $mkpoint->city, 'prefecture' => $mkpoint->prefecture, 'elevation' => $mkpoint->elevation, 'viewed' => false];
             if (isset($mkpoint->remoteness)) $spot['remoteness'] = $mkpoint->remoteness;
             ///var_dump($mkpoint->id);
-            ///var_dump($viewed_mkpoints);
-            if (in_array_r($mkpoint->id, $viewed_mkpoints)) $spot['viewed'] = true;
+            ///var_dump($cleared_mkpoints);
+            if (in_array_r($mkpoint->id, $cleared_mkpoints)) $spot['viewed'] = true;
             array_push($spots, $spot);
         }
 

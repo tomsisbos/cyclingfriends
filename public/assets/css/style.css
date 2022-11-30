@@ -196,38 +196,6 @@ img.site-logo {
     box-shadow: -1px 1px 1px black;
 }
 
-.propic-friends {
-	outline: 4px solid pink;
-	border-radius: 99px;
-}
-
-.bike-container {
-	display: flex;
-    padding: 10px;
-    background-color: #ebf1f1;
-    gap: 10px;
-}
-
-.bike-image-container {
-	height: 200px;
-}
-.bike-infos-container {
-    display: flex;
-    flex-flow: column;
-}
-
-.bike-image-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-	border: 3px solid #fff;
-	background-color: white;
-	cursor: pointer;
-}
-.bike-image-img:hover {
-	opacity: 0.8;
-}
-
 
 .image-modify-container {
     position: relative;
@@ -415,6 +383,10 @@ img.site-logo {
 }
 .bg-pink-3 {
     background-color: #f6b9cd33 !important;
+}
+
+.bg-transparent {
+    background-color: #00000000;
 }
 
 .admin-field {
@@ -1092,7 +1064,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .top-link a::after {
-    content: ' ▾';
+    content: ' \25BE';
 }
 
 /* Others */

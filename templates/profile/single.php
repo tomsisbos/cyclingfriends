@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<link rel="stylesheet" href="../assets/css/profile.css" />
 <link rel="stylesheet" href="../assets/css/lightbox-style.css" />
-<link rel="stylesheet" href="../assets/css/riders.css" /> <?php
+<link rel="stylesheet" href="../assets/css/dashboard.css" /> <?php
 
 session_start();
 include '../actions/users/securityAction.php';
@@ -19,64 +20,66 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 		// Space for general error messages
 		displayMessage(); ?>
 		
-		<div class="container d-flex flex-column gap bg-user">
+		<div class="container pf-header">
 
 			<!-- Top section -->
-			<div class="tr-row gap nav">
-				<div class="td-row"> <?php
-				
-					// Include profile picture
-					include '../includes/riders/profile/propic.php'; ?>
 
-				</div>
-				<div class="flex-column">
-					<h1 class="title-with-subtitle js-login"><?= $user->login; ?></h1>
-					<div class="d-flex gap">
-					<?php // Only display social links if filled
-					// Twitter
-					if (isset($user->twitter) AND !empty($user->twitter)) { ?>
-						<a target="_blank" href="<?= $user->twitter ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
-					} // Facebook
-					if (isset($user->facebook) AND !empty($user->facebook)) { ?>
-						<a target="_blank" href="<?= $user->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a> <?php
-					} // Instagram
-					if (isset($user->instagram) AND !empty($user->instagram)) { ?>
-						<a target="_blank" href="<?= $user->instagram ?>"><span class="social iconify instagram" data-icon="ant-design:instagram-filled" data-width="20"></span></a> <?php
-					} // Strava
-					if (isset($user->strava) AND !empty($user->strava)) { ?>
-						<a target="_blank" href="<?= $user->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a> <?php
-					} ?>
-					</div>
-				</div> <?php
-				
-				// Buttons ?>
-				<div class="td-row push gap-30"> <?php
-					if ($_SESSION['id'] != $user->id) { ?>	
-						<a href="#">
-							<button id="sendMessageButton" class="btn button" name="send_message">Send message</button>
-						</a> <?php
-						include '../includes/riders/friends/buttons.php';
-						include '../includes/riders/profile/send-message.php'; 
-					} else { ?>
-						<a href="/profile/edit">
-							<button class="button btn">
-								Edit my profile
-							</button>
-						</a> <?php
-					} ?>
-				</div>
-
+			<h1 class="title-with-subtitle js-login"><?= $user->login; ?></h1>
+			<div class="d-flex gap"> <?php
+			
+			// Only display social links if filled
+			// Twitter
+			if (isset($user->twitter) AND !empty($user->twitter)) { ?>
+				<a target="_blank" href="<?= $user->twitter ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
+			} // Facebook
+			if (isset($user->facebook) AND !empty($user->facebook)) { ?>
+				<a target="_blank" href="<?= $user->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a> <?php
+			} // Instagram
+			if (isset($user->instagram) AND !empty($user->instagram)) { ?>
+				<a target="_blank" href="<?= $user->instagram ?>"><span class="social iconify instagram" data-icon="ant-design:instagram-filled" data-width="20"></span></a> <?php
+			} // Strava
+			if (isset($user->strava) AND !empty($user->strava)) { ?>
+				<a target="_blank" href="<?= $user->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a> <?php
+			} ?>
+			</div> <?php
+			
+			// Buttons ?>
+			<div class="td-row push gap-30"> <?php
+				if ($_SESSION['id'] != $user->id) { ?>	
+					<a href="#">
+						<button id="sendMessageButton" class="btn button" name="send_message">Send message</button>
+					</a> <?php
+					include '../includes/riders/friends/buttons.php';
+					include '../includes/riders/profile/send-message.php'; 
+				} else { ?>
+					<a href="/profile/edit">
+						<button class="button btn">
+							Edit my profile
+						</button>
+					</a> <?php
+				} ?>
 			</div>
-		</div> <?php
 
-		// Include friends list
-		include '../includes/riders/profile/friends-list.php'; ?>
+		</div>
 		
-		<div class="container d-flex flex-column gap end"> 
+		<div class="container container-thin d-flex gap-20 nav bg-friend"> <?php
+
+			// Include friends list
+			include '../includes/riders/profile/friends-list.php'; ?>
+
+		</div>
+		
+		<div class="container margin-bottom"> 
 			
 			<!-- Profile infos -->
-			<div class="container gap">
-				<div class="col-12">
+			<div class="pf-general-infos"> <?php
+				
+				// Include profile picture ?>
+				<div class="pf-propic"> <?php
+					include '../includes/riders/profile/propic.php'; ?>
+				</div>
+
+				<div class="pf-infos">
 					<div class="mb-3 row g-2"> <?php
 						if (!empty($user->last_name OR $user->first_name)) { ?>
 							<div class="col-md">
@@ -117,13 +120,39 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 						} ?>
 					</div>
 				</div>
-			</div> <?php
-					
-			// Include profile gallery
-			/*include '../includes/riders/profile/gallery.php';*/
+			</div>
+			
+		</div> <?php
 
-			// Include bikes
-			include '../includes/riders/profile/bikes.php'; ?>	
+		if (!empty($user->getBikes())) { ?>
+			<div class="container margin-bottom d-flex flex-column gap"> <?php
+				// Include bikes
+				include '../includes/riders/profile/bikes.php'; ?>
+			</div> <?php
+		} ?>
+		
+		<div class="container bg-transparent margin-bottom p-0 pf-columns-container">
+			
+			<div class="pf-column">
+				<div class="d-flex flex-column gap"> <?php
+					// Cleared mkpoints panel ?>
+					<div class="profile-container"> <?php 
+						define('CLEARED_MKPOINTS_LIMIT', 20); 
+						include '../includes/riders/profile/cleared-mkpoints.php'; ?>
+					</div>
+				</div>
+			</div>
+
+			<div class="pf-column">
+				
+				<div class="d-flex flex-column gap"> <?php
+					// Cleared cegments panel ?>
+					<div class="profile-container"> <?php 
+						define('CLEARED_SEGMENTS_LIMIT', 20); 
+						include '../includes/riders/profile/cleared-segments.php'; ?>
+					</div>
+				</div>
+			</div>
 
 		</div>
 	

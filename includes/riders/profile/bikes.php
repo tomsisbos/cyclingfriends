@@ -3,18 +3,20 @@
 if (!empty($user->getBikes())) { ?>
 
 	<div>
-		<h2 id="bikeTitle" class="d-inline-block"><?= $user->login?>'s <?php if (isset($user->getBikes()[1])) { echo 'bikes'; } else { echo 'bike'; } ?></h2>
-		<button id="showBike" class="btn smallbutton mb-2 mx-4">Show</button>
-		<div id="bikes" class="d-flex flex-column gap my-2 hide"> <?php
+		<h2 id="bikeTitle" class="d-inline-block"><?= $user->login?>'s <?php if (isset($user->getBikes()[1])) { echo 'bikes'; } else { echo 'bike'; } ?></h2> <?php
+		if (count($user->getBikes()) > 1) { ?>
+			<button id="showBike" class="btn smallbutton mb-2 mx-4">Show <?= count($user->getBikes()) - 1 ?> more...</button> <?php
+		} ?>
+		<div class="d-flex flex-column gap my-2"> <?php
 			
 			forEach ($user->getBikes() as $bike) {
 				$bike = new Bike ($bike['id']); ?>
 
-				<div class="bike-container">
-					<div class="col-4 bike-image-container">
+				<div class="pf-bike-container <?php if ($bike->number != 1) echo 'hidden' ?>">
+					<div class="col-4 pf-bike-image-container">
 						<?php $bike->displayImage(); ?>
 					</div>
-					<div class="col-8 bike-infos-container">
+					<div class="col-8 pf-bike-infos-container">
 						<div><strong>Type : </strong><?= $bike->type ?></div><?php
 						if (!empty($bike->model)) { ?>
 							<div><strong>Model : </strong><?= $bike->model ?></div><?php } 

@@ -36,6 +36,10 @@
     transition: opacity .2s;
     border-radius: 99px;
 }
+.mkpoint-marker img:hover {
+    height: 30px !important;
+    width: 30px !important;
+}
 .mkpoint-marker::after {
     content: '\25BC';
     height: 0px;

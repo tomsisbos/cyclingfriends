@@ -259,6 +259,12 @@ class User extends Model {
         return array_column($getFollowingList->fetchAll(PDO::FETCH_NUM), 0);
     }
 
+    public function getFriendsAndFollowingList () {
+        $getFriendsAndFollowingList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = :user_id UNION SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
+        $getFriendsAndFollowingList->execute(array(':user_id' => $this->id));
+        return array_column($getFriendsAndFollowingList->fetchAll(PDO::FETCH_NUM), 0);
+    }
+
     // Function for downloading users's profile picture
     public function downloadPropic () {
         // Check if there is an image that corresponds to connected user in the database
@@ -467,7 +473,7 @@ class User extends Model {
         // Get period of rides to display
         $friends_list = $this->getFriends();
         $following_list = $this->getFollowingList();
-        $following_number = count($following_list);
+        $following_number = count($this->getFriendsAndFollowingList());
         if ($following_number < 3) $period = 999;
         else if ($following_number < 8) $period = 28;
         else if ($following_number < 18) $period = 20;
@@ -538,6 +544,13 @@ class User extends Model {
         return $getActivities->rowCount();
     }
 
+    // Get $number last activity photos
+    public function getLastActivityPhotos ($number) {
+        $getLastActivityPhotos = $this->getPdo()->prepare("SELECT id FROM activity_photos WHERE user_id = ? ORDER BY datetime DESC LIMIT " . $number);
+        $getLastActivityPhotos->execute(array($this->id));
+        return array_column($getLastActivityPhotos->fetchAll(PDO::FETCH_NUM), 0);
+    }
+
     // Get all messages between two users
     public function getConversation ($user) {
         $getConversation = $this->getPdo()->prepare('SELECT id FROM messages WHERE sender_id = :user1 AND receiver_id = :user2 UNION SELECT id FROM messages WHERE sender_id = :user2 AND receiver_id = :user1 ORDER BY id');
@@ -597,39 +610,71 @@ class User extends Model {
         $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
     }
 
-    // Get currently saved viewed mkpoints list
-    public function getViewedMkpoints ($limit = 99999) {
-        $getViewedMkpoints = $this->getPdo()->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
-        $getViewedMkpoints->execute(array($this->id));
-        $viewed_mkpoints = $getViewedMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($viewed_mkpoints as $viewed_mkpoint) {
+    // Get currently saved cleared mkpoints list
+    public function getClearedMkpoints ($limit = 99999) {
+        $getClearedMkpoints = $this->getPdo()->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
+        $getClearedMkpoints->execute(array($this->id));
+        $cleared_mkpoints = $getClearedMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($cleared_mkpoints as $cleared_mkpoint) {
             $checkIfActivityExists = $this->getPdo()->prepare('SELECT id FROM activities WHERE id = ?');
-            $checkIfActivityExists->execute(array($viewed_mkpoint['activity_id']));
-            // If activity in which mkpoint has been viewed has been deleted, remove from viewed mkpoints list
+            $checkIfActivityExists->execute(array($cleared_mkpoint['activity_id']));
+            // If activity in which mkpoint has been cleared has been deleted, remove from cleared mkpoints list
             if ($checkIfActivityExists->rowCount() == 0) {
-                if (($key = array_search($viewed_mkpoint, $viewed_mkpoints)) !== false) {
-                    unset($viewed_mkpoints[$key]);
-                    $removeViewedMkpoint = $this->getPdo()->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
-                    $removeViewedMkpoint->execute(array($viewed_mkpoint['mkpoint_id']));
+                if (($key = array_search($cleared_mkpoint, $cleared_mkpoints)) !== false) {
+                    unset($cleared_mkpoints[$key]);
+                    $removeClearedMkpoint = $this->getPdo()->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
+                    $removeClearedMkpoint->execute(array($cleared_mkpoint['mkpoint_id']));
                 }
             }
         }
-        return $viewed_mkpoints;
+        return $cleared_mkpoints;
+    }
+
+    public function countClearedMkpoints() {
+        $countClearedMkpoints = $this->getPdo()->prepare("SELECT id FROM user_mkpoints WHERE user_id = ?");
+        $countClearedMkpoints->execute(array($this->id));
+        return $countClearedMkpoints->rowCount();
     }
 
     public function getPublicMkpoints ($offset = 0, $limit = 20) {
         // Get period of mkpoints to display
-        $following_list = $this->getFollowingList();
-        $following_number = count($following_list);
-        if ($following_number < 3) $period = 999;
-        else if ($following_number < 8) $period = 28;
-        else if ($following_number < 18) $period = 20;
-        else if ($following_number < 25) $period = 14;
+        $friends_and_following_list = $this->getFriendsAndFollowingList();
+        $friends_and_following_number = count($friends_and_following_list);
+        if ($friends_and_following_number < 3) $period = 999;
+        else if ($friends_and_following_number < 8) $period = 28;
+        else if ($friends_and_following_number < 18) $period = 20;
+        else if ($friends_and_following_number < 25) $period = 14;
         else $period = 10;
         // Request mkpoints
-        $getMkpoints = $this->getPdo()->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$following_list)."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints = $this->getPdo()->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_following_list)."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
         $getMkpoints->execute(array($period));
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Get currently saved cleared segments list
+    public function getClearedSegments ($limit = 99999) {
+        $getClearedSegments = $this->getPdo()->prepare("SELECT u.segment_id, u.activity_id FROM user_segments AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
+        $getClearedSegments->execute(array($this->id));
+        $cleared_segments = $getClearedSegments->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($cleared_segments as $cleared_segment) {
+            $checkIfActivityExists = $this->getPdo()->prepare('SELECT id FROM activities WHERE id = ?');
+            $checkIfActivityExists->execute(array($cleared_segment['activity_id']));
+            // If activity in which segment has been cleared has been deleted, remove from cleared segments list
+            if ($checkIfActivityExists->rowCount() == 0) {
+                if (($key = array_search($cleared_segment, $cleared_segments)) !== false) {
+                    unset($cleared_segments[$key]);
+                    $removeClearedSegment = $this->getPdo()->prepare('DELETE FROM user_msegments WHERE segment_id = ?');
+                    $removeClearedSegment->execute(array($cleared_segment['segment_id']));
+                }
+            }
+        }
+        return $cleared_segments;
+    }
+
+    public function countClearedSegments() {
+        $countClearedSegments = $this->getPdo()->prepare("SELECT id FROM user_segments WHERE user_id = ?");
+        $countClearedSegments->execute(array($this->id));
+        return $countClearedSegments->rowCount();
     }
 
     public function getThread ($offset = 0, $limit = null) {
@@ -659,36 +704,36 @@ class User extends Model {
         return array_slice($thread_data, $offset, $limit);
     }
 
-    // Update viewed mkpoints list in the database according to newly uploaded activities
-    /*public function updateViewedMkpoints ($activity = false) {
+    // Update cleared mkpoints list in the database according to newly uploaded activities
+    /*public function updateClearedMkpoints ($activity = false) {
 
         $activities = $this->getActivities();
 
-        // For each activity route, get close mkpoints and add them to viewed mkpoints
+        // For each activity route, get close mkpoints and add them to cleared mkpoints
         if ($activity) {
-            $viewed_mkpoints = $activity->route->getCloseMkpoints(500, false);
-            foreach ($viewed_mkpoints as $viewed_mkpoint) $viewed_mkpoint['activity_id'] = $activity->id;
+            $cleared_mkpoints = $activity->route->getCloseMkpoints(500, false);
+            foreach ($cleared_mkpoints as $cleared_mkpoint) $cleared_mkpoint['activity_id'] = $activity->id;
         } else {
-            $viewed_mkpoints = [];
+            $cleared_mkpoints = [];
             foreach ($activities as $activity) {
                 $activity = new Activity($activity['id']);
                 $mkpoints = $activity->route->getCloseMkpoints(500, false);
                 foreach ($mkpoints as $mkpoint) {
                     $mkpoint['activity_id'] = $activity->id;
-                    if (!in_array_r($mkpoint['id'], $viewed_mkpoints, true)) array_push($viewed_mkpoints, $mkpoint);
+                    if (!in_array_r($mkpoint['id'], $cleared_mkpoints, true)) array_push($cleared_mkpoints, $mkpoint);
                 }
             }
         }
 
         // Filter mkpoints to add
-        $saved_mkpoints = $this->getViewedMkpoints();
+        $saved_mkpoints = $this->getClearedMkpoints();
         $mkpoints_to_add = [];
-        foreach ($viewed_mkpoints as $viewed_mkpoint) {
+        foreach ($cleared_mkpoints as $cleared_mkpoint) {
             $already_saved = false;
             foreach ($saved_mkpoints as $saved_mkpoint) {
-                if ($saved_mkpoint['mkpoint_id'] == $viewed_mkpoint['id'] && $saved_mkpoint['activity_id'] == $viewed_mkpoint['activity_id']) $already_saved = true;
+                if ($saved_mkpoint['mkpoint_id'] == $cleared_mkpoint['id'] && $saved_mkpoint['activity_id'] == $cleared_mkpoint['activity_id']) $already_saved = true;
             }
-            if (!$already_saved) array_push($mkpoints_to_add, $viewed_mkpoint);
+            if (!$already_saved) array_push($mkpoints_to_add, $cleared_mkpoint);
         }
 
         // Add relevant mkpoints to user mkpoints table

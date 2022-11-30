@@ -14,12 +14,12 @@ include '../actions/users/securityAction.php'; ?>
 
 	<div class="sidebar-left sticky-sidebar">
 
-		<!-- Viewed mkpoints panel -->
+		<!-- Cleared mkpoints panel -->
 		<div class="dashboard-container"> <?php 
-			define('VIEWED_MKPOINTS_LIMIT', 20); 
-			include '../includes/dashboard/viewed-mkpoints-counter.php';
-			include '../includes/dashboard/viewed-mkpoints-list.php';
-			include '../includes/dashboard/viewed-mkpoints-stats.php'; ?>
+			define('CLEARED_MKPOINTS_LIMIT', 20); 
+			include '../includes/dashboard/cleared-mkpoints-counter.php';
+			include '../includes/dashboard/cleared-mkpoints-list.php';
+			include '../includes/dashboard/cleared-mkpoints-stats.php'; ?>
 		</div>
 
 	</div>

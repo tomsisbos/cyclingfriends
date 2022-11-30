@@ -2,15 +2,6 @@
 
 require '../../../includes/api-head.php';
 
-// In case an Ajax request have been detected
-if (isAjax()) {
-
-    if (isset($_GET)) {
-
-    }
-
-}
-
 // In case a Json request have been detected
 $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
@@ -124,14 +115,20 @@ if (is_array($data)) {
         else $featured = 0;
 
         // Insert photo in 'activity_photos' table
-        $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $insert_photos -> execute(array($activity_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
+        $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+        $insert_photos -> execute(array($activity_id, $user_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
     }
 
-    // Update user's viewed mkpoints
+    // Update user's cleared mkpoints
     foreach ($data['mkpoints'] as $mkpoint) {
         $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
         $addMkpoint->execute(array($connected_user->id, $mkpoint['id'], $activity_id));
+    }
+
+    // Update user's cleared segments
+    foreach ($data['segments'] as $segment) {
+        $addSegment = $db->prepare('INSERT INTO user_segments(user_id, segment_id, activity_id) VALUES (?, ?, ?)');
+        $addSegment->execute(array($connected_user->id, $segment['id'], $activity_id));
     }
 
     echo json_encode(true);

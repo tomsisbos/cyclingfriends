@@ -2,7 +2,7 @@
 
 // Display propic ?>
 <div id="propic"> <?php
-	$user->displayPropic(100, 100, 100); ?>
+	$user->displayPropic(250, 250, 20); ?>
 </div> <?php
 
 // Propic modal
@@ -19,30 +19,8 @@ if (isset($propic['img'])) { ?>
 			</div>
 			
 		</div>
-	</div>
-
-	<script>
-	var propicModal = document.getElementById("propicModal")
-	var modalBlock  = document.querySelector(".modal-block")
-
-		document.querySelector('#propic').addEventListener('click', () => {
-			
-			propicModal.style.display = "block";
-			
-			// Close on clicking outside modal-block
-			propicModal.onclick = function (e) {
-				var eTarget = e ? e.target : event.srcElement
-				if ((eTarget !== modalBlock) && (eTarget !== propicModal)){
-					// Nothing
-				}else{
-					closePropicModal()
-				}
-			}
-		} )
-		
-		function closePropicModal() {
-			propicModal.style.display = "none";
-		}
-	</script> <?php
+	</div> <?php
 
 } ?>
+
+<script defer src="/scripts/riders/propic.js"></script>

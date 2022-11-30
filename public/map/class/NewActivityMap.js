@@ -157,6 +157,7 @@ export default class NewActivityMap extends ActivityMap {
                 routeData,
                 checkpoints,
                 mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
+                segments: await this.getFittingSegments(),
                 photos: [],
                 trackpoints
             }
@@ -298,6 +299,7 @@ export default class NewActivityMap extends ActivityMap {
                 routeData,
                 checkpoints,
                 mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
+                segments: await this.getFittingSegments(),
                 photos: [],
                 trackpoints
             }
@@ -742,7 +744,7 @@ export default class NewActivityMap extends ActivityMap {
                         // Send data to server
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)
-                            window.location.replace('/' + this.session.login + '/activities/')
+                            window.location.replace('/' + this.session.login + '/activities')
                         } )
                     }, 'image/jpeg', 0.7)
                 } )     

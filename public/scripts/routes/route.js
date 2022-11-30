@@ -95,4 +95,11 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         routePageMap.buildSlider()
         routePageMap.buildTable()
     } )
+
+    var fittingSegments = await routePageMap.getFittingSegments()
+    console.log(fittingSegments)
+    fittingSegments.forEach( (segment) => {
+        routePageMap.displaySegment(segment)
+    } )
+    
 } )

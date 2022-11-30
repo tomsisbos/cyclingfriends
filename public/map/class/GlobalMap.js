@@ -13,8 +13,8 @@ export default class GlobalMap extends Model {
             sessionStorage.setItem('session-id', session.id)
             sessionStorage.setItem('session-login', session.login)
         } )
-        ajaxGetRequest (this.apiUrl + "?get-user-viewed-mkpoints=true", (response) => {
-            this.viewedMkpoints = response
+        ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (response) => {
+            this.clearedMkpoints = response
         } )
     }
 
@@ -32,6 +32,7 @@ export default class GlobalMap extends Model {
     segmentLocalColor = '#8bffff'
     segmentRegionalColor = '#2bffff'
     segmentNationalColor = '#2bc8ff'
+    segmentCapColor = 'white'
 
     setSeason () {
         if (this.month == 12 || this.month == 1 || this.month == 2) {
@@ -2116,6 +2117,142 @@ export default class GlobalMap extends Model {
         } )
     }
 
+    displaySegment (segment) {
+
+        // Build geojson
+        var geojson = {
+            type: 'Feature',
+            properties: {
+                rank: segment.rank,
+                name: segment.name,
+                specs: {
+                    offroad: segment.spec_offroad,
+                    rindo: segment.spec_rindo
+                },
+                tags: {
+                    hanami: segment.spec_hanami,
+                    kouyou: segment.kouyou,
+                    ajisai: segment.ajisai,
+                    culture: segment.spec_culture,
+                    machinami: segment.spec_machinami,
+                    shrines: segment.spec_shrines,
+                    teaFields: segment.spec_tea_fields,
+                    sea: segment.spec_sea,
+                    mountains: segment.spec_mountains,
+                    forest: segment.spec_forest,
+                },
+                tunnels: segment.route.tunnels
+            },
+            geometry: {
+                type: 'LineString',
+                coordinates: segment.route.coordinates
+            }
+        }
+
+        // Add source
+        this.map.addSource('segment' + segment.id, {
+            type: 'geojson',
+            data: geojson
+        } )
+
+        // Add segment cap layer
+        this.map.addLayer( {
+            id: 'segmentCap' + segment.id,
+            type: 'line',
+            source: 'segment' + segment.id,
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': this.segmentCapColor,
+                'line-width': 2,
+                'line-opacity': 0,
+                'line-gap-width': 2
+            }
+        } )
+
+        // Define segment color
+        if (segment.rank == 'local') var segmentColor = this.segmentLocalColor
+        if (segment.rank == 'regional') var segmentColor = this.segmentRegionalColor
+        if (segment.rank == 'national') var segmentColor = this.segmentNationalColor
+
+        // Add segment layer
+        this.map.addLayer( {
+            id: 'segment' + segment.id,
+            type: 'line',
+            source: 'segment' + segment.id,
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': segmentColor,
+                'line-width': 3,
+                'line-opacity': 1
+            }
+        } )
+
+        // Set animation
+        this.map.on('mouseenter', 'segmentCap' + segment.id, () => {
+            this.map.getCanvas().style.cursor = 'default'
+            this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 1)
+        } )
+        this.map.on('mouseleave', 'segmentCap' + segment.id, () => {
+            this.map.getCanvas().style.cursor = 'grab'
+            this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
+        } )
+    }
+
+    getFittingSegments () {
+
+        return new Promise ( async (resolve, reject) => {
+
+            // Get segments fitting the route
+            ajaxGetRequest ('/api/map.php' + "?display-segments=" + this.routeId, async (segments) => {
+                console.log(segments)
+
+                const remotenessTolerance = 0.1
+                const range = 2
+                var segmentsInRange = []
+                var fittingSegments = []
+
+                // Get route
+                const routeData = await this.getRouteData()
+
+                // Build a simplified line for rough filtering
+                var coreLine = turf.simplify(routeData, {tolerance: 0.02, highQuality: false, mutate: false})
+                segments.forEach( (segment) => {
+                    var point = turf.point([segment.route.coordinates[0][0], segment.route.coordinates[0][1]])
+                    var nearestLinePoint = turf.nearestPointOnLine(coreLine, point)
+                    var roughRemoteness = nearestLinePoint.properties.dist
+                    if (range < 3) var roughRange = range * 8 // Define range from the coreline where to keep segments according range value to prevent too small range
+                    else var roughRange = range * 3
+                    if (roughRemoteness < roughRange) {
+                        segmentsInRange.push(segment)
+                    }
+                } )
+
+                // Get route remoteness
+                segmentsInRange.forEach( (segment) => {
+                    var point = turf.point([segment.route.coordinates[0][0], segment.route.coordinates[0][1]])
+                    var nearestLinePoint = turf.nearestPointOnLine(routeData, point)
+                    segment.remoteness = nearestLinePoint.properties.dist
+                    segment.distance = nearestLinePoint.properties.location
+                    if (segment.remoteness < range) {
+                        if (segment.remoteness < remotenessTolerance) segment.on_route = true
+                        else segment.on_route = false
+                        fittingSegments.push(segment)
+                    }
+                } )
+                // Sort segments by distance
+                fittingSegments.sort( (segmentA, segmentB) => segmentA.distance - segmentB.distance)
+
+                resolve(fittingSegments)
+            } )
+        } )
+    }
+
     addMkpoints (mkpoints) {
         mkpoints.forEach( async (mkpoint) => {
             let mkpointPopup = new MkpointPopup(mkpoint)
@@ -3120,8 +3257,8 @@ export default class GlobalMap extends Model {
 
     inViewedMkpointsList (mkpoint) {
         var activity_id = false
-        this.viewedMkpoints.forEach( (viewedMkpoint) => {
-            if (viewedMkpoint.id == mkpoint.id) activity_id = viewedMkpoint.activity_id
+        this.clearedMkpoints.forEach( (clearedMkpoint) => {
+            if (clearedMkpoint.id == mkpoint.id) activity_id = clearedMkpoint.activity_id
         } )
         return activity_id
     }

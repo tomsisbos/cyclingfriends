@@ -18,15 +18,14 @@ require '../actions/databaseAction.php';
 		
 		} else {
 			
-		// If id doesn't exist, redirect to dashboard.php
-		header('location: /');
+			// If id doesn't exist, redirect to dashboard.php
+			header('location: /');
 		
 		}
 	
 	} else {
 		
-	// If id is not set, redirect to dashboard.php
-	header('location: /');
+		// If id is not set, redirect to dashboard.php
+		header('location: /');
 		
-	}
-?>
+	} ?>

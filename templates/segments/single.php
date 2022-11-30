@@ -20,7 +20,7 @@ include '../actions/segments/segmentAction.php'; ?>
 		
 		<div class="container-fluid">
 
-			<div class="container pg-sg-header" style="background-image: <?= $segment->getFeaturedImage() ?>;">
+			<div class="container pg-sg-header" style="background-image: url(<?= $segment->getFeaturedImage() ?>);">
 				<div class="header">
 					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
 						<h1><?= $segment->name ?></h1>

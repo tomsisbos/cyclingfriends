@@ -12,8 +12,9 @@ if (isAjax()) {
         $offset = $parameters[1];
         $preview_photos_quantity = $parameters[2];
         $results = $connected_user->getThread($offset, $limit);
-        $activities = [];
+        $entries = [];
         foreach ($results as $result) {
+            // Activity data preparation
             if ($result->type === 'activity') {
                 $result->datetimeString = $result->datetime->format('Y/m/d');
                 $result->photosNumber = count($result->getPhotoIds());
@@ -23,11 +24,16 @@ if (isAjax()) {
                 else $result->formattedDuration = $result->duration->format('H') . '<span class="ac-spec-unit"> h </span>' . $result->duration->format('i');
                 $result->averagespeed = $result->getAverageSpeed();
                 $result->propic = $result->user->getPropicElement();
-                array_push($activities, $result);
+                array_push($entries, $result);
+            // Mkpoint data preparation
+            } else if ($result->type === 'mkpoint') {
+                $result->propic = $result->user->getPropicElement();
+                $result->featuredimage = $result->getImages()[0]->blob;
+                array_push($entries, $result);
             }
         }
 
-        echo json_encode($activities);
+        echo json_encode($entries);
 
     }
 

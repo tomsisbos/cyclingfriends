@@ -557,15 +557,15 @@ if (isAjax()) {
         echo json_encode($close_mkpoints);
     }
 
-    if (isset($_GET['get-user-viewed-mkpoints'])) {
-        $entries = $connected_user->getViewedMkpoints();
-        $viewed_mkpoints = [];
+    if (isset($_GET['get-user-cleared-mkpoints'])) {
+        $entries = $connected_user->getClearedMkpoints();
+        $cleared_mkpoints = [];
         foreach ($entries as $entry) {
             $mkpoint = new Mkpoint($entry['mkpoint_id']);
             $mkpoint->activity_id = intval($entry['activity_id']);
-            array_push($viewed_mkpoints, $mkpoint);
+            array_push($cleared_mkpoints, $mkpoint);
         }
-        echo json_encode($viewed_mkpoints);
+        echo json_encode($cleared_mkpoints);
     }
 
 }

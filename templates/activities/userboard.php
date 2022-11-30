@@ -34,7 +34,7 @@ include '../actions/users/securityAction.php';
 
 						<div class="my-ac-card">
 
-							<div class="ac-thumbnail-container">
+							<div class="my-ac-thumbnail-container">
 								<a href="/activity/<?= $activity->id ?>">
 									<img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
 								</a>
