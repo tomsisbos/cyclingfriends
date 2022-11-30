@@ -70,6 +70,7 @@
     align-items: center;
     min-width: fit-content;
     display: flex;
+    gap: 6px;
 }
 
 .rdr-button {

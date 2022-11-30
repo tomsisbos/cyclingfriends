@@ -120,8 +120,20 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 						} ?>
 					</div>
 				</div>
-			</div>
+			</div> <?php
 			
+			$photos = $user->getLastActivityPhotos(5);
+			if (!empty($photos)) { ?>
+				<div class="pf-photos-container"> <?php
+					foreach ($photos as $photo_id) {
+						$photo = new ActivityPhoto($photo_id); ?>
+						<a class="pf-photo" href="/activities/<?= $photo->activity_id ?>">
+							<img src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>" />
+						</a> <?php
+					} ?>
+				</div> <?php
+			} ?>
+
 		</div> <?php
 
 		if (!empty($user->getBikes())) { ?>
