@@ -3,6 +3,7 @@ export default class Model {
     apiKey = 'pk.eyJ1Ijoic2lzYm9zIiwiYSI6ImNsMDdyNGYxbjAxd2MzbG12M3V1bjM1MGIifQ.bFRgCmK9_kkfZSd_skNF1g' // API Key (public mode for the moment)
     apiUrl = '/api/map.php'
 
+    defaultStyle = 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z'
     loaderContainer = document.body
     loader = {
         prepare: () => {

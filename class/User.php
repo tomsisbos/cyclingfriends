@@ -17,6 +17,7 @@ class User extends Model {
     public $gender;
     public $birthdate;
     public $place;
+    public $lngLat;
     public $level;
     public $description;
     public $twitter;
@@ -37,7 +38,8 @@ class User extends Model {
         $this->last_name                 = $data['last_name'];
         $this->gender                    = $data['gender'];
         $this->birthdate                 = $data['birthdate'];
-        $this->place                     = $data['place'];
+        $this->location                  = new Geolocation($data['city'], $data['prefecture']);
+        $this->lngLat                    = new LngLat($data['lng'], $data['lat']);
         $this->level                     = $data['level'];
         $this->description               = $data['description'];
         $this->twitter                   = $data['twitter'];
@@ -66,6 +68,8 @@ class User extends Model {
         $_SESSION['login']                     = $this->login;
         $_SESSION['default_profilepicture_id'] = $this->default_profilepicture_id;
         $_SESSION['inscription_date']          = $this->inscription_date;
+        $_SESSION['location']                  = $this->location;
+        $_SESSION['lngLat']                    = $this->lngLat;
         $_SESSION['settings']                  = $this->getSettings();
 		$_SESSION['rights']                    = $this->getRights();
     }
@@ -138,6 +142,13 @@ class User extends Model {
         $today = date("Y-m-d");
         $diff = date_diff(date_create($this->birthdate), date_create($today));
         return $diff->format('%y');
+    }
+
+    // Update user location in database
+    public function setLocation ($geolocation, $lngLat) {
+        $setLocation = $this->getPdo()->prepare('UPDATE users SET city = ?, prefecture = ?, lng = ?, lat = ? WHERE id = ?');
+        $setLocation->execute([$geolocation->city, $geolocation->prefecture, $lngLat->lng, $lngLat->lat, $this->id]);
+        return true;
     }
 
     // Register a friend request

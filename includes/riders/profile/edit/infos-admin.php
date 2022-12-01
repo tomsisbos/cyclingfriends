@@ -20,7 +20,7 @@
 	</div>
 	<div class="col">
 		<label><strong>Place : </strong></label>
-			<button class="js-place btn smallbutton">Pick on map</button>
+			<button id="userLocationButton" class="btn smallbutton">Pick on map</button>
 	</div>
 </div>
 <div class="mb-3 row g-2">

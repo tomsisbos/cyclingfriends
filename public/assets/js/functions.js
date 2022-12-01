@@ -215,12 +215,8 @@ async function openConfirmationPopup (question) {
 		document.querySelector('body').appendChild(modal)
 		modal.addEventListener('click', (e) => {
 			var eTarget = e ? e.target : event.srcElement
-			if ((eTarget == confirmationPopup || eTarget == confirmationPopup.firstElementChild) && (eTarget !== modal)){
-				// Nothing
-			}else{
-				modal.remove()
-			}
-		})
+			if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
+		} )
 		var confirmationPopup = document.createElement('div')
 		confirmationPopup.classList.add('popup')
 		confirmationPopup.innerHTML = question + '<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkgreen text-white">Yes</div><div id="no" class="mp-button bg-darkred text-white">No</div></div>'
@@ -239,28 +235,30 @@ async function openConfirmationPopup (question) {
 }
 
 // Show corresponding message after request
-function showResponseMessage (response) {
+function showResponseMessage (message, elementToAppend = false) {
 	const $navbar = document.querySelector('nav')
-	console.log(response)
+	console.log(message)
 	console.log($navbar)
 	hideResponseMessage()
 	// If success, show a success message
-	if (response.success) {
+	if (message.success) {
 		var successBlock = document.createElement('div')
 		successBlock.className = 'success-block m-0'
 		var successMessage = document.createElement('p')
 		successMessage.className = 'success-message'
-		successMessage.innerHTML = response.success
-		$navbar.nextElementSibling.prepend(successBlock)
+		successMessage.innerHTML = message.success
+		if (!elementToAppend) $navbar.after(successBlock)
+		else elementToAppend.appendChild(successBlock)
 		successBlock.appendChild(successMessage)
 	// Else, show an error message
-	} else if (response.error) {
+	} else if (message.error) {
 		var errorBlock = document.createElement('div')
 		errorBlock.className = 'error-block m-0'
 		var errorMessage = document.createElement('p')
 		errorMessage.className = 'error-message'
-		errorMessage.innerHTML = response.error
-		$navbar.nextElementSibling.prepend(errorBlock)
+		errorMessage.innerHTML = message.error
+		if (!elementToAppend) $navbar.after(errorBlock)
+		else elementToAppend.appendChild(errorBlock)
 		errorBlock.appendChild(errorMessage)
 	}
 	window.scroll( {top: $navbar.offsetHeight, behavior: 'smooth'} )

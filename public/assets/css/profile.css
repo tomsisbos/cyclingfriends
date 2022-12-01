@@ -12,6 +12,23 @@
     gap: 20px;
 }
 
+.pf-map-popup {
+    background-color: white;
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    padding: 20px;
+    position: relative;
+    text-align: center;
+    top: 20px;
+    left: 20px;
+    border-radius: 10px;
+}
+#pickMap {
+    height: 100%;
+    width: 100%;
+    background-color: #f9f9f9;
+}
+
 .pf-photos-container {
     display: flex;
     flex-wrap: wrap;
@@ -158,4 +175,8 @@
     padding: 10px;
     background-color: #bbb;
     color: #fff;
+}
+.cleared-segments-list {
+    max-height: 200px;
+    overflow: auto;
 }

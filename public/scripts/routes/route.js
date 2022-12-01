@@ -40,7 +40,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
     routePageMap.data.routeData = geojson
     
     // Set default layer according to current season
-    var map = await routePageMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', coordinates[0])
+    var map = await routePageMap.load($map, routePageMap.defaultStyle, coordinates[0])
     
     // Set grabber 
     routePageMap.setGrabber()

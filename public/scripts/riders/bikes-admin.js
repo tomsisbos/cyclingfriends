@@ -107,7 +107,6 @@ function addListeners() {
                         bikeDiv.remove()
                     }
                     showResponseMessage(response)
-
                 } )
             }
         } )

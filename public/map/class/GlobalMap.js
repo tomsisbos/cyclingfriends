@@ -13,14 +13,19 @@ export default class GlobalMap extends Model {
             sessionStorage.setItem('session-id', session.id)
             sessionStorage.setItem('session-login', session.login)
         } )
-        ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (response) => {
-            this.clearedMkpoints = response
+        ajaxGetRequest ('/api/riders/location.php' + "?get-location=false", (userLocation) => {
+            this.userLocation = userLocation
+            if (this.centerOnUserLocation) this.centerOnUserLocation()
         } )
+        ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (mkpoints) => this.clearedMkpoints = mkpoints)
     }
 
     map
     $map
     loaded = false
+    defaultCenter = [138.69056, 35.183002]
+    userLocation
+    centerOnUserLocation = false
     mkpoints
     tunnelNumber = 0
     profileData
@@ -259,7 +264,7 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    async load (element, style, center = [138.924, 35.582]) {
+    async load (element, style, center = this.defaultCenter) {
         return new Promise ((resolve, reject) => {
             this.$map = element
             this.map = new mapboxgl.Map ( {

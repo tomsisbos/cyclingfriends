@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	
+<link rel="stylesheet" href="/assets/css/profile.css" />
 <link rel="stylesheet" href="/assets/css/lightbox-style.css" /> <?php 
 
 session_start();
@@ -61,10 +62,13 @@ include '../actions/riders/profile/profileInfosAction.php';
 			include '../includes/riders/profile/edit/social-admin.php'; ?>
 
 		</div>
-	</div>
+	</div> <?php
 	
-	<?php // Include friends
-	include '../includes/riders/profile/friends-list.php'; ?>
+	// Include friends ?>
+		
+	<div class="container container-thin d-flex gap-20 nav bg-friend"> <?php
+		include '../includes/riders/profile/friends-list.php'; ?>
+	</div>
 	
 	<div class="container d-flex flex-column gap end">
 	
@@ -72,9 +76,6 @@ include '../actions/riders/profile/profileInfosAction.php';
 			// Profile infos
 			include '../includes/riders/profile/edit/infos-admin.php'; ?>	
 		</div> <?php
-		
-		// Include profile gallery
-		include '../includes/riders/profile/edit/gallery-admin.php';
 			
 		// Include bikes
 		include '../includes/riders/profile/edit/bikes-admin.php'; ?>	
@@ -86,6 +87,5 @@ include '../actions/riders/profile/profileInfosAction.php';
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/riders/friends.js"></script>
 <script src="/scripts/riders/infos-admin.js"></script>
-<script src="/scripts/riders/gallery.js"></script>
-<script src="/scripts/riders/gallery-admin.js"></script>
 <script src="/scripts/riders/bikes-admin.js"></script>
+<script type="module" src="/scripts/riders/user-location-admin.js"></script>

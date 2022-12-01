@@ -97,9 +97,9 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 									<strong>Age : </strong><?= $user->calculateAge(). ' years old'; ?>
 								</div> <?php
 							}
-							if (!empty($user->place)) { ?>
+							if (!empty($user->location)) { ?>
 								<div class="col-md">
-									<strong>Place : </strong><?= $user->place; ?>
+									<strong>Place : </strong><?= $user->location->toString(); ?>
 								</div> <?php
 							} ?>
 						</div>
@@ -127,7 +127,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 				<div class="pf-photos-container"> <?php
 					foreach ($photos as $photo_id) {
 						$photo = new ActivityPhoto($photo_id); ?>
-						<a class="pf-photo" href="/activities/<?= $photo->activity_id ?>">
+						<a class="pf-photo" href="/activity/<?= $photo->activity_id ?>">
 							<img src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>" />
 						</a> <?php
 					} ?>

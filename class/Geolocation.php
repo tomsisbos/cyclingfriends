@@ -10,7 +10,7 @@ class Geolocation {
         $this->prefecture = $prefecture;
     }
 
-    public function getString () {
+    public function toString () {
         return $this->city . ' (' . $this->prefecture . ')';
     }
 
