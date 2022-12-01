@@ -44,6 +44,7 @@ export default class MapMap extends GlobalMap {
     capColorHover = '#ff5555'
     mode = 'default'
     highlight = false
+    centerOnUserLocation = () => this.map.setCenter(this.userLocation)
 
     updateMapDataListener = this.updateMapData.bind(this)
     updateMapData () {
@@ -94,7 +95,7 @@ export default class MapMap extends GlobalMap {
         this.displayRidesBox.addEventListener('click', () => {
             if (this.displayRidesBox.checked) this.updateRides()
             else this.ridesCollection.forEach( (ride) => {
-                if (map.getLayer('ride' + ride.id)) this.hideRide(ride)
+                if (this.map.getLayer('ride' + ride.id)) this.hideRide(ride)
             } )
             this.ridesCollection = []
         } )
@@ -114,7 +115,7 @@ export default class MapMap extends GlobalMap {
         this.displaySegmentsBox.addEventListener('click', () => {
             if (this.displaySegmentsBox.checked) this.updateSegments()
             else this.segmentsCollection.forEach( (segment) => {
-                if (map.getLayer('segment' + segment.id)) this.hideSegment(segment)
+                if (this.map.getLayer('segment' + segment.id)) this.hideSegment(segment)
             } )
             this.segmentsCollection = []
         } )

@@ -21,9 +21,8 @@ if (is_array($data)) {
 if (isAjax()) {
 
     if (isset($_GET['get-location'])) {
-
-        if ($_GET['get-location'] == false) $user = $connected_user;
-        else $user = new User($_GET['get-location']);
+        if (is_numeric($_GET['get-location'])) $user = new User($_GET['get-location']);
+        else $user = $connected_user;
         echo json_encode($user->lngLat);
 
     }

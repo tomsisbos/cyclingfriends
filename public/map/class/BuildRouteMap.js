@@ -14,6 +14,7 @@ export default class BuildRouteMap extends GlobalMap {
     endpointSet
     elevationProfile
     directionsMode = 'driving'
+    centerOnUserLocation = () => this.map.setCenter(this.userLocation)
 
     addBuildRouteControl () {
         // Get (or add) controller container

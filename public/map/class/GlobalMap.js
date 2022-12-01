@@ -13,7 +13,7 @@ export default class GlobalMap extends Model {
             sessionStorage.setItem('session-id', session.id)
             sessionStorage.setItem('session-login', session.login)
         } )
-        ajaxGetRequest ('/api/riders/location.php' + "?get-location=false", (userLocation) => {
+        ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
             this.userLocation = userLocation
             if (this.centerOnUserLocation) this.centerOnUserLocation()
         } )
