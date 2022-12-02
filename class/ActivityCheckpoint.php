@@ -56,4 +56,25 @@ class ActivityCheckpoint extends Model {
         }
     }
 
+    public function getPhotos () {
+
+        // Get datetime of previous checkpoint
+        $getPreviousCheckpointDatetime = $this->getPdo()->prepare('SELECT datetime FROM activity_checkpoints WHERE activity_id = ? AND number = ?');
+        $getPreviousCheckpointDatetime->execute(array($this->activity_id, $this->number - 1));
+        if ($getPreviousCheckpointDatetime->rowCount() > 0) $previous_checkpoint_datetime = new DateTime($getPreviousCheckpointDatetime->fetch(PDO::FETCH_NUM)[0]);
+        else $previous_checkpoint_datetime = $this->datetime;
+
+        // Get all activity photos id with datetime
+        $getPhotos = $this->getPdo()->prepare('SELECT id, datetime FROM activity_photos WHERE activity_id = ? AND datetime >= ? AND datetime < ? ORDER BY datetime');
+        $getPhotos->execute(array($this->activity_id, $previous_checkpoint_datetime->format('Y-m-d H:i:s'), $this->datetime->format('Y-m-d H:i:s')));
+        $photo_ids = $getPhotos->fetchAll(PDO::FETCH_ASSOC);
+        
+        $photos_to_append = [];
+        foreach ($photo_ids as $photo_id) {
+            array_push($photos_to_append, new ActivityPhoto($photo_id['id']));
+        }
+
+        return $photos_to_append;
+    }
+
 }
