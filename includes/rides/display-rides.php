@@ -26,7 +26,7 @@
                                     <div class="<?php if ($featuredImage){ echo 'rd-ride-date'; } else { echo 'rd-ride-date'; }?>"><?= $ride->date; ?></div>
                                 </div>
                             </a> <?php
-                            if (isset($ride->route)) echo '<img class="rd-route-thumbnail" src="' . $ride->route->thumbnail . '">' ?>
+                            if (isset($ride->route)) echo '<img class="rd-route-thumbnail" src="' . $ride->route->getThumbnail() . '">' ?>
                         </div>
                 
                         <!-- Bottom container --> 

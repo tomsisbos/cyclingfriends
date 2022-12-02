@@ -502,7 +502,7 @@ form#mkpointForm input[type="file" i] {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 2s font-size;
+    transition: font-size 2s;
 }
 .popup-img-with-background {
     position: absolute;
@@ -727,4 +727,24 @@ form#mkpointForm input[type="file" i] {
     .map-controller-block {
         width: initial;
     }
+}
+
+.map-fullscreen-mode {
+    position: fixed !important;
+    background-color: white;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 80vh !important;
+    z-index: 4;
+}
+.profile-fullscreen-mode {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    z-index: 4;
+    width: 100%;
+    height: 20vh !important;
+    margin: 0 !important;
+    min-width: 100vw !important;
 }

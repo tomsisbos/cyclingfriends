@@ -45,7 +45,7 @@
 
         <div class="ac-thumbnail-container">
             <a href="/activity/<?= $activity->id ?>">
-                <img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
+                <img class="ac-map-thumbnail" src="<?= $activity->route->getThumbnail() ?>">
             </a>
         </div>
 

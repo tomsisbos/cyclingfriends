@@ -1,4 +1,4 @@
-const urlParams  = new URLSearchParams(window.location.search)
+window.location
 
 // Button handler
 document.querySelectorAll('#deleteButton').forEach( (element) => {
@@ -6,9 +6,9 @@ document.querySelectorAll('#deleteButton').forEach( (element) => {
     element.addEventListener('click', async () => {
         var answer = await openConfirmationPopup('Do you really want to delete this activity ?')
         if (answer) {
-            ajaxGetRequest ('/api/activity.php' + "?delete=" + activityId, async (response) => {
-                console.log(response)
-                window.location.replace('/activities')
+            ajaxGetRequest ('/api/activity.php' + "?delete=" + activityId, async (login) => {
+                console.log(login)
+                window.location.replace('/' + login + '/activities')
             } )
         }
     } )

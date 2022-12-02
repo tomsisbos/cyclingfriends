@@ -168,6 +168,13 @@ export default class MapMap extends GlobalMap {
             } )
         } )
     }
+    addFullscreenControl () {
+        this.map.addControl(
+            new mapboxgl.FullscreenControl( {
+                container: this.$map
+            } )
+        )
+    }
 
     addEditorControl () {
         // Get (or add) controller container

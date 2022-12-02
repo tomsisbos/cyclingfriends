@@ -30,7 +30,7 @@ include '../actions/users/securityAction.php';
 					<div class="rt-card">
 						<div class="rt-thumbnail-container">
 							<a href="/route/<?= $route->id ?>">
-								<img class="rt-thumbnail" src="<?= $route->thumbnail ?>">
+								<img class="rt-thumbnail" src="<?= $route->getThumbnail() ?>">
 							</a>
 						</div>
 						<div class="rt-infos-container">

@@ -12,7 +12,6 @@ class Route extends Model {
     public $id;
     public $author;
     public $category;
-    public $thumbnail;
     public $posting_date;
     public $name;
     public $description;
@@ -27,8 +26,6 @@ class Route extends Model {
         $data = $this->getData($this->table);
         $this->author = new User($data['author_id']);
         $this->category = $data['category'];
-        $this->thumbnail = $data['thumbnail'];
-        $this->featured_image = new RouteFeaturedImage($this->id);
         $this->posting_date = $data['posting_date'];
         $this->name = $data['name'];
         $this->description = $data['description'];
@@ -64,6 +61,16 @@ class Route extends Model {
             array_push($time, $datetime);
         }
         return $time;
+    }
+
+    public function getThumbnail () {
+        $getThumbnail = $this->getPdo()->prepare('SELECT thumbnail FROM routes WHERE id = ?');
+        $getThumbnail->execute(array($this->id));
+        return $getThumbnail->fetch(PDO::FETCH_NUM)[0];
+    }
+
+    public function getFeaturedImage () {
+        return new RouteFeaturedImage($this->id);
     }
 
     public function getTunnels () {

@@ -188,7 +188,7 @@ export default class NewActivityMap extends ActivityMap {
             if (record.power) trackpoint.power = record.power[i]
             trackpoints.push(trackpoint)
             routeCoords.push([record.position_long[i], record.position_lat[i]])
-            routeTime.push(record.timestamp[i])
+            routeTime.push(record.timestamp[i] * 1000)
         }
 
         console.log(trackpoints)

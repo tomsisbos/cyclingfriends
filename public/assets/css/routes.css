@@ -162,9 +162,7 @@
 
 .spec-table {
     background-color: #f9f9f9;
-    margin: 0px 20px;
     width: 100%;
-    padding: 20px;
 }
 
 .spec-table table {
@@ -183,8 +181,8 @@
     cursor: default;
 }
 
-.spec-table td {
-	padding: 0px 10px;
+.table-element, .spec-table td {
+	padding: 0px 20px;
 }
 
 .spec-table tr:hover {

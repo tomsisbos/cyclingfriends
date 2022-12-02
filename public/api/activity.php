@@ -16,9 +16,10 @@ if (isAjax()) {
 
         if (isset($_GET['delete'])) {
             $activity = new Activity($_GET['delete']);
+
             if ($connected_user == $activity->user) $activity->delete();
             else "You don't have necessary rights to delete this activity.";
-            echo json_encode(true);
+            echo json_encode($connected_user->login);
         }
 
     }
@@ -30,8 +31,6 @@ $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
 
 if (is_array($data)) {
-
-    //var_dump($data);
 
     // Build route data
     $author_id   = $connected_user->id;
@@ -104,8 +103,6 @@ if (is_array($data)) {
         $insert_checkpoints = $db->prepare('INSERT INTO activity_checkpoints(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, lng, lat, special) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $insert_checkpoints -> execute(array($activity_id, $number, $name, $type, $story, $datetime->format('Y-m-d H:i:s'), $city, $prefecture, $elevation, $distance, $temperature, $lng, $lat, $special));
     }
-
-    
 
     // For each photo
     foreach ($data['photos'] as $photo) {

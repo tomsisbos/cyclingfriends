@@ -1816,6 +1816,17 @@ export default class GlobalMap extends Model {
         this.generateProfile()
     }
 
+    closeControlsOnMobile () {
+        this.$map.querySelectorAll('.map-controller-block').forEach( (block) => {
+            if (block.querySelector('.map-controller-label') && block.querySelector('.map-controller-label').classList.contains('up')) {
+                block.querySelector('.map-controller-label').classList.remove('up')
+                block.querySelectorAll('.map-controller-line').forEach( (line) => {
+                    line.classList.add('hide-on-mobiles')
+                } )
+            }
+        } )
+    }
+
     addRouteLayer (geojson) {
         this.map.addLayer( {
             id: 'route',
@@ -2679,6 +2690,19 @@ export default class GlobalMap extends Model {
 
             var startFlying = () => {
 
+                // Go fullscreen
+                this.$map.classList.add('map-fullscreen-mode')
+                var $profile = document.querySelector('#profileBox')
+                $profile.classList.add('profile-fullscreen-mode')
+                this.map.resize()
+                this.closeControlsOnMobile()
+                document.querySelector('.mapboxgl-ctrl-logo').style.display = 'none'
+                // If profile is displayed inside a popup, temporary move it outside
+                if ($profile.closest('.mapboxgl-popup')) {
+                    var $profilePreviousElementSibling = $profile.previousElementSibling
+                    document.querySelector('body').appendChild($profile)
+                }
+
                 var clearAlongRoute = async (routeData) => {
                     return new Promise ( async (resolve, reject) => {
                         // Clear along route layer
@@ -2693,6 +2717,12 @@ export default class GlobalMap extends Model {
                         if (this.updateMapDataListener) this.updateMapData()
                         if (this.updateMapDataListener) this.hideStartGoalMarkers()
                         if (distanceMarkersOn) this.updateDistanceMarkers()
+                        if (this.$map.querySelector('.story-caption')) this.$map.querySelector('.story-caption').remove()
+                        document.querySelector('.mapboxgl-ctrl-logo').style.display = 'block'
+                        this.$map.classList.remove('map-fullscreen-mode')                        
+                        $profile.classList.remove('profile-fullscreen-mode')
+                        if ($profilePreviousElementSibling) $profilePreviousElementSibling.after($profile)
+                        this.map.resize()
                         end = true
                     } )
                 }
@@ -2708,7 +2738,8 @@ export default class GlobalMap extends Model {
                 const cameraData = CFUtils.smoothLine(routeData)
                 const cameraRouteDistance = turf.length(cameraData)
                 const camera = this.map.getFreeCameraOptions()
-                var animationDuration = routeDistance * 1200
+                if (routeDistance * 1200 < 90000) var animationDuration = routeDistance * 1200
+                else var animationDuration = 90000
                 let prephase = true
                 let prephaseDistanceOffset
                 let start
@@ -2754,13 +2785,15 @@ export default class GlobalMap extends Model {
                     // this approach syncs the camera and route positions ensuring they move
                     // at roughly equal rates even if they don't contain the same number of points
                     if (prephase) {
-                        var alongCamera = turf.along(cameraData, 0).geometry.coordinates
-                        var awayCamera  = turf.along(cameraData, cameraRouteDistance * phase).geometry.coordinates
-                        var alongRoute  = turf.along(routeData, routeDistance * phase).geometry.coordinates
+                        var alongCamera    = turf.along(cameraData, 0).geometry.coordinates
+                        var awayCamera     = turf.along(cameraData, cameraRouteDistance * phase).geometry.coordinates
+                        var alongRoute     = turf.along(routeData, routeDistance * phase).geometry.coordinates
+                        if (phase > 0) var alongRouteData = turf.lineSliceAlong(routeData, 0, routeDistance * phase)
                     } else {
-                        var alongCamera = turf.along(cameraData, cameraRouteDistance * phase).geometry.coordinates
-                        var awayCamera  = turf.along(cameraData, (cameraRouteDistance * phase) + prephaseDistanceOffset).geometry.coordinates
-                        var alongRoute  = turf.along(routeData, (routeDistance * phase) + prephaseDistanceOffset).geometry.coordinates
+                        var alongCamera    = turf.along(cameraData, cameraRouteDistance * phase).geometry.coordinates
+                        var awayCamera     = turf.along(cameraData, (cameraRouteDistance * phase) + prephaseDistanceOffset).geometry.coordinates
+                        var alongRoute     = turf.along(routeData, (routeDistance * phase) + prephaseDistanceOffset).geometry.coordinates
+                        var alongRouteData = turf.lineSliceAlong(routeData, 0, (routeDistance * phase) + prephaseDistanceOffset)
                     }
 
                     // Tell the camera to look at a point along the route
@@ -2785,11 +2818,7 @@ export default class GlobalMap extends Model {
                     // Display along route red line and tooltip
                     // Draw route at real time
                     if (this.map.getLayer('alongRoute')) {
-                        var closestAlongRoute = CFUtils.replaceOnRoute(alongRoute, routeData)
-                        // Add portion of the route from previous position to next position
-                        var nextKey = getKeyByValue(routeData.geometry.coordinates, closestAlongRoute)
-                        this.map.getSource('alongRoute')._data.geometry.coordinates = routeData.geometry.coordinates.slice(0, nextKey)
-                        this.map.getSource('alongRoute').setData(this.map.getSource('alongRoute')._data)
+                        this.map.getSource('alongRoute').setData(alongRouteData)
                     } else {
                         var alongRouteGeojson = {
                             type: 'Feature',
@@ -2823,39 +2852,65 @@ export default class GlobalMap extends Model {
                     
                     // If popup is opened, display tooltip
                     if (document.querySelector('.marker-popup')) {
-                        if (this.type == 'mapMap') {
-                            var positionX = cursorPosition + elevationProfile.getBoundingClientRect().left
-                            var positionY = elevationProfile.getBoundingClientRect().top - 168
-                        } else {
-                            var positionX = cursorPosition
-                            var positionY = 0
-                        }
                         this.clearTooltip()
-                        if (!document.querySelector('.profile-inside-map') || (document.querySelector('.profile-inside-map') && document.querySelector('.show-profile'))) { // If profile is displayed, draw tooltip along profile cursor
-                            this.drawTooltip(routeData, alongRoute[0], alongRoute[1], positionX, positionY, {backgroundColor: 'white'})
-                        } else { // Else, draw it statically
-                            this.drawTooltip(routeData, alongRoute[0], alongRoute[1], document.querySelector('.map-controller-left').clientWidth + 20, 5, {backgroundColor: 'white'})
-                        }
+                        this.drawTooltip(routeData, alongRoute[0], alongRoute[1], cursorPosition, 0, {backgroundColor: 'white'})
                     }
 
                     /// Set data events
                     // Checkpoints
                     if (this.data) {
+
+                        const currentDistance = turf.length(this.map.getSource('alongRoute')._data)
+                        const displayStory = (checkpoint) => {
+                            // Make sure story is not already displayed
+                            if (!this.$map.querySelector('.lightbox-caption') || (this.$map.querySelector('.lightbox-caption') && this.$map.querySelector('.lightbox-caption') && parseInt(this.$map.querySelector('.story-number').innerText) != checkpoint.number)) {
+                                var checkpointTime = new Date(checkpoint.datetime)
+                                // Remove previous caption element
+                                if (this.$map.querySelector('.lightbox-caption')) this.$map.querySelector('.lightbox-caption').remove()
+                                // Build caption element
+                                var $storyCaption = document.createElement('div')
+                                $storyCaption.className = 'lightbox-caption story-caption'
+                                var $storyTopLine = document.createElement('div')
+                                $storyTopLine.className = 'd-flex gap'
+                                var $storyNumber = document.createElement('div')
+                                $storyNumber.className = 'lightbox-name story-number'
+                                $storyNumber.innerText = checkpoint.number
+                                var $storyName = document.createElement('div')
+                                $storyName.className = 'lightbox-name'
+                                $storyName.innerText = checkpoint.name
+                                var $storyData = document.createElement('div')
+                                $storyData.className = 'lightbox-location'
+                                $storyData.innerText = checkpoint.distance + 'km - ' + checkpointTime.getHours() + 'h' + checkpointTime.getMinutes()
+                                var $story = document.createElement('div')
+                                $story.className = 'lightbox-story'
+                                $story.innerText = checkpoint.story
+                                $storyTopLine.appendChild($storyNumber)
+                                $storyTopLine.appendChild($storyName)
+                                $storyCaption.appendChild($storyTopLine)
+                                $storyCaption.appendChild($storyData)
+                                $storyCaption.appendChild($story)
+                                // Append it to map element
+                                this.$map.appendChild($storyCaption)
+                            }
+                        }
+
+                        // Checkpoints
                         if (this.data.checkpoints) {
-                            const displayRange = 1.5 // km
+                            const displayRange = 0.3 // km - Maximum distance current point and checkpoint can be separated
+                            const alongRouteTolerance = 1 // km - Maximum distance current point and checkpoint can be separated along the course
                             this.data.checkpoints.forEach( (checkpoint) => {
-                                if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) < displayRange && !checkpoint.marker.getPopup().isOpen()) {
-                                    checkpoint.marker.togglePopup()
-                                } else if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) > displayRange && checkpoint.marker.getPopup().isOpen()) {
-                                    checkpoint.marker.togglePopup()
+                                // If marker has entered displayRange and alongRoute length is not too far from checkpoint distance, open popup
+                                if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) < displayRange && Math.abs(currentDistance - checkpoint.distance) < alongRouteTolerance) {
+                                    displayStory(checkpoint)
                                 }
                             } )
                         }
                         // Photos
                         if (this.data.photos) {
-                            const displayRange = 0.8 // km
+                            var displayRange = 1.5 * animationDuration / routeDistance / 1000 // km - Maximum distance current point and photo can be separated
                             this.data.photos.forEach( (photo) => {
                                 if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) < displayRange && !photo.marker.getElement().classList.contains('half-grown')) {
+                                    this.data.photos.forEach(otherPhoto => otherPhoto.marker.getElement().classList.remove('half-grown')) // Ensure that two close photos will not display at the same time
                                     photo.marker.getElement().classList.add('half-grown')
                                 } else if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) > displayRange && photo.marker.getElement().classList.contains('half-grown')) {
                                     photo.marker.getElement().classList.remove('half-grown')
@@ -2864,6 +2919,8 @@ export default class GlobalMap extends Model {
                         }
                     }
                 }
+
+                console.log(routeDistance / animationDuration * 1000)
 
                 // Stop the animation on mouse down
                 this.map.once('mousedown', () => {
@@ -2918,7 +2975,9 @@ export default class GlobalMap extends Model {
             if (routeData) var routeBounds = CFUtils.defineRouteBounds(routeData.geometry.coordinates)
             else if (!routeData && this.map.getSource('startPoint')) var routeBounds = CFUtils.defineRouteBounds([this.map.getSource('startPoint')._data.features[0].geometry.coordinates])
             this.map.fitBounds(routeBounds)
-            this.map.once('idle', resolve(true))
+            this.map.once('idle', () => {
+                resolve(true)
+            } )
         } )
     }
 

@@ -167,6 +167,11 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 			</div>
 
 		</div>
+
+		<div class="container margin-bottom p-0"> <?php
+			include '../includes/riders/profile/activities.php' ?>
+		</div>
+
 	
 	</div>
 	

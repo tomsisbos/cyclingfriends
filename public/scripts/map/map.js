@@ -18,6 +18,7 @@ console.log(mapMap.session)
 
 mapMap.addStyleControl()
 mapMap.addOptionsControl()
+mapMap.addFullscreenControl()
 if (mapMap.session.rights === 'administrator' || mapMap.session.rights === 'editor') mapMap.addEditorControl()
 
 // Controls

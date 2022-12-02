@@ -94,8 +94,12 @@
   object-fit: cover;
   border-radius: 10px 10px 0px 0px;
 }
-.wider-slide img {
-  /*height: 560px !important;*/
+
+@media only screen and (max-width: 600px) {
+  .mySlides img {
+    background-color: #000;
+    object-fit: contain;
+  }
 }
 
 .name-container, .caption-container {

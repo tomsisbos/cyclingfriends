@@ -36,7 +36,7 @@ include '../actions/users/securityAction.php';
 
 							<div class="my-ac-thumbnail-container">
 								<a href="/activity/<?= $activity->id ?>">
-									<img class="ac-map-thumbnail" src="<?= $activity->route->thumbnail ?>">
+									<img class="ac-map-thumbnail" src="<?= $activity->route->getThumbnail() ?>">
 								</a>
 							</div>
 
@@ -50,7 +50,7 @@ include '../actions/users/securityAction.php';
 									<?= $activity->datetime->format('Y/m/d') . ' from ' . $activity->datetime->format('H\hi') . ' to ' . $activity->getEndDateTime()->format('H\hi') ; ?>
 								</div>
 								<div class="ac-place">
-									<?= 'From ' . $activity->getPlace()['start']->getString() . ' to ' . $activity->getPlace()['goal']->getString(); ?>
+									<?= 'From ' . $activity->getPlace()['start']->toString() . ' to ' . $activity->getPlace()['goal']->toString(); ?>
 								</div>
 								<div class="ac-specs">
 									<div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">

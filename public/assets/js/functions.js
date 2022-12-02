@@ -237,8 +237,6 @@ async function openConfirmationPopup (question) {
 // Show corresponding message after request
 function showResponseMessage (message, elementToAppend = false) {
 	const $navbar = document.querySelector('nav')
-	console.log(message)
-	console.log($navbar)
 	hideResponseMessage()
 	// If success, show a success message
 	if (message.success) {

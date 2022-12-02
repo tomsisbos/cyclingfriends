@@ -1,5 +1,7 @@
 // API requests
 
+var ride_id = getIdFromString(location.pathname)
+
 var myModal = document.getElementById("myModal")
 myModal.querySelectorAll('input').forEach(input => {
     input.addEventListener('change', updateInput)
@@ -12,8 +14,8 @@ function updateInput (e) {
     var updateInfos = {
         field: 'name',
         value: e.target.value,
-        ride_id: getParam('id'),
-        checkpoint_id: getIdFromString(e.target.name)[0]
+        ride_id,
+        checkpoint_id: getIdFromString(e.target.name)
     }
     return new Promise ((resolve, reject) => {
         ajaxJsonPostRequest ('/api/rides/course', updateInfos, afterUpdating)
@@ -31,11 +33,12 @@ function updateInput (e) {
 }
 
 function updateTextArea (e) {
+    console.log(e)
     var updateInfos = {
         field: 'description',
         value: e.target.value,
-        ride_id: getParam('id'),
-        checkpoint_id: getIdFromString(e.target.name)[0]
+        ride_id,
+        checkpoint_id: getIdFromString(e.target.name)
     }
     console.log(updateInfos)
     return new Promise ((resolve, reject) => {

@@ -433,23 +433,43 @@ export default class MkpointPopup extends Popup {
     }
 
     prepareModal () {
+
+        // Prepare arrows
+        if (this.photos.length > 1) {
+            var prevArrow = document.createElement('a')
+            prevArrow.className = 'prev lightbox-arrow'
+            prevArrow.innerHTML = '&#10094;'
+            var nextArrow = document.createElement('a')
+            nextArrow.className = 'next lightbox-arrow'
+            nextArrow.innerHTML = '&#10095;'
+        }
+        
         // If first opening, prepare modal window structure
         if (!document.querySelector('#myModal')) {
             var modalBaseContent = document.createElement('div')
             modalBaseContent.id = 'myModal'
             modalBaseContent.className = 'modal'
-            modalBaseContent.innerHTML =
-                    `<span class="close cursor" onclick="closeModal()">&times;</span>
-                    <div class="modal-block">
-                        <a class="prev lightbox-arrow">&#10094;</a>
-                        <a class="next lightbox-arrow">&#10095;</a>
-                    </div>`
+            var closeButton = document.createElement('span')
+            closeButton.className = "close cursor"
+            closeButton.setAttribute('onclick', 'closeModal()')
+            closeButton.innerHTML = '&times;'
+            var modalBlock = document.createElement('div')
+            modalBlock.className = "modal-block"
+            modalBaseContent.appendChild(closeButton)
+            modalBaseContent.appendChild(modalBlock)
             document.querySelector('.mapboxgl-map').after(modalBaseContent)
+            // If more than one photo, display arrows
+            if (this.photos.length > 1) {
+                modalBlock.appendChild(prevArrow)
+                modalBlock.appendChild(nextArrow)
+            }
         // Else, clear modal window content
         } else {
-            document.querySelector('.modal-block').innerHTML =
-            `<a class="prev lightbox-arrow">&#10094;</a>
-            <a class="next lightbox-arrow">&#10095;</a>`
+            document.querySelector('.modal-block').innerHTML = ''
+            if (this.photos.length > 1) {
+                document.querySelector('.modal-block').appendChild(prevArrow)
+                document.querySelector('.modal-block').appendChild(nextArrow)
+            }
         }
         
         // Slides display

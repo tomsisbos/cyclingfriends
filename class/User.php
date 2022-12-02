@@ -657,7 +657,7 @@ class User extends Model {
         else if ($friends_and_following_number < 25) $period = 14;
         else $period = 10;
         // Request mkpoints
-        $getMkpoints = $this->getPdo()->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_following_list)."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints = $this->getPdo()->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_following_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
         $getMkpoints->execute(array($period));
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }

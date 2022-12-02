@@ -79,7 +79,7 @@ include '../actions/users/securityAction.php';
             <div id="profileBox" class="container p-0" style="height: 20vh; background-color: white;">
                 <canvas id="elevationProfile"></canvas>
             </div>
-            <div class="container spec-table-container">
+            <div class="container p-0 spec-table-container">
                 <div class="spec-table">
                     <table id="routeTable">
                         <tbody>

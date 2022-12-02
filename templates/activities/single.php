@@ -7,6 +7,7 @@ include '../actions/users/securityAction.php';
 include '../actions/activities/activityAction.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/activity.css">
+<link rel="stylesheet" href="/assets/css/lightbox-style.css">
 
 <body>
 
@@ -40,7 +41,7 @@ include '../actions/activities/activityAction.php'; ?>
 						<h1><?= $activity->title ?></h1>
 						<p><?= $activity->datetime->format('Y/m/d') ?></p>
 					</div>
-					<div class="td-row">
+					<div class="td-row text-shadow">
 						<p>by <strong><?= $activity->user->login ?></strong></p>
 					</div>
 					<div class="td-row flex-column align-self-center"> <?php
@@ -158,8 +159,10 @@ include '../actions/activities/activityAction.php'; ?>
 										if ($time->h != 0 AND $time->i != 0) {
 											echo ' (';
 											if ($time->h > 0) {
-												if (substr($time->h, 0, 1) == '0') echo substr($time->h, 1, strlen($time->h)) . 'h' . $time->i;
-												else echo $time->h . 'h' . $time->i;
+												if (substr($time->h, 0, 1) == '0') echo substr($time->h, 1, strlen($time->h)) . 'h';
+												else echo $time->h . 'h';
+												if (strlen($time->i) == 1) echo '0' . $time->i;
+												else echo $time->i;
 											} else {
 												echo $time->i . ' min'; 
 											}

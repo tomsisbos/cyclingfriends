@@ -21,7 +21,7 @@ class Activity extends Model {
     public $notes_privacy;
     public $route;
     
-    function __construct($id = NULL, $lngLatFormat = true) {        
+    function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
         $this->id = intval($id);
         $data = $this->getData($this->table);
@@ -87,6 +87,12 @@ class Activity extends Model {
         }
 
         return $photos_to_append;
+    }
+
+    public function getFirstStory() {
+        $getFirstStory = $this->getPdo()->prepare('SELECT story FROM activity_checkpoints WHERE activity_id = ? AND story IS NOT NULL ORDER BY number DESC');
+        $getFirstStory->execute(array($this->id));
+        return $getFirstStory->fetch(PDO::FETCH_NUM)[0];
     }
 
     public function getPhotoIds () {
@@ -223,7 +229,7 @@ class Activity extends Model {
         }
         // If no featured photo, return the last one
         if ($photos) return $photos[count($photos) - 1];
-        // If no photo, return a default picture
+        // If no photo, return false
         else return false;
     }
 

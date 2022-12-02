@@ -250,6 +250,7 @@ export default class ActivityMap extends GlobalMap {
     }
 
     displayPhotos () {
+        console.log(this.data.photos)
         this.data.photos.forEach( (photo) => {
             var lngLat = this.getPhotoLocation(photo)
             photo.marker = this.addPhoto(photo, lngLat)
