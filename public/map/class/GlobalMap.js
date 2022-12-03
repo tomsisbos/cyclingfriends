@@ -1846,6 +1846,7 @@ export default class GlobalMap extends Model {
             type: 'line',
             source: {
                 type: 'geojson',
+                lineMetrics: true,
                 data: geojson
             },
             layout: {
@@ -2703,26 +2704,12 @@ export default class GlobalMap extends Model {
 
             var startFlying = () => {
 
-                // Go fullscreen
-                this.$map.classList.add('map-fullscreen-mode')
-                var $profile = document.querySelector('#profileBox')
-                $profile.classList.add('profile-fullscreen-mode')
-                this.map.resize()
-                this.closeControlsOnMobile()
-                document.querySelector('.mapboxgl-ctrl-logo').style.display = 'none'
-                // If profile is displayed inside a popup, temporary move it outside
-                if ($profile.closest('.mapboxgl-popup')) {
-                    var $profilePreviousElementSibling = $profile.previousElementSibling
-                    document.querySelector('body').appendChild($profile)
-                }
-
                 var clearAlongRoute = async (routeData) => {
                     return new Promise ( async (resolve, reject) => {
-                        // Clear along route layer
-                        if (this.map.getSource('alongRoute')) {
-                            this.map.removeLayer('alongRoute')
-                            this.map.removeSource('alongRoute')
-                        }
+                        // Remove route red gradient property
+                        this.map.setPaintProperty('route', 'line-gradient', null)
+                        // Clear position marker
+                        positionMarker.remove()
                         // Clear start and goal markers
                         this.clearProfileCursor()
                         this.clearTooltip()
@@ -2754,6 +2741,7 @@ export default class GlobalMap extends Model {
                 if (routeDistance * 1200 < 90000) var animationDuration = routeDistance * 1200
                 else var animationDuration = 90000
                 let prephase = true
+                let prephaseOffset = 0
                 let prephaseDistanceOffset
                 let start
                 let stop
@@ -2773,6 +2761,34 @@ export default class GlobalMap extends Model {
                 }
                 if (document.querySelector('.show-profile')) cameraOffset = 4
 
+                // Go fullscreen
+                this.$map.classList.add('map-fullscreen-mode')
+                var $profile = document.querySelector('#profileBox')
+                $profile.classList.add('profile-fullscreen-mode')
+                this.map.resize()
+                this.closeControlsOnMobile()
+                document.querySelector('.mapboxgl-ctrl-logo').style.display = 'none'
+                // If profile is displayed inside a popup, temporary move it outside
+                if ($profile.closest('.mapboxgl-popup')) {
+                    var $profilePreviousElementSibling = $profile.previousElementSibling
+                    document.querySelector('body').appendChild($profile)
+                }
+
+                // Build position marker
+                const $marker = document.createElement('div')
+                $marker.classList = 'fly-along-marker'
+                $marker.innerHTML = '<img>'
+                var positionMarker = new mapboxgl.Marker($marker)
+                positionMarker.setLngLat(routeData.geometry.coordinates[0])
+                positionMarker.addTo(this.map)
+                // Update marker element with connected user profile picture
+                ajaxGetRequest ('/api/map.php' + "?getpropic=" + this.session.id, (src) => {
+                    $marker.querySelector('img').style.backgroundImage = 'url(' + src + ')'
+                    positionMarker = new mapboxgl.Marker($marker)
+                    positionMarker.setLngLat(routeData.geometry.coordinates[0])
+                    positionMarker.addTo(this.map)
+                } )
+
                 var frame = async (time) => {
 
                     if (!start) start = time
@@ -2787,6 +2803,7 @@ export default class GlobalMap extends Model {
                     var phase = (time - start) / animationDuration
                     // Case of end of prephase
                     if (prephase && ((cameraRouteDistance * phase) >= cameraOffset)) {
+                        prephaseOffset = phase
                         prephaseDistanceOffset = routeDistance * phase
                         start = 0
                         phase = 0
@@ -2801,13 +2818,16 @@ export default class GlobalMap extends Model {
                         var alongCamera    = turf.along(cameraData, 0).geometry.coordinates
                         var awayCamera     = turf.along(cameraData, cameraRouteDistance * phase).geometry.coordinates
                         var alongRoute     = turf.along(routeData, routeDistance * phase).geometry.coordinates
-                        if (phase > 0) var alongRouteData = turf.lineSliceAlong(routeData, 0, routeDistance * phase)
                     } else {
                         var alongCamera    = turf.along(cameraData, cameraRouteDistance * phase).geometry.coordinates
                         var awayCamera     = turf.along(cameraData, (cameraRouteDistance * phase) + prephaseDistanceOffset).geometry.coordinates
                         var alongRoute     = turf.along(routeData, (routeDistance * phase) + prephaseDistanceOffset).geometry.coordinates
-                        var alongRouteData = turf.lineSliceAlong(routeData, 0, (routeDistance * phase) + prephaseDistanceOffset)
                     }
+                    var elevationCorrectorAway = this.map.queryTerrainElevation(awayCamera, {exaggerated: false})
+                    var elevationCorrectorAlong = this.map.queryTerrainElevation(alongCamera, {exaggerated: false})
+                    if (elevationCorrectorAlong == undefined) elevationCorrectorAlong = elevationCorrectorAway
+                    var elevationCorrector = (elevationCorrectorAway + elevationCorrectorAlong) / 2
+                    console.log(elevationCorrector + ' (along : ' + elevationCorrectorAlong + ', away : ' + elevationCorrectorAway)
 
                     // Tell the camera to look at a point along the route
                     camera.lookAtPoint( {
@@ -2821,44 +2841,24 @@ export default class GlobalMap extends Model {
                             lng: alongCamera[0],
                             lat: alongCamera[1]
                         },
-                        cameraAltitude + this.map.queryTerrainElevation(alongCamera, {exaggerated: false})
+                        cameraAltitude + elevationCorrector
                     )
 
                     this.map.setFreeCameraOptions(camera)
 
                     if (!end) window.requestAnimationFrame(frame)
 
-                    // Display along route red line and tooltip
-                    // Draw route at real time
-                    if (this.map.getLayer('alongRoute')) {
-                        this.map.getSource('alongRoute').setData(alongRouteData)
-                    } else {
-                        var alongRouteGeojson = {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: [alongRoute],
-                            }
-                        }
-                        this.map.addLayer( {
-                            id: 'alongRoute',
-                            type: 'line',
-                            source: {
-                                type: 'geojson',
-                                data: alongRouteGeojson
-                            },
-                            layout: {
-                                'line-join': 'round',
-                                'line-cap': 'round'
-                            },
-                            paint: {
-                                'line-color': '#ff5555',
-                                'line-width': 7,
-                                'line-opacity': 1,
-                            }
-                        } )
-                    }
+                    // Color route in red according to process
+                    this.map.setPaintProperty('route', 'line-gradient', [
+                        'step',
+                        ['line-progress'],
+                        '#ff5555',
+                        phase + prephaseOffset,
+                        'blue'
+                    ] )
+
+                    // Update position marker
+                    positionMarker.setLngLat(CFUtils.replaceOnRoute(alongRoute, routeData))
                     
                     // Draw profile cursor
                     if (!stop) var cursorPosition = this.drawAlongProfileCursor(routeData, alongRoute)
@@ -2873,7 +2873,7 @@ export default class GlobalMap extends Model {
                     // Checkpoints
                     if (this.data) {
 
-                        const currentDistance = turf.length(this.map.getSource('alongRoute')._data)
+                        const currentDistance = routeDistance * phase
                         const displayStory = (checkpoint) => {
                             // Make sure story is not already displayed
                             if (!this.$map.querySelector('.lightbox-caption') || (this.$map.querySelector('.lightbox-caption') && this.$map.querySelector('.lightbox-caption') && parseInt(this.$map.querySelector('.story-number').innerText) != checkpoint.number)) {
@@ -2932,8 +2932,6 @@ export default class GlobalMap extends Model {
                         }
                     }
                 }
-
-                console.log(routeDistance / animationDuration * 1000)
 
                 // Stop the animation on mouse down
                 this.map.once('mousedown', () => {
@@ -3045,6 +3043,7 @@ export default class GlobalMap extends Model {
         if (routeStyle.route) {
             this.map.addSource('route', {
                 type: 'geojson',
+                lineMetrics: true,
                 data: routeStyle.route
             } )
             if (routeStyle.routeCap) {

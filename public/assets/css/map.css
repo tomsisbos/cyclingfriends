@@ -748,3 +748,26 @@ form#mkpointForm input[type="file" i] {
     margin: 0 !important;
     min-width: 100vw !important;
 }
+
+.fly-along-marker {
+    top: -20px !important;
+}
+.fly-along-marker img {
+    background-color: #fff;
+    border: 3px solid #ff5555;
+    height: 30px;
+    width: 30px;
+    border-radius: 30px;
+    background-size: cover;
+}
+.fly-along-marker::after {
+    content: '■';
+    height: 0px;
+    bottom: 9px;
+    left: 10px;
+    font-size: 14px;
+    position: absolute;
+    z-index: -1;
+    text-shadow: 0px 6px 6px #00000099;
+    color: #ff5555;
+}

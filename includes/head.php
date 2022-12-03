@@ -45,5 +45,7 @@
 			<script src="/assets/js/functions.js"></script>
 		<!-- Animated background -->
 			<script defer src="/assets/js/animated-background.js"></script>
+		<!-- togpx -->
+			<script src='/node_modules/togpx/togpx.js'></script>
 		
 </head>

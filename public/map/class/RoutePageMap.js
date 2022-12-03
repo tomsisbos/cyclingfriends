@@ -64,6 +64,7 @@ export default class RoutePageMap extends GlobalMap {
             type: 'line',
             source: {
                 type: 'geojson',
+                lineMetrics: true,
                 data: geojson
             },
             layout: {
