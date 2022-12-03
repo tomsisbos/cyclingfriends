@@ -104,6 +104,33 @@ export default class CFUtils {
         return [[parseFloat(minlng) - margin, parseFloat(minlat) - margin], [parseFloat(maxlng) + margin, parseFloat(maxlat) + margin]]
     }
 
+    static getRouteBbox (routeData) {
+        const coordinates = routeData.geometry.coordinates
+        const margin = 0.02
+        var maxlng = coordinates[0][0]
+        var minlng = coordinates[0][0]
+        var maxlat = coordinates[0][1]
+        var minlat = coordinates[0][1]
+        for (let i = 0; i < coordinates.length; i++) {
+            if (coordinates[i][0] > maxlng) {
+                maxlng = parseFloat(coordinates[i][0])
+            }
+            if (coordinates[i][0] < minlng) {
+                minlng = parseFloat(coordinates[i][0])
+            }
+            if (coordinates[i][1] > maxlat) {
+                maxlat = parseFloat(coordinates[i][1])
+            }
+            if (coordinates[i][1] < minlat) {
+                minlat = parseFloat(coordinates[i][1])
+            }
+        }
+        const southWest = new mapboxgl.LngLat(minlng, minlat)
+        const northEast = new mapboxgl.LngLat(maxlng, maxlat)
+        const boundingBox = new mapboxgl.LngLatBounds(southWest, northEast)
+        return boundingBox
+    }
+
     // Get location of a LngLat point
 static async getLocation (lngLat) {
 	return new Promise ((resolve, reject) => {

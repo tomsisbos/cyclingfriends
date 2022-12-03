@@ -1,6 +1,8 @@
 import CFUtils from "/map/class/CFUtils.js"
 import Model from "/map/class/Model.js"
 import MkpointPopup from "/map/class/MkpointPopup.js"
+import tilebelt from "/node_modules/@mapbox/tilebelt/index.js"
+import cover from '/node_modules/@mapbox/tile-cover/index.js'
 
 // Global class initialization
 export default class GlobalMap extends Model {
@@ -303,6 +305,17 @@ export default class GlobalMap extends Model {
                 this.styleSeason()
                 this.loadTerrain()
                 this.loadImages()
+            } )
+            
+            this.map.on('contextmenu', async () => {
+                var limits = {
+                    min_zoom: 10,
+                    max_zoom: 12
+                };
+                var routeData = await this.getRouteData()
+                var tile = cover.tiles(routeData.geometry, limits)
+                console.log(tile)
+                this.generateProfile()
             } )
         } )
     }
