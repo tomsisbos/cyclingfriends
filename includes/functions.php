@@ -831,7 +831,6 @@ function addMessage($receiver_id, $message){
 	$addMessage = $db->prepare('INSERT INTO messages (sender_id, sender_login, receiver_id, receiver_login, message, time) VALUES (?, ?, ?, ?, ?, ?)');
 	$addMessage->execute(array($sender_id, $sender_login, $receiver_id, $receiver_login, $message, $time));
 }
-*/
 
 // Function for uploading a profile picture
 function uploadProfilePicture(){
@@ -912,7 +911,7 @@ function getPrivacyAndStatus($ride_id){
 	}else{
 		return false;
 	}
-}
+}*/
 
 // Check if ride name is already set in the database
 function checkIfRideIsAlreadySet($ride_name) {
@@ -1398,12 +1397,8 @@ function displayMessage () {
 		unset($_SESSION['successmessage']);
 	}
 	// if is set inside direct variable
-	if (isset($errormessage)) {
-		echo '<div class="error-block" style="margin: 0px;"><p class="error-message">' .$errormessage. '</p></div>';
-	}
-	if (isset($successmessage)) {
-		echo '<div class="success-block" style="margin: 0px;"><p class="success-message">' .$successmessage. '</p></div>';
-	}	
+	if (isset($errormessage)) echo '<div class="error-block" style="margin: 0px;"><p class="error-message">' .$errormessage. '</p></div>';
+	if (isset($successmessage)) echo '<div class="success-block" style="margin: 0px;"><p class="success-message">' .$successmessage. '</p></div>';
 
 }
 

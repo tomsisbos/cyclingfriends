@@ -17,7 +17,8 @@ include '../actions/riders/profile/profileInfosAction.php';
 	include '../includes/navbar.php';
 	
 	// Space for general error messages
-	displayMessage(); ?>
+	if (isset($errormessage)) echo '<div class="error-block" style="margin: 0px;"><p class="error-message">' .$errormessage. '</p></div>';
+	if (isset($successmessage)) echo '<div class="success-block" style="margin: 0px;"><p class="success-message">' .$successmessage. '</p></div>'; ?>
 	
 	<div class="container d-flex flex-column gap bg-user">
 

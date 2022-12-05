@@ -221,7 +221,8 @@ if (isAjax()) {
     }
 
     if (isset($_GET['getpropic'])) {
-        $user = new User($_GET['getpropic']);
+        if (is_numeric($_GET['getpropic'])) $user = new User($_GET['getpropic']);
+        else $user = $connected_user;
         $profile_picture_src = $user->getPropicSrc();
         echo json_encode([$profile_picture_src]);
     }

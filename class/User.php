@@ -281,6 +281,53 @@ class User extends Model {
         return round($calculator->getDistance($user_location, $this_location) / 1000, 1);
     }
 
+    // Function for uploading a profile picture
+    function uploadPropic () {
+        
+        // Declaration of variables
+        $img_blob   = '';
+        $img_size   = 0;
+        $max_size   = 500000;
+        $img_name   = '';
+        $img_type   = '';
+            
+        // Displays an error message if any problem through upload
+        if (!is_uploaded_file($_FILES['propicfile']['tmp_name'])) {
+            return array('error' => "A problem has occured during file upload.");
+                
+        } else {
+                
+            // Displays an error message if file size exceeds $max_size
+            $img_size = $_FILES['propicfile']['size'];
+            if ($img_size > $max_size) return array('error' => 'The image you uploaded exceeds size limit (500kb). Please reduce the size and try again.');
+            
+            // Displays an error message if format is not accepted
+            $img_type = $_FILES['propicfile']['type'];
+            if ($img_type != 'image/jpeg') return array('error' => 'The file you uploaded is not at *.jpg format. Please try again with a *.jpg image file.');
+                
+            // Sort upload data into variables
+            $img_name = $_FILES['propicfile']['name'];
+            $img_blob = file_get_contents($_FILES['propicfile']['tmp_name']);
+                            
+            // Check if connected user has already uploaded a picture
+            $checkUserId = $this->getPdo()->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
+            $checkUserId->execute(array($this->id));
+                
+            // If he does, update data in the database
+            if ($checkUserId->rowCount() > 0) {
+                $updateImage = $this->getPdo()->prepare('UPDATE profile_pictures SET img = ?, size = ?, name = ?, type = ? WHERE user_id = ?');
+                $updateImage->execute(array($img_blob, $img_size, $img_name, $img_type, $this->id));
+                    
+            // If he doesn't, insert a new line into the database
+            } else {
+                $insertImage = $this->getPdo()->prepare('INSERT INTO profile_pictures (user_id, img, size, name, type) VALUES (?, ?, ?, ?, ?)');
+                $insertImage->execute(array($this->id, $img_blob, $img_size, $img_name, $img_type));
+            }
+                		
+            return array('success' => 'Profile picture has correctly been updated !');
+        }
+    }
+
     // Function for downloading users's profile picture
     public function downloadPropic () {
         // Check if there is an image that corresponds to connected user in the database
@@ -351,7 +398,7 @@ class User extends Model {
             return 'data:image/jpeg;base64,' . base64_encode($profile_picture['img']);
         } else {
             $picture = $this->getDefaultPropicId();
-            return '\includes\media\default-profile-' . $picture . '.jpg';
+            return '\media\default-profile-' . $picture . '.jpg';
         }
     }
 

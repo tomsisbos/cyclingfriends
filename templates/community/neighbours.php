@@ -14,10 +14,9 @@ include '../actions/users/securityAction.php';
 		
 		<h2 class="top-title">Neighbours</h2>
 		
-		<div class="container">
-		
-			<!-- Filter options --->
-			<?php // include 'includes/riders/neighbours/filter-options.php'; ?>
+		<div class="container p-0">
+
+			<div id="neighboursMap"></div>
 			
 		</div> <?php 
 		
@@ -28,7 +27,7 @@ include '../actions/users/securityAction.php';
 
 			if ($getRiders->rowCount() > 0) {
 				foreach ($riders as $rider) { ?>					
-					<div class="nbr-card"> <?php
+					<div class="nbr-card" id="card<?= $rider->id ?>"> <?php
 						include '../includes/riders/rider-card.php'; ?>
 						<div class="nbr-infos">
 							<div class="nbr-distance"><?= $rider->distance ?>km</div> - 
@@ -51,3 +50,5 @@ include '../actions/users/securityAction.php';
 	
 </body>
 </html>
+
+<script type="module" src="/scripts/riders/neighbours.js"></script>

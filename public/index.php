@@ -53,6 +53,7 @@ $router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
 // Riders
 $router->map('GET', '/rider/[i:user_id]', 'profile/single', 'profile-single');
 $router->map('GET', '/profile/edit', 'profile/edit', 'profile-edit');
+$router->map('POST', '/profile/edit', 'profile/edit');
 
 // User
 $router->map('GET', '/signin', 'user/signin', 'user-signin');

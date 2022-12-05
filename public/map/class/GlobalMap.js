@@ -27,6 +27,7 @@ export default class GlobalMap extends Model {
     $map
     loaded = false
     defaultCenter = [138.69056, 35.183002]
+    defaultZoom = 10
     userLocation
     mkpoints
     tunnelNumber = 0
@@ -272,7 +273,7 @@ export default class GlobalMap extends Model {
             this.map = new mapboxgl.Map ( {
                 container: element,
                 center,
-                zoom: 10,
+                zoom: this.defaultZoom,
                 style: style,
                 preserveDrawingBuffer: true,
                 accessToken: 'pk.eyJ1Ijoic2lzYm9zIiwiYSI6ImNsMDdyNGYxbjAxd2MzbG12M3V1bjM1MGIifQ.bFRgCmK9_kkfZSd_skNF1g',
@@ -316,9 +317,9 @@ export default class GlobalMap extends Model {
                 var tile = cover.tiles(routeData.geometry, limits)
                 console.log(tile)
                 this.generateProfile()
-            } )
 
-            this.centerOnUserLocation()
+                if (this.centerOnUserLocation) this.centerOnUserLocation()
+            } )
         } )
     }
     
@@ -2659,7 +2660,7 @@ export default class GlobalMap extends Model {
         if (tunnels) {
             tunnels.forEach( (tunnel) => {
                 // Prepare layer data
-                const tunnelData  = {
+                const tunnelData = {
                     type: 'Feature',
                     properties: {},
                     geometry: {

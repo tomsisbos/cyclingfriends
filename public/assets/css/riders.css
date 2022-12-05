@@ -119,6 +119,24 @@
     }
 }
 
+#neighboursMap {
+    height: 500px;
+}
+.nbr-marker img {
+    background-color: #fff;
+    height: 20px;
+    width: 20px;
+    border-radius: 30px;
+    background-size: cover;
+    cursor: pointer;
+}
+.nbr-marker.hover > img {
+    box-shadow: 0 0 1px 3px #00e06e !important;
+}
+.nbr-card.hover {
+    box-shadow: 0 0 1px 1px #00e06e !important;
+}
+
 .nbr-container {
     display: flex;
     flex-direction: column;
