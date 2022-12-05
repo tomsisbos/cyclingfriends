@@ -41,6 +41,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     $form.style.display = 'block'
     editActivityMap.updateForm()
     editActivityMap.updatePhotos()
+    document.querySelector('#inputTitle').addEventListener('change', e => editActivityMap.data.title = e.target.value)
     document.querySelector('#selectBikes').addEventListener('change', e => editActivityMap.data.bike_id = e.target.value)
     document.querySelector('#selectPrivacy').addEventListener('change', e => editActivityMap.data.privacy = e.target.value)
 

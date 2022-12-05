@@ -222,12 +222,16 @@
     flex-wrap: wrap;
     min-width: 270px;
     background-color: lightgrey;
+    overflow: hidden;
 }
 .my-ac-photo-container {
     width: 90px;
     height: 90px;
     border: 1px solid white;
     flex-grow: 4;
+}
+.my-ac-photo-container.featured {
+    width: 100%;
 }
 .my-ac-photo {
     width: 100%;

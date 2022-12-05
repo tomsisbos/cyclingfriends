@@ -1,9 +1,7 @@
 <?php
 
 use Location\Coordinate;
-use Location\Polyline;
 use Location\Distance\Vincenty;
-use Location\Utility\PointToLineDistance;
 
 class User extends Model {
 
@@ -276,6 +274,13 @@ class User extends Model {
         return array_column($getFriendsAndFollowingList->fetchAll(PDO::FETCH_NUM), 0);
     }
 
+    public function getDistance ($user) {
+        $user_location = new Coordinate($user->lngLat->lat, $user->lngLat->lng);
+        $this_location = new Coordinate($this->lngLat->lat, $this->lngLat->lng);
+        $calculator = new Vincenty();
+        return round($calculator->getDistance($user_location, $this_location) / 1000, 1);
+    }
+
     // Function for downloading users's profile picture
     public function downloadPropic () {
         // Check if there is an image that corresponds to connected user in the database
@@ -384,75 +389,6 @@ class User extends Model {
         }
         // If no match have been found, return false
         return false;
-    }
-
-    // Function for uploading profile gallery
-    public function uploadProfileGallery () {
-        
-        // Declaration of variables
-        $return     = false;
-        $img_blob   = '';
-        $img_size   = 0;
-        $max_size   = 10000000;
-        $img_name   = '';
-        $img_type   = '';
-                            
-        // Count files and start the loop if there are from 1 to 5 files
-        $countfiles = count($_FILES['file']['name']);
-        if ($countfiles > 5) {
-            $error = 'You can\'t upload more than 5 files. Please try again with 5 files or less.';
-            return array(false, $error);
-        } else if ($countfiles <= 0 OR empty($_FILES['file']['name'][0])) {
-            return;
-        } else if ($countfiles <= 5 AND $countfiles > 0) {
-
-            for ($i = 0; $i < $countfiles; $i++) {
-                // Display an error message if any problem occured through upload
-                $return = is_uploaded_file($_FILES['file']['tmp_name'][$i]);
-                if (!$return) {
-                    $error = 'Upload problem for ' . $_FILES['file']['name'][$i] . '. Please try again.';
-                    return array(false, $error);
-                } else {
-                    // Display an error message if file size exceeds $max_size
-                    if ($_FILES['file']['size'][$i] > $max_size) {
-                        $error = $_FILES['file']['name'][$i] . ' exceeds size limit (10Mb). Please reduce the size and try again.';
-                        return array(false, $error);
-                    } else {
-                        $checksuccess = true;
-                    }
-                }
-            }
-            
-            // If everything have been tested fine
-            if ($checksuccess == true) {
-                // First, delete current photos
-                $deleteCurrentPhotos = $this->getPdo()->prepare('DELETE FROM user_photos WHERE user_id = ?');
-                $deleteCurrentPhotos->execute(array($this->id));
-                // Then, upload new photos
-                for ($i = 0; $i < $countfiles; $i++) {
-                    $return = img_compress($_FILES['file']['tmp_name'][$i], $_FILES['file']['size'][$i]);
-                    if ($return[0] == true) {
-                        $img_blob = $return[1];
-                    } else {
-                        return $return;
-                    }
-                    $img_size = $_FILES['file']['size'][$i];
-                    $img_name = $_FILES['file']['name'][$i];
-                    $img_type = $_FILES['file']['type'][$i];
-                    // Upload photo
-                    $insertImage = $this->getPdo()->prepare('INSERT INTO user_photos(user_id, img_id, img, size, name, type) VALUES (?, ?, ?, ?, ?, ?)');
-                    $insertImage->execute(array($this->id, $i, $img_blob, $img_size, $img_name, $img_type));
-                }
-                return array(true, $countfiles . ' pictures have been successfully uploaded ! Click <a href="' .$_SERVER['HTTP_REFERER']. '">here</a> to refresh the page and display your changes.');
-            }
-        }
-    }
-
-    // Function for downloading profile gallery
-    public function getProfileGallery () {
-        $getProfileGallery = $this->getPdo()->prepare('SELECT * FROM user_photos WHERE user_id = ? ORDER BY img_id');
-        $getProfileGallery->execute(array($this->id));
-        return $getProfileGallery->fetchAll();
     }
 
     public function getRides () {
@@ -642,7 +578,7 @@ class User extends Model {
     }
 
     public function countClearedMkpoints() {
-        $countClearedMkpoints = $this->getPdo()->prepare("SELECT id FROM user_mkpoints WHERE user_id = ?");
+        $countClearedMkpoints = $this->getPdo()->prepare("SELECT DISTINCT mkpoint_id FROM user_mkpoints WHERE user_id = ?");
         $countClearedMkpoints->execute(array($this->id));
         return $countClearedMkpoints->rowCount();
     }
@@ -664,7 +600,7 @@ class User extends Model {
 
     // Get currently saved cleared segments list
     public function getClearedSegments ($limit = 99999) {
-        $getClearedSegments = $this->getPdo()->prepare("SELECT u.segment_id, u.activity_id FROM user_segments AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
+        $getClearedSegments = $this->getPdo()->prepare("SELECT DISTINCT u.segment_id, u.activity_id FROM user_segments AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
         $getClearedSegments->execute(array($this->id));
         $cleared_segments = $getClearedSegments->fetchAll(PDO::FETCH_ASSOC);
         foreach ($cleared_segments as $cleared_segment) {
@@ -683,7 +619,7 @@ class User extends Model {
     }
 
     public function countClearedSegments() {
-        $countClearedSegments = $this->getPdo()->prepare("SELECT id FROM user_segments WHERE user_id = ?");
+        $countClearedSegments = $this->getPdo()->prepare("SELECT DISTINCT segment_id FROM user_segments WHERE user_id = ?");
         $countClearedSegments->execute(array($this->id));
         return $countClearedSegments->rowCount();
     }

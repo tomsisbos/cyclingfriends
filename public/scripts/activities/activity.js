@@ -41,6 +41,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     } )
     activityData.photos.forEach( (photo) => {
         photo.datetime = new Date(photo.datetime.date).getTime()
+        photo.distance = activityMap.getPhotoDistance(photo, activityData.routeData)
     } )
 
     // Load activity data into map instance
@@ -53,6 +54,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     
     // Set default layer according to current season
     var map = await activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.data.routeData.geometry.coordinates[0])
+    console.log(map)
 
     // Build controls
     activityMap.addStyleControl()

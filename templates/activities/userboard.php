@@ -77,7 +77,7 @@ include '../actions/users/securityAction.php';
 							<div class="my-ac-photos-container"><?php
 								$preview_photos = $activity->getPreviewPhotos(5);
 								foreach ($preview_photos as $photo) { ?>
-									<div class="my-ac-photo-container"> 
+									<div class="my-ac-photo-container<?php if ($photo->featured) echo ' featured' ?>"> 
 										<img class="my-ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>">
 									</div> <?php
 								} ?>

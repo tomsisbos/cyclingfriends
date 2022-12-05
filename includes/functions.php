@@ -1339,6 +1339,7 @@ function imagecreatefromjpegexif($filename){
 	return $img;
 }
 
+/*
 // Compress an image
 function img_compress ($filename, $filesize) {
 
@@ -1364,12 +1365,10 @@ function img_compress ($filename, $filesize) {
 			$img = imagescale($img, 1600); // Only scale if img is wider than 1600px
 		}
 
-		/*
 		// Correct image gamma and contrast
 		imagegammacorrect($img, 1.0, 1.1);
 		imagefilter($img, IMG_FILTER_CONTRAST, -5);
-		*/
-
+	
 		// Compress it and move it into a new folder
 		$path = $_SERVER["DOCUMENT_ROOT"]. '/includes/media/profile/gallery/' .$img_name; // Set path variable
 		if ($filesize > 3000000) { // If uploaded file size exceeds 3Mb, set new quality to 75
@@ -1386,6 +1385,7 @@ function img_compress ($filename, $filesize) {
 
 	return array(true, $img_blob);
 }
+*/
 
 // Display success or error message if one is set
 function displayMessage () {

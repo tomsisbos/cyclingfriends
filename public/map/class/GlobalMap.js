@@ -16,8 +16,9 @@ export default class GlobalMap extends Model {
             sessionStorage.setItem('session-login', session.login)
         } )
         ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
-            this.userLocation = userLocation
-            if (this.centerOnUserLocation) this.centerOnUserLocation()
+            if (userLocation.lng !== 0) this.userLocation = userLocation
+            else this.userLocation = this.defaultCenter
+
         } )
         ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (mkpoints) => this.clearedMkpoints = mkpoints)
     }
@@ -27,7 +28,6 @@ export default class GlobalMap extends Model {
     loaded = false
     defaultCenter = [138.69056, 35.183002]
     userLocation
-    centerOnUserLocation = false
     mkpoints
     tunnelNumber = 0
     profileData
@@ -317,6 +317,8 @@ export default class GlobalMap extends Model {
                 console.log(tile)
                 this.generateProfile()
             } )
+
+            this.centerOnUserLocation()
         } )
     }
     
@@ -2722,6 +2724,15 @@ export default class GlobalMap extends Model {
                         this.$map.classList.remove('map-fullscreen-mode')                        
                         $profile.classList.remove('profile-fullscreen-mode')
                         if ($profilePreviousElementSibling) $profilePreviousElementSibling.after($profile)
+                        if (!this.map.style.stylesheet.name.includes('satellite') && this.map.getLayer('satellite')) this.map.setPaintProperty('satellite', 'raster-opacity', [
+                            "interpolate",
+                            ["exponential", 1.3],
+                            ["zoom"],
+                            13,
+                            0,
+                            17,
+                            1
+                        ] )
                         this.map.resize()
                         end = true
                     } )
@@ -2731,6 +2742,10 @@ export default class GlobalMap extends Model {
                 if (document.querySelector('#boxShowDistanceMarkers') && document.querySelector('#boxShowDistanceMarkers').checked) {
                     var distanceMarkersOn = true
                     this.hideDistanceMarkers ()
+                    console.log(this.map.style.stylesheet.name)
+                    if (!this.map.style.stylesheet.name.includes('satellite') && this.map.getLayer('satellite')) { // Hide satellite raster images if style is not a dedicated satellite one for improving smoothness during animation
+                        this.map.setPaintProperty('satellite', 'raster-opacity', 0)
+                    }
                 }
                 if (!this.map.getSource('startGoal')) this.displayStartGoalMarkers(routeData)
                 // Data setting
@@ -2749,7 +2764,7 @@ export default class GlobalMap extends Model {
                 // Options
                 var cameraOffset = 4 // km
                 var cameraAltitude = 800 // m
-                // Short distance correction settings
+                // Short and long distance correction settings
                 if (routeDistance < 3) {
                     cameraOffset = 0.5
                     cameraAltitude = 400
@@ -2758,8 +2773,10 @@ export default class GlobalMap extends Model {
                     cameraOffset = 2
                     cameraAltitude = 600
                     animationDuration = 12000
+                } else if (animationDuration === 90000) {
+                    cameraOffset = 2
                 }
-                if (document.querySelector('.show-profile')) cameraOffset = 4
+                console.log('cameraOffset : ' + cameraOffset)
 
                 // Go fullscreen
                 this.$map.classList.add('map-fullscreen-mode')
@@ -2823,11 +2840,6 @@ export default class GlobalMap extends Model {
                         var awayCamera     = turf.along(cameraData, (cameraRouteDistance * phase) + prephaseDistanceOffset).geometry.coordinates
                         var alongRoute     = turf.along(routeData, (routeDistance * phase) + prephaseDistanceOffset).geometry.coordinates
                     }
-                    var elevationCorrectorAway = this.map.queryTerrainElevation(awayCamera, {exaggerated: false})
-                    var elevationCorrectorAlong = this.map.queryTerrainElevation(alongCamera, {exaggerated: false})
-                    if (elevationCorrectorAlong == undefined) elevationCorrectorAlong = elevationCorrectorAway
-                    var elevationCorrector = (elevationCorrectorAway + elevationCorrectorAlong) / 2
-                    console.log(elevationCorrector + ' (along : ' + elevationCorrectorAlong + ', away : ' + elevationCorrectorAway)
 
                     // Tell the camera to look at a point along the route
                     camera.lookAtPoint( {
@@ -2836,6 +2848,10 @@ export default class GlobalMap extends Model {
                     } )
                     
                     // Set the position and altitude of the camera
+                    var elevationCorrectorAway = this.map.queryTerrainElevation(awayCamera, {exaggerated: false})
+                    var elevationCorrectorAlong = this.map.queryTerrainElevation(alongCamera, {exaggerated: false})
+                    if (elevationCorrectorAlong == undefined) elevationCorrectorAlong = elevationCorrectorAway
+                    var elevationCorrector = (elevationCorrectorAway + elevationCorrectorAlong) / 2
                     camera.position = mapboxgl.MercatorCoordinate.fromLngLat( 
                         {
                             lng: alongCamera[0],
@@ -2873,7 +2889,7 @@ export default class GlobalMap extends Model {
                     // Checkpoints
                     if (this.data) {
 
-                        const currentDistance = routeDistance * phase
+                        const currentDistance = routeDistance * (phase + prephaseOffset)
                         const displayStory = (checkpoint) => {
                             // Make sure story is not already displayed
                             if (!this.$map.querySelector('.lightbox-caption') || (this.$map.querySelector('.lightbox-caption') && this.$map.querySelector('.lightbox-caption') && parseInt(this.$map.querySelector('.story-number').innerText) != checkpoint.number)) {
@@ -2909,23 +2925,19 @@ export default class GlobalMap extends Model {
 
                         // Checkpoints
                         if (this.data.checkpoints) {
-                            const displayRange = 0.3 // km - Maximum distance current point and checkpoint can be separated
-                            const alongRouteTolerance = 1 // km - Maximum distance current point and checkpoint can be separated along the course
                             this.data.checkpoints.forEach( (checkpoint) => {
-                                // If marker has entered displayRange and alongRoute length is not too far from checkpoint distance, open popup
-                                if (turf.distance(turf.point(alongRoute), turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])) < displayRange && Math.abs(currentDistance - checkpoint.distance) < alongRouteTolerance) {
-                                    displayStory(checkpoint)
-                                }
+                                // If marker has entered displayRange and alongRoute length is not too far from checkpoint distance, display story
+                                if (currentDistance > checkpoint.distance) displayStory(checkpoint)
                             } )
                         }
                         // Photos
                         if (this.data.photos) {
-                            var displayRange = 1.5 * animationDuration / routeDistance / 1000 // km - Maximum distance current point and photo can be separated
+                            const displayRange = 1.5 * animationDuration / routeDistance / 1000 // km - Maximum distance current point and photo can be separated on the line
                             this.data.photos.forEach( (photo) => {
-                                if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) < displayRange && !photo.marker.getElement().classList.contains('half-grown')) {
+                                if (Math.abs(photo.distance - currentDistance) < displayRange && !photo.marker.getElement().classList.contains('half-grown')) {
                                     this.data.photos.forEach(otherPhoto => otherPhoto.marker.getElement().classList.remove('half-grown')) // Ensure that two close photos will not display at the same time
                                     photo.marker.getElement().classList.add('half-grown')
-                                } else if (turf.distance(turf.point(alongRoute), turf.point(this.getPhotoLocation(photo))) > displayRange && photo.marker.getElement().classList.contains('half-grown')) {
+                                } else if (Math.abs(photo.distance - currentDistance) > displayRange  && photo.marker.getElement().classList.contains('half-grown')) {
                                     photo.marker.getElement().classList.remove('half-grown')
                                 }
                             } )

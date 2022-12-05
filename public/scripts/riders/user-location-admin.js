@@ -1,6 +1,7 @@
 import PickMap from "../../map/class/PickMap"
 
 var pickMap = new PickMap()
+console.log(pickMap)
 const originalPosition = pickMap.currentPosition
 
 const button = document.querySelector('#userLocationButton')
@@ -19,11 +20,18 @@ button.addEventListener('click', async () => {
     const marker = new mapboxgl.Marker( {
         draggable: true
     } )
-    marker.setLngLat(pickMap.currentPosition)
+    if (pickMap.currentPosition) marker.setLngLat(pickMap.currentPosition)
+    else marker.setLngLat(pickMap.userLocation)
     marker.addTo(map)
 
     // Update current position property to the marker new position
-    marker.on('dragend', async (e) => pickMap.currentPosition = e.target._lngLat)
+    marker.on('dragend', (e) => pickMap.currentPosition = e.target._lngLat)
+
+    map.on('click', (e) => {
+        console.log(e)
+        marker.setLngLat(e.lngLat)
+        pickMap.currentPosition = e.lngLat
+    } )
 
 } )
 
@@ -66,7 +74,11 @@ async function closePopup (modal) {
 
         // Send data to server and get user location data sorted
         ajaxJsonPostRequest (pickMap.apiUrl, userLocationData, async (message) => {
+
             showResponseMessage(message)
+
+            // Update location on edit page
+            document.querySelector('#userLocationString').innerText = userLocationData.geolocation.city + ' (' + userLocationData.geolocation.prefecture + ')'
         } )
 
     }

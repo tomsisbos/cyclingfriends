@@ -31,7 +31,7 @@ class Bike extends Model {
             
         // Else, use a profile picture corresponding to user's randomly attribuated icon
         } else { ?>
-            <img class="pf-bike-image" src="\includes\media\default-bike-' .$this->user->getDefaultPropicId(). '.svg" /> <?php
+            <img class="pf-bike-image" src="<?= '\media\default-bike-' . $this->user->getDefaultPropicId() . '.svg' ?>" /> <?php
         }
 
     }

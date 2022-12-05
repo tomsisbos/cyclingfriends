@@ -97,7 +97,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 									<strong>Age : </strong><?= $user->calculateAge(). ' years old'; ?>
 								</div> <?php
 							}
-							if (!empty($user->location)) { ?>
+							if (!empty($user->location->city)) { ?>
 								<div class="col-md">
 									<strong>Place : </strong><?= $user->location->toString(); ?>
 								</div> <?php
@@ -142,6 +142,10 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 				include '../includes/riders/profile/bikes.php'; ?>
 			</div> <?php
 		} ?>
+
+		<div class="container margin-bottom p-0"> <?php
+			include '../includes/riders/profile/activities.php' ?>
+		</div>
 		
 		<div class="container bg-transparent margin-bottom p-0 pf-columns-container">
 			
@@ -156,7 +160,6 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 			</div>
 
 			<div class="pf-column">
-				
 				<div class="d-flex flex-column gap"> <?php
 					// Cleared cegments panel ?>
 					<div class="profile-container"> <?php 
@@ -166,10 +169,6 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 				</div>
 			</div>
 
-		</div>
-
-		<div class="container margin-bottom p-0"> <?php
-			include '../includes/riders/profile/activities.php' ?>
 		</div>
 
 	

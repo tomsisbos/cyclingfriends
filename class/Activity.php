@@ -252,6 +252,8 @@ class Activity extends Model {
         $deleteLikeData->execute(array($this->id));
         $deleteActivity = $this->getPdo()->prepare('DELETE FROM activities WHERE id = ?');
         $deleteActivity->execute(array($this->id));
+        $deleteClearedSegments = $this->getPdo()->prepare('DELETE FROM user_segments WHERE activity_id = ?');
+        $deleteClearedSegments->execute(array($this->id));
         return true;
     }
 }

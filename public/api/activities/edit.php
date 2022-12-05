@@ -73,7 +73,7 @@ if (is_array($data)) {
             // Photo treatment
             $ext = strtolower(substr($photo['name'], -3));
             $img_name = 'temp.'.$ext;
-            $temp = $_SERVER["DOCUMENT_ROOT"]. '/includes/media/activities/temp/' .$img_name; // Set temp path
+            $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
             // Temporary upload raw file on the server
             base64_to_jpeg($photo['blob'], $temp);
             // Get the file into $img thanks to imagecreatefromjpeg
@@ -83,7 +83,7 @@ if (is_array($data)) {
             imagegammacorrect($img, 1.0, 1.1);
             imagefilter($img, IMG_FILTER_CONTRAST, -5);
             // Compress it and move it into a new folder
-            $path = $_SERVER["DOCUMENT_ROOT"]. "/includes/media/activities/temp/photo_" .$img_name; // Set path variable
+            $path = $_SERVER["DOCUMENT_ROOT"]. "/media/activities/temp/photo_" .$img_name; // Set path variable
             imagejpeg($img, $path, 75); // Set new quality to 75
 
             // Build photo data
@@ -101,8 +101,8 @@ if (is_array($data)) {
         else $featured = 0;
 
         // Insert photo in 'activity_photos' table
-        $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $insert_photos -> execute(array($activity_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
+        $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+        $insert_photos -> execute(array($activity_id, $connected_user->id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
     }
 
     echo json_encode(true);

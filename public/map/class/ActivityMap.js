@@ -226,9 +226,9 @@ export default class ActivityMap extends GlobalMap {
         } )
     }
 
-    getPhotoLocation (photo) {
-        const routeCoordinates = this.data.routeData.geometry.coordinates
-        const routeTime = this.data.routeData.properties.time
+    getPhotoLocation (photo, routeData = this.data.routeData) {
+        const routeCoordinates = routeData.geometry.coordinates
+        const routeTime = routeData.properties.time
         var smallestGap = routeTime[0]
         var closestCoordinate
         // Get closest route coordinate by looping through them
@@ -240,6 +240,12 @@ export default class ActivityMap extends GlobalMap {
             }
         }
         return closestCoordinate
+    }
+
+    getPhotoDistance (photo, routeData = this.data.routeData) {
+        const photoLocation = this.getPhotoLocation(photo, routeData)
+        var segment = turf.lineSlice(turf.point(routeData.geometry.coordinates[0]), turf.point(photoLocation), routeData)
+        return turf.length(segment)
     }
 
     getFormattedTimeFromLngLat (lngLat) {

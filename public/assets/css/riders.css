@@ -118,3 +118,30 @@
         flex-direction: column;
     }
 }
+
+.nbr-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.nbr-card {
+    border-radius: 50px 50px 50px 50px;
+	overflow: hidden;
+}
+.nbr-card:hover {
+	box-shadow: 3px 0px 3px grey; 
+}
+.nbr-card .rdr-card {
+    border-radius: unset;
+    margin: 0px;
+}
+.nbr-card .rdr-card:hover {
+	box-shadow: none;
+}
+.nbr-infos {
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+}
+.nbr-distance, .nbr-city {
+    display: inline;
+}

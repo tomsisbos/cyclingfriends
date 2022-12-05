@@ -1,9 +1,8 @@
-<div class="pf-activities profile-block">
+<div class="profile-title-block">
+    <h2>Latest activities</h2><div class="cleared-counter"><?= '(' . $user->getActivitiesNumber() . ')' ?></div>
+</div>
 
-    <div class="profile-title-block">
-        <h2>Latest activities</h2><div class="cleared-counter"><?= '(' . $user->getActivitiesNumber() . ')' ?></div>
-    </div> <?php
-
+<div class="pf-activities-list dashboard-block"> <?php
     $activities = $user->getActivities(0, 6);
     foreach ($activities as $activity) {
         $activity = new Activity($activity['id']);
@@ -23,5 +22,4 @@
             </div>
         </a> <?php
     } ?>
-
 </div>

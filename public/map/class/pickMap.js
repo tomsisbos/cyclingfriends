@@ -8,7 +8,10 @@ export default class PickMap extends GlobalMap {
     }
 
     apiUrl = '/api/riders/location.php'
-    currentPosition = this.defaultCenter
-    centerOnUserLocation = () => this.map.setCenter(this.currentPosition)
+    
+    centerOnUserLocation () {
+        if (this.currentPosition) this.map.setCenter(this.currentPosition)
+        else this.map.setCenter(this.userLocation)
+    }
 
 }

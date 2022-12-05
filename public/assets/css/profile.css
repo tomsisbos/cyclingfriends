@@ -11,6 +11,9 @@
     display: flex;
     gap: 20px;
 }
+#userLocationString {
+    display: inline;
+}
 
 .pf-map-popup {
     background-color: white;
@@ -27,6 +30,9 @@
     height: 100%;
     width: 100%;
     background-color: #f9f9f9;
+}
+#pickMap .mapboxgl-canvas {
+    cursor: crosshair;
 }
 
 .pf-photos-container {
@@ -180,10 +186,6 @@
     overflow: auto;
 }
 
-.pf-activities {
-    max-height: 200px;
-    overflow: auto;
-}
 .pf-activity-container {
     border-bottom: 1px dashed #f0f0f0;
     padding: 10px;
@@ -193,6 +195,10 @@
 }
 .pf-activity-container:hover {
     background-color: #fff;
+}
+.pf-activities-list {
+    height: 200px;
+    overflow: auto;
 }
 .pf-activity-photo {
     height: 80px;

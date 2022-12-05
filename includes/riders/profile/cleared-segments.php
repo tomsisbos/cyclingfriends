@@ -50,7 +50,7 @@ $cleared_segments_number = $user->countClearedSegments(); ?>
 </div> <?php
 
 // Get cleared segments location
-$getClearedSegmentsData = $db->prepare("SELECT startplace FROM routes INNER JOIN segments ON routes.id = segments.route_id INNER JOIN user_segments ON segments.id = user_segments.segment_id WHERE user_segments.user_id = ?");
+$getClearedSegmentsData = $db->prepare("SELECT DISTINCT routes.startplace FROM routes INNER JOIN segments ON routes.id = segments.route_id INNER JOIN user_segments ON segments.id = user_segments.segment_id WHERE user_segments.user_id = ?");
 $getClearedSegmentsData->execute(array($user->id));
 $segments_data = $getClearedSegmentsData->fetchAll(PDO::FETCH_ASSOC);
 
@@ -66,7 +66,7 @@ foreach ($segments_data as $entry) {
 <div class="cleared-segment-block"> <?php
     $prefectures_total = [];
     foreach ($locations as $prefecture => $number) { 
-        $getPrefectureTotalSegments = $db->prepare("SELECT routes.id FROM routes JOIN segments ON routes.id = segments.route_id WHERE routes.startplace LIKE ?");
+        $getPrefectureTotalSegments = $db->prepare("SELECT routes.id FROM routes JOIN segments ON routes.id = segments.route_id WHERE routes.category = 'segment' AND routes.startplace LIKE ?");
         $getPrefectureTotalSegments->execute(array('%' .$prefecture. '%'));
         $prefectures_total[$prefecture] = $getPrefectureTotalSegments->rowCount();?>
         <div class="cleared-segment-prefecture-container">
