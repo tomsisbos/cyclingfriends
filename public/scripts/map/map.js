@@ -61,7 +61,7 @@ ajaxGetRequest (mapMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
     }
 
     // Update mkpoints, rides and segments display on ending moving the map
-    map.on('moveend', mapMap.updateMapDataListener)
+    map.on('moveend', () => mapMap.updateMapData() )
 } )
 
 var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']

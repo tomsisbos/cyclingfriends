@@ -18,6 +18,7 @@ export default class GlobalMap extends Model {
         ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
             if (userLocation.lng !== 0) this.userLocation = userLocation
             else this.userLocation = this.defaultCenter
+            this.centerOnUserLocation()
 
         } )
         ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (mkpoints) => this.clearedMkpoints = mkpoints)
@@ -280,17 +281,7 @@ export default class GlobalMap extends Model {
                 attributionControl: false
             } )
 
-            // Method for setting 
-            this.map.scaleMarkerAccordingToZoom = (element) => {
-                var zoom = this.map.getZoom()
-                var size = (zoom * 3 - 10) - 5
-                if (size < 15) {
-                    size = 15
-                }
-                element.style.height = size + 'px'
-                element.style.width = size + 'px'
-                element.style.border = size/15 + 'px solid white'
-            }
+            // Add basic controls
             this.map.addControl(new mapboxgl.NavigationControl())
             this.map.addControl(
                 new mapboxgl.AttributionControl( {
@@ -317,9 +308,9 @@ export default class GlobalMap extends Model {
                 var tile = cover.tiles(routeData.geometry, limits)
                 console.log(tile)
                 this.generateProfile()
-
-                if (this.centerOnUserLocation) this.centerOnUserLocation()
             } )
+
+            this.centerOnUserLocation()
         } )
     }
     
@@ -1478,6 +1469,10 @@ export default class GlobalMap extends Model {
         }
     }
 
+    centerOnUserLocation () {
+        return
+    }
+
     async generateProfile (options = {force: false, time: false}) {
         
         const route = this.map.getSource('route')
@@ -1968,6 +1963,19 @@ export default class GlobalMap extends Model {
         }
     }
 
+    scaleMarkerAccordingToZoom (element) {
+        console.log(element)
+        var zoom = this.map.getZoom()
+        var size = (zoom * 3 - 10) - 5
+        if (size < 15) {
+            size = 15
+        }
+        console.log(size)
+        element.style.height = size + 'px'
+        element.style.width = size + 'px'
+        element.style.border = size/15 + 'px solid white'
+    }
+
     hideDistanceMarkers () {
         if (this.map.getSource('distanceMarkers')) {
             this.map.removeLayer('distanceMarkers')
@@ -2297,7 +2305,7 @@ export default class GlobalMap extends Model {
             icon.classList.add('mkpoint-icon')
             if (mkpoint.on_route === true) icon.style.boxShadow = '0 0 1px 3px ' + this.routeColor
             element.appendChild(icon)
-            this.map.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
+            this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
             var marker = new mapboxgl.Marker ( {
                 anchor: 'center',
                 color: '#5e203c',

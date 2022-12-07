@@ -101,7 +101,7 @@ export default class CFUtils {
                 minlat = parseFloat(coordinates[i][1])
             }
         }
-        return [[parseFloat(minlng) - margin, parseFloat(minlat) - margin], [parseFloat(maxlng) + margin, parseFloat(maxlat) + margin]]
+        return [[minlng - margin, minlat - margin], [maxlng + margin, maxlat + margin]]
     }
 
     static getRouteBbox (routeData) {
@@ -131,56 +131,61 @@ export default class CFUtils {
         return boundingBox
     }
 
+    static getWiderBounds (bbox, margin) {
+        var m = margin / 10
+        return [[bbox[0].lng - m, bbox[0].lat - m], [bbox[1].lng + m, bbox[1].lat + m]]
+    }
+
     // Get location of a LngLat point
-static async getLocation (lngLat) {
-	return new Promise ((resolve, reject) => {
-		var lng = lngLat.lng
-		var lat = lngLat.lat
-		ajaxGetRequest ('https://api.mapbox.com/search/v1/reverse/' + lng + ',' + lat + '?language=ja&access_token=' + this.apiKey, callback)
-		function callback (response) {
-			console.log('MAPBOX GEOCODING API USE +1')
-			var geolocation = CFUtils.reverseGeocoding (response)
-			resolve (geolocation)
-		}
-	} )
-}
+    static async getLocation (lngLat) {
+        return new Promise ((resolve, reject) => {
+            var lng = lngLat.lng
+            var lat = lngLat.lat
+            ajaxGetRequest ('https://api.mapbox.com/search/v1/reverse/' + lng + ',' + lat + '?language=ja&access_token=' + this.apiKey, callback)
+            function callback (response) {
+                console.log('MAPBOX GEOCODING API USE +1')
+                var geolocation = CFUtils.reverseGeocoding (response)
+                resolve (geolocation)
+            }
+        } )
+    }
 
 
-// Getting city and prefecture data from mapbox reverse geocoding API request response (used as a callback function)
-static reverseGeocoding (response) {
-	var city, prefecture, skip = false
-	// Look for prefecture data
-	for (var i = 0; i < response.features[0].properties.context.length; i++) {
-		if (response.features[0].properties.context[i].layer.includes('region') || response.features[0].properties.context[i].layer.includes('prefecture')) {
-			var prefecture = response.features[0].properties.context[i].name
-		}
-	}
-	// Look for city data
-	for (var i = 0; i < response.features[0].properties.context.length; i++) {
-		if (response.features[0].properties.context[i].layer.includes('locality')) {
-			if (response.features[0].properties.context[i].name.includes('区')) {
-				if (prefecture === '東京都'){
-					city = response.features[0].properties.context[i].name
-					break
-				} else {
-					skip = true
-				}
-			} else if (!skip) {
-				var city = response.features[0].properties.context[i].name
-			break
-			}
-		}
-		if (response.features[0].properties.context[i].layer.includes('place')) {
-			var city = response.features[0].properties.context[i].name
-			break
-		}
-		if (response.features[0].properties.context[i].layer.includes('city')) {
-			var city = response.features[0].properties.context[i].name.match('^[^\(]+')[0] // Everything before parenthesis
-			break
-		}
-	}
-	return ({"city": city, "prefecture": prefecture})
-}
+    // Getting city and prefecture data from mapbox reverse geocoding API request response (used as a callback function)
+    static reverseGeocoding (response) {
+        var city, prefecture, skip = false
+        // Look for prefecture data
+        for (var i = 0; i < response.features[0].properties.context.length; i++) {
+            if (response.features[0].properties.context[i].layer.includes('region') || response.features[0].properties.context[i].layer.includes('prefecture')) {
+                var prefecture = response.features[0].properties.context[i].name
+            }
+        }
+        // Look for city data
+        for (var i = 0; i < response.features[0].properties.context.length; i++) {
+            if (response.features[0].properties.context[i].layer.includes('locality')) {
+                if (response.features[0].properties.context[i].name.includes('区')) {
+                    if (prefecture === '東京都'){
+                        city = response.features[0].properties.context[i].name
+                        break
+                    } else {
+                        skip = true
+                    }
+                } else if (!skip) {
+                    var city = response.features[0].properties.context[i].name
+                break
+                }
+            }
+            if (response.features[0].properties.context[i].layer.includes('place')) {
+                var city = response.features[0].properties.context[i].name
+                break
+            }
+            if (response.features[0].properties.context[i].layer.includes('city')) {
+                var city = response.features[0].properties.context[i].name.match('^[^\(]+')[0] // Everything before parenthesis
+                break
+            }
+        }
+        return ({"city": city, "prefecture": prefecture})
+    }
 
     static buildGeolocationFromString (string) {
         var regex1     = /[^\s]+/

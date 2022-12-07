@@ -52,3 +52,4 @@ include '../actions/users/securityAction.php';
 </html>
 
 <script type="module" src="/scripts/riders/neighbours.js"></script>
+<script src="/scripts/riders/friends.js"></script>

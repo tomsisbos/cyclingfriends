@@ -771,3 +771,18 @@ form#mkpointForm input[type="file" i] {
     text-shadow: 0px 6px 6px #00000099;
     color: #ff5555;
 }
+
+.alert-modal {
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+}
+.alert-window {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #00000099;
+    color: white;
+}

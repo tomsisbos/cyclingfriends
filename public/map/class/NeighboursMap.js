@@ -12,12 +12,12 @@ export default class NeighboursMap extends GlobalMap {
     defaultZoom = 8
     
     centerOnUserLocation () {
-        this.map.setCenter(this.userLocation)
+        if (this.map) this.map.setCenter(this.userLocation)
     }
 
     buildMarkerElement (neighbour) {
         const $marker = document.createElement('div')
-        $marker.id = 'narker' + neighbour.id
+        $marker.id = 'marker' + neighbour.id
         $marker.classList = 'nbr-marker'
         const $markerImg = document.createElement('img')
         $markerImg.src = neighbour.propic
@@ -25,11 +25,19 @@ export default class NeighboursMap extends GlobalMap {
         return $marker
     }
 
-    displayLink (neighbour) {
+    scaleMarkerAccordingToZoom (element) {
+        var zoom = this.map.getZoom()
+        var size = (zoom * 3 - 10)
+        if (size < 8) size = 8
+        console.log(size)
+        element.style.height = size + 'px'
+        element.style.width = size + 'px'
+    }
+
+    displayHoverLink (neighbour) {
         var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
-        console.log(link)
         this.map.addLayer( {
-            id: 'link' + neighbour.id,
+            id: 'hoverLink' + neighbour.id,
             type: 'line',
             source: {
                 type: 'geojson',
@@ -42,13 +50,54 @@ export default class NeighboursMap extends GlobalMap {
                 'line-dasharray': [3, 2],
                 'line-opacity': 1,
             }
-        } )
-        console.log(this.map.getLayer('link' + neighbour.id))
+        }, 'no-bicycle-rindos')
     }
 
-    hideLink (neighbour) {
-        this.map.removeLayer('link' + neighbour.id)
-        this.map.removeSource('link' + neighbour.id)
+    displaySelectedLink (neighbour) {
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
+        this.map.addLayer( {
+            id: 'selectedLink' + neighbour.id,
+            type: 'line',
+            source: {
+                type: 'geojson',
+                data: link
+            },
+            layout: {},
+            paint: {
+                'line-color': '#ff5555',
+                'line-width': 3,
+                'line-dasharray': [3, 2],
+                'line-opacity': 1,
+            }
+        } )
+    }
+
+    hideHoverLink (neighbour) {
+        if (this.map.getLayer('hoverLink' + neighbour.id)) {
+            this.map.removeLayer('hoverLink' + neighbour.id)
+            this.map.removeSource('hoverLink' + neighbour.id)
+        }
+    }
+    
+    hideSelectedLink (neighbour) {
+        this.map.removeLayer('selectedLink' + neighbour.id)
+        this.map.removeSource('selectedLink' + neighbour.id)
+    }
+
+    displayZoomMessage () {
+        if (!this.$map.querySelector('.alert-modal')) {
+            var modal = document.createElement('div')
+            modal.className = "alert-modal"
+            var messageWindow = document.createElement('div')
+            messageWindow.className = 'alert-window'
+            messageWindow.innerText = "For privacy reasons, riders location can't be displayed at high zoom level."
+            modal.appendChild(messageWindow)
+            this.$map.appendChild(modal)
+        }
+    }
+
+    hideZoomMessage () {
+        if (this.$map.querySelector('.alert-modal')) this.$map.querySelector('.alert-modal').remove()
     }
 
 }
