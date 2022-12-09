@@ -62,6 +62,7 @@ $router->map('GET', '/signout', 'user/signout', 'user-signout');
 $router->map('POST', '/signout', 'user/signout');
 $router->map('GET', '/signup', 'user/signup', 'user-signup');
 $router->map('POST', '/signup', 'user/signup');
+$router->map('GET', '/settings', 'user/settings', 'user-settings');
 
 // Treatment of results
 $match = $router->match();
