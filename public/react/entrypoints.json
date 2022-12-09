@@ -1,0 +1,22 @@
+{
+  "entrypoints": {
+    "settings": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/settings.js"
+      ]
+    },
+    "settings/Board": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/settings/Board.js"
+      ]
+    },
+    "settings/ChangePassword": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/settings/ChangePassword.js"
+      ]
+    }
+  }
+}

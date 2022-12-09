@@ -2,7 +2,6 @@
     display: grid;
     grid-template-columns: 25% 50% 25%;
     height: -webkit-fill-available;
-    overflow: auto;
 }
 
 @media only screen and (max-width: 1050px) and (min-width: 600px) {

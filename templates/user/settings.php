@@ -21,7 +21,7 @@ include '../actions/users/securityAction.php';
 			<?php // Settings sidebar
 			include '../includes/users/settings/sidebar.php'; ?>
 
-			<div style="width: 200px; height: 200px; background-color: yellow" id="board"></div>
+			<div id="board"></div>
 
 		</div>
 	
@@ -32,6 +32,7 @@ include '../actions/users/securityAction.php';
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
     <!-- Load our React component. -->
-    <script type="module" src="/scripts/user/settings.js"></script>
+    <script type="module" src="react/runtime.js"></script>
+    <script type="module" src="react/settings.js"></script>
 	
 </body>
