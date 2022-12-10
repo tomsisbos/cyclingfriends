@@ -1,6 +1,4 @@
 {
   "public/settings.js": "/public/react/settings.js",
-  "public/settings/Board.js": "/public/react/settings/Board.js",
-  "public/settings/ChangePassword.js": "/public/react/settings/ChangePassword.js",
   "public/runtime.js": "/public/react/runtime.js"
 }

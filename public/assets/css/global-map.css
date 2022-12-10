@@ -14,7 +14,7 @@
     opacity: 1 !important;
 }
 .checkpoint-marker::after {
-    content: '▼';
+    content: '\25BC';
     height: 0px;
     bottom: 7px;
     font-size: 10px;

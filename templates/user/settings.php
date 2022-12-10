@@ -6,6 +6,8 @@ session_start();
 include '../actions/users/securityAction.php';
 ?>
 
+<link rel="stylesheet" href="/assets/css/settings.css" />
+
 <body>
 
 	<?php // Navbar
@@ -16,20 +18,11 @@ include '../actions/users/securityAction.php';
 		// Space for error messages
 		displayMessage(); ?>
 		
-		<div class="container d-flex flex-column gap end">	
-		
-			<?php // Settings sidebar
-			include '../includes/users/settings/sidebar.php'; ?>
-
-			<div id="board"></div>
-
-		</div>
+		<div id="settings"></div>
 	
 	</div>
 
-    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <!-- Load our React component. -->
     <script type="module" src="react/runtime.js"></script>

@@ -72,11 +72,18 @@ class User extends Model {
 		$_SESSION['rights']                    = $this->getRights();
     }
 
-    // Get user settings from settings table
     public function getSettings() {
-        $getSettings = $this->getPdo()->prepare('SELECT * FROM settings WHERE user_id = ?');
-        $getSettings->execute(array($this->id));
-        return $getSettings->fetch(PDO::FETCH_ASSOC);
+        return new Settings ($this->id);
+    }
+
+    public function updateSettings($settings) {
+        foreach ($settings as $key => $setting) {
+            if ($setting == true) $value = 1;
+            else $value = 0;
+            $updateSetting = $this->getPdo()->prepare("UPDATE settings SET {$key} = :value WHERE id = :id");
+            $updateSetting->execute([':value' => $value, ':id' => $this->id]);
+            return true;
+        }
     }
 
     // Get user rights from users table
@@ -84,19 +91,6 @@ class User extends Model {
         $getRights = $this->getPdo()->prepare('SELECT rights FROM users WHERE id = ?');
         $getRights->execute(array($this->id));
         return $getRights->fetch(PDO::FETCH_NUM)[0];
-    }
-
-    // Check if there is an entry in settings table matching a specific user ID
-    public function checkIfUserHasSettingsEntry(){
-        
-        $checkIfUserHasSettingsEntry = $this->getPdo()->prepare('SELECT user_id FROM settings WHERE user_id = ?');
-        $checkIfUserHasSettingsEntry->execute(array($user_id));
-
-        if($checkIfUserHasSettingsEntry->rowCount() > 0){
-            return true;
-        }else{
-            return false;
-        }
     }
 
     public function checkIfLoginAlreadyExists ($login) {
