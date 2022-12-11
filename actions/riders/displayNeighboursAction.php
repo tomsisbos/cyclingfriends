@@ -4,7 +4,7 @@ $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUM
 require $folder . '/actions/databaseAction.php';
 	
 // Get data from database
-$getRiders = $db->prepare('SELECT id FROM users WHERE city IS NOT NULL AND prefecture IS NOT NULL AND id NOT IN (SELECT user_id FROM settings WHERE hide_on_neighbours = true) AND NOT id = ? ORDER BY id ASC');
+$getRiders = $db->prepare('SELECT id FROM users WHERE city IS NOT NULL AND prefecture IS NOT NULL AND id NOT IN (SELECT id FROM settings WHERE hide_on_neighbours = true) AND NOT id = ? ORDER BY id ASC');
 $getRiders->execute(array($connected_user->id));
 $rider_ids = $getRiders->fetchAll(PDO::FETCH_ASSOC);
 $riders = [];

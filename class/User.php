@@ -122,6 +122,12 @@ class User extends Model {
             return true;
         }
     }
+
+    public function getPassword () {
+        $getUserInfos = $this->getPdo()->prepare('SELECT password FROM users WHERE id = ?');
+        $getUserInfos->execute(array($this->id));
+        return $password = $getUserInfos->fetch(PDO::FETCH_NUM)[0];
+    }
     
     public function getInscriptionDate($user){
         $getUserInfos = $this->getPdo()->prepare('SELECT * FROM users WHERE id = ?');

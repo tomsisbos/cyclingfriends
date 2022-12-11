@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, createContext } from 'react'
 import ReactDOM from 'react-dom/client'
 import ChangeEmail from "/react/settings/ChangeEmail.jsx"
 import ChangePassword from "/react/settings/ChangePassword.jsx"
 import Privacy from "/react/settings/Privacy.jsx"
 import Sidebar from "/react/settings/Sidebar.jsx"
+import ResponseMessage from "/react/settings/ResponseMessage.jsx"
+import AppContext from "/react/settings/AppContext.js"
 
-class Settings extends React.Component {
+function App () {
 
-    constructor (props) {
-        super(props)
-        this.state = {
-            board: 'privacy'
-        }
-    }
+    const [board, setBoard] = useState('default board')
+    const [message, setMessage] = useState(false)
 
-    getPage = (page) => {
+    const getPage = (page) => {
         switch (page) {
             case 'changeEmail': var component = <ChangeEmail />; break;
             case 'changePassword': var component = <ChangePassword />; break;
             case 'privacy': var component = <Privacy />; break;
         }
-        this.setState( (prevState) => ( {
-            ...prevState,
-            board: component
-        } ) )
-        this.forceUpdate()
+        setBoard(component)
+    }
+
+    const displayResponseMessage = (response) => {
+        console.log(response)
+        setMessage(<ResponseMessage response={response}/>)
     }
   
-    render () {
-        return (
+    return (
+        <AppContext.Provider value={displayResponseMessage}>
+            {message}
             <div className="container d-flex gap end">
-                <Sidebar changePage={this.getPage} />
-                {this.state.board}
+                <Sidebar changePage={getPage} />
+                {board}
             </div>
-        )
-    }
+        </AppContext.Provider>
+    )
 
 }
 
 const root = ReactDOM.createRoot(document.querySelector('#settings'))
-root.render(<Settings />)
+root.render(<App />)
