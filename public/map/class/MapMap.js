@@ -167,13 +167,6 @@ export default class MapMap extends GlobalMap {
             } )
         } )
     }
-    addFullscreenControl () {
-        this.map.addControl(
-            new mapboxgl.FullscreenControl( {
-                container: this.$map
-            } )
-        )
-    }
 
     addEditorControl () {
         // Get (or add) controller container
@@ -279,7 +272,7 @@ export default class MapMap extends GlobalMap {
             // Add 'selected-marker' class to selected marker
             this.unselect()
             mkpointPopup.select()
-            mkpointPopup.comments()
+            mkpointPopup.reviews()
             mkpointPopup.rating()
             if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin()
             if (content.includes('target-button')) mkpointPopup.setTarget()

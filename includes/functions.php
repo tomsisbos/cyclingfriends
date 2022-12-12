@@ -1465,4 +1465,12 @@ function base64_to_jpeg ($base64_string, $output_file) {
     return $output_file; 
 }
 
+function getStars ($number) {
+	$string = '';
+	for ($i = 0; $i < $number; $i++) {
+		$string .= '<div class="d-inline selected-star">★</div>';
+	}
+	return $string;
+}
+
 ?>

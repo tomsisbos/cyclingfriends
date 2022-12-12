@@ -27,3 +27,11 @@
 .mk-title {
     font-weight: bold;
 }
+
+.mk-thumbnail {
+    transition: opacity 1s;
+    cursor: pointer;
+}
+.mk-thumbnail:hover {
+    opacity: 0.8;
+}

@@ -177,14 +177,18 @@ export default class Popup extends Model {
     toggleLike () {
 
         // Get button elements
-        var thumbnailButton = this.popup.getElement().querySelector('#like-button')
+        var thumbnailButton = document.querySelector('#like-button')
         var modalButtons = document.querySelectorAll('.like-button-modal')
 
         // On click, add or remove points to the mkpoint depending of user already liked it or not
-        var clickOnThumbnailButton = toggleLike.bind(this)
-        thumbnailButton.addEventListener('click', clickOnThumbnailButton)
-        var clickOnModalButton = toggleLike.bind(this)
-        modalButtons.forEach( (modalButton) => modalButton.addEventListener('click', clickOnModalButton) )
+        if (thumbnailButton) {
+            var clickOnThumbnailButton = toggleLike.bind(this)
+            thumbnailButton.addEventListener('click', clickOnThumbnailButton)
+        }
+        if (modalButtons) {
+            var clickOnModalButton = toggleLike.bind(this)
+            modalButtons.forEach( (modalButton) => modalButton.addEventListener('click', clickOnModalButton) )
+        }
 
         function toggleLike (e) {
 
@@ -196,8 +200,8 @@ export default class Popup extends Model {
             // Get image id
             if (buttonType == 'thumbnail') {
                 var img_id
-                this.popup._content.querySelectorAll('.popup-img').forEach( ($img) => {
-                    if ($img.style.display != 'none') img_id = parseInt($img.id)
+                document.querySelectorAll('.popup-img').forEach( ($img) => {
+                    if ($img.style.display != 'none') img_id = parseInt($img.dataset.id)
                 } )
             }
 
@@ -219,19 +223,19 @@ export default class Popup extends Model {
                 if (button.classList.contains('liked')) {
                     modalButton.classList.remove('liked')
                     modalLikeCounter.innerText = parseInt(modalLikeCounter.innerText) - 1
-                    thumbnailButton.classList.remove('liked')
+                    if (thumbnailButton) thumbnailButton.classList.remove('liked')
                 } else {
                     modalButton.classList.add('liked')
                     modalLikeCounter.innerText = parseInt(modalLikeCounter.innerText) + 1
-                    thumbnailButton.classList.add('liked')
+                    if (thumbnailButton) thumbnailButton.classList.add('liked')
                 }
             } )
         }
 
         // To prevent increasing of click events
         this.popup.on('close', () => {
-            thumbnailButton.removeEventListener('click', clickOnThumbnailButton)
-            modalButtons.forEach( (modalButton) => modalButton.removeEventListener('click', clickOnModalButton) )
+            if (thumbnailButton) thumbnailButton.removeEventListener('click', clickOnThumbnailButton)
+            if (modalButtons) modalButtons.forEach( (modalButton) => modalButton.removeEventListener('click', clickOnModalButton) )
         } )
     }
 
@@ -239,34 +243,38 @@ export default class Popup extends Model {
 
         // Get image id and button elements
         var img_id
-        this.popup._content.querySelectorAll('.popup-img').forEach( ($img) => {
+        document.querySelectorAll('.popup-img').forEach( ($img) => {
             if ($img.style.display != 'none') img_id = parseInt($img.id)
         } )
-        var thumbnailButton = this.popup.getElement().querySelector('#like-button')
+        var thumbnailButton = document.querySelector('#like-button')
         var modalButtons = document.querySelectorAll('.like-button-modal')
         
         // Set thumbnail like button default color depending on if user liked image or not
-        ajaxGetRequest (this.apiUrl + "?islike-img=" + img_id, (islike) => {
-            if (islike === true) thumbnailButton.classList.add('liked')
-            else thumbnailButton.classList.remove('liked')
-        } )
+        if (thumbnailButton) {
+            ajaxGetRequest (this.apiUrl + "?islike-img=" + img_id, (islike) => {
+                if (islike === true) thumbnailButton.classList.add('liked')
+                else thumbnailButton.classList.remove('liked')
+            } )
+        }
 
         // Set every modal like button default color depending on if user liked image or not
-        modalButtons.forEach( (modalButton) => {
+        if (modalButtons) {
+            modalButtons.forEach( (modalButton) => {
             
-            // Get image id
-            var img_id = getIdFromString(modalButton.closest('.mySlides').querySelector('img').id)
+                // Get image id
+                var img_id = getIdFromString(modalButton.closest('.mySlides').querySelector('img').id)
 
-            // Check if liked or not and style button accordingly
-            ajaxGetRequest (this.apiUrl + "?islike-img=" + img_id, (islike) => {
-                if (islike === true) modalButton.classList.add('liked')
-                else modalButton.classList.remove('liked')
+                // Check if liked or not and style button accordingly
+                ajaxGetRequest (this.apiUrl + "?islike-img=" + img_id, (islike) => {
+                    if (islike === true) modalButton.classList.add('liked')
+                    else modalButton.classList.remove('liked')
+                } )
             } )
-        } )
+        }
     }
 
     rating = () => {
-        var ratingDiv = this.popup.getElement().querySelector('.popup-rating')
+        var ratingDiv = document.querySelector('.popup-rating')
         
         // Display 5 stars with an unique id
         if (ratingDiv.innerText == '') {
@@ -275,7 +283,7 @@ export default class Popup extends Model {
             }
         }
         
-        var stars = this.popup.getElement().querySelectorAll('.star')
+        var stars = document.querySelectorAll('.star')
 
         // Get current rating infos
         ajaxGetRequest (this.apiUrl + "?get-rating=true&type=" + this.type + "&id=" + this.data.id, (ratingInfos) => {
@@ -302,11 +310,11 @@ export default class Popup extends Model {
                 stars.forEach( (star) => { star.className = 'star ' + className } )
 
                 // If rating details are already displayed, update them
-                if (this.popup.getElement().querySelector('.popup-rating-details')) {
+                if (document.querySelector('.popup-rating-details')) {
                     if (number == 0) { // If number is 0, remove rating details
-                        this.popup.getElement().querySelector('.popup-rating-details').remove()
+                        document.querySelector('.popup-rating-details').remove()
                     } else { // Else, update it
-                        this.popup.getElement().querySelector('.popup-rating-details').innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
+                        document.querySelector('.popup-rating-details').innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
                     }
                 // Else, display them
                 } else if (ratingInfos.grades_number > 0) {

@@ -16,6 +16,9 @@ $router->map('GET', '/world', 'map');
 // Segments
 $router->map('GET', '/segment/[i:segment_id]', 'segments/single', 'segment-single');
 
+// Scenery spots
+$router->map('GET', '/scenery/[i:mkpoint_id]', 'sceneries/single', 'scenery-single');
+
 // Activities
 $router->map('GET', '/activity/[i:activity_id]', 'activities/single', 'activity-single');
 $router->map('GET', '/activity/new', 'activities/new', 'activity-new');

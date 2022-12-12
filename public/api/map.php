@@ -203,10 +203,8 @@ if (isAjax()) {
     }
 
     if (isset($_GET['mkpoint-photos'])) {
-        $getMkpointPhotos = $db->prepare('SELECT * FROM img_mkpoint WHERE mkpoint_id = ?');
-        $getMkpointPhotos->execute([$_GET['mkpoint-photos']]);
-        $mkpointphotos = $getMkpointPhotos->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($mkpointphotos);
+        $mkpoint = new Mkpoint($_GET['mkpoint-photos']);
+        echo json_encode($mkpoint->getImages());
     }
 
     if (isset($_GET['mkpoint-closest-photo'])) { // Get photo whose period is the soonest
@@ -232,6 +230,15 @@ if (isAjax()) {
         $getMkpoints->execute();
         $mkpointsList = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($mkpointsList);
+    }
+
+    if (isset($_GET['mkpoint'])) {
+        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
+        $getMkpoint->execute(array($_GET['mkpoint']));
+        if ($getMkpoint->rowCount() > 0) {
+            $mkpoint = new Mkpoint($_GET['mkpoint']);
+            echo json_encode(['data' => $mkpoint, 'photos' => $mkpoint->getImages()]);
+        } else echo json_encode(['error' => 'There is no mkpoint corresponding to this id.']);
     }
 
     if (isset($_GET['display-mkpoints-list'])) {
@@ -484,35 +491,41 @@ if (isAjax()) {
         echo json_encode(['rating' => $new_rating, 'grades_number' => $rating_infos['grades_number'] - 1, 'vote' => false, 'popularity' => $popularity]);
     }
 
-    if (isset($_GET['get-comments-mkpoint'])) {
-        $mkpoint = new Mkpoint($_GET['get-comments-mkpoint']);
-        $comments = $mkpoint->getComments();
+    if (isset($_GET['get-reviews-mkpoint'])) {
+        $mkpoint = new Mkpoint($_GET['get-reviews-mkpoint']);
+        $reviews = $mkpoint->getReviews();
         // Add profile picture src to the response
-        for ($i = 0; $i < count($comments); $i++) {
-            $user = new User($comments[$i]['user_id']);
-            $propic = $user->getPropicSrc();
-            $comments[$i]["propic"] = $propic;
+        for ($i = 0; $i < count($reviews); $i++) {
+            $propic = $reviews[$i]->user->getPropicSrc();
+            $reviews[$i]->propic = $propic;
         }
-        echo json_encode($comments);
+        echo json_encode($reviews);
     }
 
-    if (isset($_GET['add-comment-mkpoint'])) {
-        $mkpoint    = new Mkpoint($_GET['add-comment-mkpoint']);
+    if (isset($_GET['add-review-mkpoint'])) {
+        $mkpoint    = new Mkpoint($_GET['add-review-mkpoint']);
         $content    = $_GET['content'];
         $time       = date('Y-m-d H:i:s');
         $propic     = $connected_user->getPropicSrc();
-        // Check if user has already posted a comment
-        $comments = $mkpoint->getComments();
-        if (count($comments) > 0) {
-            // If there is one, update it
-            $updateRating = $db->prepare('UPDATE chat_mkpoint SET content = ?, time = ? WHERE mkpoint_id = ? AND user_id = ?');
-            $updateRating->execute(array($content, $time, $mkpoint->id, $connected_user->id));
+        // Check if user has already posted a review
+        $reviews = $mkpoint->getUserReview($connected_user);
+        // If there is one..
+        if (!empty($reviews)) {
+            // ..and if content is not empty, update it
+            if (!empty($content)) {
+                $updateReview = $db->prepare('UPDATE mkpoint_reviews SET content = ?, time = ? WHERE mkpoint_id = ? AND user_id = ?');
+                $updateReview->execute(array($content, $time, $mkpoint->id, $connected_user->id));
+            // ..and if content is empty, delete it
+            } else {
+                $deleteReview = $db->prepare('DELETE FROM mkpoint_reviews WHERE mkpoint_id = ? AND user_id = ?');
+                $deleteReview->execute(array($mkpoint->id, $connected_user->id));
+            }
         } else {
-            // Insert into chat_mkpoint table
-            $insertChatMessage = $db->prepare('INSERT INTO chat_mkpoint(mkpoint_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
-            $insertChatMessage->execute(array($mkpoint->id, $connected_user->id, $connected_user->login, $content, $time));
+            // Insert into mkpoint_reviews table
+            $insertReview = $db->prepare('INSERT INTO mkpoint_reviews(mkpoint_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
+            $insertReview->execute(array($mkpoint->id, $connected_user->id, $connected_user->login, $content, $time));
         }
-        echo json_encode(['mkpoint_id' => $mkpoint->id, "user_id" => $connected_user->id, "user_login" => $connected_user->login, "content" => $content, "time" => $time, "propic" => $propic]);
+        echo json_encode(['mkpoint_id' => $mkpoint->id, "user" => ["id" => $connected_user->id, "login" => $connected_user->login], "content" => $content, "time" => $time, "propic" => $propic]);
     }
 
     if (isset($_GET['display-rides'])) {

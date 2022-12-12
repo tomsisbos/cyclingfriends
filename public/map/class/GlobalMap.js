@@ -10,11 +10,6 @@ export default class GlobalMap extends Model {
     constructor () {
         super()
         this.setSeason()
-        ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
-            this.session = session
-            sessionStorage.setItem('session-id', session.id)
-            sessionStorage.setItem('session-login', session.login)
-        } )
         ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
             if (userLocation.lng !== 0) this.userLocation = userLocation
             else this.userLocation = this.defaultCenter
@@ -266,6 +261,14 @@ export default class GlobalMap extends Model {
                 }
             } )
         } )
+    }
+    
+    addFullscreenControl () {
+        this.map.addControl(
+            new mapboxgl.FullscreenControl( {
+                container: this.$map
+            } )
+        )
     }
 
     async load (element, style, center = this.defaultCenter) {
@@ -1492,7 +1495,6 @@ export default class GlobalMap extends Model {
             const uptwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 6 ? value : undefined
             const upsix = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 10 ? value : undefined
             const upten = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined
-            console.log(this.profileData)
             const data = {
                 labels: this.profileData.labels,
                 datasets: [ {
@@ -1964,13 +1966,11 @@ export default class GlobalMap extends Model {
     }
 
     scaleMarkerAccordingToZoom (element) {
-        console.log(element)
         var zoom = this.map.getZoom()
         var size = (zoom * 3 - 10) - 5
         if (size < 15) {
             size = 15
         }
-        console.log(size)
         element.style.height = size + 'px'
         element.style.width = size + 'px'
         element.style.border = size/15 + 'px solid white'
@@ -2327,7 +2327,8 @@ export default class GlobalMap extends Model {
                 this.unselect()
                 mkpointPopup.select()
                 this.generateProfile()
-                mkpointPopup.comments()
+                console.log(mkpointPopup)
+                mkpointPopup.reviews()
                 mkpointPopup.rating()
                 if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin()
                 if (content.includes('target-button')) mkpointPopup.setTarget()
@@ -2751,7 +2752,6 @@ export default class GlobalMap extends Model {
                 if (document.querySelector('#boxShowDistanceMarkers') && document.querySelector('#boxShowDistanceMarkers').checked) {
                     var distanceMarkersOn = true
                     this.hideDistanceMarkers ()
-                    console.log(this.map.style.stylesheet.name)
                     if (!this.map.style.stylesheet.name.includes('satellite') && this.map.getLayer('satellite')) { // Hide satellite raster images if style is not a dedicated satellite one for improving smoothness during animation
                         this.map.setPaintProperty('satellite', 'raster-opacity', 0)
                     }
@@ -2785,7 +2785,6 @@ export default class GlobalMap extends Model {
                 } else if (animationDuration === 90000) {
                     cameraOffset = 2
                 }
-                console.log('cameraOffset : ' + cameraOffset)
 
                 // Go fullscreen
                 this.$map.classList.add('map-fullscreen-mode')

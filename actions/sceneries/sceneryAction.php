@@ -6,12 +6,12 @@
 	$slug = basename($_SERVER['REQUEST_URI']);
 	if (is_numeric($slug)) {
 
-        $getSegment = $db->prepare('SELECT id FROM segments WHERE id = ?');
-        $getSegment->execute(array($slug));
+        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
+        $getMkpoint->execute(array($slug));
 		
-		if ($getSegment->rowCount() > 0) {
+		if ($getMkpoint->rowCount() > 0) {
 			
-			$segment = new Segment($slug);
+			$mkpoint = new Mkpoint($slug);
 
         } else {
 			

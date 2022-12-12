@@ -7,6 +7,7 @@ class Segment extends Model {
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
         $this->id = $id;
+        $this->type               = 'segment';
         $data = $this->getData($this->table);
         $this->route              = new Route($data['route_id'], $lngLatFormat);
         $this->rank               = $data['rank'];
@@ -65,6 +66,25 @@ class Segment extends Model {
 
         }
 
+    }
+
+    public function toggleFavorites () {
+        if ($this->isFavorite()) {
+            $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
+            $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
+            return ['success' => $this->name . 'has been removed from your favorites list.'];
+        } else {
+            $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
+            $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
+            return ['success' => $this->name . 'has been added to your favorites list !'];
+        }
+    }
+
+    public function isFavorite () {
+        $isFavorite = $this->getPdo()->prepare('SELECT id FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
+        $isFavorite->execute(array($_SESSION['id'], $this->type, $this->id));
+        if ($isFavorite->rowCount() > 0) return true;
+        else return false;
     }
 
 }

@@ -52,7 +52,9 @@ export default class MkpointPopup extends Popup {
                 </div>
                 <div class="popup-properties">
                     <div class="popup-properties-reference">
-                        <div class="popup-properties-name">` + mkpoint.name + `</div>
+                        <div class="popup-properties-name">
+                            <a href="/scenery/` + mkpoint.id + `" target="_blank">` + mkpoint.name + `</a>
+                        </div>
                         <div class="popup-properties-location">` + mkpoint.city + ` (` + mkpoint.prefecture + `) - ` + mkpoint.elevation + `m</div>
                         <div class="popup-rating"></div>
                     </div>
@@ -61,57 +63,71 @@ export default class MkpointPopup extends Popup {
             <div class="popup-description">` + mkpoint.description + `</div>
         </div>
         <div class="popup-buttons">
-            <button id="showComments" class="mp-button bg-button text-white">Show reviews</button>
+            <button id="showReviews" class="mp-button bg-button text-white">Show reviews</button>
         </div>
         <div class="chat-box">
             <div class="msgbox-label">Reviews</div>
-            <div class="chat-comments"></div>
+            <div class="chat-reviews"></div>
             <div class="chat-msgbox">
-                <textarea id="mkpointComment" class="fullwidth"></textarea>
-                <button id="mkpointCommentSend" class="mp-button bg-button text-white">Post review</button>
+                <textarea id="mkpointReview" class="fullwidth"></textarea>
+                <button id="mkpointReviewSend" class="mp-button bg-button text-white">Post review</button>
             </div>
         </div>`
     }
 
-    comments = () => {
-        if (document.querySelector('#mkpointComment')) {
-            var $popup = this.popup.getElement()
+    reviews = () => {
+        if (document.querySelector('#mkpointReview')) {
 
-            // Get comments on this mkpoint
-            ajaxGetRequest (this.apiUrl + "?get-comments-mkpoint=" + this.data.id, (response) => {
-                // Clear comments if necessary
+            // Get reviews on this mkpoint
+            ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.id, (reviews) => {
+                // Clear reviews if necessary
                 if (document.querySelector('.chat-line')) {
                     document.querySelectorAll('.chat-line').forEach( (chatline) => {
                         chatline.remove()
                     } )
                 }
-                // Display comments
-                response.forEach( (comment) => {
-                    this.displayComment(comment)
-                } )
-                // If connected user has already posted a comment, change 'Post review' button to 'Edit review'
-                if (document.getElementById('comment-author-' + sessionStorage.getItem('session-id'))) {
-                    document.getElementById('mkpointCommentSend').innerText = 'Edit review'
+                // Display reviews or a message if there is no review yet
+                if (reviews.length > 0) reviews.forEach( (review) => this.displayReview(review))
+                else {
+                    var $noReviewMessage = document.createElement('div')
+                    $noReviewMessage.innerText = 'No one yet reviewed this scenery point.'
+                    $noReviewMessage.className = 'chat-default pb-2'
+                    document.querySelector('.chat-reviews').appendChild($noReviewMessage)
+                }
+                // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
+                if (document.querySelector('#review-author-' + sessionStorage.getItem('session-id'))) {
+                    document.querySelector('#mkpointReviewSend').innerText = 'Edit review'
+                    reviews.forEach( (review) => {
+                        if (review.user.id == sessionStorage.getItem('session-id')) {
+                            document.querySelector('#mkpointReview').innerText = review.content
+                        }
+                    } )
                 }
             } )
 
-            // Treat posting of a new comment
-            var textareaComment   = document.querySelector('#mkpointComment')
-            var buttonComment     = document.querySelector('#mkpointCommentSend')
-            buttonComment.addEventListener('click', () => {
-                let comment = textareaComment.value
-                ajaxGetRequest (this.apiUrl + "?add-comment-mkpoint=" + this.data.id + '&content=' + comment, (response) => {
-                    // Clear text area
-                    textareaComment.value = ''
-                    // Display new comment on top
-                    this.displayComment(response)
+            // Treat posting of a new review
+            var textareaReview   = document.querySelector('#mkpointReview')
+            var buttonReview     = document.querySelector('#mkpointReviewSend')
+            buttonReview.addEventListener('click', () => {
+                let content = textareaReview.value
+                ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.id + '&content=' + content, (review) => {
+                    console.log(review)
+                    // If content is empty, remove review element and but button text back
+                    if (review.content == '') {
+                        document.querySelector('#review-author-' + review.user.id).remove()
+                        document.querySelector('#mkpointReviewSend').innerText = 'Post review'
+                    // Else, display new review on top and change button text
+                    } else {
+                        this.displayReview(review, {new: true})
+                        document.querySelector('#mkpointReviewSend').innerText = 'Edit review'
+                    }
                 } )
             } )
 
-            // Show comments on button click
-            $popup.querySelector('#showComments').onclick = function () {
-                let chatbox = $popup.querySelector('.chat-box')
-                let button = $popup.querySelector('#showComments')
+            // Show review on button click
+            if (document.querySelector('#showReviews')) document.querySelector('#showReviews').onclick = function () {
+                let chatbox = document.querySelector('.chat-box')
+                let button = document.querySelector('#showReviews')
                 if (button.innerText == 'Show reviews') {
                     chatbox.style.visibility = 'visible'
                     chatbox.style.height = 'auto'
@@ -125,65 +141,77 @@ export default class MkpointPopup extends Popup {
         }
     }
 
-    displayComment = (comment) => {
-        if (document.querySelector('#mkpointComment')) {
-            // If comment is already displayed, update it and move it to the top
-            if (document.getElementById('comment-author-' + comment.user_id)) {
-                let $comment = document.getElementById('comment-author-' + comment.user_id)
-                $comment.querySelector('.chat-time').innerText = comment.time
-                $comment.querySelector('.chat-message').innerText = comment.content
-                let chatComments = this.popup.getElement().querySelector('.chat-comments')
-                chatComments.insertBefore($comment, chatComments.firstChild)
+    displayReview = (review, options = {new: false}) => {
+        if (document.querySelector('#mkpointReview')) {
+            // If review is already displayed, update it and move it to the top
+            console.log(review)
+            if (document.getElementById('review-author-' + review.user.id)) {
+                let $review = document.getElementById('review-author-' + review.user.id)
+                $review.querySelector('.chat-time').innerText = review.time
+                $review.querySelector('.chat-message').innerText = review.content
+                let chatReviews = document.querySelector('.chat-reviews')
+                chatReviews.insertBefore($review, chatReviews.firstChild)
             // Else, display it
             } else {
-                var chatComments = this.popup.getElement().querySelector('.chat-comments')
-                let $comment = document.createElement('div')
-                $comment.className = 'chat-line'
-                // Set comment background in yellow if author is connected user 
-                if (sessionStorage.getItem('session-id') === comment.user_id) {
-                    $comment.classList.add('bg-admin', 'p-2')
+                // If a default message was displayed, clear it
+                if (document.querySelector('.chat-default')) document.querySelector('.chat-default').remove()
+                var chatReviews = document.querySelector('.chat-reviews')
+                let $review = document.createElement('div')
+                $review.className = 'chat-line'
+                // Set review background in yellow if author is connected user 
+                if (sessionStorage.getItem('session-id') === review.user.id) {
+                    $review.classList.add('bg-admin', 'p-2')
                 }
-                $comment.id = 'comment-author-' + comment.user_id
-                chatComments.insertBefore($comment, chatComments.firstChild)
+                $review.id = 'review-author-' + review.user.id
+                if (options.new) chatReviews.prepend($review)
+                else chatReviews.appendChild($review)
                 let propicContainer = document.createElement('div')
                 propicContainer.className = 'round-propic-container'
                 propicContainer.style.width = '40px'
                 propicContainer.style.height = '40px'
                 propicContainer.style.minWidth = '40px'
-                $comment.appendChild(propicContainer)
+                $review.appendChild(propicContainer)
                 let propicLink = document.createElement('a')
-                propicLink.href = '/rider/' + comment.user_id
+                propicLink.href = '/rider/' + review.user.id
+                propicLink.setAttribute('target', '_blank')
                 propicContainer.appendChild(propicLink)
                 let propic = document.createElement('img')
                 propic.className = 'round-propic-img'
-                propic.src = comment.propic
+                propic.src = review.propic
                 propicLink.appendChild(propic)
                 let messageBlock = document.createElement('div')
                 messageBlock.className = 'chat-message-block'
                 messageBlock.style.marginLeft = '10px'
-                $comment.appendChild(messageBlock)
+                $review.appendChild(messageBlock)
                 let login = document.createElement('div')
                 login.className = 'chat-login'
-                login.innerText = comment.user_login + ' - '
-                messageBlock.appendChild(login)
+                login.innerText = review.user.login + ' - '
+                let loginLink = document.createElement('a')
+                loginLink.href = '/rider/' + review.user.id
+                loginLink.setAttribute('target', '_blank')
+                loginLink.appendChild(login)
+                messageBlock.appendChild(loginLink)
                 let time = document.createElement('div')
                 time.className = 'chat-time'
-                time.innerText = comment.time
+                time.innerText = review.time
                 messageBlock.appendChild(time)
                 let content = document.createElement('div')
                 content.className = 'chat-message'
-                content.innerText = comment.content
+                content.innerText = review.content
                 messageBlock.appendChild(content)
             }
-            // Add stars if voted
-            ajaxGetRequest (this.apiUrl + "?check-user-vote=" + comment.mkpoint_id + "&user_id=" + comment.user_id, (response) => {
+            // Add (or replace) stars if voted
+            ajaxGetRequest (this.apiUrl + "?check-user-vote=" + review.mkpoint_id + "&user_id=" + review.user.id, (response) => {
                 if (response != false) {
                     var number = parseInt(response)
+                    // Remove stars previously displayed
+                    document.querySelector('#review-author-' + review.user.id).querySelectorAll('.selected-star').forEach($star => $star.remove())
+                    // Display new stars
                     for (let i = 1; i < number + 1; i++) {
                         let star = document.createElement('div')
                         star.innerText = '★'
                         star.className = 'd-inline selected-star'
-                        document.getElementById('comment-author-' + comment.user_id).querySelector('.chat-time').after(star)
+                        document.getElementById('review-author-' + review.user.id).querySelector('.chat-time').after(star)
                     }
                 }
             } )
@@ -373,10 +401,10 @@ export default class MkpointPopup extends Popup {
                 var newPhoto = document.createElement('img')
                 newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
                 newPhoto.style.display = 'none'
-                newPhoto.setAttribute('id', photo.id)
-                newPhoto.setAttribute('thumbnailId', number)
-                newPhoto.setAttribute('author', photo.user_id)
-                newPhoto.src = 'data:image/jpeg;base64,' + photo.file_blob
+                newPhoto.dataset.number = number
+                newPhoto.dataset.id = photo.id
+                newPhoto.dataset.author = photo.user_id
+                newPhoto.src = 'data:image/jpeg;base64,' + photo.blob
                 photoContainer.firstChild.before(newPhoto)
                 var newPhotoPeriod = document.createElement('div')
                 newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo))
@@ -426,7 +454,7 @@ export default class MkpointPopup extends Popup {
 
                 // Add delete photo button if necessary
                 if (this.popup.getElement().querySelector('.deletephoto-button')) this.popup.getElement().querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-                if (photos[photoIndex-1].getAttribute('author') == sessionStorage.getItem('session-id')) addDeletePhotoIcon() // ... And add it if connected user is photo author
+                if (photos[photoIndex-1].dataset.author == sessionStorage.getItem('session-id')) addDeletePhotoIcon() // ... And add it if connected user is photo author
                 
             }
         }
@@ -457,7 +485,7 @@ export default class MkpointPopup extends Popup {
             modalBlock.className = "modal-block"
             modalBaseContent.appendChild(closeButton)
             modalBaseContent.appendChild(modalBlock)
-            document.querySelector('.mapboxgl-map').after(modalBaseContent)
+            document.querySelector('body').after(modalBaseContent)
             // If more than one photo, display arrows
             if (this.photos.length > 1) {
                 modalBlock.appendChild(prevArrow)
@@ -488,7 +516,7 @@ export default class MkpointPopup extends Popup {
             slides[i].appendChild(numberText)
             // Create image
             imgs[i] = document.createElement('img')
-            imgs[i].src = 'data:image/jpeg;base64,' + this.photos[i].file_blob
+            imgs[i].src = 'data:image/jpeg;base64,' + this.photos[i].blob
             imgs[i].id = 'mkpoint-img-' + this.photos[i].id
             imgs[i].classList.add('fullwidth')
             slides[i].appendChild(imgs[i])
@@ -518,20 +546,21 @@ export default class MkpointPopup extends Popup {
             imgMeta.appendChild(period)
             slidesBox.appendChild(slides[i])
         }
+        console.log(slides)
         // Caption display
         var caption = document.createElement('div')
         caption.className = 'lightbox-caption'
         var name = document.createElement('div')
-        name.innerText = this.popup.getElement().querySelector('.popup-properties-name').innerText
+        name.innerText = this.data.name
         name.className = 'lightbox-name'
         caption.appendChild(name)
         var location = document.createElement('div')
-        location.innerText = this.popup.getElement().querySelector('.popup-properties-location').innerText
+        location.innerText = this.data.city + ' (' + this.data.prefecture + ') - ' + this.data.elevation + 'm'
         location.className = 'lightbox-location'
         caption.appendChild(location)
         var description = document.createElement('div')
         description.className = 'lightbox-description'
-        description.innerText = this.popup.getElement().querySelector('.popup-description').innerText
+        description.innerText = this.data.description
         caption.appendChild(description)
         slidesBox.appendChild(caption)
         // Display caption on slide hover
@@ -556,15 +585,16 @@ export default class MkpointPopup extends Popup {
             demos[i] = document.createElement('img')
             demos[i].className = 'demo cursor fullwidth'
             demos[i].setAttribute('demoId', i + 1)
-            demos[i].src = 'data:image/jpeg;base64,' + this.photos[i].file_blob
+            demos[i].src = 'data:image/jpeg;base64,' + this.photos[i].blob
             column.appendChild(demos[i])
             demosBox.appendChild(column)
         }
 
         // Load lightbox script for this popup
-        var script = document.createElement('script');
-        script.src = '/assets/js/lightbox-script.js';
-        this.popup.getElement().appendChild(script);
+        var script = document.createElement('script')
+        script.src = '/assets/js/lightbox-script.js'
+        if (this.popup.getElement()) this.popup.getElement().appendChild(script)
+        else document.querySelector('body').appendChild(script)
     }
     
     // Adds user profile picture to the mkpoint popup

@@ -1,5 +1,13 @@
 export default class Model {
 
+    constructor () {
+        ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
+            this.session = session
+            sessionStorage.setItem('session-id', session.id)
+            sessionStorage.setItem('session-login', session.login)
+        } )
+    }
+
     apiKey = 'pk.eyJ1Ijoic2lzYm9zIiwiYSI6ImNsMDdyNGYxbjAxd2MzbG12M3V1bjM1MGIifQ.bFRgCmK9_kkfZSd_skNF1g' // API Key (public mode for the moment)
     apiUrl = '/api/map.php'
 

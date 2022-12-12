@@ -28,7 +28,7 @@ include '../actions/segments/segmentAction.php'; ?>
 					if ($segment->favourite) ?> <span class="popup-favourite">★</span>
 					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 					<div class="header-buttons">
-						<button class="btn button box-shadow" type="button">Add to favorites</button>
+						<button id="favoriteButton" class="btn button box-shadow" type="button">Add to favorites</button>
 						<a id="export" download>
 							<button class="btn button box-shadow" type="button">Export as *.gpx</button>
 						</a>
@@ -160,9 +160,14 @@ include '../actions/segments/segmentAction.php'; ?>
 						<div class="pg-sg-itinerary-title">Itinerary</div> <?php
 						foreach ($segment->route->getItinerary() as $spot) { ?>
 							<div class="pg-sg-itinerary-spot <?php if (isset($spot['viewed']) AND $spot['viewed'] == true) echo 'text-success' ?>">
-								<div class="pg-sg-spot-icon"><span class="iconify" data-icon="bxs:landscape"></span></div>
+								<div class="pg-sg-spot-icon"><img src="data:image/jpeg;base64,<?= $spot['icon'] ?>"></div>
 								<div class="pg-sg-spot-distance">km <?= round($spot['distance'] / 1000, 1) ?></div>
-								<div class="pg-sg-spot-name"><?= $spot['name'] ?></div>
+								<div class="pg-sg-spot-name"> <?php
+									if ($spot['type'] == 'mkpoint') { echo '<a href="/scenery/' . $spot['id'] . '">'; }
+										echo $spot['name'];
+									if ($spot['type'] == 'mkpoint') { echo '</a>'; } ?>
+								</div>
+
 							</div> <?php
 						} ?>
 					</div>
@@ -179,5 +184,6 @@ include '../actions/segments/segmentAction.php'; ?>
 </body>
 </html>
 
+<script src="/scripts/user/favorites.js"></script>
 <script src="/scripts/map/vendor.js"></script>
 <script type="module" src="/scripts/segments/segment.js"></script>

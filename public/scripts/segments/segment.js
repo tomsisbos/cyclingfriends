@@ -51,6 +51,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
     // Controls
     segmentMap.addStyleControl()
     segmentMap.addRouteControl()
+    segmentMap.addFullscreenControl()
     document.querySelector('.mapboxgl-ctrl-logo').style.display = 'none'
     map.addControl(
         new mapboxgl.GeolocateControl( {
@@ -81,7 +82,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
     segmentMap.displayStartGoalMarkers(geojson)
 
     // Request and display mkpoints close to the route
-    segmentMap.loadCloseMkpoints(2).then( async (mkpoints) => {
+    segmentMap.loadCloseMkpoints(5).then( async (mkpoints) => {
 
         // Load mkpoints into map instance
         segmentMap.mkpoints = mkpoints
