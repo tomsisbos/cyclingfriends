@@ -108,13 +108,13 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
             if (map.getZoom() > 13) {
                 neighboursMap.map._markers.forEach(mkr => {
                     mkr.getElement().style.display = "none"
-                    mkr.getPopup().getElement().style.display = "none"
+                    if (mkr.getPopup() && mkr.getPopup().getElement()) mkr.getPopup().getElement().style.display = "none"
                 } )
                 neighboursMap.displayZoomMessage()
             } else {
                 neighboursMap.map._markers.forEach(mkr => {
                     mkr.getElement().style.display = "block"
-                    mkr.getPopup().getElement().style.display = "block"
+                    if (mkr.getPopup() && mkr.getPopup().getElement()) mkr.getPopup().getElement().style.display = "block"
                 } )
                 neighboursMap.hideZoomMessage()
             }

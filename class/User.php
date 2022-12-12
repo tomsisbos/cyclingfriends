@@ -604,6 +604,18 @@ class User extends Model {
         $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
     }
 
+    public function getFavorites ($type) {
+        $getFavorites = $this->getPdo()->prepare('SELECT object_id FROM favorites WHERE user_id = ? AND object_type = ?');
+        $getFavorites->execute(array($this->id, $type));
+        $favorites_data = $getFavorites->fetchAll(PDO::FETCH_ASSOC);
+        $favorites = [];
+        foreach ($favorites_data as $favorite_data) {
+            if ($type == 'scenery') array_push($favorites, new Mkpoint($favorite_data['object_id']));
+            if ($type == 'segment') array_push($favorites, new Segment($favorite_data['object_id']));
+        }
+        return $favorites;
+    }
+
     // Get currently saved cleared mkpoints list
     public function getClearedMkpoints ($limit = 99999) {
         $getClearedMkpoints = $this->getPdo()->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");

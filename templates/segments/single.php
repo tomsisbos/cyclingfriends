@@ -34,9 +34,12 @@ include '../actions/segments/segmentAction.php'; ?>
 						</a>
 					</div>
 				</div>
-			</div>
-			
-			<div class="container pg-sg-topline">
+			</div> <?php
+
+			$featured_image = $segment->getFeaturedImage(true);
+			if ($featured_image) $main_color = getMainColor($segment->getFeaturedImage(true));
+			else $main_color = '#d9d9d9' ?>
+			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>">
 				<div class="pg-sg-location">
 					<?= $segment->route->startplace ?>
 				</div>

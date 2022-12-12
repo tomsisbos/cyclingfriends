@@ -60,8 +60,8 @@ class Mkpoint extends Model {
     }
 
     // Get mkpoint images
-    public function getImages () {
-        $getImages = $this->getPdo()->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ?');
+    public function getImages ($number = 99) {
+        $getImages = $this->getPdo()->prepare("SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY likes LIMIT {$number}");
         $getImages->execute(array($this->id));
         $images_data = $getImages->fetchAll(PDO::FETCH_ASSOC);
         $images = [];
@@ -77,11 +77,11 @@ class Mkpoint extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . 'has been removed from your favorites list.'];
+            return ['success' => $this->name . ' has been removed from your favorites list.'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . 'has been added to your favorites list !'];
+            return ['success' => $this->name . ' has been added to your favorites list !'];
         }
     }
 

@@ -9,4 +9,5 @@ return array(
     'phpGPX\\' => array($vendorDir . '/sibyx/phpgpx/src/phpGPX'),
     'adriangibbons\\' => array($vendorDir . '/adriangibbons/php-fit-file-analysis/src'),
     'Location\\' => array($vendorDir . '/mjaschen/phpgeo/src'),
+    'League\\ColorExtractor\\' => array($vendorDir . '/league/color-extractor/src'),
 );

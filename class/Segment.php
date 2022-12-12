@@ -45,7 +45,7 @@ class Segment extends Model {
         } else return false;
     }
 
-    public function getFeaturedImage () {
+    public function getFeaturedImage ($blob = false) {
 
         // Get all photos in an array
         $photos = $this->route->getPhotos();
@@ -57,12 +57,14 @@ class Segment extends Model {
                 return strcmp($b->likes, $a->likes);
             } ) );
 
-            return 'data:image/jpeg;base64,' .$photos[0]->blob;
+            if ($blob) return $photos[0]->blob;
+            else return 'data:image/jpeg;base64,' .$photos[0]->blob;
         
         // If no photo has been found, return default image
         } else {
 
-            return '/media/default-photo-' . rand(1,9) .'.svg';
+            if ($blob) return false;
+            else return '/media/default-photo-' . rand(1,9) .'.svg';
 
         }
 
@@ -72,11 +74,11 @@ class Segment extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . 'has been removed from your favorites list.'];
+            return ['success' => $this->name . ' has been removed from your favorites list.'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . 'has been added to your favorites list !'];
+            return ['success' => $this->name . ' has been added to your favorites list !'];
         }
     }
 

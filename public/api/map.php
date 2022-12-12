@@ -83,7 +83,7 @@ if (isAjax()) {
                 $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
 
                 // Delete temporary files
-                // unlink($temp); unlink($path); unlink($thumbpath);
+                unlink($temp); unlink($path); unlink($thumbpath);
             }
         
         // If any exception have been catched, response the error message set in the exception

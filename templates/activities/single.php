@@ -42,7 +42,7 @@ include '../actions/activities/activityAction.php'; ?>
 						<p><?= $activity->datetime->format('Y/m/d') ?></p>
 					</div>
 					<div class="td-row text-shadow">
-						<p>by <strong><?= $activity->user->login ?></strong></p>
+						<p>by <a href="/rider/<?= $activity->user->id ?>"><strong><?= $activity->user->login ?></strong></a></p>
 					</div>
 					<div class="td-row flex-column align-self-center"> <?php
 						if ($activity->privacy == 'private') { ?>

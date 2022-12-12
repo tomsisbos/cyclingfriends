@@ -20,7 +20,7 @@
                 <div class="cleared-mkpoint">
                     <div class="cleared-mkpoint-thumbnail"><img src="data:image/jpeg;base64,<?= $cleared_mkpoint->thumbnail ?>"></div>
                     <div class="cleared-mkpoint-activity-date"><?= $cleared_mkpoint->activity->datetime->format('Y/m/d'); ?></div>
-                    <div class="cleared-mkpoint-name"><?= $cleared_mkpoint->name ?></div>
+                    <div class="cleared-mkpoint-name"><a href="/scenery/<?= $cleared_mkpoint->id ?>"><?= $cleared_mkpoint->name ?></a></div>
                     <div class="cleared-mkpoint-place"><?= $cleared_mkpoint->prefecture . ', ' . $cleared_mkpoint->city ?></div>
                     <div class="cleared-mkpoint-activity-title">(<a target="_blank" href="/activity/<?= $cleared_mkpoint->activity->id ?>"><?= $cleared_mkpoint->activity->title ?></a>)</div>
                 </div> <?php

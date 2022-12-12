@@ -1,0 +1,11 @@
+.favorites {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    gap: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+    .favorites {
+        grid-template-columns: auto;
+    }
+}

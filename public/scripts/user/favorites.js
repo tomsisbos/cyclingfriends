@@ -6,5 +6,7 @@ $button.addEventListener('click', () => {
     if (location.pathname.includes('scenery')) var type = 'scenery'
     ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + id, (response) => {
         showResponseMessage(response)
+        if ($button.innerText == 'Add to favorites') $button.innerText = 'Remove from favorites'
+        else $button.innerText = 'Add to favorites'
     } )
 } )

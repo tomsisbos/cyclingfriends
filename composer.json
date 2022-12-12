@@ -3,6 +3,7 @@
         "adriangibbons/php-fit-file-analysis": "^3.2.0",
         "mjaschen/phpgeo": "4.0",
         "altorouter/altorouter": "1.1.0",
-        "sibyx/phpgpx": "1.2.1"
+        "sibyx/phpgpx": "1.2.1",
+        "league/color-extractor": "^0.4.0"
     }
 }

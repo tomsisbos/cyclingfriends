@@ -21,7 +21,8 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 		
 		<div class="container-fluid"> <?php
 
-			$mkpoint_photos = $mkpoint->getImages(); ?>
+			$mkpoint_photos = $mkpoint->getImages(8);
+			$main_color = getMainColor($mkpoint->thumbnail); ?>
 			<div class="container pg-sg-header" style="background-image: url('data:<?= $mkpoint_photos[0]->type ?>;base64,<?= $mkpoint_photos[0]->blob ?>');">
 				<div class="header">
 					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
@@ -29,19 +30,22 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 					</div>
 					<div class="tag-light tag-blue"></div>
 					<div class="header-buttons">
-						<button id="favoriteButton" class="btn button box-shadow" type="button">Add to favorites</button>
+						<button id="favoriteButton" class="btn button box-shadow" type="button"> <?php
+							if ($mkpoint->isFavorite()) echo 'Remove from favorites';
+							else echo 'Add to favorites' ?>
+						</button>
 					</div>
 				</div>
 			</div>
 			
-			<div class="container pg-sg-topline"> <?php
+			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>"> <?php
 				$mkpoint->user->displayPropic() ?>
 				<div class="d-flex flex-column">
 					<div class="pg-sg-location">
 						<?= $mkpoint->city . ' (' . $mkpoint->prefecture . ') - ' . $mkpoint->elevation . 'm' ?>
 					</div>
 					<div>by <a href="/rider/<?= $mkpoint->user->id ?>"><?= $mkpoint->user->login ?></a></div>
-					<div><div class="popup-rating"></div></div>
+					<div><div class="popup-rating" style="color: darkgrey"></div></div>
 				</div>
 			</div>
 
@@ -64,7 +68,7 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 				} ?>
 			</div>
 			<div class="container p-0 pg-sg-map-box">
-				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&z=10&output=embed"></iframe>
+				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=10&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">Reviews</div>
 					<div class="chat-reviews pt-2"></div>

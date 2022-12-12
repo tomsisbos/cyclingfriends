@@ -51,6 +51,7 @@ $router->map('GET', '/ride/[i:ride_id]/route', 'routes/single', 'ride-route');
 // Community
 $router->map('GET', '/community', 'community/community', 'community');
 $router->map('GET', '/friends', 'community/friends', 'friends');
+$router->map('POST', '/friends', 'community/friends');
 $router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
 
 // Riders
@@ -66,6 +67,7 @@ $router->map('POST', '/signout', 'user/signout');
 $router->map('GET', '/signup', 'user/signup', 'user-signup');
 $router->map('POST', '/signup', 'user/signup');
 $router->map('GET', '/settings', 'user/settings', 'user-settings');
+$router->map('GET', '/[*:user_login]/favorites', 'user/favorites', 'user-favorites');
 
 // Treatment of results
 $match = $router->match();

@@ -18,6 +18,7 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
         'L' => 
         array (
             'Location\\' => 9,
+            'League\\ColorExtractor\\' => 22,
         ),
     );
 
@@ -33,6 +34,10 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
         'Location\\' => 
         array (
             0 => __DIR__ . '/..' . '/mjaschen/phpgeo/src',
+        ),
+        'League\\ColorExtractor\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/color-extractor/src',
         ),
     );
 
