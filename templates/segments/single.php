@@ -28,7 +28,10 @@ include '../actions/segments/segmentAction.php'; ?>
 					if ($segment->favourite) ?> <span class="popup-favourite">★</span>
 					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 					<div class="header-buttons">
-						<button id="favoriteButton" class="btn button box-shadow" type="button">Add to favorites</button>
+						<button class="btn button box-shadow js-favorite-button" type="button"> <?php
+							if (!$segment->isFavorite()) echo 'Add to favorites';
+							else echo 'Remove from favorites'; ?>
+						</button>
 						<a id="export" download>
 							<button class="btn button box-shadow" type="button">Export as *.gpx</button>
 						</a>
@@ -42,7 +45,15 @@ include '../actions/segments/segmentAction.php'; ?>
 			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>">
 				<div class="pg-sg-location">
 					<?= $segment->route->startplace ?>
-				</div>
+				</div> <?php
+				$cleared_activity_id = $segment->isCleared();
+				if ($cleared_activity_id) { ?>
+					<div id="visited-icon" style="display: inline;" title="You have visited this segment.">
+						<a href="/activity/<?= $cleared_activity_id ?>" target="_blank">
+							<span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
+						</a>
+					</div> <?php
+				} ?>
 				<div class="pg-sg-tags"> <?php 
 					foreach ($segment->tags as $tag => $set) {
 						if ($tag != 'id' AND $set == 1) { ?>

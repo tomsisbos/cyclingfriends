@@ -917,6 +917,14 @@ function getPrivacyAndStatus($ride_id){
 	}
 }*/
 
+function getPrivacyString ($privacy) {
+	switch ($privacy) {
+		case 'public': return 'Public';
+		case 'friends_only': return 'Friends only';
+		case 'private': return 'Private';
+	}
+}
+
 // Check if ride name is already set in the database
 function checkIfRideIsAlreadySet($ride_name) {
 	require '../actions/databaseAction.php';

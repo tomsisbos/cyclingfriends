@@ -172,8 +172,26 @@ class Route extends Model {
         return $time;
     }
 
+    // Check if $point is located inside $range from a straight line from start to half and half to goal
+    public function isPointInRoughArea($point, $range) { // $point = Coordinate
+        $routeCoords = $this->coordinates;
+        $first_core_line = new Line(
+            new Coordinate($routeCoords[0]->lat, $routeCoords[0]->lng),
+            new Coordinate($routeCoords[floor(count($routeCoords) / 2)]->lat, $routeCoords[floor(count($routeCoords) / 2)]->lng)
+        );
+        $second_core_line = new Line(
+            new Coordinate($routeCoords[floor(count($routeCoords) / 2)]->lat, $routeCoords[floor(count($routeCoords) / 2)]->lng),
+            new Coordinate($routeCoords[count($routeCoords) - 1]->lat, $routeCoords[count($routeCoords) - 1]->lng)
+        );
+        $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
+        $first_rough_remoteness = $pointToLineDistanceCalculator->getDistance($point, $first_core_line);
+        $second_rough_remoteness = $pointToLineDistanceCalculator->getDistance($point, $second_core_line);
+        if ($first_rough_remoteness < $range || $second_rough_remoteness < $range) return true;
+        else return false;
+    }
+
     // Get Mkpoints that are less than [basis] km from the route
-    public function getCloseMkpoints ($tolerance = 3000, $classFormat = true) { // m
+    public function getCloseMkpoints ($tolerance = 3000, $classFormat = true, $append_distance = false) { // m
 
         // Get all Mkpoints registered in the database
         $getMkpoints = $this->getPdo()->prepare('SELECT id, name, lng, lat FROM map_mkpoint');
@@ -189,31 +207,20 @@ class Route extends Model {
         for ($i = 0; $i < count($mkpoints); $i++) {
 
             $point = new Coordinate($mkpoints[$i]['lat'], $mkpoints[$i]['lng']);
-            
-            $remoteness_min = 500000000;
             $closest_point = [];
+            $range = $tolerance * 10;
 
-            // Only filter mkpoints not too far from a straight line from start to half and half to goal
-            $first_core_line = new Line(
-                new Coordinate($routeCoords[0]->lat, $routeCoords[0]->lng),
-                new Coordinate($routeCoords[floor(count($routeCoords) / 2)]->lat, $routeCoords[floor(count($routeCoords) / 2)]->lng)
-            );
-            $second_core_line = new Line(
-                new Coordinate($routeCoords[floor(count($routeCoords) / 2)]->lat, $routeCoords[floor(count($routeCoords) / 2)]->lng),
-                new Coordinate($routeCoords[count($routeCoords) - 1]->lat, $routeCoords[count($routeCoords) - 1]->lng)
-            );
-            $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
-            $first_rough_remoteness = $pointToLineDistanceCalculator->getDistance($point, $first_core_line);
-            $second_rough_remoteness = $pointToLineDistanceCalculator->getDistance($point, $second_core_line);
-            $range = $tolerance * 10; // Max remoteness from core line in meters for filter purposes
             // Step of route coordinates to evaluate (defined accordingly to number of route coords for optimization purposes)
             if (count($routeCoords) > 500) $step = 5;
             else if (count($routeCoords) > 100 && count($routeCoords) < 500) $step = 2;
             else $step = 1;
 
             // For mkpoints inside this range, test remoteness for each route segment on a step
-            if ($first_rough_remoteness < $range || $second_rough_remoteness < $range) {
+            if ($this->isPointInRoughArea($point, $range)) {
                 array_push($mkpoints_in_range, $mkpoints[$i]);
+
+                $remoteness_min = 500000000;
+                $routeCoords = $this->coordinates;
                 $simplifiedRouteCoords = [];
                 for ($j = 0; $j < count($routeCoords) - $step - 1; $j += $step) {
                     array_push($simplifiedRouteCoords, $routeCoords[$j]);
@@ -229,14 +236,6 @@ class Route extends Model {
                     }
                 }
                 $mkpoints_in_range[$number]['remoteness'] = $remoteness_min;
-                // Calculate distance from start
-                $sublineCoords = array_slice($simplifiedRouteCoords, 0, array_search($closest_point, $simplifiedRouteCoords));
-                $subline = new Polyline();
-                forEach ($sublineCoords as $lngLat) {
-                    $coordinates = new Coordinate($lngLat->lat, $lngLat->lng);
-                    $subline->addPoint($coordinates);
-                }
-                $mkpoints_in_range[$number]['distance'] = $subline->getLength(new Vincenty());
                 $number++;
             }
         }
@@ -247,9 +246,20 @@ class Route extends Model {
             $distance_column = array_column($mkpoints_in_range, 'distance');
             array_multisort($distance_column, SORT_ASC, $mkpoints_in_range);
         }
-        forEach ($mkpoints_in_range as $mkpoint_data) {
+        foreach ($mkpoints_in_range as $mkpoint_data) {
+            // If mkpoint is located inside tolerance zone
             if (isset($mkpoint_data['remoteness'])) {
                 if ($mkpoint_data['remoteness'] < $tolerance) {
+                    // Calculate distance from start
+                    if ($append_distance) {
+                        $sublineCoords = array_slice($simplifiedRouteCoords, 0, array_search($closest_point, $simplifiedRouteCoords));
+                        $subline = new Polyline();
+                        forEach ($sublineCoords as $lngLat) {
+                            $coordinates = new Coordinate($lngLat->lat, $lngLat->lng);
+                            $subline->addPoint($coordinates);
+                        }
+                        $mkpoint_data['distance'] = $subline->getLength(new Vincenty());
+                    }
                     // If classFormat is set to true, build mkpoint object and append relevant data to it
                     if ($classFormat) {
                         $mkpoint = new Mkpoint($mkpoint_data['id']);
@@ -258,11 +268,12 @@ class Route extends Model {
                             $mkpoint->on_route = false;
                             $mkpoint->remoteness = $mkpoint_data['remoteness']; // Append remoteness from the route
                         }
-                        $mkpoint->distance = $mkpoint_data['distance']; // Append distance from the start of the route
+                        if ($append_distance) $mkpoint->distance = $mkpoint_data['distance']; // Append distance from the start of the route
                     // Else, only return id and relevant data 
                     } else {
-                        if ($mkpoint_data['remoteness'] < 200) $mkpoint = ['id' => $mkpoint_data['id'], 'on_route' => true, 'distance' => $mkpoint_data['distance']];
-                        else $mkpoint = ['id' => $mkpoint_data['id'], 'on_route' => false, 'remoteness' => $mkpoint_data['remoteness'], 'distance' => $mkpoint_data['distance']];
+                        if ($mkpoint_data['remoteness'] < 200) $mkpoint = ['id' => $mkpoint_data['id'], 'on_route' => true];
+                        else $mkpoint = ['id' => $mkpoint_data['id'], 'on_route' => false, 'remoteness' => $mkpoint_data['remoteness']];
+                        if ($append_distance) $mkpoint['distance'] = $mkpoint_data['distance'];
                     }
                     // Add it to close_mkpoints array
                     array_push($close_mkpoints, $mkpoint);
@@ -342,7 +353,7 @@ class Route extends Model {
         $connected_user = new User($_SESSION['id']);
         $cleared_mkpoints = $connected_user->getClearedMkpoints();
 
-        foreach ($this->getCloseMkpoints($tolerance) as $mkpoint) {
+        foreach ($this->getCloseMkpoints($tolerance, true, true) as $mkpoint) {
             $spot = ['type' => 'mkpoint', 'icon' => $mkpoint->thumbnail, 'id' => $mkpoint->id, 'on_route' => $mkpoint->on_route, 'distance' => $mkpoint->distance, 'name' => $mkpoint->name, 'city' => $mkpoint->city, 'prefecture' => $mkpoint->prefecture, 'elevation' => $mkpoint->elevation, 'viewed' => false];
             if (isset($mkpoint->remoteness)) $spot['remoteness'] = $mkpoint->remoteness;
             if (in_array_r($mkpoint->id, $cleared_mkpoints)) $spot['viewed'] = true;

@@ -12,6 +12,7 @@
 }
 .pg-sg-location {
     font-weight: bold;
+    display: inline;
 }
 .pg-sg-section-infos {
     display: flex;
@@ -115,14 +116,6 @@
     border-left: 1px solid #ff5555;
     height: 14px;
 }
-/*.pg-sg-season-description {
-    width: calc(100% / 12 * 3);
-    top: 0px;
-    position: absolute;
-    height: inherit;
-    padding-top: 0px;
-    border-radius: 0px 10px 10px 10px;
-}*/
 .pg-sg-season-description {
     width: calc(100% / 12 * 3);
     max-width: fit-content;
@@ -275,4 +268,32 @@
     .pg-sg-specs-container {
         display: block;
     }
+}
+
+
+.sg-card {
+    display: flex;
+    flex-direction: column;
+}
+.sg-imgs-container {
+    display: flex;
+}
+.sg-photo, .sg-map-thumbnail {
+    width: 50%;
+}
+.sg-imgs-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.sg-data {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #fff;
+}
+.sg-title {
+    font-weight: bold;
+    display: inline;
 }

@@ -8,6 +8,7 @@ const limit = parseInt($cardsContainer.dataset.limit)
 var offset = 0
 if (document.querySelector('#infiniteScrollElement')) var infiniteScrollElement = document.querySelector('#infiniteScrollElement')
 else var infiniteScrollElement = document
+console.log(infiniteScrollElement)
 
 infiniteScrollElement.addEventListener('scroll', function (e) {
 
@@ -140,6 +141,16 @@ function buildCard (entry) {
 
         var mkpoint = entry
 
+        // Build cleared icon
+        if (entry.cleared) {
+            var clearedIcon = `
+            <div id="visited-icon" style="display: inline;" title="You have visited this mkpoint.">
+                <a href="/activity/` + entry.cleared + `" target="_blank">
+                    <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
+                </a>
+            </div>`
+        } else var clearedIcon = ''
+
         // Build main container
         var $card = document.createElement('div')
         $card.className = 'mk-card'
@@ -151,7 +162,9 @@ function buildCard (entry) {
                     mkpoint.propic + `
                 </a>
                 <div class="mk-top-text">
-                    <div class="mk-title">` + mkpoint.name + `</div>
+                    <a href="/scenery/` + mkpoint.id + `">
+                        <div class="mk-title">` + mkpoint.name + `</div>
+                    </a>` + clearedIcon + `
                     <div class="mk-place-elevation">` + mkpoint.city + `(` + mkpoint.prefecture + `) - ` + mkpoint.elevation + `m</div>
                 </div>
             </div>

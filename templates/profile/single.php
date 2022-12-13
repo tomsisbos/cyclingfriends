@@ -143,8 +143,18 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 			</div> <?php
 		} ?>
 
-		<div class="container margin-bottom p-0"> <?php
-			include '../includes/riders/profile/activities.php' ?>
+		<div class="container margin-bottom p-0">
+			<div class="profile-title-block">
+				<h2>Latest activities</h2><div class="cleared-counter"><?= '(' . $user->getActivitiesNumber() . ')' ?></div>
+			</div>
+
+			<div class="acsm-list dashboard-block"> <?php
+				$activities = $user->getActivities(0, 6);
+				foreach ($activities as $activity) {
+					$activity = new Activity($activity['id']);
+					include '../includes/activities/small-card.php';
+				} ?>
+			</div>
 		</div>
 		
 		<div class="container bg-transparent margin-bottom p-0 pf-columns-container">

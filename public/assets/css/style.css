@@ -904,6 +904,12 @@ li.nav-item {
     margin: 0px 2px;
 }
 
+.tag-on-div {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
 .text-right {
 	text-align: right;
 }
@@ -919,6 +925,10 @@ li.nav-item {
 
 a .social {
 	color: black;
+}
+
+a.in-success:active, a.in-success:target, a.in-success:visited {
+    color: pink;
 }
 
 a .twitter:hover {

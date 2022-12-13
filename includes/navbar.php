@@ -62,7 +62,7 @@
 				</a>
 				<div class="dropdown-menu dropdown-menu-end" id="profileDropdownMenuLink">
 					<a class="dropdown-item" href="/rider/<?= $_SESSION['id'] ?>">My profile</a>
-					<a class="dropdown-item" href="/<?= $_SESSION['login'] ?>/favorites">My favorites</a>
+					<a class="dropdown-item" href="/favorites">My favorites</a>
 					<a class="dropdown-item" href="/settings">Settings</a> <?php
 					// If the user is connected, displays the sign out button 
 					if (isset($_SESSION['auth'])) { ?>

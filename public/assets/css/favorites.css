@@ -9,3 +9,11 @@
         grid-template-columns: auto;
     }
 }
+
+.fav-card-appendice {
+    width: 100%;
+    text-align: right;
+    background-color: #eee;
+    padding: 10px;
+    clear: both;
+}

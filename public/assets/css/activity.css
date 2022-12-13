@@ -89,6 +89,7 @@
     height: 200px;
     min-width: 260px;
     width: 500px;
+    position: relative;
 }
 .ac-map-thumbnail {
     height: 100%;
@@ -216,6 +217,7 @@
     margin-left: auto;
     min-width: 260px;
     width: 500px;
+    position: relative;
 }
 .my-ac-photos-container {
     display: flex;
@@ -576,4 +578,69 @@
     height: 20px;
     box-shadow: 0px 0px 3px #000;
     border-radius: 99px;
+}
+
+.acsm-container {
+    border-bottom: 1px dashed #f0f0f0;
+    padding: 10px;
+    display: flex;
+    color: unset !important;
+    gap: 10px;
+}
+.acsm-container:hover {
+    background-color: #fff;
+}
+.acsm-list {
+    height: 200px;
+    overflow: auto;
+}
+.acsm-photo {
+    height: 80px;
+    width: 150px;
+    min-width: 150px;
+}
+.acsm-photo img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.acsm-infos {
+    overflow: hidden;
+    width: 100%;
+}
+.acsm-line {
+    display: flex;
+    column-gap: 6px;
+}
+.acsm-line > div {
+    width: 50%;
+    flex-wrap: wrap;
+}
+@media only screen and (max-width: 576px) {
+    .acsm-line {
+        flex-direction: column;
+    }
+    .acsm-line > div {
+        width: 100%;
+        flex-wrap: unset;
+    }
+}
+.acsm-title {
+    font-weight: bold;
+    display: inline;
+}
+.acsm-datetime {
+    display: inline;
+    color: #bbbbbb;
+}
+.acsm-duration {
+    display: inline;
+}
+.acsm-distance {
+    display: inline;
+}
+.acsm-story {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

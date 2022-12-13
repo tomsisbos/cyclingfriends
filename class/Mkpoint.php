@@ -1,5 +1,10 @@
 <?php
 
+use Location\Coordinate;
+use Location\Line;
+use Location\Distance\Vincenty;
+use Location\Utility\PointToLineDistance;
+
 class Mkpoint extends Model {
     
     protected $table = 'map_mkpoint';
@@ -77,11 +82,11 @@ class Mkpoint extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been removed from your favorites list.'];
+            return ['success' => $this->name . ' has been removed from <a class="in-success" href="/favorites">your favorites list</a>.'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been added to your favorites list !'];
+            return ['success' => $this->name . ' has been added to <a class="in-success" href="/favorites">your favorites list</a> !'];
         }
     }
 
@@ -89,6 +94,49 @@ class Mkpoint extends Model {
         $isFavorite = $this->getPdo()->prepare('SELECT id FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
         $isFavorite->execute(array($_SESSION['id'], $this->type, $this->id));
         if ($isFavorite->rowCount() > 0) return true;
+        else return false;
+    }
+
+    public function findLastRelatedActivities ($limit) {
+        $i = 0;
+        $offset = 0;
+        $lastRelatedActivites = [];
+        while ($i < $limit) {
+            $getCloseActivitiy = $this->getPdo()->prepare("SELECT activities.id FROM activities INNER JOIN routes ON activities.route_id = routes.id WHERE routes.category = 'activity' AND (routes.goalplace LIKE '%" .$this->prefecture. "%' OR routes.startplace LIKE '%" .$this->prefecture. "%') LIMIT 1 OFFSET " .$offset);
+            $getCloseActivitiy->execute();
+            if ($getCloseActivitiy->rowCount() > 0) {
+                $activity_data = $getCloseActivitiy->fetch(PDO::FETCH_ASSOC);
+                $activity = new Activity($activity_data['id']);
+                $range = 10000;
+                if ($activity->route->isPointInRoughArea(new Coordinate($this->lngLat->lat, $this->lngLat->lng), $range)) {
+                    if ($this->getRemoteness($activity->route) < 500) array_push($lastRelatedActivites, $activity);
+                }
+                $offset++;
+            } else return $lastRelatedActivites;
+        }
+    }
+
+    public function getRemoteness ($route, $step = 5) {
+        $remoteness_min = 500000000;
+        $routeCoords = $route->coordinates;
+        $simplifiedRouteCoords = [];
+        for ($j = 0; $j < count($routeCoords) - $step - 1; $j += $step) {
+            array_push($simplifiedRouteCoords, $routeCoords[$j]);
+            $line = new Line(
+                new Coordinate($routeCoords[$j]->lat, $routeCoords[$j]->lng),
+                new Coordinate($routeCoords[$j + $step]->lat, $routeCoords[$j + $step]->lng)
+            );
+            $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
+            $segment_remoteness = $pointToLineDistanceCalculator->getDistance(new Coordinate($this->lngLat->lat, $this->lngLat->lng), $line);
+            if ($segment_remoteness < $remoteness_min) $remoteness_min = $segment_remoteness;
+        }
+        return $remoteness_min;
+    }
+
+    public function isCleared () {
+        $isCleared = $this->getPdo()->prepare('SELECT DISTINCT activity_id FROM user_mkpoints WHERE user_id = ? AND mkpoint_id = ?');
+        $isCleared->execute(array($_SESSION['id'], $this->id));
+        if ($isCleared->rowCount() > 0) return $isCleared->fetch(PDO::FETCH_NUM)[0];
         else return false;
     }
 

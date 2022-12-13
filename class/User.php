@@ -696,6 +696,7 @@ class User extends Model {
         foreach ($mkpoint_data as $data) {
             $mkpoint = new Mkpoint($data['id']);
             $mkpoint->type = 'mkpoint';
+            $mkpoint->cleared = $mkpoint->isCleared();
             array_push($thread_data, $mkpoint);
         }
         // Sort thread data by date

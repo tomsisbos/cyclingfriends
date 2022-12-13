@@ -1,9 +1,7 @@
 <?php
 
-require '../actions/databaseAction.php';
-
 // Get cleared mkpoints location
-$getClearedMkpointsData = $db->prepare("SELECT city, prefecture FROM map_mkpoint INNER JOIN user_mkpoints ON map_mkpoint.id = user_mkpoints.mkpoint_id WHERE user_mkpoints.user_id = ?");
+$getClearedMkpointsData = $db->prepare("SELECT DISTINCT map_mkpoint.id, map_mkpoint.city, map_mkpoint.prefecture FROM map_mkpoint INNER JOIN user_mkpoints ON map_mkpoint.id = user_mkpoints.mkpoint_id WHERE user_mkpoints.user_id = ?");
 $getClearedMkpointsData->execute(array($connected_user->id));
 $mkpoints_data = $getClearedMkpointsData->fetchAll(PDO::FETCH_ASSOC);
 

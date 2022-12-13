@@ -74,11 +74,11 @@ class Segment extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been removed from your favorites list.'];
+            return ['success' => $this->name . ' has been removed from <a class="in-success" href="/favorites">your favorites list</a>.'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been added to your favorites list !'];
+            return ['success' => $this->name . ' has been added to <a class="in-success" href="/favorites">your favorites list</a> !'];
         }
     }
 
@@ -86,6 +86,13 @@ class Segment extends Model {
         $isFavorite = $this->getPdo()->prepare('SELECT id FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
         $isFavorite->execute(array($_SESSION['id'], $this->type, $this->id));
         if ($isFavorite->rowCount() > 0) return true;
+        else return false;
+    }
+
+    public function isCleared () {
+        $isCleared = $this->getPdo()->prepare('SELECT DISTINCT activity_id FROM user_segments WHERE user_id = ? AND segment_id = ?');
+        $isCleared->execute(array($_SESSION['id'], $this->id));
+        if ($isCleared->rowCount() > 0) return $isCleared->fetch(PDO::FETCH_NUM)[0];
         else return false;
     }
 

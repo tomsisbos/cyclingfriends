@@ -23,9 +23,14 @@ include '../actions/users/securityAction.php';
         <h2 class="top-title">Segments</h2>
 
         <div class="container favorites"> <?php
-            $mkpoints = $connected_user->getFavorites('segment');
-            foreach ($mkpoints as $mkpoint) {
-                ///include '../includes/segments/card.php';
+            $segments = $connected_user->getFavorites('segment');
+            foreach ($segments as $segment) { ?>
+                <div class="fav-card"> <?php
+                    include '../includes/segments/card.php'; ?>
+                    <div class="fav-card-appendice">
+                        <div class="mp-button btn bg-darkred text-white js-favorite-button">Remove from favorites</div>
+                    </div>
+                </div> <?php
             } ?>
         </div>
 
@@ -33,8 +38,13 @@ include '../actions/users/securityAction.php';
 
         <div class="container favorites"> <?php
             $mkpoints = $connected_user->getFavorites('scenery');
-            foreach ($mkpoints as $mkpoint) {
-                include '../includes/mkpoints/card.php';
+            foreach ($mkpoints as $mkpoint) { ?>
+                <div class="fav-card"> <?php
+                    include '../includes/mkpoints/card.php'; ?>
+                    <div class="fav-card-appendice">
+                        <div class="mp-button btn bg-darkred text-white js-favorite-button">Remove from favorites</div>
+                    </div>
+                </div> <?php
             } ?>
         </div>
 
@@ -42,3 +52,5 @@ include '../actions/users/securityAction.php';
 
 </body>
 </html>
+
+<script src="/scripts/user/favorites.js"></script>

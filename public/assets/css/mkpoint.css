@@ -1,9 +1,26 @@
+
+@media only screen and (min-width: 1200px) {
+    .mk-card {
+        display: flex;
+        flex-direction: row !important;
+        height: 200px !important;
+    }
+    .mk-photo {
+        width: 50% !important;
+        min-width: 50%;
+        height: 200px;
+        padding: 0px 10px 0px 0px;
+    }
+}
+
 .mk-card {
     background-color: #fff;
 }
 .mk-data {
     padding: 10px;
     display: flex;
+    height: unset;
+    overflow: auto;
     flex-direction: column;
     gap: 10px;
 }
@@ -20,12 +37,9 @@
     width: 100%;
     object-fit: cover;
 }
-.mk-top-text {
-    display: flex;
-    flex-direction: column;
-}
 .mk-title {
     font-weight: bold;
+    display: inline;
 }
 
 .mk-thumbnail {
@@ -34,4 +48,29 @@
 }
 .mk-thumbnail:hover {
     opacity: 0.8;
+}
+.mk-data::-webkit-scrollbar, .summary-checkpoint::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+.mk-data::-webkit-scrollbar-track, .summary-checkpoint::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+.mk-data::-webkit-scrollbar-thumb, .summary-checkpoint::-webkit-scrollbar-thumb {
+    background: #5c9999;
+    border-radius: 10px;
+}
+.mk-data::-webkit-scrollbar-thumb:hover, .summary-checkpoint::-webkit-scrollbar-thumb:hover {
+    background: #c1c1c1; 
+}
+
+.mk-activities-container {
+    background-color: #fff;
+    flex-direction: column;
+    gap: 10px;
+    display: flex;
+    padding: 10px 40px;
+}
+.mk-activities-container .acsm-container {
+    border-top: 1px dotted #bbbbbb;
 }
