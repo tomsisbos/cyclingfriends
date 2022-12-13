@@ -604,8 +604,8 @@ class User extends Model {
         $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
     }
 
-    public function getFavorites ($type) {
-        $getFavorites = $this->getPdo()->prepare('SELECT object_id FROM favorites WHERE user_id = ? AND object_type = ?');
+    public function getFavorites ($type, $offset = 0, $limit = 9999) {
+        $getFavorites = $this->getPdo()->prepare("SELECT object_id FROM favorites WHERE user_id = ? AND object_type = ? LIMIT " .$offset. ", " .$limit);
         $getFavorites->execute(array($this->id, $type));
         $favorites_data = $getFavorites->fetchAll(PDO::FETCH_ASSOC);
         $favorites = [];
@@ -614,6 +614,12 @@ class User extends Model {
             if ($type == 'segment') array_push($favorites, new Segment($favorite_data['object_id']));
         }
         return $favorites;
+    }
+
+    public function getFavoritesNumber ($type) {
+        $countFavorites = $this->getPdo()->prepare("SELECT id FROM favorites WHERE user_id = ? AND object_type = ?");
+        $countFavorites->execute(array($this->id, $type));
+        return $countFavorites->rowCount();
     }
 
     // Get currently saved cleared mkpoints list

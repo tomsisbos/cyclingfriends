@@ -236,6 +236,7 @@ class Route extends Model {
                     }
                 }
                 $mkpoints_in_range[$number]['remoteness'] = $remoteness_min;
+                $mkpoints_in_range[$number]['closest_point'] = $closest_point;
                 $number++;
             }
         }
@@ -252,7 +253,7 @@ class Route extends Model {
                 if ($mkpoint_data['remoteness'] < $tolerance) {
                     // Calculate distance from start
                     if ($append_distance) {
-                        $sublineCoords = array_slice($simplifiedRouteCoords, 0, array_search($closest_point, $simplifiedRouteCoords));
+                        $sublineCoords = array_slice($simplifiedRouteCoords, 0, array_search($mkpoint_data['closest_point'], $simplifiedRouteCoords));
                         $subline = new Polyline();
                         forEach ($sublineCoords as $lngLat) {
                             $coordinates = new Coordinate($lngLat->lat, $lngLat->lng);

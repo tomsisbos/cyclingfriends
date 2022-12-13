@@ -23,7 +23,12 @@ include '../actions/users/securityAction.php';
         <h2 class="top-title">Segments</h2>
 
         <div class="container favorites"> <?php
-            $segments = $connected_user->getFavorites('segment');
+        
+            // Define offset and number of articles to query
+            $limit = 20;
+            if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+            else $offset = 0;
+            $segments = $connected_user->getFavorites('segment', $offset, $limit);
             foreach ($segments as $segment) { ?>
                 <div class="fav-card"> <?php
                     include '../includes/segments/card.php'; ?>
@@ -34,18 +39,15 @@ include '../actions/users/securityAction.php';
             } ?>
         </div>
 
-        <h2 class="top-title">Sceneries</h2>
-
-        <div class="container favorites"> <?php
-            $mkpoints = $connected_user->getFavorites('scenery');
-            foreach ($mkpoints as $mkpoint) { ?>
-                <div class="fav-card"> <?php
-                    include '../includes/mkpoints/card.php'; ?>
-                    <div class="fav-card-appendice">
-                        <div class="mp-button btn bg-darkred text-white js-favorite-button">Remove from favorites</div>
-                    </div>
-                </div> <?php
-            } ?>
+        <div class="container"> <?php
+            // Set pagination system
+            if (isset($_GET['p'])) $p = $_GET['p'];
+            else $p = 1;
+            $url = strtok($_SERVER["REQUEST_URI"], '?');
+            $total_pages = $connected_user->getFavoritesNumber('segments') / $limit;
+            
+            // Build pagination menu
+            include '../includes/pagination.php' ?>
         </div>
 
     </div>

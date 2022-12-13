@@ -17,6 +17,7 @@ export default class GlobalMap extends Model {
 
         } )
         ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (mkpoints) => this.clearedMkpoints = mkpoints)
+        ajaxGetRequest (this.apiUrl + "?get-user-favorite-mkpoints=true", (mkpoints) => this.favorites.mkpoints = mkpoints)
     }
 
     map
@@ -26,6 +27,7 @@ export default class GlobalMap extends Model {
     defaultZoom = 10
     userLocation
     mkpoints
+    favorites = {}
     tunnelNumber = 0
     profileData
     month = new Date().getMonth() + 1
@@ -3358,11 +3360,13 @@ export default class GlobalMap extends Model {
         } )
         return activity_id
     }
+    
+    inFavoriteMkpointsList (mkpoint) {
+        var found = false
+        this.favorites.mkpoints.forEach( (favorite) => {
+            if (favorite.id == mkpoint.id) found = true
+        } )
+        if (found) return true
+        else return false
+    }
 }
-
-
-/*
-// Correct left offset depending on whether closest container will be counted or not
-if (this.type = "route") var pointX = e.x + document.querySelector('#profileBox').offsetLeft
-else var pointX = e.x - document.querySelector('#profileBox').offsetLeft
-*/

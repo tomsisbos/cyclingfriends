@@ -13,7 +13,6 @@ class Segment extends Model {
         $this->rank               = $data['rank'];
         $this->name               = $data['name'];
         $this->description        = $data['description'];
-        $this->favourite          = intval($data['favourite']);
         $this->advice             = new SegmentAdvice($this->id);
         $this->seasons            = $this->getSeasons();
         $this->specs              = new SegmentSpecs($this->id);
@@ -74,11 +73,11 @@ class Segment extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been removed from <a class="in-success" href="/favorites">your favorites list</a>.'];
+            return ['success' => $this->name . ' has been removed from <a class="in-success" href="/favorites/segments">your favorites list</a>.'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been added to <a class="in-success" href="/favorites">your favorites list</a> !'];
+            return ['success' => $this->name . ' has been added to <a class="in-success" href="/favorites/segments">your favorites list</a> !'];
         }
     }
 

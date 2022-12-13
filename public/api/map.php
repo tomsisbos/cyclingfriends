@@ -581,5 +581,9 @@ if (isAjax()) {
         }
         echo json_encode($cleared_mkpoints);
     }
+    
+    if (isset($_GET['get-user-favorite-mkpoints'])) {
+        echo json_encode($connected_user->getFavorites('scenery'));
+    }
 
 }

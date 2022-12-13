@@ -74,6 +74,9 @@
 .visited-marker img {
     box-shadow: 0 0 1px 3px #00e06e;
 }
+.favoured-marker img {
+    box-shadow: 0 0 1px 3px pink;
+}
 .oncourse-marker {
     box-shadow: 0 0 1px 3px blue;
 }
@@ -176,6 +179,9 @@ form#mkpointForm input[type="file" i] {
 
 .liked {
 	color: red !important;
+}
+.favoured {
+	color: pink !important;
 }
 
 #visited-icon {

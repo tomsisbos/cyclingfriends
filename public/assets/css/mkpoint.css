@@ -74,3 +74,14 @@
 .mk-activities-container .acsm-container {
     border-top: 1px dotted #bbbbbb;
 }
+
+.fav-card {
+    display: flex;
+    flex-direction: column;
+}
+.fav-card .mk-card {
+    flex-grow: 3;
+}
+.fav-card .mk-data {
+    flex-grow: 3;
+}

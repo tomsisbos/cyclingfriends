@@ -39,6 +39,9 @@ export default class MkpointPopup extends Popup {
                 </form>
                 <div id="like-button" title="Click to like this photo">
                     <span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>
+                </div>
+                <div class="js-favorite-button" title="Add to favorites list">
+                    <span class="iconify" data-icon="mdi:favorite-add" data-width="20" data-height="20"></span>
                 </div>` + 
                 visitedIcon + `
             </div>
@@ -458,6 +461,27 @@ export default class MkpointPopup extends Popup {
                 
             }
         }
+    }
+
+    setFavorite () {
+        var $button = document.querySelector('.js-favorite-button')
+        $button.addEventListener('click', () => {
+            var id = this.data.id
+            var type = 'scenery'
+            ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + id, (response) => {
+                showResponseMessage(response)
+                var marker
+                this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
+                    if (_marker.getElement().id == 'mkpoint' + this.data.id) marker = _marker
+                } )
+                marker.getElement().classList.toggle('favoured-marker')
+                if (response.success.includes('removed')) {
+                    $button.classList.remove('favoured')
+                } else if (response.success.includes('added')) {
+                    $button.classList.add('favoured')
+                }
+            } )
+        } )
     }
 
     prepareModal () {

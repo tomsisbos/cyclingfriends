@@ -227,12 +227,14 @@ export default class MapMap extends GlobalMap {
         // Add marker to the map and to markers collection
         let mkpointPopup = new MkpointPopup()
         if (this.inViewedMkpointsList(mkpoint)) mkpointPopup.activity_id = this.inViewedMkpointsList(mkpoint)
+        mkpointPopup.favoured = this.inFavoriteMkpointsList(mkpoint)
         var content = mkpointPopup.setPopupContent(mkpoint)
         let element = document.createElement('div')
         let icon = document.createElement('img')
         icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
         icon.classList.add('mkpoint-icon')
         if (mkpointPopup.activity_id) element.classList.add('visited-marker') // Highlight if visited
+        if (mkpointPopup.favoured) element.classList.add('favoured-marker') // Highlight if favoured
         element.appendChild(icon)
         this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
@@ -261,6 +263,7 @@ export default class MapMap extends GlobalMap {
         popup.setHTML(content)
         mkpointPopup.data = mkpoint
         if (this.inViewedMkpointsList(mkpoint)) mkpointPopup.visited = true
+        if (this.inFavoriteMkpointsList(mkpoint)) mkpointPopup.favoured = true
         marker.setPopup(popup)
         marker.setLngLat([mkpoint.lng, mkpoint.lat])
         marker.addTo(this.map)
@@ -276,6 +279,7 @@ export default class MapMap extends GlobalMap {
             mkpointPopup.rating()
             if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin()
             if (content.includes('target-button')) mkpointPopup.setTarget()
+            if (content.includes('js-favorite-button')) mkpointPopup.setFavorite()
             if (content.includes('addphoto-button')) mkpointPopup.addPhoto()
             if (content.includes('round-propic-img')) mkpointPopup.addPropic()
         } )

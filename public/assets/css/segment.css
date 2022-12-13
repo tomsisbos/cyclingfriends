@@ -297,3 +297,14 @@
     font-weight: bold;
     display: inline;
 }
+
+.fav-card {
+    display: flex;
+    flex-direction: column;
+}
+.fav-card .sg-card {
+    flex-grow: 3;
+}
+.fav-card .sg-data {
+    flex-grow: 3;
+}
