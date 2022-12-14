@@ -235,31 +235,41 @@ async function openConfirmationPopup (question) {
 }
 
 // Show corresponding message after request
-function showResponseMessage (message, elementToAppend = false) {
-	const $navbar = document.querySelector('nav')
+function showResponseMessage (message, options = {element: false, absolute: false}) {
+
 	hideResponseMessage()
-	// If success, show a success message
+
+	// Build and append elements
+	if (!options.element) var element = document.querySelector('.main')
+	else var element = options.element
+	var $block = document.createElement('div')
+	if (options.absolute) $block.classList.add('absolute')
+	var $message = document.createElement('p')
+	$block.appendChild($message)
+	element.appendChild($block)
+
+	// If success, show and style as success message
 	if (message.success) {
-		var successBlock = document.createElement('div')
-		successBlock.className = 'success-block m-0'
-		var successMessage = document.createElement('p')
-		successMessage.className = 'success-message'
-		successMessage.innerHTML = message.success
-		if (!elementToAppend) $navbar.after(successBlock)
-		else elementToAppend.appendChild(successBlock)
-		successBlock.appendChild(successMessage)
-	// Else, show an error message
+		$block.classList.add('success-block')
+		$message.className = 'success-message'
+		$message.innerHTML = message.success
+	// If error, show and style as error message
 	} else if (message.error) {
-		var errorBlock = document.createElement('div')
-		errorBlock.className = 'error-block m-0'
-		var errorMessage = document.createElement('p')
-		errorMessage.className = 'error-message'
-		errorMessage.innerHTML = message.error
-		if (!elementToAppend) $navbar.after(errorBlock)
-		else elementToAppend.appendChild(errorBlock)
-		errorBlock.appendChild(errorMessage)
+		$block.classList.add('error-block')
+		$message.className = 'error-message'
+		$message.innerHTML = message.error
 	}
-	window.scroll( {top: $navbar.offsetHeight, behavior: 'smooth'} )
+	
+	// Set up close button
+	var closeButton = document.createElement('div')
+	closeButton.className = 'mapboxgl-popup-close-button'
+	closeButton.style.color = 'black'
+	closeButton.innerText = 'x'
+	$message.appendChild(closeButton)
+	closeButton.addEventListener('click', hideResponseMessage)
+	
+	// Scroll to message
+	window.scroll( {top: element.offsetTop, behavior: 'smooth'} )
 }
 
 function hideResponseMessage () {

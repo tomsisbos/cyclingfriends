@@ -1124,25 +1124,33 @@ input[type="range"]::-webkit-slider-thumb {
 
 .error-block {
     background: #ff5555;
+    width: 100%;
+    z-index: 5;
 	padding: 20px;
-	margin: 20px 0px;
 }
-
 .error-message {
+    position: relative;
 	margin: 0px;
 	font-weight: bold;
 	color: white;
 }
+
 .success-block {
     background: #00e06e;
+    width: 100%;
+    z-index: 5;
 	padding: 20px;
-	margin: 20px 0px;
 }
-
 .success-message {
+    position: relative;
 	margin: 0px;
 	font-weight: bold;
 	color: white;
+}
+
+.absolute {
+    position: absolute;
+    top: 0px;
 }
 
 .hidden {

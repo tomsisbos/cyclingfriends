@@ -469,7 +469,11 @@ export default class MkpointPopup extends Popup {
             var id = this.data.id
             var type = 'scenery'
             ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + id, (response) => {
-                showResponseMessage(response)
+                showResponseMessage(response, {
+                    element: document.querySelector('.main'),
+                    absolute: true
+                } )
+                this.popup.once('close', hideResponseMessage)
                 var marker
                 this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
                     if (_marker.getElement().id == 'mkpoint' + this.data.id) marker = _marker
