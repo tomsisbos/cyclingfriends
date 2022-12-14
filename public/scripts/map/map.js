@@ -19,7 +19,6 @@ console.log(mapMap.session)
 mapMap.addStyleControl()
 mapMap.addOptionsControl()
 mapMap.addFullscreenControl()
-if (mapMap.session.rights === 'administrator' || mapMap.session.rights === 'editor') mapMap.addEditorControl()
 
 // Controls
 const mapStyleSelect = document.querySelector('.js-map-styles')
@@ -32,37 +31,27 @@ mapStyleSelect.onchange = (e) => {
     map.once('idle', () => mapMap.updateMapData())
 }
 
-/* -- Mkpoints -- */
-
-// Displaying all mkpoints from map_mkpoints table inside the map
+// Prepare and display mkpoints data
 ajaxGetRequest (mapMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
-
-    // Display mkpoints on first loading of the map
-    if (map.getZoom() > mapMap.mkpointsZoomRoof) {
-        map.once('idle', () => {
-            mapMap.mkpointsMarkerCollection = []
-            const bounds = map.getBounds ()
-            mkpoints.forEach (async (mkpoint) => {
-                // If mkpoint is inside bounds
-                if ((mkpoint.lat < bounds._ne.lat && mkpoint.lat > bounds._sw.lat) && (mkpoint.lng < bounds._ne.lng && mkpoint.lng > bounds._sw.lng)) {
-                    // Filter through zoom popularity algorithm
-                    if (mapMap.zoomPopularityFilter(mkpoint.popularity) == true) {
-                        mapMap.setMkpoint(mkpoint)
-                    }
-                }
-            } )
-        } )
-    }
-
-    // Display rides and segments on first loading of the map
-    if (map.getZoom() > mapMap.ridesZoomRoof) {
-        mapMap.updateRides()
-        mapMap.updateSegments()
-    }
-
-    // Update mkpoints, rides and segments display on ending moving the map
-    map.on('moveend', () => mapMap.updateMapData() )
+    mapMap.data.mkpoints = mkpoints
+    mapMap.updateMkpoints()
+    mapMap.addFavoriteMkpoints()
 } )
+
+// Prepare and display segments data
+ajaxGetRequest (mapMap.apiUrl + "?display-segments=true", (segments) => {
+    mapMap.data.segments = segments
+    mapMap.updateSegments()
+} )
+
+// Prepare and display rides data
+ajaxGetRequest (mapMap.apiUrl + "?display-rides=true", (rides) => {
+    mapMap.data.rides = rides
+    mapMap.updateRides()
+} )
+
+// Update map data on ending moving the map
+map.on('moveend', () => mapMap.updateMapData() )
 
 var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']
 amenities.forEach( (amenity) => {

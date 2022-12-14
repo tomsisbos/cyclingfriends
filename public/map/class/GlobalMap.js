@@ -16,8 +16,6 @@ export default class GlobalMap extends Model {
             this.centerOnUserLocation()
 
         } )
-        ajaxGetRequest (this.apiUrl + "?get-user-cleared-mkpoints=true", (mkpoints) => this.clearedMkpoints = mkpoints)
-        ajaxGetRequest (this.apiUrl + "?get-user-favorite-mkpoints=true", (mkpoints) => this.favorites.mkpoints = mkpoints)
     }
 
     map
@@ -27,7 +25,6 @@ export default class GlobalMap extends Model {
     defaultZoom = 10
     userLocation
     mkpoints
-    favorites = {}
     tunnelNumber = 0
     profileData
     month = new Date().getMonth() + 1
@@ -2131,7 +2128,7 @@ export default class GlobalMap extends Model {
             // Build a simplified line for rough filtering
             var coreLine = turf.simplify(routeData, {tolerance: 0.02, highQuality: false, mutate: false})
             mkpoints.forEach( (mkpoint) => {
-                var point = turf.point([mkpoint.lng, mkpoint.lat])
+                var point = turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
                 var nearestLinePoint = turf.nearestPointOnLine(coreLine, point)
                 var roughRemoteness = nearestLinePoint.properties.dist
                 if (range < 3) var roughRange = range * 8 // Define range from the coreline where to keep mkpoints according range value to prevent too small range
@@ -2143,7 +2140,7 @@ export default class GlobalMap extends Model {
 
             // Get route remoteness
             mkpointsInRange.forEach( (mkpoint) => {
-                var point = turf.point([mkpoint.lng, mkpoint.lat])
+                var point = turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
                 var nearestLinePoint = turf.nearestPointOnLine(routeData, point)
                 mkpoint.remoteness = nearestLinePoint.properties.dist
                 mkpoint.distance = nearestLinePoint.properties.location
@@ -2319,12 +2316,12 @@ export default class GlobalMap extends Model {
             mkpointPopup.popup.setMaxWidth("250px")
             mkpointPopup.data = mkpoint
             marker.setPopup(mkpointPopup.popup)
-            marker.setLngLat([mkpoint.lng, mkpoint.lat])
+            marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
             marker.addTo(this.map)
             marker.getElement().id = 'mkpoint' + mkpoint.id
             marker.getElement().className = 'mkpoint-marker'
             marker.getElement().dataset.id = mkpoint.id
-            marker.getElement().dataset.user_id = mkpoint.user_id
+            marker.getElement().dataset.user_id = mkpoint.user.id
             mkpointPopup.popup.on('open', () => {
                 this.unselect()
                 mkpointPopup.select()
@@ -3351,22 +3348,5 @@ export default class GlobalMap extends Model {
         }
 
         grabber.addEventListener('mousedown', mouseDownHandler)
-    }
-
-    inViewedMkpointsList (mkpoint) {
-        var activity_id = false
-        this.clearedMkpoints.forEach( (clearedMkpoint) => {
-            if (clearedMkpoint.id == mkpoint.id) activity_id = clearedMkpoint.activity_id
-        } )
-        return activity_id
-    }
-    
-    inFavoriteMkpointsList (mkpoint) {
-        var found = false
-        this.favorites.mkpoints.forEach( (favorite) => {
-            if (favorite.id == mkpoint.id) found = true
-        } )
-        if (found) return true
-        else return false
     }
 }

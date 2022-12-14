@@ -12,6 +12,7 @@ export default class MapMap extends GlobalMap {
     }
 
     type = 'mapMap'
+    data = {}
     cursor = 1
     tempMarkerCollection = []
     mkpointsMarkerCollection = []
@@ -45,6 +46,10 @@ export default class MapMap extends GlobalMap {
     mode = 'default'
     highlight = false
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
+
+    afterSettingSession = () => {
+        if (this.session.rights === 'administrator' || this.session.rights === 'editor') this.addEditorControl()
+    }
 
     updateMapData () {
         if (this.displayMkpointsBox.checked) this.updateMkpoints()
@@ -226,15 +231,13 @@ export default class MapMap extends GlobalMap {
     setMkpoint (mkpoint) {        
         // Add marker to the map and to markers collection
         let mkpointPopup = new MkpointPopup()
-        if (this.inViewedMkpointsList(mkpoint)) mkpointPopup.activity_id = this.inViewedMkpointsList(mkpoint)
-        mkpointPopup.favoured = this.inFavoriteMkpointsList(mkpoint)
         var content = mkpointPopup.setPopupContent(mkpoint)
         let element = document.createElement('div')
         let icon = document.createElement('img')
         icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
         icon.classList.add('mkpoint-icon')
-        if (mkpointPopup.activity_id) element.classList.add('visited-marker') // Highlight if visited
-        if (mkpointPopup.favoured) element.classList.add('favoured-marker') // Highlight if favoured
+        if (mkpoint.isCleared) element.classList.add('visited-marker') // Highlight if visited
+        if (mkpoint.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured
         element.appendChild(icon)
         this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
@@ -244,7 +247,7 @@ export default class MapMap extends GlobalMap {
             element: element
         } )
         // If connected user is administrator of this mkpoint
-        if (mkpoint.user_id == this.session.id) {
+        if (mkpoint.user.id == this.session.id) {
             var mkpointAdminPanel = `
                 <div id="mkpointAdminPanel" class="popup-content container-admin">
                     <div class="popup-head">Edition tools</div>
@@ -262,17 +265,14 @@ export default class MapMap extends GlobalMap {
         let popup = mkpointPopup.popup
         popup.setHTML(content)
         mkpointPopup.data = mkpoint
-        if (this.inViewedMkpointsList(mkpoint)) mkpointPopup.visited = true
-        if (this.inFavoriteMkpointsList(mkpoint)) mkpointPopup.favoured = true
         marker.setPopup(popup)
-        marker.setLngLat([mkpoint.lng, mkpoint.lat])
+        marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
         marker.addTo(this.map)
         marker.getElement().id = 'mkpoint' + mkpoint.id
         marker.getElement().classList.add('mkpoint-marker')
         marker.getElement().dataset.id = mkpoint.id
-        marker.getElement().dataset.user_id = mkpoint.user_id
+        marker.getElement().dataset.user_id = mkpoint.user.id
         popup.once('open', (e) => {
-            console.log('here')
             // Add 'selected-marker' class to selected marker
             this.unselect()
             mkpointPopup.select()
@@ -280,7 +280,7 @@ export default class MapMap extends GlobalMap {
             mkpointPopup.rating()
             if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin()
             if (content.includes('target-button')) mkpointPopup.setTarget()
-            if (content.includes('js-favorite-button')) mkpointPopup.setFavorite()
+            if (content.includes('js-favorite-button')) mkpointPopup.setFavorite(this.updateFavoriteData.bind(this))
             if (content.includes('addphoto-button')) mkpointPopup.addPhoto()
             if (content.includes('round-propic-img')) mkpointPopup.addPropic()
         } )
@@ -291,70 +291,99 @@ export default class MapMap extends GlobalMap {
             }
         } )
         // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-        if (mkpoint.user_id === this.session.id && this.mode == 'edit') marker.setDraggable(true)
-        else if (mkpoint.user_id === this.session.id && this.mode == 'default') marker.setDraggable(false)
+        if (mkpoint.user.id === this.session.id && this.mode == 'edit') marker.setDraggable(true)
+        else if (mkpoint.user.id === this.session.id && this.mode == 'default') marker.setDraggable(false)
 
         marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
+        marker.isFavorite = mkpoint.isFavorite // Append favorites list data
         this.mkpointsMarkerCollection.push(marker)
     }
 
+    updateFavoriteData (mkpointId) {
+        var mkpoint = this.data.mkpoints.find(mkpoint => mkpoint.id == mkpointId)
+        mkpoint.isFavorite = !mkpoint.isFavorite
+        var key
+        for (let i = 0; i < this.mkpointsMarkerCollection.length; i++) {
+            if (this.mkpointsMarkerCollection[i]._element.dataset.id == mkpoint.id) key = i
+        }
+        this.mkpointsMarkerCollection[key].isFavorite = !this.mkpointsMarkerCollection[key].isFavorite
+    }
+
     updateMkpoints () {
-        if (this.map.getZoom() > this.mkpointsZoomRoof) {
+
+        if (this.data.mkpoints && this.map.getZoom() > this.mkpointsZoomRoof) {
+
             const bounds = this.map.getBounds()
-            ajaxGetRequest (this.apiUrl + "?display-mkpoints=true", (mkpoints) => {
+            const mkpoints = this.data.mkpoints
 
-                // Sort mkpoints in popularity order
-                mkpoints.sort((a, b) => a.popularity - b.popularity)
+            // Sort mkpoints in popularity order
+            mkpoints.sort((a, b) => a.popularity - b.popularity)
 
-                // First, remove all mkpoints that have left bounds
-                var collection = this.mkpointsMarkerCollection
-                let i = 0
-                while (i < collection.length) {
-                    // If existing marker is not inside new bounds OR should not be displayed at this zoom level
-                    if ((!(collection[i]._lngLat.lat < bounds._ne.lat && collection[i]._lngLat.lat > bounds._sw.lat) || !(collection[i]._lngLat.lng < bounds._ne.lng && collection[i]._lngLat.lng > bounds._sw.lng)) || !this.zoomPopularityFilter(collection[i].popularity)) {
+            // First, remove all mkpoints that have left bounds
+            var collection = this.mkpointsMarkerCollection
+            let i = 0
+            while (i < collection.length) {
+                // If existing marker is not inside new bounds OR should not be displayed at this zoom level
+                if ((!(collection[i]._lngLat.lat < bounds._ne.lat && collection[i]._lngLat.lat > bounds._sw.lat) || !(collection[i]._lngLat.lng < bounds._ne.lng && collection[i]._lngLat.lng > bounds._sw.lng)) || !this.zoomPopularityFilter(collection[i].popularity)) {
+                    // If existing mkpoint is not favoured
+                    console.log(collection[i])
+                    if (!collection[i].isFavorite) {
                         collection[i].remove() // Remove it from the DOM
                         collection.splice(i, 1) // Remove it from instance Nodelist
                         i--
                     }
-                    i++
                 }
+                i++
+            }
 
-                // Second, add all mkpoints that have entered bounds
-                let mkpointsSet = collection.length
-                let keepMkpoints = []
-                let j = 0
-                while (j < mkpoints.length && mkpointsSet <= this.mkpointsMaxNumber) {
-                    // If mkpoint is inside bounds
-                    if ((mkpoints[j].lat < bounds._ne.lat && mkpoints[j].lat > bounds._sw.lat) && (mkpoints[j].lng < bounds._ne.lng && mkpoints[j].lng > bounds._sw.lng)) {
-                        // Verify it has not already been loaded
-                        if (!document.querySelector('#mkpoint' + mkpoints[j].id)) {
-                            // Filter through zoom popularity algorithm
-                            if (this.zoomPopularityFilter(mkpoints[j].popularity) == true) {
-                                this.setMkpoint(mkpoints[j])
-                                mkpointsSet++
-                            } else {
-                                keepMkpoints.push(mkpoints[j])
-                            }
-                        }
-                    }
-                    j++
-                }
-
-                // Third, if overall number of mkpoints is still less than mkpointsMinNumber, add other mkpoints inside bounds up to a total number of mkpointsMinNumber
-                if (mkpointsSet < this.mkpointsMinNumber) {
-                    for (let mkpointsToSet = 0; mkpointsToSet < this.mkpointsMinNumber - mkpointsSet && mkpointsToSet < keepMkpoints.length; mkpointsToSet++) {
-                        this.setMkpoint(keepMkpoints[mkpointsToSet])
+            // Second, add all mkpoints that have entered bounds
+            let mkpointsSet = collection.length
+            let keepMkpoints = []
+            let j = 0
+            while (j < mkpoints.length && mkpointsSet <= this.mkpointsMaxNumber) {
+                // If mkpoint is inside bounds
+                if ((mkpoints[j].lngLat.lat < bounds._ne.lat && mkpoints[j].lngLat.lat > bounds._sw.lat) && (mkpoints[j].lngLat.lng < bounds._ne.lng && mkpoints[j].lngLat.lng > bounds._sw.lng)) {
+                    
+                    // Verify it has not already been loaded
+                    if (!document.querySelector('#mkpoint' + mkpoints[j].id)) {
+                        // Filter through zoom popularity algorithm
+                        if (this.zoomPopularityFilter(mkpoints[j].popularity) == true) {
+                            this.setMkpoint(mkpoints[j])
+                            mkpointsSet++
+                        } else keepMkpoints.push(mkpoints[j])
                     }
                 }
+                j++
+            }
 
-                // Update mkpoints scale
-                document.querySelectorAll('.mkpoint-icon').forEach((mkpointIcon) => this.scaleMarkerAccordingToZoom(mkpointIcon))
-            } )
+            // Third, if overall number of mkpoints is still less than mkpointsMinNumber, add other mkpoints inside bounds up to a total number of mkpointsMinNumber
+            if (mkpointsSet < this.mkpointsMinNumber) {
+                for (let mkpointsToSet = 0; mkpointsToSet < this.mkpointsMinNumber - mkpointsSet && mkpointsToSet < keepMkpoints.length; mkpointsToSet++) {
+                    this.setMkpoint(keepMkpoints[mkpointsToSet])
+                }
+            }
+
+            // Update mkpoints scale
+            document.querySelectorAll('.mkpoint-icon').forEach((mkpointIcon) => this.scaleMarkerAccordingToZoom(mkpointIcon))
 
         } else {
-            for (let i = 0; i < this.mkpointsMarkerCollection.length; i++) this.mkpointsMarkerCollection[i].remove()
-            this.mkpointsMarkerCollection = []
+            for (let i = 0; i < this.mkpointsMarkerCollection.length; i++) {
+                if (!this.mkpointsMarkerCollection[i].isFavorite) {
+                    this.mkpointsMarkerCollection[i].remove()
+                    this.mkpointsMarkerCollection.splice(i, 1)
+                    i--
+                }
+            }
         }
+    }
+
+    addFavoriteMkpoints () {
+        this.data.mkpoints.forEach( (mkpoint) => {
+            // Verify it has not already been loaded
+            if (!document.querySelector('#mkpoint' + mkpoint.id)) {
+                if (mkpoint.isFavorite) this.setMkpoint(mkpoint)
+            }
+        } )
     }
 
     zoomPopularityFilter (popularity) {
@@ -431,34 +460,34 @@ export default class MapMap extends GlobalMap {
 
         // If current zoom is precise enough
         if (this.map.getZoom() > this.ridesZoomRoof) {
-            ajaxGetRequest (this.apiUrl + "?display-rides=true", (rides) => {
+            
+            const rides = this.data.rides
 
-                // First, remove all rides that have left bounds
-                let i = 0
-                while (i < this.ridesCollection.length) {
-                    // If existing ride is not inside new bounds
-                    if (!CFUtils.isInsideBounds(this.map.getBounds(), this.ridesCollection[i].route)) {
-                        if (this.map.getLayer('ride' + this.ridesCollection[i].id)) this.hideRide(this.ridesCollection[i]) // Remove it from the map
-                        this.ridesCollection.splice(i, 1) // Remove it from instance Nodelist
-                        i--
-                    }
-                    i++
+            // First, remove all rides that have left bounds
+            let i = 0
+            while (i < this.ridesCollection.length) {
+                // If existing ride is not inside new bounds
+                if (!CFUtils.isInsideBounds(this.map.getBounds(), this.ridesCollection[i].route)) {
+                    if (this.map.getLayer('ride' + this.ridesCollection[i].id)) this.hideRide(this.ridesCollection[i]) // Remove it from the map
+                    this.ridesCollection.splice(i, 1) // Remove it from instance Nodelist
+                    i--
                 }
+                i++
+            }
 
-                // Second, add all rides that have entered bounds
-                rides.forEach( (ride) => {
-                    // If ride is public and has a route data
-                    if (ride.privacy == 'Public' && ride.route) {
-                        // If ride is inside bounds
-                        if (CFUtils.isInsideBounds(this.map.getBounds(), ride.route)) {
-                            // Verify it has not already been loaded
-                            if (!this.isLinestringAlreadyDisplayed(ride)) {
-                                this.ridesCollection.push(ride)
-                                this.displayRide(ride)
-                            }
+            // Second, add all rides that have entered bounds
+            if (rides) rides.forEach( (ride) => {
+                // If ride is public and has a route data
+                if (ride.privacy == 'Public' && ride.route) {
+                    // If ride is inside bounds
+                    if (CFUtils.isInsideBounds(this.map.getBounds(), ride.route)) {
+                        // Verify it has not already been loaded
+                        if (!this.isLinestringAlreadyDisplayed(ride)) {
+                            this.ridesCollection.push(ride)
+                            this.displayRide(ride)
                         }
                     }
-                } )
+                }
             } )
 
         // If current zoom is not precise enough
@@ -620,34 +649,34 @@ export default class MapMap extends GlobalMap {
 
         // If current zoom is precise enough
         if (this.map.getZoom() > this.segmentsZoomRoof) {
-            ajaxGetRequest (this.apiUrl + "?display-segments=true", (segments) => {
 
-                // First, remove all segments that have left bounds
-                let i = 0
-                while (i < this.segmentsCollection.length) {
-                    // If existing segment is not inside new bounds, or if it is not displayable at this zoom level
-                    if (!CFUtils.isInsideBounds(this.map.getBounds(), this.segmentsCollection[i].route.coordinates) || !this.isSegmentToDisplay(this.segmentsCollection[i])) {
-                        if (this.map.getLayer('segment' + this.segmentsCollection[i].id)) this.hideSegment(this.segmentsCollection[i]) // Remove it from the map
-                        this.segmentsCollection.splice(i, 1) // Remove it from instance Nodelist
-                        i--
-                    }
-                    i++
+            const segments = this.data.segments
+
+            // First, remove all segments that have left bounds
+            let i = 0
+            while (i < this.segmentsCollection.length) {
+                // If existing segment is not inside new bounds, or if it is not displayable at this zoom level
+                if (!CFUtils.isInsideBounds(this.map.getBounds(), this.segmentsCollection[i].route.coordinates) || !this.isSegmentToDisplay(this.segmentsCollection[i])) {
+                    if (this.map.getLayer('segment' + this.segmentsCollection[i].id)) this.hideSegment(this.segmentsCollection[i]) // Remove it from the map
+                    this.segmentsCollection.splice(i, 1) // Remove it from instance Nodelist
+                    i--
                 }
+                i++
+            }
 
-                // Second, add all segments that have entered bounds
-                segments.forEach( (segment) => {
-                    // If segment is public and has a route data
-                    if (this.isSegmentToDisplay(segment)) {
-                        // If segment is inside bounds
-                        if (CFUtils.isInsideBounds(this.map.getBounds(), segment.route.coordinates)) {
-                            // Verify it has not already been loaded
-                            if (!this.isLinestringAlreadyDisplayed(segment)) {
-                                this.segmentsCollection.push(segment)
-                                this.displaySegment(segment)
-                            }
+            // Second, add all segments that have entered bounds
+            if (segments) segments.forEach( (segment) => {
+                // If segment is public and has a route data
+                if (this.isSegmentToDisplay(segment)) {
+                    // If segment is inside bounds
+                    if (CFUtils.isInsideBounds(this.map.getBounds(), segment.route.coordinates)) {
+                        // Verify it has not already been loaded
+                        if (!this.isLinestringAlreadyDisplayed(segment)) {
+                            this.segmentsCollection.push(segment)
+                            this.displaySegment(segment)
                         }
                     }
-                } )
+                }
             } )
 
         // If current zoom is not precise enough
@@ -914,7 +943,6 @@ export default class MapMap extends GlobalMap {
     onClickBound = this.onClick.bind(this)
     onClick (e) {
         var marker = this.addTempMarker(e.lngLat)
-        console.log('onClick')
         marker.getElement().addEventListener('contextmenu', this.removeOnClick)
     }
 
@@ -949,7 +977,6 @@ export default class MapMap extends GlobalMap {
         // If box is not checked
         } else {
             this.map.off('click', this.onClickBound)
-            console.log(this.map)
             this.mode = 'default'
             // Disable removing temp marker on left click
             this.tempMarkerCollection.forEach((existingMarker) => {
@@ -958,7 +985,6 @@ export default class MapMap extends GlobalMap {
                 popup.options.className = 'marker-popup' // Display popup outside edit mode
                 popup.id = $existingMarker.id // Attributes an ID to popup
                 popup.elevation = existingMarker.elevation // Pass elevation data to the popup
-                console.log($existingMarker)
                 $existingMarker.removeEventListener('contextmenu', this.removeOnClick)
             } )
             // Enable opening popup on click on mkpoint markers

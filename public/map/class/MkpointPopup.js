@@ -24,6 +24,10 @@ export default class MkpointPopup extends Popup {
             `
         }
 
+
+        if (mkpoint.isFavorite) var favoriteButtonClass = ' favoured'
+        else var favoriteButtonClass = ''
+
         return `
         <div class="popup-img-container">
             <div class="popup-icons">
@@ -40,7 +44,7 @@ export default class MkpointPopup extends Popup {
                 <div id="like-button" title="Click to like this photo">
                     <span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>
                 </div>
-                <div class="js-favorite-button" title="Add to favorites list">
+                <div class="js-favorite-button` + favoriteButtonClass + `" title="Add to favorites list">
                     <span class="iconify" data-icon="mdi:favorite-add" data-width="20" data-height="20"></span>
                 </div>` + 
                 visitedIcon + `
@@ -49,7 +53,7 @@ export default class MkpointPopup extends Popup {
         <div id="popup-content" class="popup-content">
             <div class="d-flex gap">
                 <div class="round-propic-container">
-                    <a href="/rider/` + mkpoint.user_id + `">
+                    <a href="/rider/` + mkpoint.user.id + `">
                         <img class="round-propic-img" />
                     </a>
                 </div>
@@ -114,7 +118,6 @@ export default class MkpointPopup extends Popup {
             buttonReview.addEventListener('click', () => {
                 let content = textareaReview.value
                 ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.id + '&content=' + content, (review) => {
-                    console.log(review)
                     // If content is empty, remove review element and but button text back
                     if (review.content == '') {
                         document.querySelector('#review-author-' + review.user.id).remove()
@@ -147,7 +150,6 @@ export default class MkpointPopup extends Popup {
     displayReview = (review, options = {new: false}) => {
         if (document.querySelector('#mkpointReview')) {
             // If review is already displayed, update it and move it to the top
-            console.log(review)
             if (document.getElementById('review-author-' + review.user.id)) {
                 let $review = document.getElementById('review-author-' + review.user.id)
                 $review.querySelector('.chat-time').innerText = review.time
@@ -398,7 +400,7 @@ export default class MkpointPopup extends Popup {
 
             // Prepare toggle like function
             this.colorLike()
-            this.toggleLike()
+            this.prepareToggleLike()
 
             function addPhoto (photo, number) {
                 var newPhoto = document.createElement('img')
@@ -463,12 +465,11 @@ export default class MkpointPopup extends Popup {
         }
     }
 
-    setFavorite () {
+    setFavorite (toggleMkpointFavoriteData) {
         var $button = document.querySelector('.js-favorite-button')
         $button.addEventListener('click', () => {
-            var id = this.data.id
             var type = 'scenery'
-            ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + id, (response) => {
+            ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + this.data.id, (response) => {
                 showResponseMessage(response, {
                     element: document.querySelector('.main'),
                     absolute: true
@@ -478,12 +479,13 @@ export default class MkpointPopup extends Popup {
                 this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
                     if (_marker.getElement().id == 'mkpoint' + this.data.id) marker = _marker
                 } )
+                // Update data in map instance for ensuring display update
+                marker.isFavorite = !marker.isfavorite
+                toggleMkpointFavoriteData(this.data.id)
+                console.log(this.data)
+                // Toggle button and marker element class
+                $button.classList.toggle('favoured')
                 marker.getElement().classList.toggle('favoured-marker')
-                if (response.success.includes('removed')) {
-                    $button.classList.remove('favoured')
-                } else if (response.success.includes('added')) {
-                    $button.classList.add('favoured')
-                }
             } )
         } )
     }
@@ -574,7 +576,6 @@ export default class MkpointPopup extends Popup {
             imgMeta.appendChild(period)
             slidesBox.appendChild(slides[i])
         }
-        console.log(slides)
         // Caption display
         var caption = document.createElement('div')
         caption.className = 'lightbox-caption'
@@ -628,7 +629,7 @@ export default class MkpointPopup extends Popup {
     // Adds user profile picture to the mkpoint popup
     addPropic = () => {
         // Asks server for profil picture src and display it
-        ajaxGetRequest (this.apiUrl + "?getpropic=" + this.data.user_id, (response) => this.popup.getElement().querySelector('.round-propic-img').src = response)
+        ajaxGetRequest (this.apiUrl + "?getpropic=" + this.data.user.id, (response) => this.popup.getElement().querySelector('.round-propic-img').src = response)
     }
     
     mkpointAdmin = () => {

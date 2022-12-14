@@ -226,10 +226,17 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-mkpoints'])) {
-        $getMkpoints = $db->prepare('SELECT * FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        $getMkpoints = $db->prepare('SELECT id FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
         $getMkpoints->execute();
-        $mkpointsList = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($mkpointsList);
+        $result = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        $mkpoints = [];
+        foreach ($result as $mkpoint_data) {
+            $mkpoint = new Mkpoint($mkpoint_data['id']);
+            $mkpoint->isFavorite = $mkpoint->isFavorite();
+            $mkpoint->isCleared = $mkpoint->isCleared();
+            array_push($mkpoints, $mkpoint);
+        }
+        echo json_encode($mkpoints);
     }
 
     if (isset($_GET['mkpoint'])) {

@@ -171,16 +171,16 @@ export default class Popup extends Model {
         this.popup.getElement().appendChild(script);
 
         // Prepare toggle like function
-        if (this.popup.getElement().querySelector('#like-button')) this.toggleLike()
+        if (this.popup.getElement().querySelector('#like-button')) this.prepareToggleLike()
     }
 
-    toggleLike () {
+    prepareToggleLike () {
 
         // Get button elements
         var thumbnailButton = document.querySelector('#like-button')
         var modalButtons = document.querySelectorAll('.like-button-modal')
 
-        // On click, add or remove points to the mkpoint depending of user already liked it or not
+        // Set up listeners
         if (thumbnailButton) {
             var clickOnThumbnailButton = toggleLike.bind(this)
             thumbnailButton.addEventListener('click', clickOnThumbnailButton)
@@ -193,9 +193,8 @@ export default class Popup extends Model {
         function toggleLike (e) {
 
             // Check if clicked on thumbnail button or modal button
-            var buttonType = ''
-            if (e.target.closest('#like-button')) buttonType = 'thumbnail'
-            else if (e.target.closest('.like-button-modal')) buttonType = 'modal'
+            if (e.target.closest('#like-button')) var buttonType = 'thumbnail'
+            else if (e.target.closest('.like-button-modal')) var buttonType = 'modal'
 
             // Get image id
             if (buttonType == 'thumbnail') {
@@ -218,17 +217,15 @@ export default class Popup extends Model {
             var modalLikeCounter = modalButton.parentElement.querySelector('.mkpoint-img-likes')
 
             ajaxGetRequest (this.apiUrl + "?togglelike-img=" + img_id, (response) => { // Response contains like data
-                if (buttonType == 'thumbnail') var button = thumbnailButton
-                else if (buttonType == 'modal') var button = modalButton
-                if (button.classList.contains('liked')) {
-                    modalButton.classList.remove('liked')
-                    modalLikeCounter.innerText = parseInt(modalLikeCounter.innerText) - 1
-                    if (thumbnailButton) thumbnailButton.classList.remove('liked')
+                console.log(response)
+                if (response.islike) {
+                    modalButton.classList.toggle('liked')
+                    if (thumbnailButton) thumbnailButton.classList.toggle('liked')
                 } else {
-                    modalButton.classList.add('liked')
-                    modalLikeCounter.innerText = parseInt(modalLikeCounter.innerText) + 1
-                    if (thumbnailButton) thumbnailButton.classList.add('liked')
+                    modalButton.classList.toggle('liked')
+                    if (thumbnailButton) thumbnailButton.classList.toggle('liked')
                 }
+                modalLikeCounter.innerText = response.imgLikes
             } )
         }
 
@@ -244,15 +241,17 @@ export default class Popup extends Model {
         // Get image id and button elements
         var img_id
         document.querySelectorAll('.popup-img').forEach( ($img) => {
-            if ($img.style.display != 'none') img_id = parseInt($img.id)
+            if ($img.style.display != 'none') img_id = parseInt($img.dataset.id)
         } )
         var thumbnailButton = document.querySelector('#like-button')
         var modalButtons = document.querySelectorAll('.like-button-modal')
         
         // Set thumbnail like button default color depending on if user liked image or not
         if (thumbnailButton) {
+            console.log(img_id)
             ajaxGetRequest (this.apiUrl + "?islike-img=" + img_id, (islike) => {
-                if (islike === true) thumbnailButton.classList.add('liked')
+                console.log(islike)
+                if (islike === true) thumbnailButton.className = 'liked'
                 else thumbnailButton.classList.remove('liked')
             } )
         }
