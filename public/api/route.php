@@ -50,7 +50,7 @@ if (is_array($var)) {
         if (empty($var['description'])) $var['description'] = '';
         if (!isset($var['tunnels'])) $var['tunnels'] = [];
         if ($var['category'] == 'route') $coordinates->createRoute($connected_user->id, $var['id'], 'route', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels']);
-        else if ($var['category'] == 'segment') $coordinates->createSegment($connected_user->id, $var['id'], 'segment', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels'], $var['rank'], $var['favourite'], $var['seasons'], $var['advice'], $var['specs'], $var['tags']);
+        else if ($var['category'] == 'segment') $coordinates->createSegment($connected_user->id, $var['id'], 'segment', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels'], $var['rank'], $var['advised'], $var['seasons'], $var['advice'], $var['specs'], $var['tags']);
         echo json_encode($var);
     }
 

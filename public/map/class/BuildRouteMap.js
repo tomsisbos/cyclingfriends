@@ -1334,7 +1334,7 @@ export default class BuildRouteMap extends GlobalMap {
                     createSegmentButton.addEventListener('click', () => {
                         // Set data default properties
                         data.rank = 'local'
-                        data.favourite = 'off'
+                        data.advised = 'off'
                         data.specs = {
                             offroad: 'off',
                             rindo: 'off',
@@ -1378,8 +1378,8 @@ export default class BuildRouteMap extends GlobalMap {
                                 <option value="national">National</option>
                             </select>
                             <div class="rt-checkbox">
-                                <input type="checkbox" id="favourite" class="js-segment-favourite" />
-                                <label for="favourite">Favoured by cyclingfriends</label>
+                                <input type="checkbox" id="advised" class="js-segment-advised" />
+                                <label for="advised">Favoured by cyclingfriends</label>
                             </div>
                         </p>
                         <button id="addSeason" class="mp-button bg-white">Add recommended period</button>
@@ -1611,7 +1611,7 @@ export default class BuildRouteMap extends GlobalMap {
                             // Restore usual properties
                             data.category = 'route'
                             delete data.rank
-                            delete data.favourite
+                            delete data.advised
                             delete data.specs
                             delete data.tags
                             delete data.seasons
@@ -1625,7 +1625,7 @@ export default class BuildRouteMap extends GlobalMap {
 
                         // Data treatment
                         var selectRank            = document.querySelector('.js-segment-rank')
-                        var inputFavourite        = document.querySelector('.js-segment-favourite')
+                        var inputAdvised          = document.querySelector('.js-segment-advised')
                         var inputSpecOffroad      = document.querySelector('.js-segment-spec-offroad')
                         var inputSpecRindo        = document.querySelector('.js-segment-spec-rindo')
                         var inputSpecCyclinglane  = document.querySelector('.js-segment-spec-cyclinglane')
@@ -1644,7 +1644,7 @@ export default class BuildRouteMap extends GlobalMap {
                         var inputTagRivers        = document.querySelector('.js-segment-tag-rivers')
                         var inputTagLakes         = document.querySelector('.js-segment-tag-lakes')
                         selectRank.addEventListener('change', () => data.rank = selectRank.value)
-                        inputFavourite.addEventListener('change', () => data.favourite = inputFavourite.value)
+                        inputAdvised.addEventListener('change', () => data.advised = inputAdvised.value)
                         inputSpecOffroad.addEventListener('change', () => data.specs.offroad = inputSpecOffroad.value)
                         inputSpecRindo.addEventListener('change', () => data.specs.rindo = inputSpecRindo.value)
                         inputSpecCyclinglane.addEventListener('change', () => data.specs.cyclinglane = inputSpecCyclinglane.value)
@@ -1807,7 +1807,7 @@ export default class BuildRouteMap extends GlobalMap {
                 goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
                 thumbnail: details.thumbnail,
                 rank: details.rank,
-                favourite: details.favourite,
+                advised: details.advised,
                 seasons: details.seasons,
                 advice: details.advice,
                 specs: details.specs,

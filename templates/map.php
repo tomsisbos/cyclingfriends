@@ -20,7 +20,7 @@ include '../actions/users/securityAction.php';
 		
 		<div class="container-fluid mp-container">
 
-			<div id="mapMap" class="mp-map"></div>
+			<div id="worldMap" class="mp-map"></div>
 		
 		</div>
 	

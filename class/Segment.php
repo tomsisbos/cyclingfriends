@@ -13,6 +13,7 @@ class Segment extends Model {
         $this->rank               = $data['rank'];
         $this->name               = $data['name'];
         $this->description        = $data['description'];
+        $this->advised            = (intval($data['advised']) === 1);
         $this->advice             = new SegmentAdvice($this->id);
         $this->seasons            = $this->getSeasons();
         $this->specs              = new SegmentSpecs($this->id);

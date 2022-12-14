@@ -1,57 +1,58 @@
 import CFUtils from "/map/class/CFUtils.js"
-import MapMap from "/map/class/MapMap.js"
+import WorldMap from "/map/class/WorldMap.js"
 import AmenityPopup from "/map/class/AmenityPopup.js"
 
-var mapMap = new MapMap()
-console.log(mapMap)
+var worldMap = new WorldMap()
+console.log(worldMap)
 
 // Set default layer according to current season
-var map = await mapMap.load(document.querySelector('#mapMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+var map = await worldMap.load(document.querySelector('#worldMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
 
 // Load CF sources and layers
-mapMap.addSources()
-mapMap.addLayers()
+worldMap.addSources()
+worldMap.addLayers()
 
-console.log(mapMap.session)
+console.log(worldMap.session)
 
 /* -- Controls -- */
 
-mapMap.addStyleControl()
-mapMap.addOptionsControl()
-mapMap.addFullscreenControl()
+worldMap.addStyleControl()
+worldMap.addOptionsControl()
+worldMap.addFullscreenControl()
+if (worldMap.session.rights === 'administrator' || worldMap.session.rights === 'editor') worldMap.addEditorControl()
 
 // Controls
 const mapStyleSelect = document.querySelector('.js-map-styles')
 mapStyleSelect.onchange = (e) => {
     var index = e.target.selectedIndex
     var layerId = e.target.options[index].id
-    if (layerId === 'seasons') layerId = mapMap.season
-    mapMap.clearMapData()
-    mapMap.setMapStyle(layerId)
-    map.once('idle', () => mapMap.updateMapData())
+    if (layerId === 'seasons') layerId = worldMap.season
+    worldMap.clearMapData()
+    worldMap.setMapStyle(layerId)
+    map.once('idle', () => worldMap.updateMapData())
 }
 
 // Prepare and display mkpoints data
-ajaxGetRequest (mapMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
-    mapMap.data.mkpoints = mkpoints
-    mapMap.updateMkpoints()
-    mapMap.addFavoriteMkpoints()
+ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
+    worldMap.data.mkpoints = mkpoints
+    worldMap.updateMkpoints()
+    worldMap.addFavoriteMkpoints()
 } )
 
 // Prepare and display segments data
-ajaxGetRequest (mapMap.apiUrl + "?display-segments=true", (segments) => {
-    mapMap.data.segments = segments
-    mapMap.updateSegments()
+ajaxGetRequest (worldMap.apiUrl + "?display-segments=true", (segments) => {
+    worldMap.data.segments = segments
+    worldMap.updateSegments()
 } )
 
 // Prepare and display rides data
-ajaxGetRequest (mapMap.apiUrl + "?display-rides=true", (rides) => {
-    mapMap.data.rides = rides
-    mapMap.updateRides()
+ajaxGetRequest (worldMap.apiUrl + "?display-rides=true", (rides) => {
+    worldMap.data.rides = rides
+    worldMap.updateRides()
 } )
 
 // Update map data on ending moving the map
-map.on('moveend', () => mapMap.updateMapData() )
+map.on('moveend', () => worldMap.updateMapData() )
 
 var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']
 amenities.forEach( (amenity) => {

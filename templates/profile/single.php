@@ -2,6 +2,7 @@
 <html lang="en">
 
 <link rel="stylesheet" href="../assets/css/profile.css" />
+<link rel="stylesheet" href="../assets/css/activity.css" />
 <link rel="stylesheet" href="../assets/css/lightbox-style.css" />
 <link rel="stylesheet" href="../assets/css/dashboard.css" /> <?php
 

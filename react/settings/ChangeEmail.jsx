@@ -26,7 +26,7 @@ export default function ChangeEmail () {
     }, [])
 
     return (
-        <form className="container d-flex flex-column" method="post">
+        <form className="stg-board container d-flex flex-column" method="post">
 		
 			<h2>Change email</h2>
 	

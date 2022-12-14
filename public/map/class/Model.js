@@ -5,7 +5,6 @@ export default class Model {
             this.session = session
             sessionStorage.setItem('session-id', session.id)
             sessionStorage.setItem('session-login', session.login)
-            if (this.afterSettingSession) this.afterSettingSession()
         } )
     }
 

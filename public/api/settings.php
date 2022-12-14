@@ -23,8 +23,8 @@ if (is_array($settings)) {
     if ($settings['type'] === 'settings') {
         unset($settings['type']);
         $response = $connected_user->updateSettings($settings);
-        if ($response = true) json_encode(true);
-        else json_encode(false);
+        if ($response === true) echo json_encode(['success' => 'Your changes have been updated.']);
+        else echo json_encode(['error' => 'An error has occured during saving process.']);
 
     } else if ($settings['type'] === 'email') {
         $posted_email = htmlspecialchars($settings['email']);

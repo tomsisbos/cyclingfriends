@@ -1,3 +1,48 @@
 .stg-sidebar {
     width: 280px;
 }
+
+.stg-title-card {
+    cursor: pointer;
+    background-color: #fff;
+    padding: 10px;
+    color: #111;
+}
+.stg-title-card:hover {
+    background-color: #5c9999;
+    transition: 0.3s background-color, color;
+    color: #fff;
+}
+
+.stg-title::after {
+    content: '\25BC';
+    padding-left: 6px;
+    font-size: 10px;
+}
+
+.stg-sidebar .active {
+    color: #ff5555;
+}
+
+.card-body li {
+    cursor: pointer;
+    padding: 6px;
+    margin: 0;
+    display: block;
+}
+.card-body li::before {
+    content: '-';
+    padding: 6px;
+}
+.card-body li:hover {
+    transition: 0.3s background-color;
+    background-color: #fff;
+}
+
+.stg-board {
+    background-color: #fff;
+}
+
+.stg-board input[type=checkbox] {
+    margin: 0px 12px;
+}

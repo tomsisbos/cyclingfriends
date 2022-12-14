@@ -5,13 +5,13 @@ import RidePopup from "/map/class/RidePopup.js"
 import SegmentPopup from "/map/class/SegmentPopup.js"
 import TempPopup from "/map/class/TempPopup.js"
 
-export default class MapMap extends GlobalMap {
+export default class WorldMap extends GlobalMap {
 
     constructor (session) {
         super(session)
     }
 
-    type = 'mapMap'
+    type = 'worldMap'
     data = {}
     cursor = 1
     tempMarkerCollection = []
@@ -46,10 +46,6 @@ export default class MapMap extends GlobalMap {
     mode = 'default'
     highlight = false
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
-
-    afterSettingSession = () => {
-        if (this.session.rights === 'administrator' || this.session.rights === 'editor') this.addEditorControl()
-    }
 
     updateMapData () {
         if (this.displayMkpointsBox.checked) this.updateMkpoints()
@@ -326,7 +322,6 @@ export default class MapMap extends GlobalMap {
                 // If existing marker is not inside new bounds OR should not be displayed at this zoom level
                 if ((!(collection[i]._lngLat.lat < bounds._ne.lat && collection[i]._lngLat.lat > bounds._sw.lat) || !(collection[i]._lngLat.lng < bounds._ne.lng && collection[i]._lngLat.lng > bounds._sw.lng)) || !this.zoomPopularityFilter(collection[i].popularity)) {
                     // If existing mkpoint is not favoured
-                    console.log(collection[i])
                     if (!collection[i].isFavorite) {
                         collection[i].remove() // Remove it from the DOM
                         collection.splice(i, 1) // Remove it from instance Nodelist

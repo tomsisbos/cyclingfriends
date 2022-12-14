@@ -27,7 +27,7 @@ export default function Privacy () {
     }, [])
 
     return (
-        <form className="container d-flex flex-column" method="post">
+        <form className="stg-board container d-flex flex-column" method="post">
 		
 		<h2 className="mb-4">Privacy settings</h2>
 	

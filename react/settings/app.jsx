@@ -9,7 +9,9 @@ import AppContext from "/react/settings/AppContext.js"
 
 function App () {
 
-    const [board, setBoard] = useState('default board')
+    const defaultBoard = <Privacy />
+
+    const [board, setBoard] = useState(defaultBoard)
     const [message, setMessage] = useState(false)
 
     const getPage = (page) => {
@@ -29,7 +31,7 @@ function App () {
     return (
         <AppContext.Provider value={displayResponseMessage}>
             {message}
-            <div className="container d-flex gap end">
+            <div className="container p-0 d-flex gap end">
                 <Sidebar changePage={getPage} />
                 {board}
             </div>

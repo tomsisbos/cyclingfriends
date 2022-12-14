@@ -14,7 +14,7 @@
 		<div class="collapse navbar-collapse" id="collapsedMenu">
 			<ul class="navbar-nav cf-navbar">
 				<li class="nav-item dropdown">
-					<a class="nav-link" href="/world">Map</a>
+					<a class="nav-link" href="/world">World</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link nav-dropdown-link" href="/activities">Activities</a>

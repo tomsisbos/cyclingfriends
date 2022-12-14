@@ -98,14 +98,14 @@ class Coordinates extends Model {
     }
 
     // Create a segment (and a route) from these coordinates
-    public function createSegment ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels, $rank, $favourite, $seasons, $advice, $specs, $tags) {
+    public function createSegment ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels, $rank, $advised, $seasons, $advice, $specs, $tags) {
         
         // Create route
         $route_id = $this->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels);
 
         // Prepare variables
-        if ($favourite == 'on') $favourite = 1;
-        else $favourite = 0;
+        if ($advised == 'on') $advised = 1;
+        else $advised = 0;
         forEach ($specs as $key => $index) {
             if ($index == 'on') $specs[$key] = 1; // true
             if ($index == 'off') $specs[$key] = 0; // false
@@ -121,8 +121,8 @@ class Coordinates extends Model {
         $popularity = 30;
         
         // Save segment
-        $insertSegment = $this->getPdo()->prepare('INSERT INTO segments(route_id, rank, name, description, favourite, advice_name, advice_description, spec_offroad, spec_rindo, spec_cyclinglane, spec_cyclingroad, tag_hanami, tag_kouyou, tag_ajisai, tag_culture, tag_machinami, tag_shrines, tag_teafields, tag_sea, tag_mountains, tag_forest, tag_rivers, tag_lakes, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $insertSegment->execute(array($route_id, $rank, $name, $description, $favourite, $advice['name'], $advice['description'], $specs['offroad'], $specs['rindo'], $specs['cyclinglane'], $specs['cyclingroad'], $tags['hanami'], $tags['kouyou'], $tags['ajisai'], $tags['culture'], $tags['machinami'], $tags['shrines'], $tags['teafields'], $tags['sea'], $tags['mountains'], $tags['forest'], $tags['rivers'], $tags['lakes'], $popularity));
+        $insertSegment = $this->getPdo()->prepare('INSERT INTO segments(route_id, rank, name, description, advised, advice_name, advice_description, spec_offroad, spec_rindo, spec_cyclinglane, spec_cyclingroad, tag_hanami, tag_kouyou, tag_ajisai, tag_culture, tag_machinami, tag_shrines, tag_teafields, tag_sea, tag_mountains, tag_forest, tag_rivers, tag_lakes, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $insertSegment->execute(array($route_id, $rank, $name, $description, $advised, $advice['name'], $advice['description'], $specs['offroad'], $specs['rindo'], $specs['cyclinglane'], $specs['cyclingroad'], $tags['hanami'], $tags['kouyou'], $tags['ajisai'], $tags['culture'], $tags['machinami'], $tags['shrines'], $tags['teafields'], $tags['sea'], $tags['mountains'], $tags['forest'], $tags['rivers'], $tags['lakes'], $popularity));
 
         // Get segment id
         $getSegmentId = $this->getPdo()->prepare('SELECT id FROM segments WHERE route_id = ? AND name = ?');

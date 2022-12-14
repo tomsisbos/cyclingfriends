@@ -25,7 +25,7 @@ include '../actions/segments/segmentAction.php'; ?>
 					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
 						<h1><?= $segment->name ?></h1>
 					</div> <?php 
-					if ($segment->favourite) ?> <span class="popup-favourite">★</span>
+					if ($segment->advised) ?> <span class="popup-favourite">★</span>
 					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 					<div class="header-buttons">
 						<button class="btn button box-shadow js-favorite-button" type="button"> <?php

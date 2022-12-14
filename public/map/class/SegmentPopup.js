@@ -22,9 +22,9 @@ export default class SegmentPopup extends Popup {
 
     load () {
 
-        // Define favourite
-        var favourite = ''
-        if (this.data.favourite == 1) favourite = '<div class="popup-favourite" title="CyclingFriends\' favourite">★</div>'
+        // Define advised
+        var advised = ''
+        if (this.data.advised) advised = '<div class="popup-favourite" title="CyclingFriends\' favourite">★</div>'
 
         // Define tag color according to segment rank
         if (this.data.rank == 'local') var tagColor = 'tag-lightblue'
@@ -85,7 +85,7 @@ export default class SegmentPopup extends Popup {
             <div class="popup-properties">
                 <div class="popup-properties-name">
                     <a target="_blank" style="text-decoration: none" href="/segment/` + this.data.id + `">` + this.data.name + `</a>` +
-                    favourite + `
+                    advised + `
                     <div class="popup-tag ` + tagColor + `" >`+ capitalizeFirstLetter(this.data.rank) + `</div>
                 </div>
                 <div>
@@ -683,7 +683,7 @@ export default class SegmentPopup extends Popup {
         this.popup.getElement().appendChild(script);
 
         // Prepare toggle like function
-        if (this.popup.getElement().querySelector('#like-button')) this.toggleLike()
+        if (this.popup.getElement().querySelector('#like-button')) this.prepareToggleLike()
     }
             
     displayPhotos () {
