@@ -53,6 +53,12 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 							</a>
 						</div> <?php
 					} ?>
+					<div class="pg-sg-tags"> <?php 
+						foreach ($mkpoint->getTags() as $tag_name) {
+							$tag = new Tag($tag_name) ?>
+							<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div> <?php
+						} ?>
+					</div>
 					<div>by <a href="/rider/<?= $mkpoint->user->id ?>"><?= $mkpoint->user->login ?></a></div>
 					<div><div class="popup-rating" style="color: darkgrey"></div></div>
 				</div>
@@ -86,7 +92,7 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 				} else echo 'No activity data has been found.' ?>
 			</div>
 			<div class="container p-0 pg-sg-map-box">
-				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=10&output=embed"></iframe>
+				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">Reviews</div>
 					<div class="chat-reviews pt-2"></div>

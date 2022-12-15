@@ -25,7 +25,7 @@ export default class SegmentPopup extends Popup {
 
         // Define advised
         var advised = ''
-        if (this.data.advised) advised = '<div class="popup-favourite" title="CyclingFriends\' favourite">★</div>'
+        if (this.data.advised) advised = '<div class="popup-advised" title="CyclingFriends\' favourite">★</div>'
 
         // Define tag color according to segment rank
         if (this.data.rank == 'local') var tagColor = 'tag-lightblue'

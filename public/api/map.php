@@ -245,6 +245,7 @@ if (isAjax()) {
             $mkpoint = new Mkpoint($mkpoint_data['id']);
             $mkpoint->isFavorite = $mkpoint->isFavorite();
             $mkpoint->isCleared = $mkpoint->isCleared();
+            $mkpoint->tags = $mkpoint->getTags();
             array_push($mkpoints, $mkpoint);
         }
         echo json_encode($mkpoints);
@@ -344,10 +345,18 @@ if (isAjax()) {
         $mkpoint_id          = $_GET['edit-mkpoint'];
         $mkpoint_name        = $_GET['name'];
         $mkpoint_description = $_GET['description'];
+        $mkpoint_tags        = explode(",", $_GET['tags']);
         // Update mkpoint data
         $removeMkpoint = $db->prepare('UPDATE map_mkpoint SET name = ?, description = ? WHERE id = ?');
         $removeMkpoint->execute(array($mkpoint_name, $mkpoint_description, $mkpoint_id));
-        echo json_encode(['id' => $mkpoint_id, 'name' =>  $mkpoint_name, 'description' => $mkpoint_description]);
+        // Update tags data
+        $deleteCurrentTags = $db->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
+        $deleteCurrentTags->execute(array('scenery', $mkpoint_id));
+        foreach ($mkpoint_tags as $tag) {
+            $insertNewTags = $db->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
+            $insertNewTags->execute(array('scenery', $mkpoint_id, $tag));
+        }
+        echo json_encode(['id' => $mkpoint_id, 'name' =>  $mkpoint_name, 'description' => $mkpoint_description, 'tags' => $mkpoint_tags]);
     }
 
     if (isset($_GET['delete-mkpoint'])) {

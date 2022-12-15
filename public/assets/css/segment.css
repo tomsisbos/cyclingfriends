@@ -10,6 +10,9 @@
     display: flex;
     gap: 20px;
 }
+.pg-sg-tags {
+    display: inline;
+}
 .pg-sg-location {
     font-weight: bold;
     display: inline;

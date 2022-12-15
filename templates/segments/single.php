@@ -25,7 +25,7 @@ include '../actions/segments/segmentAction.php'; ?>
 					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
 						<h1><?= $segment->name ?></h1>
 					</div> <?php 
-					if ($segment->advised) ?> <span class="popup-favourite">★</span>
+					if ($segment->advised) ?> <span class="popup-advised">★</span>
 					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 					<div class="header-buttons">
 						<button class="btn button box-shadow js-favorite-button" type="button"> <?php
@@ -57,7 +57,7 @@ include '../actions/segments/segmentAction.php'; ?>
 				<div class="pg-sg-tags"> <?php 
 					foreach ($segment->tags as $tag_name) {
 						$tag = new Tag($tag_name) ?>
-						<div class="popup-tag tag-dark"> <?= '#' . $tag->getString() ?> </div> <?php
+						<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div> <?php
 					} ?>
 				</div>
 			</div>

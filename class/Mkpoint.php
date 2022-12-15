@@ -44,6 +44,17 @@ class Mkpoint extends Model {
         return $reviews;
     }
 
+    public function getTags () {
+        $getTags = $this->getPdo()->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
+        $getTags->execute(array($this->type, $this->id));
+        $tags_data = $getTags->fetchAll(PDO::FETCH_ASSOC);
+        $tags = [];
+        foreach ($tags_data as $tag_data) {
+            array_push($tags, $tag_data['tag']);
+        }
+        return $tags;
+    }
+
     // Get connected user's vote information
     public function getUserVote ($user) {
         $checkUserVote = $this->getPdo()->prepare('SELECT grade FROM grade_mkpoint WHERE mkpoint_id = ? AND user_id = ?');

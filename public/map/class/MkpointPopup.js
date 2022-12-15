@@ -1,4 +1,5 @@
 import Popup from "/map/class/Popup.js"
+import CFUtils from "/map/class/CFUtils.js"
 
 export default class MkpointPopup extends Popup {
 
@@ -13,6 +14,7 @@ export default class MkpointPopup extends Popup {
     activity_id = false
 
     setPopupContent (mkpoint) {
+        console.log(mkpoint)
         var visitedIcon = ''
         if (this.activity_id) {
             visitedIcon = `
@@ -27,6 +29,12 @@ export default class MkpointPopup extends Popup {
 
         if (mkpoint.isFavorite) var favoriteButtonClass = ' favoured'
         else var favoriteButtonClass = ''
+
+        // Build tagslist
+        var tags = ''
+        mkpoint.tags.map( (tag) => {
+            tags += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
+        } )
 
         return `
         <div class="popup-img-container">
@@ -68,6 +76,9 @@ export default class MkpointPopup extends Popup {
                 </div>
             </div>
             <div class="popup-description">` + mkpoint.description + `</div>
+            <div class="js-tags">` + 
+                tags + `
+            </div>
         </div>
         <div class="popup-buttons">
             <button id="showReviews" class="mp-button bg-button text-white">Show reviews</button>
@@ -656,6 +667,24 @@ export default class MkpointPopup extends Popup {
             $name.style.display = 'none'
             $description.before(textareaDescription)
             $description.style.display = 'none'
+            // Change tags into checkbox fields
+            var tagsContainer = document.querySelector('.js-tags')
+            tagsContainer.style.display = 'none'
+            var checkboxesContainer = document.createElement('div')
+            checkboxesContainer.className = 'js-tags'
+            var $tags = ''
+            this.tags.forEach(tag => {
+                if (this.data.tags.includes(tag)) var checked = 'checked'
+                else var checked = ''
+                $tags += `
+                    <div class="mp-checkbox">
+                        <input type="checkbox" data-name="` + tag + `" id="tag` + tag + `" class="js-segment-tag" ` + checked + `/>
+                        <label for="tag` + tag + `">` + CFUtils.getTagString(tag) + `</label>
+                    </div>
+                `
+            } )
+            checkboxesContainer.innerHTML = $tags
+            tagsContainer.after(checkboxesContainer)
             // Change edit button into save button
             var saveButton = document.createElement('div')
             saveButton.classList.add('mp-button', 'bg-button', 'text-white')
@@ -665,15 +694,28 @@ export default class MkpointPopup extends Popup {
             saveButton.addEventListener('click', () => {
                 let name = inputName.value
                 let description = textareaDescription.value
-                ajaxGetRequest (this.apiUrl + "?edit-mkpoint=" + this.data.id + "&name=" + name + "&description=" + description, (response) => {
+                let tags = []
+                checkboxesContainer.querySelectorAll('input').forEach(checkbox => {
+                    if (checkbox.checked) tags.push(checkbox.dataset.name)
+                } )
+                let tagsString = tags.join()
+                ajaxGetRequest (this.apiUrl + "?edit-mkpoint=" + this.data.id + "&name=" + name + "&description=" + description + '&tags=' + tagsString, (response) => {
                     saveButton.remove()
                     editButton.style.display = 'block'
                     inputName.remove()
                     $name.style.display = 'block'
-                    $name.innerText = response.name
+                    $name.innerHTML = '<a target="_blank" href="/scenery/' + this.data.id + '">' + response.name + '</a>'
                     textareaDescription.remove()
                     $description.style.display = 'block'
                     $description.innerText = response.description
+                    checkboxesContainer.remove()
+                    tagsContainer.style.display = 'block'
+                    tagsContainer.innerHTML = ''
+                    response.tags.map(tag => {
+                        tagsContainer.innerHTML += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
+                    } )
+                    // Reload map instance mkpoints data
+                    mapInstance.loadMkpoints()
                 } )
             } )
         } )

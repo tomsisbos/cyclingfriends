@@ -534,6 +534,7 @@ form#mkpointForm input[type="file" i] {
 .popup-advised {
     display: inline-block;
     color: #ff5555;
+    padding-left: 6px;
 }
 .popup-advice {
     background-color: #f9f9f9;
