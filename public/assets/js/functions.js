@@ -140,8 +140,7 @@ function getAbsoluteUrl (str) {
 }
 
 // Set the class of the period tag depending on the month
-function setPeriodClass (mkpoint) {
-	let month = mkpoint.month
+function setPeriodClass (month) {
 	switch (month) {
 		case '1':
 			return 'period-1'

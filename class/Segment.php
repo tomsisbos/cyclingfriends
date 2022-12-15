@@ -17,7 +17,7 @@ class Segment extends Model {
         $this->advice             = new SegmentAdvice($this->id);
         $this->seasons            = $this->getSeasons();
         $this->specs              = new SegmentSpecs($this->id);
-        $this->tags               = new SegmentTags($this->id);
+        $this->tags               = $this->getTags();
         $this->rating             = intval($data['rating']);
         $this->grades_number      = intval($data['grades_number']);
         $this->popularity         = intval($data['popularity']);
@@ -33,6 +33,17 @@ class Segment extends Model {
             array_push($seasons, new SegmentSeason($season_data['id']));
         }
         return $seasons;
+    }
+
+    public function getTags () {
+        $getTags = $this->getPdo()->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
+        $getTags->execute(array($this->type, $this->id));
+        $tags_data = $getTags->fetchAll(PDO::FETCH_ASSOC);
+        $tags = [];
+        foreach ($tags_data as $tag_data) {
+            array_push($tags, $tag_data['tag']);
+        }
+        return $tags;
     }
 
     // Get connected user's vote information

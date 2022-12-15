@@ -274,7 +274,7 @@ export default class WorldMap extends GlobalMap {
             mkpointPopup.select()
             mkpointPopup.reviews()
             mkpointPopup.rating()
-            if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin()
+            if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin(this)
             if (content.includes('target-button')) mkpointPopup.setTarget()
             if (content.includes('js-favorite-button')) mkpointPopup.setFavorite(this.updateFavoriteData.bind(this))
             if (content.includes('addphoto-button')) mkpointPopup.addPhoto()
@@ -838,6 +838,7 @@ export default class WorldMap extends GlobalMap {
             
             // Add segment relevant photos
             segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()
+            segment.segmentPopup.photos = segment.segmentPopup.getPhotos()
             segment.segmentPopup.displayPhotos()
         }
     }
@@ -882,18 +883,7 @@ export default class WorldMap extends GlobalMap {
 
         var tempPopup = new TempPopup()
         var popup = tempPopup.popup
-        popup.setHTML(`
-            <div class="popup-head popup-content container-admin">Share a new scenery spot</div>
-            <form class="popup-content" name="mkpointForm" id="mkpointForm">
-                <strong>Name :</strong>
-                <input type="text" name="name" class="admin-field"/>
-                <strong>Description :</strong>
-                <textarea name="description" class="admin-field"></textarea>
-                <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
-                <label for="file" class="mp-button"><input enctype="multipart/form-data" type="file" name="file" id="file" style="display: none" />Upload a photo</label>
-                <img class="mp-image-preview" />
-                <input type="submit" name="mbkPointForm" value="Submit" class="mp-button bg-button text-white fullwidth" />
-            </form>`)
+        tempPopup.load()
         marker.setPopup(popup)
         popup.on('open', async () => {
             // Display a preview on photo upload

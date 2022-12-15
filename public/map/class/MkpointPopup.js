@@ -412,7 +412,7 @@ export default class MkpointPopup extends Popup {
                 newPhoto.src = 'data:image/jpeg;base64,' + photo.blob
                 photoContainer.firstChild.before(newPhoto)
                 var newPhotoPeriod = document.createElement('div')
-                newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo))
+                newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo.month))
                 newPhotoPeriod.innerText = photo.period
                 newPhotoPeriod.style.display = 'none'
                 newPhoto.after(newPhotoPeriod)
@@ -465,9 +465,12 @@ export default class MkpointPopup extends Popup {
         }
     }
 
-    setFavorite (toggleMkpointFavoriteData) {
-        var $button = document.querySelector('.js-favorite-button')
+    setFavorite (toggleMkpointFavoriteData = null) {
+        if (this.popup.getElement()) var $button = this.popup.getElement().querySelector('.js-favorite-button')
+        else var $button = document.querySelector('.js-favorite-button')
+        console.log($button)
         $button.addEventListener('click', () => {
+            console.log('here')
             var type = 'scenery'
             ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + this.data.id, (response) => {
                 showResponseMessage(response, {
@@ -481,7 +484,7 @@ export default class MkpointPopup extends Popup {
                 } )
                 // Update data in map instance for ensuring display update
                 marker.isFavorite = !marker.isfavorite
-                toggleMkpointFavoriteData(this.data.id)
+                if (toggleMkpointFavoriteData) toggleMkpointFavoriteData(this.data.id)
                 console.log(this.data)
                 // Toggle button and marker element class
                 $button.classList.toggle('favoured')
@@ -632,7 +635,7 @@ export default class MkpointPopup extends Popup {
         ajaxGetRequest (this.apiUrl + "?getpropic=" + this.data.user.id, (response) => this.popup.getElement().querySelector('.round-propic-img').src = response)
     }
     
-    mkpointAdmin = () => {
+    mkpointAdmin = (mapInstance) => {
     // Edit
         var editButton = this.popup.getElement().querySelector('#mkpointEdit')
         // On click on edit button, change text into input fields and change Edit button into Save button
@@ -713,6 +716,9 @@ export default class MkpointPopup extends Popup {
             var answer = await openConfirmationPopup('Do you really want to remove this spot ?')
             if (answer) { // If yes, remove the mkpoint and close the popup
                 ajaxGetRequest (this.apiUrl + "?delete-mkpoint=" + this.data.id, (response) => { console.log(response) } )
+                mapInstance.data.mkpoints.forEach(mkpoint => {
+                    if (mkpoint.id === this.data.id) mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
+                } )
                 document.querySelector('#mkpoint' + this.data.id).remove()
                 this.popup.getElement().remove()
             }

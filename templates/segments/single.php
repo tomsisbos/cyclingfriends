@@ -55,10 +55,9 @@ include '../actions/segments/segmentAction.php'; ?>
 					</div> <?php
 				} ?>
 				<div class="pg-sg-tags"> <?php 
-					foreach ($segment->tags as $tag => $set) {
-						if ($tag != 'id' AND $set == 1) { ?>
-							<div class="popup-tag tag-dark"> <?= '#' .$tag ?> </div> <?php
-						}
+					foreach ($segment->tags as $tag_name) {
+						$tag = new Tag($tag_name) ?>
+						<div class="popup-tag tag-dark"> <?= '#' . $tag->getString() ?> </div> <?php
 					} ?>
 				</div>
 			</div>
@@ -177,7 +176,7 @@ include '../actions/segments/segmentAction.php'; ?>
 								<div class="pg-sg-spot-icon"><img src="data:image/jpeg;base64,<?= $spot['icon'] ?>"></div>
 								<div class="pg-sg-spot-distance">km <?= round($spot['distance'] / 1000, 1) ?></div>
 								<div class="pg-sg-spot-name"> <?php
-									if ($spot['type'] == 'mkpoint') { echo '<a href="/scenery/' . $spot['id'] . '">'; }
+									if ($spot['type'] == 'mkpoint') { echo '<a target="_blank" href="/scenery/' . $spot['id'] . '">'; }
 										echo $spot['name'];
 									if ($spot['type'] == 'mkpoint') { echo '</a>'; } ?>
 								</div>

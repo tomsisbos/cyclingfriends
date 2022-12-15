@@ -9,7 +9,7 @@ ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (mkpoint) => {
 	mkpointPopup.photos = mkpoint.photos
 	mkpointPopup.prepareModal()
     mkpointPopup.colorLike()
-    mkpointPopup.toggleLike()
+    mkpointPopup.prepareToggleLike()
     mkpointPopup.rating()
     mkpointPopup.reviews()
 } )

@@ -2333,6 +2333,7 @@ export default class GlobalMap extends Model {
                 if (content.includes('target-button')) mkpointPopup.setTarget()
                 if (content.includes('addphoto-button')) mkpointPopup.addPhoto() 
                 if (content.includes('round-propic-img')) mkpointPopup.addPropic()
+                if (content.includes('js-favorite-button')) mkpointPopup.setFavorite()
             } )
             mkpointPopup.popup.on('close', () => {
                 this.unselect()

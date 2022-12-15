@@ -212,11 +212,6 @@
     position: relative;
 }
 
-.rt-checkbox {
-    display: inline-block;
-    margin-left: 20px;
-}
-
 /* width */
 .rt-slider::-webkit-scrollbar {
     height: 5px;

@@ -40,6 +40,7 @@ if (isAjax()) {
                 $mkpoint['month']            = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
                 $mkpoint['period']           = getPeriod($mkpoint['date']);
                 $mkpoint['description']      = htmlspecialchars($_POST['description']);
+                $mkpoint['tags']             = explode(",", $_POST['tags']);
                 $mkpoint['file_size']        = $_FILES['file']['size'];
                 $mkpoint['file_name']        = $_FILES['file']['name'];
                 $mkpoint['file_type']        = $_FILES['file']['type'];
@@ -51,7 +52,7 @@ if (isAjax()) {
 
                 /* Photo treatment */
                 $img_name = 'temp.'.$ext; // Set image name
-                $temp = '/map/media/temp/' .$img_name; // Set temp path
+                $temp = $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
                 // Temporary upload raw file on the server
                 move_uploaded_file($_FILES['file']['tmp_name'], $temp);
                 // Get the file into $img thanks to imagecreatefromjpeg
@@ -62,7 +63,7 @@ if (isAjax()) {
                 imagegammacorrect($img, 1.0, 1.1);
                 imagefilter($img, IMG_FILTER_CONTRAST, -5);
                 // Compress it and move it into a new folder
-                $path = '/map/media/temp/photo_' .$img_name; // Set path variable
+                $path = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/photo_' .$img_name; // Set path variable
                 // If uploaded file size exceeds 3Mb, set new quality to 15
                 if ($_FILES['file']['size'] > 3000000) imagejpeg($img, $path, 75);
                 // If uploaded file size is between 1Mb and 3Mb set new quality to 30
@@ -77,7 +78,7 @@ if (isAjax()) {
                 // Correct image gamma and contrast
                 imagegammacorrect($thumbnail, 1.0, 1.275);
                 imagefilter($thumbnail, IMG_FILTER_CONTRAST, -12);
-                $thumbpath = '/map/media/temp/thumb_' .$img_name; // Set path variable
+                $thumbpath = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/thumb_' .$img_name; // Set path variable
                 imagejpeg($thumbnail, $thumbpath);
                 // Get variable ready
                 $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
@@ -115,6 +116,16 @@ if (isAjax()) {
             $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insertImgMkpoint->execute(array($mkpointId['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], 0));
         }
+
+        // Insert tags data
+        $checkLngLat->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
+        $mkpoint_data = $checkLngLat->fetch(PDO::FETCH_ASSOC);
+        if (!empty($mkpoint['tags'][0])) {
+            foreach ($mkpoint['tags'] as $tag) {
+                $insertTag = $db->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
+                $insertTag->execute(array('scenery', $mkpoint_data['id'], $tag));
+            }
+        }
     }
 
     if (isset($_POST['addphoto-button-form']) AND !empty($_POST['addphoto-button-form'])) {
@@ -150,7 +161,7 @@ if (isAjax()) {
 
                 /* Photo treatment */
                 $img_name = 'img.'.$ext; // Set image name
-                $temp = 'map/media/temp/' .$img_name; // Set temp path
+                $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
                 // Temporary upload raw file on the server
                 move_uploaded_file($_FILES['file']['tmp_name'], $temp);
                 // Get the file into $img thanks to imagecreatefromjpeg
@@ -160,7 +171,7 @@ if (isAjax()) {
                 imagegammacorrect($img, 1.0, 1.1);
                 imagefilter($img, IMG_FILTER_CONTRAST, -5);
                 // Compress it and move it into a new folder
-                $path = 'map/media/temp/photo_' .$img_name; // Set path variable
+                $path = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/photo_' .$img_name; // Set path variable
                 if ($_FILES['file']['size'] > 3000000) { // If uploaded file size exceeds 3Mb, set new quality
                     imagejpeg($img, $path, 75);
                 } else { // If uploaded file size is between 1Mb and 3Mb set new quality
@@ -347,6 +358,9 @@ if (isAjax()) {
         // Remove photo data
         $removeMkpointPhotos = $db->prepare('DELETE FROM img_mkpoint WHERE mkpoint_id = ?');
         $removeMkpointPhotos->execute(array($mkpoint->id));
+        // Remove tags data
+        $removeMkpointPhotos = $db->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
+        $removeMkpointPhotos->execute(array('scenery', $mkpoint->id));
         echo json_encode([$mkpoint->id]);
     }
 

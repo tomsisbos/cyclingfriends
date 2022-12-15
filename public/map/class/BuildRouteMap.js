@@ -1304,7 +1304,7 @@ export default class BuildRouteMap extends GlobalMap {
             inputName.addEventListener('change', () => data.name = inputName.value)
             inputDescription.addEventListener('change', () => data.description = inputDescription.value)
             // Close on click outside popup
-            modal.addEventListener('click', (e) => {
+            modal.addEventListener('mousedown', (e) => {
                 if (e.target == modal) {
                     modal.remove()
                     resolve(false)
@@ -1341,20 +1341,7 @@ export default class BuildRouteMap extends GlobalMap {
                             cyclinglane: 'off',
                             cyclingroad: 'off'
                         }
-                        data.tags = {
-                            hanami: 'off',
-                            kouyou: 'off',
-                            ajisai: 'off',
-                            culture: 'off',
-                            machinami: 'off',
-                            shrines: 'off',
-                            teafields: 'off',
-                            sea: 'off',
-                            mountains: 'off',
-                            forest: 'off',
-                            rivers: 'off',
-                            lakes: 'off'
-                        }
+                        data.tags = []
                         data.seasons = []
                         data.advice = {}
                         data.category = 'segment'
@@ -1364,6 +1351,16 @@ export default class BuildRouteMap extends GlobalMap {
                         savePopup.style.top = 'calc(30% - 100px)'
                         savePopup.style.left = 'calc(50% - 20vw)'
                         savePopup.style.maxWidth = '40vw'
+                        // Build tag checkboxes
+                        var $tags = ''
+                        this.tags.forEach(tag => {
+                            $tags += `
+                            <div class="mp-checkbox">
+                                <input type="checkbox" data-name="` + tag + `" id="tag` + tag + `" class="js-segment-tag" />
+                                <label for="tag` + tag + `">` + CFUtils.getTagString(tag) + `</label>
+                            </div>
+                            `
+                        } )
                         // Create form
                         var createSegmentForm = document.createElement('div')
                         createSegmentForm.id = 'createSegmentForm'
@@ -1377,7 +1374,7 @@ export default class BuildRouteMap extends GlobalMap {
                                 <option value="regional">Regional</option>
                                 <option value="national">National</option>
                             </select>
-                            <div class="rt-checkbox">
+                            <div class="mp-checkbox">
                                 <input type="checkbox" id="advised" class="js-segment-advised" />
                                 <label for="advised">Favoured by cyclingfriends</label>
                             </div>
@@ -1386,73 +1383,26 @@ export default class BuildRouteMap extends GlobalMap {
                         <button id="addAdvice" class="mp-button bg-white">Add advice</button>
                         <div class="mb-2">
                             <label>Specs :</label><br>
-                            <div class="rt-checkbox">
+                            <div class="mp-checkbox">
                                 <input type="checkbox" id="specOffroad" class="js-segment-spec-offroad" />
                                 <label for="specOffroad">Offroad</label>
                             </div>
-                            <div class="rt-checkbox">
+                            <div class="mp-checkbox">
                                 <input type="checkbox" id="specRindo" class="js-segment-spec-rindo" />
                                 <label for="specRindo">Rindo</label>
                             </div>
-                            <div class="rt-checkbox">
+                            <div class="mp-checkbox">
                                 <input type="checkbox" id="specCyclinglane" class="js-segment-spec-cyclinglane" />
                                 <label for="specCyclinglane">Cycling lane</label>
                             </div>
-                            <div class="rt-checkbox">
+                            <div class="mp-checkbox">
                                 <input type="checkbox" id="specCyclingroad" class="js-segment-spec-cyclingroad" />
                                 <label for="specCyclingroad">Cycling road</label>
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label>Tags :</label><br>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagHanami" class="js-segment-tag-hanami" />
-                                <label for="tagHanami">Hanami</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagKouyou" class="js-segment-tag-kouyou" />
-                                <label for="tagKouyou">Kouyou</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagAjisai" class="js-segment-tag-ajisai" />
-                                <label for="tagAjisai">Ajisai</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagCulture" class="js-segment-tag-culture" />
-                                <label for="tagCulture">Culture</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagMachinami" class="js-segment-tag-machinami" />
-                                <label for="tagMachinami">Machinami</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagShrines" class="js-segment-tag-shrines" />
-                                <label for="tagShrines">Shrines</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagTeaFields" class="js-segment-tag-teafields" />
-                                <label for="tagTeaFields">Tea fields</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagSea" class="js-segment-tag-sea" />
-                                <label for="tagSea">Sea</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagMountains" class="js-segment-tag-mountains" />
-                                <label for="tagMountains">Mountains</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagForest" class="js-segment-tag-forest" />
-                                <label for="tagForest">Forest</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagRivers" class="js-segment-tag-rivers" />
-                                <label for="tagRivers">Rivers</label>
-                            </div>
-                            <div class="rt-checkbox">
-                                <input type="checkbox" id="tagLakes" class="js-segment-tag-lakes" />
-                                <label for="tagLakes">Lakes</label>
-                            </div>
+                            <label>Tags :</label><br>` + 
+                                $tags + `
                         </div>`
                         createSegmentButton.after(createSegmentForm)
 
@@ -1631,36 +1581,19 @@ export default class BuildRouteMap extends GlobalMap {
                         var inputSpecCyclinglane  = document.querySelector('.js-segment-spec-cyclinglane')
                         var inputSpecCyclingroad  = document.querySelector('.js-segment-spec-cyclingroad')
                         var inputSpecRindo        = document.querySelector('.js-segment-spec-rindo')
-                        var inputTagHanami        = document.querySelector('.js-segment-tag-hanami')
-                        var inputTagKouyou        = document.querySelector('.js-segment-tag-kouyou')
-                        var inputTagAjisai        = document.querySelector('.js-segment-tag-ajisai')
-                        var inputTagCulture       = document.querySelector('.js-segment-tag-culture')
-                        var inputTagMachinami     = document.querySelector('.js-segment-tag-machinami')
-                        var inputTagShrines       = document.querySelector('.js-segment-tag-shrines')
-                        var inputTagTeaFields     = document.querySelector('.js-segment-tag-teafields')
-                        var inputTagSea           = document.querySelector('.js-segment-tag-sea')
-                        var inputTagMountains     = document.querySelector('.js-segment-tag-mountains')
-                        var inputTagForest        = document.querySelector('.js-segment-tag-forest')
-                        var inputTagRivers        = document.querySelector('.js-segment-tag-rivers')
-                        var inputTagLakes         = document.querySelector('.js-segment-tag-lakes')
+                        var inputTags             = document.querySelectorAll('.js-segment-tag')
                         selectRank.addEventListener('change', () => data.rank = selectRank.value)
                         inputAdvised.addEventListener('change', () => data.advised = inputAdvised.value)
                         inputSpecOffroad.addEventListener('change', () => data.specs.offroad = inputSpecOffroad.value)
                         inputSpecRindo.addEventListener('change', () => data.specs.rindo = inputSpecRindo.value)
                         inputSpecCyclinglane.addEventListener('change', () => data.specs.cyclinglane = inputSpecCyclinglane.value)
                         inputSpecCyclingroad.addEventListener('change', () => data.specs.cyclingroad = inputSpecCyclingroad.value)
-                        inputTagHanami.addEventListener('change', () => data.tags.hanami = inputTagHanami.value)
-                        inputTagKouyou.addEventListener('change', () => data.tags.kouyou = inputTagKouyou.value)
-                        inputTagAjisai.addEventListener('change', () => data.tags.ajisai = inputTagAjisai.value)
-                        inputTagCulture.addEventListener('change', () => data.tags.culture = inputTagCulture.value)
-                        inputTagMachinami.addEventListener('change', () => data.tags.machinami = inputTagMachinami.value)
-                        inputTagShrines.addEventListener('change', () => data.tags.shrines = inputTagShrines.value)
-                        inputTagTeaFields.addEventListener('change', () => data.tags.teafields = inputTagTeaFields.value)
-                        inputTagSea.addEventListener('change', () => data.tags.sea = inputTagSea.value)
-                        inputTagMountains.addEventListener('change', () => data.tags.mountains = inputTagMountains.value)
-                        inputTagForest.addEventListener('change', () => data.tags.forest = inputTagForest.value)
-                        inputTagRivers.addEventListener('change', () => data.tags.rivers = inputTagRivers.value)
-                        inputTagLakes.addEventListener('change', () => data.tags.lakes = inputTagLakes.value)
+                        inputTags.forEach( (inputTag) => {
+                            inputTag.addEventListener('change', () => {
+                                if (inputTag.value == 'on') data.tags.push(inputTag.dataset.name)
+                                else if (inputTag.value == 'off') data.tags.splice(data.tags.indexOf(inputTag.dataset.name), 1)
+                            } )
+                        } )
                     } )
                 }
             } )

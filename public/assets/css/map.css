@@ -430,6 +430,10 @@ form#mkpointForm input[type="file" i] {
 .mp-button:hover, .mp-button-small:hover {
     opacity: 0.8;
 }
+.mp-checkbox {
+    display: inline-block;
+    margin-left: 20px;
+}
 .chat-box {
     padding: 0px 10px 10px 10px;
     background-color: #fff;
@@ -527,7 +531,7 @@ form#mkpointForm input[type="file" i] {
     margin-bottom: 10px;
     text-align: center;
 }
-.popup-favourite {
+.popup-advised {
     display: inline-block;
     color: #ff5555;
 }

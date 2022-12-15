@@ -86,9 +86,5 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
 
         // Load mkpoints into map instance
         segmentMap.mkpoints = mkpoints
-            
-        // Build route specs table
-        ///routePageMap.buildSlider()
-        ///routePageMap.buildTable()
     } )
 } )

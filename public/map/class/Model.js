@@ -12,6 +12,7 @@ export default class Model {
     apiUrl = '/api/map.php'
 
     defaultStyle = 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z'
+    tags = ['hanami', 'kouyou', 'ajisai', 'culture', 'machinami', 'shrines', 'teafields', 'sea', 'mountains', 'forest', 'rivers', 'lakes']
     loaderContainer = document.body
     loader = {
         prepare: () => {
