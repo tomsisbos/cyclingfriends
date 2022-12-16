@@ -11,15 +11,14 @@ export default class MkpointPopup extends Popup {
     type = 'mkpoint'
     data
     photos
-    activity_id = false
 
     setPopupContent (mkpoint) {
         console.log(mkpoint)
         var visitedIcon = ''
-        if (this.activity_id) {
+        if (mkpoint.isCleared) {
             visitedIcon = `
                 <div id="visited-icon" title="You have visited this mkpoint.">
-                    <a href="/activity/` + this.activity_id + `" target="_blank">
+                    <a href="/activity/` + mkpoint.isCleared + `" target="_blank">
                         <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
                     </a>
                 </div>
@@ -414,6 +413,7 @@ export default class MkpointPopup extends Popup {
             this.prepareToggleLike()
 
             function addPhoto (photo, number) {
+                console.log(photo)
                 var newPhoto = document.createElement('img')
                 newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
                 newPhoto.style.display = 'none'

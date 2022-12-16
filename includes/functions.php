@@ -1242,12 +1242,13 @@ function getUsersDisablingPublicChat() {
 // Get the period (early/mid/late + month) from a date
 function getPeriod($date) {
 	// Get part of the month from the day
-	if (date("d", strtotime($date)) < 10) $third = "early ";
-	else if ((date("d", strtotime($date)) >= 10) AND (date("d", strtotime($date) <= 20))) $third = "mid ";
-	else if (date("d", strtotime($date)) > 20) $third = "late ";
+	$day = date("d", strtotime($date));
+	if ($day < 10) $third = "early ";
+	else if (($day >= 10) AND ($day <= 20)) $third = "mid ";
+	else if ($day > 20) $third = "late ";
 
 	// Get month in letters
-	switch(date("n", strtotime($date))){
+	switch (date("n", strtotime($date))) {
 		case 1: $month = "january"; break;
 		case 2: $month = "february"; break;
 		case 3: $month = "march"; break;

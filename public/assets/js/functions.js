@@ -142,44 +142,19 @@ function getAbsoluteUrl (str) {
 // Set the class of the period tag depending on the month
 function setPeriodClass (month) {
 	switch (month) {
-		case '1':
-			return 'period-1'
-			break
-		case '2':
-			return 'period-2'
-			break
-		case '3':
-			return 'period-3'
-			break
-		case '4':
-			return 'period-4'
-			break
-		case '5':
-			return 'period-5'
-			break
-		case '6':
-			return 'period-6'
-			break
-		case '7':
-			return 'period-7'
-			break
-		case '8':
-			return 'period-8'
-			break
-		case '9':
-			return 'period-9'
-			break
-		case '10':
-			return 'period-10'
-			break
-		case '11':
-			return 'period-11'
-			break
-		case '12':
-			return 'period-12'
-			break
-		default:
-			return 'period-default'
+		case 1: return 'period-1'
+		case 2: return 'period-2'
+		case 3: return 'period-3'
+		case 4: return 'period-4'
+		case 5: return 'period-5'
+		case 6: return 'period-6'
+		case 7: return 'period-7'
+		case 8: return 'period-8'
+		case 9: return 'period-9'
+		case 10: return 'period-10'
+		case 11: return 'period-11'
+		case 12: return 'period-12'
+		default: return 'period-default'
 	}	  
 }
 

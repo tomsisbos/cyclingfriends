@@ -724,7 +724,6 @@ export default class NewActivityMap extends ActivityMap {
             if (photosToAsk) var photosToShare = await this.openSelectPhotosToShareModal(photosToAsk)
             else var photosToShare = []
             console.log(photosToShare)
-            debugger
             resolve(photosToShare)
         } )
     }
@@ -816,7 +815,7 @@ export default class NewActivityMap extends ActivityMap {
         } )
     }
 
-    async saveActivity () {
+    async saveActivity (mkpointPhotos = null) {
         return new Promise(async (resolve, reject) => {
             
             // Remove trackpoints and photos data
@@ -843,20 +842,28 @@ export default class NewActivityMap extends ActivityMap {
                 } )
             })
 
+            // If photos need to be added to a mkpoint, append info data
+            if (mkpointPhotos) cleanData.mkpointPhotos = mkpointPhotos
+
             // Save canvas as a picture
-            await this.focus(this.data.routeData)
-            this.map.on('idle', () => {
+            this.map.once('idle', () => {
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
                     canvas.toBlob( async (blob) => {
                         cleanData.thumbnail = await blobToBase64(blob)
                         // Send data to server
+                        console.log(cleanData)
+                        debugger
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)
+                            debugger
                             window.location.replace('/' + this.session.login + '/activities')
                         } )
                     }, 'image/jpeg', 0.7)
                 } )     
             } )
+            var {lng, lat} = this.map.getCenter()
+            this.map.setCenter({lng: lng + 0.01, lat: lat + 0.01})
+            await this.focus(this.data.routeData)
         } )
     }
 

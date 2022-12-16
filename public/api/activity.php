@@ -134,9 +134,28 @@ if (is_array($data)) {
         if ($photo['featured'] == true) $featured = 1;
         else $featured = 0;
 
+        // Prepare mkpoint photos data if necessary
+        if (isset($data['mkpointPhotos'])) {
+            foreach ($data['mkpointPhotos'] as $entry) {
+                if ($entry['photo_name'] == $img_name) {
+                    $entry['blob'] = $img_blob;
+                    $entry['size'] = $img_size;
+                    $entry['type'] = $img_type;
+                }
+            }
+        }
+
         // Insert photo in 'activity_photos' table
         $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?)');
         $insert_photos -> execute(array($activity_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
+    }
+
+    // If necessary, add selected photos to corresponding mkpoint
+    if (isset($data['mkpointPhotos'])) {
+        foreach ($data['mkpointPhotos'] as $entry) {
+            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), getPeriod(date('Y-m-d H:i:s')), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
+        }
     }
 
     echo json_encode(true);

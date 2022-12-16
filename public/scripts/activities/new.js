@@ -122,8 +122,8 @@ $upload.addEventListener('change', async (e) => {
 
                 // Save activity treatment
                 document.querySelector('#saveActivity').addEventListener('click', async () => {
-                    await newActivityMap.beforeSavingActivity()
-                    newActivityMap.saveActivity()
+                    var photosToShare = await newActivityMap.beforeSavingActivity()
+                    newActivityMap.saveActivity(photosToShare)
                 } )
 
             } else showResponseMessage(response)
