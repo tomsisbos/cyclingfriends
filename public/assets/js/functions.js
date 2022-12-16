@@ -245,7 +245,8 @@ function showResponseMessage (message, options = {element: false, absolute: fals
 	if (options.absolute) $block.classList.add('absolute')
 	var $message = document.createElement('p')
 	$block.appendChild($message)
-	element.appendChild($block)
+	if (!options.element) element.prepend($block)
+	else element.appendChild($block)
 
 	// If success, show and style as success message
 	if (message.success) {

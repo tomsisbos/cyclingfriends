@@ -1,5 +1,5 @@
 import ActivityMap from "/map/class/ActivityMap.js"
-///import GPX from '/node_modules/gpx-parser-builder/src/gpx.js'
+import CFUtils from "/map/class/CFUtils.js"
 
 export default class NewActivityMap extends ActivityMap {
 
@@ -708,8 +708,116 @@ export default class NewActivityMap extends ActivityMap {
         document.querySelectorAll('.pg-ac-photo-container').forEach($photoContainer => $photoContainer.remove())
     }
 
+    async beforeSavingActivity () {
+        return new Promise(async (resolve, reject) => {
+            // Compare all close mkpoints to all uploaded photos location and store similar data
+            var photosToAsk = []
+            this.data.mkpoints.forEach(mkpoint => {
+                this.data.photos.forEach(photo => {
+                    var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
+                    if (CFUtils.compareCoords(mkpoint.lngLat, photoLocation, 3)) {
+                        console.log(photo.name + ' could be added to ' + mkpoint.name + ' at a decimal level of 3.')
+                        photosToAsk.push({photo, mkpoint})
+                    }
+                } )
+            } )
+            if (photosToAsk) var photosToShare = await this.openSelectPhotosToShareModal(photosToAsk)
+            else var photosToShare = []
+            console.log(photosToShare)
+            debugger
+            resolve(photosToShare)
+        } )
+    }
+
+    async openSelectPhotosToShareModal (photosToAsk) {
+        return new Promise ((resolve, reject) => {
+
+            // Build window structure
+            var modal = document.createElement('div')
+            modal.classList.add('modal', 'd-block')
+            document.querySelector('body').appendChild(modal)
+            modal.addEventListener('click', (e) => {
+                var eTarget = e ? e.target : event.srcElement
+                if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
+            } )
+            var confirmationPopup = document.createElement('div')
+            confirmationPopup.classList.add('popup', 'fullscreen-popup')
+            modal.appendChild(confirmationPopup)
+            confirmationPopup.innerHTML = `We have detected that these photos have been taken at registered scenery spots. Would you like to add them and share them with the community ?<br>
+            (!) Note that photos sharing is subject to rules. Please <a>check the rules here</a> if you are not sure.`
+            var $entriesContainer = document.createElement('div')
+            $entriesContainer.className = 'new-ac-entries-container'
+            confirmationPopup.appendChild($entriesContainer)
+
+            photosToAsk.forEach(async (entry) => {
+
+                // Build photoToAsk elements
+                var dataUrl = await getDataURLFromBlob(entry.photo.blob)
+                var $entry = document.createElement('div')
+                $entry.dataset.photoname = entry.photo.name
+                $entry.dataset.mkpointid = entry.mkpoint.id
+                $entry.innerHTML = `
+                    <div class="new-ac-window-photo-container">
+                        <img src="` + dataUrl + `" />
+                    </div>
+                    <div class="new-ac-window-mkpoint-infos">`
+                        + entry.mkpoint.name + `
+                    </div>
+                    <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">Yes</div><div class="mp-button bg-darkred text-white js-no">No</div></div>
+                `
+                $entriesContainer.appendChild($entry)
+
+                var $yes = $entry.querySelector('.js-yes')
+                var $no = $entry.querySelector('.js-no')
+                console.log($yes)
+                console.log($no)
+                // On click on "Yes" button, close the popup and return true
+                $yes.addEventListener('click', () => {
+                    entry.answer = 'keep'
+                    styleButtons($yes, $no)
+                    if (isEverythingAnswered(photosToAsk)) {
+                        treatAnswers(photosToAsk)
+                    }
+                } )
+                // On click on "No" button, return false and close the popup
+                $no.addEventListener('click', () => {
+                    entry.answer = 'discard'
+                    styleButtons($no, $yes)
+                    if (isEverythingAnswered(photosToAsk)) {
+                        treatAnswers(photosToAsk)
+                    }
+                } )
+            } )
+
+            function styleButtons ($clickedButton, $otherButton) {
+                if (!$clickedButton.classList.contains('new-ac-btn-kept')) $clickedButton.classList.add('new-ac-btn-kept')
+                if ($clickedButton.classList.contains('new-ac-btn-discarded')) $clickedButton.classList.remove('new-ac-btn-discarded')
+                if ($otherButton.classList.contains('new-ac-btn-kept')) $otherButton.classList.remove('new-ac-btn-kept')
+                if (!$otherButton.classList.contains('new-ac-btn-discarded')) $otherButton.classList.add('new-ac-btn-discarded')
+            }
+
+            function isEverythingAnswered (photosToAsk) {
+                var isEverythingAnswered = true
+                photosToAsk.forEach(tempEntry => {
+                    if (!tempEntry.answer) isEverythingAnswered = false
+                })
+                if (isEverythingAnswered) return true
+                else return false
+            }
+
+            function treatAnswers (photosToAsk) {
+                modal.remove()
+                var photosToShare = []
+                photosToAsk.forEach(finalEntry => {
+                    if (finalEntry.answer == 'keep') photosToShare.push({photo_name: finalEntry.photo.name, mkpoint_id: finalEntry.mkpoint.id})
+                } )
+                resolve(photosToShare)
+            }
+        } )
+    }
+
     async saveActivity () {
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             
             // Remove trackpoints and photos data
             var cleanData = {}

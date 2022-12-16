@@ -959,6 +959,11 @@ a .strava:hover {
     border-radius: 10px;
     margin-bottom: 150px;
 }
+.popup.fullscreen-popup {
+    max-width: 90%;
+    left: 5%;
+    top: 5%;
+}
 
 .classy-title {
     color: white;

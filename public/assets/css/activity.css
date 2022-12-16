@@ -68,6 +68,27 @@
     border-top: 1px dashed #ced4da;
 }
 
+.new-ac-window-photo-container {
+    width: 100%;
+    height: 120px;
+}
+.new-ac-window-photo-container img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.new-ac-entries-container {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0px;
+}
+.new-ac-btn-kept {
+    background-color: blue !important;
+}
+.new-ac-btn-discarded {
+    background-color: lightgrey !important;
+}
+
 .ac-container {
     display: flex;
     flex-direction: column;
