@@ -168,6 +168,7 @@ async function openConfirmationPopup (question) {
 
 // Show corresponding message after request
 function showResponseMessage (message, options = {element: false, absolute: false}) {
+	console.log(options)
 
 	hideResponseMessage()
 
@@ -178,8 +179,7 @@ function showResponseMessage (message, options = {element: false, absolute: fals
 	if (options.absolute) $block.classList.add('absolute')
 	var $message = document.createElement('p')
 	$block.appendChild($message)
-	if (!options.element) element.prepend($block)
-	else element.appendChild($block)
+	element.prepend($block)
 
 	// If success, show and style as success message
 	if (message.success) {

@@ -122,8 +122,10 @@ $upload.addEventListener('change', async (e) => {
 
                 // Save activity treatment
                 document.querySelector('#saveActivity').addEventListener('click', async () => {
-                    var photosToShare = await newActivityMap.beforeSavingActivity()
-                    newActivityMap.saveActivity(photosToShare)
+                    var photosToShare = await newActivityMap.checkForCloseMkpoints()
+                    if (newActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await newActivityMap.createMkpoints()
+                    else var mkpointsToCreate = null
+                    newActivityMap.saveActivity(photosToShare, mkpointsToCreate)
                 } )
 
             } else showResponseMessage(response)

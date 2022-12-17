@@ -684,6 +684,25 @@ export default class NewActivityMap extends ActivityMap {
                 this.setFeatured(photo)
             } )
 
+            // Create mkpoint listener
+            $createMkpointButton.addEventListener('click', () => {
+                // Initialize list if necessary
+                if (!this.data.mkpointsToCreate) this.data.mkpointsToCreate = []
+                // If no similar entry exists yet, create it and highlight thumbnail
+                if (!this.data.mkpointsToCreate.includes(photo)) {
+                    this.data.mkpointsToCreate.push(photo)
+                    photo.$thumbnail.firstChild.classList.add('admin-marker')
+                    photo.$thumbnail.querySelector('.pg-ac-createmkpoint-button').style.color = 'yellow'
+                // Else, remove entry in map instance data and set thumbnail back to default 
+                } else {
+                    var key = this.data.mkpointsToCreate.find(key => key == photo)
+                    this.data.mkpointsToCreate.splice(key, 1)
+                    photo.$thumbnail.firstChild.classList.remove('admin-marker')
+                    photo.$thumbnail.querySelector('.pg-ac-createmkpoint-button').style.color = 'white'
+                }
+                console.log(this.data.mkpointsToCreate)
+            } )
+
             // Delete photo listener
             $deleteButton.addEventListener('click', () => {
                 photo.$thumbnail.remove()
@@ -719,14 +738,13 @@ export default class NewActivityMap extends ActivityMap {
         this.data.photos.forEach(photo => {
             if (photo.featured) {
                 photo.$thumbnail.firstChild.classList.add('selected-marker')
+                photo.$thumbnail.querySelector('.pg-ac-feature-button').style.color = "#ff5555"
                 isSetFeatured = true
-            } else photo.$thumbnail.firstChild.classList.remove('selected-marker')
-        } )/*
-        // Set first photo as featured if no featured photo found
-        if (!isSetFeatured) {
-            this.data.photos[0].featured = true
-            this.data.photos[0].$thumbnail.firstChild.classList.add('selected-marker')
-        }*/
+            } else {
+                photo.$thumbnail.firstChild.classList.remove('selected-marker')
+                photo.$thumbnail.querySelector('.pg-ac-feature-button').style.color = "white"
+            }
+        } )
     }
 
     // Remove all photo elements from the DOM
@@ -734,7 +752,7 @@ export default class NewActivityMap extends ActivityMap {
         document.querySelectorAll('.pg-ac-photo-container').forEach($photoContainer => $photoContainer.remove())
     }
 
-    async beforeSavingActivity () {
+    async checkForCloseMkpoints () {
         return new Promise(async (resolve, reject) => {
             // Compare all close mkpoints to all uploaded photos location and store similar data
             var photosToAsk = []
@@ -744,6 +762,14 @@ export default class NewActivityMap extends ActivityMap {
                     if (CFUtils.compareCoords(mkpoint.lngLat, photoLocation, 3)) {
                         console.log(photo.name + ' could be added to ' + mkpoint.name + ' at a decimal level of 3.')
                         photosToAsk.push({photo, mkpoint})
+                        // If any photo close to an existing mkpoint have been added to the create mkpoints list, discard it
+                        if (this.data.mkpointsToCreate) for (let i = 0; i < this.data.mkpointsToCreate.length; i++) {
+                            if (this.data.mkpointsToCreate[i].size == photo.size) {
+                                this.data.mkpointsToCreate.splice(i, 1)
+                                i--
+                                showResponseMessage({'error': 'You cannot create a scenery spot from ' + photo.name + ' because it is too close to existing scenery point "' + mkpoint.name + '". You can add it instead.'})
+                            }
+                        }
                     }
                 } )
             } )
@@ -783,7 +809,7 @@ export default class NewActivityMap extends ActivityMap {
                 $entry.dataset.photoname = entry.photo.name
                 $entry.dataset.mkpointid = entry.mkpoint.id
                 $entry.innerHTML = `
-                    <div class="new-ac-window-photo-container">
+                    <div class="new-ac-window-photo">
                         <img src="` + dataUrl + `" />
                     </div>
                     <div class="new-ac-window-mkpoint-infos">`
@@ -842,7 +868,161 @@ export default class NewActivityMap extends ActivityMap {
         } )
     }
 
-    async saveActivity (mkpointPhotos = null) {
+    async createMkpoints () {
+        return new Promise(async (resolve, reject) => {
+            // Store close photos that could also be added
+            for (let i = 0; i < this.data.mkpointsToCreate.length; i++) {
+                this.data.mkpointsToCreate[i].closePhotos = []
+                var currentPhotoLocation = {lng: this.getPhotoLocation(this.data.mkpointsToCreate[i])[0], lat: this.getPhotoLocation(this.data.mkpointsToCreate[i])[1]}
+                this.data.photos.forEach(photo => {
+                    var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
+                    if (CFUtils.compareCoords(currentPhotoLocation, photoLocation, 2) && this.data.mkpointsToCreate[i].name != photo.name) this.data.mkpointsToCreate[i].closePhotos.push(photo)
+                } )
+            }
+            // Open modal and get user input data
+            console.log(this.data.mkpointsToCreate)
+            var mkpointsToCreate = await this.openCreateMkpointsModal()
+            resolve(mkpointsToCreate)
+        } )
+    }
+
+    async openCreateMkpointsModal () {
+        return new Promise ((resolve, reject) => {
+            
+            // Build window structure
+            var modal = document.createElement('div')
+            modal.classList.add('modal', 'd-block')
+            document.querySelector('body').appendChild(modal)
+            modal.addEventListener('click', (e) => {
+                var eTarget = e ? e.target : event.srcElement
+                if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
+            } )
+            var confirmationPopup = document.createElement('div')
+            confirmationPopup.classList.add('popup', 'fullscreen-popup')
+            modal.appendChild(confirmationPopup)
+            confirmationPopup.innerHTML = `
+            (!) Note that scenery spots sharing is subject to rules. Please <a>check the rules here</a> if you are not sure.`
+            var $entriesContainer = document.createElement('div')
+            $entriesContainer.className = 'new-ac-entries-container'
+            confirmationPopup.appendChild($entriesContainer)
+
+            // Build each mkpoint element
+            this.data.mkpointsToCreate.forEach(async (entry) => {
+                var content = ''
+                var mkpointElement = document.createElement('div')
+                mkpointElement.id = 'form' + entry.number
+                // Build tag checkboxes
+                var $tags = '<div class="js-tags">'
+                this.tags.forEach(tag => {
+                    $tags += `
+                        <div class="mp-checkbox">
+                            <input type="checkbox" data-name="` + tag + `" id="tag` + tag + entry.number + `" class="js-segment-tag" />
+                            <label for="tag` + tag + entry.number + `">` + CFUtils.getTagString(tag) + `</label>
+                        </div>
+                    `
+                } )
+                $tags += '</div>'
+                // Build photos section
+                var dataUrl = await getDataURLFromBlob(entry.blob)
+                content += `
+                    <div class="new-ac-window-photo">
+                        <img src="` + dataUrl + `" />
+                    </div>
+                `
+                    
+                if (entry.closePhotos.length > 0) {
+                    content += 'Following photos can also be added to this scenery point. Do you want to add them ?<div class="new-ac-window-other-photos-container">'
+                    content += await buildOtherPhotosElements(entry.closePhotos)
+                    content += '</div>'
+                }
+                // Build mkpoint form element
+                content += `
+                    <div class="popup-content">
+                        <strong>Name :</strong>
+                        <input type="text" class="admin-field js-mkpoint-name"/>
+                        <strong>Description :</strong>
+                        <textarea class="admin-field js-mkpoint-description"></textarea>
+                    </div>`
+                    + $tags + `
+                `
+                mkpointElement.innerHTML = content
+                $entriesContainer.appendChild(mkpointElement)
+            } )
+
+            // Build validate button
+            var $validateButton = document.createElement('button')
+            $validateButton.className = 'btn button bg-primary text-white'
+            $validateButton.innerText = 'Validate'
+            confirmationPopup.appendChild($validateButton)
+            $validateButton.addEventListener('click', () => {
+                var mkpointsToCreate = []
+                var filled = true
+                this.data.mkpointsToCreate.forEach(async (entry) => {
+                    console.log('form' + entry.number)
+                    var $mkpointForm = document.querySelector('#form' + entry.number)
+                    console.log($mkpointForm)
+                    var name = $mkpointForm.querySelector('.js-mkpoint-name').value
+                    var description = $mkpointForm.querySelector('.js-mkpoint-description').value
+                    var tags = []
+                    $mkpointForm.querySelectorAll('.js-segment-tag').forEach($tagInput => {
+                        if ($tagInput.checked) tags.push($tagInput.dataset.name)
+                    } )
+                    var photos = [{
+                        blob: entry.blob,
+                        size: entry.size,
+                        name: entry.number,
+                        type: entry.type
+                    }]
+                    entry.closePhotos.forEach(closePhoto => {
+                        photos.push({
+                            blob: closePhoto.blob,
+                            size: closePhoto.size,
+                            name: closePhoto.name,
+                            type: closePhoto.type
+                        })
+                    })
+                    mkpointsToCreate.push( {
+                        name,
+                        description,
+                        tags,
+                        photos
+                    } )
+                    if (name == '' || description == '') filled = false
+                } )
+                if (filled) resolve(mkpointsToCreate)
+                else showResponseMessage({'error': 'Scenery spot must have a name and a description. Please have a look to <a>the scenery spots rules</a> if needed.'}, {element: document.querySelector('.popup')})
+            } )
+
+            async function buildPhotoElement (photo) {
+                return new Promise(async (resolve, reject) => {
+                    var dataUrl = await getDataURLFromBlob(photo.blob)
+                    resolve(`
+                    <div class="new-ac-window-photo-element">
+                        <div class="new-ac-window-photo">
+                            <img src="` + dataUrl + `" />
+                        </div>
+                        <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">Yes</div><div class="mp-button bg-darkred text-white js-no">No</div></div>
+                    </div>
+                    `)
+                } )
+            }
+
+            async function buildOtherPhotosElements (photos) {
+                return new Promise(async (resolve, reject) => {
+                    var content = ''
+                    for (let i = 0; i < photos.length; i++) {
+                        var photoElement = await buildPhotoElement(photos[i])
+                        content += photoElement
+                    }
+                    console.log(content)
+                    resolve(content)
+                } )
+            }
+
+        } )
+    }
+
+    async saveActivity (mkpointPhotos = null, mkpointsToCreate = null) {
         return new Promise(async (resolve, reject) => {
             
             // Remove trackpoints and photos data
@@ -871,6 +1051,9 @@ export default class NewActivityMap extends ActivityMap {
 
             // If photos need to be added to a mkpoint, append info data
             if (mkpointPhotos) cleanData.mkpointPhotos = mkpointPhotos
+            
+            // If mkpoints need to be created, append data
+            if (mkpointsToCreate) cleanData.mkpointsToCreate = mkpointsToCreate
 
             // Save canvas as a picture
             this.map.once('idle', () => {
@@ -879,6 +1062,7 @@ export default class NewActivityMap extends ActivityMap {
                         cleanData.thumbnail = await blobToBase64(blob)
                         // Send data to server
                         console.log(cleanData)
+                        debugger
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)
                             window.location.replace('/' + this.session.login + '/activities')
