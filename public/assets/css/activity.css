@@ -479,7 +479,29 @@
     cursor: pointer;
     z-index: 3;
 }
-.pg-ac-close-button:hover {
+.pg-ac-feature-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 16px;
+    border-radius: 20px 0px;
+    color: white;
+    margin: 5px;
+    cursor: pointer;
+    z-index: 3;
+}
+.pg-ac-createmkpoint-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 16px;
+    border-radius: 20px 0px;
+    color: white;
+    margin: 5px;
+    cursor: pointer;
+    z-index: 3;
+}
+.pg-ac-close-button:hover, .pg-ac-feature-button:hover, .pg-ac-createmkpoint-button:hover {
     background-color: #ffffff44;
 }
 .pg-ac-map-img-container {

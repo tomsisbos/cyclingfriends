@@ -33,7 +33,7 @@ mapStyleSelect.onchange = (e) => {
 }
 
 // Prepare and display mkpoints data
-ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=true", (mkpoints) => {
+ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=details", (mkpoints) => {
     worldMap.data.mkpoints = mkpoints
     worldMap.updateMkpoints()
     worldMap.addFavoriteMkpoints()

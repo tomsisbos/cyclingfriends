@@ -2115,7 +2115,7 @@ export default class GlobalMap extends Model {
         } )
     }
     
-    getClosestMkpoints (mkpoints, range) {
+    async getClosestMkpoints (mkpoints, range) {
         return new Promise ( async (resolve, reject) => {
 
             const remotenessTolerance = 0.1

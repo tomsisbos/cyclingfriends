@@ -1,5 +1,29 @@
 /* Global functions */
 
+function ajax (callback, loader) {
+	var xhr = getHttpRequest()
+	if (loader) loader.prepare()
+	xhr.onreadystatechange = function () {
+		// On loading
+		if (xhr.readyState > 0) if (loader) loader.start()
+		// On success
+		if (xhr.readyState === 4) {
+			if (loader) loader.stop()
+			document.body.cursor = 'auto'
+			// If an error has occured during the request
+			if (xhr.status != 200) {
+				console.log('An error has occured during the request.')
+			} else { // If the request have been performed successfully
+				var response = JSON.parse(xhr.responseText)
+				
+				// Treat response
+				callback(response)
+			}
+		}
+	}
+	return xhr
+}
+
 // XMLHttpRequest Function (function for preventing browser compatibility problems) */
 function getHttpRequest () {
 	if (window.XMLHttpRequest) { // Mozilla, Safari, Chrome...
@@ -20,26 +44,8 @@ function getHttpRequest () {
 }
 
 // Ajax GET request generic function
-function ajaxGetRequest (url, callback, loader = false) {
-	var xhr = getHttpRequest()
-	if (loader) loader.prepare()
-	xhr.onreadystatechange = function () {
-		// On loading
-		if (xhr.readyState > 0) if (loader) loader.start()
-		// On success
-		if (xhr.readyState === 4) {
-			if (loader) loader.stop()
-			// If an error has occured during the request
-			if (xhr.status != 200) {
-				console.log('An error has occured during the request.')
-			} else { // If the request have been performed successfully
-				var response = JSON.parse(xhr.responseText)
-			
-				// Treat response
-				callback(response)
-			}
-		}
-	}
+function ajaxGetRequest (url, callback, loader = null) {
+	var xhr = ajax(callback, loader)
 	// Send request through POST method
 	xhr.open('GET', url, true)
 	xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')
@@ -47,32 +53,8 @@ function ajaxGetRequest (url, callback, loader = false) {
 }
 
 // Ajax POST formData request generic function
-function ajaxPostFormDataRequest (url, formData, callback) {
-	var xhr = getHttpRequest()
-	var loading = document.createElement('div')
-	loading.className = 'loading'
-	loading.innerHTML = 'loading...'
-	document.body.cursor = 'progress'
-	xhr.onreadystatechange = function () {
-		// On loading
-		if (xhr.readyState > 0) {
-			document.body.appendChild(loading)
-		}
-		// On success
-		if (xhr.readyState === 4) {
-			loading.remove()
-			document.body.cursor = 'auto'
-			// If an error has occured during the request
-			if (xhr.status != 200) {
-				console.log('An error has occured during the request.')
-			} else { // If the request have been performed successfully
-				var response = JSON.parse(xhr.responseText)
-				
-				// Treat response
-				callback(response)
-			}
-		}
-	}
+function ajaxPostFormDataRequest (url, formData, callback, loader = null) {
+	var xhr = ajax(callback, loader)
 	// Send request through POST method
 	xhr.open('POST', url, true)
 	xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')
@@ -80,32 +62,8 @@ function ajaxPostFormDataRequest (url, formData, callback) {
 }
 
 // Ajax POST json request generic function
-function ajaxJsonPostRequest (url, jsonData, callback) {
-	var xhr = getHttpRequest()
-	var loading = document.createElement('div')
-	loading.className = 'loading'
-	loading.innerHTML = 'loading...'
-	document.body.cursor = 'progress'
-	xhr.onreadystatechange = function () {
-		// On loading
-		if (xhr.readyState > 0) {
-			document.body.appendChild(loading)
-		}
-		// On success
-		if (xhr.readyState === 4) {
-			loading.remove()
-			document.body.cursor = 'auto'
-			// If an error has occured during the request
-			if (xhr.status != 200) {
-				console.log('An error has occured during the request.')
-			} else { // If the request have been performed successfully
-				var response = JSON.parse(xhr.responseText)
-				
-				// Treat response
-				callback(response)
-			}
-		}
-	}
+function ajaxJsonPostRequest (url, jsonData, callback, loader = null) {
+	var xhr = ajax(callback, loader)
 	// Send request through POST method
 	xhr.open('POST', url, true)
 	xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')

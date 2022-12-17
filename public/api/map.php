@@ -243,9 +243,11 @@ if (isAjax()) {
         $mkpoints = [];
         foreach ($result as $mkpoint_data) {
             $mkpoint = new Mkpoint($mkpoint_data['id']);
-            $mkpoint->isFavorite = $mkpoint->isFavorite();
-            $mkpoint->isCleared = $mkpoint->isCleared();
-            $mkpoint->tags = $mkpoint->getTags();
+            if ($_GET['display-mkpoints'] == 'details') {
+                $mkpoint->isFavorite = $mkpoint->isFavorite();
+                $mkpoint->isCleared = $mkpoint->isCleared();
+                $mkpoint->tags = $mkpoint->getTags();
+            }
             array_push($mkpoints, $mkpoint);
         }
         echo json_encode($mkpoints);

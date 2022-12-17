@@ -48,7 +48,7 @@ export default class WorldMap extends GlobalMap {
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
 
     loadMkpoints () {
-        ajaxGetRequest (this.apiUrl + "?display-mkpoints=true", (mkpoints) => {
+        ajaxGetRequest (this.apiUrl + "?display-mkpoints=details", (mkpoints) => {
             this.data.mkpoints = mkpoints
         } )
     }

@@ -11,6 +11,18 @@ export default class NewActivityMap extends ActivityMap {
     apiUrl = '/api/activities/save.php'
     data
     cursor = 2
+    loader = {
+        prepare: () => {
+            this.loaderElement = document.createElement('div')
+            this.loaderElement.className = 'loading-modal'
+            let loaderIcon = document.createElement('div')
+            loaderIcon.innerText = 'Saving activity data...'
+            loaderIcon.className = 'loading-text'
+            this.loaderElement.appendChild(loaderIcon)
+        },
+        start: () => this.loaderContainer.appendChild(this.loaderElement),
+        stop: () => this.loaderElement.remove()
+    }
 
     // Parse file data and store it inside map instance
     async importDataFromGpx (gpx) {
@@ -156,7 +168,7 @@ export default class NewActivityMap extends ActivityMap {
                 },
                 routeData,
                 checkpoints,
-                mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
+                mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
                 segments: await this.getFittingSegments(),
                 photos: [],
                 trackpoints
@@ -632,10 +644,24 @@ export default class NewActivityMap extends ActivityMap {
             $img.className = 'pg-ac-photo'
             $img.src = dataUrl
             photo.$thumbnail.appendChild($img)
+            // Delete button
             var $deleteButton = document.createElement('div')
             $deleteButton.className = 'pg-ac-close-button'
             $deleteButton.innerText = 'x'
+            $deleteButton.title = 'Click to remove this photo'
             photo.$thumbnail.appendChild($deleteButton)
+            // Feature button
+            var $featureButton = document.createElement('div')
+            $featureButton.className = 'pg-ac-feature-button'
+            $featureButton.innerHTML = '<span class="iconify" data-icon="mdi:feature-highlight"></span>'
+            $featureButton.title = 'Click to chose as featured photo'
+            photo.$thumbnail.appendChild($featureButton)
+            // Create mkpoint button
+            var $createMkpointButton = document.createElement('div')
+            $createMkpointButton.className = 'pg-ac-createmkpoint-button'
+            $createMkpointButton.innerHTML = '<span class="iconify" data-icon="material-symbols:add-location-alt"></span>'
+            $createMkpointButton.title = 'Click to create a scenery spot from this photo'
+            photo.$thumbnail.appendChild($createMkpointButton)
             // If first photo of this checkpoint, append to parent, else find previous child and insert if after
             var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
             var $previousChildNumber = 0
@@ -654,7 +680,7 @@ export default class NewActivityMap extends ActivityMap {
             } else $parent.appendChild(photo.$thumbnail)
 
             // Set as featured photo listener
-            photo.$thumbnail.addEventListener('click', () => {
+            $featureButton.addEventListener('click', () => {
                 this.setFeatured(photo)
             } )
 
@@ -721,7 +747,8 @@ export default class NewActivityMap extends ActivityMap {
                     }
                 } )
             } )
-            if (photosToAsk) var photosToShare = await this.openSelectPhotosToShareModal(photosToAsk)
+            console.log(photosToAsk)
+            if (photosToAsk.length > 0) var photosToShare = await this.openSelectPhotosToShareModal(photosToAsk)
             else var photosToShare = []
             console.log(photosToShare)
             resolve(photosToShare)
@@ -852,12 +879,10 @@ export default class NewActivityMap extends ActivityMap {
                         cleanData.thumbnail = await blobToBase64(blob)
                         // Send data to server
                         console.log(cleanData)
-                        debugger
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)
-                            debugger
                             window.location.replace('/' + this.session.login + '/activities')
-                        } )
+                        }, this.loader)
                     }, 'image/jpeg', 0.7)
                 } )     
             } )

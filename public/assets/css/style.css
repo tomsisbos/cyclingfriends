@@ -66,7 +66,8 @@ h5 {
 
 .top-title {
 	text-align: center;
-	margin: 20px 0px;
+    padding: 20px 0px;
+    margin: 0;
 }
 
 legend {
@@ -1187,6 +1188,21 @@ input[type="range"]::-webkit-slider-thumb {
 	color: white;
 	text-shadow: 1px 1px black;
 	z-index: 200;
+}
+.loading-modal {
+    background-color: #00000055;
+    z-index: 20;
+    top: 0;
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loading-text {
+    color: white;
+    text-shadow: 1px 1px black;
 }
 
 
