@@ -45,7 +45,7 @@ export default class TempPopup extends Popup {
             var id = popup.id
             let lng = popup._lngLat.lng
             let lat = popup._lngLat.lat
-            var location = await this.getLocation()
+            var location = await this.getLocation(this.popup.getLngLat())
             var city = location.city
             var prefecture = location.prefecture
             var elevation = popup.elevation

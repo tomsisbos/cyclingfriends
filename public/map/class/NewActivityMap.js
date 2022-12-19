@@ -821,12 +821,10 @@ export default class NewActivityMap extends ActivityMap {
 
                 var $yes = $entry.querySelector('.js-yes')
                 var $no = $entry.querySelector('.js-no')
-                console.log($yes)
-                console.log($no)
                 // On click on "Yes" button, close the popup and return true
                 $yes.addEventListener('click', () => {
                     entry.answer = 'keep'
-                    styleButtons($yes, $no)
+                    this.styleButtons($yes, $no)
                     if (isEverythingAnswered(photosToAsk)) {
                         treatAnswers(photosToAsk)
                     }
@@ -834,19 +832,12 @@ export default class NewActivityMap extends ActivityMap {
                 // On click on "No" button, return false and close the popup
                 $no.addEventListener('click', () => {
                     entry.answer = 'discard'
-                    styleButtons($no, $yes)
+                    this.styleButtons($no, $yes)
                     if (isEverythingAnswered(photosToAsk)) {
                         treatAnswers(photosToAsk)
                     }
                 } )
             } )
-
-            function styleButtons ($clickedButton, $otherButton) {
-                if (!$clickedButton.classList.contains('new-ac-btn-kept')) $clickedButton.classList.add('new-ac-btn-kept')
-                if ($clickedButton.classList.contains('new-ac-btn-discarded')) $clickedButton.classList.remove('new-ac-btn-discarded')
-                if ($otherButton.classList.contains('new-ac-btn-kept')) $otherButton.classList.remove('new-ac-btn-kept')
-                if (!$otherButton.classList.contains('new-ac-btn-discarded')) $otherButton.classList.add('new-ac-btn-discarded')
-            }
 
             function isEverythingAnswered (photosToAsk) {
                 var isEverythingAnswered = true
@@ -866,6 +857,15 @@ export default class NewActivityMap extends ActivityMap {
                 resolve(photosToShare)
             }
         } )
+    }
+
+    styleButtons ($clickedButton, $otherButton) {
+        console.log($clickedButton)
+        console.log($otherButton)
+        if (!$clickedButton.classList.contains('new-ac-btn-kept')) $clickedButton.classList.add('new-ac-btn-kept')
+        if ($clickedButton.classList.contains('new-ac-btn-discarded')) $clickedButton.classList.remove('new-ac-btn-discarded')
+        if ($otherButton.classList.contains('new-ac-btn-kept')) $otherButton.classList.remove('new-ac-btn-kept')
+        if (!$otherButton.classList.contains('new-ac-btn-discarded')) $otherButton.classList.add('new-ac-btn-discarded')
     }
 
     async createMkpoints () {
@@ -947,6 +947,31 @@ export default class NewActivityMap extends ActivityMap {
                 `
                 mkpointElement.innerHTML = content
                 $entriesContainer.appendChild(mkpointElement)
+
+                // Append listeners to other photos buttons
+                if (entry.closePhotos.length > 0) {
+                    for (let i = 0; i < entry.closePhotos.length; i++) {
+                        var $photo = $entriesContainer.querySelector('#otherPhoto' + entry.closePhotos[i].number)
+                        var $yes = $photo.querySelector('.js-yes')
+                        var $no = $photo.querySelector('.js-no')
+                        console.log($yes)
+                        console.log($no)
+                        // On click on "Yes" button, close the popup and return true
+                        $yes.addEventListener('click', (e) => {
+                            entry.closePhotos[i].answer = 'keep'
+                            var $clickedButton = e.target
+                            var $otherButton = e.target.closest('.new-ac-window-photo-element').querySelector('.js-no')
+                            this.styleButtons($clickedButton, $otherButton)
+                        } )
+                        // On click on "No" button, return false and close the popup
+                        $no.addEventListener('click', (e) => {
+                            entry.closePhotos[i].answer = 'discard'
+                            var $clickedButton = e.target
+                            var $otherButton = e.target.closest('.new-ac-window-photo-element').querySelector('.js-yes')
+                            this.styleButtons($clickedButton, $otherButton)
+                        } )
+                    }
+                }
             } )
 
             // Build validate button
@@ -968,23 +993,31 @@ export default class NewActivityMap extends ActivityMap {
                         if ($tagInput.checked) tags.push($tagInput.dataset.name)
                     } )
                     var photos = [{
-                        blob: entry.blob,
                         size: entry.size,
-                        name: entry.number,
+                        name: entry.name,
                         type: entry.type
                     }]
                     entry.closePhotos.forEach(closePhoto => {
-                        photos.push({
-                            blob: closePhoto.blob,
-                            size: closePhoto.size,
-                            name: closePhoto.name,
-                            type: closePhoto.type
-                        })
+                        if (closePhoto.answer && closePhoto.answer == 'keep') {
+                            photos.push({
+                                size: closePhoto.size,
+                                name: closePhoto.name,
+                                type: closePhoto.type
+                            })
+                        }
                     })
+
+                    console.log(this)
+                    var lngLat = {lng: this.getPhotoLocation(entry)[0], lat: this.getPhotoLocation(entry)[1]}
+                    var location = await this.getLocation(lngLat)
                     mkpointsToCreate.push( {
                         name,
                         description,
                         tags,
+                        lngLat,
+                        city: location.city,
+                        prefecture: location.prefecture,
+                        elevation: Math.floor(this.map.queryTerrainElevation(lngLat)),
                         photos
                     } )
                     if (name == '' || description == '') filled = false
@@ -997,7 +1030,7 @@ export default class NewActivityMap extends ActivityMap {
                 return new Promise(async (resolve, reject) => {
                     var dataUrl = await getDataURLFromBlob(photo.blob)
                     resolve(`
-                    <div class="new-ac-window-photo-element">
+                    <div class="new-ac-window-photo-element" id="otherPhoto` + photo.number + `">
                         <div class="new-ac-window-photo">
                             <img src="` + dataUrl + `" />
                         </div>
@@ -1014,7 +1047,6 @@ export default class NewActivityMap extends ActivityMap {
                         var photoElement = await buildPhotoElement(photos[i])
                         content += photoElement
                     }
-                    console.log(content)
                     resolve(content)
                 } )
             }

@@ -37,19 +37,6 @@ export default class Popup extends Model {
     }
     popup
 
-    getLocation = async () => {
-        return new Promise ((resolve, reject) => {
-            var lngLat = this.popup.getLngLat()
-            var lng = lngLat.lng
-            var lat = lngLat.lat
-		    ajaxGetRequest ('https://api.mapbox.com/search/v1/reverse/' + lng + ',' + lat + '?language=ja&access_token=' + this.apiKey, (response) => {
-                console.log('MAPBOX GEOCODING API USE +1')
-                var geolocation = CFUtils.reverseGeocoding(response)
-                resolve(geolocation)
-            } )
-        } )
-    }
-
     prepareModal () {
         // If first opening, prepare modal window structure
         if (!document.querySelector('#myModal')) {

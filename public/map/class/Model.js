@@ -1,3 +1,5 @@
+import CFUtils from "/map/class/CFUtils.js"
+
 export default class Model {
 
     constructor () {
@@ -25,5 +27,19 @@ export default class Model {
         },
         start: () => this.loaderContainer.appendChild(this.loaderElement),
         stop: () => this.loaderElement.remove()
+    }
+
+    // Get location of a LngLat point
+    async getLocation (lngLat) {
+        return new Promise ((resolve, reject) => {
+            var lng = lngLat.lng
+            var lat = lngLat.lat
+            ajaxGetRequest ('https://api.mapbox.com/search/v1/reverse/' + lng + ',' + lat + '?language=ja&access_token=' + this.apiKey, callback)
+            function callback (response) {
+                console.log('MAPBOX GEOCODING API USE +1')
+                var geolocation = CFUtils.reverseGeocoding (response)
+                resolve (geolocation)
+            }
+        } )
     }
 }

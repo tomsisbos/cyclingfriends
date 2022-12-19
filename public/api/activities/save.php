@@ -83,6 +83,7 @@ if (is_array($data)) {
         $insert_checkpoints = $db->prepare('INSERT INTO activity_checkpoints(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, lng, lat, special) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $insert_checkpoints -> execute(array($activity_id, $number, $name, $type, $story, $datetime->format('Y-m-d H:i:s'), $city, $prefecture, $elevation, $distance, $temperature, $lng, $lat, $special));
     }
+    
 
     // For each photo
     foreach ($data['photos'] as $photo) {
@@ -114,7 +115,7 @@ if (is_array($data)) {
         if ($photo['featured'] == true) $featured = 1;
         else $featured = 0;
         
-        // Prepare mkpoint photos data if necessary
+        // Prepare photos data to add to an existing mkpoint if necessary
         if (isset($data['mkpointPhotos'])) {
             for ($i = 0; $i < count($data['mkpointPhotos']); $i++) {
                 if ($data['mkpointPhotos'][$i]['photo_name'] == $img_name) {
@@ -128,6 +129,97 @@ if (is_array($data)) {
         // Insert photo in 'activity_photos' table
         $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
         $insert_photos -> execute(array($activity_id, $user_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
+    }
+
+    // Create a new mkpoint if necessary
+    if (isset($data['mkpointsToCreate'])) {
+
+        // If necessary, create a new mkpoint
+        forEach($data['mkpointsToCreate'] as $entry) {
+
+            // Prepare variables
+            $mkpoint['user_id']          = $_SESSION['id'];
+            $mkpoint['user_login']       = $_SESSION['login'];
+            $mkpoint['category']         = 'marker';
+            $mkpoint['name']             = htmlspecialchars($entry['name']);
+            $mkpoint['city']             = $entry['city'];
+            $mkpoint['prefecture']       = $entry['prefecture'];
+            $mkpoint['elevation']        = $entry['elevation'];
+            $mkpoint['date']             = date('Y-m-d H:i:s');
+            $mkpoint['month']            = date("n");
+            $mkpoint['period']           = getPeriod($mkpoint['date']);
+            $mkpoint['description']      = htmlspecialchars($entry['description']);
+            $mkpoint['lng']              = $entry['lngLat']['lng'];
+            $mkpoint['lat']              = $entry['lngLat']['lat'];
+            $mkpoint['publication_date'] = date('Y-m-d H:i:s');
+            $mkpoint['popularity']       = 30;
+
+            // Insert mkpoint data
+            $insertMkpointData = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, period, description, lng, lat, publication_date, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertMkpointData->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date'], $mkpoint['popularity']));
+            // Get mkpoint id
+            $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
+            $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
+            $mkpoint['id'] = $getMkpointId->fetch()['id'];
+
+            // Get first photo blob
+            $thumbnail_set = false;
+            foreach ($data['photos'] as $activity_photo) {
+                foreach ($entry['photos'] as $mkpoint_photo) {
+                    if ($mkpoint_photo['name'] == $activity_photo['name']) {
+                        // Prepare blob
+                        $ext = strtolower(substr($entry['name'], -3));
+                        $img_name = 'temp.'.$ext;
+                        $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
+                        // Temporary upload raw file on the server
+                        base64_to_jpeg($activity_photo['blob'], $temp);
+                        // Get the file into $img thanks to imagecreatefromjpeg
+                        $img = imagecreatefromjpegexif($temp);
+                        if (imagesx($img) > 1600) $img = imagescale($img, 1600); // Only scale if img is wider than 1600px
+                        // Correct image gamma and contrast
+                        imagegammacorrect($img, 1.0, 1.1);
+                        imagefilter($img, IMG_FILTER_CONTRAST, -5);
+                        // Compress it and move it into a new folder
+                        $path = $_SERVER["DOCUMENT_ROOT"]. "/media/activities/temp/photo_" .$img_name; // Set path variable
+                        imagejpeg($img, $path, 75); // Set new quality to 75
+
+                        // Build and append mkpoint thumbnail
+                        if (!$thumbnail_set) {
+                            // Get image and scale it to thumbnail size
+                            $thumbnail = imagecreatefromjpegexif($path);
+                            $thumbnail = imagescale($thumbnail, 48, 36);
+                            // Correct image gamma and contrast
+                            imagegammacorrect($thumbnail, 1.0, 1.275);
+                            imagefilter($thumbnail, IMG_FILTER_CONTRAST, -12);
+                            $thumbpath = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/thumb_' .$img_name; // Set path variable
+                            imagejpeg($thumbnail, $thumbpath);
+                            // Insert mkpoint data
+                            $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
+                            $insertMkpointThumbnail = $db->prepare('UPDATE map_mkpoint SET thumbnail = ? WHERE id = ?');
+                            $insertMkpointThumbnail->execute(array($mkpoint['thumbnail'], $mkpoint['id']));
+                            $thumbnail_set = true;
+                            unlink($thumbpath);
+                        }
+
+                        $mkpoint_photo['blob'] = base64_encode(file_get_contents($path));
+                        unlink($temp); unlink($path);
+
+                        // Insert photos data
+                        $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                        $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint_photo['blob'], $mkpoint_photo['size'], $mkpoint_photo['name'], $mkpoint_photo['type'], 0));
+                    }
+                }
+
+            }
+
+            // Insert tags data
+            if (!empty($entry['tags'][0])) {
+                foreach ($entry['tags'] as $tag) {
+                    $insertTag = $db->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
+                    $insertTag->execute(array('scenery', $mkpoint['id'], $tag));
+                }
+            }
+        }
     }
 
     // Update user's cleared mkpoints

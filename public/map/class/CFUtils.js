@@ -136,21 +136,6 @@ export default class CFUtils {
         return [[bbox[0].lng - m, bbox[0].lat - m], [bbox[1].lng + m, bbox[1].lat + m]]
     }
 
-    // Get location of a LngLat point
-    static async getLocation (lngLat) {
-        return new Promise ((resolve, reject) => {
-            var lng = lngLat.lng
-            var lat = lngLat.lat
-            ajaxGetRequest ('https://api.mapbox.com/search/v1/reverse/' + lng + ',' + lat + '?language=ja&access_token=' + this.apiKey, callback)
-            function callback (response) {
-                console.log('MAPBOX GEOCODING API USE +1')
-                var geolocation = CFUtils.reverseGeocoding (response)
-                resolve (geolocation)
-            }
-        } )
-    }
-
-
     // Getting city and prefecture data from mapbox reverse geocoding API request response (used as a callback function)
     static reverseGeocoding (response) {
         var city, prefecture, skip = false
