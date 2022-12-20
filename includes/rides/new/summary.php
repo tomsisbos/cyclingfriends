@@ -9,18 +9,17 @@ $previous_page = intval($slug) - 1; ?>
 		<h1 class="text-center"><?= $_SESSION['forms']['1']['ride-name'];?></h1>
 		<legend>Summary</legend>
 
-	</div>
+	</div> <?php 
 
-	<div class="container">
-		
-		<?php 
-		// Displays an error message if needed
-			if (isset($errormessage)) {
-				echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>'; 
-			} else if (isset($successmessage)) {
-				echo '<div class="success-block"><p class="success-message">' .$successmessage. '</p></div>';
-			}
-		
+	// Displays an error message if needed
+	if (isset($errormessage)) {
+		echo '<div class="container error-block"><p class="error-message">' .$errormessage. '</p></div>'; 
+	} else if (isset($successmessage)) {
+		echo '<div class="container success-block"><p class="success-message">' .$successmessage. '</p></div>';
+	} ?>
+
+	<div class="container"> <?php
+
 		include '../actions/rides/convertIntToStringValuesAction.php'; ?>
 		
 		<!-- Displays the summary -->

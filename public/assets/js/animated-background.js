@@ -1,7 +1,7 @@
 // Some random colors
-const colors = ["#c1e3e9", "#f4f09d", "#f6b9cd", "#d1e4be"]
+const colors = ["#B3DFE3", "#EEEF9C", "#F7B2C4", "#6CC6AA"]
 
-const numBalls = 30
+const numBalls = 50
 const shapes = []
 const classes = ['ball', 'square', 'triangle', 'star']
 

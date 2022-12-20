@@ -173,8 +173,10 @@ function showResponseMessage (message, options = {element: false, absolute: fals
 	hideResponseMessage()
 
 	// Build and append elements
-	if (!options.element) var element = document.querySelector('.main')
-	else var element = options.element
+	if (!options.element) {
+		if (document.querySelector('.main')) var element = document.querySelector('.main')
+		else var element = document.querySelector('.container')
+	} else var element = options.element
 	var $block = document.createElement('div')
 	if (options.absolute) $block.classList.add('absolute')
 	var $message = document.createElement('p')

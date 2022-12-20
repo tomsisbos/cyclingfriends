@@ -498,7 +498,7 @@ export default class RideDrawMap extends RideMap {
         icon.classList.add('mkpoint-icon')
         if (mkpoint.on_route === true) icon.classList.add('oncourse-marker')
         element.appendChild(icon)
-        this.map.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
+        this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
             anchor: 'center',
             color: '#5e203c',

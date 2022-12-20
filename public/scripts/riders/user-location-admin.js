@@ -63,7 +63,6 @@ async function closePopup (modal) {
     if (pickMap.currentPosition != originalPosition) {
 
         // Get geolocation data of this point from map provider
-        console.log(pickMap.currentPosition)
         var geolocation = await pickMap.getCourseGeolocation(pickMap.currentPosition)
 
         // Build variable to send to server

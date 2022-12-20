@@ -17,7 +17,7 @@
 					<input type="checkbox" id="filter_bike" name="filter_bike" onChange="this.form.submit();" <?php if(isset($_POST['filter_bike'])){echo 'checked';} ?>>
 				</div>
 				<div class="td-row">
-					<label for="filter_bike">Only display rides accepting <a href="/riders/profile/edit.php?id=<?= $_SESSION['id']; ?>#addBike">my bikes</a> type</label>
+					<label for="filter_bike">Only display rides accepting <a href="/profile/edit#addBike">my bikes</a> type</label>
 				</div>
 			</div>
 			<div class="tr-row">

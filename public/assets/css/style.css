@@ -18,7 +18,7 @@
 
 body {
 	font-family: 'Noto Sans', sans-serif;
-    background: linear-gradient(#ebf1f1, #cfd5d5) !important;
+    background: linear-gradient(#f9f9f9, #cfd5d5) !important;
 	height: 100vh;
 	background-size: 90%;
 	background-repeat: no-repeat;
@@ -159,6 +159,7 @@ input[type="checkbox"] {
 
 img.site-logo {
     position: absolute;
+    height: 100%;
     bottom: 0;
     left: 4%;
     z-index: -2;
@@ -443,6 +444,7 @@ nav .navbar-brand {
 	font-weight: bold;
 	font-size: x-large;
 	padding: 0px 30px;
+    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
 @media only screen and (max-width: 560px) {
 	nav .navbar-brand { 
@@ -450,6 +452,12 @@ nav .navbar-brand {
 		margin: 0px;
 		font-size: medium;
 	}
+    nav .navbar-brand.f {
+        font-size: large;
+    }
+}
+nav .navbar-brand.f {
+    font-size: xx-large;
 }
 
 .navbar a, .navbar a:target, .navbar a:active {
@@ -1243,6 +1251,7 @@ input[type="range"]::-webkit-slider-thumb {
 .shapes-container {
     position: relative;
     z-index: -9999;
+    opacity: 0.25;
 }
 
 .shape {
