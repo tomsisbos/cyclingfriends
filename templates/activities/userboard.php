@@ -16,12 +16,12 @@ include '../actions/users/securityAction.php';
 		
 		<h2 class="top-title">My Activities</h2>
 		
-		<div class="container end">
+		<div class="container end bg-transparent">
 			
 			<div class="my-ac-container"> <?php
 
 				// Define offset and number of articles to query
-				$limit = 20;
+				$limit = 7;
 				if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 				else $offset = 0;
 			

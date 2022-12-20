@@ -618,4 +618,10 @@ if (isAjax()) {
         echo json_encode($connected_user->getFavorites('scenery'));
     }
 
+    if (isset($_GET['get-icon'])) {
+        $filename = $_GET['get-icon'];
+        $path = $_SERVER['DOCUMENT_ROOT']. "/map/media/" .$filename;
+        echo json_encode($path);
+    }
+
 }

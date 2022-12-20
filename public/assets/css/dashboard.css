@@ -1,17 +1,27 @@
 .dashboard {
-    display: grid;
-    grid-template-columns: 65% 35%;
-    height: calc(100vh - 80px);
+    height: calc(100% - 80px);
     overflow: auto;
 }
 
-@media only screen and (max-width: 600px) {
-    .dashboard {
-        grid-template-columns: 100%;
+.main.dashboard > div { /*
+    grid-template-columns: 300px auto;
+    display: grid;*/
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+@media only screen and (max-width: 992px) {
+    .sidebar-left {
+        display: none;
     }
-    .sidebar-right {
-        grid-row-start: 2;
-    }
+}
+
+.sidebar-main {
+    overflow: hidden;
+}
+.sidebar-left {
+    min-width: 300px;
+    width: 300px;
 }
 
 .dashboard-container {
@@ -150,14 +160,13 @@
     padding: 10px;
 }
 .rd-course {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+    padding: 5px 0px;
 }
 .rd-course img {
     object-fit: cover;
-    object-position: 0% 80%;
     height: 1em;
     width: 40px;
     border: 1px dashed;
+    vertical-align: middle;
+    margin: 0px 5px;
 }

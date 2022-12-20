@@ -13,6 +13,8 @@ console.log(infiniteScrollElement)
 infiniteScrollElement.addEventListener('scroll', function (e) {
 
     var element = e.target
+    console.log(element)
+    console.log(element.scrollHeight)
 
     // When scroll to the bottom zone of the dashboard, get next elements from dashboard api and display cards
     console.log('scroll position : ' + (element.scrollHeight - element.scrollTop))

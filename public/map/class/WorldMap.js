@@ -274,7 +274,7 @@ export default class WorldMap extends GlobalMap {
         marker.getElement().classList.add('mkpoint-marker')
         marker.getElement().dataset.id = mkpoint.id
         marker.getElement().dataset.user_id = mkpoint.user.id
-        popup.once('open', (e) => {
+        popup.once('open', async (e) => {
             // Add 'selected-marker' class to selected marker
             this.unselect()
             mkpointPopup.select()

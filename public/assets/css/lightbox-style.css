@@ -176,6 +176,8 @@ img.hover-shadow {
 }
 .lightbox-caption {
   position: absolute;
+  display: flex;
+  gap: 10px;
   visibility: hidden;
   opacity: 0px;
   transition: visibility .3s, opacity .3s ease-in-out;

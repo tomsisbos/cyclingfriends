@@ -5,6 +5,7 @@ use Location\Distance\Vincenty;
 
 class User extends Model {
 
+    private $plan;
     public $id;
     public $login;
     public $email;
@@ -22,6 +23,7 @@ class User extends Model {
     public $facebook;
     public $instagram;
     public $strava;
+    public $rights;
     protected $table = 'users';
     
     function __construct($id = NULL) {
@@ -44,6 +46,8 @@ class User extends Model {
         $this->facebook                  = $data['facebook'];
         $this->instagram                 = $data['instagram'];
         $this->strava                    = $data['strava'];
+        $this->rights                    = $data['rights'];
+        $this->plan                      = $data['plan'];
     }
 
     // Register user into database
@@ -111,6 +115,11 @@ class User extends Model {
         }else{
             return false;
         }
+    }
+
+    public function isPremium () {
+        if ($this->plan == 'premium') return true;
+        else return false;
     }
 
     // Function for checking password strength : at least 6 characters

@@ -387,6 +387,11 @@
     }
 }
 
+.my-ac-panel {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
 .pg-ac-header {
     height: 350px;
     background-position: center;

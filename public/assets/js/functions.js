@@ -238,6 +238,23 @@ function blobToBase64 (blob) {
 	} )
 }
 
+function srcToDataURI (src) {
+	return new Promise((resolve, reject) => {
+		var image = new Image()
+		image.crossOrigin = 'Anonymous'
+		image.onload = function(){
+			var canvas = document.createElement('canvas')
+			var context = canvas.getContext('2d')
+			canvas.height = this.naturalHeight
+			canvas.width = this.naturalWidth
+			context.drawImage(this, 0, 0)
+			var dataURL = canvas.toDataURL('image/jpeg')
+			resolve(dataURL)
+		}
+		image.src = src
+	} )
+}
+
 function getKeyByValue (object, value) {
 	return Object.keys(object).find(key => object[key] === value)
 }

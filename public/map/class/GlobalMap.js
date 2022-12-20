@@ -29,7 +29,7 @@ export default class GlobalMap extends Model {
     profileData
     month = new Date().getMonth() + 1
     season
-    routeColor = 'blue'
+    routeColor = '#0000ff'
     routeCapColor = 'white'
     routeWidth = 5
     segmentLocalColor = '#8bffff'
@@ -1351,67 +1351,70 @@ export default class GlobalMap extends Model {
         } )
     }
 
+    getSeasonalColors (season) {
+        // Define seasonnal colors
+        if (season == 'winter') {
+            return [
+                "match",
+                ["get", "class"],
+                "snow",
+                "#fff",
+                ["wood"],
+                "#c8d28e",
+                ["grass"],
+                "#efe6d2",
+                ["scrub"],
+                "#bdd08a",
+                "#d6cac2"
+            ]
+        } else if (season == 'spring') {
+            return [
+                "match",
+                ["get", "class"],
+                "snow",
+                "#fff",
+                ["wood"],
+                "#33ff05",
+                ["grass"],
+                "#a1fe7c",
+                ["scrub"],
+                "#ffb8b8",
+                "#fff"
+            ]
+        } else if (season == 'summer') {
+            return [
+                "match",
+                ["get", "class"],
+                "snow",
+                "#fff",
+                ["wood"],
+                "#2e8500",
+                ["grass"],
+                "#baff6b",
+                ["scrub"],
+                "#57ff24",
+                "#d6cac2"
+            ]
+        } else if (season == 'fall') {
+            return [
+                "match",
+                ["get", "class"],
+                "snow",
+                "#fff",
+                ["wood"],
+                "#f0a884",
+                ["grass"],
+                "#b3e580",
+                ["scrub"],
+                "#90c752",
+                "#d6cac2"
+            ]
+        }
+    }
+
     styleSeason () {
 
-        // Define seasonnal colors
-        var winter = [
-            "match",
-            ["get", "class"],
-            "snow",
-            "hsl(35, 11%, 100%)",
-            ["wood"],
-            "hsl(69, 43%, 69%)",
-            ["grass"],
-            "hsl(41, 48%, 88%)",
-            ["scrub"],
-            "hsl(77, 43%, 68%)",
-            "hsl(25, 19%, 80%)"
-        ]
-        var spring = [
-            "match",
-            ["get", "class"],
-            "snow",
-            "hsl(35, 11%, 100%)",
-            ["wood"],
-            "hsl(109, 100%, 51%)",
-            ["grass"],
-            "hsl(103, 98%, 74%)",
-            ["scrub"],
-            "hsl(360, 100%, 86%)",
-            "hsl(360, 0%, 100%)"
-        ]
-        var summer = [
-            "match",
-            ["get", "class"],
-            "snow",
-            "hsl(35, 11%, 100%)",
-            ["wood"],
-            "hsl(99, 100%, 26%)",
-            ["grass"],
-            "hsl(88, 100%, 71%)",
-            ["scrub"],
-            "hsl(106, 100%, 57%)",
-            "hsl(25, 19%, 80%)"
-        ]
-        var fall = [
-            "match",
-            ["get", "class"],
-            "snow",
-            "hsl(35, 11%, 100%)",
-            ["wood"],
-            "hsl(20, 78%, 73%)",
-            ["grass"],
-            "hsl(90, 66%, 70%)",
-            ["scrub"],
-            "hsl(88, 51%, 55%)",
-            "hsl(25, 19%, 80%)"
-        ]
-
-        // Define season
-        if (this.season == 'winter') var colors = winter
-        else if (this.season == 'spring') var colors = spring
-        else if (this.season == 'summer') var colors = summer
-        else if (this.season == 'fall') var colors = fall
+        var colors = this.getSeasonalColors(this.season)
 
         this.map.addLayer( {
             'id': 'landcover-season',

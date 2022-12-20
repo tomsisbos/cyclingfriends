@@ -22,7 +22,7 @@ include '../actions/users/securityAction.php';
 			
 				// Define offset and number of articles to query
 				define("PREVIEW_PHOTOS_QUANTITY", 5);
-				$limit = 20;
+				$limit = 10;
 				if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 				else $offset = 0; 
 

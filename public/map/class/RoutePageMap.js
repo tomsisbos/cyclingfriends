@@ -173,7 +173,7 @@ export default class RoutePageMap extends GlobalMap {
                 // If clicked thumbnail is not already selected
                 if (!target.classList.contains('selected-entry')) {
                     // Toggle popup and add selected class to corresponding marker and table entry
-                    this.map._markers.forEach( (marker) => {
+                    if (this.map) this.map._markers.forEach( (marker) => {
                         var $marker = marker.getElement()
                         if (getIdFromString($marker.id) == entry.id || this.ride && (this.ride.options.sf == true && getIdFromString($marker.id) == 0 && entry.id == this.ride.checkpoints.length - 1)) {
                             marker.togglePopup()
@@ -203,7 +203,7 @@ export default class RoutePageMap extends GlobalMap {
                     document.querySelectorAll('#routeTable tr').forEach( (tableEntry) => {
                         if (tableEntry != target) tableEntry.classList.remove('selected-entry')
                     } )
-                    if (document.querySelector('#boxShowMkpoints').checked) {
+                    if (document.querySelector('#boxShowMkpoints') && document.querySelector('#boxShowMkpoints').checked) {
                         // Fly to the marker location
                         this.map.flyTo( {
                             center: [entry.lngLat.lng, entry.lngLat.lat],

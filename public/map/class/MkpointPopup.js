@@ -13,7 +13,6 @@ export default class MkpointPopup extends Popup {
     photos
 
     setPopupContent (mkpoint) {
-        console.log(mkpoint)
         var visitedIcon = ''
         if (mkpoint.isCleared) {
             visitedIcon = `
@@ -31,7 +30,7 @@ export default class MkpointPopup extends Popup {
 
         // Build tagslist
         var tags = ''
-        mkpoint.tags.map( (tag) => {
+        if (mkpoint.tags) mkpoint.tags.map( (tag) => {
             tags += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
         } )
 
@@ -257,9 +256,7 @@ export default class MkpointPopup extends Popup {
 
         // Asks server for current photo data
         this.loaderContainer = photoContainer
-        ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.id, displayPhotos.bind(this), this.loader)
-
-        function displayPhotos (response) {
+        ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.id, (response) => {
 
             this.photos = response
 
@@ -340,7 +337,7 @@ export default class MkpointPopup extends Popup {
                 }
             }
 
-            if (!document.querySelector('.popup-img')) {
+            if (!this.popup.getElement().querySelector('.popup-img')) {
                 // Add photos to the DOM
                 for (let i = 0; i < response.length; i++) {
                     addPhoto(response[i], i + 1)
@@ -413,7 +410,6 @@ export default class MkpointPopup extends Popup {
             this.prepareToggleLike()
 
             function addPhoto (photo, number) {
-                console.log(photo)
                 var newPhoto = document.createElement('img')
                 newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
                 newPhoto.style.display = 'none'
@@ -473,15 +469,13 @@ export default class MkpointPopup extends Popup {
                 if (photos[photoIndex-1].dataset.author == sessionStorage.getItem('session-id')) addDeletePhotoIcon() // ... And add it if connected user is photo author
                 
             }
-        }
+        }, this.loader)
     }
 
     setFavorite (toggleMkpointFavoriteData = null) {
         if (this.popup.getElement()) var $button = this.popup.getElement().querySelector('.js-favorite-button')
         else var $button = document.querySelector('.js-favorite-button')
-        console.log($button)
         $button.addEventListener('click', () => {
-            console.log('here')
             var type = 'scenery'
             ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + this.data.id, (response) => {
                 showResponseMessage(response, {
@@ -496,7 +490,6 @@ export default class MkpointPopup extends Popup {
                 // Update data in map instance for ensuring display update
                 marker.isFavorite = !marker.isfavorite
                 if (toggleMkpointFavoriteData) toggleMkpointFavoriteData(this.data.id)
-                console.log(this.data)
                 // Toggle button and marker element class
                 $button.classList.toggle('favoured')
                 marker.getElement().classList.toggle('favoured-marker')
@@ -504,7 +497,7 @@ export default class MkpointPopup extends Popup {
         } )
     }
 
-    prepareModal () {
+    async prepareModal () {
 
         // Prepare arrows
         if (this.photos.length > 1) {
@@ -593,29 +586,39 @@ export default class MkpointPopup extends Popup {
         // Caption display
         var caption = document.createElement('div')
         caption.className = 'lightbox-caption'
+        var propicContainer = document.createElement('a')
+        propicContainer.setAttribute('target', '_blank')
+        propicContainer.href = '/rider/' + this.data.user.id
+        propicContainer.className = 'round-propic-container'
+        var propic = document.createElement('img')
+        propic.className = 'round-propic-img'
+        propic.src = await this.loadPropic()
+        propicContainer.appendChild(propic)
+        var captionContent = document.createElement('div')
+        captionContent.className = 'caption-content'
         var name = document.createElement('div')
         name.innerText = this.data.name
         name.className = 'lightbox-name'
-        caption.appendChild(name)
+        captionContent.appendChild(name)
         var location = document.createElement('div')
         location.innerText = this.data.city + ' (' + this.data.prefecture + ') - ' + this.data.elevation + 'm'
         location.className = 'lightbox-location'
-        caption.appendChild(location)
+        captionContent.appendChild(location)
         var description = document.createElement('div')
         description.className = 'lightbox-description'
         description.innerText = this.data.description
-        caption.appendChild(description)
+        captionContent.appendChild(description)
+        caption.appendChild(propicContainer)
+        caption.appendChild(captionContent)
         slidesBox.appendChild(caption)
-        // Display caption on slide hover
-        slides.forEach( (slide) => {
-            slide.addEventListener('mouseover', () => {
-                caption.style.visibility = 'visible'
-                caption.style.opacity = '1'
-            } )
-            slide.addEventListener('mouseout', () => {
-                caption.style.visibility = 'hidden'
-                caption.style.opacity = '0'
-            } )
+        // Display caption on slides box hover
+        slidesBox.addEventListener('mouseover', () => {
+            caption.style.visibility = 'visible'
+            caption.style.opacity = '1'
+        } )
+        slidesBox.addEventListener('mouseout', () => {
+            caption.style.visibility = 'hidden'
+            caption.style.opacity = '0'
         } )
         // Demos display
         var demos = []
@@ -639,11 +642,17 @@ export default class MkpointPopup extends Popup {
         if (this.popup.getElement()) this.popup.getElement().appendChild(script)
         else document.querySelector('body').appendChild(script)
     }
+
+    addPropic = async () => this.popup.getElement().querySelector('.round-propic-img').src = await this.loadPropic()
     
     // Adds user profile picture to the mkpoint popup
-    addPropic = () => {
-        // Asks server for profil picture src and display it
-        ajaxGetRequest (this.apiUrl + "?getpropic=" + this.data.user.id, (response) => this.popup.getElement().querySelector('.round-propic-img').src = response)
+    async loadPropic () {
+        return new Promise((resolve, reject) => {
+            // Asks server for profil picture src and display it
+            ajaxGetRequest (this.apiUrl + "?getpropic=" + this.data.user.id, (src) => {
+                resolve(src)
+            } )
+        } )
     }
     
     mkpointAdmin = (mapInstance) => {

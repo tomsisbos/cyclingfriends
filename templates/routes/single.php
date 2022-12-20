@@ -73,7 +73,9 @@ include '../actions/users/securityAction.php';
                 <div class="rt-slider"></div>
             </div>
             <div id="routePageMapContainer">
-                <div id="routePageMap"></div>
+                <div id="routePageMap" <?php /*if ($connected_user->isPremium()) echo 'data-interactive="true"'*/ ?>>
+                    <img class="staticmap"></img>
+                </div>
                 <div class="grabber"></div>
             </div>
             <div id="profileBox" class="container p-0" style="height: 20vh; background-color: white;">

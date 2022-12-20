@@ -309,4 +309,10 @@ export default class CFUtils {
             default: return capitalizeFirstLetter(tag)
         }
     }
+
+    static getMapIcon (filename) {
+        return new Promise ((resolve, reject) => {
+            ajaxGetRequest('/api/map.php?get-icon=' + filename, (response) => resolve(response))
+        } )
+    }
 }
