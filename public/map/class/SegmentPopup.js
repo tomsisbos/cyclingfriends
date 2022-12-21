@@ -540,6 +540,7 @@ export default class SegmentPopup extends Popup {
             Slope : <div class="map-slope">` + slope + `%</div><br>
             Altitude : ` + altitude + `m`
         }
+        console.log(this)
         map.getContainer().appendChild(tooltip)
 
         // Prevent tooltip from overflowing at the end of the profile

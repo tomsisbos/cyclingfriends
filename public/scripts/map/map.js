@@ -18,41 +18,33 @@ console.log(worldMap.session)
 
 worldMap.addStyleControl()
 worldMap.addOptionsControl()
+worldMap.addFilterControl()
 worldMap.addFullscreenControl()
 if (worldMap.session.rights === 'administrator' || worldMap.session.rights === 'editor') worldMap.addEditorControl()
-
-// Controls
-const mapStyleSelect = document.querySelector('.js-map-styles')
-mapStyleSelect.onchange = (e) => {
-    var index = e.target.selectedIndex
-    var layerId = e.target.options[index].id
-    if (layerId === 'seasons') layerId = worldMap.season
-    worldMap.clearMapData()
-    worldMap.setMapStyle(layerId)
-    map.once('idle', () => worldMap.updateMapData())
-}
 
 // Prepare and display mkpoints data
 ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=details", (mkpoints) => {
     worldMap.data.mkpoints = mkpoints
-    worldMap.updateMkpoints()
-    worldMap.addFavoriteMkpoints()
+    if (worldMap.displayMkpointsBox.checked) {
+        worldMap.updateMkpoints()
+        worldMap.addFavoriteMkpoints()
+    }
 } )
 
 // Prepare and display segments data
 ajaxGetRequest (worldMap.apiUrl + "?display-segments=true", (segments) => {
     worldMap.data.segments = segments
-    worldMap.updateSegments()
+    if (worldMap.displaySegmentsBox.checked) worldMap.updateSegments()
 } )
 
 // Prepare and display rides data
 ajaxGetRequest (worldMap.apiUrl + "?display-rides=true", (rides) => {
     worldMap.data.rides = rides
-    worldMap.updateRides()
+    if (worldMap.displayRidesBox.checked) worldMap.updateRides()
 } )
 
 // Update map data on ending moving the map
-map.on('moveend', () => worldMap.updateMapData() )
+map.on('moveend', worldMap.updateMapDataListener)
 
 var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']
 amenities.forEach( (amenity) => {

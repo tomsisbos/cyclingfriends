@@ -19,6 +19,9 @@ export default class GlobalMap extends Model {
 
     map
     $map
+    selectStyle
+    dislayKonbinisBox
+    displayAmenitiesBox
     loaded = false
     defaultCenter = [138.69056, 35.183002]
     defaultZoom = 10
@@ -68,7 +71,7 @@ export default class GlobalMap extends Model {
         var selectStyleLabel = document.createElement('div')
         selectStyleLabel.innerText = 'Map style : '
         selectStyleContainer.appendChild(selectStyleLabel)
-        var selectStyle = document.createElement('select')
+        this.selectStyle = document.createElement('select')
         var seasons = document.createElement("option")
         var satellite = document.createElement("option")
         seasons.value, seasons.text = 'Seasons'
@@ -76,19 +79,17 @@ export default class GlobalMap extends Model {
         seasons.id = 'cl07xga7c002616qcbxymnn5z'
         satellite.id = 'cl0chu1or003a15nocgiodiir'
         satellite.value, satellite.text = 'Satellite'
-        selectStyle.add(seasons)
-        selectStyle.add(satellite)
-        selectStyle.className = 'js-map-styles'
-        selectStyleContainer.appendChild(selectStyle)
-        selectStyle.onchange = (e) => {
+        this.selectStyle.add(seasons)
+        this.selectStyle.add(satellite)
+        this.selectStyle.className = 'js-map-styles'
+        selectStyleContainer.appendChild(this.selectStyle)
+        this.selectStyle.onchange = (e) => {
             var index = e.target.selectedIndex
             var layerId = e.target.options[index].id
-            if (layerId === 'seasons') {
-                const month = new Date().getMonth() + 1
-                layerId = setSeasonLayer(month)
-            }
+            if (layerId === 'seasons') layerId = this.season
+            this.clearMapData()
             this.setMapStyle(layerId)
-            this.generateProfile()
+            this.map.once('idle', () => this.updateMapData())
         }
     }
 
@@ -1419,30 +1420,32 @@ export default class GlobalMap extends Model {
 
         var colors = this.getSeasonalColors(this.season)
 
-        this.map.addLayer( {
-            'id': 'landcover-season',
-            'type': 'fill',
-            'source': 'composite',
-            'source-layer': 'landcover',
-            'minzoom': 0,
-            'maxzoom': 22,
-            'paint': {
-                'fill-color': colors,
-                'fill-opacity': [
-                    "interpolate",
-                    ["exponential", 1.5],
-                    ["zoom"],
-                    2,
-                    0.3,
-                    12,
-                    0.15,
-                    16,
-                    0
-                ]
-            }
-        }, 'landcover-custom')
+        if (this.map.getLayer('landcover-season')) this.map.setPaintProperty('landcover-season', 'fill-color', colors)
+        else {
+            this.map.addLayer( {
+                'id': 'landcover-season',
+                'type': 'fill',
+                'source': 'composite',
+                'source-layer': 'landcover',
+                'minzoom': 0,
+                'maxzoom': 22,
+                'paint': {
+                    'fill-color': colors,
+                    'fill-opacity': [
+                        "interpolate",
+                        ["exponential", 1.5],
+                        ["zoom"],
+                        2,
+                        0.3,
+                        12,
+                        0.15,
+                        16,
+                        0
+                    ]
+                }
+            }, 'landcover-custom')
+        }
 
-        ///if (this.season != 'undefined') this.map.setPaintProperty('landcover-custom', 'fill-color', colors)
     }
 
     // Add media
@@ -2195,59 +2198,63 @@ export default class GlobalMap extends Model {
             }
         }
 
-        // Add source
-        this.map.addSource('segment' + segment.id, {
-            type: 'geojson',
-            data: geojson
-        } )
+            if (!this.map.getSource('segment' + segment.id) && !this.map.getLayer('segment' + segment.id)) {
 
-        // Add segment cap layer
-        this.map.addLayer( {
-            id: 'segmentCap' + segment.id,
-            type: 'line',
-            source: 'segment' + segment.id,
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': this.segmentCapColor,
-                'line-width': 2,
-                'line-opacity': 0,
-                'line-gap-width': 2
-            }
-        } )
+            // Add source
+            this.map.addSource('segment' + segment.id, {
+                type: 'geojson',
+                data: geojson
+            } )
 
-        // Define segment color
-        if (segment.rank == 'local') var segmentColor = this.segmentLocalColor
-        if (segment.rank == 'regional') var segmentColor = this.segmentRegionalColor
-        if (segment.rank == 'national') var segmentColor = this.segmentNationalColor
+            // Add segment cap layer
+            this.map.addLayer( {
+                id: 'segmentCap' + segment.id,
+                type: 'line',
+                source: 'segment' + segment.id,
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': this.segmentCapColor,
+                    'line-width': 2,
+                    'line-opacity': 0,
+                    'line-gap-width': 2
+                }
+            } )
 
-        // Add segment layer
-        this.map.addLayer( {
-            id: 'segment' + segment.id,
-            type: 'line',
-            source: 'segment' + segment.id,
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': segmentColor,
-                'line-width': 3,
-                'line-opacity': 1
-            }
-        } )
+            // Define segment color
+            if (segment.rank == 'local') var segmentColor = this.segmentLocalColor
+            if (segment.rank == 'regional') var segmentColor = this.segmentRegionalColor
+            if (segment.rank == 'national') var segmentColor = this.segmentNationalColor
 
-        // Set animation
-        this.map.on('mouseenter', 'segmentCap' + segment.id, () => {
-            this.map.getCanvas().style.cursor = 'default'
-            this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 1)
-        } )
-        this.map.on('mouseleave', 'segmentCap' + segment.id, () => {
-            this.map.getCanvas().style.cursor = 'grab'
-            this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
-        } )
+            // Add segment layer
+            this.map.addLayer( {
+                id: 'segment' + segment.id,
+                type: 'line',
+                source: 'segment' + segment.id,
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': segmentColor,
+                    'line-width': 3,
+                    'line-opacity': 1
+                }
+            } )
+
+            // Set animation
+            this.map.on('mouseenter', 'segmentCap' + segment.id, () => {
+                this.map.getCanvas().style.cursor = 'default'
+                this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 1)
+            } )
+            this.map.on('mouseleave', 'segmentCap' + segment.id, () => {
+                this.map.getCanvas().style.cursor = 'grab'
+                this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
+            } )
+
+        }
     }
 
     getFittingSegments () {
@@ -2717,7 +2724,7 @@ export default class GlobalMap extends Model {
         this.tunnelNumber = 0
     }
 
-    async flyAlong (routeData) {
+    async flyAlong (routeData, options = {layerId: 'route'}) {
         return new Promise ((resolve, reject) => {
 
             var startFlying = () => {
@@ -2725,7 +2732,7 @@ export default class GlobalMap extends Model {
                 var clearAlongRoute = async (routeData) => {
                     return new Promise ( async (resolve, reject) => {
                         // Remove route red gradient property
-                        this.map.setPaintProperty('route', 'line-gradient', null)
+                        this.map.setPaintProperty(options.layerId, 'line-gradient', null)
                         // Clear position marker
                         positionMarker.remove()
                         // Clear start and goal markers
@@ -2736,6 +2743,7 @@ export default class GlobalMap extends Model {
                         if (this.updateMapDataListener) this.hideStartGoalMarkers()
                         if (distanceMarkersOn) this.updateDistanceMarkers()
                         if (this.$map.querySelector('.story-caption')) this.$map.querySelector('.story-caption').remove()
+                        document.querySelectorAll('.half-grown').forEach(grownPhoto => grownPhoto.classList.remove('half-grown'))
                         document.querySelector('.mapboxgl-ctrl-logo').style.display = 'block'
                         this.$map.classList.remove('map-fullscreen-mode')                        
                         $profile.classList.remove('profile-fullscreen-mode')
@@ -2879,7 +2887,7 @@ export default class GlobalMap extends Model {
                     if (!end) window.requestAnimationFrame(frame)
 
                     // Color route in red according to process
-                    this.map.setPaintProperty('route', 'line-gradient', [
+                    this.map.setPaintProperty(options.layerId, 'line-gradient', [
                         'step',
                         ['line-progress'],
                         '#ff5555',

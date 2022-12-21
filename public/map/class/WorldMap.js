@@ -58,6 +58,7 @@ export default class WorldMap extends GlobalMap {
         if (this.displayRidesBox.checked) this.updateRides()
         if (this.displaySegmentsBox.checked) this.updateSegments()
     }
+    updateMapDataListener = () => this.updateMapData()
 
     addOptionsControl () {
         // Get (or add) controller container
@@ -83,7 +84,7 @@ export default class WorldMap extends GlobalMap {
         line1.appendChild(this.displayMkpointsBox)
         var displayMkpointsBoxLabel = document.createElement('label')
         displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBox')
-        displayMkpointsBoxLabel.innerText = 'Show scenery points'
+        displayMkpointsBoxLabel.innerText = 'Display scenery points'
         line1.appendChild(displayMkpointsBoxLabel)
         this.displayMkpointsBox.addEventListener('change', () => {
             if (this.displayMkpointsBox.checked) this.updateMkpoints()
@@ -169,6 +170,55 @@ export default class WorldMap extends GlobalMap {
             optionsContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
                 if (getComputedStyle(controller).flexDirection == 'row') {
                     optionsLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
+    }
+
+    addFilterControl () {
+        // Get (or add) controller container
+        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        else var controller = this.addController()
+        // Filter options
+        var filterContainer = document.createElement('div')
+        filterContainer.className = 'map-controller-block flex-column'
+        controller.appendChild(filterContainer)
+        // Label
+        var filterLabel = document.createElement('div')
+        filterLabel.innerText = 'Filters'
+        filterLabel.className = 'map-controller-label'
+        filterContainer.appendChild(filterLabel)
+        // Line 1
+        let line1 = document.createElement('div')
+        line1.className = 'map-controller-line hide-on-mobiles'
+        filterContainer.appendChild(line1)
+        this.seasonsSelect = document.createElement('select')
+        this.seasonsSelect.id = 'seasonsSelect'
+        var options = {}
+        for (let month = 1; month <= 12; month++) {
+            options[month] = document.createElement('option')
+            options[month].innerText = capitalizeFirstLetter(CFUtils.getMonth(month))
+            options[month].value = month
+            if (month == this.month) options[month].setAttribute('selected', 'selected')
+            this.seasonsSelect.appendChild(options[month])
+        }
+        var seasonsSelectLabel = document.createElement('label')
+        seasonsSelectLabel.setAttribute('for', 'seasonsSelect')
+        seasonsSelectLabel.innerText = 'Season'
+        line1.appendChild(seasonsSelectLabel)
+        line1.appendChild(this.seasonsSelect)
+        this.seasonsSelect.addEventListener('change', () => {
+            this.month = this.seasonsSelect.value
+            this.setSeason()
+            if (this.selectStyle.value == 'Seasons') this.styleSeason()
+        } )
+        
+        // Hide and open on click on mobile display
+        filterLabel.addEventListener('click', () => {
+            filterContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    filterLabel.classList.toggle('up')
                     line.classList.toggle('hide-on-mobiles')
                 }
             } )
@@ -516,67 +566,71 @@ export default class WorldMap extends GlobalMap {
                 coordinates: ride.route
             }
         }
-
-        // Add source
-        this.map.addSource('ride' + ride.id, {
-            type: 'geojson',
-            data: geojson
-        } )
-
-        // Add ride cap layer
-        this.map.addLayer( {
-            id: 'rideCap' + ride.id,
-            type: 'line',
-            source: 'ride' + ride.id,
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': this.rideCapColor,
-                'line-width': 2,
-                'line-opacity': 0,
-                'line-gap-width': 2
-            }
-        } )
-
-        // Add ride layer
-        this.map.addLayer( {
-            id: 'ride' + ride.id,
-            type: 'line',
-            source: 'ride' + ride.id,
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': this.rideColor,
-                'line-width': 3,
-                'line-opacity': 1
-            }
-        } )
         
-        // Set animation
-        this.map.on('mouseenter', 'rideCap' + ride.id, () => {
-            this.map.getCanvas().style.cursor = 'pointer'
-            this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 1)
-        } )
+        if (!this.map.getSource('ride' + ride.id) && !this.map.getLayer('ride' + ride.id)) {
 
-        this.map.on('mouseleave', 'rideCap' + ride.id, () => {
-            this.map.getCanvas().style.cursor = 'grab'
-
-            // Get newest ride data from instance collection
-            this.ridesCollection.forEach((entry) => {
-                if (ride.id == entry.id) ride = entry
+            // Add source
+            this.map.addSource('ride' + ride.id, {
+                type: 'geojson',
+                data: geojson
             } )
 
-            // Leave cap displayed when popup is open
-            if ((!ride.ridePopup || (ride.ridePopup && !ride.ridePopup.popup.isOpen())) && this.map.getLayer('rideCap' + ride.id)) {
-                this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
-            }
-        } )
+            // Add ride cap layer
+            this.map.addLayer( {
+                id: 'rideCap' + ride.id,
+                type: 'line',
+                source: 'ride' + ride.id,
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': this.rideCapColor,
+                    'line-width': 2,
+                    'line-opacity': 0,
+                    'line-gap-width': 2
+                }
+            } )
 
-        this.map.on('click', 'rideCap' + ride.id, this.clickOnRide)
+            // Add ride layer
+            this.map.addLayer( {
+                id: 'ride' + ride.id,
+                type: 'line',
+                source: 'ride' + ride.id,
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': this.rideColor,
+                    'line-width': 3,
+                    'line-opacity': 1
+                }
+            } )
+            
+            // Set animation
+            this.map.on('mouseenter', 'rideCap' + ride.id, () => {
+                this.map.getCanvas().style.cursor = 'pointer'
+                this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 1)
+            } )
+
+            this.map.on('mouseleave', 'rideCap' + ride.id, () => {
+                this.map.getCanvas().style.cursor = 'grab'
+
+                // Get newest ride data from instance collection
+                this.ridesCollection.forEach((entry) => {
+                    if (ride.id == entry.id) ride = entry
+                } )
+
+                // Leave cap displayed when popup is open
+                if ((!ride.ridePopup || (ride.ridePopup && !ride.ridePopup.popup.isOpen())) && this.map.getLayer('rideCap' + ride.id)) {
+                    this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
+                }
+            } )
+
+            this.map.on('click', 'rideCap' + ride.id, this.clickOnRide)
+
+        }
     }
 
     clickOnRide = (e) => {
@@ -814,7 +868,7 @@ export default class WorldMap extends GlobalMap {
             segment.segmentPopup.addIconButtons()
             popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
                 this.map.off('moveend', this.updateMapDataListener)
-                await this.flyAlong(turf.lineString(segment.route.coordinates))
+                await this.flyAlong(turf.lineString(segment.route.coordinates), {layerId: 'segment' + segment.id})
                 this.map.on('moveend', this.updateMapDataListener)
             } )
 

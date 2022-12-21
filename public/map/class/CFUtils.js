@@ -268,28 +268,32 @@ export default class CFUtils {
         }
     }
 
-    static getPeriodString (period) {
+    getPeriodString (period) {
         var first, second
         switch (period['detail']) {
             case 1: first = 'early '; break;
             case 2: first = 'mid '; break;
             case 3: first = 'late '; break;
         }
-        switch (period['month']) {
-            case 1: second = 'january'; break;
-            case 2: second = 'february'; break;
-            case 3: second = 'march'; break;
-            case 4: second = 'april'; break;
-            case 5: second = 'may'; break;
-            case 6: second = 'june'; break;
-            case 7: second = 'july'; break;
-            case 8: second = 'august'; break;
-            case 9: second = 'september'; break;
-            case 10: second = 'october'; break;
-            case 11: second = 'november'; break;
-            case 12: second = 'december'; break;
-        }
+        var second = this.getMonth(period['month'])
         return first + second
+    }
+
+    static getMonth (number) {
+        switch (number) {
+            case 1: return 'january'
+            case 2: return 'february'
+            case 3: return 'march'
+            case 4: return 'april'
+            case 5: return 'may'
+            case 6: return 'june'
+            case 7: return 'july'
+            case 8: return 'august'
+            case 9: return 'september'
+            case 10: return 'october'
+            case 11: return 'november'
+            case 12: return 'december'
+        }
     }
 
     static getTagString (tag) {
