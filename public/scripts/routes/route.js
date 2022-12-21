@@ -40,9 +40,12 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
     // Populate instance route property
     routePageMap.data = route
     routePageMap.data.routeData = geojson
+    
+    // Set map instance paint property data
+    if (routePageMap.rideId) routePageMap.routeColor = '#FFFF00'
 
     // If map is interactive
-    if ($map.dataset.interactive == 'true') {
+    if ($map.getAttribute('interactive') == 'true') {
     
         // Set default layer according to current season
         var map = await routePageMap.load($map, routePageMap.defaultStyle, coordinates[0])
@@ -66,9 +69,6 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
                 }
             } )
         )
-
-        // Set map instance paint property data
-        if (routePageMap.rideId) routePageMap.routeColor = 'yellow'
         
         // Display route
         routePageMap.addRouteLayer(geojson)
@@ -108,16 +108,12 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
     // If map is static
     } else {
 
-        // Hide profile element
-
+        // Hide profile and grabber element
         document.querySelector('#profileBox').style.display = 'none'
-
-        const routeData = routePageMap.data.routeData
-        const routeCoordinates = routeData.geometry.coordinates
+        document.querySelector('.grabber').style.display = 'none'
 
         // Build seasons layer
         var colors = routePageMap.getSeasonalColors(routePageMap.season)
-        console.log(colors)
         var seasonData = {
             'id': 'landcover-season',
             'type': 'fill',
@@ -131,6 +127,8 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         var seasonLayer = encodeURIComponent(JSON.stringify(seasonData))
         
         // Build route overlay
+        const routeData = routePageMap.data.routeData
+        const routeCoordinates = routeData.geometry.coordinates
         var staticRouteData = turf.simplify(routeData, {tolerance: 0.0005, highQuality: true})
         var revertedCoordinates = staticRouteData.geometry.coordinates.map(coordinate => {
             return [coordinate[1], coordinate[0]]
@@ -148,23 +146,12 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         if (routePageMap.rideId) {
             routePageMap.ride = await getRide()
             
-            var checkpointsCoordinates = []
+            const markerColor = routePageMap.routeColor.slice(1)
+            var number = 0
             routePageMap.ride.checkpoints.forEach(checkpoint => {
-                if (!checkpoint.special.length > 0) checkpointsCoordinates.push([checkpoint.lngLat.lng, checkpoint.lngLat.lat]) // remove start and goal markers
+                if (!checkpoint.special.length > 0) checkpoints += ',pin-l-' + number + '+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')' // remove start and goal markers
+                number++
             } )
-            var checkpointsData = {
-                "type": "Feature",
-                "properties": {
-                    "marker-size": "s",
-                    "marker-symbol": "circle",
-                    "marker-color": "#0000FF"
-                },
-                "geometry": {
-                    "type": "MultiPoint",
-                    "coordinates": checkpointsCoordinates
-                }
-            }
-            checkpoints = ',geojson(' + encodeURIComponent(JSON.stringify(checkpointsData)) + ')'
         }
 
         // Request and display mkpoints close to the route
@@ -175,9 +162,8 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
 
 
         // Set size
-        if (window.innerWidth < 1280) {
-            var width = window.innerWidth
-        } else {
+        if (window.innerWidth < 1280) var width = window.innerWidth
+        else {
             var width = 1280
             $map.parentElement.style.height = Math.round(450 + ((window.innerWidth - 1200) * 0.275))
         }
@@ -187,6 +173,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
 https://api.mapbox.com/
 styles/v1/sisbos/cl07xga7c002616qcbxymnn5z/
 static/
+path-` + (routePageMap.routeWidth + 4) + `+` + routePageMap.routeCapColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
 path-` + routePageMap.routeWidth + `+` + routePageMap.routeColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/stop.png') + `(` + routeCoordinates[routeCoordinates.length - 1][0] + `,` + routeCoordinates[routeCoordinates.length - 1][1] + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(` + routeCoordinates[0][0] + `,` + routeCoordinates[0][1] + `)

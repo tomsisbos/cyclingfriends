@@ -141,7 +141,7 @@
     width: 100%;
     object-fit: cover;
 }
-.ac-map-thumbnail:hover, .ac-name:hover {
+.pg-ac-photo:hover, .ac-map-thumbnail:hover, .ac-name:hover {
     opacity: 0.8;
 }
 .ac-infos-container {

@@ -57,7 +57,9 @@ include '../actions/segments/segmentAction.php'; ?>
 				<div class="pg-sg-tags"> <?php 
 					foreach ($segment->tags as $tag_name) {
 						$tag = new Tag($tag_name) ?>
-						<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div> <?php
+						<a href="/tag/<?= $tag->name ?>">
+							<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div>
+						</a> <?php
 					} ?>
 				</div>
 			</div>
@@ -167,7 +169,8 @@ include '../actions/segments/segmentAction.php'; ?>
 			<div class="container p-0">
 
 				<div class="pg-sg-map-box">
-					<div id="segmentMap">
+					<div class="cf-map" id="segmentMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
+                    	<img class="staticmap"></img>
 					</div>
 					<div class="pg-sg-itinerary">
 						<div class="pg-sg-itinerary-title">Itinerary</div> <?php

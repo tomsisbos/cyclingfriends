@@ -31,7 +31,10 @@ export default class MkpointPopup extends Popup {
         // Build tagslist
         var tags = ''
         if (mkpoint.tags) mkpoint.tags.map( (tag) => {
-            tags += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
+            tags += `
+            <a target="_blank" href="/tag/` + tag + `">
+                <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+            </a>`
         } )
 
         return `

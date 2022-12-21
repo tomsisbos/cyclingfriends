@@ -153,9 +153,9 @@ export default class Popup extends Model {
         } )
 
         // Load lightbox script for this popup
-        var script = document.createElement('script');
-        script.src = '/assets/js/lightbox-script.js';
-        this.popup.getElement().appendChild(script);
+        var script = document.createElement('script')
+        script.src = '/assets/js/lightbox-script.js'
+        this.popup.getElement().appendChild(script)
 
         // Prepare toggle like function
         if (this.popup.getElement().querySelector('#like-button')) this.prepareToggleLike()

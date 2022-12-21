@@ -363,15 +363,7 @@ if (isAjax()) {
 
     if (isset($_GET['delete-mkpoint'])) {
         $mkpoint = new Mkpoint($_GET['delete-mkpoint']);
-        // Remove mkpoint data
-        $removeMkpoint = $db->prepare('DELETE FROM map_mkpoint WHERE id = ?');
-        $removeMkpoint->execute(array($mkpoint->id));
-        // Remove photo data
-        $removeMkpointPhotos = $db->prepare('DELETE FROM img_mkpoint WHERE mkpoint_id = ?');
-        $removeMkpointPhotos->execute(array($mkpoint->id));
-        // Remove tags data
-        $removeMkpointPhotos = $db->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
-        $removeMkpointPhotos->execute(array('scenery', $mkpoint->id));
+        $mkpoint->delete();
         echo json_encode([$mkpoint->id]);
     }
 

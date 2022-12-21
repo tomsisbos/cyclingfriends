@@ -35,7 +35,10 @@ export default class SegmentPopup extends Popup {
         // Build tagslist
         var tags = ''
         this.data.tags.map( (tag) => {
-            tags += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
+            tags += `
+            <a target="_blank" href="/tag/` + tag + `">
+                <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+            </a>`
         } )
 
         // Build seasonBox

@@ -60,6 +60,7 @@
   border-radius: 10px;
   width: 90%;
   box-shadow: 5px 5px 10px black;
+  overflow: auto;
 }
 .modal-block-medium {
   width: 50%;

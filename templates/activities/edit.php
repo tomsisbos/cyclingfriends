@@ -74,7 +74,7 @@ include '../actions/activities/getActivityAction.php'; ?>
 
             <div class="container p-0">
                 <div id="activityMapContainer">
-                    <div id="activityMap"></div>
+                    <div class="cf-map" id="activityMap"></div>
                     <div class="grabber"></div>
                 </div>
             </div>

@@ -10,14 +10,11 @@ $router = new AltoRouter();
 
 $router->map('GET', '/', 'dashboard');
 
-// Map
-$router->map('GET', '/world', 'map');
-
-// Segments
+// World
+$router->map('GET', '/world', 'world/map');
 $router->map('GET', '/segment/[i:segment_id]', 'segments/single', 'segment-single');
-
-// Scenery spots
 $router->map('GET', '/scenery/[i:mkpoint_id]', 'sceneries/single', 'scenery-single');
+$router->map('GET', '/tag/[a:tag]', 'world/tag', 'tag');
 
 // Activities
 $router->map('GET', '/activity/[i:activity_id]', 'activities/single', 'activity-single');

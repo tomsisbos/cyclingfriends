@@ -19,7 +19,7 @@ include '../actions/users/securityAction.php';
 		
 		<div class="container-fluid mp-container">
 
-			<div id="EditRouteMap" class="mp-map"></div>
+			<div class="cf-map" id="EditRouteMap" class="mp-map"></div>
 
 		</div>
 	</div>

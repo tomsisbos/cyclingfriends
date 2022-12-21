@@ -56,7 +56,9 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 					<div class="pg-sg-tags"> <?php 
 						foreach ($mkpoint->getTags() as $tag_name) {
 							$tag = new Tag($tag_name) ?>
-							<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div> <?php
+							<a href="/tag/<?= $tag->name ?>">
+								<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div>
+							</a> <?php
 						} ?>
 					</div>
 					<div>by <a href="/rider/<?= $mkpoint->user->id ?>"><?= $mkpoint->user->login ?></a></div>

@@ -130,7 +130,9 @@ include '../actions/activities/activityAction.php'; ?>
 			<div class="container p-0">
 
 				<div id="activityMapContainer">
-					<div id="activityMap"></div>
+					<div class="cf-map" id="activityMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
+						<img class="staticmap"></img>
+					</div>
 					<div class="grabber"></div>
 				</div>
 				<div id="profileBox" class="container p-0" style="height: 22vh; background-color: white;">

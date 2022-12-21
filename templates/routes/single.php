@@ -73,7 +73,7 @@ include '../actions/users/securityAction.php';
                 <div class="rt-slider"></div>
             </div>
             <div id="routePageMapContainer">
-                <div id="routePageMap" <?php /*if ($connected_user->isPremium()) echo 'data-interactive="true"'*/ ?>>
+                <div class="cf-map" id="routePageMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
                     <img class="staticmap"></img>
                 </div>
                 <div class="grabber"></div>

@@ -16,7 +16,7 @@ include '../actions/users/securityAction.php';
 		
 		<div class="container p-0">
 
-			<div id="neighboursMap"></div>
+			<div class="cf-map" id="neighboursMap"></div>
 			
 		</div> <?php 
 		

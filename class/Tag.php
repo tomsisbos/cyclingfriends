@@ -1,9 +1,16 @@
 <?php
 
-class Tag {
+class Tag extends Model {
 
     function __construct($name) {
         $this->name = $name;
+    }
+
+    function exists () {
+        $checkIfExists = $this->getPdo()->prepare('SELECT id FROM tags WHERE tag = ?');
+        $checkIfExists->execute(array($this->name));
+        if ($checkIfExists->rowCount() > 0) return true;
+        else return false;
     }
 
     function getString () {
@@ -22,6 +29,21 @@ class Tag {
             case 'lakes': return '湖';
             default: return ucfirst($this->name);
         }
+    }
+
+    function getEntries ($offset = 0, $limit = 20) {
+        $getEntries = $this->getPdo()->prepare("SELECT object_id, object_type FROM tags WHERE tag = ? LIMIT " .$offset. ", " .$limit);
+        $getEntries->execute(array($this->name));
+        $results = $getEntries->fetchAll(PDO::FETCH_ASSOC);
+        $entries = [];
+        foreach($results as $result) {
+            if ($result['object_type'] == 'scenery') array_push($entries, new Mkpoint($result['object_id']));
+            if ($result['object_type'] == 'segment') array_push($entries, new Segment($result['object_id']));
+        }
+        usort($entries, function ($a, $b) {
+            return ($a->popularity < $b->popularity);
+        } );
+        return $entries;
     }
 
 }

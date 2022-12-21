@@ -1,7 +1,6 @@
 import CFUtils from "/map/class/CFUtils.js"
 import Model from "/map/class/Model.js"
 import MkpointPopup from "/map/class/MkpointPopup.js"
-import tilebelt from "/node_modules/@mapbox/tilebelt/index.js"
 import cover from '/node_modules/@mapbox/tile-cover/index.js'
 
 // Global class initialization
@@ -30,12 +29,12 @@ export default class GlobalMap extends Model {
     month = new Date().getMonth() + 1
     season
     routeColor = '#0000ff'
-    routeCapColor = 'white'
+    routeCapColor = '#fff'
     routeWidth = 5
     segmentLocalColor = '#8bffff'
     segmentRegionalColor = '#2bffff'
     segmentNationalColor = '#2bc8ff'
-    segmentCapColor = 'white'
+    segmentCapColor = '#fff'
 
     setSeason () {
         if (this.month == 12 || this.month == 1 || this.month == 2) {
@@ -175,8 +174,9 @@ export default class GlobalMap extends Model {
         boxShowDistanceMarkers.setAttribute('type', 'checkbox')
         boxShowDistanceMarkers.setAttribute('checked', 'checked')
         line3.appendChild(boxShowDistanceMarkers)
-        var boxShowDistanceMarkersLabel = document.createElement('div')
+        var boxShowDistanceMarkersLabel = document.createElement('label')
         boxShowDistanceMarkersLabel.innerText = 'Show distance markers'
+        boxShowDistanceMarkersLabel.setAttribute('for', 'boxShowDistanceMarkers')
         line3.appendChild(boxShowDistanceMarkersLabel)
         boxShowDistanceMarkers.addEventListener('change', () => {
             this.updateDistanceMarkers()
@@ -186,11 +186,13 @@ export default class GlobalMap extends Model {
         line4.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line4)
         var boxSet3D = document.createElement('input')
+        boxSet3D.id = 'boxSet3D'
         boxSet3D.setAttribute('type', 'checkbox')
         boxSet3D.setAttribute('checked', 'checked')
         line4.appendChild(boxSet3D)
-        var boxSet3DLabel = document.createElement('div')
+        var boxSet3DLabel = document.createElement('label')
         boxSet3DLabel.innerText = 'Enable 3D'
+        boxSet3DLabel.setAttribute('for', 'boxSet3D')
         line4.appendChild(boxSet3DLabel)
         boxSet3D.addEventListener('change', () => {
             if (boxSet3D.checked) {
@@ -208,8 +210,9 @@ export default class GlobalMap extends Model {
         boxShowMkpoints.setAttribute('type', 'checkbox')
         boxShowMkpoints.setAttribute('checked', 'checked')
         line5.appendChild(boxShowMkpoints)
-        var boxShowMkpointsLabel = document.createElement('div')
+        var boxShowMkpointsLabel = document.createElement('label')
         boxShowMkpointsLabel.innerText = 'Show scenery points'
+        boxShowMkpointsLabel.setAttribute('for', 'boxShowMkpointsLabel')
         line5.appendChild(boxShowMkpointsLabel)
         boxShowMkpoints.addEventListener('change', () => {
             if (boxShowMkpoints.checked) {

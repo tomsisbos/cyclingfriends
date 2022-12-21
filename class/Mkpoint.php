@@ -33,6 +33,18 @@ class Mkpoint extends Model {
         $this->likes            = $data['likes'];
     }
 
+    public function delete () {
+        // Remove mkpoint data
+        $removeMkpoint = $db->prepare('DELETE FROM map_mkpoint WHERE id = ?');
+        $removeMkpoint->execute(array($this->id));
+        // Remove photo data
+        $removeMkpointPhotos = $db->prepare('DELETE FROM img_mkpoint WHERE mkpoint_id = ?');
+        $removeMkpointPhotos->execute(array($this->id));
+        // Remove tags data
+        $removeMkpointPhotos = $db->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
+        $removeMkpointPhotos->execute(array('scenery', $this->id));
+    }
+
     public function getReviews () {
         $getReviews = $this->getPdo()->prepare('SELECT id FROM mkpoint_reviews WHERE mkpoint_id = ? ORDER BY time DESC');
         $getReviews->execute(array($this->id));

@@ -84,7 +84,7 @@ include '../actions/users/securityAction.php'; ?>
                     </div>
 
                     <div id="activityMapContainer">
-                        <div id="activityMap"></div>
+                        <div class="cf-map" id="activityMap"></div>
                         <div class="grabber"></div>
                     </div>
 
