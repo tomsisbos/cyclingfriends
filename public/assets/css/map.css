@@ -21,6 +21,10 @@
     cursor: crosshair;
 }
 
+#buildRouteMap {
+    height: 100%;
+}
+
 
 /* -- Markers -- */
 

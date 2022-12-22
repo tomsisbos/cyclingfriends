@@ -2174,22 +2174,7 @@ export default class GlobalMap extends Model {
             properties: {
                 rank: segment.rank,
                 name: segment.name,
-                specs: {
-                    offroad: segment.spec_offroad,
-                    rindo: segment.spec_rindo
-                },
-                tags: {
-                    hanami: segment.spec_hanami,
-                    kouyou: segment.kouyou,
-                    ajisai: segment.ajisai,
-                    culture: segment.spec_culture,
-                    machinami: segment.spec_machinami,
-                    shrines: segment.spec_shrines,
-                    teaFields: segment.spec_tea_fields,
-                    sea: segment.spec_sea,
-                    mountains: segment.spec_mountains,
-                    forest: segment.spec_forest,
-                },
+                tags: [],
                 tunnels: segment.route.tunnels
             },
             geometry: {
@@ -2197,8 +2182,9 @@ export default class GlobalMap extends Model {
                 coordinates: segment.route.coordinates
             }
         }
+        segment.tags.forEach(tag => geojson.properties.tags.push(tag))
 
-            if (!this.map.getSource('segment' + segment.id) && !this.map.getLayer('segment' + segment.id)) {
+        if (!this.map.getSource('segment' + segment.id) && !this.map.getLayer('segment' + segment.id)) {
 
             // Add source
             this.map.addSource('segment' + segment.id, {

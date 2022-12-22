@@ -268,7 +268,7 @@ export default class CFUtils {
         }
     }
 
-    getPeriodString (period) {
+    static getPeriodString (period) {
         var first, second
         switch (period['detail']) {
             case 1: first = 'early '; break;
@@ -305,6 +305,7 @@ export default class CFUtils {
             case 'machinami': return '街並み'
             case 'shrines': return '宗教'
             case 'teafields': return '茶畑'
+            case 'ricefields': return '田んぼ'
             case 'sea': return '海'
             case 'mountains': return '山'
             case 'forest': return '森'

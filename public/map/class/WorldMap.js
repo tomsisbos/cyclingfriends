@@ -634,54 +634,62 @@ export default class WorldMap extends GlobalMap {
     }
 
     clickOnRide = (e) => {
-        
-        // Don't open if there is another feature on top
-        if (this.map.queryRenderedFeatures(e.point)[0].source.includes('ride')) {
 
-            // Get ride from ridesCollection using layer ID
-            var ride
-            this.ridesCollection.forEach(entry => {
-                if (entry.id == getIdFromString(e.features[0].source)) ride = entry
-            } )
-            ride.ridePopup = new RidePopup( {
-                closeOnClick: true,
-                anchor: 'bottom',
-                className: 'js-linestring marker-popup js-ride-popup'
-            }, ride)
-            ride.ridePopup.popup.setLngLat(ride.route[0])
-
-            // Color ride cap in hovering style
-            this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.capColorHover)
+        // Don't open if there is a marker on top
+        var markerInPath
+        e.originalEvent.path.forEach(elementInPath => {
+            if (elementInPath.className && elementInPath.className.includes('mapboxgl-marker')) markerInPath = true
+        } )
+        if (!markerInPath) {
             
-            // Remove popup instance and hide ride cap when popup is closed
-            ride.ridePopup.popup.on('close', () => {
-                delete ride.ridePopup
-                if (this.map.getLayer('rideCap' + ride.id)) {
-                    this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
-                    this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.rideCapColor)
-                }
-            } )
+            // Don't open if there is another feature on top
+            if (this.map.queryRenderedFeatures(e.point)[0].source.includes('ride')) {
 
-            ride.ridePopup.popup.addTo(this.map)
-            
-            // Hide cap when popup is closed
-            ride.ridePopup.popup.on('close', () => {
-                if (this.map.getLayer('rideCap' + ride.id)) {
-                    this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
-                    this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.rideCapColor)
-                }
-            } )
+                // Get ride from ridesCollection using layer ID
+                var ride
+                this.ridesCollection.forEach(entry => {
+                    if (entry.id == getIdFromString(e.features[0].source)) ride = entry
+                } )
+                ride.ridePopup = new RidePopup( {
+                    closeOnClick: true,
+                    anchor: 'bottom',
+                    className: 'js-linestring marker-popup js-ride-popup'
+                }, ride)
+                ride.ridePopup.popup.setLngLat(ride.route[0])
 
-            // Dislpay featured image
-            this.displayFeaturedImage(ride)
+                // Color ride cap in hovering style
+                this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.capColorHover)
+                
+                // Remove popup instance and hide ride cap when popup is closed
+                ride.ridePopup.popup.on('close', () => {
+                    delete ride.ridePopup
+                    if (this.map.getLayer('rideCap' + ride.id)) {
+                        this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
+                        this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.rideCapColor)
+                    }
+                } )
 
-            // Update rideCollection entry
-            this.ridesCollection.forEach((entry) => {
-                if (ride.id == entry.id) entry = ride
-            } )
+                ride.ridePopup.popup.addTo(this.map)
+                
+                // Hide cap when popup is closed
+                ride.ridePopup.popup.on('close', () => {
+                    if (this.map.getLayer('rideCap' + ride.id)) {
+                        this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
+                        this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.rideCapColor)
+                    }
+                } )
 
-            // Focus on ride
-            this.focus(this.map.getSource('ride' + ride.id)._data)
+                // Dislpay featured image
+                this.displayFeaturedImage(ride)
+
+                // Update rideCollection entry
+                this.ridesCollection.forEach((entry) => {
+                    if (ride.id == entry.id) entry = ride
+                } )
+
+                // Focus on ride
+                this.focus(this.map.getSource('ride' + ride.id)._data)
+            }
         }
     }
 
@@ -752,22 +760,7 @@ export default class WorldMap extends GlobalMap {
             properties: {
                 rank: segment.rank,
                 name: segment.name,
-                specs: {
-                    offroad: segment.spec_offroad,
-                    rindo: segment.spec_rindo
-                },
-                tags: {
-                    hanami: segment.spec_hanami,
-                    kouyou: segment.kouyou,
-                    ajisai: segment.ajisai,
-                    culture: segment.spec_culture,
-                    machinami: segment.spec_machinami,
-                    shrines: segment.spec_shrines,
-                    teaFields: segment.spec_tea_fields,
-                    sea: segment.spec_sea,
-                    mountains: segment.spec_mountains,
-                    forest: segment.spec_forest,
-                },
+                tags: [],
                 tunnels: segment.route.tunnels
             },
             geometry: {
@@ -775,6 +768,7 @@ export default class WorldMap extends GlobalMap {
                 coordinates: segment.route.coordinates
             }
         }
+        segment.tags.forEach(tag => geojson.properties.tags.push(tag))
 
         // Add source
         this.map.addSource('segment' + segment.id, {
@@ -843,63 +837,71 @@ export default class WorldMap extends GlobalMap {
 
     clickOnSegment = async (e) => {
 
-        // Don't open if there is another feature on top
-        if (this.map.queryRenderedFeatures(e.point)[0].source.includes('segment')) {
+        // Don't open if there is a marker on top
+        var markerInPath
+        e.originalEvent.path.forEach(elementInPath => {
+            if (elementInPath.className && elementInPath.className.includes('mapboxgl-marker')) markerInPath = true
+        } )
+        if (!markerInPath) {
 
-            // Get segment from segmentsCollection using layer ID
-            var segment
-            this.segmentsCollection.forEach(entry => {
-                if (entry.id == getIdFromString(e.features[0].source)) segment = entry
-            } )
-            
-            // Create segment popup instance
-            segment.segmentPopup = new SegmentPopup( {
-                closeOnClick: true,
-                anchor: 'bottom',
-                className: 'js-linestring marker-popup js-segment-popup'
-            }, segment)
+            // Don't open if there is another feature on top
+            if (this.map.queryRenderedFeatures(e.point)[0].source.includes('segment')) {
 
-            // Prepare and display segment popup
-            const popup = segment.segmentPopup.popup
-            popup.setLngLat(segment.route.coordinates[0])
-            popup.addTo(this.map)
-            segment.segmentPopup.rating()
-            segment.segmentPopup.generateProfile({force: true})
-            segment.segmentPopup.addIconButtons()
-            popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
-                this.map.off('moveend', this.updateMapDataListener)
-                await this.flyAlong(turf.lineString(segment.route.coordinates), {layerId: 'segment' + segment.id})
-                this.map.on('moveend', this.updateMapDataListener)
-            } )
+                // Get segment from segmentsCollection using layer ID
+                var segment
+                this.segmentsCollection.forEach(entry => {
+                    if (entry.id == getIdFromString(e.features[0].source)) segment = entry
+                } )
+                
+                // Create segment popup instance
+                segment.segmentPopup = new SegmentPopup( {
+                    closeOnClick: true,
+                    anchor: 'bottom',
+                    className: 'js-linestring marker-popup js-segment-popup'
+                }, segment)
 
-            // Color segment cap in hovering style
-            this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
-            
-            // Remove instance and hide segment cap when popup is closed
-            popup.on('close', () => {
-                delete segment.segmentPopup
-                if (this.map.getLayer('segmentCap' + segment.id)) {
-                    this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
-                    this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.segmentCapColor)
-                }
-            } )
+                // Prepare and display segment popup
+                const popup = segment.segmentPopup.popup
+                popup.setLngLat(segment.route.coordinates[0])
+                popup.addTo(this.map)
+                segment.segmentPopup.rating()
+                segment.segmentPopup.generateProfile({force: true})
+                segment.segmentPopup.addIconButtons()
+                popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
+                    this.map.off('moveend', this.updateMapDataListener)
+                    await this.flyAlong(turf.lineString(segment.route.coordinates), {layerId: 'segment' + segment.id})
+                    this.map.on('moveend', this.updateMapDataListener)
+                } )
 
-            /*
-            // Dislpay featured image
-            this.displayFeaturedImage(segment) */
+                // Color segment cap in hovering style
+                this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
+                
+                // Remove instance and hide segment cap when popup is closed
+                popup.on('close', () => {
+                    delete segment.segmentPopup
+                    if (this.map.getLayer('segmentCap' + segment.id)) {
+                        this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
+                        this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.segmentCapColor)
+                    }
+                } )
 
-            // Update segmentsCollection entry
-            this.segmentsCollection.forEach((entry) => {
-                if (segment.id == entry.id) entry = segment
-            } )
+                /*
+                // Dislpay featured image
+                this.displayFeaturedImage(segment) */
 
-            // Focus on segment
-            this.focus(this.map.getSource('segment' + segment.id)._data)
-            
-            // Add segment relevant photos
-            segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()
-            segment.segmentPopup.photos = segment.segmentPopup.getPhotos()
-            segment.segmentPopup.displayPhotos()
+                // Update segmentsCollection entry
+                this.segmentsCollection.forEach((entry) => {
+                    if (segment.id == entry.id) entry = segment
+                } )
+
+                // Focus on segment
+                this.focus(this.map.getSource('segment' + segment.id)._data)
+                
+                // Add segment relevant photos
+                segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()
+                segment.segmentPopup.photos = segment.segmentPopup.getPhotos()
+                segment.segmentPopup.displayPhotos()
+            }
         }
     }
 

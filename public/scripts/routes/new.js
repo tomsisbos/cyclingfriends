@@ -1,4 +1,3 @@
-import CFUtils from "/map/class/CFUtils.js"
 import BuildRouteMap from "/map/class/BuildRouteMap.js"
 
 var buildRouteMap = new BuildRouteMap ()
