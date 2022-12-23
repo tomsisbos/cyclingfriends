@@ -7,7 +7,7 @@ $previous_page = intval($slug) - 1; ?>
 	<div class="container ride-header text-shadow">
 		<!-- Page title -->
 		<h1 class="text-center"><?= $_SESSION['forms']['1']['ride-name'];?></h1>
-		<legend>Summary</legend>
+		<legend>サマリー</legend>
 
 	</div> <?php 
 
@@ -26,34 +26,34 @@ $previous_page = intval($slug) - 1; ?>
 		<h2>About the ride</h2>
 		<div class="row">
 			<div class="col">
-				<p><strong>Date :</strong> <?= $_SESSION['forms']['1']['date'];?></p>
+				<p><strong>開催日 :</strong> <?= $_SESSION['forms']['1']['date'];?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>Meeting time :</strong> <?= $_SESSION['forms']['1']['meeting-time'];?></p>
+				<p><strong>集合時間 :</strong> <?= $_SESSION['forms']['1']['meeting-time'];?></p>
 			</div>
 			<div class="col">
-				<p><strong>Meeting place :</strong> <?= $_SESSION['forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
-				<p><strong>Finish place :</strong> <?= $_SESSION['forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<p><strong>Departure time :</strong> <?= $_SESSION['forms']['1']['departure-time']. " (finish around " .$_SESSION['forms']['1']['finish-time']. ")";?></p>
+				<p><strong>集合場所 :</strong> <?= $_SESSION['forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
+				<p><strong>解散場所 :</strong> <?= $_SESSION['forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>Number of riders wanted :</strong> <?= "from " .$_SESSION['forms']['1']['nb-riders-min']. " to " .$_SESSION['forms']['1']['nb-riders-max']. " people";?></p>
+				<p><strong>出発時間 :</strong> <?= $_SESSION['forms']['1']['departure-time']. " (finish around " .$_SESSION['forms']['1']['finish-time']. ")";?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>Level :</strong> <?= levelFromArray($_SESSION['forms']['1']['level']); ?></p>
+				<p><strong>募集人数 :</strong> <?= $_SESSION['forms']['1']['nb-riders-min']. "人 から " .$_SESSION['forms']['1']['nb-riders-max']. "人 まで";?></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<p><strong>レベル :</strong> <?= levelFromArray($_SESSION['forms']['1']['level']); ?></p>
 			</div>
 			<div class="col">
-				<p><strong>Accepted bikes :</strong> <?= bikesFromArray($_SESSION['forms']['1']['accepted-bikes']); ?></p>
+				<p><strong>参加可能のバイク :</strong> <?= bikesFromArray($_SESSION['forms']['1']['accepted-bikes']); ?></p>
 			</div>
 		</div>
 		<div class="row">
@@ -148,15 +148,15 @@ $previous_page = intval($slug) - 1; ?>
 		<h2>About the course</h2>
 		<div class="row"> <?php
 			if (!empty($_SESSION['forms']['2']['distance'])) { ?>
-				<p><strong>Distance :</strong> 
+				<p><strong>距離 :</strong> 
 				<?php 
 				if ($_SESSION['forms']['2']['distance-about'] == 'about') echo 'about ';
-				echo $_SESSION['forms']['2']['distance']. "km from " .$_SESSION['forms']['2']['meetingplace']['geolocation']['city']. " to " .$_SESSION['forms']['2']['finishplace']['geolocation']['city']; ?>
+				echo $_SESSION['forms']['2']['distance']. "km - " .$_SESSION['forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['forms']['2']['finishplace']['geolocation']['city']. " まで"; ?>
 				</p> <?php
 			} ?>
 		</div>
 		<div class="row">
-			<p><strong>Terrain :</strong> <?php 
+			<p><strong>起伏 :</strong> <?php 
 				if (isset($_SESSION['course']) AND $_SESSION['course']['method'] == 'draw') echo $_SESSION['course']['terrain'];
 				else echo $terrain_value; ?>
 			</p>
@@ -172,9 +172,9 @@ $previous_page = intval($slug) - 1; ?>
 		if (!isset($successmessage)) { ?>
 			<div>
 				<a href="<?= $previous_page ?>">
-					<button type="button" class="btn button btnleft">Back</button>
+					<button type="button" class="btn button btnleft">戻る</button>
 				</a>
-				<button type="submit" class="btn button btnright btn-success" name="validate">Create Ride</button> <?php
+				<button type="submit" class="btn button btnright btn-success" name="validate">作成する</button> <?php
 			} ?>
 		</div>
 	

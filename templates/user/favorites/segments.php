@@ -20,7 +20,7 @@ include '../actions/users/securityAction.php';
 		// Space for error messages
 		displayMessage(); ?>
 
-        <h2 class="top-title">Segments</h2>
+        <h2 class="top-title">セグメント</h2>
 
         <div class="container favorites"> <?php
         
@@ -33,7 +33,7 @@ include '../actions/users/securityAction.php';
                 <div class="fav-card"> <?php
                     include '../includes/segments/card.php'; ?>
                     <div class="fav-card-appendice">
-                        <div class="mp-button btn bg-darkred text-white js-favorite-button">Remove from favorites</div>
+                        <div class="mp-button btn bg-darkred text-white js-favorite-button">お気に入りから除外</div>
                     </div>
                 </div> <?php
             } ?>

@@ -47,7 +47,7 @@ include '../actions/rides/edit/galleryAction.php';
 					// Only add substatus if there is one
 					if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
 					if ($ride->privacy == 'Friends only') { ?>
-						<p style="background-color: #ff5555" class="tag-light text-light">Reserved to <?= $ride->author->login; ?>'s friends</p> <?php
+						<p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->author->login; ?>の友達に限定</p> <?php
 					} ?>
 				</div>
 				<div class="header-buttons"> <?php
@@ -71,28 +71,28 @@ include '../actions/rides/edit/galleryAction.php';
 			<div class="container margin-bottom">
 				<div class="row">
 					<div class="col-sm">
-						<p><strong>Date :</strong> <?= $ride->date; ?></p>
+						<p><strong>開催日 :</strong> <?= $ride->date; ?></p>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm">
-						<p><strong>Meeting time :</strong> <?= $ride->meeting_time; ?></p>
+						<p><strong>集合時間 :</strong> <?= $ride->meeting_time; ?></p>
 					</div>
 					<div class="col-sm">
-						<p><strong>Meeting place :</strong> <?= $ride->meeting_place; ?></p>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm">
-						<p><strong>Departure time :</strong> <?= $ride->departure_time. " (finish around " .$ride->finish_time. ")"; ?></p>
+						<p><strong>集合場所 :</strong> <?= $ride->meeting_place; ?></p>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm">
-						<p><strong>Level :</strong> <?= $ride->getAcceptedLevelString(); ?></p>
+						<p><strong>出発時間 :</strong> <?= $ride->departure_time. " (" .$ride->finish_time. "頃に解散予定)"; ?></p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						<p><strong>レベル :</strong> <?= $ride->getAcceptedLevelString(); ?></p>
 					</div>
 					<div class="col-sm">
-						<p><strong>Accepted bikes :</strong> <?= $ride->getAcceptedBikesString(); ?></p>
+						<p><strong>参加可能車種 :</strong> <?= $ride->getAcceptedBikesString(); ?></p>
 					</div>
 				</div>
 				<div class="row">
@@ -116,10 +116,10 @@ include '../actions/rides/edit/galleryAction.php';
 			
 				<div class="rd-course-infos">
 					<h2>About the course</h2>
-					<p><strong>Distance :</strong> <?php 
-						if (isset($ride->finish_place)) echo $ride->distance. "km from " .$ride->meeting_place. " to " .$ride->finish_place;
-						else echo $ride->distance. "km from " .$ride->meeting_place. " to " .$ride->meeting_place; ?></p>
-					<p><strong>Terrain :</strong> <?= $terrain_value; ?></p>
+					<p><strong>距離 :</strong> <?php 
+						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->finish_place. " まで";
+						else echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->meeting_place. " まで"; ?></p>
+					<p><strong>起伏 :</strong> <?= $terrain_value; ?></p>
 					<p><?= $ride->course_description; ?></p>
 				</div>
 				<div style="clear: both"></div>

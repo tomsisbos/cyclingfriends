@@ -46,7 +46,7 @@ include '../actions/users/securityAction.php';
 
 			} else {
 				
-				$suberrormessage = 'No friend has been found. You can add friends by clicking on the "Become friends" button on user\'s profile page.'; 
+				$suberrormessage = '友達が見つかりませんでした。プロフィールページで「友達申請」ボタンにクリックし、友達を作りましょう。'; 
 				if (isset($suberrormessage)) echo '<div class="error-block fullwidth text-center"><p class="error-message">' .$suberrormessage. '</p></div>';
 			
 			} ?>

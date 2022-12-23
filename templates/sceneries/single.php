@@ -47,7 +47,7 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 					</div> <?php
 					$cleared_activity_id = $mkpoint->isCleared();
 					if ($cleared_activity_id) { ?>
-						<div id="visited-icon" style="display: inline;" title="You have visited this scenery.">
+						<div id="visited-icon" style="display: inline;" title="この絶景スポットを訪れました。">
 							<a href="/activity/<?= $cleared_activity_id ?>" target="_blank">
 								<span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
 							</a>
@@ -96,11 +96,11 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 			<div class="container p-0 pg-sg-map-box">
 				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
-					<div class="pg-sg-itinerary-title">Reviews</div>
+					<div class="pg-sg-itinerary-title">レビュー</div>
 					<div class="chat-reviews pt-2"></div>
 					<div class="chat-msgbox">
 						<textarea id="mkpointReview" class="fullwidth"></textarea>
-						<button id="mkpointReviewSend" class="mp-button bg-button text-white">Post review</button>
+						<button id="mkpointReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
 					</div>
 				</div>
 			</div>

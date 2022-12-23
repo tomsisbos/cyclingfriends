@@ -31,14 +31,14 @@ include '../includes/navbar.php'; ?>
 				</div>
 				<div class="form-floating mb-3">
 					<input type="login" class="form-control" id="floatingInput" placeholder="Login" name="login">
-					<label class="form-label" for="floatingInput">Login</label>
+					<label class="form-label" for="floatingInput">Username</label>
 				</div>
 				<div class="form-floating mb-3">
 					<input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
 					<label class="form-label" for="floatingPassword">Password</label>
 				</div>
 				
-				<button type="submit" class="btn button button-primary fullwidth" name="validate">Sign Up</button>
+				<button type="submit" class="btn button button-primary fullwidth" name="validate">Sign up</button>
 				
 			</form>
 		</div>

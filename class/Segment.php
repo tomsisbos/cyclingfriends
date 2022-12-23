@@ -85,11 +85,11 @@ class Segment extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been removed from <a class="in-success" href="/favorites/segments">your favorites list</a>.'];
+            return ['success' => $this->name . 'は<a class="in-success" href="/favorites/segments">お気に入りリスト</a>から削除されました.'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . ' has been added to <a class="in-success" href="/favorites/segments">your favorites list</a> !'];
+            return ['success' => $this->name . 'は<a class="in-success" href="/favorites/segments">お気に入りリスト</a>に追加されました !'];
         }
     }
 

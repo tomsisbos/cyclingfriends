@@ -28,11 +28,11 @@ include '../actions/users/securityAction.php';
 			include '../includes/rides/display-rides.php';
 			
 			// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
-			if (!isset($is_ride)) $errormessage = 'There is no ride to display.';
+			if (!isset($is_ride)) $errormessage = '表示できるデータがありません。';
 
 			// If no bike is displaying, filter bike is checked and connected user doesn't have any bike set, display a message advising to register bikes
-			if (isset($errormessage) AND $errormessage == 'There is no ride to display.' AND isset($_POST['filter_bike']) AND is_array($connected_user->getBikes())){
-				$submessage = 'You should first register your bike in <a href="/rider/' .$connected_user->id. '#addBike1">your profile settings</a>.';
+			if (isset($errormessage) AND $errormessage == '表示できるデータがありません。' AND isset($_POST['filter_bike']) AND is_array($connected_user->getBikes())){
+				$submessage = '<a href="/rider/' .$connected_user->id. '#addBike1">プロフィール設定</a>でバイクを登録しましょう。';
 			} ?>
 			
 			<?php // Space for error messages and submessage

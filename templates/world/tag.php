@@ -35,11 +35,11 @@ include '../actions/users/securityAction.php';
                 foreach ($entries as $entry) {
                     if ($entry->type == 'scenery') {
                         $mkpoint = $entry; ?>
-                        <div class="top-link"><a href="/scenery/<?= $mkpoint->id ?>">Scenery spot</a></div> <?php
+                        <div class="top-link"><a href="/scenery/<?= $mkpoint->id ?>">絶景スポット</a></div> <?php
                         include '../includes/mkpoints/card.php';
                     } else if ($entry->type == 'segment') {
                         $segment = $entry;?>
-                        <div class="top-link"><a href="/segment/<?= $segment->id ?>">Segment</a></div> <?php
+                        <div class="top-link"><a href="/segment/<?= $segment->id ?>">セグメント</a></div> <?php
                         include '../includes/segments/card.php';
                     }
                 } ?>

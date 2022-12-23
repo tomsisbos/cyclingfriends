@@ -94,7 +94,7 @@ class Ride extends Model {
         $level_list = $this->getAcceptedLevels();
         // If all levels are true, return Anyone
         if($level_list[0] && $level_list[1] && $level_list[2]){
-            return 'Anyone';
+            return '誰でも可';
         }else{
             // Set variables to default value
             $i = 0;	$string = '';
@@ -157,8 +157,6 @@ class Ride extends Model {
                         // Insert commas between bike types
                         if ($i > 0) $string .= ', ';
                         $string .= getBikesFromColumnName($bike);
-                        // add plural
-                        $string .= 's';
                         $i++;
                     }
                 }
@@ -285,23 +283,23 @@ class Ride extends Model {
         
         // If ride date is passed
         if ($this->date < date('Y-m-d')) {
-            $status = 'Finished'; } // status is Finished
+            $status = 'ライド終了'; } // status is Finished
         
         // If ride is full
         else if ($this->isFull()) {
-            $status = 'Full'; } // status is Full
+            $status = '定員達成'; } // status is Full
             
         // If privacy is set as private
         else if ($privacy == 'Private') {
-            $status = 'Private'; } // status is Private
+            $status = '非公開'; } // status is Private
             
         // If not set as Finished, Full or Private
         else {
             
             // If not set as private, ride date is yet to come and entry start date is yet to come
             if (($privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start > date('Y-m-d'))){
-                $status = 'Closed'; // status is Closed
-                $substatus = 'opening soon'; // substatus is opening soon
+                $status = '募集期間外'; // status is Closed
+                $substatus = 'まもなく開始'; // substatus is opening soon
             }
     
             // If not set as private, ride date is yet to come and entries are open
@@ -309,18 +307,18 @@ class Ride extends Model {
                 // If number of applicants is lower than minimum number set
                 $participants_number = $this->setParticipationInfos()['participants_number'];
                 if ($participants_number < $this->nb_riders_min) {
-                    $status = 'Open'; // status is Open 
-                    $substatus = 'riders wanted'; // substatus is riders wanted
+                    $status = '募集中'; // status is Open 
+                    $substatus = '最低催行人数に達成していません'; // substatus is riders wanted
                 } else { // If minimum number is reached
-                    $status = 'Open'; // status is Open
-                    $substatus = 'ready to depart'; //substatus is ready to depart
+                    $status = '募集中'; // status is Open
+                    $substatus = '最低催行人数に達成しました'; //substatus is ready to depart
                 }
             }
     
             // If not set as private, ride date is yet to come but entries are closed
             else if (($privacy != 'Private') AND ($this->date >= date('Y-m-d')) AND ($this->entry_start < date('Y-m-d') AND $this->entry_end < date('Y-m-d'))) {
-                $status = 'Closed'; // status is Closed
-                $substatus = 'ready to depart'; //substatus is ready to depart
+                $status = 'エントリー終了'; // status is Closed
+                $substatus = 'まもなく開催'; //substatus is ready to depart
             }
     
             else {
@@ -380,80 +378,6 @@ class Ride extends Model {
         $deleteRide = $this->getPdo()->prepare('DELETE FROM rides WHERE id = ?');
         $deleteRide->execute(array($this->id));
         return true;
-    }
-
-    // Function for uploading ride gallery
-    public function uploadGallery () {
-        
-        // Declaration of variables
-        $return     = false;
-        $img_blob   = '';
-        $img_size   = 0;
-        $max_size   = 500000;
-        $img_name   = '';
-        $img_type   = '';
-                            
-        // Count files and start the loop if there are from 1 to 5 files
-        $countfiles = count($_FILES['file']['name']);
-        if($countfiles > 5){
-            $error = 'You can\'t upload more than 5 files. Please try again with 5 files or less.';
-            return array(false, $error);
-        }else if($countfiles <= 0 OR empty($_FILES['file']['name'][0])){
-            return;
-        }else if($countfiles <= 5 AND $countfiles > 0){
-
-            // Delete all photos previously uploaded
-            $resetImage = $this->getPdo()->prepare('DELETE FROM ride_photos WHERE ride_id = ?');
-            $resetImage->execute(array($this->id));
-
-            for($i = 0; $i < $countfiles; $i++){
-                                
-                // Displays an error message if any problem through upload
-                $return = is_uploaded_file($_FILES['file']['tmp_name'][$i]);
-                if (!$return) {
-                    $error = 'Upload problem for ' . $_FILES['file']['name'][$i] . '. Please try again.';
-                    return array(false, $error);
-                }else{
-                    
-                // Sort upload data into variables
-                $img_id   = $i;
-                $img_name = $_FILES['file']['name'][$i];
-                $img_type = $_FILES['file']['type'][$i];
-                $img_blob = file_get_contents($_FILES['file']['tmp_name'][$i]);
-                        
-                    // Displays an error message if file size exceeds $max_size
-                    $img_size = $_FILES['file']['size'][$i];
-                    if ($img_size > $max_size) {
-                        $error = $img_name . ' exceeds size limit (500kb). Please reduce the size and try again.';
-                        return array(false, $error);
-                                
-                    }else{		
-                        $insertImage = $this->getPdo()->prepare('INSERT INTO ride_photos (ride_id, img_id, img, size, name, type) VALUES (?, ?, ?, ?, ?, ?)');
-                        $insertImage->execute(array($this->id, $img_id, $img_blob, $img_size, $img_name, $img_type));
-                        $checksuccess = true;
-                    }
-                }
-            }
-            
-            if($checksuccess == true){
-                $success = $countfiles . ' pictures have correctly been uploaded !';
-                return array(true, $success);
-            }
-        }
-    }
-
-    function deleteRideGallery(){
-        $CheckIfGallerySet = $this->getPdo()->prepare('SELECT * FROM ride_photos WHERE ride_id = ?');
-        $CheckIfGallerySet->execute(array($this->id));
-        if($CheckIfGallerySet->rowCount() > 0){	
-            $deleteGallery = $this->getPdo()->prepare('DELETE FROM ride_photos WHERE ride_id = ?');
-            $deleteGallery->execute(array($this->id));
-            $success = 'Current gallery has been successfully deleted.';
-            return array(true, $success);
-        }else{
-            $error = 'You don\'t have set any gallery yet.';
-            return array(false, $error);
-        }
     }
 
     // Get all checkpoints info of a specific ride

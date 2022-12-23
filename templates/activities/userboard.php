@@ -57,21 +57,21 @@ include '../actions/users/securityAction.php';
 								</div>
 								<div class="ac-specs">
 									<div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">
-										<div class="ac-spec-label"><strong>Distance : </strong></div>
+										<div class="ac-spec-label"><strong>距離 : </strong></div>
 										<div class="ac-spec-value"><?= round($activity->route->distance, 1) ?><span class="ac-spec-unit"> km</span></div>
 									</div>
 									<div class="ac-spec <?= $activity->setBackgroundColor('duration')?> ">
-										<div class="ac-spec-label"><strong>Duration : </strong></div>
+										<div class="ac-spec-label"><strong>時間 : </strong></div>
 										<div class="ac-spec-value"> <?php
 											if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
 											else echo $activity->duration->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration->format('i') ?></div>
 									</div>
 									<div class="ac-spec <?= $activity->setBackgroundColor('elevation')?> ">
-										<div class="ac-spec-label"><strong>Elevation : </strong></div>
+										<div class="ac-spec-label"><strong>獲得標高 : </strong></div>
 										<div class="ac-spec-value"><?= $activity->route->elevation ?><span class="ac-spec-unit"> m</span></div>
 									</div>
 									<div class="ac-spec <?= $activity->setBackgroundColor('speed')?> ">
-										<div class="ac-spec-label"><strong>Avg. Speed : </strong></div>
+										<div class="ac-spec-label"><strong>平均速度 : </strong></div>
 										<div class="ac-spec-value"><?= $activity->getAverageSpeed() ?><span class="ac-spec-unit"> km/h</span></div>
 									</div>
 								</div>
@@ -90,9 +90,9 @@ include '../actions/users/securityAction.php';
 						
 						<div class="my-ac-buttons">
 							<a href="/activitiy/<?= $activity->id ?>/edit">
-								<div class="mp-button btn bg-darkgreen text-white">Edit</div>
+								<div class="mp-button btn bg-darkgreen text-white">編集</div>
 							</a>
-							<div class="mp-button btn bg-darkred text-white" data-id="<?= $activity->id ?>" id="deleteButton">Delete</div>
+							<div class="mp-button btn bg-darkred text-white" data-id="<?= $activity->id ?>" id="deleteButton">削除</div>
 						</div>
 
 					</div><?php
@@ -102,7 +102,7 @@ include '../actions/users/securityAction.php';
 			
 			// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
 			if (empty($connected_user->getActivities())) { ?>
-				<div class="errormessage">There is no activity to display.</div> <?php		
+				<div class="errormessage">表示できるデータがありません。</div> <?php		
 			}
 			
 			// Set pagination system

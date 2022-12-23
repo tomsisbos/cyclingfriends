@@ -43,20 +43,20 @@ include '../actions/users/securityAction.php';
 									echo $posting_date->format('Y/m/d \a\t H\hi'); ?>
 								</div>
 								<div class="rt-specs d-flex flex-column">
-									<div><?= '<strong>Distance : </strong>' .round($route->distance, 1). 'km' ?></div>
-									<div><?= '<strong>Elevation : </strong>' .$route->elevation. 'm' ?></div>
-									<div><?= '<strong>Difficulty : </strong>' .$route->getStars($route->calculateDifficulty()) ?></div>
+									<div><?= '<strong>距離 : </strong>' .round($route->distance, 1). 'km' ?></div>
+									<div><?= '<strong>獲得標高 : </strong>' .$route->elevation. 'm' ?></div>
+									<div><?= '<strong>難易度 : </strong>' .$route->getStars($route->calculateDifficulty()) ?></div>
 								</div>
 							</div>
 						</div>
 						<div class="rt-buttons">
 							<a href="/route/<?= $route->id ?>/edit">
-								<div class="mp-button btn bg-darkgreen text-white" type="button" name="edit">Edit</div>
+								<div class="mp-button btn bg-darkgreen text-white" type="button" name="edit">編集</div>
 							</a>
 							<a id="export" data-id="<?= $route->id ?>" download>
-								<div class="mp-button btn bg-darkgreen text-white" type="button">Export</div>
+								<div class="mp-button btn bg-darkgreen text-white" type="button">エクスポート</div>
 							</a>
-							<div class="mp-button btn bg-darkred text-white" data-id="<?= $route->id ?>" id="deleteRoute" type="button" name="delete">Delete</div>
+							<div class="mp-button btn bg-darkred text-white" data-id="<?= $route->id ?>" id="deleteRoute" type="button" name="delete">削除</div>
 						</div>
 					</div> <?php
 					
@@ -66,7 +66,7 @@ include '../actions/users/securityAction.php';
 			
 			// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
 			if (empty($connected_user->getRoutes())) { ?>
-				<div class="errormessage">There is no route to display.</div> <?php		
+				<div class="errormessage">表示できるデータがありません。</div> <?php		
 			}
 			
 			// Set pagination system

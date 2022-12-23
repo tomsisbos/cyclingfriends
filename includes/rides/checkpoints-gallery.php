@@ -90,7 +90,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             <div class="lightbox-admin-panel container-admin name-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>
-                    <input type="text" class="admin-field js-name column-field form-control text-center" style="display: none" name="input<?= $i; ?>" placeholder="Write a name..." value="<?= $checkpoint->name; ?>" /> <?php
+                    <input type="text" class="admin-field js-name column-field form-control text-center" style="display: none" name="input<?= $i; ?>" placeholder="タイトルを書く..." value="<?= $checkpoint->name; ?>" /> <?php
                 } ?>
             </div> <?php
         } else { // Else, display name ?>
@@ -120,7 +120,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             <div class="lightbox-admin-panel container-admin caption-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>
-                    <textarea class="admin-field js-caption column-field form-control" style="display: none" name="textarea<?= $i; ?>" placeholder="Write a caption..."><?= $checkpoint->description ?></textarea> <?php
+                    <textarea class="admin-field js-caption column-field form-control" style="display: none" name="textarea<?= $i; ?>" placeholder="説明文を書く..."><?= $checkpoint->description ?></textarea> <?php
                 } ?>
             </div> <?php
         } else { // Else, display caption ?>

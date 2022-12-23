@@ -299,7 +299,7 @@ class Route extends Model {
         // Delete route tunnels
         $deleteTunnels = $this->getPdo()->prepare('DELETE FROM tunnels WHERE segment_id = ?');
         $deleteTunnels->execute(array($this->id));
-        return $route_name. ' has been successfully deleted.';
+        return $route_name. 'が削除されました。';
     }
 
     public function getTerrainValue () {

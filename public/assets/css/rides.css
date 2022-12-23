@@ -195,7 +195,6 @@
 .my-rd-tr {
     width: 100%;
     min-height: -webkit-fill-available;
-    height: 100%;
     padding: 5px 0px;
     display: flex;
     flex-wrap: wrap;

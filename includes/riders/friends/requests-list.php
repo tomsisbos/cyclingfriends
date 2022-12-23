@@ -5,7 +5,7 @@
 	if ($requesters) { ?>
 		
 		<div class="container">
-			<h3>Requests list</h2>
+			<h3>申請リスト</h2>
 		</div>
 			
 		<div class="container bg-white"> <?php
@@ -66,7 +66,7 @@
 									} 
 									if (!empty($rider->birthdate)) { ?>
 										<div>
-											<strong>Age : </strong>
+											<strong>年齢 : </strong>
 											<?= $rider->calculateAge(). ' years old'; ?>
 										</div> <?php
 									} ?>
@@ -77,7 +77,7 @@
 						<!-- Right container -->
 						<div class="rdr-container-right"> <?php
 							if (!empty($rider->level)) { ?>
-								<strong>Level : </strong>
+								<strong>レベル : </strong>
 								<span class="tag-<?= colorLevel($rider->level); ?>">
 									<?= $rider->level; ?>
 								</span> <?php
@@ -85,7 +85,7 @@
 							// If bike is set and bike type is filled
 							if ($rider->getBikes()) { ?>
 								<div class="mt-1 mb-1">
-									<strong>Bikes : </strong> <?php
+									<strong>バイク : </strong> <?php
 									foreach ($rider->getBikes() as $bike) { 
 										if (!empty($bike['bike_type'])) { ?>
 											<div class="tag"><?= $bike['bike_type']; ?></div>

@@ -169,17 +169,17 @@ class User extends Model {
         // If there is one, return false with an error message depending on if the friends request has already been accepted by receiver or not
         if ($checkIfAlreadySentARequest->rowCount() > 0) {
             // If accepted is set to true
-            if ($friendship['accepted']) return array('error' => "You already are friend with " .$friend->login. ".");
+            if ($friendship['accepted']) return array('error' => $friend->login. "が既に友達リストに入っています。");
             // If accepted is set to false and current user is the inviter
-            else if ($friendship['inviter_id'] == $_SESSION['id']) return array('error' => "You already sent an invitation to " .$friend->login. ".");
+            else if ($friendship['inviter_id'] == $_SESSION['id']) return array('error' => $friend->login. "には既に友達申請を送っています。");
             // else (If accepted is set to false and current user is the receiver)
-            else return array('error' => $friend->login. ' has already sent you an invitation. You can accept or dismiss it on <a href="/riders/friends.php">your friends page</a>.');
+            else return array('error' => $friend->login. 'は既に友達申請をあなた宛てに出しています。<a href="/riders/friends.php">友達ページ</a>から承認、あるいは却下することができます。');
             
         // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
         } else {
             $createNewFriendship = $this->getPdo()->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
             $createNewFriendship->execute(array($this->id, $this->login, $friend->id, $friend->login, date('Y-m-d')));
-            return array('success' => "Your friends request has been sent to " .$friend->login. " !");
+            return array('success' => $friend->login. "に友達申請を送りました !");
         }
     }
 
@@ -188,16 +188,16 @@ class User extends Model {
         // Set friendship status to "accepted"
         $acceptFriendsRequest = $this->getPdo()->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
         $acceptFriendsRequest->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
-        if ($acceptFriendsRequest->rowCount() > 0) return array('success' => $friend->login .' has been added to your friends list !');
-        else return array('error' => 'You already are friends with ' .$friend->login. '.');
+        if ($acceptFriendsRequest->rowCount() > 0) return array('success' => $friend->login .'が友達リストに追加されました !');
+        else return array('error' => $friend->login. 'とは既に友達になっています。');
     }
 
     // Remove a friendship relation
     public function removeFriend ($friend) {
 		$removeFriends = $this->getPdo()->prepare('DELETE FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend WHEN receiver_id = :user_id THEN inviter_id = :friend END');
 		$removeFriends->execute([":user_id" => $this->id, ":friend" => $friend->id]);
-        if ($removeFriends->rowCount() > 0) return array('success' =>  $friend->login .' has been removed from your friends list.');
-        else return array('error' => 'You are not friends with ' .$friend->login. '.');
+        if ($removeFriends->rowCount() > 0) return array('success' =>  $friend->login .'が友達リストから削除されました。');
+        else return array('error' => $friend->login. 'とは友達になっていません。');
     }
 
     public function getFriends () {
@@ -237,16 +237,16 @@ class User extends Model {
     public function follow ($user) {
         $follow = $this->getPdo()->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
         $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
-        if ($follow->rowCount() > 0) return array('success' => 'You now are following ' . $user->login . ' !');
-        else return array('error' => 'You are already following ' . $user->login . '.');
+        if ($follow->rowCount() > 0) return array('success' => $user->login . 'をフォローしました !');
+        else return array('error' => $user->login . 'を既にフォローしています。');
     }
 
     // Removes an entry in followers table
     public function unfollow ($user) {
         $unfollow = $this->getPdo()->prepare('DELETE FROM followers WHERE following_id = ? AND followed_id = ?');
         $unfollow->execute(array($this->id, $user->id));
-        if ($unfollow->rowCount() > 0) return array('success' => 'You are no more following ' . $user->login . '.');
-        else return array('error' => 'You have already unfollowed ' . $user->login . '.');
+        if ($unfollow->rowCount() > 0) return array('success' => $user->login . 'のフォローを取りやめました。');
+        else return array('error' => $user->login . 'をフォローしていません。');
     }
 
     // Checks if follows a specific user
@@ -302,17 +302,17 @@ class User extends Model {
             
         // Displays an error message if any problem through upload
         if (!is_uploaded_file($_FILES['propicfile']['tmp_name'])) {
-            return array('error' => "A problem has occured during file upload.");
+            return array('error' => "ファイルアップロード中に問題が発生しました。");
                 
         } else {
                 
             // Displays an error message if file size exceeds $max_size
             $img_size = $_FILES['propicfile']['size'];
-            if ($img_size > $max_size) return array('error' => 'The image you uploaded exceeds size limit (500kb). Please reduce the size and try again.');
+            if ($img_size > $max_size) return array('error' => 'アップロードしたファイルがサイズ制限（500kb）を超えています。サイズを縮小して再度試してください。');
             
             // Displays an error message if format is not accepted
             $img_type = $_FILES['propicfile']['type'];
-            if ($img_type != 'image/jpeg') return array('error' => 'The file you uploaded is not at *.jpg format. Please try again with a *.jpg image file.');
+            if ($img_type != 'image/jpeg') return array('error' => 'アップロードしたファイルは*.jpg形式のファイルではありません。*.jpg形式のファイルで再度試してください。');
                 
             // Sort upload data into variables
             $img_name = $_FILES['propicfile']['name'];
@@ -333,7 +333,7 @@ class User extends Model {
                 $insertImage->execute(array($this->id, $img_blob, $img_size, $img_name, $img_type));
             }
                 		
-            return array('success' => 'Profile picture has correctly been updated !');
+            return array('success' => 'プロフィール画像が更新されました !');
         }
     }
 
@@ -348,7 +348,7 @@ class User extends Model {
             $getImage = $this->getPdo()->prepare('SELECT * FROM profile_pictures WHERE user_id = ?');
             $getImage->execute(array($this->id));
             return $getImage->fetch(PDO::FETCH_ASSOC);	
-        } else return 'couldn\'t get image data from database.';
+        } else return 'データベースから画像を取得できませんでした。';
     }
 
     // Function for getting user's profile picture element with defined height, width and border-radius attributes

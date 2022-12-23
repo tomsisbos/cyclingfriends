@@ -51,7 +51,7 @@ class Bike extends Model {
         
         // Displays an error message if any problem through upload
         if (!$return) {
-            $error = "A problem has occured during file upload.";
+            $error = "ファイルアップロード中に問題が発生しました。";
             return array(false, $error);
                 
         } else {
@@ -59,14 +59,14 @@ class Bike extends Model {
             // Displays an error message if file size exceeds $max_size
             $img_size = $_FILES['bikeimagefile']['size'];
             if ($img_size > $max_size) {
-                $error = 'The image you uploaded exceeds size limit (5Mb). Please reduce the size and try again.';
+                $error = 'アップロードしたファイルがサイズの上限 (5Mb)を超えています。サイズを縮小して再度試してください。';
                 return array(false, $error);
             }
             
             // Displays an error message if format is not accepted
             $img_type = $_FILES['bikeimagefile']['type'];
             if ($img_type != 'image/jpeg') {
-                $error = 'The file you uploaded is not at *.jpg format. Please try again with a *.jpg image file.';
+                $error = 'アップロードしたファイルは*.jpg形式のファイルではありません。*.jpg形式の画像データで再度試してください。';
                 return array(false, $error);
             }
                 
@@ -82,7 +82,7 @@ class Bike extends Model {
             $updateImage = $this->getPdo()->prepare('UPDATE bikes SET img_blob = ?, img_size = ?, img_name = ?, img_type = ? WHERE id = ?');
             $updateImage->execute(array($img_blob, $img_size, $img_name, $img_type, $id));
             
-            $success = 'Bike image has been correctly updated !';		
+            $success = 'バイクの写真が更新されました！';		
             return array(true, $success);
         }
     }

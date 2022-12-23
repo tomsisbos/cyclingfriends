@@ -11,7 +11,7 @@
                 <a href="/segment/<?= $segment->id ?>"><div class="sg-title"><?= $segment->name ?></div></a> <?php
                 $cleared_activity_id = $segment->isCleared();
                 if ($cleared_activity_id) { ?>
-                    <div id="visited-icon" style="display: inline;" title="You have visited this segment.">
+                    <div id="visited-icon" style="display: inline;" title="このセグメントを訪れました。">
                         <a href="/activity/<?= $cleared_activity_id ?>" target="_blank">
                             <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
                         </a>

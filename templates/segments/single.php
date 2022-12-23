@@ -29,11 +29,11 @@ include '../actions/segments/segmentAction.php'; ?>
 					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 					<div class="header-buttons">
 						<button class="btn button box-shadow js-favorite-button" type="button"> <?php
-							if (!$segment->isFavorite()) echo 'Add to favorites';
+							if (!$segment->isFavorite()) echo 'お気に入りに追加';
 							else echo 'Remove from favorites'; ?>
 						</button>
 						<a id="export" download>
-							<button class="btn button box-shadow" type="button">Export as *.gpx</button>
+							<button class="btn button box-shadow" type="button">エクスポート</button>
 						</a>
 					</div>
 				</div>
@@ -48,7 +48,7 @@ include '../actions/segments/segmentAction.php'; ?>
 				</div> <?php
 				$cleared_activity_id = $segment->isCleared();
 				if ($cleared_activity_id) { ?>
-					<div id="visited-icon" style="display: inline;" title="You have visited this segment.">
+					<div id="visited-icon" style="display: inline;" title="このセグメントを訪れました。">
 						<a href="/activity/<?= $cleared_activity_id ?>" target="_blank">
 							<span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
 						</a>
@@ -69,12 +69,12 @@ include '../actions/segments/segmentAction.php'; ?>
 					<div class="pg-sg-generalinfos">
 						<div class="pg-sg-specs-container">
 							<div class="pg-sg-specs">
-								<div><strong>Distance : </strong><?= round($segment->route->distance, 1) ?>km</div>
-								<div><strong>Elevation : </strong><?= $segment->route->elevation ?>m</div>
+								<div><strong>距離 : </strong><?= round($segment->route->distance, 1) ?>km</div>
+								<div><strong>獲得標高 : </strong><?= $segment->route->elevation ?>m</div>
 							</div>
 							<div class="pg-sg-specs">
-								<div><strong>Estimated time : </strong><?= $segment->route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
-								<div><strong>Difficulty : </strong><?= $segment->route->getStars($segment->route->calculateDifficulty()) ?></div>
+								<div><strong>予測時間 : </strong><?= $segment->route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
+								<div><strong>難易度 : </strong><?= $segment->route->getStars($segment->route->calculateDifficulty()) ?></div>
 							</div>
 						</div>
 						<div class="pg-sg-description">
@@ -101,9 +101,9 @@ include '../actions/segments/segmentAction.php'; ?>
 			if (!empty($segment->seasons)) {
 
 				function getPeriodDetailClass ($number) {
-					if ($number == 1) return 'early';
-					if ($number == 2) return 'mid';
-					if ($number == 3) return 'late';
+					if ($number == 1) return '上旬';
+					if ($number == 2) return '中旬';
+					if ($number == 3) return '下旬';
 				} ?>
 
 				<div class="container bg-white">
@@ -161,7 +161,7 @@ include '../actions/segments/segmentAction.php'; ?>
 						<div class="pg-sg-photo">
 							<img src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>"></img>
 						</div>
-						<?php ///var_dump($photo);
+						<?php
 					} ?>
 				</div> <?php
 			} ?>	
@@ -173,7 +173,7 @@ include '../actions/segments/segmentAction.php'; ?>
                     	<img class="staticmap"></img>
 					</div>
 					<div class="pg-sg-itinerary">
-						<div class="pg-sg-itinerary-title">Itinerary</div> <?php
+						<div class="pg-sg-itinerary-title">行程</div> <?php
 						foreach ($segment->route->getItinerary() as $spot) { ?>
 							<div class="pg-sg-itinerary-spot <?php if (isset($spot['viewed']) AND $spot['viewed'] == true) echo 'text-success' ?>">
 								<div class="pg-sg-spot-icon"><img src="data:image/jpeg;base64,<?= $spot['icon'] ?>"></div>

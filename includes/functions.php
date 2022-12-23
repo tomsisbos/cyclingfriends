@@ -919,9 +919,9 @@ function getPrivacyAndStatus($ride_id){
 
 function getPrivacyString ($privacy) {
 	switch ($privacy) {
-		case 'public': return 'Public';
-		case 'friends_only': return 'Friends only';
-		case 'private': return 'Private';
+		case 'public': return '公開';
+		case 'friends_only': return '友達のみ';
+		case 'private': return '非公開';
 	}
 }
 
@@ -977,29 +977,29 @@ function levelFromArrayBoolean($array){
 // Change the level key number to the proper level name
 function getLevelFromKey($key){
 	if($key == 0){
-		return 'Anyone';
+		return '誰でも可';
 	}
 	if($key == 1){
-		return 'Beginner';
+		return '初心者';
 	}
 	if($key == 2){
-		return 'Intermediate';
+		return '中級者';
 	}
 	if($key == 3){
-		return 'Athlete';
+		return '上級者';
 	}
 }
 
 // Change the level column name to the proper level name
 function getLevelFromColumnName ($level) {
 	if ($level == 'level_beginner') {
-		return 'Beginner';
+		return '初心者';
 	}
 	if ($level == 'level_intermediate') {
-		return 'Intermediate';
+		return '中級者';
 	}
 	if ($level == 'level_athlete') {
-		return 'Athlete';
+		return '上級者';
 	}
 }
 
@@ -1061,35 +1061,35 @@ function bikesFromArrayBoolean ($array) {
 // Change the bike key name to the proper bike type name
 function getBikeFromKey ($key) {
 	if($key == 0){
-		return 'All bikes';
+		return '車種問わず';
 	}
 	if($key == 1){
-		return 'City bike';
+		return 'ママチャリ＆その他の自転車';
 	}
 	if($key == 2){
-		return 'Road bike';
+		return 'ロードバイク';
 	}
 	if($key == 3){
-		return 'Mountain bike';
+		return 'マウンテンバイク';
 	}
 	if($key == 4){
-		return 'Gravel & CX bike';
+		return 'グラベル＆シクロクロスバイク';
 	}
 }
 
 // Change the bike column name to the proper bike name
 function getBikesFromColumnName($bike) {
 	if ($bike == 'citybike') {
-		return 'City bike';
+		return 'ママチャリ＆その他の自転車';
 	}
 	if ($bike == 'roadbike') {
-		return 'Road bike';
+		return 'ロードバイク';
 	}
 	if ($bike == 'mountainbike') {
-		return 'Mountain bike';
+		return 'マウンテンバイク';
 	}
 	if ($bike == 'gravelcxbike') {
-		return 'Gravel/Cyclocross bike';
+		return 'グラベル＆シクロクロスバイク';
 	}
 }
 
@@ -1099,7 +1099,7 @@ function deleteBike ($bike_number, $user_id) {
 	if (checkIfBikeIsSet($bike_number, $user_id)) {
 		$deleteBike = $db->prepare('DELETE FROM bikes WHERE user_id = ? AND bike_number = ?');
 		$deleteBike->execute(array($user_id, $bike_number));
-		$success = 'Bike has been deleted.';
+		$success = 'バイクが削除しました。';
 		return array(true, $success);
 	}
 }
@@ -1110,7 +1110,7 @@ function addBike ($bike_number, $user_id) {
 	if (!checkIfBikeIsSet($bike_number, $user_id)) {
 		$addBike = $db->prepare('INSERT INTO bikes (user_id, bike_number) VALUES (?, ?)');
 		$addBike->execute(array($user_id, $bike_number));
-		$success = 'Bike has been correctly added !';
+		$success = 'バイクが追加されました。';
 		return array(true, $success);
 	}
 }
@@ -1222,13 +1222,9 @@ function nbDaysLeftToDate($date) {
 // Function for truncating a sentence (string) starting from a certain character number (offset) to a certain number of characters (length)	
 function truncate($string, $offset, $length) {
 	$string_truncated = substr($string, $offset, $length);
-	if(strlen($string) <= $length){
-		return $string_truncated;
-	}else if(strlen($string) > $length){
-		return $string_truncated. '...';
-	}else{
-		return false;
-	}
+	if(strlen($string) <= $length) return $string_truncated;
+	else if(strlen($string) > $length) return $string_truncated. '...';
+	else return false;
 }
 
 // Get a list of users having the 'hide_on_chat' settings option activated
@@ -1243,24 +1239,24 @@ function getUsersDisablingPublicChat() {
 function getPeriod($date) {
 	// Get part of the month from the day
 	$day = date("d", strtotime($date));
-	if ($day < 10) $third = "early ";
-	else if (($day >= 10) AND ($day <= 20)) $third = "mid ";
-	else if ($day > 20) $third = "late ";
+	if ($day < 10) $third = "上旬";
+	else if (($day >= 10) AND ($day <= 20)) $third = "中旬";
+	else if ($day > 20) $third = "下旬";
 
 	// Get month in letters
 	switch (date("n", strtotime($date))) {
-		case 1: $month = "january"; break;
-		case 2: $month = "february"; break;
-		case 3: $month = "march"; break;
-		case 4: $month = "april"; break;
-		case 5: $month = "may"; break;
-		case 6: $month = "june"; break;
-		case 7: $month = "july"; break;
-		case 8: $month = "august"; break;
-		case 9: $month = "september"; break;
-		case 10: $month = "october"; break;
-		case 11: $month = "november"; break;
-		case 12: $month = "december"; 
+		case 1: $month = "1月"; break;
+		case 2: $month = "2月"; break;
+		case 3: $month = "3月"; break;
+		case 4: $month = "4月"; break;
+		case 5: $month = "5月"; break;
+		case 6: $month = "6月"; break;
+		case 7: $month = "7月"; break;
+		case 8: $month = "8月"; break;
+		case 9: $month = "9月"; break;
+		case 10: $month = "10月"; break;
+		case 11: $month = "11月"; break;
+		case 12: $month = "12月"; 
 	}
 
 	return $third . $month;

@@ -9,5 +9,5 @@ $mkpoints_number = $countMkpoints->rowCount();
 $cleared_mkpoints_number = $connected_user->countClearedMkpoints(); ?>
 
 <div class="dashboard-title-block">
-    Recently cleared scenery spots <div class="cleared-mkpoint-counter">(<?= $cleared_mkpoints_number . ' / ' . $mkpoints_number ?>)</div>
+    最近訪れた絶景スポット <div class="cleared-mkpoint-counter">(<?= $cleared_mkpoints_number . ' / ' . $mkpoints_number ?>)</div>
 </div>

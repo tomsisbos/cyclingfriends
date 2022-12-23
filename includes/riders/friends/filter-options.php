@@ -2,34 +2,34 @@
 	<div class="col-md">
 		<div class="tr-row">
 			<label class="form-label td-row element-20">
-				Search
+				検索
 			</label>
 			<input class="form-control td-row element-50" type="text" name="friend_search" value="<?php if(isset($_POST['friend_search'])){echo $_POST['friend_search'];} ?>" onfocusout="this.form.submit();" />
 		</div>
 		<div class="tr-row">
-			<label class="form-label td-row element-20">Order by</label>
+			<label class="form-label td-row element-20">並び順</label>
 			<select class="form-select td-row element-50" name="friend_orderby" onfocusout="this.form.submit();">
 				<option value="approval_date"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'approval_date'){echo ' selected';}} ?>>
-					Friendship duration</option>
+					追加日時</option>
 				<option value="login"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'login'){echo ' selected';}} ?>>
-					Login</option>
+					ユーザーネーム</option>
 				<option value="last_name"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'last_name'){echo ' selected';}} ?>>
-					Last name</option>
+					苗字</option>
 				<option value="first_name"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'first_name'){echo ' selected';}} ?>>
-					First name</option>
+					名前</option>
 				<option value="place"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'place'){echo ' selected';}} ?> disabled>
-					Distance from me</option> <!-- Needs to implement maps system -->
+					距離</option>
 				<option value="level"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'level'){echo ' selected';}} ?>>
-					Level</option>
+					レベル</option>
 				<option value="birthdate"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'birthdate'){echo ' selected';}} ?>>
-					Age</option>
+					年齢</option>
 			</select>
 		</div>
 	</div>

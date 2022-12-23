@@ -3,7 +3,7 @@
 	<form class="admin-panel nav flex" enctype="multipart/form-data" method="POST">
 		<div class="d-flex flex-column">
 			<div>
-				<label class="form-label">Privacy</label>
+				<label class="form-label">プライバシー設定</label>
 				<select class="admin-field" name="privacy" id="privacySelect">
 					<option value="Private"<?php
 						// First check if user has selected something and display it
@@ -17,7 +17,7 @@
 								echo ' selected';
 							}
 						}
-						?>>Private</option>
+						?>>非公開</option>
 					<option value="Friends only"<?php // If some of the participants are not in ride author's friendlist
 						if (!$ride->isEveryParticipantInFriendsList($ride->author)) {
 							echo ' disabled';
@@ -33,7 +33,7 @@
 								echo ' selected';
 							}
 						}
-						?>>Friends only</option>
+						?>>友達のみ</option>
 					<option value="Public"<?php
 						// First check if user has selected something and display it
 						if (isset($_POST['privacy'])) {
@@ -46,7 +46,7 @@
 								echo ' selected';
 							}
 						}
-						?>>Public</option>
+						?>>公開</option>
 				</select>
 			</div>
 			
@@ -60,7 +60,7 @@
 			$oneDayBeforeRide = date('Y-m-d', strtotime($ride->date. ' - 1 days')); ?>
 		
 			<div>
-				<label class="form-label">Entry period</label>
+				<label class="form-label">募集期間</label>
 				<input type="date" class="admin-field" name="entry_start" value="<?php
 				// First check if user has selected something and display it
 				if (isset($_POST['entry_start'])) {
@@ -85,7 +85,7 @@
 		</div>
 		
 		<div class="push flex-end">
-			<button class="btn button" type="submit" name="save">Save changes</button>				
+			<button class="btn button" type="submit" name="save">保存</button>				
 		</div>
 	</form>
 		

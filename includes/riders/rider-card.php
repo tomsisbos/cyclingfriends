@@ -46,7 +46,7 @@
                             } ?>
                         </div> <?php
                         if ($rider->isFriend($connected_user)) { ?>
-                            <strong>Friends since :</strong><?= datetimeToDate($rider->friendsSince($connected_user->id)); 
+                            <strong>友達から :</strong><?= datetimeToDate($rider->friendsSince($connected_user->id)); 
                         } ?>
                     </div>
                 </div>
@@ -62,13 +62,13 @@
                         </div> <?php
                     } 
                     if (!empty($rider->birthdate)) { ?>
-                        <strong>Age : </strong>
+                        <strong>年齢 : </strong>
                         <?= $rider->calculateAge(). ' years old';
                     } ?>
                 </div> <?php
                 if (!empty($rider->level)) { ?>
                     <div>
-                        <strong>Level : </strong>
+                        <strong>レベル : </strong>
                         <span class="tag-<?= colorLevel($rider->level); ?>">
                             <?= $rider->level; ?>
                         </span>
@@ -77,7 +77,7 @@
                 // If bike is set and bike type is filled
                 if ($rider->getBikes()) { ?>
                     <div class="mt-1 mb-1">
-                        <strong>Bikes : </strong> <?php
+                        <strong>バイク : </strong> <?php
                         foreach ($rider->getBikes() as $bike) {
                             $bike = new Bike($bike['id']);
                             if (!empty($bike->type)) { ?>

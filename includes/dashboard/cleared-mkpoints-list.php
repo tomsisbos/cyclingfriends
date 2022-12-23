@@ -6,7 +6,7 @@
     if (count($cleared_mkpoints) == 0) { ?>
         <div class="success-block">
             <div class="success-message">
-                You don't have any cleared scenery point yet. Let's explore the world together !
+                絶景スポットを訪れたことはまだないようです。一緒に世界を探検しましょう !
             </div>
         </div> <?php
 

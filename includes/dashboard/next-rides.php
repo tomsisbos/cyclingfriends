@@ -17,7 +17,7 @@ $getRides->execute(array(":level" => $connected_user->level));
 
 // Display ride cards ?>
 <div class="dashboard-title-block">
-    Next rides
+    募集中のライド
 </div>
 
 <div class="dashboard-cards"> <?php

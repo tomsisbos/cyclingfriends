@@ -10,7 +10,7 @@ if (isset($_SESSION['forms']['created'])) {
 	unset($_SESSION['forms'][1]);
 	unset($_SESSION['forms'][2]);
 	unset($_SESSION['course']);
-	$successmessage = "Your ride has been created ! It privacy is set as \"private\" for the moment, you need to change it to \"public\" if you want other riders to be able to apply.";
+	$successmessage = "ライドページが作成されました！「非公開」に設定されているので、募集を開始する際にはライドページからプライバシー設定を変更しましょう。";
 	unset($_SESSION['forms']['created']);
 } ?>
 
@@ -30,19 +30,19 @@ if (isset($_SESSION['forms']['created'])) {
 		<div class="container end">
 			<div class="my-rd-th justify">
 				<div class="my-rd-td table-element e10 justify-center">
-					Created on
+					作成日
 				</div>
 				<div class="my-rd-td table-element e10 justify-center">
-					Start date
+					出発日
 				</div>
 				<div class="my-rd-td table-element e30">
-					Ride name
+					タイトル
 				</div>
 				<div class="my-rd-td table-element e15 justify-center">
-					Status
+					募集状況
 				</div>
 				<div class="my-rd-td table-element e10 justify-center">
-					Applicants
+					参加状況
 				</div>
 				<div class="my-rd-td table-element e10">
 				</div>
@@ -58,10 +58,10 @@ if (isset($_SESSION['forms']['created'])) {
 				
 					<div class="my-rd-tr justify">
 						<div class="my-rd-td table-element e10 bg-white">
-							<div class="my-rd-responsive-label">Created on : </div><?= $ride->posting_date ?>
+							<div class="my-rd-responsive-label">作成日 : </div><?= $ride->posting_date ?>
 						</div>
 						<div class="my-rd-td table-element e10 bg-white">
-						<div class="my-rd-responsive-label">Start date : </div><?= $ride->date ?>
+						<div class="my-rd-responsive-label">出発日 : </div><?= $ride->date ?>
 						</div>
 						<div class="my-rd-td table-element e30 bg-grey">
 							<?= truncate($ride->name, 0, 50) ?>
@@ -79,14 +79,14 @@ if (isset($_SESSION['forms']['created'])) {
 						</div>
 						<div class="my-rd-td table-element e10 my-rd-button" style="padding-top: 0px; padding-bottom: 0px;">
 							<a href="/ride/<?= $ride->id ?>">
-								<button class="btn button" type="button">check</button>
+								<button class="btn button" type="button">確認</button>
 							</a>
 						</div>
 					</div> <?php
 				}
 
 			} else {
-				$noride = 'You don\'t have admin rights on any ride !';
+				$noride = 'あなたが管理しているライドがありません。';
 				if (isset($noride)) echo '<div class="error-block fullwidth text-center"><p class="error-message">' .$noride. '</p></div>';
 			} ?>
 		</div>

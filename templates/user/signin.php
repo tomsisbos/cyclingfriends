@@ -34,7 +34,7 @@ require '../actions/users/signinAction.php'; ?>
 					<label class="form-label" for="floatingPassword">Password</label>
 				</div>
 				
-				<button type="submit" class="btn button fullwidth button-primary" name="validate">Sign In</button>
+				<button type="submit" class="btn button fullwidth button-primary" name="validate">Sign in</button>
 				
 			</form>
 		</div>

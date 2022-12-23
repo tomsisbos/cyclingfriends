@@ -41,7 +41,7 @@
                                 <div class="rd-section-text">
                                     <p><?= $ride->getAcceptedLevelTags(). ' (' .$ride->getAcceptedBikesString(). ')'; ?></p>
                                     <div class="rd-distance">
-                                        <p><strong>Distance : </strong><?php if ($ride->distance_about === 'about') { echo $ride->distance_about. ' '; } echo $ride->distance. 'km'; ?></p> <?php
+                                        <p><strong>距離 : </strong><?php if ($ride->distance_about === 'about') { echo $ride->distance_about. ' '; } echo $ride->distance. 'km'; ?></p> <?php
                                         if ($ride->terrain == 1) echo '<img src="\media\flat.svg" />';
                                         else if ($ride->terrain == 2) echo '<img src="\media\smallhills.svg" />';
                                         else if ($ride->terrain == 3) echo '<img src="\media\hills.svg" />';
@@ -80,7 +80,7 @@
                                 <div class="rd-organizer">
                                     <div class="rd-login"><?= 'by <strong>@' .$ride->author->login. '</strong>'; ?></div> <?php
                                     if ($ride->privacy === 'Friends only') { ?>
-                                        <p style="background-color: #ff5555" class="tag-light text-light">Friends only</p> <?php
+                                        <p style="background-color: #ff5555" class="tag-light text-light">友達のみ</p> <?php
                                     } ?>
                                 </div>
                             </div>
@@ -89,15 +89,15 @@
                                     <?= '<strong>Entry : </strong>' .$ride->status;
                                     if ($ride->entry_start > date('Y-m-d')) {
                                         if (nbDaysLeftToDate($ride->entry_start) == 1) echo '<br><div class="xsmallfont">Opening tomorrow</div>';
-                                        else echo '<br><div class="xsmallfont">' .nbDaysLeftToDate($ride->entry_start). ' days before opening</div>';
+                                        else echo '<br><div class="xsmallfont">エントリー開始まで残り' .nbDaysLeftToDate($ride->entry_start). '日</div>';
                                     } else if ($ride->entry_start <= date('Y-m-d') AND date('Y-m-d') <= $ride->entry_end) {
-                                        if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont">Last day for entering</div>';
+                                        if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont">本日締め切り</div>';
                                         else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">Entries ending tomorrow</div>';
-                                        else echo '<br><div class="xsmallfont">' .nbDaysLeftToDate($ride->entry_end). ' days before closing</div>';
+                                        else echo '<br><div class="xsmallfont">締め切りまで残り' .nbDaysLeftToDate($ride->entry_end). '日</div>';
                                     } else if ($ride->entry_end <= date('Y-m-d') AND date('Y-m-d') <= $ride->date) {
-                                        if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont text-danger">Departing today</div>';
-                                        else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">Departing tomorrow</div>';
-                                        else echo '<br><div class="xsmallfont">' .nbDaysLeftToDate($ride->date). ' days before departing</div>';
+                                        if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont text-danger">本日出発</div>';
+                                        else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日出発</div>';
+                                        else echo '<br><div class="xsmallfont">出発まで残り' .nbDaysLeftToDate($ride->date). '日</div>';
                                     } ?>
                                 </span>
                             </div>

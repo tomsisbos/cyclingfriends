@@ -7,7 +7,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 	<div class="container ride-header text-shadow">
 		<!-- Page title -->
 		<h1 class="text-center"><?= $_SESSION['edit-forms']['1']['ride-name'];?></h1>
-		<legend>Summary</legend>
+		<legend>サマリー</legend>
 
 	</div>
 
@@ -27,34 +27,34 @@ $previous_page = intval($stage_slug) - 1; ?>
 		<h2>About the ride</h2>
 		<div class="row">
 			<div class="col">
-				<p><strong>Date :</strong> <?= $_SESSION['edit-forms']['1']['date'];?></p>
+				<p><strong>開催日 :</strong> <?= $_SESSION['edit-forms']['1']['date'];?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>Meeting time :</strong> <?= $_SESSION['edit-forms']['1']['meeting-time'];?></p>
+				<p><strong>集合時間 :</strong> <?= $_SESSION['edit-forms']['1']['meeting-time'];?></p>
 			</div>
 			<div class="col">
-				<p><strong>Meeting place :</strong> <?= $_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
-				<p><strong>Finish place :</strong> <?= $_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<p><strong>Departure time :</strong> <?= $_SESSION['edit-forms']['1']['departure-time']. " (finish around " .$_SESSION['edit-forms']['1']['finish-time']. ")";?></p>
+				<p><strong>集合場所 :</strong> <?= $_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
+				<p><strong>解散場所 :</strong> <?= $_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>Number of riders wanted :</strong> <?= "from " .$_SESSION['edit-forms']['1']['nb-riders-min']. " to " .$_SESSION['edit-forms']['1']['nb-riders-max']. " people";?></p>
+				<p><strong>出発時間 :</strong> <?= $_SESSION['edit-forms']['1']['departure-time']. " (finish around " .$_SESSION['edit-forms']['1']['finish-time']. ")";?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>Level :</strong> <?= levelFromArray($_SESSION['edit-forms']['1']['level']); ?></p>
+				<p><strong>募集人数 :</strong> <?= $_SESSION['edit-forms']['1']['nb-riders-min']. "人 から " .$_SESSION['edit-forms']['1']['nb-riders-max']. "人 まで";?></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<p><strong>レベル :</strong> <?= levelFromArray($_SESSION['edit-forms']['1']['level']); ?></p>
 			</div>
 			<div class="col">
-				<p><strong>Accepted bikes :</strong> <?= bikesFromArray($_SESSION['edit-forms']['1']['accepted-bikes']); ?></p>
+				<p><strong>参加可能のバイク :</strong> <?= bikesFromArray($_SESSION['edit-forms']['1']['accepted-bikes']); ?></p>
 			</div>
 		</div>
 		<div class="row">
@@ -140,7 +140,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 						if (isset($_SESSION['edit-forms']['2']['route-id'])) { ?>
 							<span style="font-weight: normal"><?= ' - km ' .round($_SESSION['edit-forms']['2']['distance'], 1); ?></span> <?php
 						} else { ?>
-							<span style="font-weight: normal"><?= ' - alt. ' .round($checkpoints[0]['elevation'], 1). 'm'; ?></span> <?php
+							<span style="font-weight: normal"><?= ' - 標高 ' .round($checkpoints[0]['elevation'], 1). 'm'; ?></span> <?php
 						} ?>
 					</div>
 				</div> <?php
@@ -158,15 +158,15 @@ $previous_page = intval($stage_slug) - 1; ?>
 		<h2>About the course</h2>
 		<div class="row"> <?php
 			if (!empty($_SESSION['edit-forms']['2']['distance'])) { ?>
-				<p><strong>Distance :</strong> 
+				<p><strong>距離 :</strong> 
 				<?php 
-				if ($_SESSION['edit-forms']['2']['distance-about'] == 'about') echo 'about ';
-				echo $_SESSION['edit-forms']['2']['distance']. "km from " .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. " to " .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']; ?>
+				if ($_SESSION['edit-forms']['2']['distance-about'] == 'about') echo '約';
+				echo $_SESSION['edit-forms']['2']['distance']. "km - " .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' まで'; ?>
 				</p> <?php
 			} ?>
 		</div>
 		<div class="row">
-			<p><strong>Terrain :</strong> <?php 
+			<p><strong>起伏 :</strong> <?php 
 				if (isset($_SESSION['edit-course']) AND $_SESSION['edit-course']['method'] == 'draw') echo $_SESSION['edit-course']['terrain'];
 				else echo $terrain_value; ?>
 			</p>
@@ -183,9 +183,9 @@ $previous_page = intval($stage_slug) - 1; ?>
 		if (!isset($successmessage)) { ?>
 			<div>
 				<a href="<?= $previous_page?>">
-					<button type="button" class="btn button btnleft">Back</button>
+					<button type="button" class="btn button btnleft">戻る</button>
 				</a>
-				<button type="submit" class="btn button btnright btn-success" name="validate">Save changes</button>
+				<button type="submit" class="btn button btnright btn-success" name="validate">作成する</button>
 		<?php }
 		?>
 		</div>

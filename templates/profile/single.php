@@ -55,7 +55,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 				} else { ?>
 					<a href="/profile/edit">
 						<button class="button btn">
-							Edit my profile
+							編集
 						</button>
 					</a> <?php
 				} ?>
@@ -84,34 +84,34 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 					<div class="mb-3 row g-2"> <?php
 						if (!empty($user->last_name OR $user->first_name)) { ?>
 							<div class="col-md">
-								<strong>Name : </strong><?= $user->last_name. ' ' .$user->first_name; ?>
+								<strong>姓名 : </strong><?= $user->last_name. ' ' .$user->first_name; ?>
 							</div> <?php
 						}
 						if (!empty($user->gender)) { ?>
 							<div class="col-md">
-								<strong>Gender : </strong><?= $user->gender; ?>
+								<strong>性別 : </strong><?= $user->gender; ?>
 							</div> <?php
 						} ?>
 						<div class="row g-2"> <?php 
 							if (!empty($user->birthdate)) { ?>
 								<div class="col-md">
-									<strong>Age : </strong><?= $user->calculateAge(). ' years old'; ?>
+									<strong>年齢 : </strong><?= $user->calculateAge(). ' years old'; ?>
 								</div> <?php
 							}
 							if (!empty($user->location->city)) { ?>
 								<div class="col-md">
-									<strong>Place : </strong><?= $user->location->toString(); ?>
+									<strong>場所 : </strong><?= $user->location->toString(); ?>
 								</div> <?php
 							} ?>
 						</div>
 						<div class="row g-2"> <?php
 							if (!empty($user->level)) { ?>
 								<div class="col-md">
-									<strong>Level : </strong><?= $user->level; ?>
+									<strong>レベル : </strong><?= $user->level; ?>
 								</div> <?php
 							} ?>
 							<div class="col-md">
-								<strong>Inscription date : </strong><?= $user->inscription_date; ?>
+								<strong>登録日時 : </strong><?= $user->inscription_date; ?>
 							</div>
 						</div> <?php
 						if (!empty($user->description)) { ?>

@@ -46,9 +46,9 @@ include '../actions/activities/activityAction.php'; ?>
 					</div>
 					<div class="td-row flex-column align-self-center"> <?php
 						if ($activity->privacy == 'private') { ?>
-							<p style="background-color: #ff5555" class="tag-light text-light">Private</p> <?php
+							<p style="background-color: #ff5555" class="tag-light text-light">非公開</p> <?php
 						} else if ($activity->privacy == 'friends_only') { ?>
-							<p style="background-color: #ff5555" class="tag-light text-light">Friends only</p> <?php
+							<p style="background-color: #ff5555" class="tag-light text-light">友達のみ</p> <?php
 						} ?>
 					</div>
 					<div class="header-buttons"> <?php
@@ -68,15 +68,15 @@ include '../actions/activities/activityAction.php'; ?>
 
 			<div class="container p-0 pg-ac-specs-container">
 				<div class="pg-ac-spec-container front border-0 <?= $activity->setBackgroundColor('distance')?>">
-					<div class="pg-ac-spec-label">Distance</div>
+					<div class="pg-ac-spec-label">距離</div>
 					<div class="pg-ac-spec-value"><?= $activity->route->distance ?><span class="pg-ac-spec-unit"> km</span></div>
 				</div>
 				<div class="pg-ac-spec-container back border-0 <?= $activity->setBackgroundColor('altitude_max')?>" style="display: none;">
-					<div class="pg-ac-spec-label">Max. Altitude</div>
+					<div class="pg-ac-spec-label">最高地点</div>
 					<div class="pg-ac-spec-value"><?= $activity->altitude_max ?><span class="pg-ac-spec-unit"> m</span></div>
 				</div> 
 				<div class="pg-ac-spec-container front <?= $activity->setBackgroundColor('duration')?>">
-					<div class="pg-ac-spec-label">Duration</div>
+					<div class="pg-ac-spec-label">時間</div>
 					<div class="pg-ac-spec-value"> <?php
 						if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
 						else echo $activity->duration->format('H') ?>
@@ -85,7 +85,7 @@ include '../actions/activities/activityAction.php'; ?>
 					</div>
 				</div>
 				<div class="pg-ac-spec-container back <?= $activity->setBackgroundColor('break_time')?>" style="display: none;">
-					<div class="pg-ac-spec-label">Break time</div>
+					<div class="pg-ac-spec-label">休憩時間</div>
 					<div class="pg-ac-spec-value"> <?php
 						if (intval($activity->getBreakTime()->format('H')) > 1) {
 							if (substr($activity->getBreakTime()->h, 0, 1) == '0') echo substr($activity->getBreakTime()->h, 1, strlen($activity->getBreakTime()->h));
@@ -100,28 +100,28 @@ include '../actions/activities/activityAction.php'; ?>
 					</div>
 				</div>
 				<div class="pg-ac-spec-container front <?= $activity->setBackgroundColor('elevation')?>">
-					<div class="pg-ac-spec-label">Elevation</div>
+					<div class="pg-ac-spec-label">獲得標高</div>
 					<div class="pg-ac-spec-value"><?= $activity->route->elevation ?><span class="pg-ac-spec-unit"> m</span></div>
 				</div>
 				<div class="pg-ac-spec-container back <?= $activity->setBackgroundColor('slope_max')?>" style="display: none;">
-					<div class="pg-ac-spec-label">Max. slope</div>
+					<div class="pg-ac-spec-label">最高勾配</div>
 					<div class="pg-ac-spec-value"><?= $activity->slope_max ?><span class="pg-ac-spec-unit"> %</span></div>
 				</div> 
 				<div class="pg-ac-spec-container front <?= $activity->setBackgroundColor('speed_avg')?>">
-					<div class="pg-ac-spec-label">Average speed</div>
+					<div class="pg-ac-spec-label">平均速度</div>
 					<div class="pg-ac-spec-value"><?= $activity->getAverageSpeed() ?><span class="pg-ac-spec-unit"> km/h</span></div>
 				</div>
 				<div class="pg-ac-spec-container back <?= $activity->setBackgroundColor('speed_max')?>" style="display: none;">
-					<div class="pg-ac-spec-label">Max. speed</div>
+					<div class="pg-ac-spec-label">最高速度</div>
 					<div class="pg-ac-spec-value"><?= $activity->speed_max ?><span class="pg-ac-spec-unit"> km/h</span></div>
 				</div> <?php
 					if ($activity->temperature_avg) { ?>
 						<div class="pg-ac-spec-container front <?= $activity->setBackgroundColor('temperature_avg')?>">
-							<div class="pg-ac-spec-label">Avg. temperature</div>
+							<div class="pg-ac-spec-label">平均気温</div>
 							<div class="pg-ac-spec-value"><?= $activity->temperature_avg ?><span class="pg-ac-spec-unit"> °C</span></div>
 						</div>
 						<div class="pg-ac-spec-container back border-0 <?= $activity->setBackgroundColor('temperature_max')?>" style="display: none;">
-							<div class="pg-ac-spec-label">Min. - Max. temperature</div>
+							<div class="pg-ac-spec-label">最低 - 最高気温</div>
 							<div class="pg-ac-spec-value"><?= $activity->temperature_min ?> - <?= $activity->temperature_max ?><span class="pg-ac-spec-unit"> °C</span></div>
 						</div> <?php
 					}?>

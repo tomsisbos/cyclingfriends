@@ -11,7 +11,7 @@ $featured_image = $activity->getFeaturedImage() ?>
     </div>
     <div class="acsm-infos">
         <div class="acsm-title"><?= $activity->title ?></div> - <div class="acsm-datetime"><?= $activity->datetime->format('Y/m/d') ?></div>
-        <div class="acsm-line"><div class="acsm-distance">Distance : <?= $activity->route->distance ?>km</div><div class="acsm-duration">Duration : <?= $activity->duration->format('H\hi') ?></div></div>
+        <div class="acsm-line"><div class="acsm-distance">距離 : <?= $activity->route->distance ?>km</div><div class="acsm-duration">時間 : <?= $activity->duration->format('H\hi') ?></div></div>
         <div class="acsm-story"><?= $activity->getFirstStory() ?></div>
     </div>
 </a>

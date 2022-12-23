@@ -39,17 +39,17 @@ include '../actions/users/securityAction.php';
                     <div class="header-buttons"> <?php
                         if (isset($ride)) { ?>
                             <a href="/ride/<?= $ride->id ?>">
-                                <button class="btn button" type="button">Back to ride page</button>
+                                <button class="btn button" type="button">ライドページに戻る</button>
                             </a> <?php
                         }
                         if ($route->author->id == $connected_user->id) { ?>
                             <a href="/route/<?= $route->id ?>/edit">
-                                <button class="btn button" type="button" name="edit">Edit</button>
+                                <button class="btn button" type="button" name="edit">編集</button>
                             </a>
-                            <button class="btn button" id="deleteRoute" data-id="<?= $route->id ?>" type="button" name="delete">Delete</button> <?php
+                            <button class="btn button" id="deleteRoute" data-id="<?= $route->id ?>" type="button" name="delete">削除</button> <?php
                         } ?>
                         <a id="export" download>
-                            <button class="btn button" type="button">Export as *.gpx</button>
+                            <button class="btn button" type="button">エクスポート</button>
                         </a>
                     </div>
                 </div>
@@ -58,16 +58,16 @@ include '../actions/users/securityAction.php';
                 <?= $route->description ?>
                 <div class="specs">
                     <div class="spec-column">
-                        <div><strong>Start : </strong><?= $route->startplace ?></div>
-                        <div><strong>Goal : </strong><?= $route->goalplace ?></div>
+                        <div><strong>集合場所 : </strong><?= $route->startplace ?></div>
+                        <div><strong>解散場所 : </strong><?= $route->goalplace ?></div>
                     </div>
                     <div class="spec-column">
-                    <div><strong>Distance : </strong><?= round($route->distance, 1) ?>km</div>
-                        <div><strong>Elevation : </strong><?= $route->elevation ?>m</div>
+                    <div><strong>距離 : </strong><?= round($route->distance, 1) ?>km</div>
+                        <div><strong>獲得標高 : </strong><?= $route->elevation ?>m</div>
                     </div>
                     <div class="spec-column">
-                        <div><strong>Estimated time : </strong><?= $route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
-                        <div><strong>Difficulty : </strong><?= $route->getStars($route->calculateDifficulty()) ?></div>
+                        <div><strong>予測時間 : </strong><?= $route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
+                        <div><strong>難易度 : </strong><?= $route->getStars($route->calculateDifficulty()) ?></div>
                     </div>
                 </div>
                 <div class="rt-slider"></div>
@@ -86,11 +86,11 @@ include '../actions/users/securityAction.php';
                     <table id="routeTable">
                         <tbody>
                             <tr class="spec-table-th">
-                                <th class="table-element e10 text-left">Distance</th>
-                                <th class="table-element e40 text-left">Name</th>
-                                <th class="table-element e20 text-center">Place</th>
-                                <th class="table-element e15 text-center">Elevation</th>
-                                <th class="table-element e25 text-center">Distance from route</th>
+                                <th class="table-element e10 text-left">スタートから</th>
+                                <th class="table-element e40 text-left">名称</th>
+                                <th class="table-element e20 text-center">場所</th>
+                                <th class="table-element e15 text-center">標高</th>
+                                <th class="table-element e25 text-center">ルートまで</th>
                             </tr>
                         </tbody>
                     </table>

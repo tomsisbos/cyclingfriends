@@ -72,8 +72,8 @@ $getRideChatParents->execute(array($ride->id));
 <!-- Displays the input box -->
 <form method="post" class="chat-msgbox form-floating">
 	<textarea class="form-control" name="message"></textarea>
-	<label class="form-label" for="floatingInput">Write a comment...</label>
-	<button type="submit" class="btn button btn button-primary" name="send">Send</button>
+	<label class="form-label" for="floatingInput">コメントを書く...</label>
+	<button type="submit" class="btn button btn button-primary" name="send">送信</button>
 </form> <?php
 
 /*

@@ -22,7 +22,7 @@ include '../actions/users/securityAction.php'; ?>
 
                 <div class="new-ac-upload-container">
                     <label for="uploadActivity">
-                        <div class="btn smallbutton">Upload activity</div>
+                        <div class="btn smallbutton">ファイルをアップロード</div>
                     </label>
                     <input type="file" id="uploadActivity" class="hidden" name="uploadActivity" />
                     <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
@@ -35,18 +35,18 @@ include '../actions/users/securityAction.php'; ?>
                     <div class="container inner">
 
                         <div class="mb-1">
-                            <label class="form-label">Title</label>
+                            <label class="form-label">タイトル</label>
                             <input type="text" id="inputTitle" class="form-control bold" />
                         </div>
 
                         <div class="new-ac-upload-photos-container">
                             <label for="uploadPhotos">
-                                <div class="btn smallbutton">Upload photos</div>
+                                <div class="btn smallbutton">写真を追加する</div>
                             </label>
                             <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple />
                             <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
                             <div class="new-ac-inputgroup">
-                                <label class="form-label">Bike</label>
+                                <label class="form-label">バイク</label>
                                 <select id="selectBikes" class="form-select"> <?php
                                     $bikes = $connected_user->getBikes();
                                     foreach ($bikes as $entry) {
@@ -56,29 +56,29 @@ include '../actions/users/securityAction.php'; ?>
                                 </select>
                             </div>
                             <div class="new-ac-inputgroup">
-                                <label class="form-label">Privacy</label>
+                                <label class="form-label">プライバシー設定</label>
                                 <select id="selectPrivacy" class="form-select">
-                                    <option value="private">Private</option>
-                                    <option value="public" selected>Public</option>
-                                    <option value="friends_only">Friends only</option>
+                                    <option value="private">非公開</option>
+                                    <option value="public" selected>公開</option>
+                                    <option value="friends_only">友達のみ</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="new-ac-properties-container">
                             <div class="col-4 d-flex flex-column">
-                                <div id="divStart"><strong>Start : </strong></div>
-                                <div id="divGoal"><strong>Goal : </strong></div>
+                                <div id="divStart"><strong>スタート : </strong></div>
+                                <div id="divGoal"><strong>ゴール : </strong></div>
                             </div>
                             <div class="col-4 d-flex flex-column">
-                                <div id="divDistance"><strong>Distance : </strong></div>
-                                <div id="divDuration"><strong>Duration : </strong></div>
-                                <div id="divElevation"><strong>Elevation : </strong></div>
+                                <div id="divDistance"><strong>距離 : </strong></div>
+                                <div id="divDuration"><strong>時間 : </strong></div>
+                                <div id="divElevation"><strong>獲得標高 : </strong></div>
                             </div>
                             <div class="col-4 d-flex flex-column">
-                                <div id="divMinTemperature"><strong>Min. Temperature : </strong></div>
-                                <div id="divAvgTemperature"><strong>Avg. Temperature : </strong></div>
-                                <div id="divMaxTemperature"><strong>Max. Temperature : </strong></div>
+                                <div id="divMinTemperature"><strong>最低気温 : </strong></div>
+                                <div id="divAvgTemperature"><strong>平均気温 : </strong></div>
+                                <div id="divMaxTemperature"><strong>最高気温 : </strong></div>
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ include '../actions/users/securityAction.php'; ?>
                     <div class="container inner">
 
                         <div class="new-ac-save-container">
-                            <div id="saveActivity" class="btn smallbutton push">Save</div>
+                            <div id="saveActivity" class="btn smallbutton push">保存</div>
                         </div>
 
                     </div>

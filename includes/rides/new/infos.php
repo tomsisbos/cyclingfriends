@@ -7,41 +7,41 @@
 	<!--Displays the Ride Infos form-->
 	<form class="container smaller inner" method="POST" action="<?= $base_uri . (CFG_STAGE_ID + 1) ?>">
 
-		<legend>Ride infos</legend>
+		<legend>ライド情報</legend>
 		
 		<!--Displays an error message if needed-->
 		<?php if (isset($errormessage)) { echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>'; } ?>
 		
 		<div class="mb-3">
-			<label class="form-label required">Ride name</label>
+			<label class="form-label required">タイトル</label>
 			<input type="text" class="form-control" name="ride-name" value="<?= $_SESSION['forms'][CFG_STAGE_ID]['ride-name']; ?>">
 		</div>
 		<div class="mb-3">
-			<label class="form-label required">Date</label>
+			<label class="form-label required">開催日</label>
 			<input type="date" class="form-control" name="date" value="<?= $_SESSION['forms'][CFG_STAGE_ID]['date']; ?>" min="<?= date('Y-m-d'); ?>" max="2099-12-31">
 		</div>
 		<div class="mb-3 row g-2">
 			<div class="col-md">
 				<div class="form-floating">
 					<input type="time" class="form-control" name="meeting-time" value="<?= $_SESSION['forms'][CFG_STAGE_ID]['meeting-time']; ?>">
-					<label for="floatingInputGrid" class="required">Meeting time</label>
+					<label for="floatingInputGrid" class="required">集合時間</label>
 				</div>
 			</div>
 			<div class="col-md">
 				<div class="form-floating">
 					<input type="time" class="form-control" name="departure-time" value="<?= $_SESSION['forms'][CFG_STAGE_ID]['departure-time']; ?>">
-					<label for="floatingInputGrid" class="required">Departure time</label>
+					<label for="floatingInputGrid" class="required">出発時間</label>
 				</div>
 			</div>
 		</div>
 		<div class="mb-3 form-floating">
 			<input type="time" class="form-control" name="finish-time" value="<?= $_SESSION['forms'][CFG_STAGE_ID]['finish-time']; ?>">
-			<label for="floatingInputGrid" class="required">Finish time</label>
+			<label for="floatingInputGrid" class="required">解散時間</label>
 		</div>
 		<div class="mb-3 row g-2">
 			<div class="col-md">
 				<div class="form-floating">
-					<div class="with-range-output required">Minimum number of riders</div>
+					<div class="with-range-output required">最低催行人数</div>
 					<input type="range" class="form-range" min="1" max="30" name="nb-riders-min" value="<?php
 						if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-min'])) echo 1;
 						else echo $_SESSION['forms'][CFG_STAGE_ID]['nb-riders-min']; ?>"
@@ -54,7 +54,7 @@
 			</div>
 			<div class="col-md">
 				<div class="form-floating">
-					<div class="with-range-output required">Maximum number of riders</div>
+					<div class="with-range-output required">定員</div>
 					<input type="range" class="form-range" min="1" max="30" name="nb-riders-max" value="<?php
 					if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max'])) echo 8;
 					else echo $_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max']; ?>" oninput="this.nextElementSibling.value = this.value">
@@ -67,45 +67,45 @@
 		</div>
 		<div class="mb-3 row g-2">
 			<div class="col-md">
-				<label class="form-label required">Level</label>
+				<label class="form-label required">レベル</label>
 				<select class="form-select" name="level[]" multiple>
 					<option value="1"<?php
 						if (in_array(1, $_SESSION['forms'][CFG_STAGE_ID]['level'])) {echo ' selected="selected"';}
-						?>>Beginner</option>
+						?>>初心者</option>
 					<option value="2" <?php
 						if (in_array(2, $_SESSION['forms'][CFG_STAGE_ID]['level'])) {echo ' selected="selected"';}
-						?>>Intermediate</option>
+						?>>中級者</option>
 					<option value="3" <?php
 						if (in_array(3, $_SESSION['forms'][CFG_STAGE_ID]['level'])) {echo ' selected="selected"';}
-						?>>Athlete</option>
+						?>>上級者</option>
 				</select>
 			</div>
 			<div class="col-md">
-				<label class="form-label required">Type of bikes accepted</label>
+				<label class="form-label required">参加可能車種</label>
 				<select class="form-select" name="accepted-bikes[]" multiple>
 					<option value="1" <?php
 						if (in_array(1, $_SESSION['forms'][CFG_STAGE_ID]['accepted-bikes'])) {echo ' selected="selected"';}
-						?>>City bikes</option>
+						?>>ママチャリ＆その他自転車</option>
 					<option value="2" <?php
 						if (in_array(2, $_SESSION['forms'][CFG_STAGE_ID]['accepted-bikes'])) {echo ' selected="selected"';}
-						?>>Road bikes</option>
+						?>>ロードバイク</option>
 					<option value="3" <?php
 						if (in_array(3, $_SESSION['forms'][CFG_STAGE_ID]['accepted-bikes'])) {echo ' selected="selected"';}
-						?>>Mountain bikes</option>
+						?>>マウンテンバイク</option>
 					<option value="4" <?php
 						if (in_array(4, $_SESSION['forms'][CFG_STAGE_ID]['accepted-bikes'])) {echo ' selected="selected"';}
-						?>>Gravel/Cyclocross bikes</option>
+						?>>グラベル＆シクロクロスバイク</option>
 				</select>
 			</div>
 		</div>
 		<div class="mb-3">
-			<label class="form-label required">Ride description</label>
+			<label class="form-label required">ライド紹介</label>
 			<textarea class="form-control" name="ride-description"><?= $_SESSION['forms'][CFG_STAGE_ID]['ride-description']; ?></textarea>
 		</div>
 		
 		
 		<div class="btn-container">
-			<button type="submit" class="btn button btnright btn-primary" name="next">Next</button>
+			<button type="submit" class="btn button btnright btn-primary" name="next">進む</button>
 		</div>	
 			
 	</form>

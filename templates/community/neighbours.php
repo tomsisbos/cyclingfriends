@@ -38,7 +38,7 @@ include '../actions/users/securityAction.php';
 
 			} else {
 				
-				$errormessage = 'There is no rider to display.';
+				$errormessage = '表示できるデータがありません。';
 				
 				if (isset($errormessage)) echo '<div class="error-block fullwidth text-center"><p class="error-message">' .$errormessage. '</p></div>'; 
 

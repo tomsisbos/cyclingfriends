@@ -17,27 +17,27 @@
                         </a>
                     </div>
                     <div class="ac-posting-date">
-                        <?= $activity->datetime->format('Y/m/d') . ' - from ' . $activity->getPlace()['start']->toString() . ' to ' . $activity->getPlace()['goal']->toString(); ?>
+                        <?= $activity->datetime->format('Y/m/d') . ' - ' . $activity->getPlace()['start']->toString() . ' から ' . $activity->getPlace()['goal']->toString() . ' まで'; ?>
                     </div>
                 </div>
             </div>
             <div class="ac-specs">
                 <div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">
-                    <div class="ac-spec-label"><strong>Distance : </strong></div>
+                    <div class="ac-spec-label"><strong>距離 : </strong></div>
                     <div class="ac-spec-value"><?= round($activity->route->distance, 1) ?><span class="ac-spec-unit"> km</span></div>
                 </div>
                 <div class="ac-spec <?= $activity->setBackgroundColor('duration')?> ">
-                    <div class="ac-spec-label"><strong>Duration : </strong></div>
+                    <div class="ac-spec-label"><strong>時間 : </strong></div>
                     <div class="ac-spec-value"> <?php
                         if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
                         else echo $activity->duration->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration->format('i') ?></div>
                 </div>
                 <div class="ac-spec <?= $activity->setBackgroundColor('elevation')?> ">
-                    <div class="ac-spec-label"><strong>Elevation : </strong></div>
+                    <div class="ac-spec-label"><strong>獲得標高 : </strong></div>
                     <div class="ac-spec-value"><?= $activity->route->elevation ?><span class="ac-spec-unit"> m</span></div>
                 </div>
                 <div class="ac-spec <?= $activity->setBackgroundColor('speed')?> ">
-                    <div class="ac-spec-label"><strong>Avg. Speed : </strong></div>
+                    <div class="ac-spec-label"><strong>平均速度 : </strong></div>
                     <div class="ac-spec-value"><?= $activity->getAverageSpeed() ?><span class="ac-spec-unit"> km/h</span></div>
                 </div>
             </div>
