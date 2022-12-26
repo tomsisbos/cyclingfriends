@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import axios from 'axios'
 import AppContext from'/react/settings/AppContext.js'
 
-export default function SaveButton ({ settings, type = 'settings', text = 'Save' }) {
+export default function SaveButton ({ settings, type = 'settings', text = '保存' }) {
 
     const displayResponseMessage = useContext(AppContext)
 

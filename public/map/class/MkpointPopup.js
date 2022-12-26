@@ -16,7 +16,7 @@ export default class MkpointPopup extends Popup {
         var visitedIcon = ''
         if (mkpoint.isCleared) {
             visitedIcon = `
-                <div id="visited-icon" title="You have visited this mkpoint.">
+                <div id="visited-icon" title="この絶景スポットを訪れたことがあります。">
                     <a href="/activity/` + mkpoint.isCleared + `" target="_blank">
                         <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
                     </a>
@@ -40,20 +40,20 @@ export default class MkpointPopup extends Popup {
         return `
         <div class="popup-img-container">
             <div class="popup-icons">
-                <div id="target-button" title="Click to fly to this spot">
+                <div id="target-button" title="走行再現モードに切り替える。">
                     <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
                 </div>
                 <form enctype="multipart/form-data" method="post" id="addphoto-button-form">
-                    <label for="addphoto-button" title="Click to add a photo to this spot">
+                    <label for="addphoto-button" title="この絶景スポットに写真を追加する">
                         <span class="iconify" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"></span>
                     </label>
                     <input id="addphoto-button" type="file" name="file" />
                     <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
                 </form>
-                <div id="like-button" title="Click to like this photo">
+                <div id="like-button" title="この写真に「いいね」を付ける">
                     <span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>
                 </div>
-                <div class="js-favorite-button` + favoriteButtonClass + `" title="Add to favorites list">
+                <div class="js-favorite-button` + favoriteButtonClass + `" title="この絶景スポットをお気に入りリストに追加する">
                     <span class="iconify" data-icon="mdi:favorite-add" data-width="20" data-height="20"></span>
                 </div>` + 
                 visitedIcon + `
@@ -82,14 +82,14 @@ export default class MkpointPopup extends Popup {
             </div>
         </div>
         <div class="popup-buttons">
-            <button id="showReviews" class="mp-button bg-button text-white">Show reviews</button>
+            <button id="showReviews" class="mp-button bg-button text-white">レビューを表示</button>
         </div>
         <div class="chat-box">
-            <div class="msgbox-label">Reviews</div>
+            <div class="msgbox-label">レビュー</div>
             <div class="chat-reviews"></div>
             <div class="chat-msgbox">
                 <textarea id="mkpointReview" class="fullwidth"></textarea>
-                <button id="mkpointReviewSend" class="mp-button bg-button text-white">Post review</button>
+                <button id="mkpointReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
             </div>
         </div>`
     }
@@ -109,13 +109,13 @@ export default class MkpointPopup extends Popup {
                 if (reviews.length > 0) reviews.forEach( (review) => this.displayReview(review))
                 else {
                     var $noReviewMessage = document.createElement('div')
-                    $noReviewMessage.innerText = 'No one yet reviewed this scenery point.'
+                    $noReviewMessage.innerText = 'この絶景スポットはまだレビューがありません。'
                     $noReviewMessage.className = 'chat-default pb-2'
                     document.querySelector('.chat-reviews').appendChild($noReviewMessage)
                 }
                 // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
                 if (document.querySelector('#review-author-' + sessionStorage.getItem('session-id'))) {
-                    document.querySelector('#mkpointReviewSend').innerText = 'Edit review'
+                    document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
                     reviews.forEach( (review) => {
                         if (review.user.id == sessionStorage.getItem('session-id')) {
                             document.querySelector('#mkpointReview').innerText = review.content
@@ -133,11 +133,11 @@ export default class MkpointPopup extends Popup {
                     // If content is empty, remove review element and but button text back
                     if (review.content == '') {
                         document.querySelector('#review-author-' + review.user.id).remove()
-                        document.querySelector('#mkpointReviewSend').innerText = 'Post review'
+                        document.querySelector('#mkpointReviewSend').innerText = 'レビューを投稿'
                     // Else, display new review on top and change button text
                     } else {
                         this.displayReview(review, {new: true})
-                        document.querySelector('#mkpointReviewSend').innerText = 'Edit review'
+                        document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
                     }
                 } )
             } )
@@ -146,14 +146,14 @@ export default class MkpointPopup extends Popup {
             if (document.querySelector('#showReviews')) document.querySelector('#showReviews').onclick = function () {
                 let chatbox = document.querySelector('.chat-box')
                 let button = document.querySelector('#showReviews')
-                if (button.innerText == 'Show reviews') {
+                if (button.innerText == '表示') {
                     chatbox.style.visibility = 'visible'
                     chatbox.style.height = 'auto'
-                    button.innerText = 'Hide reviews'
-                } else if (button.innerText == 'Hide reviews') {
+                    button.innerText = '非表示'
+                } else if (button.innerText == '非表示') {
                     chatbox.style.visibility = 'hidden'
                     chatbox.style.height = '0px'
-                    button.innerText = 'Show reviews'
+                    button.innerText = '表示'
                 }
             }
         }
@@ -289,7 +289,7 @@ export default class MkpointPopup extends Popup {
                     var deletePhoto = document.createElement('div')
                     deletePhoto.className = 'deletephoto-button admin-icon'
                     deletePhoto.innerHTML = '<span class="iconify" data-icon="mdi:image-remove" data-width="20" data-height="20"></span>'
-                    deletePhoto.title = 'Click to delete this photo'
+                    deletePhoto.title = 'この写真を削除する'
                     this.popup.getElement().querySelector('.popup-icons').appendChild(deletePhoto)
                     // Delete photo on click
                     deletePhoto.addEventListener('click', () => {
@@ -307,7 +307,7 @@ export default class MkpointPopup extends Popup {
                         })
                         var deleteConfirmationPopup = document.createElement('div')
                         deleteConfirmationPopup.classList.add('popup')
-                        deleteConfirmationPopup.innerHTML = 'Do you really want to delete this photo ?<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkred text-white">Yes</div><div id="no" class="mp-button bg-darkgreen text-white">No</div></div>'
+                        deleteConfirmationPopup.innerHTML = 'この写真が削除されます。宜しいですか？<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkred text-white">はい</div><div id="no" class="mp-button bg-darkgreen text-white">いいえ</div></div>'
                         modal.appendChild(deleteConfirmationPopup)
                         // On click on "Yes" button, remove the photo and close the popup
                         document.querySelector('#yes').addEventListener('click', () => {
@@ -567,7 +567,7 @@ export default class MkpointPopup extends Popup {
             var likeButton = document.createElement('div')
             likeButton.className = 'like-button-modal'
             likeButton.style.color = 'white'
-            likeButton.setAttribute('title', 'Click to like this photo')
+            likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
             var likeIcon = document.createElement('span')
             likeIcon.className = 'iconify'
             likeIcon.dataset.icon = 'mdi:heart-plus'
@@ -700,7 +700,7 @@ export default class MkpointPopup extends Popup {
             // Change edit button into save button
             var saveButton = document.createElement('div')
             saveButton.classList.add('mp-button', 'bg-button', 'text-white')
-            saveButton.innerText = 'Save'
+            saveButton.innerText = '保存'
             editButton.after(saveButton)
             editButton.style.display = 'none'
             saveButton.addEventListener('click', () => {
@@ -734,7 +734,7 @@ export default class MkpointPopup extends Popup {
     // Move
         var moveMkpoint = () => {
             moveButton.style.opacity = '70%'
-            moveButton.innerText = 'Set'
+            moveButton.innerText = '確定'
             moveButton.onclick = quitMoveMkpoint
             $marker.classList.add('moving-marker')
             marker.setDraggable(true)
@@ -753,7 +753,7 @@ export default class MkpointPopup extends Popup {
             marker.setDraggable(false)
             marker.getElement().classList.remove('moving-marker')
             moveButton.style.opacity = '100%'
-            moveButton.innerText = 'Move'
+            moveButton.innerText = '編集'
             moveButton.onclick = moveMkpoint
         }
         var marker
@@ -767,7 +767,7 @@ export default class MkpointPopup extends Popup {
     // Delete
         var deleteButton = this.popup.getElement().querySelector('#mkpointDelete')
         deleteButton.addEventListener('click', async () => {
-            var answer = await openConfirmationPopup('Do you really want to remove this spot ?')
+            var answer = await openConfirmationPopup('この絶景スポットが削除されます。宜しいですか？')
             if (answer) { // If yes, remove the mkpoint and close the popup
                 ajaxGetRequest (this.apiUrl + "?delete-mkpoint=" + this.data.id, (response) => { console.log(response) } )
                 mapInstance.data.mkpoints.forEach(mkpoint => {

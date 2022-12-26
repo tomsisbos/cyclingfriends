@@ -10,7 +10,7 @@ class Bike extends Model {
         $data = $this->getData($this->table);
         $this->user             = new User ($data['user_id']);
         $this->number           = $data['number'];
-        $this->type             = $data['type'];
+        $this->type             = $this->getType($data['type']);
         $this->model            = $data['model'];
         $this->components       = $data['components'];
         $this->wheels           = $data['wheels'];
@@ -20,6 +20,15 @@ class Bike extends Model {
         $this->img_name         = $data['img_name'];
         $this->img_type         = $data['img_type'];
 
+    }
+
+    private function getType ($type) {
+        switch ($type) {
+            case 'Road bike': return 'ロードバイク';
+            case 'City bike': return 'ママチャリ';
+            case 'Mountain bike': return 'マウンテンバイク';
+            case 'Gravel&Cyclocross bike': return 'グラベル／シクロクロスバイク';
+        }
     }
 
     // Function for downloading & displaying user's bike image as a presized square

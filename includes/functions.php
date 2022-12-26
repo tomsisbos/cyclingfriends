@@ -975,32 +975,18 @@ function levelFromArrayBoolean($array){
 */
 
 // Change the level key number to the proper level name
-function getLevelFromKey($key){
-	if($key == 0){
-		return '誰でも可';
-	}
-	if($key == 1){
-		return '初心者';
-	}
-	if($key == 2){
-		return '中級者';
-	}
-	if($key == 3){
-		return '上級者';
-	}
+function getLevelFromKey ($key) {
+	if ($key == 0) return '誰でも可';
+	if ($key == 1) return '初心者';
+	if ($key == 2) return '中級者';
+	if ($key == 3) return '上級者';
 }
 
 // Change the level column name to the proper level name
 function getLevelFromColumnName ($level) {
-	if ($level == 'level_beginner') {
-		return '初心者';
-	}
-	if ($level == 'level_intermediate') {
-		return '中級者';
-	}
-	if ($level == 'level_athlete') {
-		return '上級者';
-	}
+	if ($level == 'level_beginner') return '初心者';
+	if ($level == 'level_intermediate') return '中級者';
+	if ($level == 'level_athlete') return '上級者';
 }
 
 // Build a bikes list made of array values separated by commas
@@ -1147,26 +1133,6 @@ function colorStatus($status) {
 	return array($status_color, $background_color);
 }
 
-// Attribute a color depending on the level
-function colorLevel($level){
-	switch($level)
-	{
-		case 'Beginner' :
-			$level_color = 'green'; // green
-			break;
-		case 'Intermediate' :
-			$level_color = 'blue'; // blue
-			break;
-		case 'Athlete' :
-			$level_color = 'red'; // red
-			break;
-		default :
-			$level_color = 'black';
-	}
-	// Returning the color
-	return $level_color;
-}
-
 // Get the gender of an user and return it as an icon
 function getGenderAsIcon($user_id){
 	require '../actions/databaseAction.php';
@@ -1217,7 +1183,7 @@ function nbDaysLeftToDate($date) {
 	$currentdate = time();
 	$daysleft = (strtotime($date) / 86400) - ($currentdate / 86400);
 	return ceil($daysleft);
-}
+} /*
 
 // Function for truncating a sentence (string) starting from a certain character number (offset) to a certain number of characters (length)	
 function truncate($string, $offset, $length) {
@@ -1225,7 +1191,7 @@ function truncate($string, $offset, $length) {
 	if(strlen($string) <= $length) return $string_truncated;
 	else if(strlen($string) > $length) return $string_truncated. '...';
 	else return false;
-}
+}*/
 
 // Get a list of users having the 'hide_on_chat' settings option activated
 function getUsersDisablingPublicChat() {

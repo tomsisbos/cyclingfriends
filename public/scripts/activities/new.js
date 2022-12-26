@@ -128,18 +128,16 @@ $upload.addEventListener('change', async (e) => {
                     newActivityMap.saveActivity(photosToShare, mkpointsToCreate)
                 } )
 
-            } else showResponseMessage(response)
-
-            // Create new checkpoint on click on route
-            newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
-            newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
-            newActivityMap.map.on('click', 'route', (e) => {
-                newActivityMap.addMarkerOnRoute(e.lngLat)
-                newActivityMap.updatePhotos()
-            } )
-        }
+                // Create new checkpoint on click on route
+                newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
+                newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
+                newActivityMap.map.on('click', 'route', (e) => {
+                    newActivityMap.addMarkerOnRoute(e.lngLat)
+                    newActivityMap.updatePhotos()
+                } )
+            } else if (response.error) showResponseMessage(response)
 
         // Else, display error message
-        else if (response.error) showResponseMessage(response)
+        } else if (response.error) showResponseMessage(response)
     }
 } )

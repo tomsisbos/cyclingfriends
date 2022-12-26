@@ -31,42 +31,42 @@
 				<form method="post" class="fullwidth">
 					<div class="row">
 						<div class="col mb-3">
-							<label><strong>Type : </strong></label>
+							<label><strong>車種 : </strong></label>
 							<select name="bike-type" class="js-bike-type admin-field">
 								<option value="Other"<?php
 									if ($bike->type == 'Other') { echo ' selected="selected"'; }
-									?>>Other</option>
+									?>>その他</option>
 								<option value="City bike"<?php
 									if ($bike->type == 'City bike') { echo ' selected="selected"'; }
-									?>>City bike</option>
+									?>>ママチャリ</option>
 								<option value="Road bike"<?php
 									if ($bike->type == 'Road bike') { echo ' selected="selected"'; }
-									?>>Road bike</option>
+									?>>ロードバイク</option>
 								<option value="Mountain bike" <?php
 									if ($bike->type == 'Mountain bike') { echo ' selected="selected"'; }
-									?>>Mountain bike</option>
+									?>>マウンテンバイク</option>
 								<option value="Gravel/Cyclocross bike" <?php
 									if ($bike->type == 'Gravel/Cyclocross bike') { echo ' selected="selected"'; }
-									?>>Gravel/Cyclocross bike</option>
+									?>>グラベル／シクロクロスバイク</option>
 							</select>
 						</div>
 						<div class="col mb-3">
-							<label><strong>Model : </strong></label>
+							<label><strong>車種 : </strong></label>
 							<input type="text" name="bike-model" class="js-bike-model admin-field" value="<?= $bike->model; ?>">
 						</div>
 					</div>
 					<div class="row">
 						<div class="col mb-3">
-							<label><strong>Wheels : </strong></label>
+							<label><strong>ホイール : </strong></label>
 							<input type="text" name="bike-wheels" class="js-bike-wheels admin-field" value="<?= $bike->wheels; ?>">
 						</div>
 						<div class="col mb-3">
-							<label><strong>Components : </strong></label>
+							<label><strong>コンポネント : </strong></label>
 							<input type="text" name="bike-components" class="js-bike-components admin-field" value="<?= $bike->components; ?>">
 						</div>
 					</div>
 					<div class="col mb-3">
-						<label><strong>Description : </strong></label>
+						<label><strong>紹介文 : </strong></label>
 						<textarea name="bike-description" class="js-bike-description col-9 admin-field d-block fullwidth"><?php echo $bike->description; ?></textarea>
 					</div>
 				</form>

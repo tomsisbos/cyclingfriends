@@ -7,6 +7,8 @@ console.log(neighboursMap)
 
 ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours) => {
 
+    neighboursMap.data.neighbours = neighbours
+
     // Setup map
     var map = await neighboursMap.load(neighboursMap.$map, neighboursMap.defaultStyle)
     neighboursMap.addSources()
@@ -111,6 +113,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                     if (mkr.getPopup() && mkr.getPopup().getElement()) mkr.getPopup().getElement().style.display = "none"
                 } )
                 neighboursMap.displayZoomMessage()
+                neighbours.forEach(neighbour => neighboursMap.hideSelectedLink(neighbour))
             } else {
                 neighboursMap.map._markers.forEach(mkr => {
                     mkr.getElement().style.display = "block"

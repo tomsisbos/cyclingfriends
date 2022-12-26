@@ -56,11 +56,7 @@ if (isAjax()) {
     if (isset($_GET['deleteBike'])) {
         $deleteBike = $db->prepare('DELETE FROM bikes WHERE id = ?');
         $deleteBike->execute(array($_GET['deleteBike']));
-        ///if ($deleteBike->rowCount() > 0) {
-            echo json_encode([true, 'success' => 'Bike has been successfully deleted.']);
-        ///} else {
-        ///    echo json_encode([false, 'error' => 'This bike has already been deleted.']);
-        ///}
+        echo json_encode([true, 'success' => 'バイクが削除されました。']);
     }
 }
 

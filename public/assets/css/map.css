@@ -13,15 +13,11 @@
 
 /* -- Map --- */
 
-.mp-map {
-	height: 100%
-}
-
 #routesMap .mapboxgl-canvas-container {
     cursor: crosshair;
 }
 
-#buildRouteMap {
+.cf-map {
     height: 100%;
 }
 

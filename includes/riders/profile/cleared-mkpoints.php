@@ -21,7 +21,7 @@ $cleared_mkpoints_number = $user->countClearedMkpoints(); ?>
     if (count($cleared_mkpoints) == 0) { ?>
         <div class="success-block">
             <div class="success-message">
-                <?= $user->login ?> don't have any cleared scenery point yet. Let's explore the world together !
+                <?= $user->login ?>は絶景スポットを訪れたことがまだないようです。一緒に世界を探検しましょう !
             </div>
         </div> <?php
 

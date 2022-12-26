@@ -23,8 +23,8 @@ if (is_array($settings)) {
     if ($settings['type'] === 'settings') {
         unset($settings['type']);
         $response = $connected_user->updateSettings($settings);
-        if ($response === true) echo json_encode(['success' => 'Your changes have been updated.']);
-        else echo json_encode(['error' => 'An error has occured during saving process.']);
+        if ($response === true) echo json_encode(['success' => '変更が保存されました。']);
+        else echo json_encode(['error' => '保存中にエラーが発生しました。']);
 
     } else if ($settings['type'] === 'email') {
         $posted_email = htmlspecialchars($settings['email']);
@@ -35,9 +35,9 @@ if (is_array($settings)) {
             if (filter_var($posted_email, FILTER_VALIDATE_EMAIL)) {  
                 $updateEmail = $db->prepare('UPDATE users SET email = ? WHERE id = ?');
                 $updateEmail->execute(array($posted_email, $connected_user->id));
-                echo json_encode(['success' => 'Your email address has correctly been updated !']);
-            } else echo json_encode(['error' => 'This is not a valid email address. Please try again.']);
-        } else echo json_encode(['error' => 'Your password is not correct. Please try again.']);
+                echo json_encode(['success' => 'メールアドレスが更新されました！']);
+            } else echo json_encode(['error' => 'この形式のメールアドレスをご利用頂けません。メールアドレスの記載に誤字がないか、再度ご確認ください。']);
+        } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
     
     } else if ($settings['type'] === 'password') {
         if (isset($settings['newPassword'])) {
@@ -55,11 +55,11 @@ if (is_array($settings)) {
                             $encrypted_password = password_hash($new_password, PASSWORD_DEFAULT);
                             $updatePassword = $db->prepare('UPDATE users SET password = ? WHERE id = ?');
                             $updatePassword->execute(array($encrypted_password, $_SESSION['id']));
-                            echo json_encode(['success' => 'Your password has correctly been updated !']);
-                        } else echo json_encode(['error' => 'Your password must be at least 6 characters long.']);
-                    } else echo json_encode(['error' => 'Your new password is the same as the current one. It won\'t be updated.']);
-                } else echo json_encode(['error' => 'The current password you entered is not correct. Please try again.']);
-            } else echo json_encode(['error' => 'Your password field is empty. You need to fill in a password.']);
+                            echo json_encode(['success' => 'パスワードが更新されました！']);
+                        } else echo json_encode(['error' => '6文字以上のパスワードを入力してください。']);
+                    } else echo json_encode(['error' => '現在利用中のパスワードと違うパスワードを入力してください。']);
+                } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
+            } else echo json_encode(['error' => 'パスワードが空欄になっています。6文字以上のパスワードを入力してください。']);
         }
     }
 }

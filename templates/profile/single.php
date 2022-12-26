@@ -50,6 +50,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 					<a href="#">
 						<button id="sendMessageButton" class="btn button" name="send_message">Send message</button>
 					</a> <?php
+					$rider = $user;
 					include '../includes/riders/friends/buttons.php';
 					include '../includes/riders/profile/send-message.php'; 
 				} else { ?>
@@ -73,7 +74,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 		<div class="container margin-bottom"> 
 			
 			<!-- Profile infos -->
-			<div class="pf-general-infos"> <?php
+			<div class="pf-general-infos"> <?php 
 				
 				// Include profile picture ?>
 				<div class="pf-propic"> <?php
@@ -89,13 +90,13 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 						}
 						if (!empty($user->gender)) { ?>
 							<div class="col-md">
-								<strong>性別 : </strong><?= $user->gender; ?>
+								<strong>性別 : </strong><?= $user->getGenderString(); ?>
 							</div> <?php
 						} ?>
 						<div class="row g-2"> <?php 
 							if (!empty($user->birthdate)) { ?>
 								<div class="col-md">
-									<strong>年齢 : </strong><?= $user->calculateAge(). ' years old'; ?>
+									<strong>年齢 : </strong><?= $user->calculateAge(). '才'; ?>
 								</div> <?php
 							}
 							if (!empty($user->location->city)) { ?>
@@ -107,7 +108,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 						<div class="row g-2"> <?php
 							if (!empty($user->level)) { ?>
 								<div class="col-md">
-									<strong>レベル : </strong><?= $user->level; ?>
+									<strong>レベル : </strong><?= $user->getLevelString(); ?>
 								</div> <?php
 							} ?>
 							<div class="col-md">
@@ -164,7 +165,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 				<div class="d-flex flex-column gap"> <?php
 					// Cleared mkpoints panel ?>
 					<div class="profile-container"> <?php 
-						define('CLEARED_MKPOINTS_LIMIT', 20); 
+						define('CLEARED_MKPOINTS_LIMIT', 8); 
 						include '../includes/riders/profile/cleared-mkpoints.php'; ?>
 					</div>
 				</div>
@@ -174,7 +175,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 				<div class="d-flex flex-column gap"> <?php
 					// Cleared cegments panel ?>
 					<div class="profile-container"> <?php 
-						define('CLEARED_SEGMENTS_LIMIT', 20); 
+						define('CLEARED_SEGMENTS_LIMIT', 8); 
 						include '../includes/riders/profile/cleared-segments.php'; ?>
 					</div>
 				</div>

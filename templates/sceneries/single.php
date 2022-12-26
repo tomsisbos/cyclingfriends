@@ -84,14 +84,16 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 					$number++;
 				} ?>
 			</div>
-			<div class="container mk-activities-container">
-				<h2>Latest public activities</h2> <?php
-				$activities = $mkpoint->findLastRelatedActivities(3);
-				if (!empty($activities)) {
-					foreach ($activities as $activity) {
-						if ($activity->privacy == 'public') include '../includes/activities/small-card.php';
-					}
-				} else echo 'No activity data has been found.' ?>
+			<div class="container">
+				<h2>Latest public activities</h2>
+				<div class="mk-activities-container"> <?php
+					$activities = $mkpoint->findLastRelatedActivities(3);
+					if (!empty($activities)) {
+						foreach ($activities as $activity) {
+							if ($activity->privacy == 'public') include '../includes/activities/small-card.php';
+						}
+					} else echo '表示できるデータはありません。' ?>
+				</div>
 			</div>
 			<div class="container p-0 pg-sg-map-box">
 				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>

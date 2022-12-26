@@ -16,7 +16,8 @@ export default class NewActivityMap extends ActivityMap {
             this.loaderElement = document.createElement('div')
             this.loaderElement.className = 'loading-modal'
             let loaderIcon = document.createElement('div')
-            loaderIcon.innerText = 'Saving activity data...'
+            loaderIcon.innerText = 'アクティビティデータを処理しています...'
+            this.loaderElement.style.cursor = 'loading'
             loaderIcon.className = 'loading-text'
             this.loaderElement.appendChild(loaderIcon)
         },
@@ -26,297 +27,300 @@ export default class NewActivityMap extends ActivityMap {
 
     // Parse file data and store it inside map instance
     async importDataFromGpx (gpx) {
-        console.log(gpx)
+        return new Promise(async (resolve, reject) => {
+            console.log(gpx)
 
-        // Build trackpoints and routeCoords
-        const track = gpx.tracks[0]
-        const segment = track.segments[0]
-        const trkpt = segment.points
+            // Build trackpoints and routeCoords
+            const track = gpx.tracks[0]
+            const segment = track.segments[0]
+            const trkpt = segment.points
 
-        var trackpoints = []
-        var routeCoords = []
-        var routeTime = []
-        for (let i = 0; i < trkpt.length; i++) {
-            var date = new Date(trkpt[i].time.date)
-            let trackpoint = {
-                lngLat: {
-                    lng: trkpt[i].longitude,
-                    lat: trkpt[i].latitude
-                },
-                elevation: trkpt[i].elevation,
-                time: date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) // Needs to add the timezone difference to be correct
+            var trackpoints = []
+            var routeCoords = []
+            var routeTime = []
+            console.log(gpx)
+            for (let i = 0; i < trkpt.length; i++) {
+                console.log(trkpt[i].time)
+                if (trkpt[i].time == null) return resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
+                else {
+                    var date = new Date(trkpt[i].time.date)
+                    let trackpoint = {
+                        lngLat: {
+                            lng: trkpt[i].longitude,
+                            lat: trkpt[i].latitude
+                        },
+                        elevation: trkpt[i].elevation,
+                        time: date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) // Needs to add the timezone difference to be correct
+                    }
+                    routeCoords.push([trkpt[i].longitude, trkpt[i].latitude])
+                    routeTime.push(trackpoint.time)
+                    if (trkpt[i].extensions) {
+                        if (trkpt[i].extensions.trackPointExtension.aTemp) trackpoint.temperature = trkpt[i].extensions.trackPointExtension.aTemp
+                        if (trkpt[i].extensions.trackPointExtension.cad) trackpoint.cadence = trkpt[i].extensions.trackPointExtension.cad
+                        if (trkpt[i].extensions.unsupported.power) trackpoint.power = parseInt(trkpt[i].extensions.unsupported.power)
+                    }
+                    trackpoints.push(trackpoint)
+                }
             }
-            routeCoords.push([trkpt[i].longitude, trkpt[i].latitude])
-            routeTime.push(trackpoint.time)
-            if (trkpt[i].extensions) {
-                if (trkpt[i].extensions.trackPointExtension.aTemp) trackpoint.temperature = trkpt[i].extensions.trackPointExtension.aTemp
-                if (trkpt[i].extensions.trackPointExtension.cad) trackpoint.cadence = trkpt[i].extensions.trackPointExtension.cad
-                if (trkpt[i].extensions.unsupported.power) trackpoint.power = parseInt(trkpt[i].extensions.unsupported.power)
-            }
-            trackpoints.push(trackpoint)
-        }
 
-        // Build max speed, max altitude and max slope
-        var speed_max = 0
-        var altitude_max = 0
-        var slope_max = 0
-        var duration_running = 0
-        const precision = 10 // Calcul interval in seconds
-        for (let i = 0; i < routeCoords.length; i += precision) {
-            // Build max altitude
-            if (parseInt(trackpoints[i].elevation) > altitude_max) {
-                altitude_max = Math.round(trackpoints[i].elevation)
+            // Build max speed, max altitude and max slope
+            var speed_max = 0
+            var altitude_max = 0
+            var slope_max = 0
+            var duration_running = 0
+            const precision = 10 // Calcul interval in seconds
+            for (let i = 0; i < routeCoords.length; i += precision) {
+                // Build max altitude
+                if (parseInt(trackpoints[i].elevation) > altitude_max) {
+                    altitude_max = Math.round(trackpoints[i].elevation)
+                }
+                if (routeCoords[i - precision]) {
+                    // Build max speed
+                    let distance = 0
+                    for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
+                    let seconds = (trackpoints[i].time - trackpoints[i - precision].time) / 1000
+                    let hours = seconds / 60 / 60
+                    var speed = distance / hours
+                    if (speed > speed_max) speed_max = Math.round(speed * 10) / 10
+                    // Build max slope
+                    let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
+                    if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
+                    if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
+                    // Build time running
+                    if (distance > 0.015) duration_running += (trackpoints[i].time - trackpoints[i - precision].time)
+                    if (seconds > precision) duration_running -= (seconds - precision) * 1000 // Substact auto pause
+                }
             }
-            if (routeCoords[i - precision]) {
-                // Build max speed
-                let distance = 0
-                for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
-                let seconds = (trackpoints[i].time - trackpoints[i - precision].time) / 1000
-                let hours = seconds / 60 / 60
-                var speed = distance / hours
-                if (speed > speed_max) speed_max = Math.round(speed * 10) / 10
-                // Build max slope
-                let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
-                if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
-                if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
-                // Build time running
-                if (distance > 0.015) duration_running += (trackpoints[i].time - trackpoints[i - precision].time)
-                if (seconds > precision) duration_running -= (seconds - precision) * 1000 // Substact auto pause
-            }
-        }
-        console.log('slope max : ' + slope_max)
-        console.log('altitude max : ' + altitude_max)
-        console.log('duration running : ' + getFormattedDurationFromTimestamp(duration_running))
 
-        // Dynamically simplify routeCoords and routeTime
-        if (trackpoints.length < 6000) var simplificationMultiplicator = 3
-        else simplificationMultiplicator = 4
-        for (let i = 0; i < routeCoords.length; i++) {
-            routeCoords.splice(i, simplificationMultiplicator)
-            routeTime.splice(i, simplificationMultiplicator)
-        }
-        // Build route geojson
-        var routeData = turf.lineString(routeCoords)
-        routeData.properties.time = routeTime
-        this.data = { routeData }
+            // Dynamically simplify routeCoords and routeTime
+            if (trackpoints.length < 6000) var simplificationMultiplicator = 3
+            else simplificationMultiplicator = 4
+            for (let i = 0; i < routeCoords.length; i++) {
+                routeCoords.splice(i, simplificationMultiplicator)
+                routeTime.splice(i, simplificationMultiplicator)
+            }
+            // Build route geojson
+            var routeData = turf.lineString(routeCoords)
+            routeData.properties.time = routeTime
+            this.data = { routeData }
 
-        // Build temperature
-        if (trackpoints[0].temperature) {
-            var sumTemperature = 0
-            var minTemperature = 100
-            var maxTemperature = -100
-            for (let i = 0; i < trackpoints.length; i++) {
-                sumTemperature += parseInt(trackpoints[i].temperature)
-                if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
-                if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
+            // Build temperature
+            if (trackpoints[0].temperature) {
+                var sumTemperature = 0
+                var minTemperature = 100
+                var maxTemperature = -100
+                for (let i = 0; i < trackpoints.length; i++) {
+                    sumTemperature += parseInt(trackpoints[i].temperature)
+                    if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
+                    if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
+                }
+                var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
             }
-            var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
-        }
 
-        // Build duration
-        const endDate = trackpoints[trackpoints.length - 1].time
-        const startDate = trackpoints[0].time
-        var duration = getDurationFromTimestamp(endDate - startDate)
-        // If no time data, display an error message
-        if (endDate - startDate <= 60) resolve({error: 'This file doesn\'t have time data. It can\'t be saved as an activity.'})
-        else {
-            // Build start and end checkpoints
-            var checkpoints = []
-            var startPoint = {
-                name: 'Start',
-                type: 'Start',
-                story: '',
-                number: 0,
-                lngLat: trackpoints[0].lngLat,
-                datetime: startDate,
-                geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
-                elevation: Math.floor(trackpoints[0].elevation),
-                distance: 0,
-                temperature: parseInt(trackpoints[0].temperature)
-            }
-            var goalPoint = {
-                name: 'Goal',
-                type: 'Goal',
-                story: '',
-                number: 1,
-                lngLat: trackpoints[trackpoints.length - 1].lngLat,
-                datetime: endDate,
-                geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
-                elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
-                distance: Math.floor(turf.length(routeData) * 10) / 10,
-                temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
-            }
-            checkpoints.push(startPoint)
-            checkpoints.push(goalPoint)
+            // Build duration
+            const endDate = trackpoints[trackpoints.length - 1].time
+            const startDate = trackpoints[0].time
+            var duration = getDurationFromTimestamp(endDate - startDate)
+            // If no time data, display an error message
+            if (endDate - startDate <= 60) return resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
+            else {
+                // Build start and end checkpoints
+                var checkpoints = []
+                var startPoint = {
+                    name: 'Start',
+                    type: 'Start',
+                    story: '',
+                    number: 0,
+                    lngLat: trackpoints[0].lngLat,
+                    datetime: startDate,
+                    geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
+                    elevation: Math.floor(trackpoints[0].elevation),
+                    distance: 0,
+                    temperature: parseInt(trackpoints[0].temperature)
+                }
+                var goalPoint = {
+                    name: 'Goal',
+                    type: 'Goal',
+                    story: '',
+                    number: 1,
+                    lngLat: trackpoints[trackpoints.length - 1].lngLat,
+                    datetime: endDate,
+                    geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
+                    elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
+                    distance: Math.floor(turf.length(routeData) * 10) / 10,
+                    temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
+                }
+                checkpoints.push(startPoint)
+                checkpoints.push(goalPoint)
 
-            // Build data
-            this.data = {
-                title: track.name,
-                distance: Math.ceil(turf.length(routeData) * 10) / 10,
-                duration,
-                duration_running: getDurationFromTimestamp(duration_running),
-                bike_id: document.querySelector('#selectBikes').value,
-                privacy: document.querySelector('#selectPrivacy').value,
-                elevation: Math.floor(this.calculateElevation(trackpoints)),
-                speed_max,
-                altitude_max,
-                slope_max,
-                temperature: {
-                    min: minTemperature,
-                    avg: avgTemperature,
-                    max: maxTemperature
-                },
-                routeData,
-                checkpoints,
-                mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
-                segments: await this.getFittingSegments(),
-                photos: [],
-                trackpoints
+                // Build data
+                this.data = {
+                    title: track.name,
+                    distance: Math.ceil(turf.length(routeData) * 10) / 10,
+                    duration,
+                    duration_running: getDurationFromTimestamp(duration_running),
+                    bike_id: document.querySelector('#selectBikes').value,
+                    privacy: document.querySelector('#selectPrivacy').value,
+                    elevation: Math.floor(this.calculateElevation(trackpoints)),
+                    speed_max,
+                    altitude_max,
+                    slope_max,
+                    temperature: {
+                        min: minTemperature,
+                        avg: avgTemperature,
+                        max: maxTemperature
+                    },
+                    routeData,
+                    checkpoints,
+                    mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
+                    segments: await this.getFittingSegments(),
+                    photos: [],
+                    trackpoints
+                }
+                resolve({success: true})
             }
-            return {success: true}
-        }
+        } )
     }
 
     // Parse file data and store it inside map instance
     async importDataFromFit (fit) {
-        console.log(fit)
+        return new Promise(async (resolve, reject) => {
+            console.log(fit)
 
-        // Build trackpoints and routeCoords
-        const record = fit.record
-        var trackpoints = []
-        var routeCoords = []
-        var routeTime = []
-        for (let i = 0; i < record.position_long.length; i++) {
-            let trackpoint = {
-                lngLat: {
-                    lng: record.position_long[i],
-                    lat: record.position_lat[i],
-                },
-                elevation: record.altitude[i],
-                time: record.timestamp[i] * 1000
+            // Build trackpoints and routeCoords
+            const record = fit.record
+            var trackpoints = []
+            var routeCoords = []
+            var routeTime = []
+            for (let i = 0; i < record.position_long.length; i++) {
+                let trackpoint = {
+                    lngLat: {
+                        lng: record.position_long[i],
+                        lat: record.position_lat[i],
+                    },
+                    elevation: record.altitude[i],
+                    time: record.timestamp[i] * 1000
+                }
+                if (record.temperature) trackpoint.temperature = record.temperature[i]
+                if (record.cadence) trackpoint.cadence = record.cadence[i]
+                if (record.power) trackpoint.power = record.power[i]
+                trackpoints.push(trackpoint)
+                routeCoords.push([record.position_long[i], record.position_lat[i]])
+                routeTime.push(record.timestamp[i] * 1000)
             }
-            if (record.temperature) trackpoint.temperature = record.temperature[i]
-            if (record.cadence) trackpoint.cadence = record.cadence[i]
-            if (record.power) trackpoint.power = record.power[i]
-            trackpoints.push(trackpoint)
-            routeCoords.push([record.position_long[i], record.position_lat[i]])
-            routeTime.push(record.timestamp[i] * 1000)
-        }
 
-        console.log(trackpoints)
+            console.log(trackpoints)
 
-        // Build max altitude
-        const session = fit.session
-        var altitude_max = record.altitude.reduce((a, b) => Math.max(a, b), -Infinity)
-        // Build max speed
-        var speed_max = Math.floor(session.max_speed * 10) / 10
-        // Build max slope
-        var slope_max = 0
-        const precision = 10 // Calcul interval in seconds
-        for (let i = 0; i < routeCoords.length; i += precision) {
-            if (routeCoords[i - precision]) {
-                // Build distance
-                let distance = 0
-                for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
-                // Build max slope
-                let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
-                if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
-                if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
+            // Build max altitude
+            const session = fit.session
+            var altitude_max = record.altitude.reduce((a, b) => Math.max(a, b), -Infinity)
+            // Build max speed
+            var speed_max = Math.floor(session.max_speed * 10) / 10
+            // Build max slope
+            var slope_max = 0
+            const precision = 10 // Calcul interval in seconds
+            for (let i = 0; i < routeCoords.length; i += precision) {
+                if (routeCoords[i - precision]) {
+                    // Build distance
+                    let distance = 0
+                    for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
+                    // Build max slope
+                    let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
+                    if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
+                    if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
+                }
             }
-        }
-        // Build time running
-        var duration_running = session.total_timer_time * 1000
-        console.log('slope max : ' + slope_max)
-        console.log('altitude max : ' + altitude_max)
-        console.log('duration running : ' + getFormattedDurationFromTimestamp(duration_running))
+            // Build time running
+            var duration_running = session.total_timer_time * 1000
 
-        // Dynamically simplify routeCoords and routeTime
-        if (trackpoints.length < 6000) var simplificationMultiplicator = 3
-        else simplificationMultiplicator = 4
-        for (let i = 0; i < routeCoords.length; i++) {
-            routeCoords.splice(i, simplificationMultiplicator)
-            routeTime.splice(i, simplificationMultiplicator)
-        }
-        // Build route geojson
-        var routeData = turf.lineString(routeCoords)
-        routeData.properties.time = routeTime
-        this.data = { routeData }
+            // Dynamically simplify routeCoords and routeTime
+            if (trackpoints.length < 6000) var simplificationMultiplicator = 3
+            else simplificationMultiplicator = 4
+            for (let i = 0; i < routeCoords.length; i++) {
+                routeCoords.splice(i, simplificationMultiplicator)
+                routeTime.splice(i, simplificationMultiplicator)
+            }
+            // Build route geojson
+            var routeData = turf.lineString(routeCoords)
+            routeData.properties.time = routeTime
+            this.data = { routeData }
 
-        // Build temperature
-        if (trackpoints[0].temperature) {
-            var sumTemperature = 0
-            var minTemperature = 100
-            var maxTemperature = -100
-            for (let i = 0; i < trackpoints.length; i++) {
-                sumTemperature += parseInt(trackpoints[i].temperature)
-                if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
-                if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
+            // Build temperature
+            if (trackpoints[0].temperature) {
+                var sumTemperature = 0
+                var minTemperature = 100
+                var maxTemperature = -100
+                for (let i = 0; i < trackpoints.length; i++) {
+                    sumTemperature += parseInt(trackpoints[i].temperature)
+                    if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
+                    if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
+                }
+                var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
             }
-            var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
-        }
 
-        // Build duration
-        const endDate = trackpoints[trackpoints.length - 1].time
-        const startDate = trackpoints[0].time
-        var duration = getDurationFromTimestamp(endDate - startDate)
-        // If no time data, display an error message
-        if (endDate - startDate <= 60) resolve({error: 'This file doesn\'t have time data. It can\'t be saved as an activity.'})
-        else {
-            // Build start and end checkpoints
-            var checkpoints = []
-            var startPoint = {
-                name: 'Start',
-                type: 'Start',
-                story: '',
-                number: 0,
-                lngLat: trackpoints[0].lngLat,
-                datetime: startDate,
-                geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
-                elevation: Math.floor(trackpoints[0].elevation),
-                distance: 0,
-                temperature: parseInt(trackpoints[0].temperature)
-            }
-            var goalPoint = {
-                name: 'Goal',
-                type: 'Goal',
-                story: '',
-                number: 1,
-                lngLat: trackpoints[trackpoints.length - 1].lngLat,
-                datetime: endDate,
-                geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
-                elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
-                distance: Math.floor(turf.length(routeData) * 10) / 10,
-                temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
-            }
-            checkpoints.push(startPoint)
-            checkpoints.push(goalPoint)
+            // Build duration
+            const endDate = trackpoints[trackpoints.length - 1].time
+            const startDate = trackpoints[0].time
+            var duration = getDurationFromTimestamp(endDate - startDate)
+            // If no time data, display an error message
+            if (endDate - startDate <= 60) resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
+            else {
+                // Build start and end checkpoints
+                var checkpoints = []
+                var startPoint = {
+                    name: 'Start',
+                    type: 'Start',
+                    story: '',
+                    number: 0,
+                    lngLat: trackpoints[0].lngLat,
+                    datetime: startDate,
+                    geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
+                    elevation: Math.floor(trackpoints[0].elevation),
+                    distance: 0,
+                    temperature: parseInt(trackpoints[0].temperature)
+                }
+                var goalPoint = {
+                    name: 'Goal',
+                    type: 'Goal',
+                    story: '',
+                    number: 1,
+                    lngLat: trackpoints[trackpoints.length - 1].lngLat,
+                    datetime: endDate,
+                    geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
+                    elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
+                    distance: Math.floor(turf.length(routeData) * 10) / 10,
+                    temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
+                }
+                checkpoints.push(startPoint)
+                checkpoints.push(goalPoint)
 
-            // Build data
-            this.data = {
-                title: startPoint.geolocation.city + ' ride',
-                distance: Math.ceil(turf.length(routeData) * 10) / 10,
-                duration,
-                duration_running: getDurationFromTimestamp(duration_running),
-                bike_id: document.querySelector('#selectBikes').value,
-                privacy: document.querySelector('#selectPrivacy').value,
-                elevation: Math.floor(this.calculateElevation(trackpoints)),
-                speed_max,
-                altitude_max,
-                slope_max,
-                temperature: {
-                    min: minTemperature,
-                    avg: avgTemperature,
-                    max: maxTemperature
-                },
-                routeData,
-                checkpoints,
-                mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
-                segments: await this.getFittingSegments(),
-                photos: [],
-                trackpoints
+                // Build data
+                this.data = {
+                    title: startPoint.geolocation.city + ' ride',
+                    distance: Math.ceil(turf.length(routeData) * 10) / 10,
+                    duration,
+                    duration_running: getDurationFromTimestamp(duration_running),
+                    bike_id: document.querySelector('#selectBikes').value,
+                    privacy: document.querySelector('#selectPrivacy').value,
+                    elevation: Math.floor(this.calculateElevation(trackpoints)),
+                    speed_max,
+                    altitude_max,
+                    slope_max,
+                    temperature: {
+                        min: minTemperature,
+                        avg: avgTemperature,
+                        max: maxTemperature
+                    },
+                    routeData,
+                    checkpoints,
+                    mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
+                    segments: await this.getFittingSegments(),
+                    photos: [],
+                    trackpoints
+                }
+                resolve({success: true})
             }
-            return {success: true}
-        }
+        } )
     }
 
     updateForm () {
@@ -331,14 +335,15 @@ export default class NewActivityMap extends ActivityMap {
         var $avgTemperature = $form.querySelector('#divAvgTemperature')
         var $maxTemperature = $form.querySelector('#divMaxTemperature')
         if (this.data.title != $title.value) $title.value = this.data.title
-        $start.innerHTML = '<strong>Start : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
-        $goal.innerHTML = '<strong>Goal : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
-        $distance.innerHTML = '<strong>Distance : </strong>' + this.data.distance + 'km'
-        $duration.innerHTML = '<strong>Duration : </strong>' + getFormattedDurationFromTimestamp(this.data.trackpoints[this.data.trackpoints.length - 1].time - this.data.trackpoints[0].time)
-        $elevation.innerHTML = '<strong>Elevation : </strong>' + this.data.elevation + 'm'
-        if (this.data.temperature.min) $minTemperature.innerHTML = '<strong>Min. Temperature : </strong>' + this.data.temperature.min + '°C'
-        if (this.data.temperature.avg) $avgTemperature.innerHTML = '<strong>Avg. Temperature : </strong>' + this.data.temperature.avg + '°C'
-        if (this.data.temperature.max) $maxTemperature.innerHTML = '<strong>Max. Temperature : </strong>' + this.data.temperature.max + '°C'
+        $title.addEventListener('change', () => this.data.title = $title.value)
+        $start.innerHTML = '<strong>スタート : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
+        $goal.innerHTML = '<strong>ゴール : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
+        $distance.innerHTML = '<strong>距離 : </strong>' + this.data.distance + 'km'
+        $duration.innerHTML = '<strong>時間 : </strong>' + getFormattedDurationFromTimestamp(this.data.trackpoints[this.data.trackpoints.length - 1].time - this.data.trackpoints[0].time)
+        $elevation.innerHTML = '<strong>獲得標高 : </strong>' + this.data.elevation + 'm'
+        if (this.data.temperature.min) $minTemperature.innerHTML = '<strong>最低気温 : </strong>' + this.data.temperature.min + '°C'
+        if (this.data.temperature.avg) $avgTemperature.innerHTML = '<strong>平均気温 : </strong>' + this.data.temperature.avg + '°C'
+        if (this.data.temperature.max) $maxTemperature.innerHTML = '<strong>最高気温 : </strong>' + this.data.temperature.max + '°C'
         this.updateCheckpointForms()
     }
 
@@ -367,7 +372,7 @@ export default class NewActivityMap extends ActivityMap {
                 $topline.className = 'new-ac-checkpoint-topline'
                 var $name = document.createElement('input')
                 $name.className = 'form-control'
-                $name.placeholder = 'Name...'
+                $name.placeholder = '名前...'
                 if (checkpoint.name) $name.value = checkpoint.name
                 var $properties = document.createElement('div')
                 $properties.className = 'new-ac-checkpoint-properties form-control-plaintext'
@@ -387,7 +392,7 @@ export default class NewActivityMap extends ActivityMap {
                 var $story = document.createElement('textarea')
                 if (checkpoint.story) $story.innerText = checkpoint.story
                 $story.className = 'form-control'
-                $story.placeholder = 'Story...'
+                $story.placeholder = 'ストーリー...'
                 $properties.appendChild($distance)
                 $properties.appendChild($datetime)
                 $topline.appendChild($name)
@@ -427,37 +432,37 @@ export default class NewActivityMap extends ActivityMap {
             // Landscape
             let $landscape = document.createElement('option')
             $landscape.value = 'Landscape'
-            $landscape.text = 'Landscape'
+            $landscape.text = '景色'
             if (type == 'Landscape') $landscape.setAttribute('selected', true)
             $type.add($landscape)
             // Break
             let $break = document.createElement('option')
             $break.value = 'Break'
-            $break.text = 'Break'
+            $break.text = '休憩'
             if (type == 'Break') $break.setAttribute('selected', true)
             $type.add($break)
             // Restaurant
             let $restaurant = document.createElement('option')
             $restaurant.value = 'Restaurant'
-            $restaurant.text = 'Restaurant'
+            $restaurant.text = '食事'
             if (type == 'Restaurant') $restaurant.setAttribute('selected', true)
             $type.add($restaurant)
             // Cafe
             let $cafe = document.createElement('option')
             $cafe.value = 'Cafe'
-            $cafe.text = 'Cafe'
+            $cafe.text = 'カフェ'
             if (type == 'Cafe') $cafe.setAttribute('selected', true)
             $type.add($cafe)
             // Attraction
             let $attraction = document.createElement('option')
             $attraction.value = 'Attraction'
-            $attraction.text = 'Attraction'
+            $attraction.text = '情報'
             if (type == 'Attraction') $attraction.setAttribute('selected', true)
             $type.add($attraction)
             // Event
             let $event = document.createElement('option')
             $event.value = 'Event'
-            $event.text = 'Event'
+            $event.text = '出来事'
             if (type == 'Event') $event.setAttribute('selected', true)
             $type.add($event)
             return $type
@@ -510,7 +515,7 @@ export default class NewActivityMap extends ActivityMap {
             } )
             if (filesInDouble.length > 0) {
                 var filesInDoubleString = filesInDouble.join(', ')
-                showResponseMessage({success: '\"' + filesInDoubleString + '\" have already been uploaded. You can\'t upload it twice.'})
+                showResponseMessage({success: '\"' + filesInDoubleString + '\"は既にアップロードされています。再度アップロードすることが出来ません。'})
             }
             // Sort files by date
             files.sort( (a, b) => {
@@ -569,12 +574,12 @@ export default class NewActivityMap extends ActivityMap {
                                     if (number == filesLength + currentPhotosNumber) resolve(true)
 
                                 } else {
-                                    showResponseMessage({error: '\"' + files[i].name + '\" has not been taken during the activity.'})
+                                    showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。'})
                                     filesLength--
                                 }
 
                             } else {
-                                showResponseMessage({error: '\"' + files[i].name + '\" does not have valid time data. Please upload raw photo data taken during the activity.'})
+                                showResponseMessage({error: '\"' + files[i].name + '\"にはタイムデータが付随されていません。未加工のファイルをアップロードしてください。'})
                                 filesLength--
                             }
 
@@ -583,7 +588,7 @@ export default class NewActivityMap extends ActivityMap {
                     } )
                     
                 } else {
-                    showResponseMessage({error: '\"' + files[i].name + '\" is not of an accepted format. Please upload images from following formats : ' + acceptedFormatsString + '.'})
+                    showResponseMessage({error: '\"' + files[i].name + '\"のファイル形式に対応していません。対応しているファイル形式は次の通り：' + acceptedFormatsString + '.'})
                     filesLength--
                 }
             }
@@ -648,19 +653,19 @@ export default class NewActivityMap extends ActivityMap {
             var $deleteButton = document.createElement('div')
             $deleteButton.className = 'pg-ac-close-button'
             $deleteButton.innerText = 'x'
-            $deleteButton.title = 'Click to remove this photo'
+            $deleteButton.title = '写真を削除する'
             photo.$thumbnail.appendChild($deleteButton)
             // Feature button
             var $featureButton = document.createElement('div')
             $featureButton.className = 'pg-ac-feature-button'
             $featureButton.innerHTML = '<span class="iconify" data-icon="mdi:feature-highlight"></span>'
-            $featureButton.title = 'Click to chose as featured photo'
+            $featureButton.title = 'ハイライト写真に選定する'
             photo.$thumbnail.appendChild($featureButton)
             // Create mkpoint button
             var $createMkpointButton = document.createElement('div')
             $createMkpointButton.className = 'pg-ac-createmkpoint-button'
             $createMkpointButton.innerHTML = '<span class="iconify" data-icon="material-symbols:add-location-alt"></span>'
-            $createMkpointButton.title = 'Click to create a scenery spot from this photo'
+            $createMkpointButton.title = 'この写真を元に絶景スポットを新規作成する'
             photo.$thumbnail.appendChild($createMkpointButton)
             // If first photo of this checkpoint, append to parent, else find previous child and insert if after
             var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
@@ -767,7 +772,7 @@ export default class NewActivityMap extends ActivityMap {
                             if (this.data.mkpointsToCreate[i].size == photo.size) {
                                 this.data.mkpointsToCreate.splice(i, 1)
                                 i--
-                                showResponseMessage({'error': 'You cannot create a scenery spot from ' + photo.name + ' because it is too close to existing scenery point "' + mkpoint.name + '". You can add it instead.'})
+                                showResponseMessage({'error': photo.name + 'の位置が既存の絶景スポット「' + mkpoint.name + '」と一致しているため、新規の絶景スポットを作成できません。その代わり、写真として「' + mkpoint.name + '」に追加してください。'})
                             }
                         }
                     }
@@ -795,8 +800,8 @@ export default class NewActivityMap extends ActivityMap {
             var confirmationPopup = document.createElement('div')
             confirmationPopup.classList.add('popup', 'fullscreen-popup')
             modal.appendChild(confirmationPopup)
-            confirmationPopup.innerHTML = `We have detected that these photos have been taken at registered scenery spots. Would you like to add them and share them with the community ?<br>
-            (!) Note that photos sharing is subject to rules. Please <a>check the rules here</a> if you are not sure.`
+            confirmationPopup.innerHTML = `下記の写真は、絶景スポットに指定されている場所で撮影されました。絶景スポットの公開写真に追加し、コミュニティと共有しますか？<br>
+            (!) 写真の公開にはルールがあります。<a>こちら</a>で確認してください。`
             var $entriesContainer = document.createElement('div')
             $entriesContainer.className = 'new-ac-entries-container'
             confirmationPopup.appendChild($entriesContainer)
@@ -815,7 +820,7 @@ export default class NewActivityMap extends ActivityMap {
                     <div class="new-ac-window-mkpoint-infos">`
                         + entry.mkpoint.name + `
                     </div>
-                    <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">Yes</div><div class="mp-button bg-darkred text-white js-no">No</div></div>
+                    <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">はい</div><div class="mp-button bg-darkred text-white js-no">いいえ</div></div>
                 `
                 $entriesContainer.appendChild($entry)
 
@@ -901,7 +906,7 @@ export default class NewActivityMap extends ActivityMap {
             confirmationPopup.classList.add('popup', 'fullscreen-popup')
             modal.appendChild(confirmationPopup)
             confirmationPopup.innerHTML = `
-            (!) Note that scenery spots sharing is subject to rules. Please <a>check the rules here</a> if you are not sure.`
+            (!) 写真の公開にはルールがあります。<a>こちら</a>で確認してください。`
             var $entriesContainer = document.createElement('div')
             $entriesContainer.className = 'new-ac-entries-container'
             confirmationPopup.appendChild($entriesContainer)
@@ -931,16 +936,16 @@ export default class NewActivityMap extends ActivityMap {
                 `
                     
                 if (entry.closePhotos.length > 0) {
-                    content += 'Following photos can also be added to this scenery point. Do you want to add them ?<div class="new-ac-window-other-photos-container">'
+                    content += '次の写真も、絶景スポットに追加することができます。追加しますか？<div class="new-ac-window-other-photos-container">'
                     content += await buildOtherPhotosElements(entry.closePhotos)
                     content += '</div>'
                 }
                 // Build mkpoint form element
                 content += `
                     <div class="popup-content">
-                        <strong>Name :</strong>
+                        <strong>タイトル :</strong>
                         <input type="text" class="admin-field js-mkpoint-name"/>
-                        <strong>Description :</strong>
+                        <strong>紹介文 :</strong>
                         <textarea class="admin-field js-mkpoint-description"></textarea>
                     </div>`
                     + $tags + `
@@ -977,7 +982,7 @@ export default class NewActivityMap extends ActivityMap {
             // Build validate button
             var $validateButton = document.createElement('button')
             $validateButton.className = 'btn button bg-primary text-white'
-            $validateButton.innerText = 'Validate'
+            $validateButton.innerText = '確定'
             confirmationPopup.appendChild($validateButton)
             $validateButton.addEventListener('click', () => {
                 var mkpointsToCreate = []
@@ -1023,7 +1028,7 @@ export default class NewActivityMap extends ActivityMap {
                     if (name == '' || description == '') filled = false
                 } )
                 if (filled) resolve(mkpointsToCreate)
-                else showResponseMessage({'error': 'Scenery spot must have a name and a description. Please have a look to <a>the scenery spots rules</a> if needed.'}, {element: document.querySelector('.popup')})
+                else showResponseMessage({'error': '絶景スポットにはタイトルと紹介文が必要です。必要に応じて、<a>絶景スポットの共有ルール</a>をご確認ください。'}, {element: document.querySelector('.popup')})
             } )
 
             async function buildPhotoElement (photo) {
@@ -1034,7 +1039,7 @@ export default class NewActivityMap extends ActivityMap {
                         <div class="new-ac-window-photo">
                             <img src="` + dataUrl + `" />
                         </div>
-                        <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">Yes</div><div class="mp-button bg-darkred text-white js-no">No</div></div>
+                        <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">はい</div><div class="mp-button bg-darkred text-white js-no">いいえ</div></div>
                     </div>
                     `)
                 } )
@@ -1092,9 +1097,9 @@ export default class NewActivityMap extends ActivityMap {
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
                     canvas.toBlob( async (blob) => {
                         cleanData.thumbnail = await blobToBase64(blob)
-                        // Send data to server
                         console.log(cleanData)
                         debugger
+                        // Send data to server
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)
                             window.location.replace('/' + this.session.login + '/activities')

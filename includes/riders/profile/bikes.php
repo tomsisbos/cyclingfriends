@@ -5,7 +5,7 @@ if (!empty($user->getBikes())) { ?>
 	<div>
 		<h2 id="bikeTitle" class="d-inline-block"><?= $user->login?>'s <?php if (isset($user->getBikes()[1])) { echo 'bikes'; } else { echo 'bike'; } ?></h2> <?php
 		if (count($user->getBikes()) > 1) { ?>
-			<button id="showBike" class="btn smallbutton mb-2 mx-4">Show <?= count($user->getBikes()) - 1 ?> more...</button> <?php
+			<button id="showBike" class="btn smallbutton mb-2 mx-4">他<?= count($user->getBikes()) - 1 ?>台を表示...</button> <?php
 		} ?>
 		<div class="d-flex flex-column gap my-2"> <?php
 			
@@ -17,13 +17,13 @@ if (!empty($user->getBikes())) { ?>
 						<?php $bike->displayImage(); ?>
 					</div>
 					<div class="col-8 pf-bike-infos-container">
-						<div><strong>Type : </strong><?= $bike->type ?></div><?php
+						<div><strong>車種 : </strong><?= $bike->type ?></div><?php
 						if (!empty($bike->model)) { ?>
-							<div><strong>Model : </strong><?= $bike->model ?></div><?php } 
+							<div><strong>モデル : </strong><?= $bike->model ?></div><?php } 
 						if (!empty($bike->components)) { ?>
-							<div><strong>Components : </strong><?= $bike->components ?></div><?php }
+							<div><strong>コンポネント : </strong><?= $bike->components ?></div><?php }
 						if (!empty($bike->wheels)) { ?>
-							<div><strong>Wheels : </strong><?= $bike->wheels ?></div><?php }
+							<div><strong>ホイール : </strong><?= $bike->wheels ?></div><?php }
 						if (!empty($bike->description)) { ?>
 							<div class="mt-1"><?= $bike->description ?></div><?php
 						} ?>

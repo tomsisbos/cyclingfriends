@@ -70,7 +70,7 @@ export default class WorldMap extends GlobalMap {
         controller.appendChild(optionsContainer)
         // Label
         var optionsLabel = document.createElement('div')
-        optionsLabel.innerText = 'Options'
+        optionsLabel.innerText = '設定'
         optionsLabel.className = 'map-controller-label'
         optionsContainer.appendChild(optionsLabel)
         // Line 1
@@ -84,7 +84,7 @@ export default class WorldMap extends GlobalMap {
         line1.appendChild(this.displayMkpointsBox)
         var displayMkpointsBoxLabel = document.createElement('label')
         displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBox')
-        displayMkpointsBoxLabel.innerText = 'Display scenery points'
+        displayMkpointsBoxLabel.innerText = '絶景スポットを表示'
         line1.appendChild(displayMkpointsBoxLabel)
         this.displayMkpointsBox.addEventListener('change', () => {
             if (this.displayMkpointsBox.checked) this.updateMkpoints()
@@ -108,7 +108,7 @@ export default class WorldMap extends GlobalMap {
         } )
         var displayRidesBoxLabel = document.createElement('label')
         displayRidesBoxLabel.setAttribute('for', 'displayRidesBox')
-        displayRidesBoxLabel.innerText = 'Display rides'
+        displayRidesBoxLabel.innerText = 'ライドを表示'
         line2.appendChild(displayRidesBoxLabel)
         // Line 3
         let line3 = document.createElement('div')
@@ -128,7 +128,7 @@ export default class WorldMap extends GlobalMap {
         } )
         var displaySegmentsBoxLabel = document.createElement('label')
         displaySegmentsBoxLabel.setAttribute('for', 'displaySegmentsBox')
-        displaySegmentsBoxLabel.innerText = 'Display segments'
+        displaySegmentsBoxLabel.innerText = 'セグメントを表示'
         line3.appendChild(displaySegmentsBoxLabel)
         // Line 4
         let line4 = document.createElement('div')
@@ -145,7 +145,7 @@ export default class WorldMap extends GlobalMap {
         } )
         var dislayKonbinisBoxLabel = document.createElement('label')
         dislayKonbinisBoxLabel.setAttribute('for', 'dislayKonbinisBox')
-        dislayKonbinisBoxLabel.innerText = 'Display konbinis'
+        dislayKonbinisBoxLabel.innerText = 'コンビニを表示'
         line4.appendChild(dislayKonbinisBoxLabel)
         // Line 5
         let line5 = document.createElement('div')
@@ -162,7 +162,7 @@ export default class WorldMap extends GlobalMap {
         } )
         var displayAmenitiesBoxLabel = document.createElement('label')
         displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
-        displayAmenitiesBoxLabel.innerText = 'Display amenities'
+        displayAmenitiesBoxLabel.innerText = 'アメニティを表示'
         line5.appendChild(displayAmenitiesBoxLabel)
         
         // Hide and open on click on mobile display
@@ -186,7 +186,7 @@ export default class WorldMap extends GlobalMap {
         controller.appendChild(filterContainer)
         // Label
         var filterLabel = document.createElement('div')
-        filterLabel.innerText = 'Filters'
+        filterLabel.innerText = 'フィルター'
         filterLabel.className = 'map-controller-label'
         filterContainer.appendChild(filterLabel)
         // Line 1
@@ -205,13 +205,13 @@ export default class WorldMap extends GlobalMap {
         }
         var seasonsSelectLabel = document.createElement('label')
         seasonsSelectLabel.setAttribute('for', 'seasonsSelect')
-        seasonsSelectLabel.innerText = 'Season'
+        seasonsSelectLabel.innerText = '季節'
         line1.appendChild(seasonsSelectLabel)
         line1.appendChild(this.seasonsSelect)
         this.seasonsSelect.addEventListener('change', () => {
             this.month = this.seasonsSelect.value
             this.setSeason()
-            if (this.selectStyle.value == 'Seasons') this.styleSeason()
+            if (this.selectStyle.value == 'seasons') this.styleSeason()
         } )
         
         // Hide and open on click on mobile display
@@ -235,7 +235,7 @@ export default class WorldMap extends GlobalMap {
         controller.appendChild(editorContainer)
         // Label
         var editorLabel = document.createElement('div')
-        editorLabel.innerText = 'Editor'
+        editorLabel.innerText = '管理者設定'
         editorLabel.className = 'map-controller-label'
         editorContainer.appendChild(editorLabel)
         // Line 1
@@ -251,7 +251,7 @@ export default class WorldMap extends GlobalMap {
         } ) // Data treatment
         var editModeBoxLabel = document.createElement('label')
         editModeBoxLabel.setAttribute('for', 'editModeBox')
-        editModeBoxLabel.innerText = 'Edit scenery points'
+        editModeBoxLabel.innerText = '絶景スポットを編集'
         line1.appendChild(editModeBoxLabel)
         // Line 2
         let line2 = document.createElement('div')
@@ -266,7 +266,7 @@ export default class WorldMap extends GlobalMap {
         } ) // Data treatment
         var highlightMyMkpointsBoxLabel = document.createElement('label')
         highlightMyMkpointsBoxLabel.setAttribute('for', 'highlightMyMkpointsBox')
-        highlightMyMkpointsBoxLabel.innerText = 'Highlight my scenery points'
+        highlightMyMkpointsBoxLabel.innerText = '自分の絶景スポットを表示'
         line2.appendChild(highlightMyMkpointsBoxLabel)
         
         // Hide and open on click on mobile display
@@ -302,11 +302,11 @@ export default class WorldMap extends GlobalMap {
         if (mkpoint.user.id == this.session.id) {
             var mkpointAdminPanel = `
                 <div id="mkpointAdminPanel" class="popup-content container-admin">
-                    <div class="popup-head">Edition tools</div>
+                    <div class="popup-head">管理者ツール</div>
                     <div class="popup-buttons">
-                        <button class="mp-button bg-button text-white" id="mkpointEdit">Edit</button>
-                        <button class="mp-button bg-button text-white" id="mkpointMove">Move</button>
-                        <button class="mp-button bg-danger text-white" id="mkpointDelete">Delete</button>
+                        <button class="mp-button bg-button text-white" id="mkpointEdit">情報編集</button>
+                        <button class="mp-button bg-button text-white" id="mkpointMove">位置変更</button>
+                        <button class="mp-button bg-danger text-white" id="mkpointDelete">削除</button>
                     </div>
                 </div>`
             // Insert admin panel before the popup content

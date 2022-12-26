@@ -40,7 +40,7 @@ export default class RidePopup extends Popup {
         <div class="popup-img-container">
             <a target="_blank" href="/ride/` + this.data.id + `">
                 <div class="popup-img-background">
-                    Check details
+                    詳細ページ
                     <img id="rideFeaturedImage` + this.data.id + `" class="popup-img popup-img-with-background" />
                 </div>
             </a>
@@ -62,7 +62,7 @@ export default class RidePopup extends Popup {
         `</div>
         <div class="d-flex">
             <button class="mp-button bg-button m-auto">
-                <a target="_blank" class="text-white" style="text-decoration: none;" href="/ride/` + this.data.id + `">Check details</a>
+                <a target="_blank" class="text-white" style="text-decoration: none;" href="/ride/` + this.data.id + `">詳細ページ</a>
             </button>
         </div>`)
     }

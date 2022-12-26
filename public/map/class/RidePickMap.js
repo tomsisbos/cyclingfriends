@@ -91,12 +91,12 @@ export default class RidePickMap extends RideMap {
             <div class="checkpoint-popup-line">
                 <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
                 <input enctype="multipart/form-data" type="file" name="file" id="file" />
-                <label for="file" title="Click to change picture">
+                <label for="file" title="写真を変更する">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ic" width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"><path fill="currentColor" d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5s-5 2.24-5 5s2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2s-3.2 1.43-3.2 3.2z"></path></svg>
                 </label>
-                <input type="text" id="name" name="name" placeholder="Name" class="admin-field" value="` + name +  `"/>
+                <input type="text" id="name" name="name" placeholder="タイトル" class="admin-field" value="` + name +  `"/>
             </div>
-            <textarea name="description" placeholder="Description..." id="description" class="admin-field">` + description + `</textarea>
+            <textarea name="description" placeholder="詳細..." id="description" class="admin-field">` + description + `</textarea>
         </div>`
 
         else return `

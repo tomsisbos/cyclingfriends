@@ -26,17 +26,17 @@ export default class EditRouteMap extends BuildRouteMap {
             savePopup.classList.add('popup')
             savePopup.innerHTML = `
             <div>
-                <label>Name :</label>
+                <label>タイトル :</label>
                 <input type="text" class="js-route-name fullwidth" value="` + this.routeData.name + `" />
-                <label>Description :</label>
+                <label>詳細 :</label>
                 <textarea class="js-route-description fullwidth">` + this.routeData.description + `</textarea>
             </div>
             <div class="d-flex justify-content-between">
                 <div id="save" class="mp-button bg-darkgreen text-white">
-                    Save
+                    保存
                 </div>
                 <div id="cancel" class="mp-button bg-darkred text-white">
-                    Cancel
+                    キャンセル
                 </div>
             </div>`
 

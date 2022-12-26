@@ -12,7 +12,7 @@
                     echo $user->login; ?>
                 </h2>
             </div>
-			<textarea class="form-control" placeholder="Send a message..."></textarea>
+			<textarea class="form-control" placeholder="メッセージを送る..."></textarea>
             <button class="smallbutton btn m-0 push">Send</button>
 		</div>
 		

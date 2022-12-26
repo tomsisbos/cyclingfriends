@@ -220,31 +220,31 @@ export default class CFUtils {
 
     // Get amenity name from layer id
     static getAmenityName (amenity) {
-        if      (amenity == 'toilets') return 'Toilets'
-        else if (amenity == 'drinking-water') return 'Water spot'
-        else if (amenity == 'vending-machine-drinks') return 'Vending machine'
+        if      (amenity == 'toilets') return 'トイレ'
+        else if (amenity == 'drinking-water') return '水補給'
+        else if (amenity == 'vending-machine-drinks') return '自販機'
         else if (amenity == 'seven-eleven') return 'Seven Eleven'
         else if (amenity == 'family-mart' || amenity == 'mb-family-mart') return 'Family Mart'
         else if (amenity == 'lawson') return 'Lawson'
         else if (amenity == 'mini-stop') return 'Mini Stop'
         else if (amenity == 'daily-yamazaki') return 'Daily Yamazaki'
-        else if (amenity == 'michi-no-eki') return 'Michi no Eki'
-        else if (amenity == 'onsens') return 'Onsen'
-        else if (amenity == 'footbaths') return 'Footbath'
-        else if (amenity == 'rindos') return 'Rindo'
-        else if (amenity == 'cycle-path' || amenity == 'cycle-path-case') return 'Cycling Road'
+        else if (amenity == 'michi-no-eki') return '道の駅'
+        else if (amenity == 'onsens') return '温泉'
+        else if (amenity == 'footbaths') return '足湯'
+        else if (amenity == 'rindos') return '林道'
+        else if (amenity == 'cycle-path' || amenity == 'cycle-path-case') return 'サイクリングロード'
         else return 'Amenity'
     }
 
     static getSurfaceFromvalue (value) {
         switch (value) {
-            case 'paved': return 'Asphalt';
-            case 'asphalt': return 'Asphalt';
-            case 'concrete': return 'Concrete';
-            case 'gravel': return 'Gravel';
-            case 'unpaved': return 'Gravel';
-            case 'dirt': return 'Dirt';
-            case 'grass': return 'Unrideable';
+            case 'paved': return '舗装';
+            case 'asphalt': return '舗装';
+            case 'concrete': return 'コンクリート';
+            case 'gravel': return 'グラベル';
+            case 'unpaved': return 'グラベル';
+            case 'dirt': return 'ダート';
+            case 'grass': return '走行不能';
             default: return value 
         }
     }
@@ -271,9 +271,9 @@ export default class CFUtils {
     static getPeriodString (period) {
         var first, second
         switch (period['detail']) {
-            case 1: first = 'early '; break;
-            case 2: first = 'mid '; break;
-            case 3: first = 'late '; break;
+            case 1: first = '上旬'; break;
+            case 2: first = '中旬'; break;
+            case 3: first = '下旬'; break;
         }
         var second = this.getMonth(period['month'])
         return first + second
@@ -281,18 +281,18 @@ export default class CFUtils {
 
     static getMonth (number) {
         switch (number) {
-            case 1: return 'january'
-            case 2: return 'february'
-            case 3: return 'march'
-            case 4: return 'april'
-            case 5: return 'may'
-            case 6: return 'june'
-            case 7: return 'july'
-            case 8: return 'august'
-            case 9: return 'september'
-            case 10: return 'october'
-            case 11: return 'november'
-            case 12: return 'december'
+            case 1: return '1月'
+            case 2: return '2月'
+            case 3: return '3月'
+            case 4: return '4月'
+            case 5: return '5月'
+            case 6: return '6月'
+            case 7: return '7月'
+            case 8: return '8月'
+            case 9: return '9月'
+            case 10: return '10月'
+            case 11: return '11月'
+            case 12: return '12月'
         }
     }
 

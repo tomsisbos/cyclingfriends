@@ -15,17 +15,17 @@ if (isAjax()) {
         try {
 
             if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
-                throw new Exception('A problem have occured during file upload.');
+                throw new Exception('アップロード中に問題が発生しました。');
             } else {
                 // Get extension from file name
                 $ext = strtolower(substr($_FILES['file']['name'], -3));
 
                 if ($_FILES['file']['error'] == 2) { // If error is file_exceed_limit
-                    throw new Exception('The file you uploaded exceeds size limit (10Mb). Please reduce the size and try again.');
+                    throw new Exception('アップロードされたファイルがサイズ制限を超えています（10Mb）。サイズを縮小して再度お試しください。');
                 } else if (!getimagesize($_FILES["file"]["tmp_name"])) {
-                    throw new Exception('The file you uploaded is not an image file.');
+                    throw new Exception('アップロードされたファイルは画像ではありません。');
                 } else if (!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
-                    throw new Exception('This file is not a raw photography taken with a camera device.');
+                    throw new Exception('この画像にはタイムデータが付随されていません。未加工のファイルをアップロードしてください。');
                 }
                 
                 // Preparing variables
@@ -133,16 +133,16 @@ if (isAjax()) {
         try {
 
             if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
-                throw new Exception('A problem have occured during file upload.');
+                throw new Exception('アップロード中に問題が発生しました。');
             } else {
                 // Get extension from file name
                 $ext = strtolower(substr($_FILES['file']['name'], -3));
 
                 if ($_FILES['file']['error'] == 2) { // If error is file_exceed_limit
-                    throw new Exception('The file you uploaded exceeds size limit (10Mb). Please reduce the size and try again.');
+                    throw new Exception('アップロードされたファイルがサイズ制限を超えています（10Mb）。サイズを縮小して再度お試しください。');
                 } else if (!getimagesize($_FILES["file"]["tmp_name"])) {
-                    throw new Exception('The file you uploaded is not an image file.');
-                } else if (@!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
+                    throw new Exception('アップロードされたファイルは画像ではありません。');
+                } else if (!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
                     throw new Exception('This file is not a raw photography taken with a camera device.');
                 }
                 
@@ -208,7 +208,7 @@ if (isAjax()) {
             $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['user_login'], $mkpointimg['date'], $mkpointimg['month'], $mkpointimg['period'], $mkpointimg['file_blob'], $mkpointimg['file_size'], $mkpointimg['file_name'], $mkpointimg['file_type'], 0));    
             echo json_encode($mkpointimg);
         } else {
-            echo json_encode(['error' => 'This image have already been uploaded.']);
+            echo json_encode(['error' => $photo['file_name']. 'は既にアップロードされています。']);
         }
 		
     }
@@ -259,7 +259,7 @@ if (isAjax()) {
         if ($getMkpoint->rowCount() > 0) {
             $mkpoint = new Mkpoint($_GET['mkpoint']);
             echo json_encode(['data' => $mkpoint, 'photos' => $mkpoint->getImages()]);
-        } else echo json_encode(['error' => 'There is no mkpoint corresponding to this id.']);
+        } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
     }
 
     if (isset($_GET['display-mkpoints-list'])) {

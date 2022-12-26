@@ -8,6 +8,10 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     apiUrl = '/api/route.php'
+    state = []
+    currentState = 0
+    buttonUndo
+    buttonRedo
     waypointNumber = 0
     preparedWaypoint = 0
     start = 0
@@ -16,7 +20,96 @@ export default class BuildRouteMap extends GlobalMap {
     directionsMode = 'driving'
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
 
-    addBuildRouteControl () {
+    addRouteControl () {
+        // Get (or add) controller container
+        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        else var controller = this.addController()
+        // Container
+        var routeContainer = document.createElement('div')
+        routeContainer.className = 'map-controller-block flex-column'
+        controller.appendChild(routeContainer)
+        // Label
+        var routeOptionsLabel = document.createElement('div')
+        routeOptionsLabel.innerText = 'ルート設定'
+        routeOptionsLabel.className = 'map-controller-label'
+        routeContainer.appendChild(routeOptionsLabel)
+        // Line 3
+        let line3 = document.createElement('div')
+        line3.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line3)
+        var boxShowDistanceMarkers = document.createElement('input')
+        boxShowDistanceMarkers.id = 'boxShowDistanceMarkers'
+        boxShowDistanceMarkers.setAttribute('type', 'checkbox')
+        boxShowDistanceMarkers.setAttribute('checked', 'checked')
+        line3.appendChild(boxShowDistanceMarkers)
+        var boxShowDistanceMarkersLabel = document.createElement('label')
+        boxShowDistanceMarkersLabel.innerText = '距離を表示'
+        boxShowDistanceMarkersLabel.setAttribute('for', 'boxShowDistanceMarkers')
+        line3.appendChild(boxShowDistanceMarkersLabel)
+        boxShowDistanceMarkers.addEventListener('change', () => {
+            this.updateDistanceMarkers()
+        } )
+        // Line 4
+        let line4 = document.createElement('div')
+        line4.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line4)
+        var boxSet3D = document.createElement('input')
+        boxSet3D.id = 'boxSet3D'
+        boxSet3D.setAttribute('type', 'checkbox')
+        boxSet3D.setAttribute('checked', 'checked')
+        line4.appendChild(boxSet3D)
+        var boxSet3DLabel = document.createElement('label')
+        boxSet3DLabel.innerText = '3次元'
+        boxSet3DLabel.setAttribute('for', 'boxSet3D')
+        line4.appendChild(boxSet3DLabel)
+        boxSet3D.addEventListener('change', () => {
+            if (boxSet3D.checked) {
+                this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 1})
+            } else {
+                this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 0})
+            }
+        } )
+        // Camera buttons
+        let line6 = document.createElement('div')
+        line6.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line6)
+        // Focus button
+        var buttonFocus = document.createElement('button')
+        buttonFocus.className = 'map-controller-block mp-button mp-button-small'
+        buttonFocus.id = 'buttonFocus'
+        buttonFocus.innerText = '全体表示'
+        line6.appendChild(buttonFocus)
+        buttonFocus.addEventListener('click', () => {
+            this.focus(this.map.getSource('route')._data)
+        } )
+        // Fly button
+        var buttonFly = document.createElement('button')
+        buttonFly.className = 'map-controller-block mp-button mp-button-small'
+        buttonFly.id = 'buttonFly'
+        buttonFly.innerText = '走行再現'
+        line6.appendChild(buttonFly)
+        buttonFly.addEventListener('click', () => {
+            if (this.map.getSource('route')) {
+                this.flyAlong(this.data.routeData)
+            }
+        } )
+        // Edition buttons
+        let line7 = document.createElement('div')
+        line7.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line7)
+
+        // Hide and open on click on mobile display
+        routeOptionsLabel.addEventListener('click', () => {
+            routeContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+                if (getComputedStyle(controller).flexDirection == 'row') {
+                    routeOptionsLabel.classList.toggle('up')
+                    line.classList.toggle('hide-on-mobiles')
+                }
+            } )
+        } )
+    }
+
+    addRouteEditionControl () {
         // Get (or add) controller container
         if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
         else var controller = this.addController()
@@ -26,50 +119,50 @@ export default class BuildRouteMap extends GlobalMap {
         controller.appendChild(routeContainer)
         // Label
         var routeOptionsLabel = document.createElement('div')
-        routeOptionsLabel.innerText = 'Route options'
+        routeOptionsLabel.innerText = '作成ツール'
         routeOptionsLabel.className = 'map-controller-label'
         routeContainer.appendChild(routeOptionsLabel)
-        // Line 3
-        let line3 = document.createElement('div')
-        line3.className = 'map-controller-line'
-        routeContainer.appendChild(line3)
+        // Line 1
+        let line1 = document.createElement('div')
+        line1.className = 'map-controller-line'
+        routeContainer.appendChild(line1)
         var boxFollowRoads = document.createElement('input')
         boxFollowRoads.id = 'boxFollowRoads'
         boxFollowRoads.setAttribute('type', 'checkbox')
         boxFollowRoads.setAttribute('checked', 'checked')
-        line3.appendChild(boxFollowRoads)
+        line1.appendChild(boxFollowRoads)
         var boxFollowRoadsLabel = document.createElement('label')
-        boxFollowRoadsLabel.innerText = 'Follow roads'
+        boxFollowRoadsLabel.innerText = '道路に沿って作る'
         boxFollowRoadsLabel.setAttribute('for', 'boxFollowRoads')
-        line3.appendChild(boxFollowRoadsLabel)
-        // Line 4
-        let line4 = document.createElement('div')
-        line4.className = 'map-controller-line'
-        routeContainer.appendChild(line4)
+        line1.appendChild(boxFollowRoadsLabel)
+        // Line 2
+        let line2 = document.createElement('div')
+        line2.className = 'map-controller-line'
+        routeContainer.appendChild(line2)
         var boxFollowPaths = document.createElement('input')
         boxFollowPaths.id = 'boxFollowPaths'
         boxFollowPaths.setAttribute('type', 'checkbox')
-        line4.appendChild(boxFollowPaths)
+        line2.appendChild(boxFollowPaths)
         var boxFollowPathsLabel = document.createElement('label')
-        boxFollowPathsLabel.innerText = 'Follow paths'
+        boxFollowPathsLabel.innerText = '小道を優先する'
         boxFollowPathsLabel.setAttribute('for', 'boxFollowPaths')
-        line4.appendChild(boxFollowPathsLabel)
+        line2.appendChild(boxFollowPathsLabel)
         boxFollowPaths.addEventListener('change', () => {
             if (boxFollowPaths.checked) this.directionsMode = 'cycling'
             else this.directionsMode = 'driving'
         } )
-        // Line 5
-        let line5 = document.createElement('div')
-        line5.className = 'map-controller-line'
-        routeContainer.appendChild(line5)
+        // Line 3
+        let line3 = document.createElement('div')
+        line3.className = 'map-controller-line'
+        routeContainer.appendChild(line3)
         var boxAddWaypoints = document.createElement('input')
         boxAddWaypoints.setAttribute('type', 'checkbox')
         boxAddWaypoints.id = "boxAddWaypoints"
-        line5.appendChild(boxAddWaypoints)
+        line3.appendChild(boxAddWaypoints)
         var boxAddWaypointsLabel = document.createElement('label')
-        boxAddWaypointsLabel.innerText = 'Add waypoints mid-way'
+        boxAddWaypointsLabel.innerText = 'ウェイポイントを追加'
         boxAddWaypointsLabel.setAttribute('for', 'boxAddWaypoints')
-        line5.appendChild(boxAddWaypointsLabel)
+        line3.appendChild(boxAddWaypointsLabel)
         boxAddWaypoints.addEventListener('change', () => {
             console.log('boxAddWaypoints changed')
             if (boxAddWaypoints.checked) {
@@ -90,90 +183,48 @@ export default class BuildRouteMap extends GlobalMap {
                 this.map.on('click', this.routeBuilding)
             }
         } )
-
-        // Line 6
-        let line6 = document.createElement('div')
-        line6.className = 'map-controller-line'
-        routeContainer.appendChild(line6)
-        var boxShowDistanceMarkers = document.createElement('input')
-        boxShowDistanceMarkers.id = 'boxShowDistanceMarkers'
-        boxShowDistanceMarkers.setAttribute('type', 'checkbox')
-        boxShowDistanceMarkers.setAttribute('checked', 'checked')
-        line6.appendChild(boxShowDistanceMarkers)
-        var boxShowDistanceMarkersLabel = document.createElement('label')
-        boxShowDistanceMarkersLabel.innerText = 'Show distance markers'
-        boxShowDistanceMarkersLabel.setAttribute('for', 'boxShowDistanceMarkers')
-        line6.appendChild(boxShowDistanceMarkersLabel)
-        boxShowDistanceMarkers.addEventListener('change', () => {
-            this.updateDistanceMarkers()
-        } )
-        // Line 7
-        let line7 = document.createElement('div')
-        line7.className = 'map-controller-line'
-        routeContainer.appendChild(line7)
-        var boxSet3D = document.createElement('input')
-        boxSet3D.id = 'boxSet3D'
-        boxSet3D.setAttribute('type', 'checkbox')
-        boxSet3D.setAttribute('checked', 'checked')
-        line7.appendChild(boxSet3D)
-        var boxSet3DLabel = document.createElement('label')
-        boxSet3DLabel.innerText = 'Enable 3D'
-        boxSet3DLabel.setAttribute('for', 'boxSet3D')
-        line7.appendChild(boxSet3DLabel)
-        boxSet3D.addEventListener('change', () => {
-            if (boxSet3D.checked) {
-                this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 1})
-            } else {
-                this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 0})
-            }
-        } )
-        // Camera buttons
-        let line8 = document.createElement('div')
-        line8.className = 'map-controller-buttons'
-        routeContainer.appendChild(line8)
-        // Focus button
-        var buttonFocus = document.createElement('button')
-        buttonFocus.className = 'map-controller-block mp-button mp-button-small'
-        buttonFocus.id = 'buttonFocus'
-        buttonFocus.innerText = 'Focus'
-        line8.appendChild(buttonFocus)
-        buttonFocus.addEventListener('click', () => {
-            this.focus(this.map.getSource('route')._data)
-        } )
-        buttonFocus.setAttribute('disabled', 'disabled')
-        // Fly button
-        var buttonFly = document.createElement('button')
-        buttonFly.className = 'map-controller-block mp-button mp-button-small'
-        buttonFly.id = 'buttonFly'
-        buttonFly.innerText = 'Fly'
-        line8.appendChild(buttonFly)
-        buttonFly.addEventListener('click', () => {
-            if (this.map.getSource('route')) {
-                this.flyAlong(this.map.getSource('route')._data)
-            }
-        } )
-        buttonFly.setAttribute('disabled', 'disabled')
         // Edition buttons
-        let line9 = document.createElement('div')
-        line9.className = 'map-controller-buttons'
-        routeContainer.appendChild(line9)
+        let line4 = document.createElement('div')
+        line4.className = 'map-controller-buttons'
+        routeContainer.appendChild(line4)
+        // Undo button
+        this.buttonUndo = document.createElement('button')
+        this.buttonUndo.className = 'map-controller-block mp-button mp-button-small'
+        this.buttonUndo.id = 'buttonUndo'
+        this.buttonUndo.innerText = 'Undo'
+        line4.appendChild(this.buttonUndo)
+        this.buttonUndo.addEventListener('click', async () => this.undo())
+        this.buttonUndo.setAttribute('disabled', 'disabled')
+        // Redo button
+        this.buttonRedo = document.createElement('button')
+        this.buttonRedo.className = 'map-controller-block mp-button mp-button-small'
+        this.buttonRedo.id = 'buttonRedo'
+        this.buttonRedo.innerText = 'Redo'
+        line4.appendChild(this.buttonRedo)
+        this.buttonRedo.addEventListener('click', async () => this.redo())
+        this.buttonRedo.setAttribute('disabled', 'disabled')
+        let line5 = document.createElement('div')
+        line5.className = 'map-controller-buttons'
+        routeContainer.appendChild(line5)
         // Clear button
         var buttonClear = document.createElement('button')
         buttonClear.className = 'map-controller-block mp-button mp-button-small'
         buttonClear.id = 'buttonClear'
-        buttonClear.innerText = 'Clear'
-        line9.appendChild(buttonClear)
-        buttonClear.addEventListener('click', () => {
-            this.clearRoute()
-            this.hideProfile()
+        buttonClear.innerText = 'クリア'
+        line5.appendChild(buttonClear)
+        buttonClear.addEventListener('click', async () => {
+            if (await openConfirmationPopup('現在のコースが削除されます。宜しいですか？')) {
+                this.clearRoute()
+                this.hideProfile()
+            }                
         } )
         buttonClear.setAttribute('disabled', 'disabled')
         // Save button
         var buttonSave = document.createElement('button')
         buttonSave.className = 'map-controller-block mp-button mp-button-small'
         buttonSave.id = 'buttonSave'
-        buttonSave.innerText = 'Save'
-        line9.appendChild(buttonSave)
+        buttonSave.innerText = '保存'
+        line5.appendChild(buttonSave)
         buttonSave.addEventListener('click', async () => {
             // Hide waypoints
             let i = 2
@@ -240,11 +291,8 @@ export default class BuildRouteMap extends GlobalMap {
         var route = this.map.getSource('route')
         var boxFollowRoads = document.querySelector('#boxFollowRoads')
         // Choose drawing mode depending on settings
-        if (boxFollowRoads.checked) {
-            await this.directionsRequest(route, end)
-        } else {
-            this.drawStraight(route, end)
-        }
+        if (boxFollowRoads.checked) await this.directionsRequest(route, end)
+        else this.drawStraight(route, end)
         // Replace on the route if necessary
         if (route) {
             var point = this.map.getSource('endPoint')
@@ -528,6 +576,8 @@ export default class BuildRouteMap extends GlobalMap {
         route.setData(geojson)
         // Update tunnels
         this.updateTunnels(this.map.getSource('route')._data.properties.tunnels)
+
+        this.addState()
     }
 
     // Paint tunnels on map from an array of coordinate arrays
@@ -1284,17 +1334,17 @@ export default class BuildRouteMap extends GlobalMap {
             savePopup.classList.add('popup')
             savePopup.innerHTML = `
             <div>
-                <label>Name :</label>
+                <label>タイトル :</label>
                 <input type="text" class="js-route-name fullwidth" />
-                <label>Description :</label>
+                <label>詳細 :</label>
                 <textarea class="js-route-description fullwidth"></textarea>
             </div>
             <div id="saveButtons" class="d-flex justify-content-between">
                 <div id="save" class="mp-button bg-darkgreen text-white">
-                    Save
+                    保存
                 </div>
                 <div id="cancel" class="mp-button bg-darkred text-white">
-                    Cancel
+                    キャンセル
                 </div>
             </div>`
 
@@ -1327,7 +1377,7 @@ export default class BuildRouteMap extends GlobalMap {
                     var createSegmentButton = document.createElement('button')
                     createSegmentButton.id = 'createSegment'
                     createSegmentButton.className = 'mp-button bg-admin'
-                    createSegmentButton.innerText = 'Create segment'
+                    createSegmentButton.innerText = 'セグメントを作成'
                     document.querySelector('#saveButtons').before(createSegmentButton)
 
                     // On click of create segment button, display create segment form
@@ -1366,9 +1416,9 @@ export default class BuildRouteMap extends GlobalMap {
                         createSegmentForm.id = 'createSegmentForm'
                         createSegmentForm.className = 'bg-admin'
                         createSegmentForm.innerHTML = `
-                        <h5>Segment properties</h5>
+                        <h5>セグメントプロパティ</h5>
                         <p>
-                            <label>Rank :</label>
+                            <label>規模 :</label>
                             <select id="rank" class="js-segment-rank fullwidth">
                                 <option value="local" selected>Local</option>
                                 <option value="regional">Regional</option>
@@ -1376,32 +1426,32 @@ export default class BuildRouteMap extends GlobalMap {
                             </select>
                             <div class="mp-checkbox">
                                 <input type="checkbox" id="advised" class="js-segment-advised" />
-                                <label for="advised">Favoured by cyclingfriends</label>
+                                <label for="advised">cyclingfriendsのおススメ</label>
                             </div>
                         </p>
-                        <button id="addSeason" class="mp-button bg-white">Add recommended period</button>
-                        <button id="addAdvice" class="mp-button bg-white">Add advice</button>
+                        <button id="addSeason" class="mp-button bg-white">「おススメ季節」を追加</button>
+                        <button id="addAdvice" class="mp-button bg-white">「ポイント」を追加</button>
                         <div class="mb-2">
-                            <label>Specs :</label><br>
+                            <label>特徴 :</label><br>
                             <div class="mp-checkbox">
                                 <input type="checkbox" id="specOffroad" class="js-segment-spec-offroad" />
-                                <label for="specOffroad">Offroad</label>
+                                <label for="specOffroad">未舗装</label>
                             </div>
                             <div class="mp-checkbox">
                                 <input type="checkbox" id="specRindo" class="js-segment-spec-rindo" />
-                                <label for="specRindo">Rindo</label>
+                                <label for="specRindo">林道</label>
                             </div>
                             <div class="mp-checkbox">
                                 <input type="checkbox" id="specCyclinglane" class="js-segment-spec-cyclinglane" />
-                                <label for="specCyclinglane">Cycling lane</label>
+                                <label for="specCyclinglane">サイクリングレーン</label>
                             </div>
                             <div class="mp-checkbox">
                                 <input type="checkbox" id="specCyclingroad" class="js-segment-spec-cyclingroad" />
-                                <label for="specCyclingroad">Cycling road</label>
+                                <label for="specCyclingroad">サイクリングロード</label>
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label>Tags :</label><br>` + 
+                            <label>タグ :</label><br>` + 
                                 $tags + `
                         </div>`
                         createSegmentButton.after(createSegmentForm)
@@ -1422,58 +1472,58 @@ export default class BuildRouteMap extends GlobalMap {
                             seasonSection.id = 'period' + (cursor + 1)
                             seasonSection.className = 'rt-section js-segment-season-section'
                             seasonSection.innerHTML = `
-                            <label class="js-segment-period-title">Period n°` + (cursor + 1) + `</label>
+                            <label class="js-segment-period-title">時期 n°` + (cursor + 1) + `</label>
                             <div class="d-flex">
                                 <div class="col-md-6">
-                                    <label>Period start :</label><br>
+                                    <label>開始 :</label><br>
                                     <div class="d-flex justify-content-center">
-                                        <select id="periodStart1">
-                                            <option value="1" selected>Early</option>
-                                            <option value="2">Mid</option>
-                                            <option value="3">Late</option>
-                                        </select>
                                         <select id="periodStart2">
-                                            <option value="1" selected>January</option>
-                                            <option value="2">February</option>
-                                            <option value="3">March</option>
-                                            <option value="4">April</option>
-                                            <option value="5">May</option>
-                                            <option value="6">June</option>
-                                            <option value="7">July</option>
-                                            <option value="8">August</option>
-                                            <option value="9">September</option>
-                                            <option value="10">October</option>
-                                            <option value="11">November</option>
-                                            <option value="12">December</option>
+                                            <option value="1" selected>1月</option>
+                                            <option value="2">2月</option>
+                                            <option value="3">3月</option>
+                                            <option value="4">4月</option>
+                                            <option value="5">5月</option>
+                                            <option value="6">6月</option>
+                                            <option value="7">7月</option>
+                                            <option value="8">8月</option>
+                                            <option value="9">9月</option>
+                                            <option value="10">10月</option>
+                                            <option value="11">11月</option>
+                                            <option value="12">12月</option>
+                                        </select>
+                                        <select id="periodStart1">
+                                            <option value="1" selected>上旬</option>
+                                            <option value="2">中旬</option>
+                                            <option value="3">下旬</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label>Period End :</label><br>
+                                    <label>終了 :</label><br>
                                     <div class="d-flex justify-content-center">
-                                        <select id="periodEnd1">
-                                            <option value="1">Early</option>
-                                            <option value="2">Mid</option>
-                                            <option value="3" selected>Late</option>
-                                        </select>
                                         <select id="periodEnd2">
-                                            <option value="1">January</option>
-                                            <option value="2">February</option>
-                                            <option value="3">March</option>
-                                            <option value="4">April</option>
-                                            <option value="5">May</option>
-                                            <option value="6">June</option>
-                                            <option value="7">July</option>
-                                            <option value="8">August</option>
-                                            <option value="9">September</option>
-                                            <option value="10">October</option>
-                                            <option value="11">November</option>
-                                            <option value="12" selected>December</option>
+                                            <option value="1">1月</option>
+                                            <option value="2">2月</option>
+                                            <option value="3">3月</option>
+                                            <option value="4">4月</option>
+                                            <option value="5">5月</option>
+                                            <option value="6">6月</option>
+                                            <option value="7">7月</option>
+                                            <option value="8">8月</option>
+                                            <option value="9">9月</option>
+                                            <option value="10">10月</option>
+                                            <option value="11">11月</option>
+                                            <option value="12" selected>12月</option>
+                                        </select>
+                                        <select id="periodEnd1">
+                                            <option value="1">上旬</option>
+                                            <option value="2">中旬</option>
+                                            <option value="3" selected>下旬</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <label>Description :</label>
+                            <label>紹介文 :</label>
                             <textarea class="js-segment-period-description fullwidth"></textarea>
                             <button id="removePeriod` + (cursor + 1) + `" class="mapboxgl-popup-close-button" type="button">×</button>`
                             addSeasonButton.before(seasonSection)
@@ -1493,7 +1543,7 @@ export default class BuildRouteMap extends GlobalMap {
                                     if (id > number) {
                                         console.log('updated')
                                         section.id = 'season' + (id - 1) // Decrease section id number
-                                        section.querySelector('.js-segment-period-title').innerText = 'Period n°' + (id - 1) // Decrease section title number
+                                        section.querySelector('.js-segment-period-title').innerText = '時期 n°' + (id - 1) // Decrease section title number
                                         section.querySelector('.mapboxgl-popup-close-button').id = 'removePeriod' + (id - 1) // Decrease section remove button id number
                                     }
                                 } )
@@ -1525,10 +1575,10 @@ export default class BuildRouteMap extends GlobalMap {
                             adviceSection.id = 'advice'
                             adviceSection.className = 'rt-section js-segment-advice-section'
                             adviceSection.innerHTML = `
-                            <label>Advice</label><br>
-                            <label>Name :</label><br>
+                            <label>ポイント</label><br>
+                            <label>タイトル :</label><br>
                             <input type="text" class="js-segment-advice-name fullwidth" />
-                            <label>Description :</label><br>
+                            <label>内容 :</label><br>
                             <textarea class="js-segment-advice-description fullwidth"></textarea>
                             <button id="removeAdvice" class="mapboxgl-popup-close-button" type="button">×</button>`
                             addSeasonButton.after(adviceSection)
@@ -1555,7 +1605,7 @@ export default class BuildRouteMap extends GlobalMap {
                         var saveAsRouteButton = document.createElement('button')
                         saveAsRouteButton.id = 'saveAsRoute'
                         saveAsRouteButton.className = 'mp-button bg-darkred text-white'
-                        saveAsRouteButton.innerText = 'close'
+                        saveAsRouteButton.innerText = '閉じる'
                         createSegmentForm.appendChild(saveAsRouteButton)
                         saveAsRouteButton.addEventListener('click', () => {
                             // Restore usual properties
@@ -1636,9 +1686,8 @@ export default class BuildRouteMap extends GlobalMap {
                     }
                 } ]
             }
-            if (this.map.getLayer('endPoint')) {
-                this.map.getSource('endPoint').setData(end);
-            } else {
+            if (this.map.getLayer('endPoint')) this.map.getSource('endPoint').setData(end);
+            else {
                 this.map.addLayer({
                     id: 'endPoint',
                     type: 'circle',
@@ -1699,10 +1748,100 @@ export default class BuildRouteMap extends GlobalMap {
             } )
             this.configureStartPoint()
         }
+        this.addState()
     }
 
     routeEditing = (e) => {
         this.addIntermediateWaypoint([e.lngLat.lng, e.lngLat.lat])
+        this.addState()
+    }
+
+    addState () {
+        // Get route source
+        var route = this.map.getSource('route')._data
+        // Get startpoint source
+        var startpoint = this.map.getSource('startPoint')._data
+        // Get waypoint sources
+        var waypoints = []
+        if (this.map.getSource('wayPoint2')) {
+            for (let i = 1; i < this.waypointNumber; i++) {
+                if (this.map.getSource('wayPoint' + (i + 1))) waypoints.push(this.map.getSource('wayPoint' + (i + 1))._data)
+            }
+        }
+        // Get endpoint source
+        var endpoint = this.map.getSource('endPoint')._data
+
+        // Store new state
+        this.state.splice(this.currentState, Infinity, {startpoint, waypoints, endpoint, route})
+        console.log(this.state)
+
+        // Update current state property
+        this.currentState++
+
+        this.updateStateButtons()
+    }
+
+    restoreState (stateNumber) {
+        console.log(this.waypointNumber)
+
+        // Restore previous state
+        var key = stateNumber - 1
+        this.map.getSource('route').setData(this.state[key].route)
+        this.map.getSource('startPoint').setData(this.state[key].startpoint)
+        this.map.getSource('endPoint').setData(this.state[key].endpoint)
+        for (let i = 0; i < this.waypointNumber - 1; i++) {
+            this.map.removeLayer('wayPoint' + (i + 2))
+            this.map.removeSource('wayPoint' + (i + 2))
+        }
+        for (let i = 0; i < this.state[key].waypoints.length; i++) {
+            this.map.addSource('wayPoint' + (i + 2), {
+                type: 'geojson',
+                data: this.state[key].waypoints[i]
+            } )
+            this.map.addLayer( {
+                id: 'wayPoint' + (i + 2),
+                type: 'circle',
+                source: 'wayPoint' + (i + 2),
+                paint: {
+                    'circle-radius': 4,
+                    'circle-color': '#fff',
+                    'circle-stroke-color': this.routeColor,
+                    'circle-stroke-width': 1
+                }
+            } )
+        }
+        // Update waypointNumber
+        this.waypointNumber = this.state[key].waypoints.length + 1
+        console.log(this.waypointNumber)
+
+        this.updateStateButtons()
+    }
+
+    updateStateButtons () {
+        // Update undo/redo buttons depending on the state
+        if (this.state.length == 0) {
+            this.buttonUndo.setAttribute('disabled', 'disabled')
+            this.buttonRedo.setAttribute('disabled', 'disabled')
+        } else if (this.currentState != 0 && this.currentState != this.state.length) {
+            this.buttonUndo.removeAttribute('disabled')
+            this.buttonRedo.removeAttribute('disabled')
+        } else if (this.currentState != 0 && this.currentState == this.state.length) {
+            this.buttonUndo.removeAttribute('disabled')
+            this.buttonRedo.setAttribute('disabled', 'disabled')
+        } else if (this.currentState == 0 && this.currentState > 0) {
+            this.buttonUndo.setAttribute('disabled', 'disabled')
+            this.buttonRedo.removeAttribute('disabled')
+        }
+    }
+
+    undo () {
+        this.currentState--
+        this.restoreState(this.currentState)
+    }
+
+    redo () {
+        this.currentState++
+        this.restoreState(this.currentState)
     }
 
     // Save current route

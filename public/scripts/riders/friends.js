@@ -23,8 +23,8 @@ if (friendButtons = document.querySelectorAll('.js-friend')) {
 		var user_login = button.dataset.login
 		button.addEventListener('click', async function () {
 			var action = button.dataset.action
-			if (action == 'dismiss') var answer = await openConfirmationPopup('Do you really want to dismiss ' + user_login + '\'s request ?')
-			else if (action == 'remove') var answer = await openConfirmationPopup('Do you really want to remove ' + user_login + ' from your friends list ?')
+			if (action == 'dismiss') var answer = await openConfirmationPopup(user_login + 'の友達申請を却下します。宜しいですか？')
+			else if (action == 'remove') var answer = await openConfirmationPopup(user_login + 'を友達リストから削除します。宜しいですか？')
 			else var answer = true
 			if (action != 'requested' && answer) {
 				friendAction(action, user_id, (response) => {
@@ -97,6 +97,6 @@ function getActionName (action) {
 		case 'remove': return 'Remove friend'
 		case 'accept': return 'Accept'
 		case 'dismiss': return 'Dismiss'
-		case 'requested': return 'Request sent...'
+		case 'requested': return '送信済み...'
 	}
 }

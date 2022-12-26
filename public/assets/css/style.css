@@ -236,6 +236,15 @@ img.site-logo {
 	cursor: pointer;
 }
 
+.terrain-icon {
+    object-fit: cover;
+    object-position: 0% 80%;
+    height: 1em;
+    width: 40px;
+    align-self: self-start;
+    border: 1px dashed;
+}
+
 .gallery-picture {
     width: 100%;
     height: 100%;

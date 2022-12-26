@@ -22,11 +22,11 @@ export default class TempPopup extends Popup {
         $tags += '</div>'
 
         this.popup.setHTML(`
-            <div class="popup-head popup-content container-admin">Share a new scenery spot</div>
+            <div class="popup-head popup-content container-admin">絶景スポットの新規作成</div>
             <form class="popup-content" name="mkpointForm" id="mkpointForm">
-                <strong>Name :</strong>
+                <strong>タイトル :</strong>
                 <input type="text" name="name" class="admin-field"/>
-                <strong>Description :</strong>
+                <strong>紹介文 :</strong>
                 <textarea name="description" class="admin-field"></textarea>
                 <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
                 <label for="file" class="mp-button"><input enctype="multipart/form-data" type="file" name="file" id="file" style="display: none" />Upload a photo</label>

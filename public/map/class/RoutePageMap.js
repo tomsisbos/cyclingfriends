@@ -95,7 +95,7 @@ export default class RoutePageMap extends GlobalMap {
         
         // Add each mkpoint
         for (let i = 0; i < this.mkpoints.length; i++) {
-            if (this.mkpoints[i].on_route) var remoteness = 'On route'
+            if (this.mkpoints[i].on_route) var remoteness = 'コース上'
             else var remoteness = Math.floor(this.mkpoints[i].remoteness * 10) / 10 + 'km'
             let entry = {
                 type: 'mkpoint',
@@ -127,7 +127,7 @@ export default class RoutePageMap extends GlobalMap {
                     distance: 'km ' + Math.floor(this.ride.checkpoints[i].distance * 10) / 10,
                     distanceValue: Math.floor(this.ride.checkpoints[i].distance * 100 ) / 100,
                     elevation: this.ride.checkpoints[i].elevation + 'm',
-                    remoteness: 'On route'
+                    remoteness: 'コース上'
                 }
                 tableData.push(entry)
             }
@@ -142,7 +142,7 @@ export default class RoutePageMap extends GlobalMap {
         tableData.forEach( (entry) => {
 
             var tr = document.createElement('tr')
-            if (entry.remoteness != 'On route') tr.classList.add('offroute')
+            if (entry.remoteness != 'コース上') tr.classList.add('offroute')
             var td = []
             if (previousEntry && entry.distance == previousEntry.distance) var ignore = true // Ignore if similar entry
             tr.id = entry.type + entry.id
@@ -180,7 +180,7 @@ export default class RoutePageMap extends GlobalMap {
                             $marker.classList.add('selected-marker')
                             document.querySelector('#routeTable #' + entry.type + entry.id).classList.add('selected-entry')
                             // Add selected-marker class
-                            if (this.ride && ((this.ride.options.sf == false && entry.remoteness == 'On route') || (this.ride.options.sf == true && entry.remoteness == 'On route' && entry.id != this.ride.checkpoints.length - 1))) {
+                            if (this.ride && ((this.ride.options.sf == false && entry.remoteness == 'コース上') || (this.ride.options.sf == true && entry.remoteness == 'コース上' && entry.id != this.ride.checkpoints.length - 1))) {
                                 // To clicked marker
                                 document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.add('selected-marker')
                                 // To clicked thumbnail
@@ -304,6 +304,8 @@ export default class RoutePageMap extends GlobalMap {
                 distance.innerText = entry.distance
                 distance.className = 'rt-preview-photos-distance'
                 thumbnail.appendChild(distance)
+                console.log(sliderData)
+                console.log(cursor + ' + ' + sliderData.length)
                 if (cursor < sliderData.length) {
                     var svg = document.createElement('svg')
                     svg.innerHTML = `
@@ -487,7 +489,7 @@ export default class RoutePageMap extends GlobalMap {
             <div class="popup-img-container">
             <img class="popup-img" src="` + img + `" />
                 <div class="popup-icons">
-                    <div id="target-button" title="Click to fly to this spot">
+                    <div id="target-button" title="この位置に移動する">
                         <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
                     </div>
                 </div>

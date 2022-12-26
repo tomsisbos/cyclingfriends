@@ -64,7 +64,7 @@ if (isset($_SESSION['forms']['created'])) {
 						<div class="my-rd-responsive-label">出発日 : </div><?= $ride->date ?>
 						</div>
 						<div class="my-rd-td table-element e30 bg-grey">
-							<?= truncate($ride->name, 0, 50) ?>
+							<?= $ride->name ?>
 						</div>
 						<?php // Set text color depending on the status
 						$status_color = colorStatus($ride->status)[0]; ?>

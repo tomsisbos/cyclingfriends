@@ -22,4 +22,23 @@ class Model {
         return $getData->fetch();
     }
 
+    // Attribute a color depending on the level
+    public function colorLevel ($level) {
+        if (is_countable($level)) {
+            switch ($level) {
+                case 1 : return 'green';
+                case 2 : return'blue';
+                case 3 : return 'red'; 
+                default : return 'black';
+            }
+        } else {
+            switch ($level) {
+                case 'Beginner' : return 'green';
+                case 'Intermediate' : return'blue';
+                case 'Athlete' : return 'red'; 
+                default : return 'black';
+            }
+        }
+    }
+
 }

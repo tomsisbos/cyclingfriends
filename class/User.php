@@ -138,10 +138,18 @@ class User extends Model {
         return $password = $getUserInfos->fetch(PDO::FETCH_NUM)[0];
     }
     
-    public function getInscriptionDate($user){
+    public function getInscriptionDate ($user) {
         $getUserInfos = $this->getPdo()->prepare('SELECT * FROM users WHERE id = ?');
         $getUserInfos->execute(array($user));
         return $user_infos = $getUserInfos->fetch();
+    }
+
+    public function getLevelString () {
+        switch ($this->level) {
+            case 'Beginner': return '初心者';
+            case 'Intermediate': return '中級者';
+            case 'Athlete': return '上級者';
+        }
     }
 
     // Function calculating an age from birthdate
@@ -156,6 +164,14 @@ class User extends Model {
         $setLocation = $this->getPdo()->prepare('UPDATE users SET city = ?, prefecture = ?, lng = ?, lat = ? WHERE id = ?');
         $setLocation->execute([$geolocation->city, $geolocation->prefecture, $lngLat->lng, $lngLat->lat, $this->id]);
         return true;
+    }
+
+    public function getGenderString () {
+        switch ($this->gender) {
+            case 'Man': return '男';
+            case 'Woman': return '女';
+            default: return '特定無し';
+        }
     }
 
     // Register a friend request

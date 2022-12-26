@@ -168,7 +168,7 @@ async function displayForm () {
         var markersNumber = map._markers.length
         if (!$firstMarker || (markersNumber === 1 && $firstMarker.innerText == 'S')) {
             e.preventDefault()
-            var error = 'You need to set at least the starting point and the finish point (or the start and finish point) of your ride.'
+            var error = '少なくとも、ライドのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'
             if(document.querySelector('.error-block')){
                 document.querySelector('.error-block').remove()
             }
@@ -203,7 +203,7 @@ async function displayForm () {
 
         // If no route have been selected, display an error message
         if (rideDrawMap.route == undefined) {
-            var error = 'No route has been selected. Please select a route along your routes list below.'
+            var error = 'ルートが選択されていません。下記のリストからルートを選択してください。'
             if (document.querySelector('.error-block')) {
                 document.querySelector('.error-block').remove()
             }

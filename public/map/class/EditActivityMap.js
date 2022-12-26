@@ -21,14 +21,14 @@ export default class EditActivityMap extends NewActivityMap {
         var $avgTemperature = $form.querySelector('#divAvgTemperature')
         var $maxTemperature = $form.querySelector('#divMaxTemperature')
         if (this.data.title != $title.value) $title.value = this.data.title
-        $start.innerHTML = '<strong>Start : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
-        $goal.innerHTML = '<strong>Goal : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
-        $distance.innerHTML = '<strong>Distance : </strong>' + this.data.route.distance + 'km'
-        $duration.innerHTML = '<strong>Duration : </strong>' + new Date(this.data.duration.date).getHours() + 'h' + new Date(this.data.duration.date).getMinutes()
-        $elevation.innerHTML = '<strong>Elevation : </strong>' + this.data.route.elevation + 'm'
-        $minTemperature.innerHTML = '<strong>Min. Temperature : </strong>' + this.data.temperature_min + '°C'
-        $avgTemperature.innerHTML = '<strong>Avg. Temperature : </strong>' + this.data.temperature_avg + '°C'
-        $maxTemperature.innerHTML = '<strong>Max. Temperature : </strong>' + this.data.temperature_max + '°C'
+        $start.innerHTML = '<strong>スタート : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
+        $goal.innerHTML = '<strong>ゴール : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
+        $distance.innerHTML = '<strong>距離 : </strong>' + this.data.route.distance + 'km'
+        $duration.innerHTML = '<strong>時間 : </strong>' + new Date(this.data.duration.date).getHours() + 'h' + new Date(this.data.duration.date).getMinutes()
+        $elevation.innerHTML = '<strong>獲得標高 : </strong>' + this.data.route.elevation + 'm'
+        $minTemperature.innerHTML = '<strong>最低気温 : </strong>' + this.data.temperature_min + '°C'
+        $avgTemperature.innerHTML = '<strong>平均気温 : </strong>' + this.data.temperature_avg + '°C'
+        $maxTemperature.innerHTML = '<strong>最高気温 : </strong>' + this.data.temperature_max + '°C'
         this.updateCheckpointForms()
     }
 

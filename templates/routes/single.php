@@ -86,11 +86,11 @@ include '../actions/users/securityAction.php';
                     <table id="routeTable">
                         <tbody>
                             <tr class="spec-table-th">
-                                <th class="table-element e10 text-left">スタートから</th>
+                                <th class="table-element e10 text-left">距離</th>
                                 <th class="table-element e40 text-left">名称</th>
                                 <th class="table-element e20 text-center">場所</th>
                                 <th class="table-element e15 text-center">標高</th>
-                                <th class="table-element e25 text-center">ルートまで</th>
+                                <th class="table-element e25 text-center">コースまで</th>
                             </tr>
                         </tbody>
                     </table>

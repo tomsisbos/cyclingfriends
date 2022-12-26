@@ -34,32 +34,32 @@ document.querySelector('button#addBike').addEventListener('click', () => {
             <form method="post" bike_id="new" class="fullwidth">
                 <div class="row">
                     <div class="col mb-3">
-                        <label><strong>Type : </strong></label>
+                        <label><strong>車種 : </strong></label>
                         <select name="bike-type" class="js-bike-type admin-field">
-                            <option value="Other">Other</option>
-                            <option value="City bike">City bike</option>
-                            <option value="Road bike">Road bike</option>
-                            <option value="Mountain bike">Mountain bike</option>
-                            <option value="Gravel/Cyclocross bike">Gravel/Cyclocross bike</option>
+                            <option value="Other">その他</option>
+                            <option value="City bike">ママチャリ</option>
+                            <option value="Road bike">ロードバイク</option>
+                            <option value="Mountain bike">マウンテンバイク</option>
+                            <option value="Gravel/Cyclocross bike">グラベル／シクロクロスバイク</option>
                         </select>
                     </div>
                     <div class="col mb-3">
-                        <label><strong>Model : </strong></label>
+                        <label><strong>モデル : </strong></label>
                         <input type="text" name="bike-model" class="js-bike-model admin-field">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label><strong>Wheels : </strong></label>
+                        <label><strong>ホイール : </strong></label>
                         <input type="text" name="bike-wheels" class="js-bike-wheels admin-field">
                     </div>
                     <div class="col mb-3">
-                        <label><strong>Components : </strong></label>
+                        <label><strong>コンポネント : </strong></label>
                         <input type="text" name="bike-components" class="js-bike-components admin-field">
                     </div>
                 </div>
                 <div class="col mb-3">
-                    <label><strong>Description : </strong></label>
+                    <label><strong>紹介文 : </strong></label>
                     <textarea name="bike-description" class="js-bike-description col-9 admin-field d-block fullwidth"></textarea>
                 </div>
             </form>
@@ -82,7 +82,7 @@ function addListeners() {
             var output = input.closest('.js-bike-container').querySelector('.js-file-preview')
             if (input.files[0]) {
                 output.innerHTML = input.files[0].name + ' (' + input.files[0].size.toString().slice(0, -3) + 'Ko)' + `
-                <input type="submit" value="Send" class="btn smallbutton" />`
+                <input type="submit" value="送信" class="btn smallbutton" />`
             }
         } )
     } )
@@ -100,7 +100,7 @@ function addListeners() {
             var bikeId = e.target.closest('.js-bike-container').getAttribute('bike_id')
             console.log(bikeId)
             var bikeDiv = e.target.closest('.container-admin')
-            answer = await openConfirmationPopup('Do you really want to delete this bike ?')
+            answer = await openConfirmationPopup('このバイクを削除します。宜しいですか？')
             if (answer) {
                 ajaxGetRequest (apiUrl + '?deleteBike=' + bikeId, (response) => {
                     if (response[0] == true) {

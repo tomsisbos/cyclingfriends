@@ -65,6 +65,8 @@
 }
 
 .mk-activities-container {
+    overflow: auto;
+    max-height: 250px;
     background-color: #fff;
     flex-direction: column;
     gap: 10px;

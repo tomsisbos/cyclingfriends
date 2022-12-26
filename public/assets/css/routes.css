@@ -7,9 +7,6 @@
     top: 0px;
     z-index: 1;
 }
-#routePageMap {
-    height: 100%
-}
 
 /* My routes */
 
@@ -235,6 +232,10 @@
 }
 
 @media only screen and (max-width: 768px) {
+    
+    .table-element, .spec-table td {
+        padding: 0px 3px;
+    }
     .spec-table-container {
         padding: unset !important;
     }

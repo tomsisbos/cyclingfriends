@@ -7,8 +7,8 @@ if (document.getElementById('showBike')) {
     // Display other bikes and change button text on click
     showButton.addEventListener('click', () => {
         bikes.forEach( (bike) => bike.classList.toggle('bike-displayed'))
-        if (showButton.innerText === 'Hide') showButton.innerText = showText
-        else showButton.innerText = 'Hide'
+        if (showButton.innerText === '非表示') showButton.innerText = showText
+        else showButton.innerText = '非表示'
     } )
 }
 

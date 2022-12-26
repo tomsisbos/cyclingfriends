@@ -21,7 +21,7 @@ $cleared_segments_number = $user->countClearedSegments(); ?>
     if (count($cleared_segments) == 0) { ?>
         <div class="success-block">
             <div class="success-message">
-                <?= $user->login ?> don't have any cleared segment yet. Let's explore the world together !
+                <?= $user->login ?>はセグメントを走行したことがまだないようです。一緒に世界を探検しましょう !
             </div>
         </div> <?php
 

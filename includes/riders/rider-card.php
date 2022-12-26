@@ -46,7 +46,7 @@
                             } ?>
                         </div> <?php
                         if ($rider->isFriend($connected_user)) { ?>
-                            <strong>友達から :</strong><?= datetimeToDate($rider->friendsSince($connected_user->id)); 
+                            <?= datetimeToDate($rider->friendsSince($connected_user->id)). ' から友達'; 
                         } ?>
                     </div>
                 </div>
@@ -63,14 +63,14 @@
                     } 
                     if (!empty($rider->birthdate)) { ?>
                         <strong>年齢 : </strong>
-                        <?= $rider->calculateAge(). ' years old';
+                        <?= $rider->calculateAge(). '才';
                     } ?>
                 </div> <?php
                 if (!empty($rider->level)) { ?>
                     <div>
                         <strong>レベル : </strong>
-                        <span class="tag-<?= colorLevel($rider->level); ?>">
-                            <?= $rider->level; ?>
+                        <span class="tag-<?= $rider->colorLevel($rider->level); ?>">
+                            <?= $rider->getLevelString(); ?>
                         </span>
                     </div> <?php
                 } 
@@ -90,7 +90,6 @@
         </div>
     
         <!-- Buttons --> <?php
-        $user = $rider;
         include '../includes/riders/friends/buttons.php'; ?>
 
     </div>

@@ -22,6 +22,7 @@ export default class GlobalMap extends Model {
     selectStyle
     dislayKonbinisBox
     displayAmenitiesBox
+    displayMkpointsBox
     loaded = false
     defaultCenter = [138.69056, 35.183002]
     defaultZoom = 10
@@ -69,16 +70,18 @@ export default class GlobalMap extends Model {
         selectStyleContainer.className = 'map-controller-block bold'
         controller.appendChild(selectStyleContainer)
         var selectStyleLabel = document.createElement('div')
-        selectStyleLabel.innerText = 'Map style : '
+        selectStyleLabel.innerText = '地図 : '
         selectStyleContainer.appendChild(selectStyleLabel)
         this.selectStyle = document.createElement('select')
         var seasons = document.createElement("option")
         var satellite = document.createElement("option")
-        seasons.value, seasons.text = 'Seasons'
+        seasons.value = 'seasons'
+        seasons.text = '季節'
         seasons.setAttribute('selected', 'selected')
         seasons.id = 'cl07xga7c002616qcbxymnn5z'
         satellite.id = 'cl0chu1or003a15nocgiodiir'
-        satellite.value, satellite.text = 'Satellite'
+        satellite.value = 'satellite'
+        satellite.text = '航空写真'
         this.selectStyle.add(seasons)
         this.selectStyle.add(satellite)
         this.selectStyle.className = 'js-map-styles'
@@ -104,7 +107,7 @@ export default class GlobalMap extends Model {
         controller.appendChild(mapContainer)
         // Label
         var mapOptionsLabel = document.createElement('div')
-        mapOptionsLabel.innerText = 'Map options'
+        mapOptionsLabel.innerText = '地図設定'
         mapOptionsLabel.className = 'map-controller-label'
         mapContainer.appendChild(mapOptionsLabel)
         // Line 1
@@ -122,7 +125,7 @@ export default class GlobalMap extends Model {
         } )
         var dislayKonbinisBoxLabel = document.createElement('label')
         dislayKonbinisBoxLabel.setAttribute('for', 'dislayKonbinisBox')
-        dislayKonbinisBoxLabel.innerText = 'Display konbinis'
+        dislayKonbinisBoxLabel.innerText = 'コンビニを表示'
         line1.appendChild(dislayKonbinisBoxLabel)
         // Line 2
         let line2 = document.createElement('div')
@@ -139,7 +142,7 @@ export default class GlobalMap extends Model {
         } )
         var displayAmenitiesBoxLabel = document.createElement('label')
         displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
-        displayAmenitiesBoxLabel.innerText = 'Display amenities'
+        displayAmenitiesBoxLabel.innerText = 'アメニティを表示'
         line2.appendChild(displayAmenitiesBoxLabel)
         
         // Hide and open on click on mobile display
@@ -163,7 +166,7 @@ export default class GlobalMap extends Model {
         controller.appendChild(routeContainer)
         // Label
         var routeOptionsLabel = document.createElement('div')
-        routeOptionsLabel.innerText = 'Route options'
+        routeOptionsLabel.innerText = 'ルート設定'
         routeOptionsLabel.className = 'map-controller-label'
         routeContainer.appendChild(routeOptionsLabel)
         // Line 3
@@ -176,7 +179,7 @@ export default class GlobalMap extends Model {
         boxShowDistanceMarkers.setAttribute('checked', 'checked')
         line3.appendChild(boxShowDistanceMarkers)
         var boxShowDistanceMarkersLabel = document.createElement('label')
-        boxShowDistanceMarkersLabel.innerText = 'Show distance markers'
+        boxShowDistanceMarkersLabel.innerText = '距離を表示'
         boxShowDistanceMarkersLabel.setAttribute('for', 'boxShowDistanceMarkers')
         line3.appendChild(boxShowDistanceMarkersLabel)
         boxShowDistanceMarkers.addEventListener('change', () => {
@@ -192,7 +195,7 @@ export default class GlobalMap extends Model {
         boxSet3D.setAttribute('checked', 'checked')
         line4.appendChild(boxSet3D)
         var boxSet3DLabel = document.createElement('label')
-        boxSet3DLabel.innerText = 'Enable 3D'
+        boxSet3DLabel.innerText = '3次元'
         boxSet3DLabel.setAttribute('for', 'boxSet3D')
         line4.appendChild(boxSet3DLabel)
         boxSet3D.addEventListener('change', () => {
@@ -206,23 +209,23 @@ export default class GlobalMap extends Model {
         let line5 = document.createElement('div')
         line5.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line5)
-        var boxShowMkpoints = document.createElement('input')
-        boxShowMkpoints.id = 'boxShowMkpoints'
-        boxShowMkpoints.setAttribute('type', 'checkbox')
-        boxShowMkpoints.setAttribute('checked', 'checked')
-        line5.appendChild(boxShowMkpoints)
-        var boxShowMkpointsLabel = document.createElement('label')
-        boxShowMkpointsLabel.innerText = 'Show scenery points'
-        boxShowMkpointsLabel.setAttribute('for', 'boxShowMkpointsLabel')
-        line5.appendChild(boxShowMkpointsLabel)
-        boxShowMkpoints.addEventListener('change', () => {
-            if (boxShowMkpoints.checked) {
+        this.displayMkpointsBox = document.createElement('input')
+        this.displayMkpointsBox.id = 'displayMkpointsBox'
+        this.displayMkpointsBox.setAttribute('type', 'checkbox')
+        this.displayMkpointsBox.setAttribute('checked', 'checked')
+        line5.appendChild(this.displayMkpointsBox)
+        var displayMkpointsBoxLabel = document.createElement('label')
+        displayMkpointsBoxLabel.innerText = '絶景スポットを表示'
+        displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBoxLabel')
+        line5.appendChild(displayMkpointsBoxLabel)
+        this.displayMkpointsBox.addEventListener('change', () => {
+            if (this.displayMkpointsBox.checked) {
                 this.addMkpoints(this.mkpoints)
-                document.querySelector('.rt-slider').style.display = 'flex'
+                if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'flex'
                 this.generateProfile()
             } else {
                 this.hideMkpoints()
-                document.querySelector('.rt-slider').style.display = 'none'
+                if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'none'
                 this.generateProfile()
             }
         } )
@@ -234,7 +237,7 @@ export default class GlobalMap extends Model {
         var buttonFocus = document.createElement('button')
         buttonFocus.className = 'map-controller-block mp-button mp-button-small'
         buttonFocus.id = 'buttonFocus'
-        buttonFocus.innerText = 'Focus'
+        buttonFocus.innerText = '全体表示'
         line6.appendChild(buttonFocus)
         buttonFocus.addEventListener('click', () => {
             this.focus(this.map.getSource('route')._data)
@@ -243,7 +246,7 @@ export default class GlobalMap extends Model {
         var buttonFly = document.createElement('button')
         buttonFly.className = 'map-controller-block mp-button mp-button-small'
         buttonFly.id = 'buttonFly'
-        buttonFly.innerText = 'Fly'
+        buttonFly.innerText = '走行再現'
         line6.appendChild(buttonFly)
         buttonFly.addEventListener('click', () => {
             if (this.map.getSource('route')) {
@@ -1480,9 +1483,7 @@ export default class GlobalMap extends Model {
         }
     }
 
-    centerOnUserLocation () {
-        return
-    }
+    centerOnUserLocation = () => {return} 
 
     async generateProfile (options = {force: false, time: false}) {
         
@@ -1623,7 +1624,7 @@ export default class GlobalMap extends Model {
                     }
                     // For mkpoints
                     if (this.mkpoints) this.mkpoints.forEach( (mkpoint) => {
-                            if (mkpoint.on_route && document.querySelector('#boxShowMkpoints').checked) drawPoi(mkpoint, 'mkpoint')
+                            if (mkpoint.on_route && this.displayMkpointsBox.checked) drawPoi(mkpoint, 'mkpoint')
                         } )
                     // For ride checkpoints
                     if (this.ride) {
@@ -1696,7 +1697,7 @@ export default class GlobalMap extends Model {
                             this.clearTooltip()
                             this.drawTooltip(this.map.getSource('route')._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
                             // Highlight corresponding mkpoint data
-                            if (this.mkpoints && (!document.querySelector('#boxShowMkpoints') || document.querySelector('#boxShowMkpoints').checked)) {
+                            if (this.mkpoints && (!this.displayMkpointsBox || this.displayMkpointsBox.checked)) {
                                 this.mkpoints.forEach( (mkpoint) => {
                                     if (document.getElementById(mkpoint.id) && mkpoint.distance < (distance + 1) && mkpoint.distance > (distance - 1)) {
                                         // Highlight preview image
@@ -1939,35 +1940,20 @@ export default class GlobalMap extends Model {
             }
             
             function defineDistanceMarkersBasis (distance, zoomLevel) {
-                if (zoomLevel < 6) {
-                    return 100
-                }
+                if (zoomLevel < 6) return 100
                 if (distance <= 10) {
-                    if (zoomLevel > 11) {
-                        return 1
-                    } else if (zoomLevel > 6) {
-                        return 2
-                    } else {
-                        return 5
-                    }
+                    if (zoomLevel > 11) return 1
+                    else if (zoomLevel > 6) return 2
+                    else return 5
                 } else if (distance <= 50 && distance > 10) {
-                    if (zoomLevel > 14) {
-                        return 2
-                    } else if (zoomLevel > 11) {
-                        return 5
-                    } else {
-                        return 10
-                    }
+                    if (zoomLevel > 14) return 2
+                    else if (zoomLevel > 11) return 5
+                    else return 10
                 } else if (distance > 50) {
-                    if (zoomLevel > 15) {
-                        return 2
-                    } else if (zoomLevel > 13) {
-                        return 5
-                    } else if (zoomLevel > 11) {
-                        return 10
-                    } else {
-                        return 20
-                    }
+                    if (zoomLevel > 15) return 2
+                    else if (zoomLevel > 13) return 5
+                    else if (zoomLevel > 11) return 10
+                    else return 20
                 }
             }
         }
@@ -2422,17 +2408,17 @@ export default class GlobalMap extends Model {
                 var dst2 = distance
             }
             tooltip.innerHTML = `
-            Distance : ` + dst1 + `km, ` + dst2 + `km<br>
-            Slope : <div class="map-slope">` + slope + `%</div><br>
-            Altitude : ` + altitude + `m`
+            距離 : ` + dst1 + `km, ` + dst2 + `km<br>
+            勾配 : <div class="map-slope">` + slope + `%</div><br>
+            標高 : ` + altitude + `m`
         } else {
             tooltip.innerHTML = `
-            Distance : ` + distance + `km<br>
-            Slope : <div class="map-slope">` + slope + `%</div><br>
-            Altitude : ` + altitude + `m`
+            距離 : ` + distance + `km<br>
+            勾配 : <div class="map-slope">` + slope + `%</div><br>
+            標高 : ` + altitude + `m`
         }
         // In case of an activity, add time data
-        if (this.activityId) tooltip.innerHTML += '<br>Time : ' + this.getFormattedTimeFromLngLat([lng, lat])
+        if (this.activityId) tooltip.innerHTML += '<br>時間 : ' + this.getFormattedTimeFromLngLat([lng, lat])
         
         // Position tooltip on the page
         // If height argument has been given, display on the map
@@ -2973,7 +2959,7 @@ export default class GlobalMap extends Model {
     clearProfileCursor () {
         const profileElement = document.getElementById('elevationProfile')
         const ctx            = profileElement.getContext('2d')
-        ctx.strokeStyle = 'white'
+        ctx.strokeStyle = '#fff'
         ctx.lineWidth = 10
         ctx.beginPath()
         ctx.moveTo(0, 1)
@@ -3148,7 +3134,7 @@ export default class GlobalMap extends Model {
                     source: 'wayPoint' + (i + 2),
                     paint: {
                         'circle-radius': 4,
-                        'circle-color': 'white',
+                        'circle-color': '#fff',
                         'circle-stroke-color': this.routeColor,
                         'circle-stroke-width': 1
                     }

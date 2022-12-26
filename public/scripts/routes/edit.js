@@ -10,7 +10,8 @@ var map = await editRouteMap.load(document.getElementById('EditRouteMap'), 'mapb
 
 // Controls
 editRouteMap.addStyleControl()
-editRouteMap.addBuildRouteControl()
+editRouteMap.addRouteControl()
+editRouteMap.addRouteEditionControl()
 editRouteMap.addOptionsControl()
 
 // Layers
@@ -105,16 +106,11 @@ ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, asy
     editRouteMap.waypointNumber = 1
 } )
 
+// Set edition mode by default
+document.querySelector('#boxAddWaypoints').setAttribute('checked', 'checked')
 
-/* -- Route building -- */
-
+// Init route building
 editRouteMap.setMode()
-
-
-/* -- Profile drawing -- 
-Use Chart.js
-*/
-
 
 // Profile container
 var profileCanvasContainer = document.createElement('div')

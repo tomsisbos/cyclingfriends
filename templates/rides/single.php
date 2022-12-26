@@ -119,7 +119,7 @@ include '../actions/rides/edit/galleryAction.php';
 					<p><strong>距離 :</strong> <?php 
 						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->finish_place. " まで";
 						else echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->meeting_place. " まで"; ?></p>
-					<p><strong>起伏 :</strong> <?= $terrain_value; ?></p>
+					<p><strong>起伏 :</strong> <?= $ride->getTerrainIcon() ?></p>
 					<p><?= $ride->course_description; ?></p>
 				</div>
 				<div style="clear: both"></div>

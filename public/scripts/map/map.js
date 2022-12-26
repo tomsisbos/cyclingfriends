@@ -93,18 +93,18 @@ amenities.forEach( (amenity) => {
             if (amenityPopup.data['name:en']) text += amenityPopup.data['name:en']
             text += '</div>'
             // Set surface
-            text += '<strong>Surface : </strong>'
+            text += '<strong>路面 : </strong>'
             if (amenityPopup.data.surface) text += CFUtils.getSurfaceFromvalue(amenityPopup.data.surface)
             else if (amenityPopup.data.tracktype) switch (amenityPopup.data.tracktype) {
-                case 'grade1': text += 'Asphalt, Gravel'; break
-                case 'grade2': text += 'Gravel'; break
-                case 'grade3': text += 'Gravel, Dirt'; break
-                case 'grade4': text += 'Dirt'; break
-                case 'grade5': text += 'Unrideable'; break
+                case 'grade1': text += '舗装／グラベル'; break
+                case 'grade2': text += 'グラベル'; break
+                case 'grade3': text += 'グラベル／ダート'; break
+                case 'grade4': text += 'ダート'; break
+                case 'grade5': text += '走行不能'; break
             }
-            else text += 'No data'
+            else text += 'データ無し'
             // Set width
-            text += '<br><strong>Width : </strong>'
+            text += '<br><strong>幅員 : </strong>'
             let width
             if (amenityPopup.data.width) width = amenityPopup.data.width
             else if (amenityPopup.data['yh:WIDTH']) width = amenityPopup.data['yh:WIDTH']
@@ -112,14 +112,14 @@ amenities.forEach( (amenity) => {
             if (width != 'No data' && !width.includes('m')) width += 'm'
             text += width
             // Set permission
-            if (amenityPopup.data.bicycle == 'no') '<br>(!) Bicycles are not allowed on this road.'
-            else if (amenityPopup.data.access == 'permissive' || amenityPopup.data.bicycle == 'permissive') text += '<br>This road is accessible by bicycle unless owner revoke permission.'
-            else if (amenityPopup.data.access == 'no') text += '<br>(!) Bicycles are not allowed on this road.'
+            if (amenityPopup.data.bicycle == 'no') '<br>(!) 自転車はこの道を通行出来ません。'
+            else if (amenityPopup.data.access == 'permissive' || amenityPopup.data.bicycle == 'permissive') text += '<br>この道は許可車両のみ通行出来ます。'
+            else if (amenityPopup.data.access == 'no') text += '<br>(!) 自転車はこの道を通行出来ません。'
             else if (amenityPopup.data.tracktype) switch (amenityPopup.data.tracktype) {
-                case 'grade4': text += '<br>This road is not accessible by bicycle.'; break
-                case 'grade5': text += '<br>This road is not accessible by bicycle.'; break
+                case 'grade4': text += '<br>自転車はこの道を通行出来ません。'; break
+                case 'grade5': text += '<br>自転車はこの道を通行出来ません。'; break
             }
-            else if (amenityPopup.data.highway == 'path') text += '<br>This road is not accessible by bicycle.'
+            else if (amenityPopup.data.highway == 'path') text += '<br>自転車はこの道を通行出来ません。'
 
         } else if (amenity == 'cycle-path') {
             // Build title

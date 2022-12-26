@@ -30,18 +30,18 @@ if (isset($_FILES['activity'])) {
             $gpx = new phpGPX();
             $file = $gpx->load($url);
                 
-            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'gpx', 'file' => $file], JSON_INVALID_UTF8_SUBSTITUTE);
+            echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'gpx', 'file' => $file], JSON_INVALID_UTF8_SUBSTITUTE);
         
         } else if ($ext == 'fit') {
 
             $pFFA = new adriangibbons\phpFITFileAnalysis($url);
             $data = new FitData($pFFA->data_mesgs);
 
-            echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'fit', 'file' => $data], JSON_INVALID_UTF8_SUBSTITUTE);
+            echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'fit', 'file' => $data], JSON_INVALID_UTF8_SUBSTITUTE);
 
         } else if ($ext == 'tcx') {
 
-            echo json_encode(['error' => 'Sorry, we don\'t support *.tcx files yet.']);
+            echo json_encode(['error' => '*.tcx形式ファイルはまだ対応しておりません。ご迷惑をお掛け致します。']);
 
         }
 
@@ -51,7 +51,7 @@ if (isset($_FILES['activity'])) {
         $extensions_list = '';
         foreach (ALLOWED_EXTENSIONS as $allowed_extension) $extensions_list .= $allowed_extension . ', ';
         $extensions_list = substr($extensions_list, 0, strlen($extensions_list) - 2);
-        echo json_encode(['error' => 'This file format can not be uploaded. Only ' . $extensions_list . ' formats are allowed.']);
+        echo json_encode(['error' => 'この形式のファイルはアップロードできません。アップロードできるファイル形式は次の通り：' . $extensions_list]);
     }
 
 }

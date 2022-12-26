@@ -23,9 +23,9 @@ if (isAjax()) {
         $user = new User($_GET['dismiss']);
         $result = $connected_user->removeFriend($user);
         if ($result[0]) {
-            $response = array(true, 'You have declined ' .$user->login .'\'s invitation.');
+            $response = array(true, $user->login .'の友達申請を却下しました。');
         } else {
-            $response = array(false, $user->login .' didn\'t send you any friend request.');
+            $response = array(false, $user->login .'は友達申請を送っていません。');
         }
         echo json_encode($response);
     }

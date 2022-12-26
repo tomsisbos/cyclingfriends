@@ -22,7 +22,7 @@ include '../actions/users/securityAction.php'; ?>
 
                 <div class="new-ac-upload-container">
                     <label for="uploadActivity">
-                        <div class="btn smallbutton">ファイルをアップロード</div>
+                        <div class="btn smallbutton">アップロード</div>
                     </label>
                     <input type="file" id="uploadActivity" class="hidden" name="uploadActivity" />
                     <input type="hidden" name="MAX_FILE_SIZE" value="500000" />

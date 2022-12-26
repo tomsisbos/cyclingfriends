@@ -28,23 +28,23 @@ export default function ChangeEmail () {
     return (
         <form className="stg-board container d-flex flex-column" method="post">
 		
-			<h2>Change email</h2>
+			<h2>メールアドレス変更</h2>
 	
 			<div className="tr-row gap-20">
 				<div className="col form-floating">
 					<input type="email" className="form-control" id="email" placeholder="Email" value={email} onChange={handleEmailChange} />
-					<label className="form-label" htmlFor='floatingInput'>Email address</label>
+					<label className="form-label" htmlFor='floatingInput'>メールアドレス</label>
 				</div>
 				<div className="col form-floating mb-3">
 					<input type="password" className="form-control" id="password" placeholder="Password" onChange={handlePasswordChange} />
-					<label className="form-label" htmlFor='password'>Password</label>
+					<label className="form-label" htmlFor='password'>パスワード</label>
 				</div>
 			</div>
 			<div>
 				<SaveButton
                     settings={{ email, password }}
 					type={'email'}
-					text={'Change Email'}
+					text={'変更'}
                 />
 			</div>
 				

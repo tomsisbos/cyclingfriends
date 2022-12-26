@@ -84,21 +84,21 @@ function buildCard (entry) {
                 </div>
                 <div class="ac-specs">
                     <div class="ac-spec">
-                        <div class="ac-spec-label"><strong>Distance : </strong></div>
+                        <div class="ac-spec-label"><strong>距離 : </strong></div>
                         <div class="ac-spec-value">` + Math.round(activity.route.distance / 10) * 10 + `<span class="ac-spec-unit"> km</span></div>
                     </div>
                     <div class="ac-spec">
-                        <div class="ac-spec-label"><strong>Duration : </strong></div>
+                        <div class="ac-spec-label"><strong>時間 : </strong></div>
                         <div class="ac-spec-value">
                             ` + activity.formattedDuration + `
                         </div>
                     </div>
                     <div class="ac-spec">
-                        <div class="ac-spec-label"><strong>Elevation : </strong></div>
+                        <div class="ac-spec-label"><strong>獲得標高 : </strong></div>
                         <div class="ac-spec-value">` + activity.route.elevation + `<span class="ac-spec-unit"> m</span></div>
                     </div>
                     <div class="ac-spec">
-                        <div class="ac-spec-label"><strong>Avg. Speed : </strong></div>
+                        <div class="ac-spec-label"><strong>平均速度 : </strong></div>
                         <div class="ac-spec-value">` + activity.averagespeed + `<span class="ac-spec-unit"> km/h</span></div>
                     </div>
                 </div>
@@ -146,7 +146,7 @@ function buildCard (entry) {
         // Build cleared icon
         if (entry.cleared) {
             var clearedIcon = `
-            <div id="visited-icon" style="display: inline;" title="You have visited this mkpoint.">
+            <div id="visited-icon" style="display: inline;" title="この絶景スポットを訪れました。">
                 <a href="/activity/` + entry.cleared + `" target="_blank">
                     <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
                 </a>

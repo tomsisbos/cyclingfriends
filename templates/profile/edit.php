@@ -54,7 +54,7 @@ include '../actions/riders/profile/profileInfosAction.php';
 			<div class="td-row push gap-30">
 				<a href="/rider/<?= $connected_user->id ?>">
 					<button class="button btn">
-						Check my profile
+						プロフィールを表示
 					</button>
 				</a>
 			</div> <?php
@@ -63,12 +63,6 @@ include '../actions/riders/profile/profileInfosAction.php';
 			include '../includes/riders/profile/edit/social-admin.php'; ?>
 
 		</div>
-	</div> <?php
-	
-	// Include friends ?>
-		
-	<div class="container container-thin d-flex gap-20 nav bg-friend"> <?php
-		include '../includes/riders/profile/friends-list.php'; ?>
 	</div>
 	
 	<div class="container d-flex flex-column gap end">

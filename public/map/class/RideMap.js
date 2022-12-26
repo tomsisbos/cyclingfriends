@@ -74,12 +74,12 @@ export default class RideMap extends GlobalMap {
         modeLabel.innerText = 'Edit mode'
         modeDiv.appendChild(modeLabel)
         var editMouseover = document.createElement('div')
-        editMouseover.innerHTML = '<ul><li>Click for adding a marker</li><li>Left click for removing a marker</li><li>Drag for moving a marker</li></ul>'
+        editMouseover.innerHTML = '<ul><li>クリック：チェックポイントを作成</li><li>左クリック：チェックポイントを削除</li><li>長押し：チェックポイントを移動</li></ul>'
         editMouseover.id = 'edit'
         editMouseover.classList.add('hidden')
         modeDiv.appendChild(editMouseover)
         var setMouseover = document.createElement('div')
-        setMouseover.innerHTML = '<ul><li>Click for setting up marker information</li></ul>'
+        setMouseover.innerHTML = '<ul><li>クリック：情報入力</li></ul>'
         setMouseover.id = 'set'
         setMouseover.classList.add('hidden')
         modeDiv.appendChild(setMouseover)
@@ -103,28 +103,28 @@ export default class RideMap extends GlobalMap {
         }
         var controllerSwitchmode = document.createElement('div')
         controllerSwitchmode.className = 'newpickmap-controller-button'
-        controllerSwitchmode.innerText = 'Switch mode'
-        controllerSwitchmode.setAttribute('title', 'Switch to set marker infos mode')
+        controllerSwitchmode.innerText = 'モード切替'
+        controllerSwitchmode.setAttribute('title', '情報入力モードに切り替える')
         controller.appendChild(controllerSwitchmode)
         controllerSwitchmode.addEventListener('click', () => {
             if (this.mode === 'edit') {
                 this.mode = 'set'
-                modeLabel.innerText = 'Set mode'
+                modeLabel.innerText = '情報入力'
                 modeLabel.className = 'red-twinkle'
-                controllerSwitchmode.setAttribute('title', 'Switch to edit markers mode')
+                controllerSwitchmode.setAttribute('title', 'マーカー編集モードに切り替え')
             } else if (this.mode === 'set') {
                 this.mode = 'edit'
-                modeLabel.innerText = 'Edit mode'
+                modeLabel.innerText = 'マーカー編集'
                 modeLabel.className = 'blue-twinkle'
-                controllerSwitchmode.setAttribute('title', 'Switch to set marker infos mode')
+                controllerSwitchmode.setAttribute('title', '情報入力モードに切り替える')
             }
             this.setMode(this.mode)
         } )
         // Clear button
         var controllerClear = document.createElement('div')
         controllerClear.className = 'newpickmap-controller-button'
-        controllerClear.innerText = 'Clear'
-        controllerClear.setAttribute('title', 'Remove all markers from the map')
+        controllerClear.innerText = 'クリア'
+        controllerClear.setAttribute('title', '全てのチェックポイントを削除する')
         controller.appendChild(controllerClear)
         controllerClear.addEventListener('click', this.clearMarkersHandler)
         // Same start & finish button
@@ -132,8 +132,8 @@ export default class RideMap extends GlobalMap {
         controllerSFbutton.className = 'newpickmap-controller-checkbox'
         var controllerSFcheckbox = document.createElement('input')
         controllerSFcheckbox.setAttribute('type', 'checkbox')
-        controllerSFbutton.innerHTML = 'Same start & finish'
-        controllerSFbutton.setAttribute('title', 'Set start point as start & finish point')
+        controllerSFbutton.innerHTML = 'スタートとゴールを同一地点にする'
+        controllerSFbutton.setAttribute('title', 'ゴールをスタート地点に設定する')
         controllerSFbutton.appendChild(controllerSFcheckbox)
         controller.appendChild(controllerSFbutton)
         controllerSFcheckbox.addEventListener('change', () => {
@@ -187,7 +187,7 @@ export default class RideMap extends GlobalMap {
 
         if (options.button == true) var button = `
             <div class="checkpoint-popup-line">
-                <div id="addToCheckpoints" class="mp-button bg-button text-white m-2 mt-0">Add to checkpoints</div>
+                <div id="addToCheckpoints" class="mp-button bg-button text-white m-2 mt-0">チェックポイントに追加</div>
             </div>`
         else var button = ''
         return `
@@ -203,13 +203,13 @@ export default class RideMap extends GlobalMap {
             <div class="checkpoint-popup-line">
                 <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
                 <input enctype="multipart/form-data" type="file" name="file" id="file" />
-                <label for="file" title="Click to change picture">
+                <label for="file" title="写真を変更する">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ic" width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"><path fill="currentColor" d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5s-5 2.24-5 5s2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2s-3.2 1.43-3.2 3.2z"></path></svg>
                 </label>
-                <input type="text" id="name" name="name" placeholder="Name" class="admin-field" value="` + name +  `"/>
+                <input type="text" id="name" name="name" placeholder="タイトル" class="admin-field" value="` + name +  `"/>
             </div>
             <div class="checkpoint-popup-line">
-                <textarea name="description" placeholder="Description..." id="description" class="admin-field">` + description + `</textarea>
+                <textarea name="description" placeholder="詳細..." id="description" class="admin-field">` + description + `</textarea>
             </div>`
         else {
             if (description.length > 30) description = description.slice(0, 30) + '...' // Shorten description if necessary
@@ -300,7 +300,7 @@ export default class RideMap extends GlobalMap {
             // If size image exceeds max size
             } else {
                 console.log('errorsize')
-                var errorMessage = 'This file exceeds size limit (' + Math.round(maxSize / 1000000) + 'Mb)'
+                var errorMessage = 'このファイルはサイズ制限を超えています (' + Math.round(maxSize / 1000000) + 'Mb)。'
                 displayError(popup, errorMessage)
             }
 

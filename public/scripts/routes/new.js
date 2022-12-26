@@ -6,7 +6,8 @@ var map = await buildRouteMap.load(document.getElementById('BuildRouteMap'), 'ma
 
 // Controls
 buildRouteMap.addStyleControl()
-buildRouteMap.addBuildRouteControl()
+buildRouteMap.addRouteControl()
+buildRouteMap.addRouteEditionControl()
 buildRouteMap.addOptionsControl()
 
 // Layers
@@ -36,11 +37,6 @@ map.addControl(
 buildRouteMap.setMode()
 
 
-/* -- Profile drawing -- 
-Use Chart.js
-*/
-
-
 // Profile container
 var profileCanvasContainer = document.createElement('div')
 profileCanvasContainer.className = 'd-flex profile-inside-map'
@@ -49,7 +45,7 @@ document.querySelector('body').appendChild(profileCanvasContainer)
 // Profile tag button
 var profileTag = document.createElement('div')
 profileTag.className = 'map-profile-tag cursor-pointer'
-profileTag.innerText = 'No elevation data to display.'
+profileTag.innerText = '表示できる標高データはありません。'
 profileCanvasContainer.appendChild(profileTag)
 // Profile canvas element
 var profileCanvasElement = document.createElement('canvas')
@@ -59,9 +55,7 @@ profileCanvasContainer.appendChild(profileCanvasElement)
 
 // Toggle profile on click on profile tag (only if elevation data is available (= 2 points or more))
 profileTag.addEventListener('click', () => {
-    if (map.getSource('endPoint')) {
-        buildRouteMap.toggleProfile()
-    }
+    if (map.getSource('endPoint')) buildRouteMap.toggleProfile()
 } )
 
 // Declare canvas variable

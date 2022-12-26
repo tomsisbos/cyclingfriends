@@ -70,15 +70,6 @@
     gap: 20px;
 }
 
-.rd-distance img {
-    object-fit: cover;
-    object-position: 0% 80%;
-    height: 1em;
-    width: 40px;
-    align-self: self-start;
-    border: 1px dashed;
-}
-
 .rd-checkpoints {
     display: flex;
     flex-wrap: wrap;

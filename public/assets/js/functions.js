@@ -151,7 +151,7 @@ async function openConfirmationPopup (question) {
 		} )
 		var confirmationPopup = document.createElement('div')
 		confirmationPopup.classList.add('popup')
-		confirmationPopup.innerHTML = question + '<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkgreen text-white">Yes</div><div id="no" class="mp-button bg-darkred text-white">No</div></div>'
+		confirmationPopup.innerHTML = question + '<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkgreen text-white">はい</div><div id="no" class="mp-button bg-darkred text-white">いいえ</div></div>'
 		modal.appendChild(confirmationPopup)
 		// On click on "Yes" button, close the popup and return true
 		document.querySelector('#yes').addEventListener('click', () => {

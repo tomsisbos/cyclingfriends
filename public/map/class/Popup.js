@@ -87,7 +87,7 @@ export default class Popup extends Model {
                 var likeButton = document.createElement('div')
                 likeButton.className = 'like-button-modal'
                 likeButton.style.color = 'white'
-                likeButton.setAttribute('title', 'Click to like this photo')
+                likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
                 var likeIcon = document.createElement('span')
                 likeIcon.className = 'iconify'
                 likeIcon.dataset.icon = 'mdi:heart-plus'

@@ -10,6 +10,7 @@ export default class NeighboursMap extends GlobalMap {
     apiUrl = '/api/riders/neighbours.php'
     $map = document.querySelector('#neighboursMap')
     defaultZoom = 8
+    data = {}
     
     centerOnUserLocation () {
         if (this.map) this.map.setCenter(this.userLocation)
@@ -80,8 +81,10 @@ export default class NeighboursMap extends GlobalMap {
     }
     
     hideSelectedLink (neighbour) {
-        this.map.removeLayer('selectedLink' + neighbour.id)
-        this.map.removeSource('selectedLink' + neighbour.id)
+        if (this.map.getLayer('selectedLink' + neighbour.id)) {
+            this.map.removeLayer('selectedLink' + neighbour.id)
+            this.map.removeSource('selectedLink' + neighbour.id)
+        }
     }
 
     displayZoomMessage () {
@@ -90,7 +93,7 @@ export default class NeighboursMap extends GlobalMap {
             modal.className = "alert-modal"
             var messageWindow = document.createElement('div')
             messageWindow.className = 'alert-window'
-            messageWindow.innerText = "For privacy reasons, riders location can't be displayed at high zoom level."
+            messageWindow.innerText = "プライバシーの都合上、このズームレベルではユーザーの位置情報が表示されません。"
             modal.appendChild(messageWindow)
             this.$map.appendChild(modal)
         }

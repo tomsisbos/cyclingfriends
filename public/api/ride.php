@@ -19,7 +19,7 @@ if (isAjax()) {
     if (isset($_GET['ride-delete'])) {
         $ride = new Ride($_GET['ride-delete']);
         if ($connected_user == $ride->author) $ride->delete();
-        else "You don't have necessary rights to delete this ride.";
+        else "このライドを削除する権限はありません。";
         echo json_encode($connected_user->login);
     }
 

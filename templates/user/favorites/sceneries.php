@@ -33,7 +33,7 @@ include '../actions/users/securityAction.php';
                 <div class="fav-card"> <?php
                     include '../includes/mkpoints/card.php'; ?>
                     <div class="fav-card-appendice">
-                        <div class="mp-button btn bg-darkred text-white js-favorite-button">お気に入りから除外</div>
+                        <div class="mp-button btn bg-darkred text-white js-favorite-button">除外</div>
                     </div>
                 </div> <?php
             } ?>

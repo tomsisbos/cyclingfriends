@@ -15,8 +15,8 @@ document.querySelectorAll('.js-favorite-button').forEach( ($button) => {
         }
         ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + id, (response) => {
             showResponseMessage(response)
-            if ($button.innerText == 'Add to favorites') $button.innerText = 'Remove from favorites'
-            else $button.innerText = 'Add to favorites'
+            if ($button.innerText == '追加') $button.innerText = '除外'
+            else $button.innerText = '追加'
             if ($button.classList.contains('bg-darkred')) {
                 $button.classList.remove('bg-darkred')
                 $button.classList.add('bg-darkgreen')

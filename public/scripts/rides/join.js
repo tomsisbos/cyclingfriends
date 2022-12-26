@@ -9,7 +9,7 @@
             ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
                 if (response.answer) window.location.href = "/rides/ride.php?id=" + rideId + "&join=true"
                 else {
-                    var answer = await openConfirmationPopup ('This ride only accepts the following bike types : ' + response.bikes_list + '. You don\'t have any of these registered in your bikes list. Do you still want to enter this ride ?')
+                    var answer = await openConfirmationPopup ('このライドで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
                     if (answer) {
                         window.location.href = "/ride/" + rideId + "/join"
                     }

@@ -19,10 +19,9 @@
                         <div class="rd-top-container">
                             <a href="<?= 'ride/' .$ride->id;?>" class="fullwidth">
                                 <?php // Truncate ride name if more than 60 characters
-                                $ride_name_truncated = truncate($ride->name, 0, 25);
                                 $featuredImage = $ride->getFeaturedImage(); ?>
                                 <div class="rd-image" style="background-image: url(data:image/jpeg;base64,<?= $featuredImage['img']; ?>); background-color: lightgrey">
-                                    <div class="<?php if ($featuredImage){ echo 'rd-ride-title'; } else { echo 'rd-ride-name'; }?>"><?= $ride_name_truncated; ?></div>
+                                    <div class="<?php if ($featuredImage){ echo 'rd-ride-title'; } else { echo 'rd-ride-name'; }?>"><?= $ride->name; ?></div>
                                     <div class="<?php if ($featuredImage){ echo 'rd-ride-date'; } else { echo 'rd-ride-date'; }?>"><?= $ride->date; ?></div>
                                 </div>
                             </a> <?php
@@ -41,11 +40,8 @@
                                 <div class="rd-section-text">
                                     <p><?= $ride->getAcceptedLevelTags(). ' (' .$ride->getAcceptedBikesString(). ')'; ?></p>
                                     <div class="rd-distance">
-                                        <p><strong>距離 : </strong><?php if ($ride->distance_about === 'about') { echo $ride->distance_about. ' '; } echo $ride->distance. 'km'; ?></p> <?php
-                                        if ($ride->terrain == 1) echo '<img src="\media\flat.svg" />';
-                                        else if ($ride->terrain == 2) echo '<img src="\media\smallhills.svg" />';
-                                        else if ($ride->terrain == 3) echo '<img src="\media\hills.svg" />';
-                                        else if ($ride->terrain == 4) echo '<img src="\media\mountain.svg" />'; ?>
+                                        <p><strong>距離 : </strong><?php if ($ride->distance_about === 'about') { echo '約'; } echo $ride->distance. 'km'; ?></p>
+                                        <?= $ride->getTerrainIcon() ?>
                                     </div>
                                     <div class="rd-checkpoints"> <?php
                                         if (isset($ride->checkpoints)) {

@@ -78,13 +78,10 @@ class Ride extends Model {
         $string = '';
         // Build the list string
         foreach($level_list as $level => $boolean){
-            // Filter string keys for preventing double iteration
-            // if(strlen($level)>1){
-                // If level is accepted, then write it
-                if ($boolean == true) {
-                    $string .= '<span class="tag-' .colorLevel(getLevelFromKey($level+1)). '">' .getLevelFromKey($level+1). '</span>';
-                }
-            // }
+            // If level is accepted, then write it
+            if ($boolean == true) {
+                $string .= '<span class="tag-' .$this->colorLevel($level+1). '">' .getLevelFromKey($level+1). '</span>';
+            }
         }
         return $string;
     }
@@ -104,7 +101,7 @@ class Ride extends Model {
                 if($boolean == true){
                     // Insert commas between level
                     if($i > 0){
-                        $string .= ', ';
+                        $string .= '、';
                     }
                     $string .= getLevelFromKey($level + 1);
                     $i++;
@@ -144,7 +141,7 @@ class Ride extends Model {
 
         $accepted_bikes = $this->getAcceptedBikes();
 
-        if ($accepted_bikes[0] && $accepted_bikes[1] && $accepted_bikes[2] && $accepted_bikes[3]) return 'All bikes accepted';
+        if ($accepted_bikes[0] && $accepted_bikes[1] && $accepted_bikes[2] && $accepted_bikes[3]) return '車種問わず';
         else {
             // Set variables to default value
             $i = 0;	$string = '';
@@ -155,13 +152,22 @@ class Ride extends Model {
                     // If bike type is accepted, then write it
                     if ($boolean == true) {
                         // Insert commas between bike types
-                        if ($i > 0) $string .= ', ';
+                        if ($i > 0) $string .= '、';
                         $string .= getBikesFromColumnName($bike);
                         $i++;
                     }
                 }
             }
             return $string;
+        }
+    }
+
+    public function getTerrainIcon () {
+        switch ($this->terrain) {
+            case 1: return '<img class="terrain-icon" src="\media\flat.svg" />';
+            case 2: return '<img class="terrain-icon" src="\media\smallhills.svg" />';
+            case 3: return '<img class="terrain-icon" src="\media\hills.svg" />';
+            case 4: return '<img class="terrain-icon" src="\media\mountain.svg" />';
         }
     }
 

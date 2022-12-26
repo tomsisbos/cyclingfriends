@@ -25,7 +25,7 @@ export default class SegmentPopup extends Popup {
 
         // Define advised
         var advised = ''
-        if (this.data.advised) advised = '<div class="popup-advised" title="CyclingFriends\' favourite">★</div>'
+        if (this.data.advised) advised = '<div class="popup-advised" title="cyclingfriendsのおススメ">★</div>'
 
         // Define tag color according to segment rank
         if (this.data.rank == 'local') var tagColor = 'tag-lightblue'
@@ -48,8 +48,8 @@ export default class SegmentPopup extends Popup {
             this.data.seasons.forEach( (season) => {
                 seasonBox += `
                 <div class="popup-season">
-                    <div class="popup-season-period">
-                        From ` + CFUtils.getPeriodString(season.period_start) + ` to ` + CFUtils.getPeriodString(season.period_end) + `
+                    <div class="popup-season-period">` +
+                        CFUtils.getPeriodString(season.period_start) + ` から ` + CFUtils.getPeriodString(season.period_end) + ` まで
                     </div>
                     <div class="popup-season-description">` +
                         season.description + `
@@ -79,7 +79,7 @@ export default class SegmentPopup extends Popup {
         <div class="popup-img-container">
             <a target="_blank" href="/segment/` + this.data.id + `">
                 <div class="popup-img-background">
-                    Check details
+                    詳細ページ
                     <img id="segmentFeaturedImage` + this.data.id + `" class="popup-img popup-img-with-background" />
                 </div>
             </a>
@@ -93,7 +93,7 @@ export default class SegmentPopup extends Popup {
                     <div class="popup-tag ` + tagColor + `" >`+ capitalizeFirstLetter(this.data.rank) + `</div>
                 </div>
                 <div>
-                    Distance : `+ (Math.round(this.data.route.distance * 10) / 10) + `km - Elevation : ` + this.data.route.elevation + `m
+                    距離 : `+ (Math.round(this.data.route.distance * 10) / 10) + `km - 獲得標高 : ` + this.data.route.elevation + `m
                 </div>
                 <div class="popup-rating"></div>
                 <div id="profileBox" class="mt-2 mb-2" style="height: 100px; background-color: white;">
@@ -109,7 +109,7 @@ export default class SegmentPopup extends Popup {
             + adviceBox + ``
             + seasonBox + `
             <a target="_blank" href="/segment/` + this.data.id + `">
-                <button class="mp-button bg-button text-white">Check details</div>
+                <button class="mp-button bg-button text-white">詳細ページ</div>
             </a>
         </div>`)
     }
@@ -531,14 +531,14 @@ export default class SegmentPopup extends Popup {
                 var dst2 = distance
             }
             tooltip.innerHTML = `
-            Distance : ` + dst1 + `km, ` + dst2 + `km<br>
-            Slope : <div class="map-slope">` + slope + `%</div><br>
-            Altitude : ` + altitude + `m`
+            距離 : ` + dst1 + `km, ` + dst2 + `km<br>
+            勾配 : <div class="map-slope">` + slope + `%</div><br>
+            標高 : ` + altitude + `m`
         } else {
             tooltip.innerHTML = `
-            Distance : ` + distance + `km<br>
-            Slope : <div class="map-slope">` + slope + `%</div><br>
-            Altitude : ` + altitude + `m`
+            距離 : ` + distance + `km<br>
+            勾配 : <div class="map-slope">` + slope + `%</div><br>
+            標高 : ` + altitude + `m`
         }
         console.log(this)
         map.getContainer().appendChild(tooltip)
@@ -636,7 +636,7 @@ export default class SegmentPopup extends Popup {
                 var likeButton = document.createElement('div')
                 likeButton.className = 'like-button-modal'
                 likeButton.style.color = 'white'
-                likeButton.setAttribute('title', 'Click to like this photo')
+                likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
                 var likeIcon = document.createElement('span')
                 likeIcon.className = 'iconify'
                 likeIcon.dataset.icon = 'mdi:heart-plus'
@@ -814,7 +814,7 @@ export default class SegmentPopup extends Popup {
         // Like button
         var likeButton = document.createElement('div')
         likeButton.id = 'like-button'
-        likeButton.setAttribute('title', 'Click to like this photo')
+        likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
         likeButton.innerHTML = '<span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>'
         popupIcons.prepend(likeButton)
     }
@@ -824,7 +824,7 @@ export default class SegmentPopup extends Popup {
         // Fly along button
         var flyButton = document.createElement('div')
         flyButton.id = 'fly-button'
-        flyButton.setAttribute('title', 'Click to fly along the route')
+        flyButton.setAttribute('title', '走行再現モードに切り替える')
         flyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path fill="currentColor" d="M23.188 3.735a1.766 1.766 0 0 0-3.532-.001c0 .975 1.766 4.267 1.766 4.267s1.766-3.292 1.766-4.267zm-2.61 0a.844.844 0 1 1 1.687-.001a.844.844 0 0 1-1.687.001zm4.703 14.76c-.56 0-1.097.047-1.59.123L11.1 13.976c.2-.18.312-.38.312-.59a.663.663 0 0 0-.088-.315l8.41-2.238c.46.137 1.023.22 1.646.22c1.52 0 2.75-.484 2.75-1.082c0-.6-1.23-1.083-2.75-1.083s-2.75.485-2.75 1.083c0 .07.02.137.054.202L9.896 12.2a8.075 8.075 0 0 0-2.265-.303c-2.087 0-3.78.667-3.78 1.49s1.693 1.49 3.78 1.49c.574 0 1.11-.055 1.598-.145l11.99 4.866c-.19.192-.306.4-.306.623c0 .19.096.364.236.533L8.695 25.415c-.158-.005-.316-.01-.477-.01c-3.24 0-5.87 1.036-5.87 2.31c0 1.277 2.63 2.313 5.87 2.313s5.87-1.034 5.87-2.312c0-.22-.083-.432-.23-.633l10.266-5.214c.37.04.753.065 1.155.065c2.413 0 4.37-.77 4.37-1.723c0-.944-1.957-1.716-4.37-1.716z"/></svg>'
         popupIcons.appendChild(flyButton)
     }
