@@ -1,3 +1,4 @@
+import EditRouteHelper from "/scripts/helpers/routes/edit.js"
 import CFUtils from "/map/class/CFUtils.js"
 import EditRouteMap from "/map/class/EditRouteMap.js"
 
@@ -108,10 +109,14 @@ ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, asy
 } )
 
 // Set edition mode by default
-document.querySelector('#boxAddWaypoints').setAttribute('checked', 'checked')
+editRouteMap.modeSelect.value = 'addWaypoints'
 
 // Init route building
 editRouteMap.setMode()
+
+// Display start guidance window
+console.log(EditRouteHelper)
+await EditRouteHelper.startGuidance()
 
 // Profile container
 var profileCanvasContainer = document.createElement('div')

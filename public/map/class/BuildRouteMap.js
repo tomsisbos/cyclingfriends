@@ -44,6 +44,7 @@ export default class BuildRouteMap extends GlobalMap {
         line3.appendChild(boxShowDistanceMarkers)
         var boxShowDistanceMarkersLabel = document.createElement('label')
         boxShowDistanceMarkersLabel.innerText = '距離を表示'
+        boxShowDistanceMarkersLabel.setAttribute('title', 'コース上に距離を表示する。ズームインすればするほど、細かく表示される。')
         boxShowDistanceMarkersLabel.setAttribute('for', 'boxShowDistanceMarkers')
         line3.appendChild(boxShowDistanceMarkersLabel)
         boxShowDistanceMarkers.addEventListener('change', () => {
@@ -60,6 +61,7 @@ export default class BuildRouteMap extends GlobalMap {
         line4.appendChild(boxSet3D)
         var boxSet3DLabel = document.createElement('label')
         boxSet3DLabel.innerText = '3次元'
+        boxSet3DLabel.setAttribute('title', 'チェックすると、地形が3次元表示になる。Ctrlキーを押して、カメラを動かしてみよう。')
         boxSet3DLabel.setAttribute('for', 'boxSet3D')
         line4.appendChild(boxSet3DLabel)
         boxSet3D.addEventListener('change', () => {
@@ -78,6 +80,7 @@ export default class BuildRouteMap extends GlobalMap {
         buttonFocus.className = 'map-controller-block mp-button mp-button-small'
         buttonFocus.id = 'buttonFocus'
         buttonFocus.innerText = '全体表示'
+        buttonFocus.setAttribute('title', 'ルート全体が地図の中央に表示されるようにカメラを調整する。')
         line6.appendChild(buttonFocus)
         buttonFocus.addEventListener('click', () => {
             this.focus(this.map.getSource('route')._data)
@@ -87,6 +90,7 @@ export default class BuildRouteMap extends GlobalMap {
         buttonFly.className = 'map-controller-block mp-button mp-button-small'
         buttonFly.id = 'buttonFly'
         buttonFly.innerText = '走行再現'
+        buttonFly.setAttribute('title', 'スタートからゴールまで、実際に走行しているかのようにコースを辿っていく。走行再現モードでコース全体のイメージを掴んでみよう。')
         line6.appendChild(buttonFly)
         buttonFly.addEventListener('click', () => {
             if (this.map.getSource('route')) {
@@ -124,94 +128,95 @@ export default class BuildRouteMap extends GlobalMap {
         routeContainer.appendChild(routeOptionsLabel)
         // Line 1
         let line1 = document.createElement('div')
-        line1.className = 'map-controller-line'
+        line1.className = 'map-controller-line hide-on-mobiles'
         routeContainer.appendChild(line1)
+        var modeSelectLabel = document.createElement('label')
+        modeSelectLabel.innerText = '編集モード：'
+        modeSelectLabel.setAttribute('title', 'ルート作成モードでは、地図上をクリックすると、ルートを延長することが出来る。<br>ウェイポイント追加モードでは、ルート上にクリックしウェイポイントを追加することができる。')
+        modeSelectLabel.setAttribute('for', 'boxAddWaypoints')
+        line1.appendChild(modeSelectLabel)
+        // Line 2
+        let line2 = document.createElement('div')
+        line2.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line2)
+        this.modeSelect = document.createElement('select')
+        this.modeSelect.id = "boxAddWaypoints"
+        line2.appendChild(this.modeSelect)
+        var modeSelectOption1 = document.createElement('option')
+        modeSelectOption1.value = 'drawRoute'
+        modeSelectOption1.innerText = 'ルート作成'
+        this.modeSelect.appendChild(modeSelectOption1)
+        var modeSelectOption2 = document.createElement('option')
+        modeSelectOption2.value = 'addWaypoints'
+        modeSelectOption2.innerText = 'ウェイポイント追加'
+        this.modeSelect.appendChild(modeSelectOption2)
+        this.modeSelect.addEventListener('change', () => {
+            console.log('boxAddWaypoints changed')
+            this.setMode()
+        } )
+        // Line 3
+        let line3 = document.createElement('div')
+        line3.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line3)
         var boxFollowRoads = document.createElement('input')
         boxFollowRoads.id = 'boxFollowRoads'
         boxFollowRoads.setAttribute('type', 'checkbox')
         boxFollowRoads.setAttribute('checked', 'checked')
-        line1.appendChild(boxFollowRoads)
+        line3.appendChild(boxFollowRoads)
         var boxFollowRoadsLabel = document.createElement('label')
         boxFollowRoadsLabel.innerText = '道路に沿って作る'
+        boxFollowRoadsLabel.setAttribute('title', 'チェックすると、コース作成の際に最適な道を辿る。')
         boxFollowRoadsLabel.setAttribute('for', 'boxFollowRoads')
-        line1.appendChild(boxFollowRoadsLabel)
-        // Line 2
-        let line2 = document.createElement('div')
-        line2.className = 'map-controller-line'
-        routeContainer.appendChild(line2)
+        line3.appendChild(boxFollowRoadsLabel)
+        // Line 4
+        let line4 = document.createElement('div')
+        line4.className = 'map-controller-line hide-on-mobiles'
+        routeContainer.appendChild(line4)
         var boxFollowPaths = document.createElement('input')
         boxFollowPaths.id = 'boxFollowPaths'
         boxFollowPaths.setAttribute('type', 'checkbox')
-        line2.appendChild(boxFollowPaths)
+        line4.appendChild(boxFollowPaths)
         var boxFollowPathsLabel = document.createElement('label')
         boxFollowPathsLabel.innerText = '小道を優先する'
+        boxFollowPathsLabel.setAttribute('title', 'チェックすると、コースの際に小道等を含めた中で最短コースを辿る。細かい調整をする際に使ってみよう。')
         boxFollowPathsLabel.setAttribute('for', 'boxFollowPaths')
-        line2.appendChild(boxFollowPathsLabel)
+        line4.appendChild(boxFollowPathsLabel)
         boxFollowPaths.addEventListener('change', () => {
             if (boxFollowPaths.checked) this.directionsMode = 'cycling'
             else this.directionsMode = 'driving'
         } )
-        // Line 3
-        let line3 = document.createElement('div')
-        line3.className = 'map-controller-line'
-        routeContainer.appendChild(line3)
-        var boxAddWaypoints = document.createElement('input')
-        boxAddWaypoints.setAttribute('type', 'checkbox')
-        boxAddWaypoints.id = "boxAddWaypoints"
-        line3.appendChild(boxAddWaypoints)
-        var boxAddWaypointsLabel = document.createElement('label')
-        boxAddWaypointsLabel.innerText = 'ウェイポイントを追加'
-        boxAddWaypointsLabel.setAttribute('for', 'boxAddWaypoints')
-        line3.appendChild(boxAddWaypointsLabel)
-        boxAddWaypoints.addEventListener('change', () => {
-            console.log('boxAddWaypoints changed')
-            if (boxAddWaypoints.checked) {
-                this.map.getCanvas().style.cursor = 'grab'
-                this.map.on('mouseenter', 'route', () => {
-                    this.map.getCanvas().style.cursor = 'crosshair'
-                } )
-                this.map.on('mouseleave', 'route', () => {
-                    if (boxAddWaypoints.checked) {
-                        this.map.getCanvas().style.cursor = 'grab'
-                    }
-                } )
-                this.map.off('click', this.routeBuilding)
-                this.map.on('click', 'route', this.routeEditing)
-            } else {
-                this.map.getCanvas().style.cursor = 'crosshair'
-                this.map.off('click', 'route', this.routeEditing)
-                this.map.on('click', this.routeBuilding)
-            }
-        } )
         // Edition buttons
-        let line4 = document.createElement('div')
-        line4.className = 'map-controller-buttons'
-        routeContainer.appendChild(line4)
+        let line5 = document.createElement('div')
+        line5.className = 'map-controller-buttons hide-on-mobiles'
+        routeContainer.appendChild(line5)
         // Undo button
         this.buttonUndo = document.createElement('button')
         this.buttonUndo.className = 'map-controller-block mp-button mp-button-small'
         this.buttonUndo.id = 'buttonUndo'
-        this.buttonUndo.innerText = 'Undo'
-        line4.appendChild(this.buttonUndo)
+        this.buttonUndo.innerHTML = '<span class="iconify" data-icon="mdi:undo"></span>'
+        this.buttonUndo.setAttribute('title', '直前に行われた操作を取り消す。')
+        line5.appendChild(this.buttonUndo)
         this.buttonUndo.addEventListener('click', async () => this.undo())
         this.buttonUndo.setAttribute('disabled', 'disabled')
         // Redo button
         this.buttonRedo = document.createElement('button')
         this.buttonRedo.className = 'map-controller-block mp-button mp-button-small'
         this.buttonRedo.id = 'buttonRedo'
-        this.buttonRedo.innerText = 'Redo'
-        line4.appendChild(this.buttonRedo)
+        this.buttonRedo.innerHTML = '<span class="iconify" data-icon="mdi:redo"></span>'
+        this.buttonRedo.setAttribute('title', '直前に取り消した処理をもう一度繰り返して実行する。')
+        line5.appendChild(this.buttonRedo)
         this.buttonRedo.addEventListener('click', async () => this.redo())
         this.buttonRedo.setAttribute('disabled', 'disabled')
-        let line5 = document.createElement('div')
-        line5.className = 'map-controller-buttons'
-        routeContainer.appendChild(line5)
+        let line6 = document.createElement('div')
+        line6.className = 'map-controller-buttons hide-on-mobiles'
+        routeContainer.appendChild(line6)
         // Clear button
         var buttonClear = document.createElement('button')
         buttonClear.className = 'map-controller-block mp-button mp-button-small'
         buttonClear.id = 'buttonClear'
         buttonClear.innerText = 'クリア'
-        line5.appendChild(buttonClear)
+        buttonClear.setAttribute('title', 'コースを削除し、白紙状態に戻す。')
+        line6.appendChild(buttonClear)
         buttonClear.addEventListener('click', async () => {
             if (await openConfirmationPopup('現在のコースが削除されます。宜しいですか？')) {
                 this.clearRoute()
@@ -224,7 +229,8 @@ export default class BuildRouteMap extends GlobalMap {
         buttonSave.className = 'map-controller-block mp-button mp-button-small'
         buttonSave.id = 'buttonSave'
         buttonSave.innerText = '保存'
-        line5.appendChild(buttonSave)
+        buttonSave.setAttribute('title', 'コースを保存し、マイルートページに戻る。')
+        line6.appendChild(buttonSave)
         buttonSave.addEventListener('click', async () => {
             // Hide waypoints
             let i = 2
@@ -259,7 +265,7 @@ export default class BuildRouteMap extends GlobalMap {
         
         // Hide and open on click on mobile display
         routeOptionsLabel.addEventListener('click', () => {
-            routeContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+            routeContainer.querySelectorAll('.map-controller-line, .map-controller-buttons').forEach( (line) => {
                 if (getComputedStyle(controller).flexDirection == 'row') {
                     routeOptionsLabel.classList.toggle('up')
                     line.classList.toggle('hide-on-mobiles')
@@ -875,6 +881,9 @@ export default class BuildRouteMap extends GlobalMap {
                         this.hideProfile()
                         this.hideDistanceMarkers()
                     }
+                    this.addState()
+                    console.log('State modified in configureEndPoint()')
+
                     this.waypointNumber--
                 }
             }
@@ -1333,11 +1342,11 @@ export default class BuildRouteMap extends GlobalMap {
                 <textarea class="js-route-description fullwidth"></textarea>
             </div>
             <div id="saveButtons" class="d-flex justify-content-between">
-                <div id="save" class="mp-button bg-darkgreen text-white">
-                    保存
-                </div>
                 <div id="cancel" class="mp-button bg-darkred text-white">
                     キャンセル
+                </div>
+                <div id="save" class="mp-button bg-darkgreen text-white">
+                    保存
                 </div>
             </div>`
 
@@ -1643,19 +1652,20 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     setMode () {
-        if (document.querySelector('#boxAddWaypoints').checked) {
-            this.map.getCanvasContainer().style.cursor = 'grab'
+        if (this.modeSelect.value == 'addWaypoints') {
+            
+            this.map.getCanvas().style.cursor = 'grab'
             this.map.on('mouseenter', 'route', () => {
-                this.map.getCanvasContainer().style.cursor = 'crosshair'
+                this.map.getCanvas().style.cursor = 'crosshair'
             } )
             this.map.on('mouseleave', 'route', () => {
-                if (document.querySelector('#boxAddWaypoints').checked) {
-                    this.map.getCanvasContainer().style.cursor = 'grab'
+                if (this.modeSelect.value == 'addWaypoints') {
+                    this.map.getCanvas().style.cursor = 'grab'
                 }
             } )
             this.map.off('click', this.routeBuilding)
             this.map.on('click', 'route', this.routeEditing)
-        } else {
+        } else if (this.modeSelect.value == 'drawRoute') {
             this.map.getCanvasContainer().style.cursor = 'crosshair'
             this.map.off('click', 'route', this.routeEditing)
             this.map.on('click', this.routeBuilding)
@@ -1769,11 +1779,11 @@ export default class BuildRouteMap extends GlobalMap {
 
         // Store new state
         this.state.splice(this.currentState, Infinity, {startpoint, waypoints, endpoint, route})
-
-        this.updateStateButtons()
         
         // Update current state property
         this.currentState++
+
+        this.updateStateButtons()
     }
 
     restoreState (stateNumber) {
@@ -1848,6 +1858,8 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     updateStateButtons () {
+        console.log('state length : ' + this.state.length)
+        console.log('current state : ' + this.currentState)
         // Update undo/redo buttons depending on the state
         if (this.state.length == 1) {
             this.buttonUndo.setAttribute('disabled', 'disabled')

@@ -1,4 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
+import WorldHelper from "/scripts/helpers/map.js"
 import GlobalMap from "/map/class/GlobalMap.js"
 import MkpointPopup from "/map/class/MkpointPopup.js"
 import RidePopup from "/map/class/RidePopup.js"
@@ -246,7 +247,8 @@ export default class WorldMap extends GlobalMap {
         editModeBox.id = 'editModeBox'
         editModeBox.setAttribute('type', 'checkbox')
         line1.appendChild(editModeBox)
-        editModeBox.addEventListener('click', () => {
+        editModeBox.addEventListener('click', async () => {
+            if (editModeBox.checked) await WorldHelper.onEditMkpointsStart()
             this.editMode()
         } ) // Data treatment
         var editModeBoxLabel = document.createElement('label')

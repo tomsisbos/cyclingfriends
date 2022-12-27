@@ -988,6 +988,10 @@ a .strava:hover {
     border-radius: 10px;
     margin-bottom: 150px;
 }
+.popup.medium-popup {
+    max-width: 450px;
+    text-align: left;
+}
 .popup.fullscreen-popup {
     max-width: 90%;
     left: 5%;

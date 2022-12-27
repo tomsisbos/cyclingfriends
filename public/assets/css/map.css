@@ -692,6 +692,9 @@ form#mkpointForm input[type="file" i] {
     pointer-events: auto;
     width: 100%;
 }
+.map-controller-block svg {
+    height: 1.5em;
+}
 .map-controller-left .map-controller-block {
     align-self: flex-start;
 }

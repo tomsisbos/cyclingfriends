@@ -32,11 +32,11 @@ export default class EditRouteMap extends BuildRouteMap {
                 <textarea class="js-route-description fullwidth">` + this.routeData.description + `</textarea>
             </div>
             <div class="d-flex justify-content-between">
-                <div id="save" class="mp-button bg-darkgreen text-white">
-                    保存
-                </div>
                 <div id="cancel" class="mp-button bg-darkred text-white">
                     キャンセル
+                </div>
+                <div id="save" class="mp-button bg-darkgreen text-white">
+                    保存
                 </div>
             </div>`
 
