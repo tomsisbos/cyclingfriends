@@ -288,18 +288,21 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     async draw (end) {
-        var route = this.map.getSource('route')
-        var boxFollowRoads = document.querySelector('#boxFollowRoads')
-        // Choose drawing mode depending on settings
-        if (boxFollowRoads.checked) await this.directionsRequest(route, end)
-        else this.drawStraight(route, end)
-        // Replace on the route if necessary
-        if (route) {
-            var point = this.map.getSource('endPoint')
-            var correctedCoordinates = CFUtils.replaceOnRoute(point._data.features[0].geometry.coordinates, route._data)
-            point._data.features[0].geometry.coordinates = correctedCoordinates
-            point.setData(point._data)
-        }
+        return new Promise(async (resolve, reject) => {
+            var route = this.map.getSource('route')
+            var boxFollowRoads = document.querySelector('#boxFollowRoads')
+            // Choose drawing mode depending on settings
+            if (boxFollowRoads.checked) await this.directionsRequest(route, end)
+            else this.drawStraight(route, end)
+            // Replace on the route if necessary
+            if (route) {
+                var point = this.map.getSource('endPoint')
+                var correctedCoordinates = CFUtils.replaceOnRoute(point._data.features[0].geometry.coordinates, route._data)
+                point._data.features[0].geometry.coordinates = correctedCoordinates
+                point.setData(point._data)
+            }
+            resolve(true)
+        } )
     }
 
     async edit (start, end, step = false) {
@@ -577,6 +580,7 @@ export default class BuildRouteMap extends GlobalMap {
         // Update tunnels
         this.updateTunnels(this.map.getSource('route')._data.properties.tunnels)
 
+        console.log('State modified in removeWaypoint()')
         this.addState()
     }
 
@@ -986,11 +990,8 @@ export default class BuildRouteMap extends GlobalMap {
         this.map.off('touchmove', onMoveListener)
 
         this.map.getCanvasContainer().style.cursor = ''
-        if (pointStatus == 'start') {
-            var point = this.map.getSource('startPoint')
-        } else if (pointStatus == 'end') {
-            var point = this.map.getSource('endPoint')
-        }
+        if (pointStatus == 'start') var point = this.map.getSource('startPoint')
+        else if (pointStatus == 'end') var point = this.map.getSource('endPoint')
         // Get previous and next waypoint coordinates (or closest coordinates)
         var pointCoordinates = point._data.features[0].geometry.coordinates
 
@@ -998,11 +999,8 @@ export default class BuildRouteMap extends GlobalMap {
             var route = this.map.getSource('route')
             var routeCoordinates = route._data.geometry.coordinates
             if (pointStatus == 'start') { // If moved point is startPoint, get next waypoint (or endPoint if none) coordinates
-                if (this.map.getSource('wayPoint2')) {
-                    var nextWaypointCoordinates = this.map.getSource('wayPoint2')._data.features[0].geometry.coordinates
-                } else {
-                    var nextWaypointCoordinates = this.map.getSource('endPoint')._data.features[0].geometry.coordinates
-                }
+                if (this.map.getSource('wayPoint2')) var nextWaypointCoordinates = this.map.getSource('wayPoint2')._data.features[0].geometry.coordinates
+                else var nextWaypointCoordinates = this.map.getSource('endPoint')._data.features[0].geometry.coordinates
                 var closestNextWaypointCoordinates = CFUtils.closestLocation(nextWaypointCoordinates, routeCoordinates)
                 var startKey = 0
                 var endKey = parseInt(getKeyByValue(routeCoordinates, closestNextWaypointCoordinates))
@@ -1015,15 +1013,10 @@ export default class BuildRouteMap extends GlobalMap {
                 var section = response.section
                 section.reverse()
                 routeCoordinates.splice(startKey, toSlice)
-                for (let i = 0; i < section.length; i++) {
-                    routeCoordinates.splice(startKey, 0, section[i])
-                }
+                for (let i = 0; i < section.length; i++) routeCoordinates.splice(startKey, 0, section[i])
             } else if (pointStatus == 'end') { // If moved point is endPoint, get previous waypoint (or startPoint if none) coordinates
-                if (this.map.getSource('wayPoint' + (this.waypointNumber))) {
-                    var previousWaypointCoordinates = this.map.getSource('wayPoint' + (this.waypointNumber))._data.features[0].geometry.coordinates
-                } else {
-                    var previousWaypointCoordinates = this.map.getSource('startPoint')._data.features[0].geometry.coordinates
-                }
+                if (this.map.getSource('wayPoint' + (this.waypointNumber))) var previousWaypointCoordinates = this.map.getSource('wayPoint' + (this.waypointNumber))._data.features[0].geometry.coordinates
+                else var previousWaypointCoordinates = this.map.getSource('startPoint')._data.features[0].geometry.coordinates
                 var closestPreviousWaypointCoordinates = CFUtils.closestLocation(previousWaypointCoordinates, routeCoordinates)
                 var startKey = parseInt(getKeyByValue(routeCoordinates, closestPreviousWaypointCoordinates))
                 var endKey = routeCoordinates.length
@@ -1036,9 +1029,7 @@ export default class BuildRouteMap extends GlobalMap {
                     var section = response.section
                     section.reverse()
                     routeCoordinates.splice(startKey, toSlice)
-                    for (let i = 0; i < section.length; i++) {
-                        routeCoordinates.splice(startKey, 0, section[i])
-                    }
+                    for (let i = 0; i < section.length; i++) routeCoordinates.splice(startKey, 0, section[i])
                 } else {
                     var section = [e.lngLat.lng, e.lngLat.lat]
                     routeCoordinates.splice(routeCoordinates.length - 1, 1, section)
@@ -1074,9 +1065,11 @@ export default class BuildRouteMap extends GlobalMap {
             route.setData(geojson)
             // Update tunnels
             this.updateTunnels(route._data.properties.tunnels)
-        } else { // Set start variable to released point coordinates
-            this.start = Object.keys(e.lngLat).map((key) => e.lngLat[key])
-        }
+        // Set start property to released point coordinates
+        } else this.start = Object.keys(e.lngLat).map((key) => e.lngLat[key])
+
+        this.addState()
+        console.log('State modified in onUpStartEnd()')
     }
 
     async generateProfile (options = {force: false}) {
@@ -1541,7 +1534,6 @@ export default class BuildRouteMap extends GlobalMap {
                                 document.querySelectorAll('.js-segment-season-section').forEach( (section) => {
                                     let id = getIdFromString(section.id)
                                     if (id > number) {
-                                        console.log('updated')
                                         section.id = 'season' + (id - 1) // Decrease section id number
                                         section.querySelector('.js-segment-period-title').innerText = '時期 n°' + (id - 1) // Decrease section title number
                                         section.querySelector('.mapboxgl-popup-close-button').id = 'removePeriod' + (id - 1) // Decrease section remove button id number
@@ -1670,7 +1662,7 @@ export default class BuildRouteMap extends GlobalMap {
         }
     }
 
-    routeBuilding = (e) => {
+    routeBuilding = async (e) => {
         // If starting point is already defined, request a route to clicked point
         if (this.start) {
             this.waypointNumber = this.prepareNextWaypoint(this.waypointNumber)
@@ -1717,7 +1709,7 @@ export default class BuildRouteMap extends GlobalMap {
                 }
                 this.endpointSet = true
             }
-            this.draw(coords)
+            await this.draw(coords)
         // If first click on the map, define starting point
         } else if (!this.map.getSource('startPoint')) {
             this.start = Object.keys(e.lngLat).map((key) => e.lngLat[key])
@@ -1749,18 +1741,18 @@ export default class BuildRouteMap extends GlobalMap {
             this.configureStartPoint()
         }
         this.addState()
+        console.log('State modified in routeBuilding()')
     }
 
     routeEditing = (e) => {
         this.addIntermediateWaypoint([e.lngLat.lng, e.lngLat.lat])
         this.addState()
+        console.log('State modified in routeEditing()')
     }
 
-    addState () {
-        // Get route source
-        var route = this.map.getSource('route')._data
+    async addState () {
         // Get startpoint source
-        var startpoint = this.map.getSource('startPoint')._data
+        var startpoint = JSON.parse(JSON.stringify(this.map.getSource('startPoint')._data))
         // Get waypoint sources
         var waypoints = []
         if (this.map.getSource('wayPoint2')) {
@@ -1768,27 +1760,41 @@ export default class BuildRouteMap extends GlobalMap {
                 if (this.map.getSource('wayPoint' + (i + 1))) waypoints.push(this.map.getSource('wayPoint' + (i + 1))._data)
             }
         }
+        // Get route source
+        if (this.map.getSource('route')) var route = JSON.parse(JSON.stringify(this.map.getSource('route')._data))
+        else var route = {}
         // Get endpoint source
-        var endpoint = this.map.getSource('endPoint')._data
+        if (this.map.getSource('endPoint')) var endpoint = JSON.parse(JSON.stringify(this.map.getSource('endPoint')._data))
+        else var endpoint = {}
 
         // Store new state
         this.state.splice(this.currentState, Infinity, {startpoint, waypoints, endpoint, route})
-        console.log(this.state)
-
-        // Update current state property
-        this.currentState++
 
         this.updateStateButtons()
+        
+        // Update current state property
+        this.currentState++
     }
 
     restoreState (stateNumber) {
-        console.log(this.waypointNumber)
 
-        // Restore previous state
         var key = stateNumber - 1
-        this.map.getSource('route').setData(this.state[key].route)
-        this.map.getSource('startPoint').setData(this.state[key].startpoint)
-        this.map.getSource('endPoint').setData(this.state[key].endpoint)
+        // Restore startpoint previous state
+        this.map.getSource('startPoint').setData(JSON.parse(JSON.stringify(this.state[key].startpoint)))
+        // Restore route previous state
+        const route = JSON.parse(JSON.stringify(this.state[key].route))
+        if (route.geometry) {
+            if (this.map.getSource('route')) this.map.getSource('route').setData(route)
+            else this.addRouteLayer(JSON.parse(JSON.stringify(this.state[key].route)))
+        } else {
+            if (this.map.getLayer('route')) {
+                this.map.removeLayer('route')
+                this.map.removeSource('route')
+                this.hideProfile()
+                this.hideDistanceMarkers()
+            }
+        }
+        // Restore waypoints previous state
         for (let i = 0; i < this.waypointNumber - 1; i++) {
             this.map.removeLayer('wayPoint' + (i + 2))
             this.map.removeSource('wayPoint' + (i + 2))
@@ -1810,25 +1816,49 @@ export default class BuildRouteMap extends GlobalMap {
                 }
             } )
         }
-        // Update waypointNumber
         this.waypointNumber = this.state[key].waypoints.length + 1
-        console.log(this.waypointNumber)
+        // Restore endpoint previous state
+        const endpoint = this.state[key].endpoint
+        if (this.map.getSource('endPoint')) {
+            if (endpoint.type) this.map.getSource('endPoint').setData(endpoint)
+            else {
+                this.map.removeLayer('endPoint')
+                this.map.removeSource('endPoint')
+                ///this.start = this.map.getSource('startPoint')._data.features[0].geometry.coordinates
+            }
+        } else {
+            this.map.addSource('endPoint', {
+                type: 'geojson',
+                data: endpoint
+            } )
+            this.map.addLayer( {
+                id: 'endPoint',
+                type: 'circle',
+                source: 'endPoint',
+                paint: {
+                    'circle-radius': 8,
+                    'circle-color': '#ff5555',
+                    'circle-stroke-color': this.routeColor,
+                    'circle-stroke-width': 2
+                }
+            } )
+        }
 
         this.updateStateButtons()
     }
 
     updateStateButtons () {
         // Update undo/redo buttons depending on the state
-        if (this.state.length == 0) {
+        if (this.state.length == 1) {
             this.buttonUndo.setAttribute('disabled', 'disabled')
             this.buttonRedo.setAttribute('disabled', 'disabled')
-        } else if (this.currentState != 0 && this.currentState != this.state.length) {
+        } else if (this.currentState > 1 && this.currentState != this.state.length) {
             this.buttonUndo.removeAttribute('disabled')
             this.buttonRedo.removeAttribute('disabled')
-        } else if (this.currentState != 0 && this.currentState == this.state.length) {
+        } else if (this.currentState > 1 && this.currentState == this.state.length) {
             this.buttonUndo.removeAttribute('disabled')
             this.buttonRedo.setAttribute('disabled', 'disabled')
-        } else if (this.currentState == 0 && this.currentState > 0) {
+        } else if (this.currentState == 1 && this.state.length > 1) {
             this.buttonUndo.setAttribute('disabled', 'disabled')
             this.buttonRedo.removeAttribute('disabled')
         }

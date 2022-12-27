@@ -104,6 +104,7 @@ ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, asy
     var routeBounds = CFUtils.defineRouteBounds(coordinates)
     map.fitBounds(routeBounds)
     editRouteMap.waypointNumber = 1
+    editRouteMap.addState()
 } )
 
 // Set edition mode by default
