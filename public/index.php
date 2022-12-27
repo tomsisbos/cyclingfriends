@@ -8,7 +8,10 @@ $router = new AltoRouter();
 
 /* List of targets to match */
 
-$router->map('GET', '/', 'dashboard');
+$router->map('GET', '/dashboard', 'dashboard');
+
+// Beta
+$router->map('GET', '/', 'beta/home');
 
 // World
 $router->map('GET', '/world', 'world/map');

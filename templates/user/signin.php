@@ -21,7 +21,7 @@ require '../actions/users/signinAction.php'; ?>
 
 			<form class="container smaller connection-container" method="post">
 
-				<div class="classy-title"></div>
+				<div class="js-scenery-info classy-title"></div>
 			
 				<?php if (isset($errormessage)) echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>'; ?>
 			

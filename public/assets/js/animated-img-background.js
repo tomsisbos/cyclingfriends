@@ -2,7 +2,7 @@ const imgsNumber = 30
 const interval = 10 // seconds
 var background = document.querySelector('.with-background-img')
 var flash = document.querySelector('.with-background-flash')
-var text = document.querySelector('.classy-title')
+var text = document.querySelector('.js-scenery-info')
 
 // Request [imgsNumber] images with the most likes from mkpoint images table
 ajaxGetRequest ('/api/background.php' + "?get-background-imgs=" + imgsNumber, (imgs) => {

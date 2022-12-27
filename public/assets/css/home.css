@@ -1,0 +1,66 @@
+.home-site-logo {
+    position: relative;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+.home-site-logo img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+.home-brand {
+    position: absolute;
+    font-size: 40px;
+    font-family: Dr sugiyama;
+    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+}
+.home-main-caption {
+    color: white;
+    text-shadow: 0px 0px 50px black;
+    text-align: center;
+}
+.home-main-caption p {
+    margin-bottom: 3px;
+    font-family: Yu Mincho;
+}
+.home-scenery-info {
+    color: white;
+    font-family: Yu Mincho;
+    position: absolute;
+    bottom: 10;
+    right: 10;
+    text-align: right;
+}
+.home-main-container {
+    background-color: transparent;
+    position: absolute;
+    top: calc(80px + 0px);
+    min-width: 100%;
+    padding: 50px 10%;
+    z-index: 6;
+}
+
+.home-slide {
+    height: 100vh;
+    padding: 80px 40px;
+}
+.home-release-date {
+    background-color: #5c9999;
+    padding: 10px 0px;
+    margin-top: auto;
+    letter-spacing: 4;
+    margin-top: 40px;
+}
+
+@media only screen and (max-width: 560px) {
+    .home-site-logo {
+        height: 100px !important;
+    }
+    .home-brand {
+        font-size: 40px;
+        font-weight: normal;
+    }
+}
