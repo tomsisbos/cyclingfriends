@@ -1,3 +1,13 @@
+.home-video {
+    width: 100%;
+    height: calc(100vh - 80px);
+}
+.home-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #5c9999;
+}
 .home-site-logo {
     position: relative;
     height: 200px;
@@ -39,7 +49,8 @@
     position: absolute;
     top: calc(80px + 0px);
     min-width: 100%;
-    padding: 50px 10%;
+    min-height: calc(100% - 80px);
+    padding: 100px 10%;
     z-index: 6;
 }
 
@@ -53,6 +64,33 @@
     margin-top: auto;
     letter-spacing: 4;
     margin-top: 40px;
+}
+
+.schema {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 60px;
+}
+.shema-part {
+    width: 100%;
+}
+.shema-title {
+    font-family: Dr Sugiyama;
+    font-size: 28px;
+}
+.shema-cross {
+    font-size: 100px;
+    font-family: Dr Sugiyama;
+    align-self: center;
+    line-height: 1em;
+}
+.shema-row {
+    background: linear-gradient(#fcfcfc, #fff);
+    margin: 6px;
+    padding: 6px;
+    letter-spacing: 2;
+    font-size: small;
 }
 
 @media only screen and (max-width: 560px) {
