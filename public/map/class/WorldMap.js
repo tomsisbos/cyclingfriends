@@ -430,6 +430,17 @@ export default class WorldMap extends GlobalMap {
         }
     }
 
+    async getMkpointMarker (mkpoint) {
+        return new Promise((resolve, reject) => {
+            this.mkpointsMarkerCollection.forEach((marker) => {
+                if (getIdFromString(marker.getElement().id) == parseInt(mkpoint.id)) {
+                    console.log(marker)
+                    resolve(marker)
+                }
+            } )
+        } )
+    }
+
     addFavoriteMkpoints () {
         this.data.mkpoints.forEach( (mkpoint) => {
             // Verify it has not already been loaded
@@ -710,48 +721,51 @@ export default class WorldMap extends GlobalMap {
 
     }
 
-    updateSegments () {
+    async updateSegments () {
+        return new Promise((resolve, reject) => {
 
-        // If current zoom is precise enough
-        if (this.map.getZoom() > this.segmentsZoomRoof) {
+            // If current zoom is precise enough
+            if (this.map.getZoom() > this.segmentsZoomRoof) {
 
-            const segments = this.data.segments
+                const segments = this.data.segments
 
-            // First, remove all segments that have left bounds
-            let i = 0
-            while (i < this.segmentsCollection.length) {
-                // If existing segment is not inside new bounds, or if it is not displayable at this zoom level
-                if (!CFUtils.isInsideBounds(this.map.getBounds(), this.segmentsCollection[i].route.coordinates) || !this.isSegmentToDisplay(this.segmentsCollection[i])) {
-                    if (this.map.getLayer('segment' + this.segmentsCollection[i].id)) this.hideSegment(this.segmentsCollection[i]) // Remove it from the map
-                    this.segmentsCollection.splice(i, 1) // Remove it from instance Nodelist
-                    i--
+                // First, remove all segments that have left bounds
+                let i = 0
+                while (i < this.segmentsCollection.length) {
+                    // If existing segment is not inside new bounds, or if it is not displayable at this zoom level
+                    if (!CFUtils.isInsideBounds(this.map.getBounds(), this.segmentsCollection[i].route.coordinates) || !this.isSegmentToDisplay(this.segmentsCollection[i])) {
+                        if (this.map.getLayer('segment' + this.segmentsCollection[i].id)) this.hideSegment(this.segmentsCollection[i]) // Remove it from the map
+                        this.segmentsCollection.splice(i, 1) // Remove it from instance Nodelist
+                        i--
+                    }
+                    i++
                 }
-                i++
-            }
 
-            // Second, add all segments that have entered bounds
-            if (segments) segments.forEach( (segment) => {
-                // If segment is public and has a route data
-                if (this.isSegmentToDisplay(segment)) {
-                    // If segment is inside bounds
-                    if (CFUtils.isInsideBounds(this.map.getBounds(), segment.route.coordinates)) {
-                        // Verify it has not already been loaded
-                        if (!this.isLinestringAlreadyDisplayed(segment)) {
-                            this.segmentsCollection.push(segment)
-                            this.displaySegment(segment)
+                // Second, add all segments that have entered bounds
+                if (segments) segments.forEach( (segment) => {
+                    // If segment is public and has a route data
+                    if (this.isSegmentToDisplay(segment)) {
+                        // If segment is inside bounds
+                        if (CFUtils.isInsideBounds(this.map.getBounds(), segment.route.coordinates)) {
+                            // Verify it has not already been loaded
+                            if (!this.isLinestringAlreadyDisplayed(segment)) {
+                                this.segmentsCollection.push(segment)
+                                this.displaySegment(segment)
+                            }
                         }
                     }
-                }
-            } )
+                } )
 
-        // If current zoom is not precise enough
-        } else {
-            // Hide all segments and clear instance property
-            this.segmentsCollection.forEach( (segment) => {
-                if (this.map.getLayer('segment' + segment.id)) this.hideSegment(segment)
-            } )
-            this.segmentsCollection = []
-        }
+            // If current zoom is not precise enough
+            } else {
+                // Hide all segments and clear instance property
+                this.segmentsCollection.forEach( (segment) => {
+                    if (this.map.getLayer('segment' + segment.id)) this.hideSegment(segment)
+                } )
+                this.segmentsCollection = []
+            }
+            resolve (true)
+        } )
     }
 
     displaySegment (segment) {
@@ -838,73 +852,85 @@ export default class WorldMap extends GlobalMap {
     }
 
     clickOnSegment = async (e) => {
+        return new Promise (async (resolve, reject) => {
 
-        // Don't open if there is a marker on top
-        var markerInPath
-        e.originalEvent.path.forEach(elementInPath => {
-            if (elementInPath.className && elementInPath.className.includes('mapboxgl-marker')) markerInPath = true
-        } )
-        if (!markerInPath) {
+            // Don't open if there is a marker on top
+            var markerInPath
+            e.originalEvent.path.forEach(elementInPath => {
+                if (elementInPath.className && elementInPath.className.includes('mapboxgl-marker')) markerInPath = true
+            } )
+            if (!markerInPath) {
 
-            // Don't open if there is another feature on top
-            if (this.map.queryRenderedFeatures(e.point)[0].source.includes('segment')) {
+                // Don't open if there is another feature on top
+                if (this.map.queryRenderedFeatures(e.point)[0].source.includes('segment')) {
 
-                // Get segment from segmentsCollection using layer ID
-                var segment
-                this.segmentsCollection.forEach(entry => {
-                    if (entry.id == getIdFromString(e.features[0].source)) segment = entry
-                } )
-                
-                // Create segment popup instance
-                segment.segmentPopup = new SegmentPopup( {
-                    closeOnClick: true,
-                    anchor: 'bottom',
-                    className: 'js-linestring marker-popup js-segment-popup'
-                }, segment)
+                    // Get segment from segmentsCollection using layer ID
+                    var segment
+                    this.segmentsCollection.forEach(entry => {
+                        if (entry.id == getIdFromString(e.features[0].source)) segment = entry
+                    } )
 
-                // Prepare and display segment popup
-                const popup = segment.segmentPopup.popup
-                popup.setLngLat(segment.route.coordinates[0])
-                popup.addTo(this.map)
-                segment.segmentPopup.rating()
-                segment.segmentPopup.generateProfile({force: true})
-                segment.segmentPopup.addIconButtons()
-                popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
-                    this.map.off('moveend', this.updateMapDataListener)
-                    await this.flyAlong(turf.lineString(segment.route.coordinates), {layerId: 'segment' + segment.id})
-                    this.map.on('moveend', this.updateMapDataListener)
-                } )
-
-                // Color segment cap in hovering style
-                this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
-                
-                // Remove instance and hide segment cap when popup is closed
-                popup.on('close', () => {
-                    delete segment.segmentPopup
-                    if (this.map.getLayer('segmentCap' + segment.id)) {
-                        this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
-                        this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.segmentCapColor)
-                    }
-                } )
-
-                /*
-                // Dislpay featured image
-                this.displayFeaturedImage(segment) */
-
-                // Update segmentsCollection entry
-                this.segmentsCollection.forEach((entry) => {
-                    if (segment.id == entry.id) entry = segment
-                } )
-
-                // Focus on segment
-                this.focus(this.map.getSource('segment' + segment.id)._data)
-                
-                // Add segment relevant photos
-                segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()
-                segment.segmentPopup.photos = segment.segmentPopup.getPhotos()
-                segment.segmentPopup.displayPhotos()
+                    var popup = await this.openSegmentPopup(segment)
+                    resolve(popup)
+                }
             }
-        }
+        } )
+    }
+
+    openSegmentPopup (segment) {
+        return new Promise (async (resolve, reject) => {
+                
+            // Create segment popup instance
+            segment.segmentPopup = new SegmentPopup( {
+                closeOnClick: true,
+                anchor: 'bottom',
+                className: 'js-linestring marker-popup js-segment-popup'
+            }, segment)
+
+            // Prepare and display segment popup
+            const popup = segment.segmentPopup.popup
+            popup.setLngLat(segment.route.coordinates[0])
+            popup.addTo(this.map)
+            segment.segmentPopup.rating()
+            segment.segmentPopup.generateProfile({force: true})
+            segment.segmentPopup.addIconButtons()
+            popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
+                this.map.off('moveend', this.updateMapDataListener)
+                await this.flyAlong(turf.lineString(segment.route.coordinates), {layerId: 'segment' + segment.id})
+                this.map.on('moveend', this.updateMapDataListener)
+            } )
+
+            // Color segment cap in hovering style
+            this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
+            
+            // Remove instance and hide segment cap when popup is closed
+            popup.on('close', () => {
+                delete segment.segmentPopup
+                if (this.map.getLayer('segmentCap' + segment.id)) {
+                    this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
+                    this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.segmentCapColor)
+                }
+            } )
+
+            /*
+            // Dislpay featured image
+            this.displayFeaturedImage(segment) */
+
+            // Update segmentsCollection entry
+            this.segmentsCollection.forEach((entry) => {
+                if (segment.id == entry.id) entry = segment
+            } )
+
+            // Focus on segment
+            this.focus(this.map.getSource('segment' + segment.id)._data)
+            
+            // Add segment relevant photos
+            segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()
+            segment.segmentPopup.photos = segment.segmentPopup.getPhotos()
+            segment.segmentPopup.displayPhotos()
+
+            resolve(popup)
+        } )
     }
 
     hideSegment (segment) {

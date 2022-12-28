@@ -25,6 +25,7 @@
     position: absolute;
     font-size: 40px;
     font-family: Dr sugiyama;
+    color: block;
     text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
 .home-main-caption {
@@ -54,6 +55,20 @@
     z-index: 6;
 }
 
+.home-columns {
+    display: flex;
+    height: 100%;
+}
+.home-column-2 {
+    text-align: justify;
+    width: 50%;
+    padding: 20px;
+}
+.home-column-map {
+    padding: 20px 0px;
+    width: 75% !important;
+}
+
 .home-slide {
     height: 100vh;
     padding: 80px 40px;
@@ -73,11 +88,27 @@
     margin: 60px;
 }
 .shema-part {
-    width: 100%;
+    width: 280px;
+    min-width: 280px;
+    min-height: 280px;
+    height: 280px;
+    background-color: lightblue;
+    border-radius: 999px;
 }
+@media only screen and (max-width: 780px) {
+    .shema-part {
+        width: unset;
+        min-width: unset;
+        min-height: unset;
+        height: unset;
+        background-color: lightblue;
+        border-radius: 999px;
+    }
+}
+
 .shema-title {
     font-family: Dr Sugiyama;
-    font-size: 28px;
+    font-size: 40px;
 }
 .shema-cross {
     font-size: 100px;

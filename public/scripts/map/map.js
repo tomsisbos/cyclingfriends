@@ -108,8 +108,8 @@ amenities.forEach( (amenity) => {
             let width
             if (amenityPopup.data.width) width = amenityPopup.data.width
             else if (amenityPopup.data['yh:WIDTH']) width = amenityPopup.data['yh:WIDTH']
-            else width = 'No data'
-            if (width != 'No data' && !width.includes('m')) width += 'm'
+            else width = 'データ無し'
+            if (width != 'データ無し' && !width.includes('m')) width += 'm'
             text += width
             // Set permission
             if (amenityPopup.data.bicycle == 'no') '<br>(!) 自転車はこの道を通行出来ません。'

@@ -20,7 +20,7 @@ var elements = document.querySelectorAll('.js-fade-on-scroll')
             if (bottomPosition > 0 && topPosition < 0) {
                 var pourcentageDisplayed = bottomPosition * 100 / elementHeight
                 overlay.style.opacity = 1 - (pourcentageDisplayed / 100)
-            }
+            } else overlay.style.opacity = 0
         } )
 
         // For elements containing an second overlay color data property, append another color overlay in the opposite direction
@@ -40,8 +40,7 @@ var elements = document.querySelectorAll('.js-fade-on-scroll')
                 var pourcentageDisplayed = bottomPosition * 100 / elementHeight
                 if (pourcentageDisplayed > 100 && pourcentageDisplayed < 200) {
                     overlay2.style.opacity = (pourcentageDisplayed - 100) / 100
-                    console.log(pourcentageDisplayed)
-                }
+                } else overlay2.style.opacity = 0
             } )
 
         }
@@ -56,7 +55,7 @@ var elements = document.querySelectorAll('.js-fade-on-scroll')
             if (bottomPosition > 0 && topPosition < 0) {
                 var pourcentageDisplayed = bottomPosition * 100 / elementHeight
                 element.style.opacity = pourcentageDisplayed / 100
-            }
+            } else element.style.opacity = 1
         } )
     }
 

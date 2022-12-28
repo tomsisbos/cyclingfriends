@@ -63,7 +63,7 @@ export default class GlobalMap extends Model {
 
     addStyleControl () {
         // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
         // Add style control
         var selectStyleContainer = document.createElement('div')
@@ -98,7 +98,7 @@ export default class GlobalMap extends Model {
 
     addOptionsControl () {
         // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
         // Add style control
         // Map options container
@@ -158,7 +158,7 @@ export default class GlobalMap extends Model {
 
     addRouteControl () {
         // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
         // Container
         var routeContainer = document.createElement('div')

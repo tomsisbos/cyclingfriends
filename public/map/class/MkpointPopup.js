@@ -40,7 +40,7 @@ export default class MkpointPopup extends Popup {
         return `
         <div class="popup-img-container">
             <div class="popup-icons">
-                <div id="target-button" title="走行再現モードに切り替える。">
+                <div id="target-button" title="この絶景スポットに移動する。">
                     <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
                 </div>
                 <form enctype="multipart/form-data" method="post" id="addphoto-button-form">

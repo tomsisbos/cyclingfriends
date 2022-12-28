@@ -1,8 +1,8 @@
 import CFUtils from "/map/class/CFUtils.js"
-import WorldMap from "/map/class/WorldMap.js"
+import HomeMap from "/map/class/HomeMap.js"
 import AmenityPopup from "/map/class/AmenityPopup.js"
 
-var $map = document.querySelector('#homeMap')
+var $map = document.querySelector('#homeSceneryMap')
 var loaded = false
 
 // Load map when user scrolls down to container
@@ -11,13 +11,13 @@ async function loadMap () {
     return new Promise((resolve, reject) => {
         document.addEventListener('scroll', async () => {
             var topPosition = $map.getBoundingClientRect().top
-            var bottomPosition = $map.offsetHeight + topPosition
+            var bottomPosition = $map.getBoundingClientRect().bottom
             console.log(bottomPosition)
-            console.log(topPosition)
-            if (!loaded && bottomPosition > 0 && topPosition < 0) {
-                var homeMap = new WorldMap()
-                await homeMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+            if (!loaded && topPosition < $map.offsetHeight && bottomPosition > 0) {
+                var homeMap = new HomeMap()
                 loaded = true
+                await homeMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+                console.log(loaded)
                 resolve(homeMap)
             }
         } )
@@ -25,6 +25,7 @@ async function loadMap () {
 }
 
 await loadMap().then( (homeMap) => {
+    console.log('resolved')
 
     // Load CF sources and layers
     homeMap.addSources()
@@ -35,33 +36,38 @@ await loadMap().then( (homeMap) => {
     /* -- Controls -- */
 
     homeMap.addStyleControl()
-    homeMap.addOptionsControl()
     homeMap.addFilterControl()
-    homeMap.addFullscreenControl()
 
     // Prepare and display mkpoints data
-    ajaxGetRequest (homeMap.apiUrl + "?display-mkpoints=details", (mkpoints) => {
+    ajaxGetRequest (homeMap.apiUrl + "?display-mkpoints=details", async (mkpoints) => {
         homeMap.data.mkpoints = mkpoints
-        if (homeMap.displayMkpointsBox.checked) {
-            homeMap.updateMkpoints()
-            homeMap.addFavoriteMkpoints()
-        }
-    } )
+        homeMap.updateMkpoints()
 
-    // Prepare and display segments data
-    ajaxGetRequest (homeMap.apiUrl + "?display-segments=true", (segments) => {
-        homeMap.data.segments = segments
-        if (homeMap.displaySegmentsBox.checked) homeMap.updateSegments()
-    } )
+        // Choose a scenery at random
+        var randomKey = Math.floor(Math.random() * mkpoints.length)
+        var randomMkpoint = mkpoints[randomKey]
+        const rmCoordinates = randomMkpoint.lngLat
+        console.log(randomMkpoint)
 
-    // Prepare and display rides data
-    ajaxGetRequest (homeMap.apiUrl + "?display-rides=true", (rides) => {
-        homeMap.data.rides = rides
-        if (homeMap.displayRidesBox.checked) homeMap.updateRides()
-    } )
+        // Fly to it
+        homeMap.map.jumpTo( {
+            center: [rmCoordinates.lng, rmCoordinates.lat],
+            zoom: 14,
+            pitch: 75,
+            bearing: 20
+        } )
+
+        // Open popup
+        var marker = await homeMap.getMkpointMarker(randomMkpoint)
+        console.log(marker)
+        marker.togglePopup()
+
+    }, homeMap.sceneryLoader)
 
     // Update map data on ending moving the map
-    homeMap.map.on('moveend', homeMap.updateMapDataListener)
+    homeMap.map.on('moveend', () => {
+        homeMap.updateMkpoints()
+    } )
 
     var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']
     amenities.forEach( (amenity) => {
@@ -125,8 +131,8 @@ await loadMap().then( (homeMap) => {
                 let width
                 if (amenityPopup.data.width) width = amenityPopup.data.width
                 else if (amenityPopup.data['yh:WIDTH']) width = amenityPopup.data['yh:WIDTH']
-                else width = 'No data'
-                if (width != 'No data' && !width.includes('m')) width += 'm'
+                else width = 'データ無し'
+                if (width != 'データ無し' && !width.includes('m')) width += 'm'
                 text += width
                 // Set permission
                 if (amenityPopup.data.bicycle == 'no') '<br>(!) 自転車はこの道を通行出来ません。'
@@ -150,7 +156,7 @@ await loadMap().then( (homeMap) => {
 
             // Add to map
             amenityPopup.popup.setLngLat(e.lngLat)
-            amenityPopup.popup.addTo(map)
+            amenityPopup.popup.addTo(homeMap.map)
             console.log(homeMap.map.getZoom())
         } )
 
