@@ -1,21 +1,20 @@
-import CFUtils from "/map/class/CFUtils.js"
 import Model from "/map/class/Model.js"
 
 export default class Popup extends Model {
 
     constructor (
-        options,
+        popupOptions,
         settings = {
             markerHeight: 10,
             markerRadius: 10,
             linearOffset: 25,
-        } ) {
-        super()
+        }, instanceOptions) {
+        super(instanceOptions)
         this.options
         this.markerHeight = settings.markerHeight
         this.markerRadius = settings.markerRadius
         this.linearOffset = settings.linearOffset
-        this.popup = new mapboxgl.Popup(Object.assign(this.defaultOptions, options))
+        this.popup = new mapboxgl.Popup(Object.assign(this.defaultOptions, popupOptions))
     }
     
     markerHeight = 20
@@ -223,6 +222,7 @@ export default class Popup extends Model {
         } )
     }
 
+    // Color like button depending on if currently displayed photo is liked or not
     colorLike = () => {
 
         // Get image id and button elements
@@ -259,7 +259,7 @@ export default class Popup extends Model {
         }
     }
 
-    rating = () => {
+    loadRating = (object) => {
         var ratingDiv = document.querySelector('.popup-rating')
         
         // Display 5 stars with an unique id
@@ -272,7 +272,7 @@ export default class Popup extends Model {
         var stars = document.querySelectorAll('.star')
 
         // Get current rating infos
-        ajaxGetRequest (this.apiUrl + "?get-rating=true&type=" + this.type + "&id=" + this.data.id, (ratingInfos) => {
+        ajaxGetRequest (this.apiUrl + "?get-rating=true&type=" + this.type + "&id=" + object.id, (ratingInfos) => {
 
             var setRating = (ratingInfos) => {
                 if (ratingInfos.vote != false) {
@@ -339,19 +339,29 @@ export default class Popup extends Model {
                     if (numIsPair(click)) {
                         // On click, send clicked number to API and update rating display
                         var vote = e.target.getAttribute('number')
-                        ajaxGetRequest (this.apiUrl + "?set-rating=true&type=" + this.type + "&id=" + this.data.id + "&grade=" + vote, (response) => {
+                        ajaxGetRequest (this.apiUrl + "?set-rating=true&type=" + this.type + "&id=" + object.id + "&grade=" + vote, (response) => {
                             ratingInfos = response
                             setRating(ratingInfos)
                         } )
                     } else {
                         // On click, ask API to cancel current vote and update rating display
-                        ajaxGetRequest (this.apiUrl + "?cancel-rating=true&type=" + this.type + "&id=" + this.data.id, (response) => {
+                        ajaxGetRequest (this.apiUrl + "?cancel-rating=true&type=" + this.type + "&id=" + object.id, (response) => {
                             ratingInfos = response
                             setRating(ratingInfos)
                         } )
                     }
                     click++
                 } )
+            } )
+        } )
+    }
+
+    // Adds user profile picture to the mkpoint popup
+    async loadPropic (userId) {
+        return new Promise((resolve, reject) => {
+            // Asks server for profil picture src and display it
+            ajaxGetRequest (this.apiUrl + "?getpropic=" + userId, (src) => {
+                resolve(src)
             } )
         } )
     }

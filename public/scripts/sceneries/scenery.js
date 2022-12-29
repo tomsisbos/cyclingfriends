@@ -1,15 +1,37 @@
-
-import MkpointPopup from '/map/class/MkpointPopup.js'
+import SceneryPopup from '/map/class/scenery/SceneryPopup.js'
 
 const mkpoint_id = getIdFromString(location.pathname)
-ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (mkpoint) => {
-	var mkpointPopup = new MkpointPopup()
-	console.log(mkpointPopup)
-	mkpointPopup.data = mkpoint.data
-	mkpointPopup.photos = mkpoint.photos
-	mkpointPopup.prepareModal()
-    mkpointPopup.colorLike()
-    mkpointPopup.prepareToggleLike()
-    mkpointPopup.rating()
-    mkpointPopup.reviews()
+ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (response) => {
+
+	// Prepare scenery instance
+	var instanceOptions = {
+		noPopup: true
+	}
+	var instanceData = {
+		mapInstance: null,
+		mkpoint: response.data
+	}
+	let sceneryPopup = new SceneryPopup({}, instanceData, instanceOptions)
+	
+	// Initiate relevant functions
+    sceneryPopup.loadRating(sceneryPopup.data.mkpoint)
+    sceneryPopup.loadReviews()
+
+	// Load photos
+	ajaxGetRequest (sceneryPopup.apiUrl + "?mkpoint-photos=" + sceneryPopup.data.mkpoint.id, (photos) => {
+		sceneryPopup.photos = photos
+		sceneryPopup.loadLightbox(document.body)
+		sceneryPopup.colorLike()
+		sceneryPopup.prepareToggleLike()
+		
+		// Set lightbox listener
+		document.querySelectorAll('.pg-sg-photo').forEach(thumbnail => {
+			thumbnail.addEventListener('click', () => {
+				let id = parseInt(thumbnail.dataset.number)
+				sceneryPopup.lightbox.open(id)
+			} )
+		} )
+	} )
+
+	console.log(sceneryPopup)
 } )

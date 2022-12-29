@@ -1,10 +1,11 @@
 import CFUtils from "/map/class/CFUtils.js"
+import SegmentLightbox from "/map/class/segment/SegmentLightbox.js"
 import Popup from "/map/class/Popup.js"
 
 export default class SegmentPopup extends Popup {
 
-    constructor (options, segment) {
-        super(options)
+    constructor (options, segment, instanceOptions) {
+        super(options, {}, instanceOptions)
         this.data = segment
         this.load()
     }
@@ -565,149 +566,6 @@ export default class SegmentPopup extends Popup {
         else if (slope > 6 && slope <= 9) return {color: '#ff5555', weight: 'bold'}
         else if (slope > 9) return {color: '#000000', weight: 'bold'}
     }
-
-    prepareModal () {
-
-        // Prepare arrows
-        if (this.photos.length > 1) {
-            var prevArrow = document.createElement('a')
-            prevArrow.className = 'prev lightbox-arrow'
-            prevArrow.innerHTML = '&#10094;'
-            var nextArrow = document.createElement('a')
-            nextArrow.className = 'next lightbox-arrow'
-            nextArrow.innerHTML = '&#10095;'
-        }
-        
-        // If first opening, prepare modal window structure
-        if (!document.querySelector('#myModal')) {
-            var modalBaseContent = document.createElement('div')
-            modalBaseContent.id = 'myModal'
-            modalBaseContent.className = 'modal'
-            var closeButton = document.createElement('span')
-            closeButton.className = "close cursor"
-            closeButton.setAttribute('onclick', 'closeModal()')
-            closeButton.innerHTML = '&times;'
-            var modalBlock = document.createElement('div')
-            modalBlock.className = "modal-block"
-            modalBaseContent.appendChild(closeButton)
-            modalBaseContent.appendChild(modalBlock)
-            document.querySelector('body').after(modalBaseContent)
-            // If more than one photo, display arrows
-            if (this.photos.length > 1) {
-                modalBlock.appendChild(prevArrow)
-                modalBlock.appendChild(nextArrow)
-            }
-        // Else, clear modal window content
-        } else {
-            document.querySelector('.modal-block').innerHTML = ''
-            if (this.photos.length > 1) {
-                document.querySelector('.modal-block').appendChild(prevArrow)
-                document.querySelector('.modal-block').appendChild(nextArrow)
-            }
-        }
-        
-        // Slides display
-        var cursor = 0
-        var slides = []
-        var imgs = []
-        var slidesBox = document.createElement('div')
-        slidesBox.className = 'slides-box'
-        document.querySelector('.modal-block').appendChild(slidesBox)
-        this.mkpoints.forEach( (mkpoint) => {
-            mkpoint.photos.forEach( (photo) => {
-                const distanceFromStart = this.getDistanceFromStart(mkpoint)
-                slides[cursor] = document.createElement('div')
-                slides[cursor].className = 'mySlides wider-slide'
-                // Create number
-                let numberText = document.createElement('div')
-                numberText.className = 'numbertext'
-                numberText.innerHTML = (cursor + 1) + ' / ' + this.photos.length
-                slides[cursor].appendChild(numberText)
-                // Create image
-                imgs[cursor] = document.createElement('img')
-                imgs[cursor].src = 'data:image/jpeg;base64,' + photo.blob
-                imgs[cursor].id = 'mkpoint-img-' + photo.id
-                imgs[cursor].classList.add('fullwidth')
-                slides[cursor].appendChild(imgs[cursor])
-                // Create image meta
-                var imgMeta = document.createElement('div')
-                imgMeta.className = 'mkpoint-img-meta'
-                slides[cursor].appendChild(imgMeta)
-                var likeButton = document.createElement('div')
-                likeButton.className = 'like-button-modal'
-                likeButton.style.color = 'white'
-                likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
-                var likeIcon = document.createElement('span')
-                likeIcon.className = 'iconify'
-                likeIcon.dataset.icon = 'mdi:heart-plus'
-                likeIcon.dataset.width = '40'
-                likeIcon.dataset.height = '40'
-                likeButton.appendChild(likeIcon)
-                imgMeta.appendChild(likeButton)
-                var likes = document.createElement('div')
-                likes.className = 'mkpoint-img-likes'
-                likes.innerText = photo.likes
-                imgMeta.appendChild(likes)
-                var period = document.createElement('div')
-                period.className = 'mkpoint-period lightbox-period'
-                period.classList.add('period-' + photo.month)
-                period.innerText = photo.period
-                imgMeta.appendChild(period)
-                slidesBox.appendChild(slides[cursor])
-                // Caption display
-                var caption = document.createElement('div')
-                caption.className = 'lightbox-caption'
-                var name = document.createElement('div')
-                name.innerText = 'km ' + (Math.ceil(distanceFromStart * 10) / 10) + ' - ' + mkpoint.name
-                name.className = 'lightbox-name'
-                caption.appendChild(name)
-                var location = document.createElement('div')
-                location.innerText = mkpoint.city + ' (' + mkpoint.prefecture + ') - ' + mkpoint.elevation + 'm'
-                location.className = 'lightbox-location'
-                caption.appendChild(location)
-                var description = document.createElement('div')
-                description.className = 'lightbox-description'
-                description.innerText = mkpoint.description
-                caption.appendChild(description)
-                slidesBox.appendChild(caption)
-                // Display caption on slide hover
-                slides[cursor].addEventListener('mouseover', () => {
-                    caption.style.visibility = 'visible'
-                    caption.style.opacity = '1'
-                } )
-                slides[cursor].addEventListener('mouseout', () => {
-                    caption.style.visibility = 'hidden'
-                    caption.style.opacity = '0'
-                } )
-                cursor++
-            } )
-        } )
-        // Demos display
-        cursor = 0
-        var demos = []
-        var demosBox = document.createElement('div')
-        demosBox.className = 'thumbnails-box'
-        document.querySelector('.modal-block').appendChild(demosBox)
-        this.photos.forEach( (photo) => {
-            let column = document.createElement('div')
-            column.className = 'column'
-            demos[cursor] = document.createElement('img')
-            demos[cursor].className = 'demo cursor fullwidth'
-            demos[cursor].setAttribute('demoId', cursor + 1)
-            demos[cursor].src = 'data:' + photo.type + ';base64,' + photo.blob
-            column.appendChild(demos[cursor])
-            demosBox.appendChild(column)
-        } )
-
-        // Load lightbox script for this popup
-        var script = document.createElement('script');
-        script.src = '/assets/js/lightbox-script.js';
-        this.popup.getElement().appendChild(script);
-
-        // Prepare toggle like function
-        if (this.popup.getElement().querySelector('#like-button')) this.prepareToggleLike()
-
-    }
             
     displayPhotos () {
         
@@ -733,20 +591,21 @@ export default class SegmentPopup extends Popup {
             }
         }
 
-        // if (!document.querySelector('.popup-img')) {
-            var cursor = 0
-            // Add photos to the DOM
-            this.photos.forEach( (photo) => {
-                addPhoto(photo, cursor)
-                cursor++
-            } )
-        // }
+        var cursor = 0
+        // Add photos to the DOM
+        this.photos.forEach( (photo) => {
+            addPhoto(photo, cursor)
+            cursor++
+        } )
         
-        // Display first photo and period by default
-        if (document.querySelector('.js-segment-popup .popup-img')) document.querySelector('.js-segment-popup .popup-img').style.display = 'block'
-
-        // Set modal
-        this.prepareModal()
+        // Set up lightbox
+        var lightboxData = {
+            photos: this.photos,
+            mkpoints: this.mkpoints,
+            route: this.data.route
+        }
+        var lightbox = new SegmentLightbox(this.popup._map.getContainer(), this.popup, lightboxData, {noSession: true})
+        console.log(lightbox)
         
         // Set slider system
         var setThumbnailSlider = setThumbnailSlider.bind(this)
@@ -755,7 +614,8 @@ export default class SegmentPopup extends Popup {
         function addPhoto (photo, number) {
             var newPhoto = document.createElement('img')
             newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
-            newPhoto.style.display = 'none'
+            if (number == 0) newPhoto.style.display = 'block'
+            else newPhoto.style.display = 'none'
             newPhoto.dataset.id = photo.id
             newPhoto.dataset.author = photo.user_id
             newPhoto.dataset.number = number
@@ -766,6 +626,12 @@ export default class SegmentPopup extends Popup {
             newPhotoPeriod.innerText = photo.period
             newPhotoPeriod.style.display = 'none'
             newPhoto.after(newPhotoPeriod)
+            
+            // Lightbox listener
+            newPhoto.addEventListener('click', () => {
+                let id = parseInt(newPhoto.dataset.number)
+                lightbox.open(id)
+            } )
         }
 
         // Functions for sliding photos of mkpoints
@@ -803,9 +669,7 @@ export default class SegmentPopup extends Popup {
                 showPhotos(photoIndex)
 
             // If there is only one photo in the database, remove arrows if needed
-            } else {
-                removeArrows()
-            }            
+            } else removeArrows()  
         }
     }
 

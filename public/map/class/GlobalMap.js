@@ -1,16 +1,16 @@
 import CFUtils from "/map/class/CFUtils.js"
 import Model from "/map/class/Model.js"
-import MkpointPopup from "/map/class/MkpointPopup.js"
+import SceneryPopup from "/map/class/scenery/SceneryPopup.js"
 import cover from '/node_modules/@mapbox/tile-cover/index.js'
 
 // Global class initialization
 export default class GlobalMap extends Model {
 
-    constructor () {
-        super()
+    constructor (options) {
+        super(options)
         this.setSeason()
-        ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
-            if (userLocation.lng !== 0) this.userLocation = userLocation
+        if (!options.noSession) ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
+            if (userLocation && userLocation.lng !== 0) this.userLocation = userLocation
             else this.userLocation = this.defaultCenter
             this.centerOnUserLocation()
 
@@ -280,6 +280,7 @@ export default class GlobalMap extends Model {
     async load (element, style, center = this.defaultCenter) {
         return new Promise ((resolve, reject) => {
             this.$map = element
+            console.log(center)
             this.map = new mapboxgl.Map ( {
                 container: element,
                 center,
@@ -1808,7 +1809,7 @@ export default class GlobalMap extends Model {
     }
     
     // Remove 'selected-marker' class from all selected markers
-    unselect () {
+    unselectMarkers () {
         var openedPopupId = 'none' // Prevent auto unselecting if popup opening and closing timing is wrong. If below condition is not included, style will not be switched in case of clicking another marker.
         // Remove selected class from map marker elements
         this.map._markers.forEach( (marker) => {
@@ -2280,14 +2281,15 @@ export default class GlobalMap extends Model {
 
     addMkpoints (mkpoints) {
         mkpoints.forEach( async (mkpoint) => {
-            let mkpointPopup = new MkpointPopup(mkpoint)
-            var content = mkpointPopup.setPopupContent(mkpoint)
 
+            // Build element
             let element = document.createElement('div')
             let icon = document.createElement('img')
             icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
             icon.classList.add('mkpoint-icon')
             if (mkpoint.on_route === true) icon.style.boxShadow = '0 0 1px 3px ' + this.routeColor
+            if (mkpoint.isCleared) element.classList.add('visited-marker') // Highlight if visited
+            if (mkpoint.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured
             element.appendChild(icon)
             this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
             var marker = new mapboxgl.Marker ( {
@@ -2296,33 +2298,26 @@ export default class GlobalMap extends Model {
                 draggable: false,
                 element: element
             } )
-
-            mkpointPopup.popup.setHTML(content)
-            mkpointPopup.popup.setMaxWidth("250px")
-            mkpointPopup.data = mkpoint
-            marker.setPopup(mkpointPopup.popup)
+            marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
+            marker.isFavorite = mkpoint.isFavorite // Append favorites list data
             marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
             marker.addTo(this.map)
             marker.getElement().id = 'mkpoint' + mkpoint.id
-            marker.getElement().className = 'mkpoint-marker'
+            marker.getElement().classList.add('mkpoint-marker')
             marker.getElement().dataset.id = mkpoint.id
             marker.getElement().dataset.user_id = mkpoint.user.id
-            mkpointPopup.popup.on('open', () => {
-                this.unselect()
-                mkpointPopup.select()
-                this.generateProfile()
-                console.log(mkpointPopup)
-                mkpointPopup.reviews()
-                mkpointPopup.rating()
-                if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin()
-                if (content.includes('target-button')) mkpointPopup.setTarget()
-                if (content.includes('addphoto-button')) mkpointPopup.addPhoto() 
-                if (content.includes('round-propic-img')) mkpointPopup.addPropic()
-                if (content.includes('js-favorite-button')) mkpointPopup.setFavorite()
-            } )
-            mkpointPopup.popup.on('close', () => {
-                this.unselect()
-            } )
+            
+            // Build and attach popup
+            var popupOptions = {
+                maxWidth: '250px'
+            }
+            var instanceOptions = {}
+            var instanceData = {
+                mapInstance: this,
+                mkpoint
+            }
+            let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
+            marker.setPopup(sceneryPopup.popup)
         } )
     }
 

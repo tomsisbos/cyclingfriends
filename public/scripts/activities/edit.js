@@ -1,4 +1,4 @@
-import EditActivityMap from "/map/class/EditActivityMap.js"
+import EditActivityMap from "/map/class/activity/EditActivityMap.js"
 
 var $map = document.querySelector('#activityMap')
 var $form = document.querySelector('#activityForm')

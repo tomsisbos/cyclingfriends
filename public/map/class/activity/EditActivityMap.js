@@ -1,4 +1,4 @@
-import NewActivityMap from "/map/class/NewActivityMap.js"
+import NewActivityMap from "/map/class/activity/NewActivityMap.js"
 
 export default class EditActivityMap extends NewActivityMap {
 

@@ -1,6 +1,6 @@
 import CFUtils from "/map/class/CFUtils.js"
 import Modal from "/map/class/Modal.js"
-import SegmentMap from "/map/class/SegmentMap.js"
+import SegmentMap from "/map/class/segment/SegmentMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
 var segmentMap = new SegmentMap()
@@ -85,6 +85,10 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         map.once('idle', () => segmentMap.generateProfile())
         
         // Focus
+        segmentMap.map.jumpTo( {
+            center: coordinates[0],
+            pitch: 35,
+        } )
         var routeBounds = CFUtils.defineRouteBounds(coordinates)
         map.fitBounds(routeBounds)
         

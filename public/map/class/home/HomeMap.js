@@ -1,18 +1,18 @@
 import WorldMap from "/map/class/WorldMap.js"
-import HomeMkpointPopup from "/map/class/HomeMkpointPopup.js"
-import HomeSegmentPopup from "/map/class/HomeSegmentPopup.js"
+import HomeSceneryPopup from "/map/class/home/HomeSceneryPopup.js"
+import HomeSegmentPopup from "/map/class/home/HomeSegmentPopup.js"
 
 export default class HomeMap extends WorldMap {
 
-    constructor (session) {
-        super(session)
+    constructor (options) {
+        super(options)
     }
 
+    apiUrl = '/api/home.php'
     segmentColor = '#ff5555'
-
+    defaultCenter = [139.2056, 35.613002]
     sceneryLoader = {
         prepare: () => {
-            console.log(this.$map)
             this.loaderElement = document.createElement('div')
             this.loaderElement.className = 'loading-modal-relative'
             let loaderIcon = document.createElement('div')
@@ -26,7 +26,6 @@ export default class HomeMap extends WorldMap {
     }
     segmentLoader = {
         prepare: () => {
-            console.log(this.$map)
             this.loaderElement = document.createElement('div')
             this.loaderElement.className = 'loading-modal-relative'
             let loaderIcon = document.createElement('div')
@@ -39,10 +38,9 @@ export default class HomeMap extends WorldMap {
         stop: () => this.loaderElement.remove()
     }
 
-    setMkpoint (mkpoint) {        
-        // Add marker to the map and to markers collection
-        let mkpointPopup = new HomeMkpointPopup()
-        var content = mkpointPopup.setPopupContent(mkpoint)
+    setMkpoint (mkpoint) {  
+        
+        // Build element
         let element = document.createElement('div')
         let icon = document.createElement('img')
         icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
@@ -55,33 +53,25 @@ export default class HomeMap extends WorldMap {
             draggable: false,
             element: element
         } )
-
-        let popup = mkpointPopup.popup
-        popup.setHTML(content)
-        mkpointPopup.data = mkpoint
-        marker.setPopup(popup)
         marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
         marker.addTo(this.map)
         marker.getElement().id = 'mkpoint' + mkpoint.id
         marker.getElement().classList.add('mkpoint-marker')
         marker.getElement().dataset.id = mkpoint.id
         marker.getElement().dataset.user_id = mkpoint.user.id
-        popup.once('open', async (e) => {
-            // Add 'selected-marker' class to selected marker
-            this.unselect()
-            mkpointPopup.select()
-            mkpointPopup.reviews()
-            mkpointPopup.rating()
-            mkpointPopup.setTarget()
-            mkpointPopup.addPhoto()
-        } )
-        popup.on('close', (e) => {
-            // Remove 'selected-marker' class from selected marker if there is one
-            if (document.getElementById('mkpoint' + mkpointPopup.data.id)) {
-                document.getElementById('mkpoint' + mkpointPopup.data.id).querySelector('.mkpoint-icon').classList.remove('selected-marker')
-            }
-        } )
         this.mkpointsMarkerCollection.push(marker)
+
+        // Build and attach popup
+        var popupOptions = {}
+        var instanceData = {
+            mapInstance: this,
+            mkpoint
+        }
+        var instanceOptions = {
+            noSession: true
+        }
+        let sceneryPopup = new HomeSceneryPopup(popupOptions, instanceData, instanceOptions)
+        marker.setPopup(sceneryPopup.popup)
     }
 
     openSegmentPopup (segment) {
@@ -89,16 +79,16 @@ export default class HomeMap extends WorldMap {
 
             // Create segment popup instance
             segment.segmentPopup = new HomeSegmentPopup( {
-                closeOnClick: true,
-                anchor: 'bottom',
-                className: 'js-linestring marker-popup js-segment-popup'
-            }, segment)
+                anchor: 'top-left',
+                className: 'js-linestring marker-popup js-segment-popup',
+                focusAfterOpen: false
+            }, segment, {noSession: true})
 
             // Prepare and display segment popup
             const popup = segment.segmentPopup.popup
             popup.setLngLat(segment.route.coordinates[0])
             popup.addTo(this.map)
-            segment.segmentPopup.rating()
+            segment.segmentPopup.loadRating(segment)
             segment.segmentPopup.generateProfile({force: true})
             segment.segmentPopup.addIconButtons()
             popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
@@ -108,7 +98,29 @@ export default class HomeMap extends WorldMap {
             } )
 
             // Color segment cap in hovering style
-            this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
+            if (this.map.getLayer('segmentCap' + segment.id)) {
+                this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
+                this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 1)
+                console.log('segment cap painted')
+            } else {
+                // Add segment cap layer
+                this.map.addLayer( {
+                    id: 'segmentCap' + segment.id,
+                    type: 'line',
+                    source: 'segment' + segment.id,
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-color': this.capColorHover,
+                        'line-width': 2,
+                        'line-opacity': 1,
+                        'line-gap-width': 2
+                    }
+                } )
+                console.log('segment cap added from scratch')
+            }
             
             // Remove instance and hide segment cap when popup is closed
             popup.on('close', () => {
@@ -125,7 +137,7 @@ export default class HomeMap extends WorldMap {
             } )
 
             // Focus on segment
-            this.focus(this.map.getSource('segment' + segment.id)._data)
+            this.focus(turf.lineString(segment.route.coordinates))
             
             // Add segment relevant photos
             segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()

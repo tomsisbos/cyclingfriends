@@ -60,11 +60,14 @@ class Mkpoint extends Model {
         $getTags = $this->getPdo()->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
         $getTags->execute(array($this->type, $this->id));
         $tags_data = $getTags->fetchAll(PDO::FETCH_ASSOC);
-        $tags = [];
-        foreach ($tags_data as $tag_data) {
-            array_push($tags, $tag_data['tag']);
+        if (count($tags_data) == 0 || $tags_data[0]['tag'] == '') return [];
+        else {
+            $tags = [];
+            foreach ($tags_data as $tag_data) {
+                array_push($tags, $tag_data['tag']);
+            }
+            return $tags;
         }
-        return $tags;
     }
 
     // Get connected user's vote information
@@ -105,7 +108,7 @@ class Mkpoint extends Model {
         if ($this->isFavorite()) {
             $removeFromFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE user_id = ? AND object_type = ? AND object_id = ?');
             $removeFromFavorites->execute(array($_SESSION['id'], $this->type, $this->id));
-            return ['success' => $this->name . 'は<a class="in-success" href="/favorites/sceneries">お気に入りリスト</a>から削除されました。your favorites list.'];
+            return ['success' => $this->name . 'は<a class="in-success" href="/favorites/sceneries">お気に入りリスト</a>から削除されました。'];
         } else {
             $insertIntoFavorites = $this->getPdo()->prepare('INSERT INTO favorites (user_id, object_type, object_id) VALUES (?, ?, ?)');
             $insertIntoFavorites->execute(array($_SESSION['id'], $this->type, $this->id));

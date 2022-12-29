@@ -54,24 +54,30 @@
     padding: 100px 10%;
     z-index: 6;
 }
+.home-text {
+    font-size: 14px;
+}
 
 .home-columns {
     display: flex;
     height: 100%;
+}
+.home-column-map {
+    padding: 20px 0px;
+    width: 75%;
 }
 .home-column-2 {
     text-align: justify;
     width: 50%;
     padding: 20px;
 }
-.home-column-map {
-    padding: 20px 0px;
-    width: 75% !important;
-}
 
 .home-slide {
     height: 100vh;
     padding: 80px 40px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
 .home-release-date {
     background-color: #5c9999;
@@ -85,43 +91,81 @@
     display: flex;
     justify-content: center;
     gap: 60px;
-    margin: 60px;
+    margin: 30px;
 }
-.shema-part {
+.schema-part {
     width: 280px;
     min-width: 280px;
     min-height: 280px;
     height: 280px;
-    background-color: lightblue;
+    background-color: #eeeeee;
     border-radius: 999px;
 }
-@media only screen and (max-width: 780px) {
-    .shema-part {
-        width: unset;
-        min-width: unset;
-        min-height: unset;
-        height: unset;
-        background-color: lightblue;
-        border-radius: 999px;
-    }
-}
-
-.shema-title {
+.schema-title {
+    padding: 20px 20px 0px 20px;
     font-family: Dr Sugiyama;
     font-size: 40px;
 }
-.shema-cross {
+.schema-cross {
     font-size: 100px;
     font-family: Dr Sugiyama;
     align-self: center;
     line-height: 1em;
 }
-.shema-row {
-    background: linear-gradient(#fcfcfc, #fff);
-    margin: 6px;
-    padding: 6px;
-    letter-spacing: 2;
-    font-size: small;
+.schema-row {
+    letter-spacing: 0.5;
+    width: 80%;
+    font-size: smaller;
+    margin: 6px auto;
+}
+
+@media only screen and (max-width: 780px) {
+    .home-slide p {
+        font-size: smaller;
+    }
+
+    .home-slide {
+        padding: 30px 10px;
+    }
+    .schema-part {
+        width: unset;
+        min-width: unset;
+        min-height: unset;
+        height: unset;
+        background-color: unset;
+        border-radius: 999px;
+    }
+    .schema {
+        flex-direction: column;
+        gap: 0px;
+    }
+    .schema-title {
+        line-height: 1;
+        padding: 0px;
+    }
+    .schema-row {
+        margin: auto;
+        font-size: small;
+        width: 100%;
+    }
+    .schema-cross {
+        font-size: 45px;
+    }
+
+    .home-columns {
+        flex-direction: column;
+    }
+    .home-column-map {
+        height: 40%;
+        width: 100%;
+        padding: 0px;
+    }
+    .home-columns > div {
+        width: 100%;
+        max-height: 60%;
+        padding: 10px 0px;
+        overflow: auto;
+    }
 }
 
 @media only screen and (max-width: 560px) {

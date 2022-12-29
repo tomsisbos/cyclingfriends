@@ -33,7 +33,7 @@ if (isset($_POST['validate'])) {
 				$user->setSession();
 
 				// Redirect authentified user to the Dashboard	
-				header('location: /');
+				header('location: /dashboard');
 			
 			} else {
 				$errormessage = "Your password is incorrect.";

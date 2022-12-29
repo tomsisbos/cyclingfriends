@@ -1,7 +1,7 @@
 import CFUtils from "/map/class/CFUtils.js"
-import RideMap from "/map/class/RideMap.js"
-import RidePickMap from "/map/class/RidePickMap.js"
-import RideDrawMap from "/map/class/RideDrawMap.js"
+import RideMap from "/map/class/ride/RideMap.js"
+import RidePickMap from "/map/class/ride/RidePickMap.js"
+import RideDrawMap from "/map/class/ride/RideDrawMap.js"
 
 var ridePickMapIsLoaded = false
 var rideDrawMapIsLoaded = false

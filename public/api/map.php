@@ -6,7 +6,7 @@ require '../../includes/api-head.php';
 if (isAjax()) {
 
     if (isset($_GET['get-session'])) {
-        echo json_encode($_SESSION);
+        if (isset($_SESSION['auth'])) echo json_encode($_SESSION);
     }
 
     // In case a 'saveMkpoint' index have been detected
@@ -244,8 +244,8 @@ if (isAjax()) {
         foreach ($result as $mkpoint_data) {
             $mkpoint = new Mkpoint($mkpoint_data['id']);
             if ($_GET['display-mkpoints'] == 'details') {
-                $mkpoint->isFavorite = $mkpoint->isFavorite();
-                $mkpoint->isCleared = $mkpoint->isCleared();
+                if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
+                if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
                 $mkpoint->tags = $mkpoint->getTags();
             }
             array_push($mkpoints, $mkpoint);
@@ -390,8 +390,10 @@ if (isAjax()) {
         $checkRating->execute(array($object->id));
         $rating_infos = $checkRating->fetch(PDO::FETCH_ASSOC);
         // Add user vote info
-        $vote = $object->getUserVote($connected_user);
-        $rating_infos['vote'] = $vote;
+        if (isset($_SESSION['id'])) {
+            $vote = $object->getUserVote($connected_user);
+            $rating_infos['vote'] = $vote;
+        }
         echo json_encode($rating_infos);
     }
 

@@ -1,6 +1,6 @@
 import Modal from "/map/class/Modal.js"
 import CFUtils from "/map/class/CFUtils.js"
-import ActivityMap from "/map/class/ActivityMap.js"
+import ActivityMap from "/map/class/activity/ActivityMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
 // Specs listeners

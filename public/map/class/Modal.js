@@ -1,6 +1,6 @@
 import Model from "/map/class/Model.js"
 
-export default class Popup extends Model {
+export default class Modal extends Model {
 
     constructor (src) {
         super()

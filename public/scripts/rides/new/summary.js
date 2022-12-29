@@ -1,4 +1,4 @@
-import RideMap from "/map/class/RideMap.js"
+import RideMap from "/map/class/ride/RideMap.js"
 
 var rideMap = new RideMap()
 

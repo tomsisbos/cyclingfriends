@@ -1046,36 +1046,22 @@ function bikesFromArrayBoolean ($array) {
 
 // Change the bike key name to the proper bike type name
 function getBikeFromKey ($key) {
-	if($key == 0){
-		return '車種問わず';
-	}
-	if($key == 1){
-		return 'ママチャリ＆その他の自転車';
-	}
-	if($key == 2){
-		return 'ロードバイク';
-	}
-	if($key == 3){
-		return 'マウンテンバイク';
-	}
-	if($key == 4){
-		return 'グラベル＆シクロクロスバイク';
+	switch ($key) {
+		case 0: return '車種問わず';
+		case 1: return 'ママチャリ＆その他の自転車';
+		case 2: return 'ロードバイク';
+		case 3: return 'マウンテンバイク';
+		case 4: return 'グラベル＆シクロクロスバイク';
 	}
 }
 
 // Change the bike column name to the proper bike name
 function getBikesFromColumnName($bike) {
-	if ($bike == 'citybike') {
-		return 'ママチャリ＆その他の自転車';
-	}
-	if ($bike == 'roadbike') {
-		return 'ロードバイク';
-	}
-	if ($bike == 'mountainbike') {
-		return 'マウンテンバイク';
-	}
-	if ($bike == 'gravelcxbike') {
-		return 'グラベル＆シクロクロスバイク';
+	switch ($bike) {
+		case 'citybike': return 'ママチャリ＆その他の自転車';
+		case 'roadbike': return 'ロードバイク';
+		case 'mountainbike': return 'マウンテンバイク';
+		case 'gravelcxbike': return 'グラベル＆シクロクロスバイク';
 	}
 }
 

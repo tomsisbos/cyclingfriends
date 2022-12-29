@@ -22,8 +22,10 @@ if (isAjax()) {
 
     if (isset($_GET['get-location'])) {
         if (is_numeric($_GET['get-location'])) $user = new User($_GET['get-location']);
-        else $user = $connected_user;
-        echo json_encode($user->lngLat);
+        else if (isset($connected_user)) $user = $connected_user;
+        else $user = null;
+        if ($user) echo json_encode($user->lngLat);
+        else echo json_encode(null);
 
     }
 

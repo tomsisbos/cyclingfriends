@@ -1,4 +1,4 @@
-import RideMap from "/map/class/RideMap.js"
+import RideMap from "/map/class/ride/RideMap.js"
 import Popup from "/map/class/Popup.js"
 
 export default class RidePickMap extends RideMap {

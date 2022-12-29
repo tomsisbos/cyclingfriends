@@ -1,5 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
-import RoutePageMap from "/map/class/RoutePageMap.js"
+import RoutePageMap from "/map/class/route/RoutePageMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 console.log(Polyline)
 

@@ -1,3 +1,7 @@
+<?php
+
+require '../actions/users/signupAction.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,9 +13,9 @@
 	}
 </style>
 
-<body>
+<body> <?php
 
-<?php include '../includes/navbar.php'; ?>
+include '../includes/navbar.php'; ?>
 
 <!-- Animated background -->
 <div class="main js-fade-on-scroll" data-overlay-color="#b2e0e5">
@@ -51,22 +55,23 @@
     <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#edef9c" data-overlay-color2="#f8b2c6">
         <h2>事業構想</h2>
         <div class="schema">
-            <div class="shema-part">
-                <div class="shema-title">Real</div>
-                    <div class="shema-row">全国の魅力を探究するサイクリングツアーの開催</div>
-                    <div class="shema-row">サイクリングガイドの養成</div>
-                    <div class="shema-row">サイクリングライフの普及活動</div>
-                <div class="shema-table"></div>
+            <div class="schema-part">
+                <div class="schema-title">Real</div>
+                <div class="schema-table">
+                    <div class="schema-row">全国の魅力を探究するサイクリングツアーの開催</div>
+                    <div class="schema-row">サイクリングガイドの養成</div>
+                    <div class="schema-row">サイクリングライフの普及活動</div>
+                </div>
             </div>
-            <div class="shema-cross">x</div>
-            <div class="shema-part">
-                <div class="shema-title">Remote</div>
-                <div class="shema-table">
-                    <div class="shema-row">全国のサイクリングガイドマップ</div>
-                    <div class="shema-row">日本の絶景スポット＆美しい道事典</div>
-                    <div class="shema-row">走行日記の管理＆共有</div>
-                    <div class="shema-row">ルート作成ツール</div>
-                    <div class="shema-row">グループライド開催ツール</div>
+            <div class="schema-cross">x</div>
+            <div class="schema-part">
+                <div class="schema-title">Remote</div>
+                <div class="schema-table">
+                    <div class="schema-row">全国のサイクリングガイドマップ</div>
+                    <div class="schema-row">日本の絶景スポット＆美しい道事典</div>
+                    <div class="schema-row">走行日記の管理＆共有</div>
+                    <div class="schema-row">ルート作成ツール</div>
+                    <div class="schema-row">グループライド開催ツール</div>
                 </div>
             </div>
         </div>
@@ -104,7 +109,7 @@
             </div>
             <div class="home-column-2">
                 <div class="home-text">
-                    <p>2019年から「<a href="https://www.mlit.go.jp/common/001284799.pdf" target="_blank">観光産業の生産性向上推進事業</a>」を進めている観光庁は、旅行サービスの高度化を目指す施策の主軸を、（１）国内の隠れた観光資源の発掘と、（２）個人の好みを踏まえたより高品質な旅行・宿泊サービスの開発や適正価格での提供と定義しています。</p>
+                    <p>2019年から「<a href="https://www.mlit.go.jp/common/001284799.pdf" target="_blank">観光産業の生産性向上推進事業</a>」を進めている観光庁は、旅行サービスの高度化を目指す施策の主軸を、（１）国内の隠れた観光資源の発掘と、（２）個人の好みを踏まえたより高品質な旅行「...」の開発や適正価格での提供と定義しています。</p>
                     <p>「日本で最も美しい道」は、景観や文化等の観点から優れた走行体験を提供してくれる道のデータを集め、様々な形で提供するサービスです。</p>
                     <p>そのデータをセグメントの形で地図上に落とし込んだり、紹介記事を自動作成したり、自分が走行したセグメントを記録したりできるようになります。
                     <p>キャンペーン開催を通じて、地域の活性化に貢献する取り組みも行っていきます。</p>

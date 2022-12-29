@@ -6,10 +6,10 @@ require '../actions/databaseAction.php';
 if (isset($_POST['validate'])) {
 	 
 	 // Check if user completed all fields
-	if(!empty($_POST['email']) AND !empty($_POST['login']) AND !empty($_POST['password'])) {
+	if (!empty($_POST['email']) AND !empty($_POST['login']) AND !empty($_POST['password'])) {
 		
 		// Check if email address is valid
-		if(filter_var(htmlspecialchars($_POST['email']), FILTER_VALIDATE_EMAIL)){
+		if (filter_var(htmlspecialchars($_POST['email']), FILTER_VALIDATE_EMAIL)) {
 		 
 			// User data
 			$email    = htmlspecialchars($_POST['email']);
@@ -20,42 +20,32 @@ if (isset($_POST['validate'])) {
 			$user = new User;
 
 			// Check if user already exists
-			if ($user->checkIfLoginAlreadyExists($login)) {
-			
-				$errormessage = "This user name is already used.";
+			if ($user->checkIfLoginAlreadyExists($login)) $errormessage = "このユーザーネームは既に登録されています。";
 		
-			}else{
+			else {
 			
 				// Check if email address is already used
-				if ($user->checkIfEmailAlreadyExists($email)) {
-			
-					$errormessage = "This email is already registered.";
-			
-				}else{
+				if ($user->checkIfEmailAlreadyExists($email)) $errormessage = "このメールアドレスは既に使われています。";
+				
+				else {
 					
-					if($user->checkPasswordStrength($password)){
+					if ($user->checkPasswordStrength($password)) {
 				
 						$user->register($email, $login, $password);
 
 						$user->setSession();
 
+						$_SESSION['success'] = 'アカウントが無事に登録されました。';
+
 						// Redirect authentified user to the Dashboard	
 						header('location: /');	
 
-					}else{
-						$errormessage = 'Your password must be at least 6 characters long.';
-					}
+					} else $errormessage = 'パスワードは6文字以上利用してください。';
 				}
 			}
-		}else{
-			$errormessage = "Please fill up all required informations and try again.";
-		}
-	}else{
-		$errormessage = "Please fill in a valid email address.";
-	}	
- }
- 
- ?>
+		} else $errormessage = "全ての情報をご記入の上、再度お試しください。";
+	} else $errormessage = "正しいフォーマットのメールアドレスをご記入ください。";	
+} ?>
  
  
  

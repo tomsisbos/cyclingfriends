@@ -1,6 +1,6 @@
 import EditRouteHelper from "/scripts/helpers/routes/edit.js"
 import CFUtils from "/map/class/CFUtils.js"
-import EditRouteMap from "/map/class/EditRouteMap.js"
+import EditRouteMap from "/map/class/route/EditRouteMap.js"
 
 var editRouteMap = new EditRouteMap()
 

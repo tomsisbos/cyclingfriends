@@ -1,4 +1,4 @@
-import RoutePageMap from "/map/class/RoutePageMap.js"
+import RoutePageMap from "/map/class/route/RoutePageMap.js"
 
 export default class SegmentMap extends RoutePageMap {
     

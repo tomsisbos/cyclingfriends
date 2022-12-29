@@ -4,7 +4,6 @@ export default class AmenityPopup extends Popup {
 
     constructor (properties) {
         super( {
-            
             className: 'amenity-popup',
             closeOnClick: false
         } )

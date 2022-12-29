@@ -1,5 +1,5 @@
-import NeighboursMap from "../../map/class/NeighboursMap"
-import NeighbourPopup from "../../map/class/NeighbourPopup"
+import NeighboursMap from "../../map/class/neighbours/NeighboursMap"
+import NeighbourPopup from "../../map/class/neighbours/NeighbourPopup"
 import CFUtils from "../../map/class/CFUtils"
 
 var neighboursMap = new NeighboursMap()

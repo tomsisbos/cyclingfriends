@@ -1,4 +1,4 @@
-import ActivityMap from "/map/class/ActivityMap.js"
+import ActivityMap from "/map/class/activity/ActivityMap.js"
 import CFUtils from "/map/class/CFUtils.js"
 
 export default class NewActivityMap extends ActivityMap {

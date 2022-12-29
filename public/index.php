@@ -1,6 +1,6 @@
 <?php
-require '../vendor/autoload.php';
-require '../class/Autoloader.php';
+require_once '../vendor/autoload.php';
+require_once '../class/Autoloader.php';
 Autoloader::register();
 
 $uri = $_SERVER['REQUEST_URI'];
@@ -12,6 +12,7 @@ $router->map('GET', '/dashboard', 'dashboard');
 
 // Beta
 $router->map('GET', '/', 'beta/home');
+$router->map('POST', '/', 'beta/home');
 
 // World
 $router->map('GET', '/world', 'world/map');

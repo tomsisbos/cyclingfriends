@@ -1,4 +1,4 @@
-import NewActivityMap from "/map/class/NewActivityMap.js"
+import NewActivityMap from "/map/class/activity/NewActivityMap.js"
 
 var $upload = document.querySelector('#uploadActivity')
 var $map = document.querySelector('#activityMap')

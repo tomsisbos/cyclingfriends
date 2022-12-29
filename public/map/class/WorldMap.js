@@ -1,15 +1,15 @@
 import CFUtils from "/map/class/CFUtils.js"
 import WorldHelper from "/scripts/helpers/map.js"
 import GlobalMap from "/map/class/GlobalMap.js"
-import MkpointPopup from "/map/class/MkpointPopup.js"
-import RidePopup from "/map/class/RidePopup.js"
-import SegmentPopup from "/map/class/SegmentPopup.js"
+import SceneryPopup from "/map/class/scenery/SceneryPopup.js"
+import RidePopup from "/map/class/ride/RidePopup.js"
+import SegmentPopup from "/map/class/segment/SegmentPopup.js"
 import TempPopup from "/map/class/TempPopup.js"
 
 export default class WorldMap extends GlobalMap {
 
-    constructor (session) {
-        super(session)
+    constructor (options) {
+        super(options)
     }
 
     type = 'worldMap'
@@ -63,7 +63,7 @@ export default class WorldMap extends GlobalMap {
 
     addOptionsControl () {
         // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
         // Map options
         var optionsContainer = document.createElement('div')
@@ -179,7 +179,7 @@ export default class WorldMap extends GlobalMap {
 
     addFilterControl () {
         // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
         // Filter options
         var filterContainer = document.createElement('div')
@@ -228,7 +228,7 @@ export default class WorldMap extends GlobalMap {
 
     addEditorControl () {
         // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
         // Container
         var editorContainer = document.createElement('div')
@@ -282,10 +282,9 @@ export default class WorldMap extends GlobalMap {
         } )
     }
 
-    setMkpoint (mkpoint) {        
-        // Add marker to the map and to markers collection
-        let mkpointPopup = new MkpointPopup()
-        var content = mkpointPopup.setPopupContent(mkpoint)
+    setMkpoint (mkpoint) {
+        
+        // Build element
         let element = document.createElement('div')
         let icon = document.createElement('img')
         icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
@@ -300,67 +299,31 @@ export default class WorldMap extends GlobalMap {
             draggable: false,
             element: element
         } )
-        // If connected user is administrator of this mkpoint
-        if (mkpoint.user.id == this.session.id) {
-            var mkpointAdminPanel = `
-                <div id="mkpointAdminPanel" class="popup-content container-admin">
-                    <div class="popup-head">管理者ツール</div>
-                    <div class="popup-buttons">
-                        <button class="mp-button bg-button text-white" id="mkpointEdit">情報編集</button>
-                        <button class="mp-button bg-button text-white" id="mkpointMove">位置変更</button>
-                        <button class="mp-button bg-danger text-white" id="mkpointDelete">削除</button>
-                    </div>
-                </div>`
-            // Insert admin panel before the popup content
-            var index = content.indexOf('<div id="popup-content"')
-            content = content.slice(0, index) + mkpointAdminPanel + content.slice(index)
-        }
-
-        let popup = mkpointPopup.popup
-        popup.setHTML(content)
-        mkpointPopup.data = mkpoint
-        marker.setPopup(popup)
+        marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
+        marker.isFavorite = mkpoint.isFavorite // Append favorites list data
         marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
         marker.addTo(this.map)
         marker.getElement().id = 'mkpoint' + mkpoint.id
         marker.getElement().classList.add('mkpoint-marker')
         marker.getElement().dataset.id = mkpoint.id
         marker.getElement().dataset.user_id = mkpoint.user.id
-        popup.once('open', async (e) => {
-            // Add 'selected-marker' class to selected marker
-            this.unselect()
-            mkpointPopup.select()
-            mkpointPopup.reviews()
-            mkpointPopup.rating()
-            if (content.includes('mkpointAdminPanel')) mkpointPopup.mkpointAdmin(this)
-            if (content.includes('target-button')) mkpointPopup.setTarget()
-            if (content.includes('js-favorite-button')) mkpointPopup.setFavorite(this.updateFavoriteData.bind(this))
-            if (content.includes('addphoto-button')) mkpointPopup.addPhoto()
-            if (content.includes('round-propic-img')) mkpointPopup.addPropic()
-        } )
-        popup.on('close', (e) => {
-            // Remove 'selected-marker' class from selected marker if there is one
-            if (document.getElementById('mkpoint' + mkpointPopup.data.id)) {
-                document.getElementById('mkpoint' + mkpointPopup.data.id).querySelector('.mkpoint-icon').classList.remove('selected-marker')
-            }
-        } )
+        this.mkpointsMarkerCollection.push(marker)
+
+        // Build and attach popup
+        var popupOptions = {}
+        var instanceOptions = {}
+        var instanceData = {
+            mapInstance: this,
+            mkpoint
+        }
+        console.log(instanceData)
+        if (mkpoint.user.id == this.session.id) instanceOptions.admin = true // Add administration panel if connected user has admin rights
+        let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
+        marker.setPopup(sceneryPopup.popup)
+
         // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
         if (mkpoint.user.id === this.session.id && this.mode == 'edit') marker.setDraggable(true)
         else if (mkpoint.user.id === this.session.id && this.mode == 'default') marker.setDraggable(false)
-
-        marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
-        marker.isFavorite = mkpoint.isFavorite // Append favorites list data
-        this.mkpointsMarkerCollection.push(marker)
-    }
-
-    updateFavoriteData (mkpointId) {
-        var mkpoint = this.data.mkpoints.find(mkpoint => mkpoint.id == mkpointId)
-        mkpoint.isFavorite = !mkpoint.isFavorite
-        var key
-        for (let i = 0; i < this.mkpointsMarkerCollection.length; i++) {
-            if (this.mkpointsMarkerCollection[i]._element.dataset.id == mkpoint.id) key = i
-        }
-        this.mkpointsMarkerCollection[key].isFavorite = !this.mkpointsMarkerCollection[key].isFavorite
     }
 
     updateMkpoints () {
@@ -891,7 +854,7 @@ export default class WorldMap extends GlobalMap {
             const popup = segment.segmentPopup.popup
             popup.setLngLat(segment.route.coordinates[0])
             popup.addTo(this.map)
-            segment.segmentPopup.rating()
+            segment.segmentPopup.loadRating(segment)
             segment.segmentPopup.generateProfile({force: true})
             segment.segmentPopup.addIconButtons()
             popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {

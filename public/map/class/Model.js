@@ -2,11 +2,9 @@ import CFUtils from "/map/class/CFUtils.js"
 
 export default class Model {
 
-    constructor () {
-        ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
+    constructor (options) {
+        if (!options.noSession) ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
             this.session = session
-            sessionStorage.setItem('session-id', session.id)
-            sessionStorage.setItem('session-login', session.login)
         } )
     }
 

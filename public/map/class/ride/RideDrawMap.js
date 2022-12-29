@@ -1,5 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
-import RideMap from "/map/class/rideMap.js"
+import RideMap from "/map/class/ride/rideMap.js"
 import Popup from "/map/class/Popup.js"
 
 export default class RideDrawMap extends RideMap {

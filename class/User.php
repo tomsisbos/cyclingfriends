@@ -59,7 +59,7 @@ class User extends Model {
         $register = $this->getPdo()->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
         $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 'Beginner'));
         // Get id
-        $this->id                        = $this->getData()['id'];
+        $this->id                        = $this->getData($this->table)['id'];
     }
 
     // Set session according to user data

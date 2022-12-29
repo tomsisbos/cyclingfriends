@@ -212,6 +212,7 @@ form#mkpointForm input[type="file" i] {
 }
 .like-button-modal {
     cursor: pointer;
+    filter: drop-shadow(1px 1px 1px black);
 }
 .mkpoint-period {
     z-index: 2;

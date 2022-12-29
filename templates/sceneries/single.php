@@ -54,7 +54,7 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 						</div> <?php
 					} ?>
 					<div class="pg-sg-tags"> <?php 
-						foreach ($mkpoint->getTags() as $tag_name) {
+						if (!empty($mkpoint->getTags())) foreach ($mkpoint->getTags() as $tag_name) {
 							$tag = new Tag($tag_name) ?>
 							<a href="/tag/<?= $tag->name ?>">
 								<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div>
@@ -78,7 +78,7 @@ include '../actions/sceneries/sceneryAction.php'; ?>
 			<div class="container pg-sg-photos-container"> <?php
 				$number = 1;
 				foreach ($mkpoint_photos as $photo) { ?>
-					<div class="pg-sg-photo js-clickable-thumbnail" data-number="<?= $number ?>" data-author="<?= $photo->user_id ?>" data-id="<?= $photo->id ?>">
+					<div class="pg-sg-photo" data-number="<?= $number ?>" data-author="<?= $photo->user_id ?>" data-id="<?= $photo->id ?>">
 						<img class="mk-thumbnail" src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>"></img>
 					</div> <?php
 					$number++;
