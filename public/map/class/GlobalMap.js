@@ -9,12 +9,6 @@ export default class GlobalMap extends Model {
     constructor (options) {
         super(options)
         this.setSeason()
-        if (!options.noSession) ajaxGetRequest ('/api/riders/location.php' + "?get-location=true", (userLocation) => {
-            if (userLocation && userLocation.lng !== 0) this.userLocation = userLocation
-            else this.userLocation = this.defaultCenter
-            this.centerOnUserLocation()
-
-        } )
     }
 
     map
@@ -26,7 +20,6 @@ export default class GlobalMap extends Model {
     loaded = false
     defaultCenter = [138.69056, 35.183002]
     defaultZoom = 10
-    userLocation
     mkpoints
     tunnelNumber = 0
     profileData
@@ -1483,8 +1476,6 @@ export default class GlobalMap extends Model {
             })
         }
     }
-
-    centerOnUserLocation = () => {return} 
 
     async generateProfile (options = {force: false, time: false}) {
         

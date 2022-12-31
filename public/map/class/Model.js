@@ -3,8 +3,11 @@ import CFUtils from "/map/class/CFUtils.js"
 export default class Model {
 
     constructor (options) {
-        if (!options.noSession) ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
+        if (!options || !options.noSession) ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
             this.session = session
+            if (session.userLocation && session.userLocation.lng !== 0) this.userLocation = session.userLocation
+            else this.userLocation = this.defaultCenter
+            this.centerOnUserLocation()
         } )
     }
 
@@ -13,6 +16,7 @@ export default class Model {
 
     defaultStyle = 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z'
     tags = ['hanami', 'kouyou', 'ajisai', 'culture', 'machinami', 'shrines', 'teafields', 'ricefields', 'sea', 'mountains', 'forest', 'rivers', 'lakes']
+    userLocation
     loaderContainer = document.body
     loader = {
         prepare: () => {
@@ -26,6 +30,7 @@ export default class Model {
         start: () => this.loaderContainer.appendChild(this.loaderElement),
         stop: () => this.loaderElement.remove()
     }
+    centerOnUserLocation = () => {return} 
 
     // Get location of a LngLat point
     async getLocation (lngLat) {

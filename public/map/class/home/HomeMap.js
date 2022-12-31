@@ -62,7 +62,9 @@ export default class HomeMap extends WorldMap {
         this.mkpointsMarkerCollection.push(marker)
 
         // Build and attach popup
-        var popupOptions = {}
+        var popupOptions = {
+            focusAfterOpen: false
+        }
         var instanceData = {
             mapInstance: this,
             mkpoint

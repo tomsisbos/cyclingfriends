@@ -243,7 +243,16 @@ export default class SegmentPopup extends Popup {
                                 }
                                 // Display tooltip
                                 this.clearTooltip()
-                                this.drawTooltip(map.getSource('segment' + this.data.id)._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x + elevationProfile.getBoundingClientRect().left - 10, elevationProfile.getBoundingClientRect().top - 164, {backgroundColor: '#ffffff', mergeWithCursor: true})
+                                var profileTop = this.popup.getElement().querySelector('#profileBox').getBoundingClientRect().top
+                                var mapTop = this.popup._map.getContainer().getBoundingClientRect().top
+                                var navbarHeight = document.querySelector('.navbar').getBoundingClientRect().height
+                                
+                                for (let element = this.popup.getElement().querySelector('#profileBox'); element.parentElement; element = element.parentElement) {
+                                    console.log(element.offsetTop)
+                                }
+
+                                var topValue = this.popup.getElement().querySelector('.popup-properties').getBoundingClientRect()
+                                this.drawTooltip(map.getSource('segment' + this.data.id)._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.native.layerX, profileTop - mapTop - navbarHeight, {backgroundColor: '#ffffff', mergeWithCursor: true})
                             }    
                         } else if (e.type == 'mouseout' || args.inChartArea == false) {
                             // Clear tooltip if one
@@ -485,7 +494,7 @@ export default class SegmentPopup extends Popup {
             // Clear previous tooltip if displayed
             this.clearTooltip()
             // Prepare information to display
-            this.drawTooltip(this.map.getSource('segment' + this.data.id)._data, e.lngLat.lng, e.lngLat.lat, e.point.x, e.point.y)
+            this.drawTooltip(this.map.getSource('segment' + this.data.id)._data, e.lngLat.lng, e.lngLat.lat, e.point.x)
         } )
         this.map.on('mouseout', 'segment' + this.data.id, () => {
             // Clear tooltip
@@ -517,12 +526,9 @@ export default class SegmentPopup extends Popup {
         // Build new tooltip
         var tooltip = document.createElement('div')
         tooltip.className = 'map-tooltip'
-        tooltip.style.left = 10 + pointX + 'px'
-        if (pointY) {
-            tooltip.style.top = 'calc(' + (10 + pointY) + 'px)'
-        } else {
-            tooltip.style.bottom = 10 + document.querySelector('#profileBox').offsetHeight + 'px'
-        }
+        tooltip.style.left = (10 + pointX) + 'px'
+        if (pointY) tooltip.style.top = 'calc(' + (10 + pointY) + 'px)'
+        else tooltip.style.bottom = 10 + document.querySelector('#profileBox').offsetHeight + 'px'
         if (twinDistance) {
             if (distance < twinDistance) {
                 var dst1 = distance
@@ -541,7 +547,6 @@ export default class SegmentPopup extends Popup {
             勾配 : <div class="map-slope">` + slope + `%</div><br>
             標高 : ` + altitude + `m`
         }
-        console.log(this)
         map.getContainer().appendChild(tooltip)
 
         // Prevent tooltip from overflowing at the end of the profile
@@ -605,7 +610,6 @@ export default class SegmentPopup extends Popup {
             route: this.data.route
         }
         var lightbox = new SegmentLightbox(this.popup._map.getContainer(), this.popup, lightboxData, {noSession: true})
-        console.log(lightbox)
         
         // Set slider system
         var setThumbnailSlider = setThumbnailSlider.bind(this)

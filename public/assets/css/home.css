@@ -163,6 +163,7 @@
     .home-columns > div {
         width: 100%;
         max-height: 60%;
+        height: -webkit-fill-available;
         padding: 10px 0px;
         overflow: auto;
     }

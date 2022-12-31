@@ -46,7 +46,7 @@ await loadMap().then( (homeMap) => {
 
         // Open popup
         var marker = await homeMap.getMkpointMarker(randomMkpoint)
-        homeMap.map.once('idle', () => marker.togglePopup())
+        marker.togglePopup()
 
     }, homeMap.sceneryLoader)
 

@@ -142,7 +142,6 @@ export default class SceneryPopup extends Popup {
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
                 this.data.mapInstance.unselectMarkers()
-                console.log(this.data)
                 this.loadLightbox()
                 this.colorLike()
                 this.prepareToggleLike()
@@ -568,7 +567,6 @@ export default class SceneryPopup extends Popup {
     addPropic = async () => this.popup.getElement().querySelector('.round-propic-img').src = await this.loadPropic(this.data.mkpoint.user.id)
     
     mkpointAdmin () {
-        console.log('inadminpanel')
         const mapInstance = this.data.mapInstance
     // Edit
         var editButton = this.popup.getElement().querySelector('#mkpointEdit')

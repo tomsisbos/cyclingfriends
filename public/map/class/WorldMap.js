@@ -316,7 +316,6 @@ export default class WorldMap extends GlobalMap {
             mapInstance: this,
             mkpoint
         }
-        console.log(instanceData)
         if (mkpoint.user.id == this.session.id) instanceOptions.admin = true // Add administration panel if connected user has admin rights
         let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
         marker.setPopup(sceneryPopup.popup)
@@ -396,10 +395,7 @@ export default class WorldMap extends GlobalMap {
     async getMkpointMarker (mkpoint) {
         return new Promise((resolve, reject) => {
             this.mkpointsMarkerCollection.forEach((marker) => {
-                if (getIdFromString(marker.getElement().id) == parseInt(mkpoint.id)) {
-                    console.log(marker)
-                    resolve(marker)
-                }
+                if (getIdFromString(marker.getElement().id) == parseInt(mkpoint.id)) resolve(marker)
             } )
         } )
     }

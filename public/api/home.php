@@ -38,7 +38,8 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-mkpoints'])) {
-        $getMkpoints = $db->prepare('SELECT id FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        $mkpoints_number = 30;
+        $getMkpoints = $db->prepare("SELECT id FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC LIMIT 0, {$mkpoints_number}");
         $getMkpoints->execute();
         $result = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         $mkpoints = [];
