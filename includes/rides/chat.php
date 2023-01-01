@@ -1,4 +1,4 @@
-<h2>Chatbox</h2> <?php
+<h2>チャット</h2> <?php
 
 include '../actions/databaseAction.php';
 

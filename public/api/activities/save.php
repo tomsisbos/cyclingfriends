@@ -7,6 +7,8 @@ $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
 
 if (is_array($data)) {
+    
+    echo json_encode(true);
 
     // Build route data
     $author_id   = $connected_user->id;
@@ -147,7 +149,6 @@ if (is_array($data)) {
             $mkpoint['elevation']        = $entry['elevation'];
             $mkpoint['date']             = date('Y-m-d H:i:s');
             $mkpoint['month']            = date("n");
-            $mkpoint['period']           = getPeriod($mkpoint['date']);
             $mkpoint['description']      = htmlspecialchars($entry['description']);
             $mkpoint['lng']              = $entry['lngLat']['lng'];
             $mkpoint['lat']              = $entry['lngLat']['lat'];
@@ -155,8 +156,8 @@ if (is_array($data)) {
             $mkpoint['popularity']       = 30;
 
             // Insert mkpoint data
-            $insertMkpointData = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, period, description, lng, lat, publication_date, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertMkpointData->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date'], $mkpoint['popularity']));
+            $insertMkpointData = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, lng, lat, publication_date, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertMkpointData->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date'], $mkpoint['popularity']));
             // Get mkpoint id
             $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
             $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
@@ -205,8 +206,8 @@ if (is_array($data)) {
                         unlink($temp); unlink($path);
 
                         // Insert photos data
-                        $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                        $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint_photo['blob'], $mkpoint_photo['size'], $mkpoint_photo['name'], $mkpoint_photo['type'], 0));
+                        $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                        $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint_photo['blob'], $mkpoint_photo['size'], $mkpoint_photo['name'], $mkpoint_photo['type'], 0));
                     }
                 }
 
@@ -237,11 +238,9 @@ if (is_array($data)) {
     // If necessary, add selected photos to corresponding mkpoint
     if (isset($data['mkpointPhotos'])) {
         foreach ($data['mkpointPhotos'] as $entry) {
-            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), getPeriod(date('Y-m-d H:i:s')), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
+            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
         }
     }
-
-    echo json_encode(true);
 
 }

@@ -99,7 +99,7 @@ export default class RoutePageMap extends GlobalMap {
             else var remoteness = Math.floor(this.mkpoints[i].remoteness * 10) / 10 + 'km'
             let entry = {
                 type: 'mkpoint',
-                lngLat: {lng: this.mkpoints[i].lng, lat: this.mkpoints[i].lat},
+                lngLat: {lng: this.mkpoints[i].lngLat.lng, lat: this.mkpoints[i].lngLat.lat},
                 id: this.mkpoints[i].id,
                 name: this.mkpoints[i].name,
                 description: this.mkpoints[i].description,
@@ -205,6 +205,7 @@ export default class RoutePageMap extends GlobalMap {
                     } )
                     if (document.querySelector('#boxShowMkpoints') && document.querySelector('#boxShowMkpoints').checked) {
                         // Fly to the marker location
+                        console.log(entry)
                         this.map.flyTo( {
                             center: [entry.lngLat.lng, entry.lngLat.lat],
                             zoom: 14,
@@ -250,7 +251,7 @@ export default class RoutePageMap extends GlobalMap {
                 else var thumbnailSrc = '/media/default-photo-' + Math.ceil(Math.random() * 9) + '.svg'
                 let entry = {
                     type: 'mkpoint',
-                    lngLat: {lng: this.mkpoints[i].lng, lat: this.mkpoints[i].lat},
+                    lngLat: {lng: this.mkpoints[i].lngLat.lng, lat: this.mkpoints[i].lngLat.lat},
                     id: this.mkpoints[i].id,
                     name: this.mkpoints[i].name,
                     distance: 'km ' + Math.floor(this.mkpoints[i].distance * 10) / 10,
@@ -304,8 +305,6 @@ export default class RoutePageMap extends GlobalMap {
                 distance.innerText = entry.distance
                 distance.className = 'rt-preview-photos-distance'
                 thumbnail.appendChild(distance)
-                console.log(sliderData)
-                console.log(cursor + ' + ' + sliderData.length)
                 if (cursor < sliderData.length) {
                     var svg = document.createElement('svg')
                     svg.innerHTML = `
@@ -343,6 +342,7 @@ export default class RoutePageMap extends GlobalMap {
                             if (tr.id != entry.type + entry.id) tr.classList.remove('selected-entry')
                         } )
                         // Fly to the marker location
+                        console.log(entry)
                         this.map.flyTo( {
                             center: entry.lngLat,
                             zoom: 14,
@@ -458,60 +458,26 @@ export default class RoutePageMap extends GlobalMap {
         marker.addTo(this.map)
 
         // Generate popup
-        var content = this.setCheckpointPopupContent(checkpoint)
-        let checkpointPopup = new CheckpointPopup()
-        checkpointPopup.data = checkpoint
+        let checkpointPopup = new CheckpointPopup(checkpoint)
         let popup = checkpointPopup.popup
         popup.on('open', () => {
-            this.unselect()
+            this.unselectMarkers()
             checkpointPopup.select()
             this.generateProfile()
             checkpointPopup.setTarget() // Set target button
         } )
         popup.on('close', () => {
-            this.unselect()
+            this.unselectMarkers()
         } )
-        popup.setHTML(content)
         marker.setPopup(popup)
+
+        // Set modal
+        checkpointPopup.setModal()
 
         // Set cursor pointer on mouse hover
         marker.getElement().style.cursor = 'pointer'
 
         return marker
-    }
-
-    setCheckpointPopupContent (checkpoint) {
-        // Build thumbnail src
-        if (checkpoint.img.blob) var img = 'data:' + checkpoint.img.type + ';base64,' + checkpoint.img.blob
-        else var img = '/media/default-photo-' + Math.ceil(Math.random() * 9) + '.svg'
-        // Set thumbnail if there is one
-        if (img) { var thumbnailContent = `
-            <div class="popup-img-container">
-            <img class="popup-img" src="` + img + `" />
-                <div class="popup-icons">
-                    <div id="target-button" title="この位置に移動する">
-                        <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
-                    </div>
-                </div>
-            </div>`
-        } else var thumbnailContent = ''
-
-        // Return HTML content
-        return thumbnailContent + `
-        <div class="checkpointMarkerForm">
-            <div class="checkpoint-popup-line">
-                <div>
-                    <span class="bold">` + checkpoint.name +  `</span> (km ` +
-                    Math.floor(parseFloat(checkpoint.distance) * 10) / 10 + `)
-                </div>
-                <div>
-                    alt. ` + checkpoint.elevation + `m
-                </div>
-            </div>
-            <div class="checkpoint-popup-line">
-                <div>` + checkpoint.description + `</div>
-            </div>
-        </div>`
     }
 
     createCheckpointElement (number) {

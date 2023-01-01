@@ -12,6 +12,27 @@ $upload.addEventListener('change', async (e) => {
 
     function UploadFile (element, file, callback) {
 
+        // Define throbber
+        var createThrobber = (element) => {
+            const throbberWidth = '100%'
+            const throbberHeight = 6
+            const throbber = document.createElement('canvas')
+            throbber.classList.add('upload-progress')
+            throbber.setAttribute('width', throbberWidth)
+            throbber.setAttribute('height', throbberHeight)
+            element.parentNode.appendChild(throbber)
+            throbber.ctx = throbber.getContext('2d')
+            throbber.ctx.fillStyle = 'orange'
+            throbber.update = (percent) => {
+                throbber.ctx.fillRect(0, 0, throbberWidth * percent / 100, throbberHeight)
+                if (percent === 100) {
+                    throbber.ctx.fillStyle = 'green'
+                }
+            }
+            throbber.update(0)
+            return throbber
+        }
+
         var reader = new FileReader()
         this.ctrl = createThrobber(element)
         var xhr = new XMLHttpRequest()
@@ -37,34 +58,36 @@ $upload.addEventListener('change', async (e) => {
 
         reader.onload = () => xhr.send(formData)
 
+        // Define loader
+        var loader = {
+            prepare: () => {
+                this.loaderElement = document.createElement('div')
+                this.loaderElement.className = 'loading-modal'
+                let loaderIcon = document.createElement('div')
+                loaderIcon.innerText = 'アクティビティデータを分析しています...'
+                this.loaderElement.style.cursor = 'loading'
+                loaderIcon.className = 'loading-text'
+                this.loaderElement.appendChild(loaderIcon)
+            },
+            start: () => document.body.appendChild(this.loaderElement),
+            stop: () => this.loaderElement.remove()
+        }
+
+        loader.prepare()
         xhr.onreadystatechange = () => {
+            // During loading, display loader
+		    if (xhr.readyState > 0 && xhr.readyState < 4) loader.start()
             // On success, execute callback
-            if (xhr.readyState === 4) callback(JSON.parse(xhr.responseText))
+            console.log(xhr.readyState)
+            if (xhr.readyState === 4) {
+                console.log('STOP')
+                loader.stop()
+                callback(JSON.parse(xhr.responseText))
+            }
         }
 
         reader.readAsBinaryString(file)
 
-    }
-
-    // Create loading throbber element
-    function createThrobber (element) {
-        const throbberWidth = '100%'
-        const throbberHeight = 6
-        const throbber = document.createElement('canvas')
-        throbber.classList.add('upload-progress')
-        throbber.setAttribute('width', throbberWidth)
-        throbber.setAttribute('height', throbberHeight)
-        element.parentNode.appendChild(throbber)
-        throbber.ctx = throbber.getContext('2d')
-        throbber.ctx.fillStyle = 'orange'
-        throbber.update = (percent) => {
-            throbber.ctx.fillRect(0, 0, throbberWidth * percent / 100, throbberHeight)
-            if (percent === 100) {
-                throbber.ctx.fillStyle = 'green'
-            }
-        }
-        throbber.update(0)
-        return throbber
     }
 
     // After file upload
@@ -100,6 +123,10 @@ $upload.addEventListener('change', async (e) => {
                 // Load map on first upload
                 if (!newActivityMap.loaded) {
                     newActivityMap.map = await newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+                    newActivityMap.addRouteControl( {
+                        displayMkpoints: false,
+                        flyAlong: false
+                    } )
                     newActivityMap.map.once('load', () => newActivityMap.map.resize())
                 }
 

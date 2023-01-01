@@ -115,7 +115,7 @@ include '../actions/rides/edit/galleryAction.php';
 				} ?>
 			
 				<div class="rd-course-infos">
-					<h2>About the course</h2>
+					<h2>コースについて</h2>
 					<p><strong>距離 :</strong> <?php 
 						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->finish_place. " まで";
 						else echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->meeting_place. " まで"; ?></p>

@@ -149,7 +149,7 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    addRouteControl () {
+    addRouteControl (options = {flyAlong: true, displayMkpoints: true}) {
         // Get (or add) controller container
         if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
@@ -199,29 +199,31 @@ export default class GlobalMap extends Model {
             }
         } )
         // Line 5
-        let line5 = document.createElement('div')
-        line5.className = 'map-controller-line hide-on-mobiles'
-        routeContainer.appendChild(line5)
-        this.displayMkpointsBox = document.createElement('input')
-        this.displayMkpointsBox.id = 'displayMkpointsBox'
-        this.displayMkpointsBox.setAttribute('type', 'checkbox')
-        this.displayMkpointsBox.setAttribute('checked', 'checked')
-        line5.appendChild(this.displayMkpointsBox)
-        var displayMkpointsBoxLabel = document.createElement('label')
-        displayMkpointsBoxLabel.innerText = '絶景スポットを表示'
-        displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBoxLabel')
-        line5.appendChild(displayMkpointsBoxLabel)
-        this.displayMkpointsBox.addEventListener('change', () => {
-            if (this.displayMkpointsBox.checked) {
-                this.addMkpoints(this.mkpoints)
-                if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'flex'
-                this.generateProfile()
-            } else {
-                this.hideMkpoints()
-                if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'none'
-                this.generateProfile()
-            }
-        } )
+        if (options.displayMkpoints) {
+            let line5 = document.createElement('div')
+            line5.className = 'map-controller-line hide-on-mobiles'
+            routeContainer.appendChild(line5)
+            this.displayMkpointsBox = document.createElement('input')
+            this.displayMkpointsBox.id = 'displayMkpointsBox'
+            this.displayMkpointsBox.setAttribute('type', 'checkbox')
+            this.displayMkpointsBox.setAttribute('checked', 'checked')
+            line5.appendChild(this.displayMkpointsBox)
+            var displayMkpointsBoxLabel = document.createElement('label')
+            displayMkpointsBoxLabel.innerText = '絶景スポットを表示'
+            displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBoxLabel')
+            line5.appendChild(displayMkpointsBoxLabel)
+            this.displayMkpointsBox.addEventListener('change', () => {
+                if (this.displayMkpointsBox.checked) {
+                    this.addMkpoints(this.mkpoints)
+                    if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'flex'
+                    this.generateProfile()
+                } else {
+                    this.hideMkpoints()
+                    if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'none'
+                    this.generateProfile()
+                }
+            } )
+        }
         // Camera buttons
         let line6 = document.createElement('div')
         line6.className = 'map-controller-line hide-on-mobiles'
@@ -236,16 +238,18 @@ export default class GlobalMap extends Model {
             this.focus(this.map.getSource('route')._data)
         } )
         // Fly button
-        var buttonFly = document.createElement('button')
-        buttonFly.className = 'map-controller-block mp-button mp-button-small'
-        buttonFly.id = 'buttonFly'
-        buttonFly.innerText = '走行再現'
-        line6.appendChild(buttonFly)
-        buttonFly.addEventListener('click', () => {
-            if (this.map.getSource('route')) {
-                this.flyAlong(this.data.routeData)
-            }
-        } )
+        if (options.flyAlong) {
+            var buttonFly = document.createElement('button')
+            buttonFly.className = 'map-controller-block mp-button mp-button-small'
+            buttonFly.id = 'buttonFly'
+            buttonFly.innerText = '走行再現'
+            line6.appendChild(buttonFly)
+            buttonFly.addEventListener('click', () => {
+                if (this.map.getSource('route')) {
+                    this.flyAlong(this.data.routeData)
+                }
+            } )
+        }
         // Edition buttons
         let line7 = document.createElement('div')
         line7.className = 'map-controller-line hide-on-mobiles'

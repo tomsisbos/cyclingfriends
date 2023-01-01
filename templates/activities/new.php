@@ -43,7 +43,7 @@ include '../actions/users/securityAction.php'; ?>
                             <label for="uploadPhotos">
                                 <div class="btn smallbutton">写真を追加する</div>
                             </label>
-                            <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple />
+                            <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple/>
                             <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
                             <div class="new-ac-inputgroup">
                                 <label class="form-label">バイク</label>

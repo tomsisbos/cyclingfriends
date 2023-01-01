@@ -38,7 +38,6 @@ if (isAjax()) {
                 $mkpoint['elevation']        = $_POST['elevation'];
                 $mkpoint['date']             = exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'];
                 $mkpoint['month']            = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
-                $mkpoint['period']           = getPeriod($mkpoint['date']);
                 $mkpoint['description']      = htmlspecialchars($_POST['description']);
                 $mkpoint['tags']             = explode(",", $_POST['tags']);
                 $mkpoint['file_size']        = $_FILES['file']['size'];
@@ -102,19 +101,19 @@ if (isAjax()) {
         // If there is one, update it
         if ($checkLngLat->rowCount() > 0) {
             $isMkpoint = $checkLngLat->fetch();
-            $updateMapMkpoint = $db->prepare('UPDATE map_mkpoint SET user_id = ?, user_login = ?, category = ?, name = ?, city = ?, prefecture = ?, elevation = ?, date = ?, month = ?, period = ?, description = ?, thumbnail = ?, popularity = ? WHERE ROUND(lng, 3) = ROUND(?, 3) AND ROUND(lat, 3) = ROUND(?, 3)');
-            $updateMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat']));
-            $updateImgMkpoint = $db->prepare('UPDATE img_mkpoint SET user_id = ?, user_login = ?, date = ?, month = ?, period = ?, file_blob = ?, file_size = ?, file_name = ?, file_type = ? WHERE mkpoint_id = ?');
-            $updateImgMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], $isMkpoint['id']));
+            $updateMapMkpoint = $db->prepare('UPDATE map_mkpoint SET user_id = ?, user_login = ?, category = ?, name = ?, city = ?, prefecture = ?, elevation = ?, date = ?, month = ?, description = ?, thumbnail = ?, popularity = ? WHERE ROUND(lng, 3) = ROUND(?, 3) AND ROUND(lat, 3) = ROUND(?, 3)');
+            $updateMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat']));
+            $updateImgMkpoint = $db->prepare('UPDATE img_mkpoint SET user_id = ?, user_login = ?, date = ?, month = ?, file_blob = ?, file_size = ?, file_name = ?, file_type = ? WHERE mkpoint_id = ?');
+            $updateImgMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], $isMkpoint['id']));
         // Else, create it
         } else {
-		    $insertMapMkpoint = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, period, description, thumbnail, popularity, lng, lat, publication_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-		    $insertMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date']));
+		    $insertMapMkpoint = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, thumbnail, popularity, lng, lat, publication_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+		    $insertMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date']));
             $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
             $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
             $mkpointId = $getMkpointId->fetch();
-            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertImgMkpoint->execute(array($mkpointId['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['period'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], 0));
+            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertImgMkpoint->execute(array($mkpointId['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], 0));
         }
 
         // Insert tags data
@@ -153,7 +152,6 @@ if (isAjax()) {
                 $mkpointimg['user_login']  = $user->login;
                 $mkpointimg['date']        = exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'];
                 $mkpointimg['month']       = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
-                $mkpointimg['period']      = getPeriod($mkpointimg['date']);
                 $mkpointimg['file_size']   = $_FILES['file']['size'];
                 $mkpointimg['file_name']   = $_FILES['file']['name'];
                 $mkpointimg['file_type']   = $_FILES['file']['type'];
@@ -204,8 +202,8 @@ if (isAjax()) {
         
         // If not, insert image in the database img_mkpoint table and send response
         if ($isAlreadyUploaded != true) {
-            $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['user_login'], $mkpointimg['date'], $mkpointimg['month'], $mkpointimg['period'], $mkpointimg['file_blob'], $mkpointimg['file_size'], $mkpointimg['file_name'], $mkpointimg['file_type'], 0));    
+            $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['user_login'], $mkpointimg['date'], $mkpointimg['month'], $mkpointimg['file_blob'], $mkpointimg['file_size'], $mkpointimg['file_name'], $mkpointimg['file_type'], 0));    
             echo json_encode($mkpointimg);
         } else {
             echo json_encode(['error' => $photo['file_name']. 'は既にアップロードされています。']);

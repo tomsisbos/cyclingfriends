@@ -32,6 +32,8 @@ $data = json_decode($json, true);
 
 if (is_array($data)) {
 
+    echo json_encode(true);
+
     // Build route data
     $author_id   = $connected_user->id;
     $route_id    = 'new';
@@ -153,11 +155,9 @@ if (is_array($data)) {
     // If necessary, add selected photos to corresponding mkpoint
     if (isset($data['mkpointPhotos'])) {
         foreach ($data['mkpointPhotos'] as $entry) {
-            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, period, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), getPeriod(date('Y-m-d H:i:s')), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
+            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
         }
     }
-
-    echo json_encode(true);
 
 }

@@ -71,11 +71,19 @@
 .new-ac-window-photo {
     width: 100%;
     height: 180px;
+    position: relative;
 }
 .new-ac-window-photo img {
     height: 100%;
     width: 100%;
     object-fit: cover;
+}
+.new-ac-window-distance {
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    color: white;
+    text-shadow: 0px 0px 3px black;
 }
 .new-ac-entries-container {
     display: flex;
@@ -91,7 +99,7 @@
     flex-grow: 0.33;
     padding: 10px;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #f3f3f3;
 }
 .new-ac-btn-kept {
     background-color: blue !important;

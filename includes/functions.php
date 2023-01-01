@@ -1211,7 +1211,7 @@ function getPeriod($date) {
 		case 12: $month = "12月"; 
 	}
 
-	return $third . $month;
+	return $month . $third;
 }
 
 // Scale image file and save it as a blob

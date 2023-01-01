@@ -1,3 +1,4 @@
+import Modal from "/map/class/Modal.js"
 import ActivityMap from "/map/class/activity/ActivityMap.js"
 import CFUtils from "/map/class/CFUtils.js"
 
@@ -28,7 +29,6 @@ export default class NewActivityMap extends ActivityMap {
     // Parse file data and store it inside map instance
     async importDataFromGpx (gpx) {
         return new Promise(async (resolve, reject) => {
-            console.log(gpx)
 
             // Build trackpoints and routeCoords
             const track = gpx.tracks[0]
@@ -40,7 +40,6 @@ export default class NewActivityMap extends ActivityMap {
             var routeTime = []
             console.log(gpx)
             for (let i = 0; i < trkpt.length; i++) {
-                console.log(trkpt[i].time)
                 if (trkpt[i].time == null) return resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
                 else {
                     var date = new Date(trkpt[i].time.date)
@@ -105,12 +104,16 @@ export default class NewActivityMap extends ActivityMap {
             this.data = { routeData }
 
             // Build temperature
-            if (trackpoints[0].temperature) {
+            var hasTemperatureData = false
+            for (let j = 0; !('temperature' in trackpoints[j]) || j < trackpoints.length - 1; j++) {
+                if (trackpoints[j].temperature) hasTemperatureData = true
+            }
+            if (hasTemperatureData) {
                 var sumTemperature = 0
                 var minTemperature = 100
                 var maxTemperature = -100
                 for (let i = 0; i < trackpoints.length; i++) {
-                    sumTemperature += parseInt(trackpoints[i].temperature)
+                    if (trackpoints[i].temperature) sumTemperature += parseInt(trackpoints[i].temperature)
                     if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
                     if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
                 }
@@ -648,6 +651,10 @@ export default class NewActivityMap extends ActivityMap {
             var $img = document.createElement('img')
             $img.className = 'pg-ac-photo'
             $img.src = dataUrl
+            // Modal on thumbnail click
+            var modal = new Modal(dataUrl)
+            document.body.appendChild(modal.element)
+            $img.addEventListener('click', () => modal.open())
             photo.$thumbnail.appendChild($img)
             // Delete button
             var $deleteButton = document.createElement('div')
@@ -793,10 +800,6 @@ export default class NewActivityMap extends ActivityMap {
             var modal = document.createElement('div')
             modal.classList.add('modal', 'd-block')
             document.querySelector('body').appendChild(modal)
-            modal.addEventListener('click', (e) => {
-                var eTarget = e ? e.target : event.srcElement
-                if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
-            } )
             var confirmationPopup = document.createElement('div')
             confirmationPopup.classList.add('popup', 'fullscreen-popup')
             modal.appendChild(confirmationPopup)
@@ -805,6 +808,13 @@ export default class NewActivityMap extends ActivityMap {
             var $entriesContainer = document.createElement('div')
             $entriesContainer.className = 'new-ac-entries-container'
             confirmationPopup.appendChild($entriesContainer)
+
+            // Build cancel button
+            var $cancelButton = document.createElement('button')
+            $cancelButton.className = 'btn button bg-danger text-white'
+            $cancelButton.innerText = '戻る'
+            confirmationPopup.appendChild($cancelButton)
+            $cancelButton.addEventListener('click', () => modal.remove())
 
             photosToAsk.forEach(async (entry) => {
 
@@ -816,6 +826,9 @@ export default class NewActivityMap extends ActivityMap {
                 $entry.innerHTML = `
                     <div class="new-ac-window-photo">
                         <img src="` + dataUrl + `" />
+                        <div class="new-ac-window-distance">`
+                            + (Math.ceil(entry.mkpoint.distance * 10) / 10) + `km
+                        </div>
                     </div>
                     <div class="new-ac-window-mkpoint-infos">`
                         + entry.mkpoint.name + `
@@ -897,11 +910,10 @@ export default class NewActivityMap extends ActivityMap {
             // Build window structure
             var modal = document.createElement('div')
             modal.classList.add('modal', 'd-block')
-            document.querySelector('body').appendChild(modal)
-            modal.addEventListener('click', (e) => {
-                var eTarget = e ? e.target : event.srcElement
-                if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
-            } )
+            document.querySelector('body').appendChild(modal)/*
+            modal.addEventListener('mousedown', (e) => {
+                if (e.target === modal) modal.remove()
+            } )*/
             var confirmationPopup = document.createElement('div')
             confirmationPopup.classList.add('popup', 'fullscreen-popup')
             modal.appendChild(confirmationPopup)
@@ -913,6 +925,8 @@ export default class NewActivityMap extends ActivityMap {
 
             // Build each mkpoint element
             this.data.mkpointsToCreate.forEach(async (entry) => {
+                console.log(this.data.routeData)
+                var distance = turf.length(turf.lineSlice(this.data.routeData.geometry.coordinates[0], this.getPhotoLocation(entry), this.data.routeData))
                 var content = ''
                 var mkpointElement = document.createElement('div')
                 mkpointElement.id = 'form' + entry.number
@@ -932,6 +946,9 @@ export default class NewActivityMap extends ActivityMap {
                 content += `
                     <div class="new-ac-window-photo">
                         <img src="` + dataUrl + `" />
+                        <div class="new-ac-window-distance">`
+                            + (Math.ceil(distance * 10) / 10) + `km
+                        </div>
                     </div>
                 `
                     
@@ -979,9 +996,14 @@ export default class NewActivityMap extends ActivityMap {
                 }
             } )
 
-            // Build validate button
+            // Build cancel and validate button
+            var $cancelButton = document.createElement('button')
+            $cancelButton.className = 'btn button mx-2 bg-danger text-white'
+            $cancelButton.innerText = '戻る'
+            confirmationPopup.appendChild($cancelButton)
+            $cancelButton.addEventListener('click', () => modal.remove())
             var $validateButton = document.createElement('button')
-            $validateButton.className = 'btn button bg-primary text-white'
+            $validateButton.className = 'btn button mx-2 bg-primary text-white'
             $validateButton.innerText = '確定'
             confirmationPopup.appendChild($validateButton)
             $validateButton.addEventListener('click', () => {
@@ -1098,7 +1120,6 @@ export default class NewActivityMap extends ActivityMap {
                     canvas.toBlob( async (blob) => {
                         cleanData.thumbnail = await blobToBase64(blob)
                         console.log(cleanData)
-                        debugger
                         // Send data to server
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)

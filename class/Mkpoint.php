@@ -21,8 +21,8 @@ class Mkpoint extends Model {
         $this->prefecture       = $data['prefecture'];
         $this->elevation        = $data['elevation'];
         $this->date             = $data['date'];
+        $this->period           = $this->getPeriod();
         $this->month            = $data['month'];
-        $this->period           = $data['period'];
         $this->description      = $data['description'];
         $this->thumbnail        = $data['thumbnail'];
         $this->lngLat           = new LngLat($data['lng'], $data['lat']);
@@ -31,6 +31,33 @@ class Mkpoint extends Model {
         $this->grades_number    = $data['grades_number'];
         $this->popularity       = $data['popularity'];
         $this->likes            = $data['likes'];
+    }
+
+    private function getPeriod() {
+        
+        // Get part of the month from the day
+        $day = date("d", strtotime($this->date));
+        if ($day < 10) $third = "上旬";
+        else if (($day >= 10) AND ($day <= 20)) $third = "中旬";
+        else if ($day > 20) $third = "下旬";
+
+        // Get month in letters
+        switch (date("n", strtotime($this->date))) {
+            case 1: $month = "1月"; break;
+            case 2: $month = "2月"; break;
+            case 3: $month = "3月"; break;
+            case 4: $month = "4月"; break;
+            case 5: $month = "5月"; break;
+            case 6: $month = "6月"; break;
+            case 7: $month = "7月"; break;
+            case 8: $month = "8月"; break;
+            case 9: $month = "9月"; break;
+            case 10: $month = "10月"; break;
+            case 11: $month = "11月"; break;
+            case 12: $month = "12月"; 
+        }
+
+        return $month . $third;
     }
 
     public function delete () {
