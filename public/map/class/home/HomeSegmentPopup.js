@@ -12,7 +12,6 @@ export default class HomeSegmentPopup extends SegmentPopup {
     apiUrl = '/api/home.php'
 
     load () {
-        console.log('here')
 
         // Define advised
         var advised = ''
@@ -204,17 +203,15 @@ export default class HomeSegmentPopup extends SegmentPopup {
             route: this.data.route
         }
         var lightbox = new HomeSegmentLightbox(this.popup._map.getContainer(), this.popup, lightboxData)
-        console.log(lightbox)
         
         // Set slider system
         var setThumbnailSlider = setThumbnailSlider.bind(this)
         setThumbnailSlider(1)
 
         function addPhoto (photo, number) {
+            console.log(number)
             var newPhoto = document.createElement('img')
             newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
-            if (number == 0) newPhoto.style.display = 'block'
-            else newPhoto.style.display = 'none'
             newPhoto.dataset.id = photo.id
             newPhoto.dataset.author = photo.user_id
             newPhoto.dataset.number = number
@@ -223,7 +220,14 @@ export default class HomeSegmentPopup extends SegmentPopup {
             var newPhotoPeriod = document.createElement('div')
             newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo.month))
             newPhotoPeriod.innerText = photo.period
-            newPhotoPeriod.style.display = 'none'
+            // Set default display
+            if (number == 0) {
+                newPhoto.style.display = 'block'
+                newPhotoPeriod.style.display = 'inline-block'
+            } else {
+                newPhoto.style.display = 'none'
+                newPhotoPeriod.style.display = 'none'
+            }
             newPhoto.after(newPhotoPeriod)
             
             // Lightbox listener
@@ -242,6 +246,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
 
             // If there is more than one photo in the database
             if (this.photos.length > 1) {
+                console.log(this.photos.length)
 
                 // Add left and right arrows and attach event listeners to it
                 addArrows()

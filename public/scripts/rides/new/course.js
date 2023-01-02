@@ -1,4 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
+import RideCourseHelper from "/scripts/helpers/rides/course.js"
 import RideMap from "/map/class/ride/RideMap.js"
 import RidePickMap from "/map/class/ride/RidePickMap.js"
 import RideDrawMap from "/map/class/ride/RideDrawMap.js"
@@ -58,7 +59,7 @@ async function displayForm () {
         ridePickMap.setController()
 
         // Get session information from the server
-        ajaxGetRequest ('/api/map.php' + "?get-session=true", (session) => {
+        ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
             
             // Update map instance properties
             ridePickMap.session = session
@@ -72,14 +73,27 @@ async function displayForm () {
                 // Display checkpoints
                 if (ridePickMap.data.checkpoints) ridePickMap.displayCheckpoints()
                 
+                // Display a helper
+                await RideCourseHelper.startGuidance(ridePickMap.method)
+                
             }
             if (ridePickMap.options.sf === true) {
                 document.querySelector('.newpickmap-controller-checkbox').querySelector('input').checked = true
             }
             ridePickMap.setToSF()
+
+            // Add checkpoint on click
+            map.on('click', (e) => {
+                // Prevent from adding a marker if a mkpoint or another marker is on the path
+                var markerIncludedOnPath = false
+                console.log(e)
+                e.originalEvent.composedPath().forEach( (element) => {
+                    if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('mkpoint-marker'))) markerIncludedOnPath = true
+                } )
+                // Add checkpoint
+                if (!markerIncludedOnPath) ridePickMap.addMarker(e.lngLat)
+            } )
         } )
-        
-        ridePickMap.setMode(ridePickMap.mode)
 
         ridePickMapIsLoaded = true // Prevents from multiple loading
 
@@ -95,7 +109,6 @@ async function displayForm () {
 
         // Set default layer according to current season
         var map = await rideDrawMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
-
         rideDrawMapIsLoaded = true
 
         // Get session information from the server
@@ -122,7 +135,9 @@ async function displayForm () {
 
                 // Display checkpoints
                 rideDrawMap.displayCheckpoints()
-
+                
+                // Display a helper
+                await RideCourseHelper.startGuidance(rideDrawMap.method)
             }
 
             // On change of the select input, display the route

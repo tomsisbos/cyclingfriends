@@ -70,7 +70,10 @@ if (isset($_POST['validate'])) {
 			// Setting course data into variables
 			$checkpoints = $course_infos['checkpoints'];
 
-			$ride_id = getRideIdFromRideName($ride_name);
+			$getRideId = $db->prepare('SELECT id FROM rides WHERE name = ?');
+			$getRideId->execute(array($ride_name));
+			$ride_id = $getRideId->fetch(PDO::FETCH_ASSOC)['id'];
+
 			if (isset($_SESSION['course']['featuredimage']) AND !empty($_SESSION['course']['featuredimage'])) $featured_image = $_SESSION['course']['featuredimage'];
 			else $featured_image = 0;
 			// Double meetingpoint at the end if necessary

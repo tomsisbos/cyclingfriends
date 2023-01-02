@@ -617,7 +617,7 @@ export default class SegmentPopup extends Popup {
 
         function addPhoto (photo, number) {
             var newPhoto = document.createElement('img')
-            newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
+            newPhoto.classList.add('popup-img')
             if (number == 0) newPhoto.style.display = 'block'
             else newPhoto.style.display = 'none'
             newPhoto.dataset.id = photo.id

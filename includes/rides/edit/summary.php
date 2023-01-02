@@ -185,7 +185,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 				<a href="<?= $previous_page?>">
 					<button type="button" class="btn button btnleft">戻る</button>
 				</a>
-				<button type="submit" class="btn button btnright btn-success" name="validate">作成する</button>
+				<button type="submit" class="btn button btnright btn-success" name="validate">確定</button>
 		<?php }
 		?>
 		</div>

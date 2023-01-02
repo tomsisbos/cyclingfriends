@@ -29,7 +29,6 @@ export default class RideMap extends GlobalMap {
                     return value
                 } )
             ) // Create a deep copy
-            console.log(cleanVariable)
             if (variable.data.checkpoints) {
                 cleanVariable.data.checkpoints.forEach(checkpoint => {
                     delete checkpoint.marker
@@ -40,7 +39,6 @@ export default class RideMap extends GlobalMap {
             // Send data to server
             ajaxJsonPostRequest (this.apiUrl, cleanVariable, (response) => {
                 if (this.session) this.session.course = response
-                console.log(response)
                 resolve(response)
             } )
         } )
@@ -66,60 +64,6 @@ export default class RideMap extends GlobalMap {
         var controller = document.createElement('div')
         controller.className = 'newpickmap-controller'
         this.$map.after(controller)
-        // Switch mode 
-        var modeDiv = document.createElement('div')
-        modeDiv.className = 'newpickmap-controller-label'
-        this.$map.after(modeDiv)
-        var modeLabel = document.createElement('div')
-        modeLabel.innerText = 'Edit mode'
-        modeDiv.appendChild(modeLabel)
-        var editMouseover = document.createElement('div')
-        editMouseover.innerHTML = '<ul><li>クリック：チェックポイントを作成</li><li>左クリック：チェックポイントを削除</li><li>長押し：チェックポイントを移動</li></ul>'
-        editMouseover.id = 'edit'
-        editMouseover.classList.add('hidden')
-        modeDiv.appendChild(editMouseover)
-        var setMouseover = document.createElement('div')
-        setMouseover.innerHTML = '<ul><li>クリック：情報入力</li></ul>'
-        setMouseover.id = 'set'
-        setMouseover.classList.add('hidden')
-        modeDiv.appendChild(setMouseover)
-        modeLabel.addEventListener('mouseover', showMouseover)
-        modeLabel.addEventListener('mouseout', hideMouseover)
-        function showMouseover () {
-            document.querySelector('.newpickmap-controller-label').classList.add('mouseover')
-            if (this.mode === 'edit') {
-                document.querySelector('#edit').classList.remove('hidden')
-            } else if (this.mode === 'set') {
-                document.querySelector('#set').classList.remove('hidden')
-            }
-        }
-        function hideMouseover () {
-            document.querySelector('.newpickmap-controller-label').classList.remove('mouseover')
-            if (this.mode === 'edit') {
-                document.querySelector('#edit').classList.add('hidden')
-            } else if (this.mode === 'set') {
-                document.querySelector('#set').classList.add('hidden')
-            }
-        }
-        var controllerSwitchmode = document.createElement('div')
-        controllerSwitchmode.className = 'newpickmap-controller-button'
-        controllerSwitchmode.innerText = 'モード切替'
-        controllerSwitchmode.setAttribute('title', '情報入力モードに切り替える')
-        controller.appendChild(controllerSwitchmode)
-        controllerSwitchmode.addEventListener('click', () => {
-            if (this.mode === 'edit') {
-                this.mode = 'set'
-                modeLabel.innerText = '情報入力'
-                modeLabel.className = 'red-twinkle'
-                controllerSwitchmode.setAttribute('title', 'マーカー編集モードに切り替え')
-            } else if (this.mode === 'set') {
-                this.mode = 'edit'
-                modeLabel.innerText = 'マーカー編集'
-                modeLabel.className = 'blue-twinkle'
-                controllerSwitchmode.setAttribute('title', '情報入力モードに切り替える')
-            }
-            this.setMode(this.mode)
-        } )
         // Clear button
         var controllerClear = document.createElement('div')
         controllerClear.className = 'newpickmap-controller-button'
@@ -137,11 +81,8 @@ export default class RideMap extends GlobalMap {
         controllerSFbutton.appendChild(controllerSFcheckbox)
         controller.appendChild(controllerSFbutton)
         controllerSFcheckbox.addEventListener('change', () => {
-            if (controllerSFcheckbox.checked){
-                this.options.sf = true
-            } else {
-                this.options.sf = false
-            }
+            if (controllerSFcheckbox.checked) this.options.sf = true
+            else this.options.sf = false
             this.updateSession( {
                 method: 'pick',
                 data: {
@@ -150,35 +91,6 @@ export default class RideMap extends GlobalMap {
             })
             this.setToSF()
         } )
-    }
-
-    setMode (mode) {
-
-        if (mode === 'edit') {            
-            this.map._markers.forEach( (marker) => {
-                marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
-                marker.setDraggable(true)
-                marker.getPopup().options.className = 'hidden' // Hide popup in edit mode
-                if (document.querySelector('.marker-popup')) {
-                    document.querySelector('.marker-popup').className = 'hidden' // Hide any already opened popup
-                }
-                marker.getElement().removeEventListener('click', this.setDataHandler)
-            } )
-            this.map.on('click', this.addMarkerHandler)
-            this.map._canvas.style.cursor = 'crosshair'
-
-        } else if (mode === 'set') {
-            this.map.off('click', this.addMarkerHandler)
-            this.map._canvas.style.cursor = 'grab'
-            this.map._markers.forEach( (marker) => {
-                marker.getElement().removeEventListener('contextmenu', this.removeOnClickHandler)
-                marker.setDraggable(false)
-                marker.getPopup().options.className = 'marker-popup'
-                marker.getElement().addEventListener('click',  this.setDataHandler)
-            } )
-
-        }
-
     }
 
     setCheckpointPopupContent (name, description, options = {editable: false, button: false}) {
@@ -226,14 +138,6 @@ export default class RideMap extends GlobalMap {
     setDataHandler = (e) => {
         var setData = this.setData.bind(this, e.target.id)
         setData()
-    }
-    removeOnClickHandler = (e) => {
-        var removeOnClick = this.removeOnClick.bind(this, e)
-        removeOnClick()
-    }
-    addMarkerHandler = (e) => {
-        var addMarker = this.addMarker.bind(this, e.lngLat)
-        addMarker()
     }
     clearMarkersHandler = () => {
         var clearMarkers = this.clearMarkers.bind(this)
@@ -450,7 +354,7 @@ export default class RideMap extends GlobalMap {
             marker.getElement().style.cursor = 'pointer'
             // Attach remove on left click handler except from start and goal marker
             if ((this.options.sf == false && j != 0 && j != this.data.checkpoints.length - 1) || (this.options.sf == true && j != 0)) {
-                marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
+                marker.getElement().addEventListener('contextmenu', (e) => this.removeOnClick(e))
             }
 
             // Append marker element to checkpoint

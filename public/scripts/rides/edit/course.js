@@ -104,9 +104,19 @@ async function displayForm () {
                 document.querySelector('.newpickmap-controller-checkbox').querySelector('input').checked = true
             }
             ridePickMap.setToSF()
+            
+            // Add checkpoint on click
+            map.on('click', (e) => {
+                // Prevent from adding a marker if a mkpoint or another marker is on the path
+                var markerIncludedOnPath = false
+                console.log(e)
+                e.originalEvent.composedPath().forEach( (element) => {
+                    if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('mkpoint-marker'))) markerIncludedOnPath = true
+                } )
+                // Add checkpoint
+                if (!markerIncludedOnPath) ridePickMap.addMarker(e.lngLat)
+            } )
         } )
-        
-        ridePickMap.setMode(ridePickMap.mode)
 
         ridePickMapIsLoaded = true // Prevents from multiple loading
 

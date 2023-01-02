@@ -277,7 +277,6 @@ export default class GlobalMap extends Model {
     async load (element, style, center = this.defaultCenter) {
         return new Promise ((resolve, reject) => {
             this.$map = element
-            console.log(center)
             this.map = new mapboxgl.Map ( {
                 container: element,
                 center,
@@ -3250,7 +3249,7 @@ export default class GlobalMap extends Model {
                 var markerElement = checkpoint.marker.getElement()
                 // If except SF option is on, don't update start nor finish marker
                 if (options.exceptSF) {
-                    if (!(markerElement.classList.contains('checkpoint-marker-start') || markerElement.classList.contains('checkpoint-marker-goal'))) {
+                    if (!(markerElement.classList.contains('checkpoint-marker-start') || markerElement.classList.contains('checkpoint-marker-goal') || markerElement.classList.contains('checkpoint-marker-startfinish'))) {
                         markerElement.innerHTML = checkpoint.number
                     }
                 // Else, don't update start marker

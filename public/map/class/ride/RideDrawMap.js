@@ -61,8 +61,9 @@ export default class RideDrawMap extends RideMap {
                 await this.map.once('idle')
                 document.querySelector('#profileBox').style.display = 'block'
                 document.querySelector('#js-draw .rd-course-fields').style.paddingTop = 'calc(420px + 15vh)'
-                await this.displayCloseMkpoints(0.5)
+                this.generateProfile()
                 this.addStartGoalMarkers()
+                await this.displayCloseMkpoints(0.5)
                 this.generateProfile()
                 resolve()
             } )
@@ -563,7 +564,7 @@ export default class RideDrawMap extends RideMap {
         marker.getElement().style.cursor = 'pointer'
         // Add remove listener on click (except for start and goal markers)
         if (lngLat != this.route.coordinates[0] && lngLat != this.route.coordinates[this.route.coordinates.length - 1]) {
-            marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
+            marker.getElement().addEventListener('contextmenu', (e) => this.removeOnClick(e))
         }
         
         this.cursor++

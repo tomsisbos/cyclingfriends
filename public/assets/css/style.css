@@ -539,8 +539,8 @@ li.nav-item {
 	color: #FFFFFF;
 	background-color: #5C9999;
     border-radius: 10px;
-    height: 60px;
-    min-width: 120px;
+    min-height: 60px;
+    width: 120px;
     display: inline-block;
 	border: none;
 	flex: auto;

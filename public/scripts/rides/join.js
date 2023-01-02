@@ -7,7 +7,7 @@
     if (join) {
         join.addEventListener('click', () => {
             ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
-                if (response.answer) window.location.href = "/rides/ride.php?id=" + rideId + "&join=true"
+                if (response.answer　|| response.bikes_list == '車種問わず') window.location.href = "/ride/" + rideId + "/join"
                 else {
                     var answer = await openConfirmationPopup ('このライドで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
                     if (answer) {

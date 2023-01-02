@@ -1,7 +1,7 @@
 <!--Displays the navbar-->
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
 
-	<a href="/">
+	<a href="/dashboard">
 		<p class="navbar-brand" >cycling<span class="f">f</span>riends</p>
 		<img class="site-logo" src="/media/cf.png">
 	</a> <?php

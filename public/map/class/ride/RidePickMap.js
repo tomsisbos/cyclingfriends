@@ -56,9 +56,6 @@ export default class RidePickMap extends RideMap {
         popup.options.className = 'hidden' // Hide popup as creating in edit mode
         marker.addTo(this.map)
 
-        // Reorder markers
-        this.sortMarkers() /// Need to be created
-
         // Update existing markers
         this.updateMarkers({exceptSF: false})
 
@@ -66,21 +63,21 @@ export default class RidePickMap extends RideMap {
         this.setToSF(true)
         
         this.cursor++
+        console.log(this.cursor)
+        console.log(this.data.checkpoints)
         
         // Removing a marker and updating existing markers
-        marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
+        marker.getElement().addEventListener('contextmenu', (e) => this.removeOnClick(e))
 
         // Set bounds according to existing markers
         if (this.cursor === 1) { // If added marker is the first one, fly to it
-            this.map.flyTo({
+            this.map.flyTo( {
                 center: marker._lngLat,
                 zoom: 12,
                 speed: 1,
                 curve: 1
-                })
-        } else { // Else, redefine bounds
-            this.defineBounds(marker)
-        }
+            } )
+        } else this.defineBounds(marker) // Else, redefine bounds
         
     }
 
@@ -133,7 +130,7 @@ export default class RidePickMap extends RideMap {
             } )
 
             // Removing a marker and updating existing markers
-            marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
+            marker.getElement().addEventListener('contextmenu', (e) => this.removeOnClick(e))
 
             // Set and add popup
             var popup = this.generateMarkerPopup(marker, j, this.data.checkpoints[j].name, this.data.checkpoints[j].description, this.data.checkpoints[j].img)
@@ -149,6 +146,8 @@ export default class RidePickMap extends RideMap {
             this.defineBounds(marker)
 
             this.cursor++
+            console.log(this.cursor)
+            console.log(this.data.checkpoints)
         }
     }
 
@@ -156,19 +155,19 @@ export default class RidePickMap extends RideMap {
         var element = document.createElement('div')
         element.className = 'checkpoint-marker'
         element.id = i
-        if (i === 0 && this.options.sf == false) { // If this is the first marker, set it to 'S'
+        // If this is the first marker, set it to 'S' or 'SF'
+        if (i === 0 && this.options.sf == false) {
             element.innerHTML = 'S'
             element.className = 'checkpoint-marker checkpoint-marker-start'
         } else if (i === 0 && this.options.sf == true) {
             element.innerHTML = 'SF'
             element.className = 'checkpoint-marker checkpoint-marker-startfinish'
-        } else if (this.options.sf == false && i == this.data.checkpoints.length) { // If this is the last marker, set it to 'F'
+            // If this is the last marker, set it to 'F'
+        } else if (this.options.sf == false && i == this.data.checkpoints.length) {
             element.innerHTML = 'F'
             element.className = 'checkpoint-marker checkpoint-marker-goal'
-        } else { // Else, set it to i
-            element.innerHTML = i
-            console.log('i = ' + i)
-        }
+        // Else, set it to i
+        } else element.innerHTML = i
         return element
     }
 
@@ -197,29 +196,34 @@ export default class RidePickMap extends RideMap {
     }
 
     removeOnClick (e) {
-        var id = e.target.id
-        var checkpoints = this.data.checkpoints
-        if (e.target.innerHTML === 'F' && this.cursor > 2) { // If removes goal when more than 2 markers on the map
+        const id = e.target.id
+        const checkpoints = this.data.checkpoints
+
+        // If removes goal when more than 2 markers on the map
+        if (e.target.innerHTML === 'F' && this.cursor > 2) {
             checkpoints[this.cursor - 2].marker.getElement().innerHTML = 'F'
             checkpoints[this.cursor - 2].marker.getElement().classList.add('checkpoint-marker-goal')
         }
-        if (e.target.innerHTML === 'S' && this.cursor == 2) { // If removes start when it is the only marker on the map
+        // If removes start when it is the only marker on the map
+        if (e.target.innerHTML === 'S' && this.cursor == 2) {
             checkpoints[1].marker.getElement().innerHTML = 'S'
             checkpoints[1].marker.getElement().classList.remove('checkpoint-marker-goal')
             checkpoints[1].marker.getElement().classList.add('checkpoint-marker-start')
         }
-        for (let j = e.target.id; j < this.cursor; j++) { // Update all existing markers according to the deleted marker
-            checkpoints[j].marker.getElement().innerHTML = j-1
-            checkpoints[j].marker.getElement().id = j-1
-            
+
+        // Update all existing markers according to the deleted marker
+        for (let j = id; j < this.cursor; j++) {
+            checkpoints[j].marker.getElement().innerHTML = j - 1
+            checkpoints[j].marker.getElement().id = j - 1
+            if (j > id) checkpoints[j].number-- // Decrement checkpoint numbers above removed one
             if (j === 1) {
                 checkpoints[1].marker.getElement().innerHTML = 'S'
                 checkpoints[1].marker.getElement().classList.add('checkpoint-marker-start')
             }
         }
-        if (this.cursor > 2) { // If there is more than one marker on the map
-            checkpoints[this.cursor - 1].marker.getElement().innerHTML = 'F'
-        }
+
+        // If there is more than one marker on the map
+        if (this.cursor > 2) checkpoints[this.cursor - 1].marker.getElement().innerHTML = 'F'
 
         // Remove marker
         checkpoints[id].marker.remove()
@@ -229,11 +233,13 @@ export default class RidePickMap extends RideMap {
         this.updateSession( {
             method: this.method,
             data: {
-                'checkpoints': this.data.checkpoints
+                checkpoints
             }
         })
 
-        this.cursor--        
+        this.cursor--
+        console.log(this.cursor)
+        console.log(this.data.checkpoints)
     }
 
     // Update meeting place and finish place information (only if not set or having changed)
@@ -249,7 +255,6 @@ export default class RidePickMap extends RideMap {
                     var meetingplacelngLat = this.data.checkpoints[0].lngLat
                     var meetingplacegeolocation = await this.getCourseGeolocation(meetingplacelngLat)
                     var meetingplace = {'geolocation': meetingplacegeolocation, 'lngLat': meetingplacelngLat}
-                    console.log(meetingplace)
                     if (this.options.sf === true) {
                         var finishplace = meetingplace
                         var geolocationdata = {'meetingplace': meetingplace, 'finishplace': finishplace}
