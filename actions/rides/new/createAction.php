@@ -58,14 +58,13 @@ if (isset($_POST['validate'])) {
 			$ride_author_id = $_SESSION['id'];
 			$ride_author_login = $_SESSION['login'];
 			$privacy = 'Private';
-			$status = 'Private';
 			$entry_start = NULL;
 			$entry_end = NULL;
 			$participants_number = 1;
 		
 			// Insert data in 'rides' table
-			$insert_ride = $db->prepare('INSERT INTO rides(name, date, meeting_time, departure_time, finish_time, nb_riders_min, nb_riders_max, level_beginner, level_intermediate, level_athlete, citybike, roadbike, mountainbike, gravelcxbike, description, meeting_place, distance_about, distance, finish_place, terrain, course_description, posting_date, author_id, author_login, privacy, status, entry_start, entry_end, participants_number, route_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-			$insert_ride->execute(array($ride_name, $date, $meeting_time, $departure_time, $finish_time, $nb_riders_min, $nb_riders_max, $level_beginner, $level_intermediate, $level_athlete, $citybike, $roadbike, $mountainbike, $gravelcxbike, $ride_description, $meeting_place, $distance_about, $distance, $finish_place, $terrain, $course_description, $ride_posting_date, $ride_author_id, $ride_author_login, $privacy, $status, $entry_start, $entry_end, $participants_number, $route_id));
+			$insert_ride = $db->prepare('INSERT INTO rides(name, date, meeting_time, departure_time, finish_time, nb_riders_min, nb_riders_max, level_beginner, level_intermediate, level_athlete, citybike, roadbike, mountainbike, gravelcxbike, description, meeting_place, distance_about, distance, finish_place, terrain, course_description, posting_date, author_id, author_login, privacy, entry_start, entry_end, participants_number, route_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+			$insert_ride->execute(array($ride_name, $date, $meeting_time, $departure_time, $finish_time, $nb_riders_min, $nb_riders_max, $level_beginner, $level_intermediate, $level_athlete, $citybike, $roadbike, $mountainbike, $gravelcxbike, $ride_description, $meeting_place, $distance_about, $distance, $finish_place, $terrain, $course_description, $ride_posting_date, $ride_author_id, $ride_author_login, $privacy, $entry_start, $entry_end, $participants_number, $route_id));
 			
 			// Setting course data into variables
 			$checkpoints = $course_infos['checkpoints'];

@@ -67,7 +67,7 @@ if (isset($_SESSION['forms']['created'])) {
 							<?= $ride->name ?>
 						</div>
 						<?php // Set text color depending on the status
-						$status_color = colorStatus($ride->status)[0]; ?>
+						$status_color = $ride->getStatusColor(); ?>
 						<div class="my-rd-td table-element e15 text-center" style="background-color: <?= $status_color ?>;">
 							<?= $ride->status;
 							// Only add substatus if there is one

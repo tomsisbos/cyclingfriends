@@ -32,12 +32,12 @@ class Ride extends Model {
         $this->posting_date                         = $data['posting_date'];
         $this->author                               = new User ($data['author_id']);
         $this->privacy                              = $data['privacy'];
-        $this->status                               = $data['status'];
-        $this->substatus                            = $data['substatus'];
         $this->entry_start                          = $data['entry_start'];
         $this->entry_end                            = $data['entry_end'];
         $this->participants_number                  = $data['participants_number'];
         if (isset($data['route_id'])) $this->route  = new Route ($data['route_id'], $lngLatFormat);
+        $this->status                               = $this->getStatus()['status'];
+        $this->substatus                            = $this->getStatus()['substatus'];
         $this->checkpoints                          = $this->getCheckpoints();
     }
 
@@ -284,7 +284,7 @@ class Ride extends Model {
         }
     }
 
-    public function defineStatus ($privacy){
+    private function getStatus () {
         $substatus = NULL; // Set substatus to NULL for preventing errors in case of no substatus set
         
         // If ride date is passed
@@ -296,20 +296,20 @@ class Ride extends Model {
             $status = '定員達成'; } // status is Full
             
         // If privacy is set as private
-        else if ($privacy == 'Private') {
+        else if ($this->privacy == 'Private') {
             $status = '非公開'; } // status is Private
             
         // If not set as Finished, Full or Private
         else {
             
             // If not set as private, ride date is yet to come and entry start date is yet to come
-            if (($privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start > date('Y-m-d'))){
+            if (($this->privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start > date('Y-m-d'))) {
                 $status = '募集期間外'; // status is Closed
                 $substatus = 'まもなく開始'; // substatus is opening soon
             }
     
             // If not set as private, ride date is yet to come and entries are open
-            else if (($privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start <= date('Y-m-d') AND $this->entry_end >= date('Y-m-d'))) {
+            else if (($this->privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start <= date('Y-m-d') AND $this->entry_end >= date('Y-m-d'))) {
                 // If number of applicants is lower than minimum number set
                 $participants_number = $this->setParticipationInfos()['participants_number'];
                 if ($participants_number < $this->nb_riders_min) {
@@ -322,7 +322,7 @@ class Ride extends Model {
             }
     
             // If not set as private, ride date is yet to come but entries are closed
-            else if (($privacy != 'Private') AND ($this->date >= date('Y-m-d')) AND ($this->entry_start < date('Y-m-d') AND $this->entry_end < date('Y-m-d'))) {
+            else if (($this->privacy != 'Private') AND ($this->date >= date('Y-m-d')) AND ($this->entry_start < date('Y-m-d') AND $this->entry_end < date('Y-m-d'))) {
                 $status = 'エントリー終了'; // status is Closed
                 $substatus = 'まもなく開催'; //substatus is ready to depart
             }
@@ -332,14 +332,37 @@ class Ride extends Model {
             }
             
         }
-    
-        $updateStatus = $this->getPdo()->prepare('UPDATE rides SET status = ?, substatus = ? WHERE id = ?');
-        $updateStatus->execute(array($status, $substatus, $this->id));
-
-        $this->status    = $status;
-        $this->substatus = $substatus;
         
-        return array($status, $substatus);
+        return array('status' => $status, 'substatus' => $substatus);
+    }
+
+    public function getStatusColor ($type = 'font') {
+        switch ($this->status)
+        {
+            case '非公開' : // red
+                if ($type == 'background') return '#ff5555'; 
+                else return '#ffbbbb';
+                break;
+            case 'エントリー終了' : // blue
+                if ($type == 'background') return '#5555ff'; 
+                else return '#bbbbff';
+                break;
+            case '募集中' : // green
+                if ($type == 'background') return '#00e06e';
+                else return '#afffaa';
+                break;
+            case '定員達成' : // blue
+                if ($type == 'background') return '#5555ff'; 
+                else return '#bbbbff';
+                break;
+            case 'ライド終了' : // red
+                if ($type == 'background') return '#ff5555'; 
+                else return '#ffbbbb';
+                break;
+            default :
+                if ($type == 'background') return 'ffffff00'; 
+                else return 'black';
+        }
     }
 
     public function setParticipationInfos () {

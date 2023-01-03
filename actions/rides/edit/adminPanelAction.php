@@ -6,7 +6,6 @@ if (isset($_POST['save'])) {
 	require '../actions/databaseAction.php';
 
 	if (isset($_POST['privacy'])) {
-		$status = $ride->defineStatus($_POST['privacy']);
 		$updatePrivacyInfos = $db->prepare('UPDATE rides SET privacy = ? WHERE id = ?');
 		$updatePrivacyInfos->execute(array($_POST['privacy'], $ride->id));
 	}

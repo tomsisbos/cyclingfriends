@@ -1086,7 +1086,7 @@ function addBike ($bike_number, $user_id) {
 		return array(true, $success);
 	}
 }
-
+/*
 // Attribute a color depending on the status
 function colorStatus($status) {
 	switch ($status)
@@ -1117,7 +1117,7 @@ function colorStatus($status) {
 	}
 	// Returning the color
 	return array($status_color, $background_color);
-}
+}*/
 
 // Get the gender of an user and return it as an icon
 function getGenderAsIcon($user_id){

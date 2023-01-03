@@ -197,7 +197,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
 
         // Build photos
         var photos = ''
-        if (activityMap.data.photos) {
+        if (activityMap.data.photos.length > 0) {
             var photosCoordinates = []
             activityMap.data.photos.forEach(photo => {
                 let coord = activityMap.getPhotoLocation(photo)

@@ -1,3 +1,4 @@
+import Loader from "/map/class/Loader.js"
 import NewActivityMap from "/map/class/activity/NewActivityMap.js"
 
 var $upload = document.querySelector('#uploadActivity')
@@ -41,42 +42,33 @@ $upload.addEventListener('change', async (e) => {
         this.xhr = xhr
         
         var self = this
+        // Start loader
+        let loader = new Loader()
+        loader.prepare('ファイルをアップロードしています...')
+        loader.start()
         this.xhr.upload.addEventListener("progress", (e) => {
-                if (e.lengthComputable) {
+            if (e.lengthComputable) {
                 var percentage = Math.round((e.loaded * 100) / e.total)
                 self.ctrl.update(percentage)
-                }
-            }, false)
+            }
+        }, false)
         
         xhr.upload.addEventListener("load", () => {
-                self.ctrl.update(100)
-                var canvas = self.ctrl.ctx.canvas
-                canvas.parentNode.removeChild(canvas)
-            }, false)
+            // Set throbber to 100
+            self.ctrl.update(100)
+            var canvas = self.ctrl.ctx.canvas
+            canvas.parentNode.removeChild(canvas)
+        }, false)
+
         xhr.open("POST", "/api/activities/upload.php")
         // xhr.overrideMimeType('text/plain; charset=x-user-defined-binary')
 
-        reader.onload = () => xhr.send(formData)
-
-        // Define loader
-        var loader = {
-            prepare: () => {
-                this.loaderElement = document.createElement('div')
-                this.loaderElement.className = 'loading-modal'
-                let loaderIcon = document.createElement('div')
-                loaderIcon.innerText = 'アクティビティデータを分析しています...'
-                this.loaderElement.style.cursor = 'loading'
-                loaderIcon.className = 'loading-text'
-                this.loaderElement.appendChild(loaderIcon)
-            },
-            start: () => document.body.appendChild(this.loaderElement),
-            stop: () => this.loaderElement.remove()
+        reader.onload = () => {
+            loader.setText('アクティビティデータを分析しています...')
+            xhr.send(formData)
         }
 
-        loader.prepare()
         xhr.onreadystatechange = () => {
-            // During loading, display loader
-		    if (xhr.readyState > 0 && xhr.readyState < 4) loader.start()
             // On success, execute callback
             console.log(xhr.readyState)
             if (xhr.readyState === 4) {
@@ -142,7 +134,12 @@ $upload.addEventListener('change', async (e) => {
 
                 // Add photos treatment
                 document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
+            
+                    let loader = new Loader()
+                    loader.prepare('写真を処理しています...')
+                    loader.start()
                     newActivityMap.loadPhotos(e.target.files).then( () => {
+                        loader.stop()
                         newActivityMap.updatePhotos()
                     } )
                 } )

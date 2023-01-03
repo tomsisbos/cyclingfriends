@@ -42,7 +42,7 @@ include '../actions/rides/edit/galleryAction.php';
 				<p class="text-shadow">by <strong><?= $ride->author->login ?></strong></p>
 				<div class="rd-status"> <?php
 					// Set text color depending on the status
-					$status_color = colorStatus($ride->status)[1]; ?>
+					$status_color = $ride->getStatusColor('background'); ?>
 					<p style="background-color: <?= $status_color ?>" class="tag-light text-light"><?= $ride->status;
 					// Only add substatus if there is one
 					if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
