@@ -44,6 +44,7 @@ $router->map('POST', '/ride/new/[i:stage]', 'rides/new');
 $router->map('GET', '/ride/[i:ride_id]/edit', 'rides/edit', 'ride-edit');
 $router->map('GET', '/ride/[i:ride_id]/edit/[i:stage]', 'rides/edit');
 $router->map('POST', '/ride/[i:ride_id]/edit/[i:stage]', 'rides/edit');
+$router->map('GET', '/ride/[i:ride_id]/admin', 'rides/admin', 'ride-admin');
 $router->map('GET', '/rides', 'rides/publicboard', 'rides-publicboard');
 $router->map('POST', '/rides', 'rides/publicboard');
 $router->map('GET', '/[*:user_login]/rides', 'rides/userboard', 'rides-userboard');

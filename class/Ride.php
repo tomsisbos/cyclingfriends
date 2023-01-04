@@ -227,11 +227,8 @@ class Ride extends Model {
         $checkIfParticipate = $this->getPdo()->prepare('SELECT ride_id FROM participation WHERE user_id = ? AND ride_id = ?');
         $checkIfParticipate->execute(array($user->id, $this->id));
     
-        if ($checkIfParticipate->rowCount() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        if ($checkIfParticipate->rowCount() > 0) return true;
+        else return false;
     }
 
     // Function for getting an array with participants list and the total number of them
@@ -242,9 +239,7 @@ class Ride extends Model {
             // Regroup user ids in one array
             $participants = array_column($getParticipants->fetchAll(PDO::FETCH_ASSOC), 'user_id');
             return $participants;
-        } else {
-            return NULL;
-        }
+        } else return NULL;
     }
 
     // Check if a ride is full or not
@@ -252,19 +247,13 @@ class Ride extends Model {
         
         // Get current number of participants
         $participants = $this->getParticipants();
-        if(!empty($participants)){
-            $current_nb = count($participants);
-        }else{
-            $current_nb = 0;
-        }
+        if (!empty($participants)) $current_nb = count($participants);
+        else $current_nb = 0;
         
         // Get maximum number of participants
         
-        if($current_nb >= $this->nb_riders_max){
-            return true;
-        }else if($current_nb < $this->nb_riders_max){
-            return false;
-        }
+        if ($current_nb >= $this->nb_riders_max) return true;
+        else if ($current_nb < $this->nb_riders_max) return false;
     }
 
     // Check if all participants to a ride are in friends list of an user
@@ -441,6 +430,25 @@ class Ride extends Model {
         $getMapThumbnail = $this->getPdo()->prepare('SELECT thumbnail FROM routes WHERE id = ?');
         $getMapThumbnail->execute(array($this->route->id));
         return $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
+    }
+
+    public function getAdditionalFields () {
+        // First, get all additional fields of this ride
+        $getAdditionalFields = $this->getPdo()->prepare('SELECT id, name, type FROM ride_additional_fields WHERE ride_id = ?');
+        $getAdditionalFields->execute(array($this->id));
+        $additional_fields = $getAdditionalFields->fetchAll(PDO::FETCH_ASSOC);
+
+        //
+        for ($i = 0; $i < count($additional_fields); $i++) {
+            $getFieldAnswers = $this->getPdo()->prepare('SELECT id, user_id, content FROM ride_additional_fields_answers WHERE field_id = ?');
+            $getFieldAnswers->execute(array($additional_fields[$i]['id']));
+            $answers = $getFieldAnswers->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($answers as $answer) {
+                $additional_fields[$i][$answer['user_id']] = $answer['content'];
+            }
+        }
+
+        return $additional_fields;
     }
 
 }

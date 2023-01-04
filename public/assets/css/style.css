@@ -427,6 +427,7 @@ img.site-logo {
 /* Navbar */
 
 .navbar {
+    position: sticky;
     box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
 }
 
@@ -725,6 +726,23 @@ li.nav-item {
 }
 
 /* Table display */
+
+.responsive-table-container {
+    overflow-x: auto;
+}
+
+.sticky-th-column {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+.sticky-th-row {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
 
 .th-row {
 	font-weight: bold;

@@ -321,3 +321,22 @@
 .summary-checkpoints::-webkit-scrollbar-thumb:hover, .summary-checkpoint::-webkit-scrollbar-thumb:hover {
     background: #c1c1c1; 
 }
+
+/* Admin page */
+
+.rd-ad-entry-table {
+    width: 100%;
+    min-width: 600px;
+}
+.rd-ad-entry-table th {
+    background-color: #5c9999;
+    border: 1px solid #5c9999;
+    padding: 6px;
+    color: #fff;
+    text-align: center;
+}
+.rd-ad-entry-table td {
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 0px 6px;
+}
