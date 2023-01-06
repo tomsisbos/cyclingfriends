@@ -1,20 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-    
-<link rel="stylesheet" href="/assets/css/ride.css" />
+<html lang="en"> <?php
 
-<?php
-session_start();
-include '../actions/users/securityAction.php';
-
-// Get ride from slug
-$slug = basename($_SERVER['REQUEST_URI']);
-$url_fragments = explode('/', $_SERVER['REQUEST_URI']);
-$slug = array_slice($url_fragments, -2)[0];
-if (is_numeric($slug)) $ride = new Ride($slug);
-
-// Only allow access to ride admin
-if ($ride->author->id == $connected_user->id) { ?>
+include '../includes/rides/admin/head.php'; ?>
 
     <body> <?php
 
@@ -22,24 +9,13 @@ if ($ride->author->id == $connected_user->id) { ?>
 
         <div class="main container-shrink"> <?php
 
-            // Space for general error messages
-            displayMessage() ?>
-
-            <!-- Header -->
-            <div class="container bg-admin">
-                <div class="d-flex">
-                    <div class="rd-ad-name">
-                        <h2><?= $ride->name ?></h2>
-                        <p>管理ページ</p>
-                    </div>
-                    <a class="push" href="/ride/<?= $ride->id ?>">
-                        <button class="btn button box-shadow" type="button" name="edit">ライドページへ戻る</button>
-                    </a>
-                </div>
-            </div>
+            include '../includes/rides/admin/header.php';
+            
+            include '../includes/rides/admin/navbar.php' ?>
 
             <!-- Main section -->
             <div class="container end">
+
                 <h3>エントリーリスト</h3>
                 <div class="responsive-table-container">
                     <table class="rd-ad-entry-table gridtable">
@@ -78,12 +54,11 @@ if ($ride->author->id == $connected_user->id) { ?>
                         </tbody>
                     </table>
                 </div>
+
             </div>
 
         </div>
 
-    </body> <?php
-
-} else header('location: /' . $connected_user->login . '/rides') ?>
+    </body>
 
 </html>

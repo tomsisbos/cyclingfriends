@@ -245,7 +245,7 @@ export default class SegmentPopup extends Popup {
                                 this.clearTooltip()
                                 var profileTop = this.popup.getElement().querySelector('#profileBox').getBoundingClientRect().top
                                 var mapTop = this.popup._map.getContainer().getBoundingClientRect().top
-                                var navbarHeight = document.querySelector('.navbar').getBoundingClientRect().height
+                                var navbarHeight = document.querySelector('.main-navbar').getBoundingClientRect().height
                                 
                                 for (let element = this.popup.getElement().querySelector('#profileBox'); element.parentElement; element = element.parentElement) {
                                     console.log(element.offsetTop)
@@ -642,8 +642,8 @@ export default class SegmentPopup extends Popup {
         function setThumbnailSlider (photoIndex) {
 
             var i
-            var photos = document.getElementsByClassName("popup-img")
-            var photosPeriods = document.getElementsByClassName("mkpoint-period")
+            var photos = this.popup._map.getContainer().getElementsByClassName("popup-img")
+            var photosPeriods = this.popup._map.getContainer().getElementsByClassName("mkpoint-period")
 
             // If there is more than one photo in the database
             if (this.photos.length > 1) {
@@ -654,9 +654,9 @@ export default class SegmentPopup extends Popup {
                 var plusPhoto = () => { showPhotos (photoIndex += 1) }
                 var minusPhoto = () => { showPhotos (photoIndex -= 1) }
                 var showPhotos = (n) => {
-                    if (n > photos.length) {photoIndex = 1}
-                    if (n < 1) {photoIndex = photos.length}
-                    for (i = 0; i < photos.length; i++) {
+                    if (n > this.photos.length) {photoIndex = 1}
+                    if (n < 1) {photoIndex = this.photos.length}
+                    for (i = 0; i < this.photos.length; i++) {
                         photos[i].style.display = 'none'
                     }
                     for (i = 0; i < photosPeriods.length; i++) {

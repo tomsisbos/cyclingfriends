@@ -1,5 +1,5 @@
 var elements = document.querySelectorAll('.js-fade-on-scroll')
-    elements.forEach((element) => {
+elements.forEach((element) => {
     const elementHeight = element.offsetHeight
 
     // For elements containing an overlay color data property, append a color overlay to the element and set its opacity 

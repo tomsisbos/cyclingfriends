@@ -324,6 +324,25 @@
 
 /* Admin page */
 
+.rd-ad-navbar {
+    background-color: #5c9999;
+    padding: 0;
+}
+.rd-ad-navbar .navbar-collapse.show > .navbar-nav, .rd-ad-navbar .navbar-collapse.collapsing > .navbar-nav {
+    background-color: #5c9999;
+}
+.rd-ad-navbar li {
+    color: #fff;
+    font-weight: bold;
+    margin: 0;
+}
+.rd-ad-navbar li:hover {
+    background-color: pink;
+}
+.rd-ad-navbar a:visited {
+    color: #fff;
+}
+
 .rd-ad-entry-table {
     width: 100%;
     min-width: 600px;

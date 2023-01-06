@@ -8,6 +8,16 @@
     object-fit: cover;
     background-color: #5c9999;
 }
+.home-main-text {
+    color: white;
+    text-align: center;
+    text-shadow: 0 0 30px #000;
+}
+.home-main-text p {
+    font-weight: bold;
+    font-family: Yu Mincho;
+    text-shadow: 0 0 5px #000;
+}
 .home-site-logo {
     position: relative;
     height: 200px;
@@ -25,7 +35,7 @@
     position: absolute;
     font-size: 40px;
     font-family: Dr sugiyama;
-    color: block;
+    color: #000;
     text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
 .home-main-caption {
@@ -77,7 +87,7 @@
     padding: 80px 40px;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
 }
 .home-release-date {
     background-color: #5c9999;
@@ -114,9 +124,36 @@
 }
 .schema-row {
     letter-spacing: 0.5;
-    width: 80%;
+    width: 85%;
     font-size: smaller;
     margin: 6px auto;
+}
+
+.home-schedule-container {
+    display: flex;
+    gap: 20px;
+    overflow: auto;
+    padding: 40px 0px;
+    max-width: 100%;
+    align-self: center;
+}
+.home-schedule-block {
+    background-color: #fff;
+    padding: 10px;
+    width: 240px;
+    min-width: 240px;
+}
+.home-schedule-container svg {
+    min-width: fit-content;
+    fill: #5c9999;
+}
+.home-schedule-title {
+    font-family: Yu Mincho;
+    font-weight: bold;
+    font-size: 18;
+}
+.home-schedule-subtitle {
+    color: #999;
 }
 
 @media only screen and (max-width: 780px) {
@@ -170,11 +207,15 @@
 }
 
 @media only screen and (max-width: 560px) {
+    .home-main-text {
+        font-size: 12px;
+        font-weight: bold;
+    }
     .home-site-logo {
         height: 100px !important;
     }
     .home-brand {
-        font-size: 40px;
+        font-size: 24px;
         font-weight: normal;
     }
 }

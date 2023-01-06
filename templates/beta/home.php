@@ -29,13 +29,18 @@ include '../includes/navbar.php'; ?>
 
 <!-- Main container -->
 <div class="container smaller home-main-container">
+    <div class="home-main-text">
+        <p>森は数百年単位、哺乳動物は数十年単位、そして昆虫は数年単位で、半分以上地球から絶滅したと言われている一方で、消費の拡大が止まらない我々人間の社会。</p>
+        <p>この物狂おしい社会からすり抜けて、世界の美しさを追い求めることに全てを注ぐ。それは、サイクリングが実現する世界。</p>
+        <p>cyclingfriendsとは、この世界をともに選んだ仲間たち。</p>
+        <p>君も、この旅を共にしませんか？</p>
+    </div>
     <div class="home-site-logo js-fade-on-scroll">
         <img src="/media/cf.png" />
         <h1 class="home-brand">cyclingfriends</h1>
     </div>
-        
     <div class="home-main-caption">
-        <div class="classy-title" style="text-shadow: 0 0 10px black;">2023年始動。</div>
+        <div class="classy-title">2023年始動。</div>
     </div>
 </div>
 
@@ -43,35 +48,25 @@ include '../includes/navbar.php'; ?>
 <div class="bg-lightgrey">
 
     <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#f8b2c6" data-overlay-color2="#b2e0e5">
-        <h2>cyclingfriendsとは？</h2>
-        <div class="home-text">
-            <p>森は数百年単位、哺乳動物は数十年単位、そして昆虫は数年単位で、半分以上地球から絶滅したと言われている一方で、消費の拡大が止まらない我々人間の社会。</p>
-            <p>次世代に継ぐ地球を守るために求められているのは、もはや表面的な施策ではなく、価値観の変革そのものだと考えています。</p>
-            <p>cyclingfriendsとは、失われつつある日本、世界の大切な「なにか」を見つけ出すために、旅を共にしてくれる仲間たち。</p>
-            <p>この旅を共にしませんか？</p>
-        </div>
-    </div>
-
-    <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#edef9c" data-overlay-color2="#f8b2c6">
         <h2>事業構想</h2>
         <div class="schema">
             <div class="schema-part">
                 <div class="schema-title">Real</div>
                 <div class="schema-table">
-                    <div class="schema-row">全国の魅力を探究するサイクリングツアーの開催</div>
+                    <div class="schema-row">全国の魅力を探究するサイクリングツアー</div>
                     <div class="schema-row">サイクリングガイドの養成</div>
-                    <div class="schema-row">サイクリングライフの普及活動</div>
+                    <div class="schema-row">サイクリングライフの普及活動...等</div>
                 </div>
             </div>
             <div class="schema-cross">x</div>
             <div class="schema-part">
                 <div class="schema-title">Remote</div>
                 <div class="schema-table">
-                    <div class="schema-row">全国のサイクリングガイドマップ</div>
+                    <div class="schema-row">オンラインサイクリングガイドマップ</div>
                     <div class="schema-row">日本の絶景スポット＆美しい道事典</div>
                     <div class="schema-row">走行日記の管理＆共有</div>
                     <div class="schema-row">ルート作成ツール</div>
-                    <div class="schema-row">グループライド開催ツール</div>
+                    <div class="schema-row">グループライド開催ツール...等</div>
                 </div>
             </div>
         </div>
@@ -84,7 +79,7 @@ include '../includes/navbar.php'; ?>
         </div>
     </div>
 
-    <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#6bc6ab" data-overlay-color2="#edef9c">
+    <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#edef9c" data-overlay-color2="#f8b2c6">
         <h2>全国の絶景スポット</h2>
         <div class="home-columns">
             <div class="home-column-2">
@@ -100,8 +95,8 @@ include '../includes/navbar.php'; ?>
             </div>
         </div>
     </div>
-    
-    <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#000" data-overlay-color2="#6bc6ab">
+
+    <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#6bc6ab" data-overlay-color2="#edef9c">
         <h2>日本の最も美しい道</h2>
         <div class="home-columns">
             <div class="home-column-2 home-column-map">
@@ -117,7 +112,54 @@ include '../includes/navbar.php'; ?>
             </div>
         </div>
     </div>
-</div>
+    
+    <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color2="#6bc6ab">
+        <h2>サービス開始に向けて</h2>
+        
+        <div class="home-schedule-container">
+            <div class="home-schedule-block">
+                <div class="home-schedule-subtitle">Stage 1</div>
+                <div class="home-schedule-title">プライベートベータ公開</div>
+                <p>2023年2月予定</p>
+            </div>
+            <svg height="120" width="10">
+                <polygon points="0,00 10,60 0,120" />
+            </svg>
+            <div class="home-schedule-block">
+                <div class="home-schedule-subtitle">Stage 2</div>
+                <div class="home-schedule-title">ベータ公開</div>
+                <p>2023年4月予定</p>
+            </div>
+            <svg height="120" width="10">
+                <polygon points="0,00 10,60 0,120" />
+            </svg>
+            <div class="home-schedule-block">
+                <div class="home-schedule-subtitle">Stage 3</div>
+                <div class="home-schedule-title">v.1.0 公開</div>
+                <p>2024年以降</p>
+            </div>
+        </div>
+
+        <p>本格スタートまで、開発の進捗状況報告や、ベータテストやアカウント事前作成等の特別連絡など、サービスに関するメーリングリストを管理して参ります。</p>
+        <p>cyclingFriendsの世界観を共有できる方であれば、どなたでもご登録いただけます！</p>
+        
+			<form class="container smaller connection-container" method="post"> <?php
+                
+                if (isset($errormessage)) echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>';
+                if (isset($successmessage)) echo '<div class="success-block"><p class="success-message">' .$successmessage. '</p></div>'; ?>
+
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
+                    <label class="form-label" for="floatingInput">Email address</label>
+                </div>
+
+                <button type="submit" class="btn button fullwidth button-primary" name="validate">Register</button>
+
+            </form>
+    </div>
+</div> <?php
+
+include '../includes/foot.php'; ?>
 
 </body>
 </html>

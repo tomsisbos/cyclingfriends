@@ -22,7 +22,6 @@ export default class HomeSceneryPopup extends SceneryPopup {
             // Setup general interactions
             this.select()
             await this.loadPhotos().then(() => this.loadLightbox())
-            this.loadRating(this.data.mkpoint)
             this.setTarget()
 
             // Define actions to perform on each popup display
@@ -234,9 +233,6 @@ export default class HomeSceneryPopup extends SceneryPopup {
             }
             
             setRating(ratingInfos)
-
-            if (ratingInfos.vote == false) var click = 0
-            else var click = 1
 
             stars.forEach( (star) => {
 
