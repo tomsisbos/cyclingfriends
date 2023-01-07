@@ -325,22 +325,18 @@
 /* Admin page */
 
 .rd-ad-navbar {
-    background-color: #5c9999;
+    background-color: #fff;
     padding: 0;
 }
 .rd-ad-navbar .navbar-collapse.show > .navbar-nav, .rd-ad-navbar .navbar-collapse.collapsing > .navbar-nav {
-    background-color: #5c9999;
+    background-color: #fff;
 }
 .rd-ad-navbar li {
     color: #fff;
-    font-weight: bold;
     margin: 0;
 }
 .rd-ad-navbar li:hover {
-    background-color: pink;
-}
-.rd-ad-navbar a:visited {
-    color: #fff;
+    background-color: #eee;
 }
 
 .rd-ad-entry-table {

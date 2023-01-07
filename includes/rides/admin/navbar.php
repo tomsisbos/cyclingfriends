@@ -6,10 +6,10 @@
 	<div class="collapse navbar-collapse" id="collapsedRideAdminMenu">
 		<ul class="navbar-nav cf-navbar">
 			<li class="nav-item">
-				<a class="nav-link" href="/ride/<?= $ride->id ?>/admin/entries">エントリーリスト</a>
+				<a class="nav-link" href="/ride/<?= $ride->id ?>/admin/entries">Entry list</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="/ride/<?= $ride->id ?>/admin/forms">参加者質問設定</a>
+				<a class="nav-link" href="/ride/<?= $ride->id ?>/admin/forms">Questions</a>
 			</li>
 		</ul>
 	</div>
