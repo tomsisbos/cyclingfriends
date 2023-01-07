@@ -3,7 +3,7 @@ import SegmentPopup from "./SegmentPopup"
 export default class SegmentLightbox extends SegmentPopup {
 
     constructor(container, popup, data, instanceOptions) {
-        super(instanceOptions)
+        super({}, {}, instanceOptions)
         this.container = container
         this.popup = popup
         this.data = data

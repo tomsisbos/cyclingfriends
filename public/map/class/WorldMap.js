@@ -1041,6 +1041,7 @@ export default class WorldMap extends GlobalMap {
         var highlightMyMkpointsBox = document.querySelector('#highlightMyMkpointsBox')
 
         if (highlightMyMkpointsBox.checked) {
+            console.log('true')
             this.highlight = true
             document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
                 if ($icon.parentElement.dataset.user_id === this.session.id) {
@@ -1048,14 +1049,13 @@ export default class WorldMap extends GlobalMap {
                 }
             } )
         } else {
+            console.log('false')
             this.highlight = false
-            if (this.mode != 'edit') {
-                document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
-                    if ($icon.parentElement.dataset.user_id === this.session.id) {
-                        $icon.classList.remove('admin-marker')
-                    }
-                } )
-            }
+            document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
+                if ($icon.parentElement.dataset.user_id === this.session.id) {
+                    $icon.classList.remove('admin-marker')
+                }
+            } )
         }
     }
 }

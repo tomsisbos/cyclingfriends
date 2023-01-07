@@ -98,7 +98,8 @@ input[type="checkbox"] {
 .footer {
     background-color: #fff;
     text-align: right;
-    padding: 30px 0px;
+    border-top: 4px solid;
+    border-image: linear-gradient(0deg, #eeeeeeff, #f9f9f9) 100;
 }
 .footer .container {
     background-color: #fff;
@@ -319,7 +320,7 @@ img.site-logo {
 }
 
 .connection-container input {
-    background-color: #ffffff55;
+    background-color: #ffffff80;
 }
 
 .staticmap {
@@ -1039,10 +1040,9 @@ a .strava:hover {
     padding: 20px;
     position: relative;
     text-align: center;
-    top: calc(50% - 100px);
-    left: calc(50% - 125px);
+    align-self: center;
     border-radius: 10px;
-    margin-bottom: 150px;
+    margin: auto;
 }
 .popup.medium-popup {
     max-width: 450px;
@@ -1295,6 +1295,7 @@ input[type="range"]::-webkit-slider-thumb {
     position: relative;
     height: 100%;
     width: 100%;
+    min-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

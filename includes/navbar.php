@@ -1,7 +1,10 @@
 <!--Displays the navbar-->
-<nav class="main-navbar navbar navbar-expand-lg navbar-light bg-white">
+<nav class="main-navbar navbar navbar-expand-lg navbar-light bg-white"> <?php
 
-	<a href="/dashboard">
+	if (isset($_SESSION['auth'])) $default_url = '/dashboard';
+	else $default_url = '/' ?>
+	
+	<a href="<?= $default_url ?>">
 		<p class="navbar-brand" >cycling<span class="f">f</span>riends</p>
 		<img class="site-logo" src="/media/cf.png">
 	</a> <?php
@@ -77,11 +80,11 @@
 	
 	$url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 	
-	// If the user is connected and is on the signin page, displays the sign up button 
+	// If the user is not connected and is on the signin page, displays the sign up button 
 	if (!isset($_SESSION['auth']) AND (strpos($url,'signin') == true)) { ?>
 		<div class="header-buttons">
 			<a href="/signup">
-				<button class="btn button" name="validate">Sign up</button>
+				<button class="btn button" name="validate" disabled>Sign up</button>
 			</a>
 		</div> <?php
 

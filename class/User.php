@@ -53,13 +53,13 @@ class User extends Model {
     // Register user into database
     public function register ($email, $login, $password) {
         $this->default_profilepicture_id = rand(1,9);
-        $this->email                     = $email;
-        $this->login                     = $login;
+        $this->email = $email;
+        $this->login = $login;
         // Insert data into database
         $register = $this->getPdo()->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
-        $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 'Beginner'));
+        $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 1));
         // Get id
-        $this->id                        = $this->getData($this->table)['id'];
+        $this->id = $this->getData($this->table)['id'];
     }
 
     // Set session according to user data
@@ -146,9 +146,9 @@ class User extends Model {
 
     public function getLevelString () {
         switch ($this->level) {
-            case 'Beginner': return '初心者';
-            case 'Intermediate': return '中級者';
-            case 'Athlete': return '上級者';
+            case 1: return '初心者';
+            case 2: return '中級者';
+            case 3: return '上級者';
         }
     }
 

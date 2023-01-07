@@ -2,8 +2,8 @@ import SegmentLightbox from "/map/class/segment/SegmentLightbox.js"
 
 export default class HomeSegmentLightbox extends SegmentLightbox {
 
-    constructor(container, popup, data) {
-        super(container, popup, data, {noSession: true})
+    constructor(container, popup, data, instanceOptions = {noSession: true}) {
+        super(container, popup, data, instanceOptions)
     }
 
     apiUrl = '/api/home.php'

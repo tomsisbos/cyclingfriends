@@ -209,7 +209,6 @@ export default class HomeSegmentPopup extends SegmentPopup {
         setThumbnailSlider(1)
 
         function addPhoto (photo, number) {
-            console.log(number)
             var newPhoto = document.createElement('img')
             newPhoto.classList.add('popup-img', 'js-clickable-thumbnail')
             newPhoto.dataset.id = photo.id
@@ -246,7 +245,6 @@ export default class HomeSegmentPopup extends SegmentPopup {
 
             // If there is more than one photo in the database
             if (this.photos.length > 1) {
-                console.log(this.photos.length)
 
                 // Add left and right arrows and attach event listeners to it
                 addArrows()

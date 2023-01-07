@@ -28,9 +28,9 @@
 	<div class="col">
 		<label><strong>レベル : </strong></label>
 		<select name="level" class="js-level admin-field">
-			<option value="Beginner" <?php if ($user->level == 'Beginner') { echo 'selected'; } ?>>初心者</option>
-			<option value="Intermediate" <?php if ($user->level == 'Intermediate') { echo 'selected'; } ?>>中級者</option>
-			<option value="Athlete" <?php if ($user->level == 'Athlete') { echo ' selected'; } ?>>上級者</option>
+			<option value="1" <?php if ($user->level == '1') { echo 'selected'; } ?>>初心者</option>
+			<option value="2" <?php if ($user->level == '2') { echo 'selected'; } ?>>中級者</option>
+			<option value="3" <?php if ($user->level == '3') { echo ' selected'; } ?>>上級者</option>
 		</select>
 	</div>
 	<div class="col">

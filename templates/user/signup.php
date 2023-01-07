@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> <?php
 
-<?php
+// Temporarly forbid access to the signup page during private beta
+session_start();
+include '../actions/users/securityAction.php';
+if ($connected_user->rights != 'administrator' AND $connected_user->rights != 'moderator') header('location: /signin');
+
 require '../actions/users/signupAction.php'; ?>
 
 <style>
@@ -12,18 +16,18 @@ require '../actions/users/signupAction.php'; ?>
 
 <body style="position: relative"> <?php
 
-include '../includes/navbar.php'; ?>
-
-<div class="main">
-	
-	<div class="with-background-img">
+	include '../includes/navbar.php'; ?>
+		
+	<div class="main with-background-img"> <?php
+                
+		if (isset($errormessage)) echo '<div class="error-block absolute"><p class="error-message">' .$errormessage. '</p></div>';
+		if (isset($successmessage)) echo '<div class="success-block absolute"><p class="success-message">' .$successmessage. '</p></div>'; ?>
+		
 		<div class="container-fluid end connection-page with-background-flash">
 
 			<form class="container smaller connection-container" method="post">
 				
 				<div class="js-scenery-info classy-title"></div>
-		
-				<?php if (isset($errormessage)) echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>'; ?>
 			
 				<div class="form-floating mb-3">
 					<input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
@@ -43,7 +47,6 @@ include '../includes/navbar.php'; ?>
 			</form>
 		</div>
 	</div>
-</div>
 
 </body>
 </html>

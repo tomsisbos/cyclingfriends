@@ -1,6 +1,6 @@
 <?php
 
-require '../actions/users/signupAction.php'; ?>
+require '../actions/users/registerMailAction.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +10,12 @@ require '../actions/users/signupAction.php'; ?>
 <style>
 	.with-background-img::before {
 		background: var(--bgImage);
+	}
+	#homeSceneryMap.click-map:hover {
+		background-color: #f8b2c6;
+	}
+	#homeSegmentMap.click-map:hover {
+		background-color: #edef9c;
 	}
 </style>
 
@@ -53,9 +59,9 @@ include '../includes/navbar.php'; ?>
             <div class="schema-part">
                 <div class="schema-title">Real</div>
                 <div class="schema-table">
-                    <div class="schema-row">全国の魅力を探究するサイクリングツアー</div>
                     <div class="schema-row">サイクリングガイドの養成</div>
-                    <div class="schema-row">サイクリングライフの普及活動...等</div>
+                    <div class="schema-row">全国の魅力を探究するサイクリングツアー</div>
+                    <div class="schema-row">レンタルサイクルや施設運営...等</div>
                 </div>
             </div>
             <div class="schema-cross">x</div>
@@ -64,7 +70,7 @@ include '../includes/navbar.php'; ?>
                 <div class="schema-table">
                     <div class="schema-row">オンラインサイクリングガイドマップ</div>
                     <div class="schema-row">日本の絶景スポット＆美しい道事典</div>
-                    <div class="schema-row">走行日記の管理＆共有</div>
+                    <div class="schema-row">走行日記の管理＆共有機能</div>
                     <div class="schema-row">ルート作成ツール</div>
                     <div class="schema-row">グループライド開催ツール...等</div>
                 </div>
@@ -87,11 +93,13 @@ include '../includes/navbar.php'; ?>
                     <p>サイクリングとは、消費社会で言われている「不要不急」をわざわざ追い求めるライフスタイルのこと。用のない地域を訪れ、値段のない自然を楽しむ：これは消費社会とは真逆の、サイクリストの不思議な志。</p>
                     <p>だからこそ、徒歩ではいけない、車では感じられない地域を、サイクリストは誰より知っているのです。</p>
                     <p>コミュニティの皆さんが見つけ出した全国の絶景スポットを事典化し、データの有効的な発信や活用を通じて、地方活性化に寄与していきます。</p>
-                    <p>サイクリングを楽しむだけで価値を生み出せるようになると、サイクリストの社会的地位が確立され、「自転車社会」に近づいていきます。脱炭素の実現みならず、自然を大切にする価値観の醸成にも繋がると考えています。</p>
+                    <p>サイクリングを楽しむだけで価値を生み出せるようになると、サイクリストの社会的地位が確立され、「自転車社会」に近づいていきます。脱炭素の実現はもちろんのこと、自然を大切にする価値観の醸成にも繋がると考えています。</p>
                 </div>
             </div>
             <div class="home-column-2 home-column-map">
-                <div class="cf-map" id="homeSceneryMap"></div>
+                <div class="cf-map click-map" id="homeSceneryMap">
+                    <div class="click-map-text">Click to preview...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -100,7 +108,9 @@ include '../includes/navbar.php'; ?>
         <h2>日本の最も美しい道</h2>
         <div class="home-columns">
             <div class="home-column-2 home-column-map">
-                <div class="cf-map" id="homeSegmentMap"></div>
+                <div class="cf-map click-map" id="homeSegmentMap">
+                    <div class="click-map-text">Click to preview...</div>
+                </div>
             </div>
             <div class="home-column-2">
                 <div class="home-text">
@@ -114,7 +124,7 @@ include '../includes/navbar.php'; ?>
     </div>
     
     <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color2="#6bc6ab">
-        <h2>サービス開始に向けて</h2>
+        <h2>本格スタートに向けて</h2>
         
         <div class="home-schedule-container">
             <div class="home-schedule-block">
@@ -122,16 +132,16 @@ include '../includes/navbar.php'; ?>
                 <div class="home-schedule-title">プライベートベータ公開</div>
                 <p>2023年2月予定</p>
             </div>
-            <svg height="120" width="10">
-                <polygon points="0,00 10,60 0,120" />
+            <svg height="60" width="10">
+                <polygon points="0,00 10,30 0,60" />
             </svg>
             <div class="home-schedule-block">
                 <div class="home-schedule-subtitle">Stage 2</div>
                 <div class="home-schedule-title">ベータ公開</div>
                 <p>2023年4月予定</p>
             </div>
-            <svg height="120" width="10">
-                <polygon points="0,00 10,60 0,120" />
+            <svg height="60" width="10">
+                <polygon points="0,00 10,30 0,60" />
             </svg>
             <div class="home-schedule-block">
                 <div class="home-schedule-subtitle">Stage 3</div>
@@ -140,10 +150,9 @@ include '../includes/navbar.php'; ?>
             </div>
         </div>
 
-        <p>本格スタートまで、開発の進捗状況報告や、ベータテストやアカウント事前作成等の特別連絡など、サービスに関するメーリングリストを管理して参ります。</p>
-        <p>cyclingFriendsの世界観を共有できる方であれば、どなたでもご登録いただけます！</p>
+        <p>これから本格スタートに向けて、メールを通じてご案内致しますので、気になる方は是非登録してみましょう！</p>
         
-			<form class="container smaller connection-container" method="post"> <?php
+			<form class="container smaller connection-container" method="post" id="registerMail" action="/#registerMail"> <?php
                 
                 if (isset($errormessage)) echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>';
                 if (isset($successmessage)) echo '<div class="success-block"><p class="success-message">' .$successmessage. '</p></div>'; ?>

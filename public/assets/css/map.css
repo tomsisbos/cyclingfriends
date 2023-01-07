@@ -13,6 +13,11 @@
 
 /* -- Map --- */
 
+.mapboxgl-canvas-container {
+    height: 100%;
+    width: 100%;
+}
+
 #routesMap .mapboxgl-canvas-container {
     cursor: crosshair;
 }
@@ -22,6 +27,21 @@
     background-color: #eeeeee;
 }
 
+.click-map {    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.25s background-color;
+}
+.click-map .click-map-text {
+    position: absolute;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 16px;
+}
+.click-map:hover {
+    transition: 0.25s background-color;
+}
 
 /* -- Markers -- */
 

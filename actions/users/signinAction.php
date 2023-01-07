@@ -22,11 +22,11 @@ if (isset($_POST['validate'])) {
 			$userData = $CheckIfUserExists->fetch();
 			
 			// Check if filled password matches registered password
-			if(password_verify($password, $userData['password'])){
+			if (password_verify($password, $userData['password'])) {
 			
 				// Authentify user and load his data into global variables
 
-				$user = new User ($userData['id']);
+				$user = new User($userData['id']);
 
 				session_start();
 
@@ -35,17 +35,7 @@ if (isset($_POST['validate'])) {
 				// Redirect authentified user to the Dashboard	
 				header('location: /dashboard');
 			
-			} else {
-				$errormessage = "Your password is incorrect.";
-			}	
-			
-		} else {
-			$errormessage = "Your email is incorrect.";
-		}
-		 
-	} else {
-		$errormessage = "Please fill up all required informations and try again.";
-	}
- }
- 
- ?>
+			} else $errormessage = "ご記入頂いたパスワードは一致していません。";
+		} else $errormessage = "ご記入頂いたメールアドレスは登録されていません。";
+	} else $errormessage = "全ての情報をご記入の上、再度お試しください。";
+} ?>

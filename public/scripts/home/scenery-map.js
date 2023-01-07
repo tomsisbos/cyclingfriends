@@ -7,10 +7,8 @@ var loaded = false
 
 async function loadMap () {
     return new Promise((resolve, reject) => {
-        document.addEventListener('scroll', async () => {
-            var topPosition = $map.getBoundingClientRect().top
-            var bottomPosition = $map.getBoundingClientRect().bottom
-            if (!loaded && topPosition < $map.offsetHeight && bottomPosition > 0) {
+        $map.addEventListener('click', async () => {
+            if (!loaded) {
                 var homeMap = new HomeMap({noSession: true})
                 loaded = true
                 await homeMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')

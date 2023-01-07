@@ -28,11 +28,17 @@
 }
 .home-site-logo img {
     height: 100%;
-    width: 100%;
+    max-width: 300px;
     object-fit: contain;
+    transition: 1s opacity;
+}
+.home-site-logo img:hover {
+    opacity: 0.2 !important;
+    transition: 1s opacity;
 }
 .home-brand {
     position: absolute;
+    pointer-events: none;
     font-size: 40px;
     font-family: Dr sugiyama;
     color: #000;
@@ -100,14 +106,14 @@
 .schema {
     display: flex;
     justify-content: center;
-    gap: 60px;
-    margin: 30px;
+    gap: 40px;
+    margin: 20px;
 }
 .schema-part {
-    width: 280px;
-    min-width: 280px;
-    min-height: 280px;
-    height: 280px;
+    width: 300px;
+    min-width: 300px;
+    min-height: 300px;
+    height: 300px;
     background-color: #eeeeee;
     border-radius: 999px;
 }
@@ -124,7 +130,7 @@
 }
 .schema-row {
     letter-spacing: 0.5;
-    width: 85%;
+    width: 88%;
     font-size: smaller;
     margin: 6px auto;
 }
@@ -133,12 +139,15 @@
     display: flex;
     gap: 20px;
     overflow: auto;
-    padding: 40px 0px;
+    margin: 20px 0px;
     max-width: 100%;
     align-self: center;
+    align-items: center;
 }
 .home-schedule-block {
     background-color: #fff;
+    border: 1px solid #5c9999;
+    border-radius: 5px;
     padding: 10px;
     width: 240px;
     min-width: 240px;

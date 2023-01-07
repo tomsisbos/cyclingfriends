@@ -1,6 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
 import HomeMap from "/map/class/home/HomeMap.js"
-import AmenityPopup from "/map/class/AmenityPopup.js"
 
 var $map = document.querySelector('#homeSegmentMap')
 var loaded = false
@@ -19,10 +18,8 @@ function ajaxGetRequest (url, callback, loader = null) {
 
 async function loadMap () {
     return new Promise((resolve, reject) => {
-        document.addEventListener('scroll', async () => {
-            var topPosition = $map.getBoundingClientRect().top
-            var bottomPosition = $map.getBoundingClientRect().bottom
-            if (!loaded && topPosition < $map.offsetHeight && bottomPosition > 0) {
+        $map.addEventListener('click', async () => {
+            if (!loaded) {
                 var homeMap = new HomeMap({noSession: true})
                 loaded = true
                 await homeMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
@@ -58,10 +55,9 @@ await loadMap().then( (homeMap) => {
             pitch: 45,
         } )
         const rsBounds = CFUtils.defineRouteBounds(rsCoordinates)
-        homeMap.map.fitBounds(rsBounds)
-
-        // Open popup
-        homeMap.map.once('idle', () => homeMap.openSegmentPopup(randomSegment))
+        homeMap.map.fitBounds(rsBounds).once('idle', () => {
+            homeMap.updateSegments().then(() => homeMap.openSegmentPopup(randomSegment))
+        } )
     }, homeMap.segmentLoader)
 
     // Update map data on ending moving the map

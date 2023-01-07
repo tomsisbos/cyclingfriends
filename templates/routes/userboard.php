@@ -54,7 +54,7 @@ include '../actions/users/securityAction.php';
 								<div class="mp-button btn bg-darkgreen text-white" type="button" name="edit">編集</div>
 							</a>
 							<a id="export" data-id="<?= $route->id ?>" download>
-								<div class="mp-button btn bg-darkgreen text-white" type="button">エクスポート</div>
+								<div class="mp-button btn bg-darkgreen text-white" type="button">*.gpx保存</div>
 							</a>
 							<div class="mp-button btn bg-darkred text-white" data-id="<?= $route->id ?>" id="deleteRoute" type="button" name="delete">削除</div>
 						</div>

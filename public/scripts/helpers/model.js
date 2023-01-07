@@ -7,7 +7,7 @@ export default class Helper {
     static async openWindow (string, options = {className: null}) {
         return new Promise ((resolve, reject) => {
             var modal = document.createElement('div')
-            modal.classList.add('modal', 'd-block')
+            modal.classList.add('modal', 'd-flex')
             document.querySelector('body').appendChild(modal)
             console.log('appended')
             modal.addEventListener('click', (e) => {

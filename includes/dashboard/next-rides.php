@@ -1,5 +1,7 @@
 <?php 
 
+$rides_date_range = 12; // Time range of next rides to display (in months)
+
 $getRides = $db->prepare('SELECT id FROM rides
 WHERE 
     privacy != "private" AND	
@@ -8,12 +10,13 @@ WHERE
         WHEN :level = "Intermediate" THEN level_intermediate
         WHEN :level = "Athlete" THEN level_athlete 
         ELSE true 
-    END) = TRUE 
-    AND status LIKE "Open%"
+    END) = TRUE
+	AND date BETWEEN :today AND :datemax 
 ORDER BY
     date, meeting_time ASC
 LIMIT 3');
-$getRides->execute(array(":level" => $connected_user->level));
+$today = new DateTime();
+$getRides->execute(array(":level" => $connected_user->level, ":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . $rides_date_range . ' month')->format('Y-m-d H:i:s')));
 
 // Display ride cards ?>
 <div class="dashboard-title-block">

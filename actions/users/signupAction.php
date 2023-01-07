@@ -43,11 +43,6 @@ if (isset($_POST['validate'])) {
 					} else $errormessage = 'パスワードは6文字以上利用してください。';
 				}
 			}
-		} else $errormessage = "全ての情報をご記入の上、再度お試しください。";
-	} else $errormessage = "正しいフォーマットのメールアドレスをご記入ください。";	
+		} else $errormessage = "正しいフォーマットのメールアドレスをご記入ください。";	
+	} else $errormessage = "全ての情報をご記入の上、再度お試しください。";
 } ?>
- 
- 
- 
-		
-		

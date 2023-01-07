@@ -108,7 +108,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 						<div class="row g-2"> <?php
 							if (!empty($user->level)) { ?>
 								<div class="col-md">
-									<strong>レベル : </strong><?= $user->getLevelString(); ?>
+									<strong>レベル : </strong><div class="d-inline <?= 'tag-' .$user->colorLevel($user->level) ?>"><?= $user->getLevelString(); ?></div>
 								</div> <?php
 							} ?>
 							<div class="col-md">

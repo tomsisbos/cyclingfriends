@@ -10,9 +10,9 @@ require $base_directory . '/actions/databaseAction.php';
 // In case an Ajax request have been detected
 if (isAjax()) {
 
-    if (isset($_GET['get-session'])) {
+    /*if (isset($_GET['get-session'])) {
         if (isset($_SESSION['auth'])) echo json_encode($_SESSION);
-    }
+    }*/
 
     if (isset($_GET['mkpoint-photos'])) {
         $mkpoint = new Mkpoint($_GET['mkpoint-photos']);
