@@ -131,7 +131,7 @@ class Route extends Model {
         $toughnessRank = $this->getRank($toughness);
 
         // Beginners
-        if ($level === 'Beginner') {
+        if ($level == 1) {
             switch ($toughnessRank) {
                 case 5: $averageSpeed = 13; break;
                 case 4: $averageSpeed = 15.5; break;
@@ -142,7 +142,7 @@ class Route extends Model {
             }
         }
         // Intermediates
-        if ($level === 'Intermediate') {
+        else if ($level == 2) {
             switch ($toughnessRank) {
                 case 5: $averageSpeed = 16; break;
                 case 4: $averageSpeed = 18.5; break;
@@ -153,7 +153,7 @@ class Route extends Model {
             }
         }
         // Athletes
-        if ($level === 'Athlete') {
+        else if ($level == 3) {
             switch ($toughnessRank) {
                 case 5: $averageSpeed = 18; break;
                 case 4: $averageSpeed = 20.5; break;

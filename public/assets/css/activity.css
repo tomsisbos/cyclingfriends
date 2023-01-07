@@ -488,7 +488,7 @@
 .pg-ac-photo-container {
     position: relative;
     display: inline-block;
-    padding: 5px;
+    padding: 2px;
     height: 150px;
     width: 175px;
     max-width: 50%;
@@ -499,16 +499,14 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-    border-radius: 20px;
 }
 .pg-ac-close-button {
     position: absolute;
     top: 0;
     right: 0;
     padding: 16px;
-    border-radius: 0px 20px;
     color: white;
-    margin: 5px;
+    margin: 2px;
     cursor: pointer;
     z-index: 3;
 }
@@ -517,9 +515,8 @@
     top: 0;
     left: 0;
     padding: 16px;
-    border-radius: 20px 0px;
     color: white;
-    margin: 5px;
+    margin: 2px;
     cursor: pointer;
     z-index: 3;
 }
@@ -528,9 +525,8 @@
     bottom: 0;
     right: 0;
     padding: 16px;
-    border-radius: 20px 0px;
     color: white;
-    margin: 5px;
+    margin: 2px;
     cursor: pointer;
     z-index: 3;
 }

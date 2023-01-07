@@ -1,5 +1,5 @@
 <!-- Friends list -->
-<h2 class="title-with-subtitle">Friends :</h2>
+<h3 class="title-with-subtitle">Friends :</h3>
 <div class="d-flex" id="friendsList">
 	<?php $friends = $user->getFriends();
 	$limit = 15;
@@ -21,7 +21,7 @@
 	<span class="close cursor" onclick="closeFriendsWindow()">&times;</span>
 	<div class="modal-block modal-block p-2">
 		<div class="container bg-friend">
-			<h2 class=""><?= $user->login. "'s friends"; ?></h2>
+			<h3 class=""><?= $user->login. "'s friends"; ?></h3>
 		</div>
 		<div class="container overflow-400"> <?php
 			if (!empty($friends)) {

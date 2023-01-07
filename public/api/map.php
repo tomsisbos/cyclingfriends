@@ -553,8 +553,16 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-rides'])) {
-        $getRides = $db->prepare('SELECT id, name, date, level_beginner, level_intermediate, level_athlete, nb_riders_max, description, distance, author_id, author_login, privacy, status, substatus, participants_number, route_id FROM rides');
-        $getRides->execute();
+        define('RIDES_DATE_RANGE', 2); // Define interval in which rides must be displayed in months
+        $getRides = $db->prepare("SELECT id, name, date, level_beginner, level_intermediate, level_athlete, nb_riders_max, description, distance, author_id, author_login, privacy, status, substatus, participants_number, route_id FROM rides
+        WHERE
+            (privacy = 'Public' OR (privacy = 'Friends only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
+        AND
+            date BETWEEN :today AND :datemax
+        AND
+            entry_start < NOW() AND entry_end > NOW()");
+            $today = new DateTime();
+            $getRides->execute(array(":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d H:i:s')));
         $rides = $getRides->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($rides); $i++) {
             $getCourse = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ?');

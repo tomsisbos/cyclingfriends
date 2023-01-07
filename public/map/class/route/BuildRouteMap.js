@@ -132,7 +132,7 @@ export default class BuildRouteMap extends GlobalMap {
         routeContainer.appendChild(line1)
         var modeSelectLabel = document.createElement('label')
         modeSelectLabel.innerText = '編集モード：'
-        modeSelectLabel.setAttribute('title', 'ルート作成モードでは、地図上をクリックすると、ルートを延長することが出来る。<br>ウェイポイント追加モードでは、ルート上にクリックしウェイポイントを追加することができる。')
+        modeSelectLabel.setAttribute('title', 'ルート作成モードでは、地図上をクリックすると、ルートを延長することが出来る。ウェイポイント追加モードでは、ルート上にクリックしウェイポイントを追加することができる。')
         modeSelectLabel.setAttribute('for', 'boxAddWaypoints')
         line1.appendChild(modeSelectLabel)
         // Line 2
@@ -145,10 +145,12 @@ export default class BuildRouteMap extends GlobalMap {
         var modeSelectOption1 = document.createElement('option')
         modeSelectOption1.value = 'drawRoute'
         modeSelectOption1.innerText = 'ルート作成'
+        modeSelectOption1.title = '地図上をクリックすると、ルートを延長することが出来る。'
         this.modeSelect.appendChild(modeSelectOption1)
         var modeSelectOption2 = document.createElement('option')
         modeSelectOption2.value = 'addWaypoints'
         modeSelectOption2.innerText = 'ウェイポイント追加'
+        modeSelectOption2.title = 'ルート上にクリックしウェイポイントを追加することができる。'
         this.modeSelect.appendChild(modeSelectOption2)
         this.modeSelect.addEventListener('change', () => {
             console.log('boxAddWaypoints changed')
@@ -165,7 +167,7 @@ export default class BuildRouteMap extends GlobalMap {
         line3.appendChild(boxFollowRoads)
         var boxFollowRoadsLabel = document.createElement('label')
         boxFollowRoadsLabel.innerText = '道路に沿って作る'
-        boxFollowRoadsLabel.setAttribute('title', 'チェックすると、コース作成の際に最適な道を辿る。')
+        boxFollowRoadsLabel.setAttribute('title', 'チェックすると、コース作成の際に最適な道を辿る。チェックを外すと、ウェイポイントを直線で結ぶ。')
         boxFollowRoadsLabel.setAttribute('for', 'boxFollowRoads')
         line3.appendChild(boxFollowRoadsLabel)
         // Line 4
@@ -1330,7 +1332,7 @@ export default class BuildRouteMap extends GlobalMap {
             data.category = 'route'
             // Build modal
             var modal = document.createElement('div')
-            modal.classList.add('modal', 'd-block')
+            modal.classList.add('modal', 'd-flex')
             document.querySelector('body').appendChild(modal)
             var savePopup = document.createElement('div')
             savePopup.classList.add('popup')

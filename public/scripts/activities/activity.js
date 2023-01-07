@@ -52,6 +52,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     console.log(activityMap.data)
 
     // Set month property to activity month
+    console.log(new Date(activityData.route.time[0]))
     activityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
     activityMap.setSeason()
 

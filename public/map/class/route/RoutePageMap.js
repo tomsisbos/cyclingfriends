@@ -221,7 +221,7 @@ export default class RoutePageMap extends GlobalMap {
                 } else {
                     // Unselect
                     target.classList.remove('selected-entry')
-                    if ((this.ride.options.sf == true && entry.type == 'checkpoint' && entry.id == this.ride.checkpoints.length - 1)) { // Unselect start marker if click on goal
+                    if (this.ride && (this.ride.options.sf == true && entry.type == 'checkpoint' && entry.id == this.ride.checkpoints.length - 1)) { // Unselect start marker if click on goal
                         document.querySelector('.mapboxgl-canvas-container #' + entry.type + 0).classList.remove('selected-marker')
                     } else document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.remove('selected-marker')
                     // Focus

@@ -143,7 +143,7 @@ function getBaseLog(x, y) {
 async function openConfirmationPopup (question) {
 	return new Promise ((resolve, reject) => {
 		var modal = document.createElement('div')
-		modal.classList.add('modal', 'd-block')
+		modal.classList.add('modal', 'd-flex')
 		document.querySelector('body').appendChild(modal)
 		modal.addEventListener('click', (e) => {
 			var eTarget = e ? e.target : event.srcElement

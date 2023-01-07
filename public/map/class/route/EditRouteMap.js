@@ -20,7 +20,7 @@ export default class EditRouteMap extends BuildRouteMap {
             }
             // Build modal
             var modal = document.createElement('div')
-            modal.classList.add('modal', 'd-block')
+            modal.classList.add('modal', 'd-flex')
             document.querySelector('body').appendChild(modal)
             var savePopup = document.createElement('div')
             savePopup.classList.add('popup')
@@ -87,7 +87,7 @@ export default class EditRouteMap extends BuildRouteMap {
         console.log(route)
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
             console.log(response)
-            window.location.replace('/' + this.session.login + '/routes')
+            window.location.replace('/route/' + this.routeData.id)
         } )
     }
 

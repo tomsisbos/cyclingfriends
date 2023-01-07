@@ -37,8 +37,13 @@ p, h3, h4, h5, h6, li {
 	margin-bottom: 0.5rem;
 }
 
-h1, h2, h3 {
+h1 {
 	font-family: 'Dr Sugiyama', 'Yu Mincho', cursive;
+	font-weight: 700;
+}
+
+h2, h3 {
+	font-family: 'Gaegu', 'Yu Mincho', cursive;
 	font-weight: 700;
 }
 

@@ -417,8 +417,12 @@ form#mkpointForm input[type="file" i] {
     border-bottom: 0.5px solid;
     margin-top: 10px;
 }
+.popup-checkpoints-table {
+    font-size: inherit;
+}
 .popup-checkpoints-table tr {
     border-bottom: 0.5px dashed lightgrey;
+    height: 2em;
 }
 .popup-checkpoints-table .popup-checkpoints-table-distance {
     min-width: 70px;

@@ -25,7 +25,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 
 			<!-- Top section -->
 
-			<h1 class="title-with-subtitle js-login"><?= $user->login; ?></h1>
+			<h2 class="title-with-subtitle js-login"><?= $user->login; ?></h2>
 			<div class="d-flex gap"> <?php
 			
 			// Only display social links if filled
@@ -46,10 +46,8 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 			
 			// Buttons ?>
 			<div class="td-row push gap-30"> <?php
-				if ($_SESSION['id'] != $user->id) { ?>	
-					<a href="#">
-						<button id="sendMessageButton" class="btn button" name="send_message">Send message</button>
-					</a> <?php
+				if ($_SESSION['id'] != $user->id) { ?>
+					<!--<button title="チャット機能は開発中" id="sendMessageButton" class="btn button" name="send_message" disabled>Send message</button>--> <?php
 					$rider = $user;
 					include '../includes/riders/friends/buttons.php';
 					include '../includes/riders/profile/send-message.php'; 
@@ -147,7 +145,7 @@ include '../actions/riders/profile/profileInfosAction.php'; ?>
 
 		<div class="container margin-bottom p-0">
 			<div class="profile-title-block">
-				<h2>Latest activities</h2><div class="cleared-counter"><?= '(' . $user->getActivitiesNumber() . ')' ?></div>
+				<h3>Latest activities</h3><div class="cleared-counter"><?= '(' . $user->getActivitiesNumber() . ')' ?></div>
 			</div>
 
 			<div class="acsm-list dashboard-block"> <?php

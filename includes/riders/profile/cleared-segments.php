@@ -10,7 +10,7 @@ $segments_number = $countSegments->rowCount();
 $cleared_segments_number = $user->countClearedSegments(); ?>
 
 <div class="profile-title-block">
-    <h2>Recently cleared segments</h2> <div class="cleared-counter">(<?= $cleared_segments_number . ' / ' . $segments_number ?>)</div>
+    <h3>Recently cleared segments</h3> <div class="cleared-counter">(<?= $cleared_segments_number . ' / ' . $segments_number ?>)</div>
 </div>
 
 <div class="dashboard-block cleared-segments-list"> <?php
