@@ -44,7 +44,10 @@ include '../includes/rides/admin/head.php'; ?>
                                         <td><?= $participant->first_name ?></td>
                                         <td class="text-center"><?= $participant->getGenderString() ?></td>
                                         <td class="text-center"><?= $participant->calculateAge() ?></td>
-                                        <td><?= $participant->location->toString() ?></td> <?php
+                                        <td><?php
+                                            if (!empty($participant->location->city)) echo $participant->location->toString();
+                                            else echo '-' ?>
+                                        </td> <?php
                                         foreach ($ride->getAdditionalFields() as $additional_field) { ?>
                                             <td><?php if (isset($additional_field[$participant->id])) echo $additional_field[$participant->id] ?></th> <?php
                                         } ?>

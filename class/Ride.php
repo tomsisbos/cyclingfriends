@@ -438,7 +438,7 @@ class Ride extends Model {
         $getAdditionalFields->execute(array($this->id));
         $additional_fields = $getAdditionalFields->fetchAll(PDO::FETCH_ASSOC);
 
-        //
+        // Then, get all answers for these additional fields
         for ($i = 0; $i < count($additional_fields); $i++) {
             $getFieldAnswers = $this->getPdo()->prepare('SELECT id, user_id, content FROM ride_additional_fields_answers WHERE field_id = ?');
             $getFieldAnswers->execute(array($additional_fields[$i]['id']));
@@ -448,6 +448,7 @@ class Ride extends Model {
             }
         }
 
+        var_dump($additional_fields);
         return $additional_fields;
     }
 
