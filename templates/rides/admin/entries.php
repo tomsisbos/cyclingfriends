@@ -7,7 +7,7 @@ include '../includes/rides/admin/head.php'; ?>
 
         include '../includes/navbar.php'; ?>
 
-        <div class="main container-shrink"> <?php
+        <div class="main rd-ad-main container-shrink"> <?php
 
             include '../includes/rides/admin/header.php';
             include '../includes/rides/admin/navbar.php';
@@ -15,7 +15,7 @@ include '../includes/rides/admin/head.php'; ?>
             ?>
 
             <!-- Main section -->
-            <div class="container end">
+            <div class="container rd-ad-container">
 
                 <h3>エントリーリスト</h3>
                 <div class="responsive-table-container">
@@ -49,9 +49,10 @@ include '../includes/rides/admin/head.php'; ?>
                                             if (!empty($participant->location->city)) echo $participant->location->toString();
                                             else echo '-' ?>
                                         </td> <?php
-                                        foreach ($additional_fields as $additional_field) {
-                                            var_dump($additional_field->getAnswers()); ?>
-                                            <td><?php if (isset($additional_field[$participant->id])) echo $additional_field[$participant->id] ?></th> <?php
+                                        foreach ($additional_fields as $additional_field) { ?>
+                                            <td> <?php
+                                                if ($additional_field->getAnswer($participant->id)) echo $additional_field->getAnswer($participant->id)->content; ?>
+                                            </td> <?php
                                         } ?>
                                     </tr> <?php
                                 }

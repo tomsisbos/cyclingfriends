@@ -9,14 +9,14 @@ include '../actions/rides/admin/forms.php' ?>
 
         include '../includes/navbar.php'; ?>
 
-        <div class="main container-shrink"> <?php
+        <div class="main rd-ad-main container-shrink"> <?php
 
             include '../includes/rides/admin/header.php';
             
             include '../includes/rides/admin/navbar.php' ?>
 
             <!-- Main section -->
-            <div class="container end">
+            <div class="container rd-ad-container">
 
                 <h3>参加者質問設定</h3>
                 <p>エントリーの際にユーザーから集める追加情報欄の設定</p>
@@ -69,7 +69,7 @@ include '../actions/rides/admin/forms.php' ?>
                             </div>
                             
                             <div class="col-10 d-flex gap-10 js-question hidden" id="text">
-                                <div class="col-10 g-2 mt-auto" id="contentContainer">
+                                <div class="col-10 g-2 mt-auto">
                                     <label class="form-label required">質問</label>
                                     <input type="text" class="form-control" name="text_question">
                                 </div>
@@ -80,7 +80,7 @@ include '../actions/rides/admin/forms.php' ?>
                             </div>
                             
                             <div class="col-10 d-flex flex-column gap-10 js-question hidden" id="select">
-                                <div class="g-2 d-flex gap-10" id="contentContainer">
+                                <div class="g-2 d-flex gap-10">
                                     <div class="col-10">
                                         <label class="form-label required">質問</label>
                                         <input type="text" class="form-control mt-auto" name="select_question">
@@ -90,16 +90,14 @@ include '../actions/rides/admin/forms.php' ?>
                                     </div>
                                 </div>
 
-                                <div class="d-flex flex-column col-10 gap-10" id="contentContainer">
-                                    <label class="form-label required">選択</label>
-                                    <div class="d-flex align-items-center">
-                                        <div class="rd-ad-options-label">選択１</div>
-                                        <input type="text" class="form-control rd-ad-options-input" name="select_option_1">
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="rd-ad-options-label">選択２</div>
-                                        <input type="text" class="form-control rd-ad-options-input" name="select_option_2">
-                                    </div>
+                                <div class="d-flex flex-column col-10 gap-10" id="optionsContainer">
+                                    <label class="form-label required">選択</label> <?php
+                                    for ($options_number = 1; $options_number < 3; $options_number++) { ?>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rd-ad-options-label"><?= $options_number ?>. </div>
+                                            <input type="text" class="form-control rd-ad-options-input" name="select_option_<?= $options_number ?>">
+                                        </div> <?php
+                                    } ?>
                                     <div class="btn smallbutton align-self-center" id="addOptionField">選択を追加...</div>
                                 </div>
                             </div>

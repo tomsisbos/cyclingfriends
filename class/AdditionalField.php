@@ -33,6 +33,14 @@ class AdditionalField extends Model {
         return $answers;
     }
 
+    public function getAnswer ($user_id) {
+        $answers = $this->getAnswers();
+        foreach ($answers as $answer) {
+            if ($answer->user_id == $user_id) return $answer;
+        }
+        return false;
+    }
+
     public function getOptions () {
         $getOptions = $this->getPdo()->prepare('SELECT content FROM ride_additional_field_options WHERE field_id = ? ORDER BY number ASC');
         $getOptions->execute(array($this->id));
