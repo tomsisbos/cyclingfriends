@@ -10,8 +10,9 @@ include '../includes/rides/admin/head.php'; ?>
         <div class="main container-shrink"> <?php
 
             include '../includes/rides/admin/header.php';
-            
-            include '../includes/rides/admin/navbar.php' ?>
+            include '../includes/rides/admin/navbar.php';
+            $additional_fields = $ride->getAdditionalFields();
+            ?>
 
             <!-- Main section -->
             <div class="container end">
@@ -28,8 +29,8 @@ include '../includes/rides/admin/head.php'; ?>
                                 <th class="sticky-th-row text-center">性別</th>
                                 <th class="sticky-th-row text-center">年齢</th>
                                 <th class="sticky-th-row">場所</th> <?php
-                                foreach ($ride->getAdditionalFields() as $additional_field) { ?>
-                                    <th class="sticky-th-row"><?= $additional_field['name'] ?></th> <?php
+                                foreach ($additional_fields as $additional_field) { ?>
+                                    <th class="sticky-th-row"><?= $additional_field->question ?></th> <?php
                                 } ?>
                             </tr> <?php
                             $number = 0;
@@ -48,7 +49,8 @@ include '../includes/rides/admin/head.php'; ?>
                                             if (!empty($participant->location->city)) echo $participant->location->toString();
                                             else echo '-' ?>
                                         </td> <?php
-                                        foreach ($ride->getAdditionalFields() as $additional_field) { ?>
+                                        foreach ($additional_fields as $additional_field) {
+                                            var_dump($additional_field->getAnswers()); ?>
                                             <td><?php if (isset($additional_field[$participant->id])) echo $additional_field[$participant->id] ?></th> <?php
                                         } ?>
                                     </tr> <?php

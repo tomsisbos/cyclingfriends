@@ -434,21 +434,10 @@ class Ride extends Model {
 
     public function getAdditionalFields () {
         // First, get all additional fields of this ride
-        $getAdditionalFields = $this->getPdo()->prepare('SELECT id, name, type FROM ride_additional_fields WHERE ride_id = ?');
+        $getAdditionalFields = $this->getPdo()->prepare('SELECT id FROM ride_additional_fields WHERE ride_id = ?');
         $getAdditionalFields->execute(array($this->id));
-        $additional_fields = $getAdditionalFields->fetchAll(PDO::FETCH_ASSOC);
-
-        // Then, get all answers for these additional fields
-        for ($i = 0; $i < count($additional_fields); $i++) {
-            $getFieldAnswers = $this->getPdo()->prepare('SELECT id, user_id, content FROM ride_additional_fields_answers WHERE field_id = ?');
-            $getFieldAnswers->execute(array($additional_fields[$i]['id']));
-            $answers = $getFieldAnswers->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($answers as $answer) {
-                $additional_fields[$i][$answer['user_id']] = $answer['content'];
-            }
-        }
-
-        var_dump($additional_fields);
+        $additional_fields = [];
+        while ($field = $getAdditionalFields->fetch(PDO::FETCH_ASSOC)) array_push($additional_fields, new AdditionalField($field['id']));
         return $additional_fields;
     }
 

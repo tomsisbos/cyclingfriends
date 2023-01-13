@@ -338,6 +338,10 @@
 .rd-ad-navbar li:hover {
     background-color: #eee;
 }
+.rd-ad-section {
+    padding: 10px 0px;
+    margin: 20px 0px;
+}
 
 .rd-ad-entry-table {
     width: 100%;
@@ -354,4 +358,43 @@
     background-color: #fff;
     border: 1px solid #eee;
     padding: 0px 6px;
+}
+
+.rd-ad-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.rd-ad-form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #eee;
+    background-color: #fff;
+    padding: 4px 8px;
+}
+.rd-ad-form-prefix {
+    display: inline;
+    padding-right: 6px;
+    font-weight: bold;
+}
+.rd-ad-form-type {
+    width: 80px;
+}
+.rd-ad-form-question {
+    flex-grow: 1;
+}
+.rd-ad-form-option {
+    display: flex;
+    gap: 10px;
+    margin-left: 20px;
+}
+.rd-ad-form form {
+    margin: 0;
+}
+.rd-ad-options-label {
+    width: 100px;
+}
+.rd-ad-options-input {
+    width: 100%;
 }
