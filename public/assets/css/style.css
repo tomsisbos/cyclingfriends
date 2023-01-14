@@ -43,7 +43,7 @@ h1 {
 }
 
 h2, h3 {
-	font-family: 'Gaegu', 'Yu Mincho', cursive;
+	font-family: 'Gaegu', '游ゴシック', cursive;
 	font-weight: 700;
 }
 
@@ -1185,7 +1185,7 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: #000000bb;
     display: none;
     position: fixed;
-    z-index: 4;
+    z-index: 7;
     padding: 20px 0px;
     left: 0;
     top: 0;

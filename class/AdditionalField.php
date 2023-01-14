@@ -49,6 +49,25 @@ class AdditionalField extends Model {
         return $options;
     }
 
+    public function update ($type, $question) {
+        $updateField = $this->getPdo()->prepare('UPDATE ride_additional_fields SET question = ?, type = ? WHERE id = ?');
+        $updateField->execute(array($question, $type, $this->id));
+    }
+
+    public function setOptions ($options) {
+        for ($number = 1; $number <= count($options); $number++) {
+            $insertField = $this->getPdo()->prepare('INSERT INTO ride_additional_field_options(field_id, number, content) VALUES (?, ?, ?)');
+            $insertField->execute(array($this->id, $number, $options[$number - 1]));
+        }
+    }
+
+    public function updateOptions ($options) {
+        var_dump($options);
+        $removeOptions = $this->getPdo()->prepare('DELETE FROM ride_additional_field_options WHERE field_id = ?');
+        $removeOptions->execute(array($this->id));
+        $this->setOptions($options);
+    }
+
     public function delete () {
         $removeField = $this->getPdo()->prepare('DELETE FROM ride_additional_fields WHERE id = ?');
         $removeField->execute(array($this->id));

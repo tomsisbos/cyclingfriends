@@ -30,7 +30,7 @@ include '../actions/rides/edit/galleryAction.php';
 	<div class="main container-shrink"> <?php
 
 		// Space for general error messages
-		displayMessage() ;	
+		displayMessage();	
 			
 		// Set and update all ride proprieties
 		include '../actions/rides/convertIntToStringValuesAction.php'; ?>

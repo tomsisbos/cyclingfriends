@@ -3,7 +3,6 @@
 // If data has been posted
 if (isset($_POST) && isset($_POST['add'])) {
 
-    var_dump($_POST);
     // Set variables
     $question = htmlspecialchars($_POST[$_POST['type'] . '_question']);
     $type = $_POST['type'];
@@ -14,32 +13,57 @@ if (isset($_POST) && isset($_POST['add'])) {
     if ($checkIfAlreadyExists->rowCount() == 0) {
         $insertField = $db->prepare('INSERT INTO ride_additional_fields(ride_id, question, type) VALUES (?, ?, ?)');
         $insertField->execute(array($ride->id, $question, $type));
-    }
 
-    // Get newly created field id
-    $getFieldId = $db->prepare('SELECT id FROM ride_additional_fields WHERE ride_id = ? AND question = ? AND type = ?');
-    $getFieldId->execute(array($ride->id, $question, $type));
-    $field_id = $getFieldId->fetch(PDO::FETCH_NUM)[0];
+        // Get newly created field id
+        $getFieldId = $db->prepare('SELECT id FROM ride_additional_fields WHERE ride_id = ? AND question = ? AND type = ?');
+        $getFieldId->execute(array($ride->id, $question, $type));
+        $field_id = $getFieldId->fetch(PDO::FETCH_NUM)[0];
 
-    // For select fields, insert options in table
-    if ($type == 'select') {
-        $number = 1;
-        while (isset($_POST['select_option_' . $number]) AND !empty($_POST['select_option_' . $number])) {
-            $checkIfAlreadyExists = $db->prepare('SELECT content FROM ride_additional_field_options WHERE field_id = ? AND number = ?');
-            $checkIfAlreadyExists->execute(array($field_id, $number));
-            if ($checkIfAlreadyExists->fetch()[0] != $_POST['select_option_' . $number]) {
-                $content = $_POST['select_option_' . $number];
-                $insertField = $db->prepare('INSERT INTO ride_additional_field_options(field_id, number, content) VALUES (?, ?, ?)');
-                $insertField->execute(array($field_id, $number, $content));
+        // For select fields, insert options in table
+        if ($type == 'select') {
+            $field = new AdditionalField($field_id);
+            $number = 1;
+            $options = [];
+            while (isset($_POST['select_option_' . $number]) AND !empty($_POST['select_option_' . $number])) {
+                $option = htmlspecialchars($_POST['select_option_' . $number]);
+                array_push($options, $option);
+                $number++;
             }
-            $number++;
+            $field->setOptions($options);
         }
-    }
 
+        $successmessage = "質問が追加されました！";
+
+    } else $errormessage = "この質問は既に追加されています。";
+}
+
+// If entry has been edited
+if (isset($_POST) && isset($_POST['editSave'])) {
+    
+    // Set variables
+    $question = htmlspecialchars($_POST['question']);
+    $type = $_POST['type'];
+
+    // Update field
+    $field = new AdditionalField($_POST['editSave']);
+    $field->update($type, $question);
+
+    // Update field options
+    $options_number = 1;
+    $options = [];
+    while (isset($_POST['select_option_' . $options_number])) {
+        $option = htmlspecialchars($_POST['select_option_' . $options_number]);
+        array_push($options, $option);
+        $options_number++;
+    }
+    $field->updateOptions($options);
+    
+    $successmessage = "質問の変更が保存されました！";
 }
 
 // If deleted button has been pressed
 if (isset($_POST) && isset($_POST['delete'])) {
     $field = new AdditionalField($_POST['delete']);
     $field->delete();
+    $successmessage = "質問が削除されました。";
 }

@@ -36,7 +36,7 @@ export default class NeighboursMap extends GlobalMap {
     }
 
     displayHoverLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], this.userLocation])
         this.map.addLayer( {
             id: 'hoverLink' + neighbour.id,
             type: 'line',
@@ -55,7 +55,7 @@ export default class NeighboursMap extends GlobalMap {
     }
 
     displaySelectedLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], this.userLocation])
         this.map.addLayer( {
             id: 'selectedLink' + neighbour.id,
             type: 'line',

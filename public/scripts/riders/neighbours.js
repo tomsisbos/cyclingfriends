@@ -94,7 +94,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                     }
                 } )
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 2))
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: neighboursMap.userLocation[0], lat: neighboursMap.userLocation[1]}], 4))
             } else {
                 marker.togglePopup()
                 $marker.querySelector('img').classList.remove('selected-marker')
