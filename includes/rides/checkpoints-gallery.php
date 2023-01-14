@@ -5,9 +5,9 @@
         <div class="summary-checkpoint" id="<?= $i; ?>">
             <div class="summary-checkpoint-image"> <?php
                 if (isset($checkpoint->img->blob)) { ?>
-                    <img thumbnailId="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="<?= 'data:' .$checkpoint->img->type.  ';base64,' .$checkpoint->img->blob ?>"> <?php
+                    <img data-number="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="<?= 'data:' .$checkpoint->img->type.  ';base64,' .$checkpoint->img->blob ?>"> <?php
                 } else { ?>		
-                    <img thumbnailId="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="\media\default-photo-<?= $rand[$i] ?>.svg"> <?php
+                    <img data-number="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="\media\default-photo-<?= $rand[$i] ?>.svg"> <?php
                 }
                 if ($i > 0 AND $i < count($ride->checkpoints) - 1) { ?>
                     <div class="summary-checkpoint-number"> 
