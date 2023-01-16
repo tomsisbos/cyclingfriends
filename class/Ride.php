@@ -372,10 +372,7 @@ class Ride extends Model {
         else if (($participants_number == $this->nb_riders_max)) {
             $participation_color = 'red'; } // red
         
-        else {
-            $participation_color = 'black';
-            
-        }
+        else $participation_color = 'black';
 
         return array('participants_number' => $participants_number, 'participation_color' => $participation_color);
     }
