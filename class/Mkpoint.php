@@ -126,7 +126,7 @@ class Mkpoint extends Model {
         for ($i = 0; $i < count($images_data); $i++) array_push($images, new MkpointImage($images_data[$i]['id']));
         // Sort images by likes number
         usort($images, function ($a, $b) {
-            return ($a->likes < $b->likes);
+            return ($b->likes <=> $a->likes);
         } );
         return $images;
     }

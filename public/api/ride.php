@@ -11,6 +11,12 @@ if (isAjax()) {
         else echo json_encode(['answer' => false, 'bikes_list' => $ride->getAcceptedBikesString()]);
     }
 
+    if (isset($_GET['get-questions'])) {
+        $ride = new Ride($_GET['get-questions']);
+        $questions = $ride->getAdditionalFields();
+        echo json_encode($questions);
+    }
+
     if (isset($_GET['get-terrain-value'])) {
         $route = new Route($_GET['get-terrain-value']);
         echo json_encode($route->getTerrainValue());

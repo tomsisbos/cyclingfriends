@@ -41,7 +41,7 @@ class Tag extends Model {
             if ($result['object_type'] == 'segment') array_push($entries, new Segment($result['object_id']));
         }
         usort($entries, function ($a, $b) {
-            return ($a->popularity < $b->popularity);
+            return ($b->popularity <=> $a->popularity);
         } );
         return $entries;
     }

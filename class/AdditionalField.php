@@ -15,6 +15,7 @@ class AdditionalField extends Model {
         $this->ride_id  = $data['ride_id'];
         $this->question = $data['question'];
         $this->type     = $data['type'];
+        if ($this->type == 'select') $this->options = $this->getOptions();
     }
 
     public function getTypeString () {
@@ -45,7 +46,9 @@ class AdditionalField extends Model {
         $getOptions = $this->getPdo()->prepare('SELECT content FROM ride_additional_field_options WHERE field_id = ? ORDER BY number ASC');
         $getOptions->execute(array($this->id));
         $options = [];
-        while ($option = $getOptions->fetch()[0]) array_push($options, $option);
+        if ($getOptions->rowCount() > 0) {
+            while ($option = $getOptions->fetch(PDO::FETCH_ASSOC)) array_push($options, $option['content']);
+        }
         return $options;
     }
 

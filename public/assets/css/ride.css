@@ -330,7 +330,6 @@
     position: sticky;
     top: 80px;
     box-shadow: 0px 2px 2px #ddd;
-    z-index: 7;
 }
 .rd-ad-navbar .navbar-collapse.show > .navbar-nav, .rd-ad-navbar .navbar-collapse.collapsing > .navbar-nav {
     background-color: #fff;

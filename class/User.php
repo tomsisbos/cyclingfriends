@@ -738,7 +738,7 @@ class User extends Model {
             else if (isset($a->datetime)) $a->date = $a->datetime;
             if (isset($b->publication_date)) $b->date = $b->publication_date;
             else if (isset($b->datetime)) $b->date = $b->datetime;
-            return $a->date < $b->date;
+            return $b->date <=> $a->date;
         }
         usort($thread_data, 'sort_by_date');
         return array_slice($thread_data, $offset, $limit);

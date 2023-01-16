@@ -57,8 +57,10 @@ class Route extends Model {
         $timedata = $getTime->fetchAll();
         $time = [];
         forEach($timedata as $data) {
-            $datetime = new DateTime($data['datetime']);
-            array_push($time, $datetime);
+            if (isset($data['datetime'])) {
+                $datetime = new DateTime($data['datetime']);
+                array_push($time, $datetime);
+            }
         }
         return $time;
     }
@@ -168,7 +170,7 @@ class Route extends Model {
         $hours = floor($int_date);
         $minutes = ($int_date - $hours) * 60;
         $time = new DateTime();
-        $time->setTime($hours, $minutes);
+        $time->setTime($hours, floor($minutes));
         return $time;
     }
 
@@ -195,7 +197,7 @@ class Route extends Model {
 
         // Get all Mkpoints registered in the database
         $getMkpoints = $this->getPdo()->prepare('SELECT id, name, lng, lat FROM map_mkpoint');
-        $getMkpoints->execute(array($this->id));
+        $getMkpoints->execute();
         $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         $mkpoints_in_range = [];
         $number = 0;
@@ -362,7 +364,7 @@ class Route extends Model {
         }
 
         function compareDistance ($a, $b) {
-            return $a['distance'] > $b['distance'];
+            return $a['distance'] <=> $b['distance'];
         }
         usort($spots, "compareDistance");
 

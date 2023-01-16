@@ -90,19 +90,16 @@ class Ride extends Model {
     public function getAcceptedLevelString () {
         $level_list = $this->getAcceptedLevels();
         // If all levels are true, return Anyone
-        if($level_list[0] && $level_list[1] && $level_list[2]){
-            return '誰でも可';
-        }else{
+        if ($level_list[0] && $level_list[1] && $level_list[2]) return '誰でも可';
+        else {
             // Set variables to default value
             $i = 0;	$string = '';
             // Build the list string
-            foreach($level_list as $level => $boolean){
+            foreach ($level_list as $level => $boolean) {
                 // If level is accepted, then write it
-                if($boolean == true){
+                if ($boolean == true) {
                     // Insert commas between level
-                    if($i > 0){
-                        $string .= '、';
-                    }
+                    if ($i > 0) $string .= '、';
                     $string .= getLevelFromKey($level + 1);
                     $i++;
                 }
@@ -415,9 +412,7 @@ class Ride extends Model {
     public function isSameSF () {
         if ($this->checkpoints[0]->lngLat->lng === $this->checkpoints[count($this->checkpoints)-1]->lngLat->lng) {
             return true;
-        } else {
-            return false;
-        } 
+        } else return false;
     }
 
     public function getChat () {

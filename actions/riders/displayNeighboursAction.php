@@ -15,7 +15,7 @@ foreach ($rider_ids as $rider) {
 	array_push($riders, $rider);
 }
 usort($riders, function ($a, $b) {
-	return $a->distance > $b->distance;
+	return $a->distance <=> $b->distance;
 } );
 	 
 ?>

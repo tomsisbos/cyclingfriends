@@ -31,7 +31,7 @@ include '../actions/riders/profile/profileInfosAction.php';
 
 			</div>
 			<div class="flex-column">
-				<h1 class="title-with-subtitle js-login"><?= $connected_user->login; ?></h1>
+				<h2 class="title-with-subtitle js-login"><?= $connected_user->login; ?></h2>
 				<div class="d-flex gap">
 				<?php // Only display social links if filled
 				// Twitter
