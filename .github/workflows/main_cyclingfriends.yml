@@ -56,5 +56,5 @@ jobs:
         with:
           app-name: 'cyclingfriends'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6597B5DBB0A04345AA5952C1C800701E }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A378445F88234DDA9C9B4382ED437765 }}
           package: .
