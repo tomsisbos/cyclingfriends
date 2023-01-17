@@ -8,26 +8,16 @@ const limit = parseInt($cardsContainer.dataset.limit)
 var offset = 0
 if (document.querySelector('#infiniteScrollElement')) var infiniteScrollElement = document.querySelector('#infiniteScrollElement')
 else var infiniteScrollElement = document
-console.log(infiniteScrollElement)
 
 infiniteScrollElement.addEventListener('scroll', function (e) {
 
     var element = e.target
-    console.log(element)
-    console.log(element.scrollHeight)
 
     // When scroll to the bottom zone of the dashboard, get next elements from dashboard api and display cards
-    console.log('scroll position : ' + (element.scrollHeight - element.scrollTop))
-    console.log('zone : ' + (element.clientHeight + toleranceZone))
-    if (isInside) console.log('inside')
-    else console.log('outside')
-
     if (!isInside && ((element.scrollHeight - element.scrollTop) <= (element.clientHeight + toleranceZone))) {
         isInside = true
         offset += limit
         ajaxGetRequest('/api/dashboard.php?getThread=' + limit + ',' + offset + ',' + photosquantity, (response) => {
-            console.log(response)
-            console.log(offset)
             response.forEach( (entry) => {
                 var $link = buildLink(entry)
                 var $card = buildCard(entry)

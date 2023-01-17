@@ -30,3 +30,22 @@ if (isAjax()) {
     }
 
 }
+
+// In case a Json request have been detected
+$json = file_get_contents('php://input'); // Get json file from xhr request
+$var = json_decode($json, true);
+
+if (is_array($var)) {
+
+    if ($var['type'] == 'post-answers') {
+        $data = $var['data'];
+        foreach ($data as $answer) {
+            $field_id = $answer['id'];
+            $answer = $answer['answer'];
+            $field = new AdditionalField($field_id);
+            $field->setAnswer($connected_user->id, $answer);
+        }
+        echo json_encode(true);
+    }
+
+}

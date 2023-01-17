@@ -49,14 +49,10 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
 
     // Load activity data into map instance
     activityMap.data = activityData
-    console.log(activityMap.data)
 
     // Set month property to activity month
-    console.log(new Date(activityData.route.time[0]))
     activityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
     activityMap.setSeason()
-
-    console.log(activityMap)
     
     // If map is interactive
     if ($map.getAttribute('interactive') == 'true') {
@@ -242,8 +238,6 @@ url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(
 &before_layer=landuse
 &access_token=pk.eyJ1Ijoic2lzYm9zIiwiYSI6ImNsMDdndjY1bTI4OTUzZG5wOGs5ZWVsNnUifQ.2BcHCFVvk0SWQOb5PejCdQ
 `
-
-console.log(url.length)
 
         // Display static map inside container
         $map.querySelector('img').src = url

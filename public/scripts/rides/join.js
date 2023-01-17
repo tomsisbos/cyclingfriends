@@ -24,25 +24,36 @@ if (quitButton) {
 
 
 function join () {
-    ajaxGetRequest (apiUrl + "?get-questions=" + rideId, async (questions) => {
+    ajaxGetRequest(apiUrl + "?get-questions=" + rideId, async (questions) => {
         console.log(questions)
-        questions.forEach(async (question) => {
-            var answer = await openPopup(question)
+        var phase = 0
+        var answers = {
+            type: 'post-answers',
+            data: []
+        }
+        while (phase < questions.length) {
+            var answer = await openPopup(questions[phase])
+            answers.data.push( {
+                id: questions[phase].id,
+                answer
+            } )
+            phase++
             console.log(answer)
-
+        }
+        console.log(answers)
+        ajaxJsonPostRequest(apiUrl, answers, (response) => {
+            console.log(response)
+            window.location.href = "/ride/" + rideId + "/join"
         } )
-        ///window.location.href = "/ride/" + rideId + "/join"
     } )
 }
 
 function openPopup (question) {
 	return new Promise ((resolve, reject) => {
+        console.log(question.question)
 		var modal = document.createElement('div')
 		modal.classList.add('modal', 'd-flex')
 		document.querySelector('body').appendChild(modal)
-		modal.addEventListener('click', (e) => {
-			if ((e.target != confirmationPopup || e.target != confirmationPopup.firstElementChild) && (e.target == modal)) modal.remove()
-		} )
 		var confirmationPopup = document.createElement('div')
 		confirmationPopup.classList.add('popup')
 
@@ -54,15 +65,22 @@ function openPopup (question) {
             question.options.forEach(option => {
                 $options += '<option value="' + option + '">' + option + '</option>'
             } )
-            confirmationPopup.innerHTML = question.question + '<select id="answer">' + $options + '</select><div class="btn smallbutton" id="ok">確定</div>'
+            confirmationPopup.innerHTML = question.question + '<select id="answer">' + $options + '</select><div class="d-flex p-2 justify-content-center"><div class="btn smallbutton bg-darkred" id="cancel">戻る</div><div class="btn smallbutton bg-darkgreen" id="ok">確定</div></div>'
         }
 
 		modal.appendChild(confirmationPopup)
+
 		// On click on ok button, close the popup and return input content
 		document.querySelector('#ok').addEventListener('click', () => {
             var answer = document.querySelector('#answer').value
 			modal.remove()
 			resolve(answer)
+		} )
+        
+		// On click on cancel button, close the popup
+		document.querySelector('#cancel').addEventListener('click', () => {
+			modal.remove()
+			reject()
 		} )
 	} )
 }

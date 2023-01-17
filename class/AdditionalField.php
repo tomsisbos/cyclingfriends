@@ -42,6 +42,12 @@ class AdditionalField extends Model {
         return false;
     }
 
+    public function setAnswer ($user_id, $answer) {
+        $insertAnswer = $this->getPdo()->prepare('INSERT INTO ride_additional_field_answers(field_id, user_id, content) VALUES (?, ?, ?)');
+        $insertAnswer->execute(array($this->id, $user_id, $answer));
+        return true;
+    }
+
     public function getOptions () {
         $getOptions = $this->getPdo()->prepare('SELECT content FROM ride_additional_field_options WHERE field_id = ? ORDER BY number ASC');
         $getOptions->execute(array($this->id));

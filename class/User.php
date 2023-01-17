@@ -77,7 +77,7 @@ class User extends Model {
     }
 
     public function getSettings() {
-        return new Settings ($this->id);
+        return new Settings($this->id);
     }
 
     public function updateSettings($settings) {

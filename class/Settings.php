@@ -12,9 +12,9 @@ class Settings extends Model {
         parent::__construct();
         $this->id = $user_id;
         $data = $this->getData($this->table);
-        $this->hide_on_riders = (intval($data['hide_on_riders']) === 1);
-        $this->hide_on_neighbours = (intval($data['hide_on_neighbours']) === 1);
-        $this->hide_on_chat = (intval($data['hide_on_chat']) === 1);
+        if (isset($data['hide_on_riders'])) $this->hide_on_riders = (intval($data['hide_on_riders']) === 1);
+        if (isset($data['hide_on_neighbours'])) $this->hide_on_neighbours = (intval($data['hide_on_neighbours']) === 1);
+        if (isset($data['hide_on_chat'])) $this->hide_on_chat = (intval($data['hide_on_chat']) === 1);
     }
 
 }
