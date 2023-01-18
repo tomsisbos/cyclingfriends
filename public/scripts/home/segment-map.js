@@ -20,6 +20,7 @@ async function loadMap () {
     return new Promise((resolve, reject) => {
         $map.addEventListener('click', async () => {
             if (!loaded) {
+                $map.classList.remove('click-map')
                 var homeMap = new HomeMap({noSession: true})
                 loaded = true
                 await homeMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')

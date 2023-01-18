@@ -71,6 +71,8 @@ $router->map('GET', '/signout', 'user/signout', 'user-signout');
 $router->map('POST', '/signout', 'user/signout');
 $router->map('GET', '/signup', 'user/signup', 'user-signup');
 $router->map('POST', '/signup', 'user/signup');
+$router->map('GET', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe');
+$router->map('POST', '/unsubscribe', 'user/unsubscribe');
 $router->map('GET', '/settings', 'user/settings', 'user-settings');
 $router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-favorites-sceneries');
 $router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
@@ -89,6 +91,4 @@ if (is_array($match)) {
         include '../includes/head.php';
         require '../templates/' . $target . '.php';
     }
-} else {
-    require '../templates/404.php';
-}
+} else require '../templates/404.php';

@@ -165,7 +165,7 @@
     color: #999;
 }
 
-@media only screen and (max-width: 780px) {
+@media only screen and (max-width: 992px) {
     .home-slide p {
         font-size: smaller;
     }
@@ -178,8 +178,10 @@
         min-width: unset;
         min-height: unset;
         height: unset;
-        background-color: unset;
         border-radius: 999px;
+        background: radial-gradient(circle at center, #eee 9vh, transparent 0%);
+        margin: -100px 0px;
+        padding: 100px 0px;
     }
     .schema {
         flex-direction: column;
@@ -196,6 +198,7 @@
     }
     .schema-cross {
         font-size: 45px;
+        z-index: 1;
     }
 
     .home-columns {
@@ -213,9 +216,7 @@
         padding: 10px 0px;
         overflow: auto;
     }
-}
 
-@media only screen and (max-width: 560px) {
     .home-main-text {
         font-size: 12px;
         font-weight: bold;

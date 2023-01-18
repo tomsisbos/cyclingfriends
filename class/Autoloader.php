@@ -7,7 +7,7 @@ class Autoloader {
      */
     static function register () {
         spl_autoload_register([__CLASS__, 'autoload']);
-        spl_autoload_register([__CLASS__, 'phpgeo']);
+        ///spl_autoload_register([__CLASS__, 'phpgeo']);
     }
 
     /**
@@ -15,15 +15,17 @@ class Autoloader {
      * @param $class string name of the Class to load
      */
     static function autoload ($class) {
+        $class_path = str_replace('\\', '/', $class); // replace namespace separators with directory separators in the relative class name
         $parent_directory = basename($_SERVER['DOCUMENT_ROOT']);
-        $class_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen($parent_directory)) . '/class/';
-        require_once $class_folder . $class . '.php';
+        $class_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen($parent_directory)) . 'class/';
+        require_once $class_folder . $class_path . '.php';
     }
 
-    static function phpgeo ($class) {
+    /*static function phpgeo ($class) {
+        
         $parent_directory = basename($_SERVER['DOCUMENT_ROOT']);
-        $class_folder = substr($_SERVER['DOCUMENT_ROOT'], - strlen($parent_directory)) . '/class/';
-        require_once $class_folder . 'Location/' . $class . '.php';
-    }
+        $class_folder = substr($_SERVER['DOCUMENT_ROOT'], - strlen($parent_directory)) . 'class/';
+        require_once $class_folder . 'Location/' . $class_path . '.php';
+    }*/
 
 }

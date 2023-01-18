@@ -1,5 +1,5 @@
 <?php
- 
+
 require '../actions/databaseAction.php';
  
 // Signup form validation
@@ -16,11 +16,11 @@ if (isset($_POST['validate'])) {
             $mailing_entry = new MailingListEntry($address);
 			
             // Check if email address is already used
-            if (!$mailing_entry->isRegistered()) {
-                $mailing_entry->register();
-                $result = $mailing_entry->sendRegistrationMail();
-                $successmessage = 'メールアドレスが登録されました！';
-            } else $errormessage = 'このメールアドレスは既に登録されています。';
+            if ($mailing_entry->isRegistered()) {
+                $mailing_entry->unsubscribe();
+                $mailing_entry->sendUnregistrationMail();
+                $successmessage = 'メーリングリストから"' . $address . '"を除外しました。これからCyclingFriendsからのメールを送信しません。';
+            } else $errormessage = 'このメールアドレスは登録されていません。';
                 
 		} else $errormessage = "正しいフォーマットのメールアドレスをご記入ください。";
     } else $errormessage = "メールアドレスをご記入ください。";

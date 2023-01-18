@@ -815,7 +815,7 @@ export default class WorldMap extends GlobalMap {
 
             // Don't open if there is a marker on top
             var markerInPath
-            e.originalEvent.path.forEach(elementInPath => {
+            e.originalEvent.composedPath().forEach(elementInPath => {
                 if (elementInPath.className && elementInPath.className.includes('mapboxgl-marker')) markerInPath = true
             } )
             if (!markerInPath) {

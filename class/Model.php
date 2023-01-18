@@ -16,9 +16,8 @@ class Model {
 
     // Get instance data from database
     protected function getData ($table) {
-        $db = $this->getPdo();
         if ($this->id != NULL) {
-            $getData = $db->prepare("SELECT * FROM {$this->table} WHERE id = {$this->id}");
+            $getData = $this->getPdo()->prepare("SELECT * FROM {$this->table} WHERE id = {$this->id}");
             $getData->execute();
             return $getData->fetch();
         }

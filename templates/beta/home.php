@@ -38,7 +38,7 @@ include '../includes/navbar.php'; ?>
     <div class="home-main-text">
         <p>森は数百年単位、哺乳動物は数十年単位、そして昆虫は数年単位で、半分以上地球から絶滅したと言われている一方で、消費の拡大が止まらない我々人間の社会。</p>
         <p>この物狂おしい社会からすり抜けて、世界の美しさを追い求めることに全てを注ぐ。それは、サイクリングが実現する世界。</p>
-        <p>cyclingfriendsとは、この世界をともに選んだ仲間たち。</p>
+        <p>CyclingFriendsとは、この世界をともに選んだ仲間たち。</p>
         <p>君も、この旅を共にしませんか？</p>
     </div>
     <div class="home-site-logo js-fade-on-scroll">
@@ -80,7 +80,7 @@ include '../includes/navbar.php'; ?>
             <p>日本の観光産業が直面している大きな課題のひとつは「生産性向上」。<br>
             ここ数年で観光に対する考え方が著しく変化しているため、従来の経営ノウハウから脱却し、変革する必要があります。</p>
             <!--<p>2019年から「<a href="https://www.mlit.go.jp/common/001284799.pdf" target="_blank">観光産業の生産性向上推進事業</a>」を進めている観光庁は、旅行サービスの高度化を目指す施策の主軸を、（１）国内の隠れた観光資源の発掘と、（２）個人の好みを踏まえたより高品質な旅行・宿泊サービスの開発や適正価格での提供と定義しています。</p>-->
-            <p>時代の変化に合った「リアル」な観光体験にこだわりを持ちながらも、cyclingfriendsは「リモート」でサイクルツーリズムを支える様々なサービスを提供していきます。</p>
+            <p>時代の変化に合った「リアル」な観光体験にこだわりを持ちながらも、CyclingFriendsは「リモート」でサイクルツーリズムを支える様々なサービスを提供していきます。</p>
             <p>サイクルツーリズムが持ち合わせる可能性を最大限に活かすことで、新たな価値提供を創出し、「旅行会社」の概念を一新させます。</p>
         </div>
     </div>
@@ -138,7 +138,7 @@ include '../includes/navbar.php'; ?>
             <div class="home-schedule-block">
                 <div class="home-schedule-subtitle">Stage 2</div>
                 <div class="home-schedule-title">ベータ公開</div>
-                <p>2023年4月予定</p>
+                <p>2023年春以降</p>
             </div>
             <svg height="60" width="10">
                 <polygon points="0,00 10,30 0,60" />
@@ -151,20 +151,20 @@ include '../includes/navbar.php'; ?>
         </div>
 
         <p>これから本格スタートに向けて、メールを通じてご案内致しますので、気になる方は是非登録してみましょう！</p>
-        
-			<form class="container smaller connection-container" method="post" id="registerMail" action="/#registerMail"> <?php
-                
-                if (isset($errormessage)) echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>';
-                if (isset($successmessage)) echo '<div class="success-block"><p class="success-message">' .$successmessage. '</p></div>'; ?>
+    
+        <form class="container smaller connection-container" method="post" id="registerMail" action="/#registerMail"> <?php
+            
+            if (isset($errormessage)) echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>';
+            if (isset($successmessage)) echo '<div class="success-block"><p class="success-message">' .$successmessage. '</p></div>'; ?>
 
-                <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
-                    <label class="form-label" for="floatingInput">Email address</label>
-                </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
+                <label class="form-label" for="floatingInput">Email address</label>
+            </div>
 
-                <button type="submit" class="btn button fullwidth button-primary" name="validate">Register</button>
+            <button type="submit" class="btn button fullwidth button-primary" name="validate">Register</button>
 
-            </form>
+        </form>
     </div>
 </div> <?php
 

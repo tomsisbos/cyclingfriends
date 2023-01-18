@@ -1,8 +1,13 @@
+<?php
+
+/// require 'force_https.php'; To activate on production for forcing https connection ?>
+
 <head>
 	<meta charset="UTF-8">
 	
 	<!-- Title -->
 	<title>Cyclingfriends</title>
+  	<link rel="icon" type="image/x-icon" href="/media/cf.png">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
@@ -19,10 +24,7 @@
 	
 	<!-- php -->
 		<?php
-			require 'functions.php';
-			///require $_SERVER["DOCUMENT_ROOT"] . '/class/Autoloader.php';
-			///Autoloader::register();
-		 ?>
+			require 'functions.php'; ?>
 	
 	<!-- js -->
 		<!-- Jquery -->
