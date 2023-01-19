@@ -13,7 +13,7 @@ if (isAjax()) {
         $imgs_number = intval($_GET['get-background-imgs']);
         // Select a random image amongst 30 most popular mkpoint images in the database
         $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        $getPopularMkpointImages = $db->prepare('SELECT * FROM img_mkpoint ORDER BY likes, id DESC LIMIT ?');
+        $getPopularMkpointImages = $db->prepare('SELECT * FROM img_mkpoint ORDER BY likes DESC LIMIT ?');
         $getPopularMkpointImages->execute(array($imgs_number));
         $mkpoint_images = $getPopularMkpointImages->fetchAll(PDO::FETCH_ASSOC);
         $data = [];

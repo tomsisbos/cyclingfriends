@@ -243,7 +243,8 @@ export default class SegmentPopup extends Popup {
                                 }
                                 // Display tooltip
                                 this.clearTooltip()
-                                var profileTop = this.popup.getElement().querySelector('#profileBox').getBoundingClientRect().top
+                                if (this.popup.getElement().querySelector('#profileBox')) var profileTop = this.popup.getElement().querySelector('#profileBox').getBoundingClientRect().top
+                                else document.querySelector('#profileBox').getBoundingClientRect().top // On fly along mode, profile box isn't inside popup
                                 var mapTop = this.popup._map.getContainer().getBoundingClientRect().top
                                 var navbarHeight = document.querySelector('.main-navbar').getBoundingClientRect().height
                                 

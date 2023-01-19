@@ -62,8 +62,8 @@ await loadMap().then( (homeMap) => {
     }, homeMap.segmentLoader)
 
     // Update map data on ending moving the map
-    homeMap.map.on('moveend', () => {
+    /*homeMap.map.on('moveend', () => {
         homeMap.updateSegments()
-    } )
+    } )*/
 
 } )

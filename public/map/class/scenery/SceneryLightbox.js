@@ -5,7 +5,6 @@ export default class SceneryLightbox extends Popup {
     constructor(data) {
         super({}, {}, {noSession: true})
         this.data = data
-        console.log(data)
 
         this.build()
         this.prepare()
@@ -199,8 +198,6 @@ export default class SceneryLightbox extends Popup {
     open (id) {
         this.modal.style.display = "block"
 
-        console.log(this.data.container)
-
         // Close on clicking outside modal-block
         this.modal.addEventListener('click', (e) => {
             if ((e.target == this.modalBlock) || (e.target == this.modal)) this.close()
@@ -244,11 +241,8 @@ export default class SceneryLightbox extends Popup {
         // Update user profile picture asynchronously if propic element exists
         if (this.modal.querySelector('.round-propic-img')) {
             var currentPhotoId = getIdFromString(slideImgs[this.slideIndex - 1].id)
-            console.log('Current photo id : ' + currentPhotoId)
             this.data.photos.forEach(async (photo) => {
-                console.log('photo n' + parseInt(photo.id))
                 if (parseInt(photo.id) == currentPhotoId) {
-                    console.log(photo)
                     this.modal.querySelector('.round-propic-container').href = "/rider/" + photo.user_id
                     this.modal.querySelector('.round-propic-img').src = await this.loadPropic(photo.user_id)
                 }

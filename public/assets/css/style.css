@@ -1369,12 +1369,12 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Signin page */
 
-@keyframes whiteBackground {
+@keyframes originalBackground {
 	from {
-		background-color: #ffffffff;
+		background-color: #5C9999ff;
 	}
 	to {
-		background-color: #ffffffff;
+		background-color: #5C9999ff;
 	}
 }
 @keyframes animatedImage {
@@ -1427,5 +1427,5 @@ input[type="range"]::-webkit-slider-thumb {
     flex-direction: column;
     padding-top: 100px;
 	content: '';
-	animation: 10s linear infinite whiteBackground
+	animation: 10s linear infinite originalBackground
 }

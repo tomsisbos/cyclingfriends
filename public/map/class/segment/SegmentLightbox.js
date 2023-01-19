@@ -1,6 +1,6 @@
-import SegmentPopup from "./SegmentPopup"
+import Popup from "/map/class/Popup.js"
 
-export default class SegmentLightbox extends SegmentPopup {
+export default class SegmentLightbox extends Popup {
 
     constructor(container, popup, data, instanceOptions) {
         super({}, {}, instanceOptions)

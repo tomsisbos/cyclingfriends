@@ -5,40 +5,21 @@
 	// Get id from URL
 	$slug = basename($_SERVER['REQUEST_URI']);
 	if (is_numeric($slug)) {
-		
-		$activity = new Activity($slug);
-		
-		if ($activity->exists()) {
 
-			if ($activity->hasAccess($connected_user)) {
-				
-				/*
-				// If ride admin have submitted data, then replace existing data by submitted one
-				if (isset($_POST['save'])) {
-					$activity->privacy     = $_POST['privacy'];
-					$activity->entry_start = $_POST['entry_start'];
-					$activity->entry_end   = $_POST['entry_end'];
-				}
-				*/
-
-			} else {
-
-				// If id doesn't exist, redirect to myactivities.php
-				header('location: ' . $connected_user->login . '/activities');
-
-			}            
-
-        } else {
+		// Check if activity exists
+		$checkIfActivityExists = $db->prepare('SELECT * FROM activities WHERE id = ?');
+		$checkIfActivityExists->execute([$slug]);
+		if ($checkIfActivityExists->rowCount() > 0) {
 			
-            // If id doesn't exist, redirect to myactivities.php
-			header('location: ' . $connected_user->login . '/activities');
-		
-		}
+			$activity = new Activity($slug);
+
+			// If id doesn't exist, redirect to myactivities.php
+			if (!$activity->hasAccess($connected_user)) header('location: ' . $connected_user->login . '/activities');       
+
+		// If id doesn't exist, redirect to myactivities.php
+		} else header('location: ' . $connected_user->login . '/activities');
 	
-	} else {
-		
-		// If id is not set, redirect to myactivities.php
-		header('location: ' . $connected_user->login . '/activities');
-		
-	}
+	// If id is not set, redirect to myactivities.php
+	} else header('location: ' . $connected_user->login . '/activities');
+	
 ?>

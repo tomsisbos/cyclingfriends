@@ -5,7 +5,6 @@ export default class HomeSceneryLightbox extends SceneryLightbox {
     constructor(data, instanceOptions) {
         super(data, instanceOptions)
         this.data = data
-        console.log(data)
 
         this.build()
         this.prepare()

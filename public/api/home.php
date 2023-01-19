@@ -39,7 +39,7 @@ if (isAjax()) {
 
     if (isset($_GET['display-mkpoints'])) {
         $mkpoints_number = 30;
-        $getMkpoints = $db->prepare("SELECT id FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC LIMIT 0, {$mkpoints_number}");
+        $getMkpoints = $db->prepare("SELECT id FROM map_mkpoint ORDER BY popularity DESC LIMIT 0, {$mkpoints_number}");
         $getMkpoints->execute();
         $result = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         $mkpoints = [];
@@ -110,7 +110,8 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-segments'])) {
-        $getSegments = $db->prepare('SELECT id FROM segments');
+        $segments_number = 6;
+        $getSegments = $db->prepare("SELECT id FROM segments ORDER BY popularity DESC LIMIT 0, {$segments_number}");
         $getSegments->execute();
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {

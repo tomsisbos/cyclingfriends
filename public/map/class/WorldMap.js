@@ -55,9 +55,9 @@ export default class WorldMap extends GlobalMap {
     }
 
     updateMapData () {
-        if (this.displayMkpointsBox.checked) this.updateMkpoints()
-        if (this.displayRidesBox.checked) this.updateRides()
-        if (this.displaySegmentsBox.checked) this.updateSegments()
+        if (!this.displayMkpointsBox || this.displayMkpointsBox.checked) this.updateMkpoints()
+        if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
+        if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
     }
     updateMapDataListener = () => this.updateMapData()
 

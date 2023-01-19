@@ -2781,13 +2781,19 @@ export default class GlobalMap extends Model {
                 var positionMarker = new mapboxgl.Marker($marker)
                 positionMarker.setLngLat(routeData.geometry.coordinates[0])
                 positionMarker.addTo(this.map)
-                // Update marker element with connected user profile picture
-                ajaxGetRequest ('/api/map.php' + "?getpropic=" + this.session.id, (src) => {
+                // If user is connected, update marker element with connected user profile picture
+                if (this.session && this.session.id) ajaxGetRequest ('/api/map.php' + "?getpropic=" + this.session.id, (src) => {
                     $marker.querySelector('img').style.backgroundImage = 'url(' + src + ')'
                     positionMarker = new mapboxgl.Marker($marker)
                     positionMarker.setLngLat(routeData.geometry.coordinates[0])
                     positionMarker.addTo(this.map)
                 } )
+                // Else, simply build marker element
+                else {
+                    positionMarker = new mapboxgl.Marker($marker)
+                    positionMarker.setLngLat(routeData.geometry.coordinates[0])
+                    positionMarker.addTo(this.map)
+                }
 
                 var frame = async (time) => {
 
@@ -2848,6 +2854,8 @@ export default class GlobalMap extends Model {
                     if (!end) window.requestAnimationFrame(frame)
 
                     // Color route in red according to process
+                    console.log(options.layerId)
+                    console.log(this.map.getLayer(options.layerId))
                     this.map.setPaintProperty(options.layerId, 'line-gradient', [
                         'step',
                         ['line-progress'],
