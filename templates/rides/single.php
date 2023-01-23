@@ -1,17 +1,17 @@
+<?php
+
+include '../actions/users/initSessionAction.php';
+include '../actions/rides/rideAction.php';
+include '../actions/rides/edit/adminPanelAction.php';
+include '../actions/rides/join&quitAction.php';
+include '../actions/rides/edit/galleryAction.php';
+include '../includes/head.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/ride.css" />
 <link rel="stylesheet" href="/assets/css/map.css" />
-
-<?php
-session_start();
-include '../actions/users/securityAction.php';
-include '../actions/rides/rideAction.php';
-include '../actions/rides/edit/adminPanelAction.php';
-include '../actions/rides/join&quitAction.php';
-include '../actions/rides/edit/galleryAction.php';
-?>
 
 <body> <?php
 

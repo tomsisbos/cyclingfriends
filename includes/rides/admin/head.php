@@ -1,9 +1,6 @@
-
-<link rel="stylesheet" href="/assets/css/ride.css" />
-
 <?php
-session_start();
-include '../actions/users/securityAction.php';
+
+include '../actions/users/initSessionAction.php';
 
 // Get ride from slug
 $slug = basename($_SERVER['REQUEST_URI']);
@@ -16,3 +13,5 @@ else header('location: /' . $connected_user->login . '/rides');
 
 // Only allow access to ride admin
 if ($ride->author->id != $connected_user->id) header('location: /' . $connected_user->login . '/rides') ?>
+
+<link rel="stylesheet" href="/assets/css/ride.css" />

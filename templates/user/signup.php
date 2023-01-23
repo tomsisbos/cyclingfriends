@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html lang="en"> <?php
+<?php
 
 // Temporarly forbid access to the signup page during private beta
 session_start();
-include '../actions/users/securityAction.php';
+include '../actions/users/initSessionAction.php';
 if ($connected_user->rights != 'administrator' AND $connected_user->rights != 'moderator') header('location: /signin');
+require '../actions/users/signupAction.php';
+include '../includes/head.php'; ?>
 
-require '../actions/users/signupAction.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
 
 <style>
 	.with-background-img::before {

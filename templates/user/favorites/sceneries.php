@@ -1,10 +1,10 @@
+<?php
+
+include '../actions/users/initSessionAction.php';
+include '../includes/head.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
-<?php 
-session_start();
-include '../actions/users/securityAction.php';
-?>
 
 <link rel="stylesheet" href="/assets/css/mkpoint.css" />
 <link rel="stylesheet" href="/assets/css/segment.css" />

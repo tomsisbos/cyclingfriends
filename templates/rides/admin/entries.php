@@ -1,7 +1,10 @@
-<!DOCTYPE html>
-<html lang="en"> <?php
+<?php
 
-include '../includes/rides/admin/head.php'; ?>
+include '../includes/rides/admin/head.php';
+include '../includes/head.php'; ?>
+
+<!DOCTYPE html>
+<html lang="en"> 
 
     <body> <?php
 

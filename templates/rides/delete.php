@@ -1,5 +1,5 @@
-<?php 
-session_start();
-require '../actions/users/securityAction.php';
+<?php
 
-include '../actions/rides/deleteAction.php'; ?>
+include '../actions/users/initSessionAction.php';
+include '../actions/rides/deleteAction.php';
+include '../includes/head.php'; ?>

@@ -34,6 +34,7 @@ if (isset($_POST['validate'])) {
 
 				// Redirect authentified user to the Dashboard	
 				header('location: /dashboard');
+				exit();
 			
 			} else $errormessage = "ご記入頂いたパスワードは一致していません。";
 		} else $errormessage = "ご記入頂いたメールアドレスは登録されていません。";

@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="en"> <?php
+<?php
 
 include '../includes/rides/admin/head.php';
+include '../includes/head.php';
 include '../actions/databaseAction.php';
 include '../actions/rides/admin/forms.php' ?>
 
+<!DOCTYPE html>
+<html lang="en"> 
+    
     <body> <?php
 
         include '../includes/navbar.php'; ?>

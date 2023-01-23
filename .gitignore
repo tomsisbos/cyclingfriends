@@ -1,4 +1,5 @@
 # Ignore map source files (such as Geojson) : heavy data
 map/sources
+map/Env.js
 .htaccess
 node_modules

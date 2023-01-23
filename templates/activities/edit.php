@@ -1,10 +1,11 @@
+<?php 
+
+include '../actions/users/initSessionAction.php';
+include '../includes/head.php';
+include '../actions/activities/getActivityAction.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
-<?php 
-session_start();
-include '../actions/users/securityAction.php';
-include '../actions/activities/getActivityAction.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/activity.css">
 <link rel="stylesheet" href="/assets/css/ride.css" />

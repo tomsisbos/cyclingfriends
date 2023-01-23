@@ -88,7 +88,6 @@ if (is_array($match)) {
     } else {
         $params = $match['params'];
         $target = $match['target'];
-        include '../includes/head.php';
         require '../templates/' . $target . '.php';
     }
 } else require '../templates/404.php';

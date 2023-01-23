@@ -1,14 +1,15 @@
+<?php
+
+include '../actions/users/initSessionAction.php';
+include '../actions/riders/profile/propicAction.php';
+include '../actions/riders/profile/profileInfosAction.php';
+include '../includes/head.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 	
 <link rel="stylesheet" href="/assets/css/profile.css" />
-<link rel="stylesheet" href="/assets/css/lightbox-style.css" /> <?php 
-
-session_start();
-include '../actions/users/securityAction.php';
-include '../actions/riders/profile/propicAction.php';
-include '../actions/riders/profile/profileInfosAction.php';
-?>
+<link rel="stylesheet" href="/assets/css/lightbox-style.css" />
 
 <body> <?php
 

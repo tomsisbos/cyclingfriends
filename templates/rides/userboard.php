@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<?php 
-session_start();
-include '../actions/users/securityAction.php';
+include '../actions/users/initSessionAction.php';
+include '../includes/head.php'; ?>
+
+<!DOCTYPE html>
+<html lang="en"> <?php 
 
 // Clear session form data if ride already posted
 if (isset($_SESSION['forms']['created'])) {

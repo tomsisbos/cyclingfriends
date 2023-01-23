@@ -2854,14 +2854,12 @@ export default class GlobalMap extends Model {
                     if (!end) window.requestAnimationFrame(frame)
 
                     // Color route in red according to process
-                    console.log(options.layerId)
-                    console.log(this.map.getLayer(options.layerId))
                     this.map.setPaintProperty(options.layerId, 'line-gradient', [
                         'step',
                         ['line-progress'],
                         '#ff5555',
                         phase + prephaseOffset,
-                        'blue'
+                        '#0000FF'
                     ] )
 
                     // Update position marker

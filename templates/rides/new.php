@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<link rel="stylesheet" href="/assets/css/ride.css" />
-
-<?php 
-session_start();
-include '../actions/users/securityAction.php';
+include '../actions/users/initSessionAction.php';
 require '../actions/rides/new/createAction.php';
-
+include '../includes/head.php';
 
 // Clear session form data if ride already posted
 if (isset($_SESSION['forms']['created'])) {
@@ -29,7 +24,12 @@ if (empty($slug) or !is_numeric($slug)) {
 $base_uri = '/ride/new/';
  
 // Sets the session variable with an array that will contain all form infos
-if (empty($_SESSION['forms'])) $_SESSION['forms'] = array();
+if (empty($_SESSION['forms'])) $_SESSION['forms'] = array(); ?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<link rel="stylesheet" href="/assets/css/ride.css" /> <?php
 
 include '../includes/navbar.php'; ?>
 

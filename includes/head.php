@@ -1,7 +1,3 @@
-<?php
-
-/// require 'force_https.php'; To activate on production for forcing https connection ?>
-
 <head>
 	<meta charset="UTF-8">
 	

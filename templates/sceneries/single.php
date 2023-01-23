@@ -1,10 +1,11 @@
+<?php
+
+include '../actions/users/initSessionAction.php';
+include '../actions/sceneries/sceneryAction.php';
+include '../includes/head.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
-<?php 
-session_start();
-include '../actions/users/securityAction.php';
-include '../actions/sceneries/sceneryAction.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/lightbox-style.css" />
 <link rel="stylesheet" href="/assets/css/segment.css">

@@ -748,6 +748,7 @@ export default class WorldMap extends GlobalMap {
         // Add source
         this.map.addSource('segment' + segment.id, {
             type: 'geojson',
+            lineMetrics: true,
             data: geojson
         } )
 
@@ -1041,7 +1042,6 @@ export default class WorldMap extends GlobalMap {
         var highlightMyMkpointsBox = document.querySelector('#highlightMyMkpointsBox')
 
         if (highlightMyMkpointsBox.checked) {
-            console.log('true')
             this.highlight = true
             document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
                 if ($icon.parentElement.dataset.user_id === this.session.id) {
@@ -1049,7 +1049,6 @@ export default class WorldMap extends GlobalMap {
                 }
             } )
         } else {
-            console.log('false')
             this.highlight = false
             document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
                 if ($icon.parentElement.dataset.user_id === this.session.id) {

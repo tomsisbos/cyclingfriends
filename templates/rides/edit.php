@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<link rel="stylesheet" href="/assets/css/ride.css" />
-
-<?php 
-session_start();
-include '../actions/users/securityAction.php';
+include '../actions/users/initSessionAction.php';
+include '../includes/head.php';
 
 // Prepare multipage system
 
@@ -30,10 +26,15 @@ else define('CFG_STAGE_ID', 1);
 
 include '../actions/rides/edit/getRideAction.php';
 include '../actions/rides/edit/editAction.php'; 
-include '../includes/navbar.php'; ?>
+include '../includes/navbar.php';?>
 
-<div class="main"> <?php
-    include '../actions/rides/edit/dataProcessAction.php'; ?>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+
+    <link rel="stylesheet" href="/assets/css/ride.css" />
+
+    <div class="main"> <?php
+        include '../actions/rides/edit/dataProcessAction.php'; ?>
+    </div>
 
 </html>

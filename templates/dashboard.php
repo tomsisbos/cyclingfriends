@@ -1,11 +1,13 @@
+<?php
+
+include '../actions/users/initSessionAction.php';
+require '../actions/databaseAction.php';
+include '../includes/head.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 	
-<link rel="stylesheet" href="/assets/css/dashboard.css" /> <?php
-
-session_start();
-include '../actions/users/securityAction.php';
-require '../actions/databaseAction.php'; ?>
+<link rel="stylesheet" href="/assets/css/dashboard.css" />
 
 <body>
 

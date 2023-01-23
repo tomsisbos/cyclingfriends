@@ -1,7 +1,10 @@
-<!DOCTYPE html>
-<html lang="en"> <?php
+<?php
 
-require '../actions/users/signinAction.php'; ?>
+require '../actions/users/signinAction.php';
+include '../includes/head.php'; ?>
+
+<!DOCTYPE html>
+<html lang="en">
 
 <style>
 	.with-background-img::before {

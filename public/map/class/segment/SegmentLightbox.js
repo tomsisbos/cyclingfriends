@@ -243,6 +243,12 @@ export default class SegmentLightbox extends Popup {
         demos[this.slideIndex - 1].className += " active"
         if (this.modal.querySelector('.js-name')) names[this.slideIndex - 1].style.display = "block"
         if (this.modal.querySelector('.js-caption')) captions[this.slideIndex - 1].style.display = "block"
+    }    
+
+    getDistanceFromStart (mkpoint) {
+        const routeCoords = this.data.route.coordinates
+        var section = turf.lineSlice(turf.point(routeCoords[0]), turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat]), turf.lineString(routeCoords))
+        return turf.length(section)
     }
 
 }

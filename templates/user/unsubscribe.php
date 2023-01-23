@@ -1,6 +1,7 @@
 <?php
 
-include '../actions/users/unsubscribemailAction.php'; ?>
+include '../actions/users/unsubscribemailAction.php';
+include '../includes/head.php'; ?>
 
 <html>
     
