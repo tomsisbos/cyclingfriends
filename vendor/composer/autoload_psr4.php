@@ -8,6 +8,13 @@ $baseDir = dirname($vendorDir);
 return array(
     'phpGPX\\' => array($vendorDir . '/sibyx/phpgpx/src/phpGPX'),
     'adriangibbons\\' => array($vendorDir . '/adriangibbons/php-fit-file-analysis/src'),
+    'SendGrid\\Stats\\' => array($vendorDir . '/sendgrid/sendgrid/lib/stats'),
+    'SendGrid\\Mail\\' => array($vendorDir . '/sendgrid/sendgrid/lib/mail'),
+    'SendGrid\\Helper\\' => array($vendorDir . '/sendgrid/sendgrid/lib/helper'),
+    'SendGrid\\EventWebhook\\' => array($vendorDir . '/sendgrid/sendgrid/lib/eventwebhook'),
+    'SendGrid\\Contacts\\' => array($vendorDir . '/sendgrid/sendgrid/lib/contacts'),
+    'SendGrid\\' => array($vendorDir . '/sendgrid/php-http-client/lib'),
     'Location\\' => array($vendorDir . '/mjaschen/phpgeo/src'),
     'League\\ColorExtractor\\' => array($vendorDir . '/league/color-extractor/src'),
+    'Composer\\CaBundle\\' => array($vendorDir . '/composer/ca-bundle/src'),
 );

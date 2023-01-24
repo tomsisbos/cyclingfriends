@@ -89,7 +89,7 @@ include '../includes/head.php'; ?>
 						</div>
 						
 						<div class="my-ac-buttons">
-							<a href="/activitiy/<?= $activity->id ?>/edit">
+							<a href="/activity/<?= $activity->id ?>/edit">
 								<div class="mp-button btn bg-darkgreen text-white">編集</div>
 							</a>
 							<div class="mp-button btn bg-darkred text-white" data-id="<?= $activity->id ?>" id="deleteButton">削除</div>

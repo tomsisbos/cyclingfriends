@@ -32,6 +32,10 @@ $router->map('GET', '/route/[i:route_id]', 'routes/single', 'route-single');
 $router->map('GET', '/route/new', 'routes/new', 'route-new');
 $router->map('GET', '/route/[i:route_id]/edit', 'routes/edit', 'route-edit');
 $router->map('GET', '/[*:user_login]/routes', 'routes/userboard', 'route-userboard');
+$router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" when typing "/routes"
+    require_once '../actions/users/initSessionAction.php';
+    header('location: /' .$connected_user->login. '/routes');
+} );
 
 // Rides
 $router->map('GET', '/ride/[i:ride_id]', 'rides/single', 'ride-single');
@@ -82,7 +86,7 @@ $match = $router->match();
 if (is_array($match)) {
     // If target is a function, call it with relevant params
     if (is_callable($match['target'])) {
-        var_dump($match); die;
+        ///var_dump($match); die;
         call_user_func_array($match['target'], $match['params']);
     // If target is a string,
     } else {

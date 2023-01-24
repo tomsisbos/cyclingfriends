@@ -113,6 +113,7 @@
 }*/
 
 .mapboxgl-popup-content {
+    overflow: hidden;
     border-radius: inherit !important;
     box-shadow: inherit !important;
     padding: inherit !important;
@@ -436,7 +437,7 @@ form#mkpointForm input[type="file" i] {
     background-color: #c1c1c1 !important;
 }
 .mp-button {
-	padding: 5px 15px;
+	padding: 5px;
     text-align: center;
     min-width: 70px;
     font-weight: bold;

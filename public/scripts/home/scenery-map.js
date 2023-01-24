@@ -39,7 +39,7 @@ await loadMap().then( (homeMap) => {
         homeMap.map.jumpTo( {
             center: [rmCoordinates.lng, rmCoordinates.lat],
             zoom: 14,
-            pitch: 75,
+            pitch: 35,
             bearing: 20
         } )
 

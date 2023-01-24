@@ -247,12 +247,6 @@ export default class SegmentPopup extends Popup {
                                 else document.querySelector('#profileBox').getBoundingClientRect().top // On fly along mode, profile box isn't inside popup
                                 var mapTop = this.popup._map.getContainer().getBoundingClientRect().top
                                 var navbarHeight = document.querySelector('.main-navbar').getBoundingClientRect().height
-                                
-                                for (let element = this.popup.getElement().querySelector('#profileBox'); element.parentElement; element = element.parentElement) {
-                                    console.log(element.offsetTop)
-                                }
-
-                                var topValue = this.popup.getElement().querySelector('.popup-properties').getBoundingClientRect()
                                 this.drawTooltip(map.getSource('segment' + this.data.id)._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.native.layerX, profileTop - mapTop - navbarHeight, {backgroundColor: '#ffffff', mergeWithCursor: true})
                             }    
                         } else if (e.type == 'mouseout' || args.inChartArea == false) {

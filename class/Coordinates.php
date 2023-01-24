@@ -22,7 +22,7 @@ class Coordinates extends Model {
     }
 
     // Create a route from these coordinates
-    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels) {
+    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels = []) {
         
         // Prepare start and goal place strings
         $startplace = $startplace['city'] . ' (' . $startplace['prefecture'] . ')';

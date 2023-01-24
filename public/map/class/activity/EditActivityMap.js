@@ -64,35 +64,37 @@ export default class EditActivityMap extends NewActivityMap {
             var numberOfBlobsTreated = 0;
             (async () => {
                 return new Promise(async (resolve, reject) => {
-                    photos.forEach(async (photo) => {
-                        if (photo.blob instanceof Blob) {
-                            await (async () => {
-                                return new Promise(async (resolve, reject) => {
-                                    cleanData.photos.push( {
-                                        blob: await blobToBase64(photo.blob),
-                                        size: photo.size,
-                                        name: photo.name,
-                                        type: photo.type,
-                                        datetime: photo.datetime,
-                                        featured: photo.featured
+                    if (photos.length > 0) {
+                        photos.forEach(async (photo) => {
+                            if (photo.blob instanceof Blob) {
+                                await (async () => {
+                                    return new Promise(async (resolve, reject) => {
+                                        cleanData.photos.push( {
+                                            blob: await blobToBase64(photo.blob),
+                                            size: photo.size,
+                                            name: photo.name,
+                                            type: photo.type,
+                                            datetime: photo.datetime,
+                                            featured: photo.featured
+                                        } )
+                                        numberOfBlobsTreated++
+                                        if (numberOfBlobs == numberOfBlobsTreated) resolve()
                                     } )
-                                    numberOfBlobsTreated++
-                                    if (numberOfBlobs == numberOfBlobsTreated) resolve()
+                                } ) ()
+                                resolve()
+                            } else {
+                                cleanData.photos.push( {
+                                    blob: photo.blob,
+                                    size: photo.size,
+                                    name: photo.name,
+                                    type: photo.type,
+                                    datetime: photo.datetime,
+                                    featured: photo.featured
                                 } )
-                            } ) ()
-                            resolve()
-                        } else {
-                            cleanData.photos.push( {
-                                blob: photo.blob,
-                                size: photo.size,
-                                name: photo.name,
-                                type: photo.type,
-                                datetime: photo.datetime,
-                                featured: photo.featured
-                            } )
-                        }
-                        if (numberOfBlobs == 0) resolve()
-                    } )
+                            }
+                            if (numberOfBlobs == 0) resolve()
+                        } )
+                    } else resolve()
                 } )
             } ) ().then(
                 () => {

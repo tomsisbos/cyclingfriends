@@ -1,5 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+require_once '../vendor/autoload.php';
+Autoloader::register();
+use \SendGrid\Mail\Mail;
+
 class MailingListEntry extends Model {
     
     protected $table = 'mailing_list';
@@ -31,27 +36,40 @@ class MailingListEntry extends Model {
     }
     
     public function sendRegistrationMail () {
+        $email = new Mail();
+        $email->setFrom(
+            'contact@cyclingfriends.co',
+            'CyclingFriends'
+        );
+        $email->setSubject('メール登録完了');
+        $email->addTo($this->address);
+        $email->addContent(
+            'text/html',
+            "<p>この度、CyclingFriendsにご登録頂き、ありがとうございます。</p>
+            <p>初期のコミュニティへようこそ！</p>
+            <p>これから始まるCyclingFriendsの長旅を、第一歩からご一緒頂けることをとても光栄に思っております。</p>
+            <p>これからは本格スタートに向けて、CyclingFriendsのサービス内容、アカウント事前作成やベータテスト募集のご案内など、様々な情報を発信して参ります。</p>
+            <p>次のぺージにて、いつでも登録を取り消して頂けます：</p>
+            <p>" .$_SERVER['HTTP_HOST']. "/unsubscribe</p>
+            <p>一緒に旅しましょう！</p>
+            <p>CyclingFriendsチーム一同</p>"
+        );
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $response = $sendgrid->send($email);
+        return $response;
+        /*
+        try {
+            $response = $sendgrid->send($email);
+            printf("Response status: %d\n\n", $response->statusCode());
         
-        // Define headers
-        $headers = 'From: "CyclingFriends" <contact@cyclingfriends.co>' . "\r\n";
-
-        // Define message content
-        $subject = 'メール登録完了';
-        $msg = "
-            この度、CyclingFriendsにご登録頂き、ありがとうございます。\n
-            初期のコミュニティへようこそ！\n
-            これから始まるCyclingFriendsの長旅を、第一歩からご一緒頂けることをとても光栄に思っております。\n
-            これからは本格スタートに向けて、CyclingFriendsのサービス内容、アカウント事前作成やベータテスト募集のご案内など、様々な情報を発信して参ります。\n
-            次のぺージにて、いつでも登録を取り消して頂けます：\n
-            " .$_SERVER['SERVER_NAME']. "/unsubscribe\n
-            一緒に旅しましょう！\n
-            CyclingFriendsチーム一同
-        ";
-
-        // Send
-        $result = mail($this->address, $subject, $msg, $headers);
-
-        return $result;
+            $headers = array_filter($response->headers());
+            echo "Response Headers\n\n";
+            foreach ($headers as $header) {
+                echo '- ' . $header . "\n";
+            }
+        } catch (Exception $e) {
+            echo 'Caught exception: '. $e->getMessage() ."\n";
+        }*/
     }
 
     public function unsubscribe () {
@@ -61,23 +79,23 @@ class MailingListEntry extends Model {
     }
     
     public function sendUnregistrationMail () {
-        
-        // Define headers
-        $headers = 'From: "CyclingFriends" <contact@cyclingfriends.co>' . "\r\n";
-
-        // Define message content
-        $subject = 'メールリストから除外しました';
-        $msg = "
-            日頃から、CyclingFriendsをご愛顧頂き、ありがとうございます。\n
-            この度、こちらのメールアドレス（" .$this->address. "）を当社のメールリストから除外させて頂きました。\n
-            またご一緒に旅できる日が待ち遠しいです。\n
-            CyclingFriendsチーム一同
-        ";
-
-        // Send
-        $result = mail($this->address, $subject, $msg, $headers);
-
-        return $result;
+        $email = new Mail();
+        $email->setFrom(
+            'contact@cyclingfriends.co',
+            'CyclingFriends'
+        );
+        $email->setSubject('メールリストから除外しました');
+        $email->addTo($this->address);
+        $email->addContent(
+            'text/html',
+            "<p>日頃から、CyclingFriendsをご愛顧頂き、ありがとうございます。</p>
+            <p>この度、こちらのメールアドレス（" .$this->address. "）を当社のメールリストから除外させて頂きました。</p>
+            <p>またご一緒に旅できる日が待ち遠しいです。</p>
+            <p>CyclingFriendsチーム一同</p>"
+        );
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $response = $sendgrid->send($email);
+        return $response;
     }
 
 }

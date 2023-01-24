@@ -19,6 +19,19 @@ export default class BuildRouteMap extends GlobalMap {
     elevationProfile
     directionsMode = 'driving'
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
+    loader = {
+        prepare: () => {
+            this.loaderElement = document.createElement('div')
+            this.loaderElement.className = 'loading-modal'
+            let loaderIcon = document.createElement('div')
+            loaderIcon.innerText = 'ルートデータを保存しています...'
+            this.loaderElement.style.cursor = 'loading'
+            loaderIcon.className = 'loading-text'
+            this.loaderElement.appendChild(loaderIcon)
+        },
+        start: () => this.loaderContainer.appendChild(this.loaderElement),
+        stop: () => this.loaderElement.remove()
+    }
 
     addRouteControl () {
         // Get (or add) controller container
@@ -1934,7 +1947,7 @@ export default class BuildRouteMap extends GlobalMap {
             console.log(response)
             if (route.category == 'segment') window.location.replace('/world')
             else window.location.replace('/' + this.session.login + '/routes')
-        } )
+        }, this.loader)
     }
 
 }

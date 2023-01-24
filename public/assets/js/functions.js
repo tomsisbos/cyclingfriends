@@ -3,7 +3,7 @@
 function ajax (callback, loader) {
 	var xhr = getHttpRequest()
 	if (loader) loader.prepare()
-	xhr.onreadystatechange = function () {
+	xhr.onreadystatechange = async function () {
 		// On loading
 		if (xhr.readyState > 0) if (loader) loader.start()
 		// On success
@@ -12,7 +12,7 @@ function ajax (callback, loader) {
 			document.body.cursor = 'auto'
 			// If an error has occured during the request
 			if (xhr.status != 200) {
-				console.log('An error has occured during the request.')
+				await openAlertPopup('An error has occured during the request.')
 			} else { // If the request have been performed successfully
 				var response = JSON.parse(xhr.responseText)
 				
@@ -138,6 +138,27 @@ function numIsPair(n) {
 // Return logarithm of x in base y
 function getBaseLog(x, y) {
     return Math.log(y) / Math.log(x);
+}
+
+async function openAlertPopup (sentence) {
+	return new Promise ((resolve, reject) => {
+		var modal = document.createElement('div')
+		modal.classList.add('modal', 'd-flex')
+		document.querySelector('body').appendChild(modal)
+		modal.addEventListener('click', (e) => {
+			var eTarget = e ? e.target : event.srcElement
+			if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
+		} )
+		var confirmationPopup = document.createElement('div')
+		confirmationPopup.classList.add('popup')
+		confirmationPopup.innerHTML = sentence + '<div class="d-flex justify-content-center"><div id="ok" class="mp-button bg-darkgreen text-white">了解</div></div>'
+		modal.appendChild(confirmationPopup)
+		// On click on "Ok" button, close the popup and return true
+		document.querySelector('#ok').addEventListener('click', () => {
+			modal.remove()
+			resolve(true)
+		} )
+	} )
 }
 
 async function openConfirmationPopup (question) {

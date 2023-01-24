@@ -32,7 +32,7 @@ if (isset($_POST['validate'])) {
 
 				$user->setSession();
 
-				// Redirect authentified user to the Dashboard	
+				// Redirect authentified user to the Dashboard
 				header('location: /dashboard');
 				exit();
 			
