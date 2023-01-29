@@ -174,7 +174,7 @@ export default class ActivityMap extends GlobalMap {
         var element = document.createElement('div')
         element.classList.add('pg-ac-map-img-container')
         element.dataset.id = photo.id
-        element.innerHTML = '<img class="pg-ac-map-img" src="data:' + photo.type + ';base64,' + photo.blob + '" />'
+        element.innerHTML = '<img class="pg-ac-map-img" src="' + photo.url + '" />'
         var marker = new mapboxgl.Marker(
             {
                 draggable: false,

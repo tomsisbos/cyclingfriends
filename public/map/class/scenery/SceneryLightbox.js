@@ -16,8 +16,11 @@ export default class SceneryLightbox extends Popup {
     slideIndex
 
     build () {
+
+        const photos = this.data.photos
+
         // Prepare arrows
-        if (this.data.photos.length > 1) {
+        if (photos.length > 1) {
             var prevArrow = document.createElement('a')
             prevArrow.className = 'prev lightbox-arrow'
             prevArrow.innerHTML = '&#10094;'
@@ -40,7 +43,7 @@ export default class SceneryLightbox extends Popup {
         this.modal.appendChild(this.modalBlock)
         this.data.container.appendChild(this.modal)
         // If more than one photo, display arrows
-        if (this.data.photos.length > 1) {
+        if (photos.length > 1) {
             this.modalBlock.appendChild(prevArrow)
             this.modalBlock.appendChild(nextArrow)
         }
@@ -95,18 +98,18 @@ export default class SceneryLightbox extends Popup {
         // Slides display
         var slides = []
         var imgs = []
-        for (let i = 0; i < this.data.photos.length; i++) {
+        for (let i = 0; i < photos.length; i++) {
             slides[i] = document.createElement('div')
             slides[i].className = 'mySlides wider-slide'
             // Create number
             let numberText = document.createElement('div')
             numberText.className = 'numbertext'
-            numberText.innerHTML = (i + 1) + ' / ' + this.data.photos.length
+            numberText.innerHTML = (i + 1) + ' / ' + photos.length
             slides[i].appendChild(numberText)
             // Create image
             imgs[i] = document.createElement('img')
-            imgs[i].src = 'data:image/jpeg;base64,' + this.data.photos[i].blob
-            imgs[i].id = 'mkpoint-img-' + this.data.photos[i].id
+            imgs[i].src = photos[i].url
+            imgs[i].id = 'mkpoint-img-' + photos[i].id
             imgs[i].classList.add('fullwidth')
             slides[i].appendChild(imgs[i])
             // Create image meta
@@ -127,12 +130,12 @@ export default class SceneryLightbox extends Popup {
             imgMeta.appendChild(likeButton)
             var likes = document.createElement('div')
             likes.className = 'mkpoint-img-likes'
-            likes.innerText = this.data.photos[i].likes
+            likes.innerText = photos[i].likes
             imgMeta.appendChild(likes)
             var period = document.createElement('div')
             period.className = 'mkpoint-period lightbox-period'
-            period.classList.add('period-' + this.data.photos[i].month)
-            period.innerText = this.data.photos[i].period
+            period.classList.add('period-' + photos[i].month)
+            period.innerText = photos[i].period
             imgMeta.appendChild(period)
             slidesBox.appendChild(slides[i])
         }
@@ -141,16 +144,19 @@ export default class SceneryLightbox extends Popup {
         var demosBox = document.createElement('div')
         demosBox.className = 'thumbnails-box'
         this.modalBlock.appendChild(demosBox)
-        for (let i = 0; i < this.data.photos.length; i++) {
+        for (let i = 0; i < photos.length; i++) {
             let column = document.createElement('div')
             column.className = 'column'
             demos[i] = document.createElement('img')
             demos[i].className = 'demo cursor fullwidth'
-            demos[i].setAttribute('demoId', i + 1)
-            demos[i].src = 'data:image/jpeg;base64,' + this.data.photos[i].blob
+            demos[i].dataset.id = i + 1
+            demos[i].src = photos[i].url
             column.appendChild(demos[i])
             demosBox.appendChild(column)
         }
+        
+        // Prepare toggle like function
+        if (this.data.popup._content.querySelector('#like-button')) this.prepareToggleLike()
 
         // Remove on popup closing
         this.data.popup.on('close', () => this.modal.remove())
@@ -162,7 +168,7 @@ export default class SceneryLightbox extends Popup {
         var demos = this.modal.querySelectorAll('.demo')
         demos.forEach(demo => {
             demo.addEventListener('click', (e) => {
-                let id = parseInt(e.target.getAttribute('demoId'))
+                let id = parseInt(e.target.dataset.id)
                 this.setSlide(id)
             } )
         } )
@@ -248,6 +254,9 @@ export default class SceneryLightbox extends Popup {
                 }
             } )
         }
+
+        // Update like button color on every photo change                
+        this.colorLike()
     }
 
 }

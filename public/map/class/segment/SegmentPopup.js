@@ -7,7 +7,12 @@ export default class SegmentPopup extends Popup {
     constructor (options, segment, instanceOptions) {
         super(options, {}, instanceOptions)
         this.data = segment
-        this.load()
+        
+        // Set popup element
+        var content = this.setContent(this.data)
+        this.popup.setHTML(content)
+
+        this.init()
     }
     
     apiUrl = '/api/map.php'
@@ -17,13 +22,18 @@ export default class SegmentPopup extends Popup {
     photos
     loaderContainer = document.body
     loader = {
-        prepare: () => this.loaderContainerInnerText = this.loaderContainer.innerText,
-        start: () => this.loaderContainer.innerText = 'Loading...',
-        stop: () => this.loaderContainer.innerText = this.loaderContainerInnerText
+        element: document.createElement('div'),
+        prepare: () => this.loader.element.className = 'loader-center',
+        start: () => this.loaderContainer.appendChild(this.loader.element),
+        stop: () => this.loader.element.remove()
+    }
+    setFlyAlong
+
+    async getDetails (id) {
+        return new Promise(async (resolve, reject) => ajaxGetRequest(this.apiUrl + "?segment-details=" + id, (segment) => resolve(segment)))
     }
 
-    load () {
-
+    setContent () {
         // Define advised
         var advised = ''
         if (this.data.advised) advised = '<div class="popup-advised" title="cyclingfriendsのおススメ">★</div>'
@@ -42,50 +52,8 @@ export default class SegmentPopup extends Popup {
             </a>`
         } )
 
-        // Build seasonBox
-        var seasonBox = ''
-        if (this.data.seasons.length > 0) {
-            seasonBox = '<div class="popup-season-box">'
-            this.data.seasons.forEach( (season) => {
-                seasonBox += `
-                <div class="popup-season">
-                    <div class="popup-season-period">` +
-                        CFUtils.getPeriodString(season.period_start) + ` から ` + CFUtils.getPeriodString(season.period_end) + ` まで
-                    </div>
-                    <div class="popup-season-description">` +
-                        season.description + `
-                    </div>
-                </div>`
-            } )
-            seasonBox += '</div>'
-        }
-
-        // Build pointBox
-        var adviceBox = ''
-        if (this.data.advice.description) {
-            adviceBox = `
-            <div class="popup-advice">
-                <div class="popup-advice-name">
-                    <iconify-icon icon="el:idea" width="20" height="20"></iconify-icon> ` +
-                    this.data.advice.name + `
-                </div>
-                    <div class="popup-advice-description">` +
-                    this.data.advice.description + `
-                </div>
-            </div>`
-        }
-
-        // Set content
-        this.popup.setHTML(`
-        <div class="popup-img-container">
-            <a target="_blank" href="/segment/` + this.data.id + `">
-                <div class="popup-img-background">
-                    詳細ページ
-                    <img id="segmentFeaturedImage` + this.data.id + `" class="popup-img popup-img-with-background" />
-                </div>
-            </a>
-            <div class="popup-icons"></div>
-        </div>
+        return `
+        <div class="popup-img-container"></div>
         <div class="popup-content">
             <div class="popup-properties">
                 <div class="popup-properties-name">
@@ -93,26 +61,101 @@ export default class SegmentPopup extends Popup {
                     advised + `
                     <div class="popup-tag ` + tagColor + `" >`+ capitalizeFirstLetter(this.data.rank) + `</div>
                 </div>
-                <div>
-                    距離 : `+ (Math.round(this.data.route.distance * 10) / 10) + `km - 獲得標高 : ` + this.data.route.elevation + `m
-                </div>
+                <div class="js-properties-location">` + this.inlineLoader + `</div>
                 <div class="popup-rating"></div>
                 <div id="profileBox" class="mt-2 mb-2" style="height: 100px; background-color: white;">
                     <canvas id="elevationProfile"></canvas>
                 </div>
             </div>
-            <div class="popup-description">`
-                + this.data.description + `
-            </div>
+            <div class="popup-description">` + this.inlineLoader + `</div>
             <div>`
                 + tags + `
-            </div>`
-            + adviceBox + ``
-            + seasonBox + `
+            </div>
+            <div class="js-popup-advice"></div>
+            <div class="popup-season-box"></div>
             <a target="_blank" href="/segment/` + this.data.id + `">
                 <button class="mp-button bg-button text-white">詳細ページ</div>
             </a>
-        </div>`)
+        </div>`
+    }
+
+    init () {
+        
+        this.popup.once('open', async () => {
+
+            // Setup general interactions
+            this.loadRating(this.data)
+            this.generateProfile({force: true})
+
+            // Query relevant mkpoints and photos
+            this.getMkpoints().then((mkpoints) => {
+                this.mkpoints = mkpoints
+                this.photos = this.getPhotos()
+                this.displayPhotos()
+                this.loadLightbox()
+                this.addIconButtons()
+            } )
+
+            // Query segment details and fill up the popup
+            this.populate()
+        } )
+    }
+
+    async populate () {
+        return new Promise(async (resolve, reject) => {
+
+            // Get scenery details
+            if (!this.data.description) {
+                var data = await this.getDetails(this.data.id)
+                this.data = {
+                    ...data,
+                    mapInstance: this.data.mapInstance
+                }
+            }
+
+            // Build properties location
+            var propertiesLocation = '距離 : ' + (Math.round(this.data.route.distance * 10) / 10) + 'km - 獲得標高 : ' + this.data.route.elevation + 'm'
+            this.popup._content.querySelector('.js-properties-location').innerHTML = propertiesLocation
+            
+            // Build description
+            this.popup._content.querySelector('.popup-description').innerHTML = this.data.description
+
+            // Build adviceBox
+            var adviceBox = ''
+            if (this.data.advice.description) {
+                adviceBox = `
+                <div class="popup-advice">
+                    <div class="popup-advice-name">
+                        <iconify-icon icon="el:idea" width="20" height="20"></iconify-icon> ` +
+                        this.data.advice.name + `
+                    </div>
+                        <div class="popup-advice-description">` +
+                        this.data.advice.description + `
+                    </div>
+                </div>`
+            }
+            this.popup._content.querySelector('.js-popup-advice').innerHTML = adviceBox
+            
+            // Build seasonBox
+            var seasonBox = ''
+            if (this.data.seasons.length > 0) {
+                this.data.seasons.forEach( (season) => {
+                    seasonBox += `
+                    <div class="popup-season">
+                        <div class="popup-season-period">` +
+                            CFUtils.getPeriodString(season.period_start) + ` から ` + CFUtils.getPeriodString(season.period_end) + ` まで
+                        </div>
+                        <div class="popup-season-description">` +
+                            season.description + `
+                        </div>
+                    </div>`
+                } )
+            }
+            this.popup._content.querySelector('.popup-season-box').innerHTML = seasonBox
+
+            resolve(true)
+
+        } )
     }
 
     // Get relevant photos from the API and display it with a modal behavior
@@ -120,11 +163,12 @@ export default class SegmentPopup extends Popup {
         return new Promise( (resolve, reject) => {
             
             // Asks server for current photo data
-            this.loaderContainer = this.popup.getElement().querySelector('.popup-img-background')
+            this.loaderContainer = this.popup._content.querySelector('.popup-img-container')
             ajaxGetRequest (this.apiUrl + "?segment-mkpoints=" + this.data.id, (mkpoints) => {
 
-                // Add toggle like icon button if a photo exists
-                if (mkpoints.length > 0) this.addToggleLikeIconButton()
+                // Sort mkpoints by distance order
+                mkpoints.forEach( (mkpoint) => mkpoint.distanceFromStart = this.getDistanceFromStart(mkpoint))
+                mkpoints.sort((a, b) => (a.distanceFromStart > b.distanceFromStart) ? 1 : -1)
 
                 resolve(mkpoints)
             }, this.loader)
@@ -143,7 +187,7 @@ export default class SegmentPopup extends Popup {
 
     async generateProfile (options = {force: false}) {
         
-        const map = this.popup._map
+        const map = this.data.mapInstance.map
         const route = map.getSource('segment' + this.data.id)
 
         // If a route is displayed on the map
@@ -243,9 +287,9 @@ export default class SegmentPopup extends Popup {
                                 }
                                 // Display tooltip
                                 this.clearTooltip()
-                                if (this.popup.getElement().querySelector('#profileBox')) var profileTop = this.popup.getElement().querySelector('#profileBox').getBoundingClientRect().top
+                                if (this.popup._content.querySelector('#profileBox')) var profileTop = this.popup._content.querySelector('#profileBox').getBoundingClientRect().top
                                 else document.querySelector('#profileBox').getBoundingClientRect().top // On fly along mode, profile box isn't inside popup
-                                var mapTop = this.popup._map.getContainer().getBoundingClientRect().top
+                                var mapTop = map.getContainer().getBoundingClientRect().top
                                 var navbarHeight = document.querySelector('.main-navbar').getBoundingClientRect().height
                                 this.drawTooltip(map.getSource('segment' + this.data.id)._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.native.layerX, profileTop - mapTop - navbarHeight, {backgroundColor: '#ffffff', mergeWithCursor: true})
                             }    
@@ -347,9 +391,19 @@ export default class SegmentPopup extends Popup {
         }
     }
 
+    // Set up lightbox
+    loadLightbox () {
+        var lightboxData = {
+            photos: this.photos,
+            mkpoints: this.mkpoints,
+            route: this.data.route
+        }
+        this.lightbox = new SegmentLightbox(this.data.mapInstance.map.getContainer(), this.popup, lightboxData, {noSession: true})
+    }
+
     // Build profile data
     async getProfileData (route, options) { // options : remote = boolean
-        const map           = this.popup._map
+        const map           = this.data.mapInstance.map
         const routeGeojson  = route._data
         const routeDistance = turf.length(routeGeojson)
         const tunnels       = routeGeojson.properties.tunnels
@@ -500,7 +554,7 @@ export default class SegmentPopup extends Popup {
     // Prepare data of [lng, lat] route point and draw tooltip at pointX/pointY position
     async drawTooltip (routeData, lng, lat, pointX, pointY = false, options) {
         
-        const map = this.popup._map
+        const map = this.data.mapInstance.map
         
         // Distance and twin distance if there is one
         var result = CFUtils.findDistanceWithTwins(routeData, {lng, lat})
@@ -566,10 +620,10 @@ export default class SegmentPopup extends Popup {
         else if (slope > 6 && slope <= 9) return {color: '#ff5555', weight: 'bold'}
         else if (slope > 9) return {color: '#000000', weight: 'bold'}
     }
-            
+
     displayPhotos () {
         
-        var photoContainer = this.popup.getElement().querySelector('.popup-img-container')
+        var photoContainer = this.popup._content.querySelector('.popup-img-container')
 
         var addArrows = () => {
             if (!photoContainer.querySelector('.small-prev')) {
@@ -594,106 +648,105 @@ export default class SegmentPopup extends Popup {
         var cursor = 0
         // Add photos to the DOM
         this.photos.forEach( (photo) => {
-            addPhoto(photo, cursor)
-            cursor++
-        } )
-        
-        // Set up lightbox
-        var lightboxData = {
-            photos: this.photos,
-            mkpoints: this.mkpoints,
-            route: this.data.route
-        }
-        var lightbox = new SegmentLightbox(this.popup._map.getContainer(), this.popup, lightboxData, {noSession: true})
-        
-        // Set slider system
-        var setThumbnailSlider = setThumbnailSlider.bind(this)
-        setThumbnailSlider(1)
-
-        function addPhoto (photo, number) {
             var newPhoto = document.createElement('img')
             newPhoto.classList.add('popup-img')
-            if (number == 0) newPhoto.style.display = 'block'
+            if (cursor == 0) newPhoto.style.display = 'block'
             else newPhoto.style.display = 'none'
             newPhoto.dataset.id = photo.id
             newPhoto.dataset.author = photo.user_id
-            newPhoto.dataset.number = number
-            newPhoto.src = 'data:image/jpeg;base64,' + photo.blob
-            photoContainer.firstChild.before(newPhoto)
+            newPhoto.dataset.number = cursor + 1
+            newPhoto.src = photo.url
+            photoContainer.appendChild(newPhoto)
             var newPhotoPeriod = document.createElement('div')
             newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo.month))
             newPhotoPeriod.innerText = photo.period
             newPhotoPeriod.style.display = 'none'
             newPhoto.after(newPhotoPeriod)
-            
-            // Lightbox listener
+
+            // Set lightbox listener
             newPhoto.addEventListener('click', () => {
-                let id = parseInt(newPhoto.dataset.number)
-                lightbox.open(id)
+                let number = parseInt(newPhoto.dataset.number)
+                this.lightbox.open(number)
             } )
-        }
 
-        // Functions for sliding photos of mkpoints
-        function setThumbnailSlider (photoIndex) {
+            cursor++
+        } )
+        
+        // Set slider system
 
-            var i
-            var photos = this.popup._map.getContainer().getElementsByClassName("popup-img")
-            var photosPeriods = this.popup._map.getContainer().getElementsByClassName("mkpoint-period")
+        var photos = this.data.mapInstance.map.getContainer().getElementsByClassName("popup-img")
+        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("mkpoint-period")
 
-            // If there is more than one photo in the database
-            if (this.photos.length > 1) {
+        // If there is more than one photo in the database
+        if (this.photos.length > 1) {
 
-                // Add left and right arrows and attach event listeners to it
-                addArrows()
-            
-                var plusPhoto = () => { showPhotos (photoIndex += 1) }
-                var minusPhoto = () => { showPhotos (photoIndex -= 1) }
-                var showPhotos = (n) => {
-                    if (n > this.photos.length) {photoIndex = 1}
-                    if (n < 1) {photoIndex = this.photos.length}
-                    for (i = 0; i < this.photos.length; i++) {
-                        photos[i].style.display = 'none'
-                    }
-                    for (i = 0; i < photosPeriods.length; i++) {
-                        photosPeriods[i].style.display = 'none'
-                    }
-                    photos[photoIndex-1].style.display = 'block'
-                    photosPeriods[photoIndex-1].style.display = 'inline-block'
-                    // Change the color of the like button depending on if new photo has been liked or not
-                    this.colorLike()
+            var photoIndex = 1
+
+            // Add left and right arrows and attach event listeners to it
+            addArrows()
+        
+            var plusPhoto = () => { showPhotos (photoIndex += 1) }
+            var minusPhoto = () => { showPhotos (photoIndex -= 1) }
+            var showPhotos = (n) => {
+                if (n > this.photos.length) {photoIndex = 1}
+                if (n < 1) {photoIndex = this.photos.length}
+                for (let i = 0; i < this.photos.length; i++) {
+                    photos[i].style.display = 'none'
                 }
-                
-                this.popup.getElement().querySelector('.small-prev').addEventListener('click', minusPhoto)
-                this.popup.getElement().querySelector('.small-next').addEventListener('click', plusPhoto)
-                showPhotos(photoIndex)
+                for (let i = 0; i < photosPeriods.length; i++) {
+                    photosPeriods[i].style.display = 'none'
+                }
+                photos[photoIndex - 1].style.display = 'block'
+                photosPeriods[photoIndex - 1].style.display = 'inline-block'
+                // Update like button color on every photo change
+                this.colorLike()
+            }
+            
+            this.popup._content.querySelector('.small-prev').addEventListener('click', minusPhoto)
+            this.popup._content.querySelector('.small-next').addEventListener('click', plusPhoto)
+            showPhotos(photoIndex)
 
-            // If there is only one photo in the database, remove arrows if needed
-            } else removeArrows()  
-        }
-    }
+        // If there is only one photo in the database, remove arrows if needed
+        } else removeArrows()
 
-    addToggleLikeIconButton () {
-        var popupIcons = this.popup.getElement().querySelector('.popup-icons')
-        // Like button
-        var likeButton = document.createElement('div')
-        likeButton.id = 'like-button'
-        likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
-        likeButton.innerHTML = '<span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>'
-        popupIcons.prepend(likeButton)
+        // If no photo for this segment, display link to details page
+        if (this.photos.length == 0) photoContainer.innerHTML = `
+            <a target="_blank" href="/segment/` + this.data.id + `">
+                <div class="popup-img-background">
+                    詳細ページ
+                    <img id="segmentFeaturedImage` + this.data.id + `" class="popup-img popup-img-with-background" />
+                </div>
+            </a>`
+
     }
 
     addIconButtons () {
-        var popupIcons = this.popup.getElement().querySelector('.popup-icons')
+        var popupIcons = document.createElement('div')
+        popupIcons.className = ('popup-icons')
+        this.popup._content.querySelector('.popup-img-container').appendChild(popupIcons)
+
         // Fly along button
         var flyButton = document.createElement('div')
         flyButton.id = 'fly-button'
         flyButton.setAttribute('title', '走行再現モードに切り替える')
         flyButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path fill="currentColor" d="M23.188 3.735a1.766 1.766 0 0 0-3.532-.001c0 .975 1.766 4.267 1.766 4.267s1.766-3.292 1.766-4.267zm-2.61 0a.844.844 0 1 1 1.687-.001a.844.844 0 0 1-1.687.001zm4.703 14.76c-.56 0-1.097.047-1.59.123L11.1 13.976c.2-.18.312-.38.312-.59a.663.663 0 0 0-.088-.315l8.41-2.238c.46.137 1.023.22 1.646.22c1.52 0 2.75-.484 2.75-1.082c0-.6-1.23-1.083-2.75-1.083s-2.75.485-2.75 1.083c0 .07.02.137.054.202L9.896 12.2a8.075 8.075 0 0 0-2.265-.303c-2.087 0-3.78.667-3.78 1.49s1.693 1.49 3.78 1.49c.574 0 1.11-.055 1.598-.145l11.99 4.866c-.19.192-.306.4-.306.623c0 .19.096.364.236.533L8.695 25.415c-.158-.005-.316-.01-.477-.01c-3.24 0-5.87 1.036-5.87 2.31c0 1.277 2.63 2.313 5.87 2.313s5.87-1.034 5.87-2.312c0-.22-.083-.432-.23-.633l10.266-5.214c.37.04.753.065 1.155.065c2.413 0 4.37-.77 4.37-1.723c0-.944-1.957-1.716-4.37-1.716z"/></svg>'
+        this.setFlyAlong(flyButton)
         popupIcons.appendChild(flyButton)
+
+        // Like button
+        if (this.mkpoints.length > 0) {
+            var likeButton = document.createElement('div')
+            likeButton.id = 'like-button'
+            likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
+            likeButton.innerHTML = '<span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>'
+            popupIcons.appendChild(likeButton)
+            this.prepareToggleLike()
+        }
     }
 
     getDistanceFromStart (mkpoint) {
-        const routeCoords = this.data.route.coordinates
+        if (this.data.coordinates) var routeCoords = this.data.coordinates
+        else if (this.data.route) var routeCoords = this.data.route.coordinates
         var section = turf.lineSlice(turf.point(routeCoords[0]), turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat]), turf.lineString(routeCoords))
         return turf.length(section)
     }

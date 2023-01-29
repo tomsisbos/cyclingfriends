@@ -130,7 +130,7 @@ include '../includes/head.php'; ?>
 					foreach ($photos as $photo_id) {
 						$photo = new ActivityPhoto($photo_id); ?>
 						<a class="pf-photo" href="/activity/<?= $photo->activity_id ?>">
-							<img src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>" />
+							<img src="<?= $photo->url ?>" />
 						</a> <?php
 					} ?>
 				</div> <?php

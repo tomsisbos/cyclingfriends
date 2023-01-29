@@ -60,7 +60,7 @@
         foreach ($preview_photos as $photo) { ?>
             <a href="/activity/<?= $activity->id ?>">
                 <div class="ac-photo-container<?php if ($photo->featured) echo ' featured'; ?>">
-                    <img class="ac-photo" src="<?= 'data:' . $photo->type . ';base64,' . $photo->blob ?>"> <?php
+                    <img class="ac-photo" src="<?= $photo->url ?>"> <?php
                     if ($i == PREVIEW_PHOTOS_QUANTITY AND count($activity->getPhotoIds()) > PREVIEW_PHOTOS_QUANTITY) { ?>
                         <div class="ac-photos-others"><div>+ <?= count($activity->getPhotoIds()) - PREVIEW_PHOTOS_QUANTITY + 1 ?></div></div> <?php
                     } ?>

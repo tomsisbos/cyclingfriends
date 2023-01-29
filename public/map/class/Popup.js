@@ -10,6 +10,7 @@ export default class Popup extends Model {
             linearOffset: 25,
         }, instanceOptions) {
         super(instanceOptions)
+        this.apiUrl = '/api/map.php'
         this.options
         this.markerHeight = settings.markerHeight
         this.markerRadius = settings.markerRadius
@@ -75,7 +76,7 @@ export default class Popup extends Model {
                 slides[cursor].appendChild(numberText)
                 // Create image
                 imgs[cursor] = document.createElement('img')
-                imgs[cursor].src = 'data:image/jpeg;base64,' + photo.file_blob
+                imgs[cursor].src = photo.url
                 imgs[cursor].id = 'mkpoint-img-' + photo.id
                 imgs[cursor].classList.add('fullwidth')
                 slides[cursor].appendChild(imgs[cursor])
@@ -145,7 +146,7 @@ export default class Popup extends Model {
                 demos[cursor] = document.createElement('img')
                 demos[cursor].className = 'demo cursor fullwidth'
                 demos[cursor].setAttribute('demoId', cursor + 1)
-                demos[cursor].src = 'data:' + photo.file_type + ';base64,' + photo.file_blob
+                demos[cursor].src = photo.url
                 column.appendChild(demos[cursor])
                 demosBox.appendChild(column)
             } )
@@ -177,6 +178,8 @@ export default class Popup extends Model {
         }
 
         function toggleLike (e) {
+            
+            var clickedLikeButton = e.target.closest('div')
 
             // Check if clicked on thumbnail button or modal button
             if (e.target.closest('#like-button')) var buttonType = 'thumbnail'
@@ -185,33 +188,41 @@ export default class Popup extends Model {
             // Get image id
             if (buttonType == 'thumbnail') {
                 var img_id
-                document.querySelectorAll('.popup-img').forEach( ($img) => {
+                document.querySelectorAll('.popup-img').forEach(($img) => {
                     if ($img.style.display != 'none') img_id = parseInt($img.dataset.id)
                 } )
+                var correspondingModalButton = document.querySelector('#mkpoint-img-' + img_id).closest('.mySlides').querySelector('.like-button-modal')
             }
-
-            // Get image id
             else if (buttonType == 'modal') {
                 var img_id
-                document.querySelectorAll('.mySlides img').forEach( ($img) => {
+                document.querySelectorAll('.mySlides img').forEach(($img) => {
                     if ($img.closest('.mySlides').style.display != 'none') img_id = getIdFromString($img.id)
                 } )
+                var thumbnail_img_id
+                document.querySelectorAll('.popup-img').forEach(($img) => {
+                    if ($img.style.display != 'none') thumbnail_img_id = parseInt($img.dataset.id)
+                } )
             }
-
-            // Get corresponding modal button and counter
-            var modalButton = document.querySelector('#mkpoint-img-' + img_id).nextElementSibling.querySelector('.like-button-modal')
-            var modalLikeCounter = modalButton.parentElement.querySelector('.mkpoint-img-likes')
-
+            
+            // Toggle necessary icons
+            if (buttonType == 'thumbnail' || (buttonType == 'modal' && thumbnail_img_id == img_id)) thumbnailButton.classList.toggle('liked')
+            if (buttonType == 'thumbnail') {
+                correspondingModalButton.classList.toggle('liked')
+                var correspondingModalLikeCounter = correspondingModalButton.parentElement.querySelector('.mkpoint-img-likes')
+                var previousLikesNumber = parseInt(correspondingModalLikeCounter.innerText)
+                if (correspondingModalButton.classList.contains('liked')) correspondingModalLikeCounter.innerText = (previousLikesNumber + 1)
+                else correspondingModalLikeCounter.innerText = (previousLikesNumber - 1)
+            } else if (buttonType == 'modal') {
+                console.log(clickedLikeButton)
+                clickedLikeButton.classList.toggle('liked')
+                var modalLikeCounter = clickedLikeButton.parentElement.querySelector('.mkpoint-img-likes')
+                var previousLikesNumber = parseInt(modalLikeCounter.innerText)
+                if (clickedLikeButton.classList.contains('liked')) modalLikeCounter.innerText = (previousLikesNumber + 1)
+                else modalLikeCounter.innerText = (previousLikesNumber - 1)
+            }
             ajaxGetRequest (this.apiUrl + "?togglelike-img=" + img_id, (response) => { // Response contains like data
-                console.log(response)
-                if (response.islike) {
-                    modalButton.classList.toggle('liked')
-                    if (thumbnailButton) thumbnailButton.classList.toggle('liked')
-                } else {
-                    modalButton.classList.toggle('liked')
-                    if (thumbnailButton) thumbnailButton.classList.toggle('liked')
-                }
-                modalLikeCounter.innerText = response.imgLikes
+                /*console.log(response)
+                modalLikeCounter.innerText = response.imgLikes*/
             } )
         }
 

@@ -73,8 +73,10 @@ include '../includes/head.php'; ?>
                 <div class="rt-slider"></div>
             </div>
             <div id="routePageMapContainer">
-                <div class="cf-map" id="routePageMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
-                    <img class="staticmap"></img>
+                <div class="cf-map" id="routePageMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
+                    if (!$connected_user->isPremium()) { ?>
+                        <img class="staticmap"></img> <?php
+                    } ?>
                 </div>
                 <div class="grabber"></div>
             </div>

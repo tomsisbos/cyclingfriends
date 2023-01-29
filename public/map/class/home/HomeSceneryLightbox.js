@@ -94,7 +94,7 @@ export default class HomeSceneryLightbox extends SceneryLightbox {
             slides[i].appendChild(numberText)
             // Create image
             imgs[i] = document.createElement('img')
-            imgs[i].src = 'data:image/jpeg;base64,' + this.data.photos[i].blob
+            imgs[i].src = this.data.photos[i].url
             imgs[i].id = 'mkpoint-img-' + this.data.photos[i].id
             imgs[i].classList.add('fullwidth')
             slides[i].appendChild(imgs[i])
@@ -119,8 +119,8 @@ export default class HomeSceneryLightbox extends SceneryLightbox {
             column.className = 'column'
             demos[i] = document.createElement('img')
             demos[i].className = 'demo cursor fullwidth'
-            demos[i].setAttribute('demoId', i + 1)
-            demos[i].src = 'data:image/jpeg;base64,' + this.data.photos[i].blob
+            demos[i].dataset.id = i + 1
+            demos[i].src = this.data.photos[i].url
             column.appendChild(demos[i])
             demosBox.appendChild(column)
         }

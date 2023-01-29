@@ -29,7 +29,7 @@ if (isAjax()) {
             // Mkpoint data preparation
             } else if ($result->type === 'mkpoint') {
                 $result->propic = $result->user->getPropicElement();
-                $result->featuredimage = $result->getImages()[0]->blob;
+                $result->featuredimageUrl = $result->getImages()[0]->url;
                 array_push($entries, $result);
             }
         }

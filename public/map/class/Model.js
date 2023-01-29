@@ -4,7 +4,7 @@ import CFUtils from "/map/class/CFUtils.js"
 export default class Model {
 
     constructor (options) {
-        if (!options || !options.noSession) ajaxGetRequest (this.apiUrl + "?get-session=true", (session) => {
+        if (!options || !options.noSession) ajaxGetRequest (this.mainApiUrl + "?get-session=true", (session) => {
             this.session = session
             if (session.userLocation && session.userLocation.lng !== 0) this.userLocation = session.userLocation
             else this.userLocation = this.defaultCenter
@@ -13,7 +13,7 @@ export default class Model {
     }
 
     apiKey = Env.mapboxApiKey
-    apiUrl = '/api/map.php'
+    mainApiUrl = '/api/map.php'
 
     defaultStyle = 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z'
     tags = ['hanami', 'kouyou', 'ajisai', 'culture', 'machinami', 'shrines', 'teafields', 'ricefields', 'sea', 'mountains', 'forest', 'rivers', 'lakes']
@@ -24,14 +24,16 @@ export default class Model {
             this.loaderElement = document.createElement('div')
             this.loaderElement.className = 'loader-element'
             let loaderIcon = document.createElement('div')
-            loaderIcon.innerText = 'Loading...'
+            loaderIcon.innerHTML = '<div class="loader-center"></div>'
             loaderIcon.className = 'loader-icon'
             this.loaderElement.appendChild(loaderIcon)
         },
         start: () => this.loaderContainer.appendChild(this.loaderElement),
         stop: () => this.loaderElement.remove()
     }
-    centerOnUserLocation = () => {return} 
+    centerOnUserLocation = () => {return}
+    inlineLoader = '<div class="loader-inline"></div>'
+    centerLoader = '<div class="loader-center"></div>'
 
     // Get location of a LngLat point
     async getLocation (lngLat) {

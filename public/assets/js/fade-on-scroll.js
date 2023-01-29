@@ -7,8 +7,8 @@ elements.forEach((element) => {
 
         // Append overlay
         var overlay = document.createElement('div')
-        overlay.className = 'black-overlay'
-        overlay.style.height = elementHeight
+        overlay.classList.add('black-overlay')
+        if (element.classList.contains('js-overlay-top')) overlay.classList.add('overlay-top') // Add 'overlay-top' class to overlays that need to substract sidebar height
         overlay.style.backgroundColor = element.dataset.overlayColor
         element.before(overlay)
 
@@ -28,8 +28,8 @@ elements.forEach((element) => {
 
             // Append overlay
             var overlay2 = document.createElement('div')
-            overlay2.className = 'black-overlay'
-            overlay2.style.height = elementHeight
+            overlay2.classList.add('black-overlay')
+            if (element.classList.contains('js-overlay-top')) overlay2.classList.add('overlay-top') // Add 'overlay-top' class to overlays that need to substract sidebar height
             overlay2.style.backgroundColor = element.dataset.overlayColor2
             element.before(overlay2)
 

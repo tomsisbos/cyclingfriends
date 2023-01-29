@@ -116,7 +116,7 @@ function buildCard (entry) {
             // Build inner html and append
             $a.innerHTML = `
                 <div class="ac-photo-container` + featured + `">
-                    <img class="ac-photo" src="data:` + photo.type + ';base64,' + photo.blob + `">
+                    <img class="ac-photo" src="` + photo.url + `">
                     ` + $photosOthers + `
                 </div>`
             $photosContainer.appendChild($a)
@@ -147,7 +147,7 @@ function buildCard (entry) {
         var $card = document.createElement('div')
         $card.className = 'mk-card'
         $card.innerHTML = `
-        <div class="mk-photo"><img src="data:image/jpeg;base64,` + mkpoint.featuredimage + `"></div>
+        <div class="mk-photo"><img src="` + mkpoint.featuredimageUrl + `"></div>
         <div class="mk-data">
             <div class="mk-top">
                 <a href="/rider/` + mkpoint.user.id + `">` +

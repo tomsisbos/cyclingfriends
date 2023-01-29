@@ -126,7 +126,7 @@ if (isset($_POST['validate'])) {
 				
 	} else {
 	
-		$errormessage = "Please fill in all the required informations before validating";
+		$errormessage = "必要な情報（*）を全てご記入ください。";
 	
 	}
 				

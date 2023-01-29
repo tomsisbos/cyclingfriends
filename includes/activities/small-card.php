@@ -4,7 +4,7 @@ $featured_image = $activity->getFeaturedImage() ?>
 <a class="acsm-container" href="/activity/<?= $activity->id ?>">
     <div class="acsm-photo"> <?php
         if ($featured_image) { ?>
-            <img src="data:<?= $featured_image->type ?>;base64,<?= $featured_image->blob ?>" /> <?php
+            <img src="<?= $featured_image->url ?>" /> <?php
         } else { ?>
             <img src="/media/default-photo-<?= rand(0, 9) ?>.svg" /> <?php
         } ?>

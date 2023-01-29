@@ -1,6 +1,6 @@
 <?php
 
-class CheckpointImage extends Image {
+class CheckpointImage extends Model {
     
     protected $table = 'ride_checkpoints';
     public $id;
@@ -10,7 +10,7 @@ class CheckpointImage extends Image {
     public $type;
 
     function __construct ($id = NULL) {
-        parent::__construct($id);
+        parent::__construct();
         $this->id                        = $id;
         $data = $this->getData($this->table);
         $this->blob                      = $data['img'];

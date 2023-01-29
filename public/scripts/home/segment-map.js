@@ -36,8 +36,7 @@ await loadMap().then( (homeMap) => {
     homeMap.addSources()
     homeMap.addLayers()
 
-    /* -- Controls -- */
-
+    // Add controls
     homeMap.addStyleControl()
     homeMap.addFilterControl()
 
@@ -48,7 +47,7 @@ await loadMap().then( (homeMap) => {
         // Choose a segment at random
         var randomKey = Math.floor(Math.random() * segments.length)
         var randomSegment = segments[randomKey]
-        const rsCoordinates = randomSegment.route.coordinates
+        const rsCoordinates = randomSegment.coordinates
 
         // Fly to it
         homeMap.map.jumpTo( {

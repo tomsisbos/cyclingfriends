@@ -32,7 +32,7 @@ include '../includes/head.php'; ?>
 		
 		<div class="container-fluid"> <?php 
 
-			if ($activity->getFeaturedImage()) { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$activity->getFeaturedImage()->blob. '); background-size: cover;'?>;"> <?php
+			if ($activity->getFeaturedImage()) { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(' .$activity->getFeaturedImage()->url. '); background-size: cover;'?>;"> <?php
 			} else { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(/media/default-photo-' . rand(1,9) .'.svg)'?>; background-size: cover;"> <?php } ?>
 				<div class="tr-row gap">
 					<div class="td-row">
@@ -151,7 +151,7 @@ include '../includes/head.php'; ?>
 								<div class="pg-ac-photos-container"> <?php
 									foreach ($checkpoint->getPhotos() as $photo) { ?>
 										<div class="pg-ac-photo-container">
-											<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="data:image/jpeg;base64,<?= $photo->blob ?>" />
+											<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="<?= $photo->url ?>" />
 										</div> <?php
 									} ?>
 								</div>

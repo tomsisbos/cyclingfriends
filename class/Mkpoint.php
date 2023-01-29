@@ -14,7 +14,7 @@ class Mkpoint extends Model {
         $this->id               = $id;
         $this->type             = 'scenery';
         $data = $this->getData($this->table);
-        $this->user             = new User($data['user_id']);
+        $this->user_id          = $data['user_id'];
         $this->category         = $data['category'];
         $this->name             = $data['name'];
         $this->city             = $data['city'];

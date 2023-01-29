@@ -40,32 +40,10 @@ export default class SceneryPopup extends Popup {
     lightbox
 
     setContent (mkpoint) {
-        var visitedIcon = ''
-        if (mkpoint.isCleared) {
-            visitedIcon = `
-                <div id="visited-icon" title="この絶景スポットを訪れたことがあります。">
-                    <a href="/activity/` + mkpoint.isCleared + `" target="_blank">
-                        <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
-                    </a>
-                </div>
-            `
-        }
-
-
-        if (mkpoint.isFavorite) var favoriteButtonClass = ' favoured'
-        else var favoriteButtonClass = ''
-
-        // Build tagslist
-        var tags = ''
-        if (mkpoint.tags) mkpoint.tags.map( (tag) => {
-            tags += `
-            <a target="_blank" href="/tag/` + tag + `">
-                <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
-            </a>`
-        } )
 
         return `
-        <div class="popup-img-container">
+        <div class="popup-img-container">` +
+            this.centerLoader + `
             <div class="popup-icons">
                 <div id="target-button" title="この絶景スポットに移動する。">
                     <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
@@ -80,16 +58,15 @@ export default class SceneryPopup extends Popup {
                 <div id="like-button" title="この写真に「いいね」を付ける">
                     <span class="iconify" data-icon="mdi:heart-plus" data-width="20" data-height="20"></span>
                 </div>
-                <div class="js-favorite-button` + favoriteButtonClass + `" title="この絶景スポットをお気に入りリストに追加する">
+                <div class="js-favorite-button" title="この絶景スポットをお気に入りリストに追加する">
                     <span class="iconify" data-icon="mdi:favorite-add" data-width="20" data-height="20"></span>
-                </div>` + 
-                visitedIcon + `
+                </div>
             </div>
         </div>
         <div id="popup-content" class="popup-content">
             <div class="d-flex gap">
                 <div class="round-propic-container">
-                    <a href="/rider/` + mkpoint.user.id + `">
+                    <a href="/rider/` + mkpoint.user_id + `">
                         <img class="round-propic-img" />
                     </a>
                 </div>
@@ -98,15 +75,13 @@ export default class SceneryPopup extends Popup {
                         <div class="popup-properties-name">
                             <a href="/scenery/` + mkpoint.id + `" target="_blank">` + mkpoint.name + `</a>
                         </div>
-                        <div class="popup-properties-location">` + mkpoint.city + ` (` + mkpoint.prefecture + `) - ` + mkpoint.elevation + `m</div>
+                        <div class="popup-properties-location"></div>
                         <div class="popup-rating"></div>
                     </div>
                 </div>
             </div>
-            <div class="popup-description">` + mkpoint.description + `</div>
-            <div class="js-tags">` + 
-                tags + `
-            </div>
+            <div class="popup-description">` + this.centerLoader + `</div>
+            <div class="js-tags"></div>
         </div>
         <div class="popup-buttons">
             <button id="showReviews" class="mp-button bg-button text-white">レビューを表示</button>
@@ -121,241 +96,280 @@ export default class SceneryPopup extends Popup {
         </div>`
     }
 
+    async getDetails (id) {
+        return new Promise(async (resolve, reject) => ajaxGetRequest(this.apiUrl + "?mkpoint-details=" + id, (mkpoint) => resolve(mkpoint)))
+    }
+
+    async populate () {
+        return new Promise(async (resolve, reject) => {
+
+            // Get scenery details
+            if (!this.data.mkpoint.description) {
+                var mkpoint = await this.getDetails(this.data.mkpoint.id)
+                this.data.mkpoint = { ...mkpoint }
+            }
+
+            // Build visited icon if necessary
+            if (this.data.mkpoint.isCleared) {
+                var visitedIcon = document.createElement('div')
+                visitedIcon.id = 'visited-icon'
+                visitedIcon.title = 'この絶景スポットを訪れたことがあります。'
+                visitedIcon.innerHTML = `
+                    <a href="/activity/` + mkpoint.isCleared + `" target="_blank">
+                        <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
+                    </a>
+                `
+            }
+
+            // Build tagslist
+            var tags = ''
+            if (this.data.mkpoint.tags) this.data.mkpoint.tags.map( (tag) => {
+                tags += `
+                <a target="_blank" href="/tag/` + tag + `">
+                    <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+                </a>`
+            } )
+
+            if (this.data.mkpoint.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
+            if (this.data.mkpoint.isCleared) this.popup._content.querySelector('.popup-icons').appendChild(visitedIcon)
+            this.popup._content.querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
+            this.popup._content.querySelector('.popup-description').innerHTML = this.data.mkpoint.description
+            this.popup._content.querySelector('.js-tags').innerHTML = tags
+
+            resolve(true)
+        } )
+    }
+
     init () {
         this.popup.once('open', async () => {
 
             // Setup general interactions
             this.select()
-            await this.loadPhotos().then(() => this.loadLightbox())
             this.loadReviews()
             this.loadRating(this.data.mkpoint)
-            this.colorLike()
-            this.prepareToggleLike()
-
-            // Setup interactions depending on content
-            var content = this.popup.getElement().innerHTML
-            if (content.includes('mkpointAdminPanel')) this.mkpointAdmin()
-            if (content.includes('target-button')) this.setTarget()
-            if (content.includes('js-favorite-button')) this.setFavorite()
-            if (content.includes('round-propic-img')) this.addPropic()
-
+            
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
                 this.data.mapInstance.unselectMarkers()
-                this.loadLightbox()
-                this.colorLike()
-                this.prepareToggleLike()
+                this.select()
             } )
             this.popup.on('close', () => {
                 this.data.mapInstance.unselectMarkers()
             } )
+
+            await this.populate().then(() => {
+                this.displayPhotos()
+                this.loadLightbox()
+                this.popup.on('open', () => {
+                    this.loadLightbox()
+                    this.colorLike()
+                    this.prepareToggleLike()
+                } )
+            } )
+
+            // Setup interactions depending on content
+            var content = this.popup._content.innerHTML
+            if (content.includes('mkpointAdminPanel')) this.mkpointAdmin()
+            if (content.includes('target-button')) this.setTarget()
+            if (content.includes('js-favorite-button')) this.setFavorite()
+            if (content.includes('round-propic-img')) this.addPropic()
         } )
     }
 
-    async loadPhotos () {
-        return new Promise((resolve, reject) => {
+    displayPhotos () {
 
-            var photosContainer = this.popup.getElement().querySelector('.popup-img-container')
+        var photosContainer = this.popup._content.querySelector('.popup-img-container')
+        const photos = this.data.mkpoint.photos
 
-            // Asks server for current photo data
-            this.loaderContainer = photosContainer
-            ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, (photos) => {
+        var addArrows = () => {
+            if (!photosContainer.querySelector('.small-prev')) {
+                var minusPhotoButton = document.createElement('a')
+                minusPhotoButton.classList.add('small-prev', 'lightbox-arrow')
+                minusPhotoButton.innerText = '<'
+                photosContainer.appendChild(minusPhotoButton)
+                var plusPhotoButton = document.createElement('a')
+                plusPhotoButton.classList.add('small-next', 'lightbox-arrow')
+                plusPhotoButton.innerText = '>'
+                photosContainer.appendChild(plusPhotoButton)
+            }
+        }
 
-                this.photos = photos
-                resolve(photos)
+        var removeArrows = () => {
+            if (photosContainer.querySelector('.small-prev')) {
+                photosContainer.querySelector('.small-prev').remove()
+                photosContainer.querySelector('.small-next').remove()
+            }
+        }
 
-                var addArrows = () => {
-                    if (!photosContainer.querySelector('.small-prev')) {
-                        var minusPhotoButton = document.createElement('a')
-                        minusPhotoButton.classList.add('small-prev', 'lightbox-arrow')
-                        minusPhotoButton.innerText = '<'
-                        photosContainer.appendChild(minusPhotoButton)
-                        var plusPhotoButton = document.createElement('a')
-                        plusPhotoButton.classList.add('small-next', 'lightbox-arrow')
-                        plusPhotoButton.innerText = '>'
-                        photosContainer.appendChild(plusPhotoButton)
-                    }
-                }
-
-                var removeArrows = () => {
-                    if (photosContainer.querySelector('.small-prev')) {
-                        photosContainer.querySelector('.small-prev').remove()
-                        photosContainer.querySelector('.small-next').remove()
-                    }
-                }
-
-                var addDeletePhotoIcon = () => {
-                    // If delete photo button is not already displayed, display it
-                    if (!this.popup.getElement().querySelector('.deletephoto-button')) {
-                        var deletePhoto = document.createElement('div')
-                        deletePhoto.className = 'deletephoto-button admin-icon'
-                        deletePhoto.innerHTML = '<span class="iconify" data-icon="mdi:image-remove" data-width="20" data-height="20"></span>'
-                        deletePhoto.title = 'この写真を削除する'
-                        this.popup.getElement().querySelector('.popup-icons').appendChild(deletePhoto)
-                        // Delete photo on click
-                        deletePhoto.addEventListener('click', () => {
-                            var modal = document.createElement('div')
-                            modal.classList.add('modal', 'd-block')
-                            document.querySelector('body').appendChild(modal)
-                            // Remove modal on clicking outside popup
-                            modal.addEventListener('click', (e) => {
-                                var eTarget = e ? e.target : event.srcElement
-                                if ((eTarget == this.popup) || (eTarget == modal)) modal.remove()
-                            })
-                            var deleteConfirmationPopup = document.createElement('div')
-                            deleteConfirmationPopup.classList.add('popup')
-                            deleteConfirmationPopup.innerHTML = 'この写真が削除されます。宜しいですか？<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkred text-white">はい</div><div id="no" class="mp-button bg-darkgreen text-white">いいえ</div></div>'
-                            modal.appendChild(deleteConfirmationPopup)
-                            // On click on "Yes" button, remove the photo and close the popup
-                            document.querySelector('#yes').addEventListener('click', () => {
-                                // Get currently displayed photo id
-                                var photo_id
-                                var currentPhoto
-                                document.querySelectorAll('.popup-img').forEach( ($photo) => {
-                                    if ($photo.style.display == 'block') {
-                                        photo_id = $photo.id
-                                        currentPhoto = $photo
-                                    }
-                                } )
-                                // Delete photo
-                                ajaxGetRequest (this.apiUrl + "?delete-photo-mkpoint=" + this.data.mkpoint.id + "&photo=" + photo_id, () => {
-                                    // Remove photo and period
-                                    currentPhoto.nextSibling.remove() // Period
-                                    currentPhoto.remove()
-                                    modal.remove()
-                                    deleteConfirmationPopup.remove()
-                                    // Reload photos
-                                    ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, displayPhotos.bind(this))
-                                } )
-                            } )
-                            // On click on "No" button, close the popup
-                            document.querySelector('#no').addEventListener('click', () => {
-                                modal.remove()
-                                deleteConfirmationPopup.remove()
-                            } )
-                        } )
-                    }
-                }
-
-                const addPhoto = (photo, number) => {
-                    photo.$element = document.createElement('img')
-                    photo.$element.classList.add('popup-img')
-                    photo.$element.dataset.number = number
-                    photo.$element.dataset.id = photo.id
-                    photo.$element.dataset.author = photo.user_id
-                    photo.$element.src = 'data:image/jpeg;base64,' + photo.blob
-                    photosContainer.prepend(photo.$element)
-                    photo.$period = document.createElement('div')
-                    photo.$period.classList.add('mkpoint-period', setPeriodClass(photo.month))
-                    photo.$period.innerText = photo.period
-                    // Display first photo and period by default
-                    if (number == 1) {
-                        photo.$period.style.display = 'block'
-                        photo.$element.style.display = 'block'
-                    } else {
-                        photo.$period.style.display = 'none'
-                        photo.$element.style.display = 'none'
-                    }
-                    photo.$element.after(photo.$period)
-                    
-                    // Set lightbox listener
-                    photo.$element.addEventListener('click', () => {
-                        let id = parseInt(photo.$element.dataset.number)
-                        this.lightbox.open(id)
-                    } )
-                }
-
-                // Add photos to the DOM on first opening
-                for (let i = 0; i < this.photos.length; i++) addPhoto(this.photos[i], i + 1)
-
-                // Set on first opening
-                if (!this.popup.getElement().querySelector('.popup-img')) {
-                    // Handle listener to the add photo button
-                    var form = this.popup.getElement().querySelector('#addphoto-button-form')
-                    form.addEventListener('change', (e) => {
-
-                        // Prevents default behavior of the submit button
-                        e.preventDefault()
-                        
-                        // Get form data into queryData and adds tab id
-                        var newPhotoData = new FormData(form)
-                        newPhotoData.append('addphoto-button-form', true)
-                        newPhotoData.append('mkpoint_id', this.data.mkpoint.id)
-                        
-                        // Proceed AJAX request and treat data in the callback function
-                        ajaxPostFormDataRequest(this.apiUrl, newPhotoData, (response) => {
-            
-                            // In case of error, display corresponding error message
-                            if (response.error) {
-        
-                                console.log('error')
-                                console.log(response)
-            
-                                // If there is already a message displayed, remove it before
-                                if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
-                                var errorDiv = document.createElement('div')
-                                errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-2')
-                                var errorMessage = document.createElement('p')
-                                errorMessage.innerHTML = response.error
-                                errorMessage.classList.add('error-message')
-                                errorDiv.appendChild(errorMessage)
-                                document.querySelector('.mapboxgl-popup-content').prepend(errorDiv)
-            
-                            } else {
-            
-                                // If upload process went successfully, remove the error message if one is displayed
-                                if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
-            
-                                // Reload photos
-                                ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, displayPhotos.bind(this))
+        var addDeletePhotoIcon = () => {
+            // If delete photo button is not already displayed, display it
+            if (!this.popup._content.querySelector('.deletephoto-button')) {
+                var deletePhoto = document.createElement('div')
+                deletePhoto.className = 'deletephoto-button admin-icon'
+                deletePhoto.innerHTML = '<span class="iconify" data-icon="mdi:image-remove" data-width="20" data-height="20"></span>'
+                deletePhoto.title = 'この写真を削除する'
+                this.popup._content.querySelector('.popup-icons').appendChild(deletePhoto)
+                // Delete photo on click
+                deletePhoto.addEventListener('click', () => {
+                    var modal = document.createElement('div')
+                    modal.classList.add('modal', 'd-block')
+                    document.querySelector('body').appendChild(modal)
+                    // Remove modal on clicking outside popup
+                    modal.addEventListener('click', (e) => {
+                        var eTarget = e ? e.target : event.srcElement
+                        if ((eTarget == this.popup) || (eTarget == modal)) modal.remove()
+                    })
+                    var deleteConfirmationPopup = document.createElement('div')
+                    deleteConfirmationPopup.classList.add('popup')
+                    deleteConfirmationPopup.innerHTML = 'この写真が削除されます。宜しいですか？<div class="d-flex justify-content-between"><div id="yes" class="mp-button bg-darkred text-white">はい</div><div id="no" class="mp-button bg-darkgreen text-white">いいえ</div></div>'
+                    modal.appendChild(deleteConfirmationPopup)
+                    // On click on "Yes" button, remove the photo and close the popup
+                    document.querySelector('#yes').addEventListener('click', () => {
+                        // Get currently displayed photo id
+                        var photo_id
+                        var currentPhoto
+                        document.querySelectorAll('.popup-img').forEach( ($photo) => {
+                            if ($photo.style.display == 'block') {
+                                photo_id = $photo.id
+                                currentPhoto = $photo
                             }
                         } )
+                        // Delete photo
+                        ajaxGetRequest (this.apiUrl + "?delete-photo-mkpoint=" + this.data.mkpoint.id + "&photo=" + photo_id, () => {
+                            // Remove photo and period
+                            currentPhoto.nextSibling.remove() // Period
+                            currentPhoto.remove()
+                            modal.remove()
+                            deleteConfirmationPopup.remove()
+                            // Reload photos
+                            ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, displayPhotos.bind(this))
+                        } )
                     } )
-                }
+                    // On click on "No" button, close the popup
+                    document.querySelector('#no').addEventListener('click', () => {
+                        modal.remove()
+                        deleteConfirmationPopup.remove()
+                    } )
+                } )
+            }
+        }
 
-                // First clear container from previously displayed photos
-                this.popup.getElement().querySelectorAll('popup-img').forEach(formerPhoto => formerPhoto.remove())
-                // If a new photo has been uploaded, add it
-                if (this.photos.length > document.querySelectorAll('.popup-img').length) {
-                    addPhoto(this.photos[this.photos.length - 1], this.photos.length - 1)
-                }
+        const addPhoto = (photo, number) => {
+            photo.$element = document.createElement('img')
+            photo.$element.classList.add('popup-img')
+            photo.$element.dataset.number = number
+            photo.$element.dataset.id = photo.id
+            photo.$element.dataset.author = photo.user_id
+            photo.$element.src = photo.url
+            photosContainer.prepend(photo.$element)
+            photo.$period = document.createElement('div')
+            photo.$period.classList.add('mkpoint-period', setPeriodClass(photo.month))
+            photo.$period.innerText = photo.period
+            // Display first photo and period by default
+            if (number == 1) {
+                photo.$period.style.display = 'block'
+                photo.$element.style.display = 'block'
+            } else {
+                photo.$period.style.display = 'none'
+                photo.$element.style.display = 'none'
+            }
+            photo.$element.after(photo.$period)
+            
+            // Set lightbox listener
+            photo.$element.addEventListener('click', () => {
+                let id = parseInt(photo.$element.dataset.number)
+                this.lightbox.open(id)
+            } )
+        }
+        
+        // Remove loader
+        photosContainer.querySelector('.loader-center').remove()
 
-                var photoIndex = 1
+        // Add photos to the DOM on first opening
+        for (let i = 0; i < photos.length; i++) addPhoto(photos[i], i + 1)
 
-                // If there is more than one photo in the database
-                if (this.photos.length > 1) {
+        // Set on first opening
+        if (!this.popup._content.querySelector('.popup-img')) {
+            // Handle listener to the add photo button
+            var form = this.popup._content.querySelector('#addphoto-button-form')
+            form.addEventListener('change', (e) => {
 
-                    // Add left and right arrows and attach event listeners to it
-                    addArrows()
+                // Prevents default behavior of the submit button
+                e.preventDefault()
                 
-                    var plusPhoto = () => { showPhotos (photoIndex += 1) }
-                    var minusPhoto = () => { showPhotos (photoIndex -= 1) }
-                    var showPhotos = (n) => {
-                        if (n > this.photos.length) {photoIndex = 1}
-                        if (n < 1) {photoIndex = this.photos.length}
-                        for (let i = 0; i < this.photos.length; i++) {
-                            this.photos[i].$element.style.display = 'none'
-                            this.photos[i].$period.style.display = 'none'
-                        }
-                        this.photos[photoIndex-1].$element.style.display = 'block'
-                        this.photos[photoIndex-1].$period.style.display = 'inline-block'
+                // Get form data into queryData and adds tab id
+                var newPhotoData = new FormData(form)
+                newPhotoData.append('addphoto-button-form', true)
+                newPhotoData.append('mkpoint_id', this.data.mkpoint.id)
+                
+                // Proceed AJAX request and treat data in the callback function
+                ajaxPostFormDataRequest(this.apiUrl, newPhotoData, (response) => {
+    
+                    // In case of error, display corresponding error message
+                    if (response.error) {
+    
+                        // If there is already a message displayed, remove it before
+                        if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
+                        var errorDiv = document.createElement('div')
+                        errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-2')
+                        var errorMessage = document.createElement('p')
+                        errorMessage.innerHTML = response.error
+                        errorMessage.classList.add('error-message')
+                        errorDiv.appendChild(errorMessage)
+                        document.querySelector('.mapboxgl-popup-content').prepend(errorDiv)
+    
+                    } else {
+    
+                        // If upload process went successfully, remove the error message if one is displayed
+                        if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
+    
+                        // Reload photos
+                        ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, displayPhotos.bind(this))
                     }
-                    
-                    this.popup.getElement().querySelector('.small-prev').addEventListener('click', minusPhoto)
-                    this.popup.getElement().querySelector('.small-next').addEventListener('click', plusPhoto)
-                    showPhotos(photoIndex)
+                } )
+            } )
+        }
 
-                    // Change the color of the like button depending on if new photo has been liked or not
-                    this.colorLike()
+        // First clear container from previously displayed photos
+        this.popup._content.querySelectorAll('popup-img').forEach(formerPhoto => formerPhoto.remove())
+        // If a new photo has been uploaded, add it
+        if (photos.length > document.querySelectorAll('.popup-img').length) {
+            addPhoto(photos[photos.length - 1], photos.length - 1)
+        }
 
-                    // Add delete photo button if necessary
-                    if (this.popup.getElement().querySelector('.deletephoto-button')) this.popup.getElement().querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-                    if (photos[photoIndex-1].$element.dataset.author == sessionStorage.getItem('session-id')) addDeletePhotoIcon() // ... And add it if connected user is photo author
+        var photoIndex = 1
 
-                // If there is only one photo in the database, remove arrows if needed
-                } else removeArrows()
-            }, this.loader)
-        } )
+        // If there is more than one photo in the database
+        if (photos.length > 1) {
+
+            // Add left and right arrows and attach event listeners to it
+            addArrows()
+        
+            var plusPhoto = () => { showPhotos (photoIndex += 1) }
+            var minusPhoto = () => { showPhotos (photoIndex -= 1) }
+            var showPhotos = (n) => {
+                if (n > photos.length) {photoIndex = 1}
+                if (n < 1) {photoIndex = photos.length}
+                for (let i = 0; i < photos.length; i++) {
+                    photos[i].$element.style.display = 'none'
+                    photos[i].$period.style.display = 'none'
+                }
+                photos[photoIndex-1].$element.style.display = 'block'
+                photos[photoIndex-1].$period.style.display = 'inline-block'
+                // Update like button color on every photo change                
+                this.colorLike()
+            }
+            
+            this.popup._content.querySelector('.small-prev').addEventListener('click', minusPhoto)
+            this.popup._content.querySelector('.small-next').addEventListener('click', plusPhoto)
+            showPhotos(photoIndex)
+
+            // Add delete photo button if necessary
+            if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
+            if (photos[photoIndex-1].$element.dataset.author == sessionStorage.getItem('session-id')) addDeletePhotoIcon() // ... And add it if connected user is photo author
+
+        // If there is only one photo in the database, remove arrows if needed
+        } else removeArrows()
     }
 
     // Setup lightbox
@@ -365,16 +379,17 @@ export default class SceneryPopup extends Popup {
             popup: this.popup,
             mapInstance: this.data.mapInstance,
             mkpoint: this.data.mkpoint,
-            photos: this.photos
+            photos: this.data.mkpoint.photos
         }
         this.lightbox = new SceneryLightbox(lightboxData)
     }
 
-    loadReviews = () => {
-        if (document.querySelector('#mkpointReview')) {
+    async loadReviews () {
 
-            // Get reviews on this mkpoint
-            ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id, (reviews) => {
+        // Get reviews on this mkpoint
+        ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id, (reviews) => {
+                
+            if (document.querySelector('#mkpointReview')) {
                 // Clear reviews if necessary
                 if (document.querySelector('.chat-line')) {
                     document.querySelectorAll('.chat-line').forEach( (chatline) => {
@@ -398,12 +413,12 @@ export default class SceneryPopup extends Popup {
                         }
                     } )
                 }
-            } )
+            }
 
             // Treat posting of a new review
             var textareaReview   = document.querySelector('#mkpointReview')
             var buttonReview     = document.querySelector('#mkpointReviewSend')
-            buttonReview.addEventListener('click', () => {
+            if (buttonReview) buttonReview.addEventListener('click', () => {
                 let content = textareaReview.value
                 ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.mkpoint.id + '&content=' + content, (review) => {
                     // If content is empty, remove review element and but button text back
@@ -432,7 +447,7 @@ export default class SceneryPopup extends Popup {
                     button.innerText = '表示'
                 }
             }
-        }
+        } )
     }
 
     displayReview = (review, options = {new: false}) => {
@@ -513,7 +528,7 @@ export default class SceneryPopup extends Popup {
     }
 
     setTarget = () => {
-        this.popup.getElement().querySelector('#target-button').addEventListener('click', () => {
+        this.popup._content.querySelector('#target-button').addEventListener('click', () => {
             var map = this.popup._map
             var lngLat = this.popup._lngLat
             map.flyTo( {
@@ -530,7 +545,7 @@ export default class SceneryPopup extends Popup {
     }
 
     setFavorite () {
-        if (this.popup.getElement()) var $button = this.popup.getElement().querySelector('.js-favorite-button')
+        if (this.popup._content) var $button = this.popup._content.querySelector('.js-favorite-button')
         else var $button = document.querySelector('.js-favorite-button')
         $button.addEventListener('click', () => {
             var type = 'scenery'
@@ -564,17 +579,17 @@ export default class SceneryPopup extends Popup {
         } )
     }
 
-    addPropic = async () => this.popup.getElement().querySelector('.round-propic-img').src = await this.loadPropic(this.data.mkpoint.user.id)
+    addPropic = async () => this.popup._content.querySelector('.round-propic-img').src = await this.loadPropic(this.data.mkpoint.user_id)
     
     mkpointAdmin () {
         const mapInstance = this.data.mapInstance
     // Edit
-        var editButton = this.popup.getElement().querySelector('#mkpointEdit')
+        var editButton = this.popup._content.querySelector('#mkpointEdit')
         // On click on edit button, change text into input fields and change Edit button into Save button
         editButton.addEventListener('click', () => {
             // Change name and description into input fields
-            var $name = this.popup.getElement().querySelector('.popup-properties-name')
-            var $description = this.popup.getElement().querySelector('.popup-description')
+            var $name = this.popup._content.querySelector('.popup-properties-name')
+            var $description = this.popup._content.querySelector('.popup-description')
             var inputName = document.createElement('input')
             inputName.setAttribute('type', 'text')
             inputName.id = 'mkpoint-edit-name'
@@ -666,15 +681,15 @@ export default class SceneryPopup extends Popup {
             moveButton.onclick = moveMkpoint
         }
         var marker
-        this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
+        this.data.mapInstance.map._markers.forEach( (_marker) => { // Get current marker instance
             if (_marker.getElement().id == 'mkpoint' + this.data.mkpoint.id) marker = _marker
         } )
         var $marker = marker.getElement()
-        var moveButton = this.popup.getElement().querySelector('#mkpointMove')
+        var moveButton = this.popup._content.querySelector('#mkpointMove')
         moveButton.onclick = moveMkpoint
         
     // Delete
-        var deleteButton = this.popup.getElement().querySelector('#mkpointDelete')
+        var deleteButton = this.popup._content.querySelector('#mkpointDelete')
         deleteButton.addEventListener('click', async () => {
             var answer = await openConfirmationPopup('この絶景スポットが削除されます。宜しいですか？')
             if (answer) { // If yes, remove the mkpoint and close the popup
@@ -683,7 +698,7 @@ export default class SceneryPopup extends Popup {
                     if (mkpoint.id === this.data.mkpoint.id) mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
                 } )
                 document.querySelector('#mkpoint' + this.data.mkpoint.id).remove()
-                this.popup.getElement().remove()
+                this.popup._content.remove()
             }
         } )
     }

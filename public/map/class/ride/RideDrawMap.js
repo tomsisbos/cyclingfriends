@@ -363,7 +363,7 @@ export default class RideDrawMap extends RideMap {
         return new Promise ( async (resolve, reject) => {
 
             // Display close mkpoints inside the map
-            ajaxGetRequest ('/api/map.php' + "?display-mkpoints=" + this.route_id, async (response) => {
+            ajaxGetRequest ('/api/map.php' + "?display-mkpoints=" + this.route_id + '&details=true', async (response) => {
 
                 this.mkpoints = await this.getClosestMkpoints(response, range)
 
@@ -379,21 +379,13 @@ export default class RideDrawMap extends RideMap {
                     if (mkpoint.on_route) this.mkpointsOnRouteNumber++
                 } )
 
-                // For each mkpoint
-                for (let i = 0, j = 0; i < this.mkpoints.length; i++) {
-                    if (this.mkpoints[i].on_route) j++ // Count mkpoints on route
-
-                    // Get images if needed
-                    if (!this.mkpoints[i].file_blob) {
-                        this.mkpoints[i].file_blob = await this.getFileBlob(this.mkpoints[i])
-                    }
-
-                    // For mkpoints located on route, build the thumbnail slider
-                    if (this.mkpoints[i].on_route) {
-                        // this.buildThumbnailSlider(this.mkpoints[i], j, this.mkpointsOnRouteNumber)
-                    }
-                    
-                }
+                // Get most relevant image url for each mkpoint and add it to map instance data
+                var closestPhotos = await this.getClosestPhotos(this.mkpoints)
+                closestPhotos.forEach(photo => {
+                    this.mkpoints.forEach(mkpoint => {
+                        if (mkpoint.id == photo.id) mkpoint.url = photo.data.url
+                    } )
+                } )
 
                 resolve(this.mkpoints)
             } )
@@ -419,7 +411,7 @@ export default class RideDrawMap extends RideMap {
                         photoInput.className = 'checkpoint-popup-img-container'
                         photoInput.innerHTML = '<img class="checkpoint-popup-img" />'
                         popup.getElement().querySelector('.checkpointMarkerForm').before(photoInput)
-                        popup.getElement().querySelector('.checkpoint-popup-img').src = 'data:image/jpeg;base64,' + mkpoint.file_blob
+                        popup.getElement().querySelector('.checkpoint-popup-img').src = mkpoint.url
                         this.generateProfile({force: true})
                         // Add "addToCheckpoints" button click event handler
                         var $button = popup._content.querySelector('#addToCheckpoints')

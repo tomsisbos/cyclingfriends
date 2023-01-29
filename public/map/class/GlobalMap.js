@@ -11,6 +11,7 @@ export default class GlobalMap extends Model {
         this.setSeason()
     }
 
+    apiUrl = '/api/map.php'
     map
     $map
     selectStyle
@@ -305,7 +306,7 @@ export default class GlobalMap extends Model {
                 this.loadImages()
             } )
             
-            this.map.on('contextmenu', async () => {
+            /*this.map.on('contextmenu', async () => {
                 var limits = {
                     min_zoom: 10,
                     max_zoom: 12
@@ -314,7 +315,7 @@ export default class GlobalMap extends Model {
                 var tile = cover.tiles(routeData.geometry, limits)
                 console.log(tile)
                 if (document.getElementById('elevationProfile')) this.generateProfile()
-            } )
+            } )*/
 
             this.centerOnUserLocation()
         } )
@@ -2065,11 +2066,11 @@ export default class GlobalMap extends Model {
         }
     }
 
-    async loadCloseMkpoints (range, options = {displayOnMap: true, generateProfile: true, getFileBlob: true}) {
+    async loadCloseMkpoints (range, options = {displayOnMap: true, generateProfile: true}) {
         return new Promise ( async (resolve, reject) => {
 
             // Display close mkpoints inside the map
-            ajaxGetRequest ('/api/map.php' + "?display-mkpoints=" + this.routeId, async (response) => {
+            ajaxGetRequest ('/api/map.php' + "?display-mkpoints=" + this.routeId + '&details=true', async (response) => {
 
                 var mkpoints = await this.getClosestMkpoints(response, range)
 
@@ -2085,22 +2086,26 @@ export default class GlobalMap extends Model {
                     if (mkpoint.on_route) this.mkpointsOnRouteNumber++
                 } )
 
-                // For each mkpoint
-                if (options.getFileBlob) {
-                    for (let i = 0; i < mkpoints.length; i++) {
-                        // Get images if needed
-                        mkpoints[i].file_blob = await this.getFileBlob(mkpoints[i])
-                    }
-                }
+                // Get most relevant image url for each mkpoint and add it to map instance data
+                var closestPhotos = await this.getClosestPhotos(mkpoints)
+                closestPhotos.forEach(photo => {
+                    mkpoints.forEach(mkpoint => {
+                        if (mkpoint.id == photo.id) mkpoint.file_url = photo.data.url
+                    } )
+                } )
                 resolve(mkpoints)
             } )
         } )
     }
 
-    async getFileBlob (mkpoint) {
+    async getClosestPhotos (mkpoints) {
         return new Promise ( async (resolve, reject) => {
-            ajaxGetRequest ('/api/map.php' + "?mkpoint-closest-photo=" + mkpoint.id, async (response) => {
-                resolve(response.file_blob)
+            var ids = mkpoints.map(mkpoint => mkpoint.id);
+            var ids_list = ids.join(',')
+            console.log(ids_list)
+            ajaxGetRequest ('/api/map.php' + "?mkpoints-closest-photo=" + ids_list, async (response) => {
+                console.log(response)
+                resolve(response)
             } )
         } )
     }
@@ -2118,7 +2123,7 @@ export default class GlobalMap extends Model {
             // Build a simplified line for rough filtering
             var coreLine = turf.simplify(routeData, {tolerance: 0.02, highQuality: false, mutate: false})
             mkpoints.forEach( (mkpoint) => {
-                var point = turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
+                var point = turf.point([mkpoint.lng, mkpoint.lat])
                 var nearestLinePoint = turf.nearestPointOnLine(coreLine, point)
                 var roughRemoteness = nearestLinePoint.properties.dist
                 if (range < 3) var roughRange = range * 8 // Define range from the coreline where to keep mkpoints according range value to prevent too small range
@@ -2130,7 +2135,7 @@ export default class GlobalMap extends Model {
 
             // Get route remoteness
             mkpointsInRange.forEach( (mkpoint) => {
-                var point = turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
+                var point = turf.point([mkpoint.lng, mkpoint.lat])
                 var nearestLinePoint = turf.nearestPointOnLine(routeData, point)
                 mkpoint.remoteness = nearestLinePoint.properties.dist
                 mkpoint.distance = nearestLinePoint.properties.location
@@ -2156,11 +2161,11 @@ export default class GlobalMap extends Model {
                 rank: segment.rank,
                 name: segment.name,
                 tags: [],
-                tunnels: segment.route.tunnels
+                tunnels: segment.tunnels
             },
             geometry: {
                 type: 'LineString',
-                coordinates: segment.route.coordinates
+                coordinates: segment.coordinates
             }
         }
         segment.tags.forEach(tag => geojson.properties.tags.push(tag))
@@ -2243,7 +2248,7 @@ export default class GlobalMap extends Model {
                 // Build a simplified line for rough filtering
                 var coreLine = turf.simplify(routeData, {tolerance: 0.02, highQuality: false, mutate: false})
                 segments.forEach( (segment) => {
-                    var point = turf.point([segment.route.coordinates[0][0], segment.route.coordinates[0][1]])
+                    var point = turf.point([segment.coordinates[0][0], segment.coordinates[0][1]])
                     var nearestLinePoint = turf.nearestPointOnLine(coreLine, point)
                     var roughRemoteness = nearestLinePoint.properties.dist
                     if (range < 3) var roughRange = range * 8 // Define range from the coreline where to keep segments according range value to prevent too small range
@@ -2255,7 +2260,7 @@ export default class GlobalMap extends Model {
 
                 // Get route remoteness
                 segmentsInRange.forEach( (segment) => {
-                    var point = turf.point([segment.route.coordinates[0][0], segment.route.coordinates[0][1]])
+                    var point = turf.point([segment.coordinates[0][0], segment.coordinates[0][1]])
                     var nearestLinePoint = turf.nearestPointOnLine(routeData, point)
                     segment.remoteness = nearestLinePoint.properties.dist
                     segment.distance = nearestLinePoint.properties.location
@@ -2294,12 +2299,12 @@ export default class GlobalMap extends Model {
             } )
             marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
             marker.isFavorite = mkpoint.isFavorite // Append favorites list data
-            marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
+            marker.setLngLat([mkpoint.lng, mkpoint.lat])
             marker.addTo(this.map)
             marker.getElement().id = 'mkpoint' + mkpoint.id
             marker.getElement().classList.add('mkpoint-marker')
             marker.getElement().dataset.id = mkpoint.id
-            marker.getElement().dataset.user_id = mkpoint.user.id
+            marker.getElement().dataset.user_id = mkpoint.user_id
             
             // Build and attach popup
             var popupOptions = {

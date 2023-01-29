@@ -24,6 +24,10 @@ await loadMap().then( (homeMap) => {
     // Load CF sources and layers
     homeMap.addSources()
     homeMap.addLayers()
+    
+    // Add controls
+    homeMap.addStyleControl()
+    homeMap.addFilterControl()
 
     // Prepare and display mkpoints data
     ajaxGetRequest (homeMap.apiUrl + "?display-mkpoints=details", async (mkpoints) => {
@@ -33,11 +37,10 @@ await loadMap().then( (homeMap) => {
         // Choose a scenery at random
         var randomKey = Math.floor(Math.random() * mkpoints.length)
         var randomMkpoint = mkpoints[randomKey]
-        const rmCoordinates = randomMkpoint.lngLat
 
         // Fly to it
         homeMap.map.jumpTo( {
-            center: [rmCoordinates.lng, rmCoordinates.lat],
+            center: [randomMkpoint.lng, randomMkpoint.lat],
             zoom: 14,
             pitch: 35,
             bearing: 20

@@ -1,9 +1,10 @@
 <div class="mk-card" data-id="<?= $mkpoint->id ?>">
-    <div class="mk-photo"><a href="/scenery/<?= $mkpoint->id ?>"><img src="data:image/jpeg;base64,<?= $mkpoint->getImages()[0]->blob ?>"></a></div>
+    <div class="mk-photo"><a href="/scenery/<?= $mkpoint->id ?>"><img src="<?= $mkpoint->getImages()[0]->url ?>"></a></div>
     <div class="mk-data">
         <div class="mk-top"> 
-            <a href="/rider/<?= $mkpoint->user->id ?>"><?php
-                $mkpoint->user->displayPropic(); ?>
+            <a href="/rider/<?= $mkpoint->user_id ?>"><?php
+                $user = new User($mkpoint->user_id);
+                $user->displayPropic(); ?>
             </a>
             <div class="mk-top-text">
                 <a href="/scenery/<?= $mkpoint->id ?>"><div class="mk-title"><?= $mkpoint->name ?></div></a> <?php

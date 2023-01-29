@@ -190,18 +190,10 @@ if (isAjax()) {
         }
 
         // Check if the same image have already been uploaded
-        $checkImg = $db->prepare('SELECT date, file_size FROM img_mkpoint WHERE mkpoint_id = ?');
-        $checkImg->execute(array($mkpointimg['mkpoint_id']));
-        $photos = $checkImg->fetchAll(PDO::FETCH_ASSOC);
-        $isAlreadyUploaded = false;
-        foreach ($photos as $photo) {
-            if (strtotime($photo['date']) == strtotime($mkpointimg['date']) && $photo['file_size'] == $mkpointimg['file_size']) {
-                $isAlreadyUploaded = true;
-            }
-        }
-        
+        $checkIfSimilarImageExists = $db->prepare('SELECT FROM img_mkpoint WHERE mkpoint_id = ? AND user_id = ? AND date = ?');
+        $checkIfSimilarImageExists->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['date']));        
         // If not, insert image in the database img_mkpoint table and send response
-        if ($isAlreadyUploaded != true) {
+        if ($checkIfSimilarImageExists->rowCount() == 0) {
             $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['user_login'], $mkpointimg['date'], $mkpointimg['month'], $mkpointimg['file_blob'], $mkpointimg['file_size'], $mkpointimg['file_name'], $mkpointimg['file_type'], 0));    
             echo json_encode($mkpointimg);
@@ -216,15 +208,20 @@ if (isAjax()) {
         echo json_encode($mkpoint->getImages());
     }
 
-    if (isset($_GET['mkpoint-closest-photo'])) { // Get photo whose period is the soonest
-        $getMkpointPhoto = $db->prepare('SELECT * FROM img_mkpoint WHERE mkpoint_id = ? AND month > ? ORDER BY month ASC');
-        $getMkpointPhoto->execute([$_GET['mkpoint-closest-photo'], date('m')]);
-        if ($getMkpointPhoto->rowCount() == 0) {
-            $getMkpointPhoto = $db->prepare('SELECT * FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY month DESC');
-            $getMkpointPhoto->execute([$_GET['mkpoint-closest-photo']]);
+    if (isset($_GET['mkpoints-closest-photo'])) { // Get photo whose period is the soonest for each mkpoint
+        $mkpoints_ids = explode(',', $_GET['mkpoints-closest-photo']);
+        $mkpoints = [];
+        foreach ($mkpoints_ids as $mkpoint_id) {
+            $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? AND MONTH(date) > ? ORDER BY date ASC');
+            $getMkpointPhoto->execute([$mkpoint_id, date('m')]);
+            if ($getMkpointPhoto->rowCount() == 0) {
+                $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY date DESC');
+                $getMkpointPhoto->execute($mkpoint_id);
+            }
+            $mkpointphoto = new MkpointImage($getMkpointPhoto->fetch(PDO::FETCH_ASSOC)['id']);
+            array_push($mkpoints,['id' => $mkpoint_id, 'data' => $mkpointphoto]);
         }
-        $mkpointphoto = $getMkpointPhoto->fetch(PDO::FETCH_ASSOC);
-        echo json_encode($mkpointphoto);
+        echo json_encode($mkpoints);
     }
 
     if (isset($_GET['getpropic'])) {
@@ -235,28 +232,51 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-mkpoints'])) {
-        $getMkpoints = $db->prepare('SELECT id FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        if (isset($_GET['details']) && $_GET['details'] == true) $getMkpoints = $db->prepare('SELECT id, user_id, name, description, city, prefecture, thumbnail, elevation, lng, lat, rating, grades_number, popularity FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        else $getMkpoints = $db->prepare('SELECT id, user_id, name, thumbnail, lng, lat, rating, grades_number, popularity FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
         $getMkpoints->execute();
         $result = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        $mkpoints = $result;
+        echo json_encode($mkpoints);
+    }
+
+    if (isset($_GET['get-mkpoints'])) {
+        $mkpoints_ids = explode(',', $_GET['get-mkpoints']);
         $mkpoints = [];
-        foreach ($result as $mkpoint_data) {
-            $mkpoint = new Mkpoint($mkpoint_data['id']);
-            if ($_GET['display-mkpoints'] == 'details') {
-                if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
-                if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
-                $mkpoint->tags = $mkpoint->getTags();
-            }
+        foreach ($mkpoints_ids as $mkpoint_id) {
+            $mkpoint = new Mkpoint($mkpoint_id);
+            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
+            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
+            $mkpoint->tags = $mkpoint->getTags();
             array_push($mkpoints, $mkpoint);
         }
         echo json_encode($mkpoints);
     }
 
     if (isset($_GET['mkpoint'])) {
+        $mkpoint_id = $_GET['mkpoint'];
         $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
-        $getMkpoint->execute(array($_GET['mkpoint']));
+        $getMkpoint->execute(array($mkpoint_id));
         if ($getMkpoint->rowCount() > 0) {
-            $mkpoint = new Mkpoint($_GET['mkpoint']);
+            $mkpoint = new Mkpoint($mkpoint_id);
+            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
+            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
+            $mkpoint->tags = $mkpoint->getTags();
             echo json_encode(['data' => $mkpoint, 'photos' => $mkpoint->getImages()]);
+        } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
+    }
+
+    if (isset($_GET['mkpoint-details'])) {
+        $mkpoint_id = $_GET['mkpoint-details'];
+        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
+        $getMkpoint->execute(array($mkpoint_id));
+        if ($getMkpoint->rowCount() > 0) {
+            $mkpoint = new Mkpoint($mkpoint_id);
+            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
+            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
+            $mkpoint->tags = $mkpoint->getTags();
+            $mkpoint->photos = $mkpoint->getImages();
+            echo json_encode($mkpoint);
         } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
     }
 
@@ -587,13 +607,37 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-segments'])) {
-        $getSegments = $db->prepare('SELECT id FROM segments');
+        $getSegments = $db->prepare('SELECT id, route_id, rank, name, advised, popularity FROM segments ORDER BY popularity DESC');
         $getSegments->execute();
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {
-            $segments[$i] = new Segment($segments[$i]['id'], false);
+            // Add coordinates
+            $getCoords = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
+            $getCoords->execute([$segments[$i]['route_id']]);
+            $segments[$i]['coordinates'] = $getCoords->fetchAll(PDO::FETCH_NUM);
+            // Add tunnels
+            $tunnels = [];
+            $getTunnelsNumber = $db->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
+            $getTunnelsNumber->execute([$segments[$i]['route_id']]);
+            $tunnels_number = $getTunnelsNumber->rowCount();
+            if ($i < $tunnels_number) for ($i = 0 ; $i < $tunnels_number; $i++) {
+                $getTunnelCoords = $db->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
+                $getTunnelCoords->execute([$i, $segments[$i]['route_id']]);
+                $tunnels[$i] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
+            }
+            $segments[$i]['tunnels'] = $tunnels;
+            // Add tags
+            $getTags = $db->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
+            $getTags->execute(['segment', $segments[$i]['id']]);
+            $tags = $getTags->fetchAll(PDO::FETCH_COLUMN);
+            $segments[$i]['tags'] = $tags;
         }
         echo json_encode($segments);
+    }
+    
+    if (isset($_GET['segment-details'])) {
+        $segment_id = $_GET['segment-details'];
+        echo json_encode(new Segment($segment_id, false));
     }
 
     if (isset($_GET['segment-mkpoints'])) {

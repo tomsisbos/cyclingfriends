@@ -7,21 +7,21 @@ class Segment extends Model {
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
         $this->id = $id;
-        $this->type               = 'segment';
+        $this->type          = 'segment';
         $data = $this->getData($this->table);
-        $this->route              = new Route($data['route_id'], $lngLatFormat);
-        $this->rank               = $data['rank'];
-        $this->name               = $data['name'];
-        $this->description        = $data['description'];
-        $this->advised            = (intval($data['advised']) === 1);
-        $this->advice             = new SegmentAdvice($this->id);
-        $this->seasons            = $this->getSeasons();
-        $this->specs              = new SegmentSpecs($this->id);
-        $this->tags               = $this->getTags();
-        $this->rating             = intval($data['rating']);
-        $this->grades_number      = intval($data['grades_number']);
-        $this->popularity         = intval($data['popularity']);
-        $this->views              = intval($data['views']);
+        $this->route         = new Route($data['route_id'], $lngLatFormat);
+        $this->rank          = $data['rank'];
+        $this->name          = $data['name'];
+        $this->description   = $data['description'];
+        $this->advised       = (intval($data['advised']) === 1);
+        $this->advice        = new SegmentAdvice($this->id);
+        $this->seasons       = $this->getSeasons();
+        $this->specs         = new SegmentSpecs($this->id);
+        $this->tags          = $this->getTags();
+        $this->rating        = intval($data['rating']);
+        $this->grades_number = intval($data['grades_number']);
+        $this->popularity    = intval($data['popularity']);
+        $this->views         = intval($data['views']);
     }
 
     private function getSeasons () {
@@ -56,7 +56,7 @@ class Segment extends Model {
         } else return false;
     }
 
-    public function getFeaturedImage ($blob = false) {
+    public function getFeaturedImage () {
 
         // Get all photos in an array
         $photos = $this->route->getPhotos();
@@ -68,14 +68,12 @@ class Segment extends Model {
                 return strcmp($b->likes, $a->likes);
             } ) );
 
-            if ($blob) return $photos[0]->blob;
-            else return 'data:image/jpeg;base64,' .$photos[0]->blob;
+            return $photos[0]->url;
         
         // If no photo has been found, return default image
         } else {
 
-            if ($blob) return false;
-            else return '/media/default-photo-' . rand(1,9) .'.svg';
+            return '/media/default-photo-' . rand(1,9) .'.svg';
 
         }
 

@@ -25,7 +25,7 @@ include '../includes/head.php'; ?>
 include '../includes/navbar.php'; ?>
 
 <!-- Animated background -->
-<div class="main js-fade-on-scroll" data-overlay-color="#b2e0e5">
+<div class="main js-fade-on-scroll js-overlay-top" data-overlay-color="#b2e0e5">
     <div class="home-video">
         <video autoplay muted loop>
             <source src="/media/overall.mp4" type="video/mp4">
@@ -178,3 +178,53 @@ include '../includes/foot.php'; ?>
 <script src="/scripts/home/home.js"></script>
 <script type="module" src="/scripts/home/scenery-map.js"></script>
 <script type="module" src="/scripts/home/segment-map.js"></script>
+
+<?php
+
+    require_once "../actions/blobStorageAction.php";
+    include "../actions/databaseAction.php";
+    
+    ini_set('memory_limit', '1024M');
+    ini_set('max_execution_time', '700');
+
+    die();
+
+    // Upload file
+    $blobClient->createBlockBlob($container_name, $blob_name, $stream);
+
+    // Set metadata
+    $blobClient->setBlobMetadata($container_name, $blob_name, $metadata);
+
+    // Get blob
+    $img_src = $blobClient->getBlobUrl($container_name, '20230108_095455.jpg');
+
+
+
+
+
+
+
+
+
+
+
+    die();
+
+    // Prepare variables
+    $container_name = 'cyclingfriends-data';
+    $blob_name = 'HelloWorldTxt';
+    $stream = fopen("HelloWorld.txt", "r");
+    $metadata = [
+        'folder' => 'test'
+    ];
+
+    // Upload file
+    $blobClient->createBlockBlob($container_name, $blob_name, $stream);
+
+    // Set metadata
+    $blobClient->setBlobMetadata($container_name, $blob_name, $metadata);    
+
+    // Get blob
+    $img_src = $blobClient->getBlobUrl($container_name, '20230108_095455.jpg');
+
+?>

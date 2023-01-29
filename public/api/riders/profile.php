@@ -59,23 +59,3 @@ if (isAjax()) {
         echo json_encode([true, 'success' => 'バイクが削除されました。']);
     }
 }
-
-
-// In case a json file have been sent
-$json = file_get_contents('php://input');
-if (isset($json) AND !empty($json)) { // Get json file from gallery.js xhr request
-
-    $var = json_decode($json, true);
-
-    if (is_array($var)) {
-
-        if (array_key_exists('updatecaption', $var)) { // Caption edition
-
-            $updateCaption = $db->prepare('UPDATE user_photos SET caption = ? WHERE user_id = ? AND img_id = ? ');
-            $updateCaption->execute(array(htmlspecialchars($var['caption']), $connected_user->id, $var['img_id']));
-            
-            echo json_encode($var);
-        
-        }
-    }
-}

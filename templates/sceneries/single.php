@@ -25,7 +25,7 @@ include '../includes/head.php'; ?>
 
 			$mkpoint_photos = $mkpoint->getImages(8);
 			$main_color = getMainColor($mkpoint->thumbnail); ?>
-			<div class="container pg-sg-header" style="background-image: url('data:<?= $mkpoint_photos[0]->type ?>;base64,<?= $mkpoint_photos[0]->blob ?>');">
+			<div class="container pg-sg-header" style="background-image: url('<?= $mkpoint_photos[0]->url ?>');">
 				<div class="header">
 					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
 						<h1><?= $mkpoint->name ?></h1>
@@ -80,7 +80,7 @@ include '../includes/head.php'; ?>
 				$number = 1;
 				foreach ($mkpoint_photos as $photo) { ?>
 					<div class="pg-sg-photo" data-number="<?= $number ?>" data-author="<?= $photo->user_id ?>" data-id="<?= $photo->id ?>">
-						<img class="mk-thumbnail" src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>"></img>
+						<img class="mk-thumbnail" src="<?= $photo->url ?>"></img>
 					</div> <?php
 					$number++;
 				} ?>

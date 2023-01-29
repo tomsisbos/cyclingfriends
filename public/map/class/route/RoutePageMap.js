@@ -99,10 +99,9 @@ export default class RoutePageMap extends GlobalMap {
             else var remoteness = Math.floor(this.mkpoints[i].remoteness * 10) / 10 + 'km'
             let entry = {
                 type: 'mkpoint',
-                lngLat: {lng: this.mkpoints[i].lngLat.lng, lat: this.mkpoints[i].lngLat.lat},
+                lngLat: {lng: this.mkpoints[i].lng, lat: this.mkpoints[i].lat},
                 id: this.mkpoints[i].id,
                 name: this.mkpoints[i].name,
-                description: this.mkpoints[i].description,
                 geolocation: this.mkpoints[i].city + ', ' + this.mkpoints[i].prefecture,
                 distance: 'km ' + Math.floor(this.mkpoints[i].distance * 10) / 10,
                 distanceValue: this.mkpoints[i].distance,
@@ -122,7 +121,6 @@ export default class RoutePageMap extends GlobalMap {
                     lngLat: this.ride.checkpoints[i].lngLat,
                     id: this.ride.checkpoints[i].number,
                     name: this.ride.checkpoints[i].name,
-                    description: this.ride.checkpoints[i].description,
                     geolocation,
                     distance: 'km ' + Math.floor(this.ride.checkpoints[i].distance * 10) / 10,
                     distanceValue: Math.floor(this.ride.checkpoints[i].distance * 100 ) / 100,
@@ -203,7 +201,7 @@ export default class RoutePageMap extends GlobalMap {
                     document.querySelectorAll('#routeTable tr').forEach( (tableEntry) => {
                         if (tableEntry != target) tableEntry.classList.remove('selected-entry')
                     } )
-                    if (document.querySelector('#boxShowMkpoints') && document.querySelector('#boxShowMkpoints').checked) {
+                    if (document.querySelector('#displayMkpointsBox') && document.querySelector('#displayMkpointsBox').checked) {
                         // Fly to the marker location
                         console.log(entry)
                         this.map.flyTo( {
@@ -247,16 +245,16 @@ export default class RoutePageMap extends GlobalMap {
         for (let i = 0; i < this.mkpoints.length; i++) {
             if (this.mkpoints[i].on_route) {
                 
-                if (this.mkpoints[i].file_blob !== null) var thumbnailSrc = 'data:image/jpeg;base64,' + this.mkpoints[i].file_blob
+                if (this.mkpoints[i].filename !== null) var thumbnailSrc = this.mkpoints[i].file_url
                 else var thumbnailSrc = '/media/default-photo-' + Math.ceil(Math.random() * 9) + '.svg'
                 let entry = {
                     type: 'mkpoint',
-                    lngLat: {lng: this.mkpoints[i].lngLat.lng, lat: this.mkpoints[i].lngLat.lat},
+                    lngLat: {lng: this.mkpoints[i].lng, lat: this.mkpoints[i].lat},
                     id: this.mkpoints[i].id,
                     name: this.mkpoints[i].name,
                     distance: 'km ' + Math.floor(this.mkpoints[i].distance * 10) / 10,
                     distanceValue: this.mkpoints[i].distance, 
-                    thumbnailSrc: 'data:image/jpeg;base64,' + this.mkpoints[i].file_blob
+                    thumbnailSrc: this.mkpoints[i].file_url
                 }
                 sliderData.push(entry)
             }

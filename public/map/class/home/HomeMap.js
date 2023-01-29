@@ -53,12 +53,12 @@ export default class HomeMap extends WorldMap {
             draggable: false,
             element: element
         } )
-        marker.setLngLat([mkpoint.lngLat.lng, mkpoint.lngLat.lat])
+        marker.setLngLat([mkpoint.lng, mkpoint.lat])
         marker.addTo(this.map)
         marker.getElement().id = 'mkpoint' + mkpoint.id
         marker.getElement().classList.add('mkpoint-marker')
         marker.getElement().dataset.id = mkpoint.id
-        marker.getElement().dataset.user_id = mkpoint.user.id
+        marker.getElement().dataset.user_id = mkpoint.user_id
         this.mkpointsMarkerCollection.push(marker)
 
         // Build and attach popup
@@ -78,60 +78,41 @@ export default class HomeMap extends WorldMap {
 
     openSegmentPopup (segment) {
         return new Promise (async (resolve, reject) => {
-
+            
             // Create segment popup instance
-            segment.segmentPopup = new HomeSegmentPopup( {
-                anchor: 'top-left',
-                className: 'js-linestring marker-popup js-segment-popup',
-                focusAfterOpen: false
-            }, segment, {noSession: true})
-
-            // Prepare and display segment popup
-            const popup = segment.segmentPopup.popup
-            popup.setLngLat(segment.route.coordinates[0])
-            popup.addTo(this.map)
-            segment.segmentPopup.loadRating(segment)
-            segment.segmentPopup.generateProfile({force: true})
-            segment.segmentPopup.addIconButtons()
-            popup.getElement().querySelector('#fly-button').addEventListener('click', async () => {
-                this.map.off('moveend', this.updateMapDataListener)
-                await this.flyAlong(turf.lineString(segment.route.coordinates), {layerId: 'segment' + segment.id})
-                this.map.on('moveend', this.updateMapDataListener)
-            } )
-
-            // Color segment cap in hovering style
-            if (this.map.getLayer('segmentCap' + segment.id)) {
-                this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
-                this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 1)
-                console.log('segment cap painted')
-            } else {
-                // Add segment cap layer
-                this.map.addLayer( {
-                    id: 'segmentCap' + segment.id,
-                    type: 'line',
-                    source: 'segment' + segment.id,
-                    layout: {
-                        'line-join': 'round',
-                        'line-cap': 'round'
-                    },
-                    paint: {
-                        'line-color': this.capColorHover,
-                        'line-width': 2,
-                        'line-opacity': 1,
-                        'line-gap-width': 2
+            if (!segment.segmentPopup) {
+                segment.mapInstance = this
+                segment.segmentPopup = new HomeSegmentPopup( {
+                    closeOnClick: true,
+                    anchor: 'bottom',
+                    className: 'js-linestring marker-popup js-segment-popup'
+                }, segment, {noSession: true})
+                // Prepare and display segment popup
+                const popup = segment.segmentPopup.popup
+                popup.setLngLat(segment.coordinates[0])
+                popup.addTo(this.map)
+                segment.segmentPopup.setFlyAlong = (flyAlongButton) => {
+                    flyAlongButton.addEventListener('click', async () => {
+                        this.map.off('moveend', this.updateMapDataListener)
+                        await this.flyAlong(turf.lineString(segment.coordinates), {layerId: 'segment' + segment.id})
+                        this.map.on('moveend', this.updateMapDataListener)
+                    } )
+                }
+                
+                // Hide segment cap when popup is closed
+                popup.on('close', () => {
+                    if (this.map.getLayer('segmentCap' + segment.id)) {
+                        this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
+                        this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.segmentCapColor)
                     }
                 } )
-                console.log('segment cap added from scratch')
+            } else {
+                segment.segmentPopup.popup.setLngLat(segment.coordinates[0])
+                segment.segmentPopup.popup.addTo(this.map)
             }
-            
-            // Remove instance and hide segment cap when popup is closed
-            popup.on('close', () => {
-                delete segment.segmentPopup
-                if (this.map.getLayer('segmentCap' + segment.id)) {
-                    this.map.setPaintProperty('segmentCap' + segment.id, 'line-opacity', 0)
-                    this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.segmentCapColor)
-                }
-            } )
+
+            // Color segment cap in hovering style
+            this.map.setPaintProperty('segmentCap' + segment.id, 'line-color', this.capColorHover)
 
             // Update segmentsCollection entry
             this.segmentsCollection.forEach((entry) => {
@@ -139,14 +120,20 @@ export default class HomeMap extends WorldMap {
             } )
 
             // Focus on segment
-            this.focus(turf.lineString(segment.route.coordinates))
-            
-            // Add segment relevant photos
-            segment.segmentPopup.mkpoints = await segment.segmentPopup.getMkpoints()
-            segment.segmentPopup.photos = segment.segmentPopup.getPhotos()
-            segment.segmentPopup.displayPhotos()
+            this.focus(this.map.getSource('segment' + segment.id)._data)
 
-            resolve (popup)
+            resolve(segment.segmentPopup.popup)
+        } )
+    }
+
+    // Set another map style without interfering with current route
+    setMapStyle (layerId) {
+
+        // Change map style
+        this.map.setStyle('mapbox://styles/sisbos/' + layerId).once('idle', async () => {
+            this.loadImages()
+            this.addSources()
+            this.addLayers()
         } )
     }
 }

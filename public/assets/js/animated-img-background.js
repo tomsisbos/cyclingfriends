@@ -8,6 +8,9 @@ var text = document.querySelector('.js-scenery-info')
 ajaxGetRequest ('/api/background.php' + "?get-background-imgs=" + imgsNumber, (imgs) => {
 	console.log(imgs)
 
+	// Preload images
+	imgs.forEach(img => new Image().src = img.url)
+
 	// Initialize css properties
 	background.style.setProperty('--imgAnimation', 'animatedImage 10s linear infinite alternate')
 	flash.style.animation = 'animatedOpacity ' + (interval / 2) + 's cubic-bezier(0,0,0,1) infinite alternate'
@@ -15,8 +18,8 @@ ajaxGetRequest ('/api/background.php' + "?get-background-imgs=" + imgsNumber, (i
 	// Function for dynamically change image and meta information
 	function changeImg () {
 		var number = Math.floor(Math.random() * imgsNumber) // Randomly define an integer among imgsNumber
-		background.style.setProperty('--bgImage', `url('data:` + imgs[number].type + `;base64,` + imgs[number].blob) // Change background image
-		text.innerHTML = imgs[number].mkpoint.name + ' (' + imgs[number].month + '月)<br>' + imgs[number].mkpoint.city + ', ' + imgs[number].mkpoint.prefecture // Change meta information
+		background.style.setProperty('--bgImage', 'url(' + imgs[number].url + ')') // Change background image
+		text.innerHTML = imgs[number].name + ' (' + imgs[number].month + '月)<br>' + imgs[number].city + ', ' + imgs[number].prefecture // Change meta information
 	}
 
 	// Run [changeImg] function once, then every [interval] seconds

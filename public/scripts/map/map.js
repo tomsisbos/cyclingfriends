@@ -59,6 +59,7 @@ amenities.forEach( (amenity) => {
             if (thisFeature.layer.id == amenity) {
                 feature = thisFeature
                 console.log(feature)
+                console.log(map.queryRenderedFeatures(e.point))
                 amenityPopup.data = feature.properties
             }
         } )

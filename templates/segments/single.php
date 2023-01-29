@@ -160,7 +160,7 @@ include '../includes/head.php'; ?>
 				<div class="container pg-sg-photos-container"> <?php
 					foreach ($photos as $photo) { ?>
 						<div class="pg-sg-photo">
-							<img src="data:<?= $photo->type ?>;base64,<?= $photo->blob ?>"></img>
+							<img src="<?= $photo->url ?>"></img>
 						</div>
 						<?php
 					} ?>

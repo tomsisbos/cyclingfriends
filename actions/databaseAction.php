@@ -6,8 +6,8 @@ $ssl_options = array(
 );
 
 try {
-	///$db = new PDO('mysql:host=cyclingfriends-db.mysql.database.azure.com:3306; dbname=cyclingfriends_db; charset=utf8;', 'sisbos', 'bOk6oyKW', $ssl_options); 
-	$db = new PDO('mysql:host=localhost; dbname=cyclingfriends; charset=utf8;', 'root', ''); 
+	$db = new PDO('mysql:host='.getenv('DB_HOST').'; dbname='.getenv('DB_NAME').'; charset=utf8;', getenv('DB_USER'), getenv('DB_PASSWORD'), $ssl_options); 
+	///$db = new PDO('mysql:host=localhost; dbname=cyclingfriends; charset=utf8;', 'root', ''); 
 	// Activation des erreurs PDO
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	/// Dev setting $db->setAttribute();

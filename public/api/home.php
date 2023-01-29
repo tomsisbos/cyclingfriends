@@ -39,19 +39,9 @@ if (isAjax()) {
 
     if (isset($_GET['display-mkpoints'])) {
         $mkpoints_number = 30;
-        $getMkpoints = $db->prepare("SELECT id FROM map_mkpoint ORDER BY popularity DESC LIMIT 0, {$mkpoints_number}");
+        $getMkpoints = $db->prepare("SELECT id, user_id, name, thumbnail, lng, lat, rating, grades_number, popularity FROM map_mkpoint ORDER BY popularity DESC LIMIT 0, {$mkpoints_number}");
         $getMkpoints->execute();
-        $result = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        $mkpoints = [];
-        foreach ($result as $mkpoint_data) {
-            $mkpoint = new Mkpoint($mkpoint_data['id']);
-            if ($_GET['display-mkpoints'] == 'details') {
-                if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
-                if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
-                $mkpoint->tags = $mkpoint->getTags();
-            }
-            array_push($mkpoints, $mkpoint);
-        }
+        $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($mkpoints);
     }
 
@@ -89,6 +79,20 @@ if (isAjax()) {
         }
     }
 
+    if (isset($_GET['mkpoint-details'])) {
+        $mkpoint_id = $_GET['mkpoint-details'];
+        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
+        $getMkpoint->execute(array($mkpoint_id));
+        if ($getMkpoint->rowCount() > 0) {
+            $mkpoint = new Mkpoint($mkpoint_id);
+            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
+            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
+            $mkpoint->tags = $mkpoint->getTags();
+            $mkpoint->photos = $mkpoint->getImages();
+            echo json_encode($mkpoint);
+        } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
+    }
+
     if (isset($_GET['get-rating'])) {
         if ($_GET['type'] == 'mkpoint') {
             $object = new Mkpoint($_GET['id']);
@@ -110,14 +114,37 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-segments'])) {
-        $segments_number = 6;
-        $getSegments = $db->prepare("SELECT id FROM segments ORDER BY popularity DESC LIMIT 0, {$segments_number}");
+        $getSegments = $db->prepare('SELECT id, route_id, rank, name, advised, popularity FROM segments ORDER BY popularity DESC');
         $getSegments->execute();
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {
-            $segments[$i] = new Segment($segments[$i]['id'], false);
+            // Add coordinates
+            $getCoords = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
+            $getCoords->execute([$segments[$i]['route_id']]);
+            $segments[$i]['coordinates'] = $getCoords->fetchAll(PDO::FETCH_NUM);
+            // Add tunnels
+            $tunnels = [];
+            $getTunnelsNumber = $db->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
+            $getTunnelsNumber->execute([$segments[$i]['route_id']]);
+            $tunnels_number = $getTunnelsNumber->rowCount();
+            if ($i < $tunnels_number) for ($i = 0 ; $i < $tunnels_number; $i++) {
+                $getTunnelCoords = $db->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
+                $getTunnelCoords->execute([$i, $segments[$i]['route_id']]);
+                $tunnels[$i] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
+            }
+            $segments[$i]['tunnels'] = $tunnels;
+            // Add tags
+            $getTags = $db->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
+            $getTags->execute(['segment', $segments[$i]['id']]);
+            $tags = $getTags->fetchAll(PDO::FETCH_COLUMN);
+            $segments[$i]['tags'] = $tags;
         }
         echo json_encode($segments);
+    }    
+    
+    if (isset($_GET['segment-details'])) {
+        $segment_id = $_GET['segment-details'];
+        echo json_encode(new Segment($segment_id, false));
     }
 
     if (isset($_GET['segment-mkpoints'])) {

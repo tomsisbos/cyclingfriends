@@ -6,12 +6,6 @@ export default class HomeSceneryPopup extends SceneryPopup {
 
     constructor (options, data, instanceOptions) {
         super(options, data, instanceOptions)
-
-        // Set popup element
-        this.popup.setHTML(this.setContent(data.mkpoint))
-
-        // Init interactions
-        this.init()
     }
 
     apiUrl = '/api/home.php'
@@ -21,16 +15,25 @@ export default class HomeSceneryPopup extends SceneryPopup {
 
             // Setup general interactions
             this.select()
-            await this.loadPhotos().then(() => this.loadLightbox())
-            this.setTarget()
 
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
                 this.data.mapInstance.unselectMarkers()
-                this.loadLightbox()
+                this.select()
             } )
             this.popup.on('close', () => {
                 this.data.mapInstance.unselectMarkers()
+            } )
+
+            await this.populate().then(() => {
+                this.displayPhotos()
+                this.setTarget()
+                this.loadLightbox()
+                this.popup.on('open', () => {
+                    this.loadLightbox()
+                    this.colorLike()
+                    this.prepareToggleLike()
+                } )
             } )
         } )
     }
@@ -45,7 +48,8 @@ export default class HomeSceneryPopup extends SceneryPopup {
         } )
 
         return `
-        <div class="popup-img-container">
+        <div class="popup-img-container">` +
+            this.centerLoader + `
             <div class="popup-icons">
                 <div id="target-button" title="この絶景スポットに移動する。">
                     <span class="iconify" data-icon="icomoon-free:target" data-width="20" data-height="20"></span>
@@ -59,16 +63,40 @@ export default class HomeSceneryPopup extends SceneryPopup {
                         <div class="popup-properties-name">`
                             + mkpoint.name + `
                         </div>
-                        <div class="popup-properties-location">` + mkpoint.city + ` (` + mkpoint.prefecture + `) - ` + mkpoint.elevation + `m</div>
+                        <div class="popup-properties-location"></div>
                         <div class="popup-rating"></div>
                     </div>
                 </div>
             </div>
-            <div class="popup-description">` + mkpoint.description + `</div>
-            <div class="js-tags">` + 
-                tags + `
-            </div>
+            <div class="popup-description">` + this.inlineLoader + `</div>
+            <div class="js-tags"></div>
         </div>`
+    }
+
+    async populate () {
+        return new Promise(async (resolve, reject) => {
+
+            // Get details of a specific mkpoint
+            if (!this.data.mkpoint.description) {
+                var mkpoint = await this.getDetails(this.data.mkpoint.id)
+                this.data.mkpoint = { ...mkpoint }
+            }
+
+            // Build tagslist
+            var tags = ''
+            if (this.data.mkpoint.tags) this.data.mkpoint.tags.map( (tag) => {
+                tags += `
+                <a target="_blank" href="/tag/` + tag + `">
+                    <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+                </a>`
+            } )
+
+            this.popup.getElement().querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
+            this.popup.getElement().querySelector('.popup-description').innerHTML = this.data.mkpoint.description
+            this.popup.getElement().querySelector('.js-tags').innerHTML = tags
+
+            resolve(true)
+        } )
     }
 
     async loadPhotos () {
@@ -109,7 +137,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
                     photo.$element.dataset.number = number
                     photo.$element.dataset.id = photo.id
                     photo.$element.dataset.author = photo.user_id
-                    photo.$element.src = 'data:image/jpeg;base64,' + photo.blob
+                    photo.$element.src = photo.url
                     photosContainer.prepend(photo.$element)
                     photo.$period = document.createElement('div')
                     photo.$period.classList.add('mkpoint-period', setPeriodClass(photo.month))
@@ -175,7 +203,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
             popup: this.popup,
             mapInstance: this.data.mapInstance,
             mkpoint: this.data.mkpoint,
-            photos: this.photos
+            photos: this.data.mkpoint.photos
         }
         this.lightbox = new HomeSceneryLightbox(lightboxData, {noSession: true})
     }
