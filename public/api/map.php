@@ -68,7 +68,7 @@ if (isAjax()) {
                 // If uploaded file size is between 1Mb and 3Mb set new quality to 30
                 else imagejpeg($img, $path, 90);
                 // Get variable ready
-                $mkpoint['file_blob'] = base64_encode(file_get_contents($path));
+                $blob = fopen($path, 'r');
                 
                 /* Thumbnail treatment */
                 // Get image and scale it to thumbnail size
@@ -82,6 +82,9 @@ if (isAjax()) {
                 // Get variable ready
                 $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
 
+                // Set filename for blob server
+                $filename = 'img_' . rand(0, 999999999999) . '.jpg';
+
                 // Delete temporary files
                 unlink($temp); unlink($path); unlink($thumbpath);
             }
@@ -91,9 +94,6 @@ if (isAjax()) {
             echo json_encode(['error' => $e->getMessage()]);
             die();
         }
-
-        // If everything went fine, response the mkpoint data
-        echo json_encode($mkpoint);
         
         // Check if there is an existing index with the same lng and lat (or less than a 0,001 difference) in the database
         $checkLngLat = $db->prepare('SELECT id, lng, lat FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
@@ -103,18 +103,54 @@ if (isAjax()) {
             $isMkpoint = $checkLngLat->fetch();
             $updateMapMkpoint = $db->prepare('UPDATE map_mkpoint SET user_id = ?, user_login = ?, category = ?, name = ?, city = ?, prefecture = ?, elevation = ?, date = ?, month = ?, description = ?, thumbnail = ?, popularity = ? WHERE ROUND(lng, 3) = ROUND(?, 3) AND ROUND(lat, 3) = ROUND(?, 3)');
             $updateMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat']));
-            $updateImgMkpoint = $db->prepare('UPDATE img_mkpoint SET user_id = ?, user_login = ?, date = ?, month = ?, file_blob = ?, file_size = ?, file_name = ?, file_type = ? WHERE mkpoint_id = ?');
-            $updateImgMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], $isMkpoint['id']));
+            $updateImgMkpoint = $db->prepare('UPDATE img_mkpoint SET user_id = ?, date = ?, filename = ? WHERE mkpoint_id = ?');
+            $updateImgMkpoint->execute(array($mkpoint['user_id'], $mkpoint['date'], $filename, $isMkpoint['id']));
+            $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
+            $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
+            $mkpoint['id'] = $getMkpointId->fetch(PDO::FETCH_COLUMN);
         // Else, create it
         } else {
 		    $insertMapMkpoint = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, thumbnail, popularity, lng, lat, publication_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
 		    $insertMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date']));
             $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
             $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
-            $mkpointId = $getMkpointId->fetch();
-            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertImgMkpoint->execute(array($mkpointId['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint['file_blob'], $mkpoint['file_size'], $mkpoint['file_name'], $mkpoint['file_type'], 0));
+            $mkpoint['id'] = $getMkpointId->fetch(PDO::FETCH_COLUMN);
+            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+            $insertImgMkpoint->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['date'], 0, $filename));
         }
+
+        // If everything went fine, response the mkpoint data
+        $mkpoint_response = [
+            'grades_number' => 0,
+            'id' => $mkpoint['id'],
+            'lat' => $mkpoint['lat'],
+            'lng' => $mkpoint['lng'],
+            'name' => $mkpoint['name'],
+            'popularity' => $mkpoint['popularity'],
+            'rating' => null,
+            'thumbnail' => $mkpoint['thumbnail'],
+            'user_id' => $mkpoint['user_id']
+        ];
+        echo json_encode($mkpoint_response);
+        
+        // Connect to blob storage
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+        // Send file to blob storage
+        $containername = 'scenery-photos';
+        $blobClient->createBlockBlob($containername, $filename, $blob);
+        // Set file metadata (except from mkpoint id which needs to be set later)
+        $metadata = [
+            'file_name' => $mkpoint['file_name'],
+            'file_type' => $mkpoint['file_type'],
+            'file_size' => $mkpoint['file_size'],
+            'scenery_id' => $mkpoint['id'],
+            'author_id' => $mkpoint['user_id'],
+            'date' => $mkpoint['publication_date'],
+            'lat' => $mkpoint['lat'],
+            'lng' => $mkpoint['lng']
+        ];
+        $blobClient->setBlobMetadata($containername, $filename, $metadata);
 
         // Insert tags data
         $checkLngLat->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
@@ -150,8 +186,7 @@ if (isAjax()) {
                 $mkpointimg['mkpoint_id']  = $_POST['mkpoint_id'];
                 $mkpointimg['user_id']     = $user->id;
                 $mkpointimg['user_login']  = $user->login;
-                $mkpointimg['date']        = exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'];
-                $mkpointimg['month']       = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
+                $mkpointimg['date']        = date('Y-m-d H:i:s', strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
                 $mkpointimg['file_size']   = $_FILES['file']['size'];
                 $mkpointimg['file_name']   = $_FILES['file']['name'];
                 $mkpointimg['file_type']   = $_FILES['file']['type'];
@@ -160,27 +195,41 @@ if (isAjax()) {
                 /* Photo treatment */
                 $img_name = 'img.'.$ext; // Set image name
                 $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
-                // Temporary upload raw file on the server
-                move_uploaded_file($_FILES['file']['tmp_name'], $temp);
+                move_uploaded_file($_FILES['file']['tmp_name'], $temp); // Temporary upload raw file on the server
                 // Get the file into $img thanks to imagecreatefromjpeg
                 $img = imagecreatefromjpegexif($temp);
                 $img = imagescale($img, 1600, 900);
                 // Correct image gamma and contrast
                 imagegammacorrect($img, 1.0, 1.1);
                 imagefilter($img, IMG_FILTER_CONTRAST, -5);
-                // Compress it and move it into a new folder
+                // Compress it and read data inside $blob
                 $path = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/photo_' .$img_name; // Set path variable
-                if ($_FILES['file']['size'] > 3000000) { // If uploaded file size exceeds 3Mb, set new quality
-                    imagejpeg($img, $path, 75);
-                } else { // If uploaded file size is between 1Mb and 3Mb set new quality
-                    imagejpeg($img, $path, 90); 
-                }
-                // Get variable ready
-                $mkpointimg['file_blob'] = base64_encode(file_get_contents($path));
-                
-                // Delete temporary files
-                unlink($temp); unlink($path);
+                if ($_FILES['file']['size'] > 3000000) imagejpeg($img, $path, 75); // If uploaded file size exceeds 3Mb, set new quality
+                else imagejpeg($img, $path, 90); // If uploaded file size is between 1Mb and 3Mb set new quality
+                $blob = fopen($path, 'r'); // Get variable ready
+                unlink($temp); unlink($path); // Delete temporary files
 
+                // Connect to blob storage
+                $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+                require $folder . '/actions/blobStorageAction.php';
+                // Send file to blob storage
+                $containername = 'scenery-photos';
+                $filename = 'img_' . rand(0, 999999999999) . '.jpg';
+                $blobClient->createBlockBlob($containername, $filename, $blob);
+                // Set file metadata (except from mkpoint id which needs to be set later)
+                $mkpoint_instance = new Mkpoint($mkpointimg['mkpoint_id']);
+                $lngLat = $mkpoint_instance->lngLat;
+                $metadata = [
+                    'file_name' => $mkpointimg['file_name'],
+                    'file_type' => $mkpointimg['file_type'],
+                    'file_size' => $mkpointimg['file_size'],
+                    'scenery_id' => $mkpointimg['mkpoint_id'],
+                    'author_id' => $mkpointimg['user_id'],
+                    'date' => $mkpointimg['date'],
+                    'lng' => $lngLat->lng,
+                    'lat' => $lngLat->lat
+                ];
+                $blobClient->setBlobMetadata($containername, $filename, $metadata);
             }
         
         // If any exception have been catched, response the error message set in the exception
@@ -190,17 +239,14 @@ if (isAjax()) {
         }
 
         // Check if the same image have already been uploaded
-        $checkIfSimilarImageExists = $db->prepare('SELECT FROM img_mkpoint WHERE mkpoint_id = ? AND user_id = ? AND date = ?');
+        $checkIfSimilarImageExists = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? AND user_id = ? AND date = ?');
         $checkIfSimilarImageExists->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['date']));        
         // If not, insert image in the database img_mkpoint table and send response
         if ($checkIfSimilarImageExists->rowCount() == 0) {
-            $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['user_login'], $mkpointimg['date'], $mkpointimg['month'], $mkpointimg['file_blob'], $mkpointimg['file_size'], $mkpointimg['file_name'], $mkpointimg['file_type'], 0));    
+            $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+            $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['date'], 0, $filename));    
             echo json_encode($mkpointimg);
-        } else {
-            echo json_encode(['error' => $photo['file_name']. 'は既にアップロードされています。']);
-        }
-		
+        } else echo json_encode(['error' => $photo['file_name']. 'は既にアップロードされています。']);
     }
 
     if (isset($_GET['mkpoint-photos'])) {
@@ -386,13 +432,11 @@ if (isAjax()) {
     }
 
     // Delete one photo from a mkpoint
-    if (isset($_GET['delete-photo-mkpoint'])) {
-        $mkpoint  = new Mkpoint($_GET['delete-photo-mkpoint']);
-        $photo_id = $_GET['photo'];
-        $removeMkpointPhoto = $db->prepare('DELETE FROM img_mkpoint WHERE id = ? AND mkpoint_id = ?');
-        $removeMkpointPhoto->execute(array($photo_id, $mkpoint->id));
-        echo json_encode(['mkpoint_id' => $mkpoint->id, 'photo_id' => $photo_id]);
-
+    if (isset($_GET['delete-mkpoint-photo'])) {
+        $photo_id = $_GET['delete-mkpoint-photo'];
+        $removeMkpointPhoto = $db->prepare('DELETE FROM img_mkpoint WHERE id = ?');
+        $removeMkpointPhoto->execute(array($photo_id));
+        echo json_encode(['photo_id' => $photo_id]);
     }
 
     if (isset($_GET['get-rating'])) {

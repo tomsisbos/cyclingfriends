@@ -123,7 +123,7 @@ export default class SceneryPopup extends Popup {
 
             // Build tagslist
             var tags = ''
-            if (this.data.mkpoint.tags) this.data.mkpoint.tags.map( (tag) => {
+            if (this.data.mkpoint.tags) this.data.mkpoint.tags.map((tag) => {
                 tags += `
                 <a target="_blank" href="/tag/` + tag + `">
                     <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
@@ -230,19 +230,20 @@ export default class SceneryPopup extends Popup {
                         var currentPhoto
                         document.querySelectorAll('.popup-img').forEach( ($photo) => {
                             if ($photo.style.display == 'block') {
-                                photo_id = $photo.id
+                                photo_id = $photo.dataset.id
                                 currentPhoto = $photo
                             }
                         } )
                         // Delete photo
-                        ajaxGetRequest (this.apiUrl + "?delete-photo-mkpoint=" + this.data.mkpoint.id + "&photo=" + photo_id, () => {
+                        console.log(photo_id)
+                        ajaxGetRequest(this.apiUrl + "?delete-mkpoint-photo=" + photo_id, () => {
                             // Remove photo and period
                             currentPhoto.nextSibling.remove() // Period
                             currentPhoto.remove()
                             modal.remove()
                             deleteConfirmationPopup.remove()
                             // Reload photos
-                            ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, displayPhotos.bind(this))
+                            ajaxGetRequest(this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, this.displayPhotos.bind(this))
                         } )
                     } )
                     // On click on "No" button, close the popup
@@ -283,52 +284,49 @@ export default class SceneryPopup extends Popup {
         }
         
         // Remove loader
-        photosContainer.querySelector('.loader-center').remove()
+        if (photosContainer.querySelector('.loader-center')) photosContainer.querySelector('.loader-center').remove()
 
         // Add photos to the DOM on first opening
         for (let i = 0; i < photos.length; i++) addPhoto(photos[i], i + 1)
 
-        // Set on first opening
-        if (!this.popup._content.querySelector('.popup-img')) {
-            // Handle listener to the add photo button
-            var form = this.popup._content.querySelector('#addphoto-button-form')
-            form.addEventListener('change', (e) => {
+        // Set up add photo button listener
+        var form = this.popup._content.querySelector('#addphoto-button-form')
+        form.addEventListener('change', (e) => {
 
-                // Prevents default behavior of the submit button
-                e.preventDefault()
-                
-                // Get form data into queryData and adds tab id
-                var newPhotoData = new FormData(form)
-                newPhotoData.append('addphoto-button-form', true)
-                newPhotoData.append('mkpoint_id', this.data.mkpoint.id)
-                
-                // Proceed AJAX request and treat data in the callback function
-                ajaxPostFormDataRequest(this.apiUrl, newPhotoData, (response) => {
-    
-                    // In case of error, display corresponding error message
-                    if (response.error) {
-    
-                        // If there is already a message displayed, remove it before
-                        if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
-                        var errorDiv = document.createElement('div')
-                        errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-2')
-                        var errorMessage = document.createElement('p')
-                        errorMessage.innerHTML = response.error
-                        errorMessage.classList.add('error-message')
-                        errorDiv.appendChild(errorMessage)
-                        document.querySelector('.mapboxgl-popup-content').prepend(errorDiv)
-    
-                    } else {
-    
-                        // If upload process went successfully, remove the error message if one is displayed
-                        if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
-    
-                        // Reload photos
-                        ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, displayPhotos.bind(this))
-                    }
-                } )
+            // Prevents default behavior of the submit button
+            e.preventDefault()
+            
+            // Get form data into queryData and adds tab id
+            var newPhotoData = new FormData(form)
+            newPhotoData.append('addphoto-button-form', true)
+            newPhotoData.append('mkpoint_id', this.data.mkpoint.id)
+
+            // Proceed AJAX request and treat data in the callback function
+            ajaxPostFormDataRequest(this.apiUrl, newPhotoData, (response) => {
+
+                // In case of error, display corresponding error message
+                if (response.error) {
+
+                    // If there is already a message displayed, remove it before
+                    if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
+                    var errorDiv = document.createElement('div')
+                    errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-2')
+                    var errorMessage = document.createElement('p')
+                    errorMessage.innerHTML = response.error
+                    errorMessage.classList.add('error-message')
+                    errorDiv.appendChild(errorMessage)
+                    document.querySelector('.mapboxgl-popup-content').prepend(errorDiv)
+
+                } else {
+
+                    // If upload process went successfully, remove the error message if one is displayed
+                    if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
+
+                    // Reload photos
+                    ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, this.displayPhotos.bind(this))
+                }
             } )
-        }
+        } )
 
         // First clear container from previously displayed photos
         this.popup._content.querySelectorAll('popup-img').forEach(formerPhoto => formerPhoto.remove())
@@ -366,7 +364,7 @@ export default class SceneryPopup extends Popup {
 
             // Add delete photo button if necessary
             if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-            if (photos[photoIndex-1].$element.dataset.author == sessionStorage.getItem('session-id')) addDeletePhotoIcon() // ... And add it if connected user is photo author
+            if (photos[photoIndex-1].$element.dataset.author == this.data.mapInstance.session.id) addDeletePhotoIcon() // ... And add it if connected user is photo author
 
         // If there is only one photo in the database, remove arrows if needed
         } else removeArrows()
@@ -405,10 +403,10 @@ export default class SceneryPopup extends Popup {
                     document.querySelector('.chat-reviews').appendChild($noReviewMessage)
                 }
                 // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
-                if (document.querySelector('#review-author-' + sessionStorage.getItem('session-id'))) {
+                if (document.querySelector('#review-author-' + this.data.mapInstance.session.id)) {
                     document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
                     reviews.forEach( (review) => {
-                        if (review.user.id == sessionStorage.getItem('session-id')) {
+                        if (review.user.id == this.data.mapInstance.session.id) {
                             document.querySelector('#mkpointReview').innerText = review.content
                         }
                     } )
@@ -467,7 +465,7 @@ export default class SceneryPopup extends Popup {
                 let $review = document.createElement('div')
                 $review.className = 'chat-line'
                 // Set review background in yellow if author is connected user 
-                if (sessionStorage.getItem('session-id') === review.user.id) {
+                if (this.data.mapInstance.session.id === review.user.id) {
                     $review.classList.add('bg-admin', 'p-2')
                 }
                 $review.id = 'review-author-' + review.user.id
@@ -697,13 +695,8 @@ export default class SceneryPopup extends Popup {
                 // Remove current marker
                 document.querySelector('#mkpoint' + this.data.mkpoint.id).remove()
                 // Also remove from map instance
-                console.log(mapInstance.data.mkpoints)
-                console.log(this.data.mkpoint.id)
                 mapInstance.data.mkpoints.forEach(mkpoint => {
-                    if (mkpoint.id === this.data.mkpoint.id) {
-                        console.log('Scenery instance removed')
-                        mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
-                    }
+                    if (mkpoint.id == this.data.mkpoint.id) mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
                 } )
                 this.popup._content.remove()
             }

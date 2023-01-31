@@ -39,22 +39,23 @@ export default class TempPopup extends Popup {
 
     // Treat Mkpoint input data through API requests
     async save () {
-        return new Promise( async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             var popup = this.popup
             var form = popup._content.querySelector('form')
-            var id = popup.id
-            let lng = popup._lngLat.lng
-            let lat = popup._lngLat.lat
-            var location = await this.getLocation(this.popup.getLngLat())
-            var city = location.city
-            var prefecture = location.prefecture
-            var elevation = popup.elevation
 
             // Get form data into queryData on submission of the form
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 
                 // Prevents default behavior of the submit button
                 e.preventDefault()
+                
+                var id = popup.id
+                let lng = popup._lngLat.lng
+                let lat = popup._lngLat.lat
+                var location = await this.getLocation(this.popup.getLngLat())
+                var city = location.city
+                var prefecture = location.prefecture
+                var elevation = popup.elevation
 
                 // Get tags data
                 var tags = []
@@ -87,7 +88,7 @@ export default class TempPopup extends Popup {
                         // Remove temp marker after posting data
                         document.querySelector('.mapboxgl-popup').remove()
                         document.getElementById(id).remove()
-                        resolve()
+                        resolve(response)
                     }
                 } )
             } )

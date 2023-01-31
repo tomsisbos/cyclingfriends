@@ -952,7 +952,7 @@ export default class WorldMap extends GlobalMap {
     addTempMarker (lngLat) {
         var marker = new mapboxgl.Marker(
             {
-                color: '#f6b9cd',
+                color: '#fffa9c',
                 draggable: true,
                 scale: 0.8
             }
@@ -972,9 +972,8 @@ export default class WorldMap extends GlobalMap {
                 previewImage.src = URL.createObjectURL(e.target.files[0])
             } )
             // Save data on submit and display new data
-            var save = tempPopup.save.bind(tempPopup)
-            await save()
-            this.updateMkpoints()
+            var mkpoint = await tempPopup.save()
+            this.addMkpoint(mkpoint)
         } )
         
         popup.options.className = 'hidden' // Hide popup as creating in edit mode
@@ -1063,6 +1062,13 @@ export default class WorldMap extends GlobalMap {
             this.tempMarkerCollection.forEach((marker) => marker.setDraggable(false))
             console.log('editModeMarker has been disabled.')
         }
+    }
+
+    addMkpoint (mkpoint) {
+        console.log(mkpoint)
+        console.log(this.data.mkpoints[0])
+        this.data.mkpoints.push(mkpoint)
+        this.updateMkpoints()
     }
 
     // Highlighting connected user markers 
