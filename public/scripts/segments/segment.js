@@ -9,10 +9,11 @@ console.log(segmentMap)
 
 var $map = document.getElementById('segmentMap')
 const exportButton = document.querySelector('#export')
+const deleteButton = document.querySelector('#delete')
 
 // Set timeline container height
 var timelineContainer = document.querySelector('.pg-sg-season-descriptions')
-if (timelineContainer) timelineContainer.style.height = (timelineContainer.querySelector('p').offsetHeight) + 'px'
+if (timelineContainer && timelineContainer.querySelector('p')) timelineContainer.style.height = (timelineContainer.querySelector('p').offsetHeight) + 'px'
 
 // Get route data from server
 ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, async (segment) => {
@@ -47,6 +48,14 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
     if (segment.rank == 'local') segmentMap.routeColor = segmentMap.segmentLocalColor
     else if (segment.rank == 'regional') segmentMap.routeColor = segmentMap.segmentRegionalColor
     else if (segment.rank == 'national') segmentMap.routeColor = segmentMap.segmentNationalColor
+
+    // On click on delete button, delete segment
+    if (deleteButton) deleteButton.addEventListener('click', async () => {
+        var answer = await openConfirmationPopup('このセグメント及びそれに関連するデータは全て削除されます。宜しいですか？')
+        if (answer) ajaxGetRequest(segmentMap.apiUrl + "?segment-delete=" + segmentMap.segmentId, async (response) => {
+            window.location.replace('/world')
+        } )
+    } )
 
     // On click on a thumbnail, open modal
     document.querySelectorAll('.pg-sg-photo img').forEach( (img) => {

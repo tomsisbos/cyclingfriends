@@ -28,10 +28,15 @@ include '../includes/head.php'; ?>
 					</div> <?php 
 					if ($segment->advised) ?> <span class="popup-advised">★</span>
 					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
-					<div class="header-buttons">
+					<div class="header-buttons"> <?php
+						if ($connected_user->hasEditorRights()) { ?>
+							<a id="delete">
+								<button class="btn button box-shadow bg-admin text-black">削除</button>
+							</a> <?php
+						} ?>
 						<button class="btn button box-shadow js-favorite-button" type="button"> <?php
 							if (!$segment->isFavorite()) echo 'お気に入りに追加';
-							else echo 'Remove from favorites'; ?>
+							else echo 'お気に入りから削除'; ?>
 						</button>
 						<a id="export" download>
 							<button class="btn button box-shadow" type="button">エクスポート</button>
@@ -102,9 +107,9 @@ include '../includes/head.php'; ?>
 			if (!empty($segment->seasons)) {
 
 				function getPeriodDetailClass ($number) {
-					if ($number == 1) return '上旬';
-					if ($number == 2) return '中旬';
-					if ($number == 3) return '下旬';
+					if ($number == 1) return 'early';
+					if ($number == 2) return 'mid';
+					if ($number == 3) return 'late';
 				} ?>
 
 				<div class="container bg-white">

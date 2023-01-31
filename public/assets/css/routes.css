@@ -144,6 +144,12 @@
     color: #5c9999;
 }
 
+/* New */
+
+.rt-save-modal {
+    display: flex;
+}
+
 /* Others */
 
 .grabber {

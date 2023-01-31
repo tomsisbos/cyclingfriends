@@ -19,7 +19,7 @@ ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (response) => {
 
 	// Load photos
 	ajaxGetRequest (sceneryPopup.apiUrl + "?mkpoint-photos=" + sceneryPopup.data.mkpoint.id, (photos) => {
-		sceneryPopup.photos = photos
+		sceneryPopup.data.mkpoint.photos = photos
 		sceneryPopup.loadLightbox(document.body)
 		sceneryPopup.colorLike()
 		sceneryPopup.prepareToggleLike()

@@ -41,6 +41,7 @@ include '../includes/navbar.php'; ?>
         <p>この物狂おしい社会からすり抜けて、世界の美しさを追い求めることに全てを注ぐ。それは、サイクリングが実現する世界。</p>
         <p>CyclingFriendsとは、この世界をともに選んだ仲間たち。</p>
         <p>君も、この旅を共にしませんか？</p>
+        <a class="tag" href="https://www.facebook.com/profile.php?id=100089569884711" target="_blank">Facebook</a>・<a class="tag" href="https://twitter.com/cyclingfds" target="_blank">Twitter</a>
     </div>
     <div class="home-site-logo js-fade-on-scroll">
         <img src="/media/cf.png" />

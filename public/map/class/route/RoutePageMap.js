@@ -190,7 +190,7 @@ export default class RoutePageMap extends GlobalMap {
                                 document.querySelector('.rt-slider #' + entry.type + 0).querySelector('img').classList.add('selected-marker')
                             }
                         } else {
-                            if (marker.getPopup().isOpen()) marker.getPopup().remove()
+                            if (marker.getPopup() && marker.getPopup().isOpen()) marker.getPopup().remove()
                             $marker.classList.remove('selected-marker')
                         }
                     } )
@@ -328,7 +328,7 @@ export default class RoutePageMap extends GlobalMap {
                                 // Add selected-marker class to clicked thumbnail
                                 target.querySelector('img').classList.add('selected-marker')
                             } else {
-                                if (marker.getPopup().isOpen()) marker.getPopup().remove()
+                                if (marker.getPopup() && marker.getPopup().isOpen()) marker.getPopup().remove()
                                 $marker.classList.remove('selected-marker')
                             }
                         } )

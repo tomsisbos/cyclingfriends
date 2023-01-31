@@ -33,6 +33,12 @@ if (isAjax()) {
             $segment = new Segment($_GET['segment-load']);
             echo json_encode($segment);
         }
+    
+        if (isset($_GET['segment-delete'])) {
+            $segment = new Segment($_GET['segment-delete']);
+            $segment->delete();
+            echo json_encode(true);
+        }
 
     }
 

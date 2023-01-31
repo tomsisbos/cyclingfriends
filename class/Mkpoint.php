@@ -60,16 +60,26 @@ class Mkpoint extends Model {
         return $month . $third;
     }
 
+    public function getAuthor () {
+        return new User($this->user_id);
+    }
+
     public function delete () {
         // Remove mkpoint data
         $removeMkpoint = $this->getPdo()->prepare('DELETE FROM map_mkpoint WHERE id = ?');
         $removeMkpoint->execute(array($this->id));
+        // Remove favorite data
+        $removeMkpointFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE object_type = ? AND object_id = ?');
+        $removeMkpointFavorites->execute(array('scenery', $this->id));
+        // Remove user scenery data
+        $removeUserMkpoint = $this->getPdo()->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
+        $removeUserMkpoint->execute(array($this->id));
         // Remove photo data
         $removeMkpointPhotos = $this->getPdo()->prepare('DELETE FROM img_mkpoint WHERE mkpoint_id = ?');
         $removeMkpointPhotos->execute(array($this->id));
         // Remove tags data
-        $removeMkpointPhotos = $this->getPdo()->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
-        $removeMkpointPhotos->execute(array('scenery', $this->id));
+        $removeMkpointTags = $this->getPdo()->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
+        $removeMkpointTags->execute(array('scenery', $this->id));
     }
 
     public function getReviews () {

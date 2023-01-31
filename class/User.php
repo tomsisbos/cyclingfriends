@@ -73,7 +73,7 @@ class User extends Model {
         $_SESSION['location']                  = $this->location;
         $_SESSION['lngLat']                    = $this->lngLat;
         $_SESSION['settings']                  = $this->getSettings();
-		$_SESSION['rights']                    = $this->getRights();
+		$_SESSION['rights']                    = $this->rights;
     }
 
     public function getSettings() {
@@ -88,13 +88,6 @@ class User extends Model {
             $updateSetting->execute([':value' => $value, ':id' => $this->id]);
             return true;
         }
-    }
-
-    // Get user rights from users table
-    public function getRights() {
-        $getRights = $this->getPdo()->prepare('SELECT rights FROM users WHERE id = ?');
-        $getRights->execute(array($this->id));
-        return $getRights->fetch(PDO::FETCH_NUM)[0];
     }
 
     public function checkIfLoginAlreadyExists ($login) {
@@ -119,6 +112,21 @@ class User extends Model {
 
     public function isPremium () {
         if ($this->plan == 'premium') return true;
+        else return false;
+    }
+
+    public function hasAdministratorRights () {
+        if ($this->rights == 'administrator') return true;
+        else return false;
+    }
+    
+    public function hasModeratorRights () {
+        if ($this->rights == 'moderator' || $this->rights == 'administrator') return true;
+        else return false;
+    }
+    
+    public function hasEditorRights () {
+        if ($this->rights == 'editor' || $this->rights == 'moderator' || $this->rights == 'administrator') return true;
         else return false;
     }
 

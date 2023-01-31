@@ -1,3 +1,4 @@
+import CFUtils from "/map/class/CFUtils.js"
 import WorldMap from "/map/class/WorldMap.js"
 import HomeSceneryPopup from "/map/class/home/HomeSceneryPopup.js"
 import HomeSegmentPopup from "/map/class/home/HomeSegmentPopup.js"
@@ -75,6 +76,18 @@ export default class HomeMap extends WorldMap {
         let sceneryPopup = new HomeSceneryPopup(popupOptions, instanceData, instanceOptions)
         marker.setPopup(sceneryPopup.popup)
     }
+    
+    updateMapData () {
+        this.updateSegments()
+        this.openSegmentPopup(this.randomSegment)
+    }
+
+    updateSegments () {
+        this.data.segments.forEach(segment => {
+            this.segmentsCollection.push(segment)
+            if (!this.map.getSource('segment' + segment.id)) this.displaySegment(segment)
+        } )
+    }
 
     openSegmentPopup (segment) {
         return new Promise (async (resolve, reject) => {
@@ -84,7 +97,8 @@ export default class HomeMap extends WorldMap {
                 segment.mapInstance = this
                 segment.segmentPopup = new HomeSegmentPopup( {
                     closeOnClick: true,
-                    anchor: 'bottom',
+                    focusAfterOpen: false,
+                    anchor: 'top-left',
                     className: 'js-linestring marker-popup js-segment-popup'
                 }, segment, {noSession: true})
                 // Prepare and display segment popup

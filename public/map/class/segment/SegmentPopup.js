@@ -6,6 +6,9 @@ export default class SegmentPopup extends Popup {
 
     constructor (options, segment, instanceOptions) {
         super(options, {}, instanceOptions)
+        
+        console.log(options)
+        
         this.data = segment
         
         // Set popup element

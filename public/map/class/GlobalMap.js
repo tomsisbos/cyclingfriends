@@ -84,10 +84,12 @@ export default class GlobalMap extends Model {
             var index = e.target.selectedIndex
             var layerId = e.target.options[index].id
             if (layerId === 'seasons') layerId = this.season
-            this.clearMapData()
             this.setMapStyle(layerId)
-            this.map.once('idle', () => this.updateMapData())
         }
+    }
+
+    clearMapData () {
+        return true
     }
 
     addOptionsControl () {
@@ -1808,7 +1810,7 @@ export default class GlobalMap extends Model {
         var openedPopupId = 'none' // Prevent auto unselecting if popup opening and closing timing is wrong. If below condition is not included, style will not be switched in case of clicking another marker.
         // Remove selected class from map marker elements
         this.map._markers.forEach( (marker) => {
-            if (!marker.getPopup().isOpen()) {
+            if (!marker.getPopup() || !marker.getPopup().isOpen()) {
                 marker.getElement().classList.remove('selected-marker')
                 if (marker.getElement().querySelector('img')) marker.getElement().querySelector('img').classList.remove('selected-marker')
             } else openedPopupId = marker.getElement().id
@@ -2102,9 +2104,7 @@ export default class GlobalMap extends Model {
         return new Promise ( async (resolve, reject) => {
             var ids = mkpoints.map(mkpoint => mkpoint.id);
             var ids_list = ids.join(',')
-            console.log(ids_list)
             ajaxGetRequest ('/api/map.php' + "?mkpoints-closest-photo=" + ids_list, async (response) => {
-                console.log(response)
                 resolve(response)
             } )
         } )
@@ -2698,7 +2698,7 @@ export default class GlobalMap extends Model {
                 var clearAlongRoute = async (routeData) => {
                     return new Promise ( async (resolve, reject) => {
                         // Remove route red gradient property
-                        this.map.setPaintProperty(options.layerId, 'line-gradient', null)
+                        if (this.map.getLayer(options.layerId)) this.map.setPaintProperty(options.layerId, 'line-gradient', null)
                         // Clear position marker
                         positionMarker.remove()
                         // Clear start and goal markers
@@ -2859,7 +2859,7 @@ export default class GlobalMap extends Model {
                     if (!end) window.requestAnimationFrame(frame)
 
                     // Color route in red according to process
-                    this.map.setPaintProperty(options.layerId, 'line-gradient', [
+                    if (this.map.getLayer(options.layerId)) this.map.setPaintProperty(options.layerId, 'line-gradient', [
                         'step',
                         ['line-progress'],
                         '#ff5555',
@@ -2942,8 +2942,6 @@ export default class GlobalMap extends Model {
                 // Stop the animation on mouse down
                 this.map.once('mousedown', () => {
                     stop = true
-                    clearAlongRoute(routeData)
-                    resolve(true)
                 })
 
                 window.requestAnimationFrame(frame)

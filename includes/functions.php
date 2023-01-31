@@ -1435,7 +1435,11 @@ function getStars ($number) {
 }
 
 function getMainColor ($image) {
-	$content = imagecreatefromstring(base64_decode($image));
+	// Get content from image regardless from whether an url or a base 64 string
+	if (filter_var($image, FILTER_VALIDATE_URL)) $content = imagecreatefromjpeg($image);
+	else if (substr($image, 0, 6) == '/media') return '#eeeeee';
+	else $content = imagecreatefromstring(base64_decode($image));
+	// Get main color from content
 	if (imagesx($content) > 200) {
 		$image = imagescale($content, 50);
 		$palette = Palette::fromGD($image);

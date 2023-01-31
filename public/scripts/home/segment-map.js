@@ -46,8 +46,8 @@ await loadMap().then( (homeMap) => {
 
         // Choose a segment at random
         var randomKey = Math.floor(Math.random() * segments.length)
-        var randomSegment = segments[randomKey]
-        const rsCoordinates = randomSegment.coordinates
+        homeMap.randomSegment = segments[randomKey]
+        const rsCoordinates = homeMap.randomSegment.coordinates
 
         // Fly to it
         homeMap.map.jumpTo( {
@@ -56,13 +56,9 @@ await loadMap().then( (homeMap) => {
         } )
         const rsBounds = CFUtils.defineRouteBounds(rsCoordinates)
         homeMap.map.fitBounds(rsBounds).once('idle', () => {
-            homeMap.updateSegments().then(() => homeMap.openSegmentPopup(randomSegment))
+            homeMap.updateSegments()
+            homeMap.openSegmentPopup(homeMap.randomSegment)
         } )
     }, homeMap.segmentLoader)
-
-    // Update map data on ending moving the map
-    /*homeMap.map.on('moveend', () => {
-        homeMap.updateSegments()
-    } )*/
 
 } )

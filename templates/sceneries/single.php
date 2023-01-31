@@ -41,7 +41,7 @@ include '../includes/head.php'; ?>
 			</div>
 			
 			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>"> <?php
-				$mkpoint->user->displayPropic() ?>
+				$mkpoint->getAuthor()->displayPropic() ?>
 				<div>
 					<div class="pg-sg-location">
 						<?= $mkpoint->city . ' (' . $mkpoint->prefecture . ') - ' . $mkpoint->elevation . 'm' ?>
@@ -62,7 +62,7 @@ include '../includes/head.php'; ?>
 							</a> <?php
 						} ?>
 					</div>
-					<div>by <a href="/rider/<?= $mkpoint->user->id ?>"><?= $mkpoint->user->login ?></a></div>
+					<div>by <a href="/rider/<?= $mkpoint->user_id ?>"><?= $mkpoint->getAuthor()->login ?></a></div>
 					<div><div class="popup-rating" style="color: darkgrey"></div></div>
 				</div>
 			</div>

@@ -104,7 +104,7 @@ export default class SceneryPopup extends Popup {
         return new Promise(async (resolve, reject) => {
 
             // Get scenery details
-            if (!this.data.mkpoint.description) {
+            if (!this.data.mkpoint.photos) {
                 var mkpoint = await this.getDetails(this.data.mkpoint.id)
                 this.data.mkpoint = { ...mkpoint }
             }
@@ -694,10 +694,17 @@ export default class SceneryPopup extends Popup {
             var answer = await openConfirmationPopup('この絶景スポットが削除されます。宜しいですか？')
             if (answer) { // If yes, remove the mkpoint and close the popup
                 ajaxGetRequest (this.apiUrl + "?delete-mkpoint=" + this.data.mkpoint.id, (response) => { console.log(response) } )
-                mapInstance.data.mkpoints.forEach(mkpoint => {
-                    if (mkpoint.id === this.data.mkpoint.id) mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
-                } )
+                // Remove current marker
                 document.querySelector('#mkpoint' + this.data.mkpoint.id).remove()
+                // Also remove from map instance
+                console.log(mapInstance.data.mkpoints)
+                console.log(this.data.mkpoint.id)
+                mapInstance.data.mkpoints.forEach(mkpoint => {
+                    if (mkpoint.id === this.data.mkpoint.id) {
+                        console.log('Scenery instance removed')
+                        mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
+                    }
+                } )
                 this.popup._content.remove()
             }
         } )

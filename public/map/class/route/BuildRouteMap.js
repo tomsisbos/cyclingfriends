@@ -259,6 +259,7 @@ export default class BuildRouteMap extends GlobalMap {
             // Open save popup
             var answer = await this.openSavePopup()
             if (answer) {
+                console.log(answer)
                 // Save canvas as a picture
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
                     canvas.toBlob( async (blob) => {
@@ -268,6 +269,7 @@ export default class BuildRouteMap extends GlobalMap {
                     }, 'image/jpeg', 0.7)
                 } )            
             } else {
+                console.log('no answer')
                 // Restore waypoints
                 let i = 2
                 while (this.map.getSource('wayPoint' + i)) {
@@ -1340,329 +1342,334 @@ export default class BuildRouteMap extends GlobalMap {
 
     async openSavePopup () {
         return new Promise ((resolve, reject) => {
-            // Initialize data
-            var data = {}
-            data.category = 'route'
-            // Build modal
-            var modal = document.createElement('div')
-            modal.classList.add('modal', 'd-flex')
-            document.querySelector('body').appendChild(modal)
-            var savePopup = document.createElement('div')
-            savePopup.classList.add('popup')
-            savePopup.innerHTML = `
-            <div>
-                <label>タイトル :</label>
-                <input type="text" class="js-route-name fullwidth" />
-                <label>詳細 :</label>
-                <textarea class="js-route-description fullwidth"></textarea>
-            </div>
-            <div id="saveButtons" class="d-flex justify-content-between">
-                <div id="cancel" class="mp-button bg-darkred text-white">
-                    キャンセル
+            // If save popup have been previously hidden, display it
+            if (document.querySelector('.rt-save-modal')) document.querySelector('.rt-save-modal').style.display = 'flex'
+            // If first opening, build and set it up
+            else {
+                // Initialize data
+                var data = {}
+                data.category = 'route'
+                // Build modal
+                var modal = document.createElement('div')
+                modal.classList.add('modal', 'rt-save-modal')
+                modal.style.display = 'flex'
+                document.querySelector('body').appendChild(modal)
+                var savePopup = document.createElement('div')
+                savePopup.classList.add('popup')
+                savePopup.innerHTML = `
+                <div>
+                    <label>タイトル :</label>
+                    <input type="text" class="js-route-name fullwidth" />
+                    <label>詳細 :</label>
+                    <textarea class="js-route-description fullwidth"></textarea>
                 </div>
-                <div id="save" class="mp-button bg-darkgreen text-white">
-                    保存
-                </div>
-            </div>`
+                <div id="saveButtons" class="d-flex justify-content-between">
+                    <div id="cancel" class="mp-button bg-darkred text-white">
+                        キャンセル
+                    </div>
+                    <div id="save" class="mp-button bg-darkgreen text-white">
+                        保存
+                    </div>
+                </div>`
 
-            modal.appendChild(savePopup)
-            var inputName        = document.querySelector('.js-route-name')
-            var inputDescription = document.querySelector('.js-route-description')
-            inputName.addEventListener('change', () => data.name = inputName.value)
-            inputDescription.addEventListener('change', () => data.description = inputDescription.value)
-            // Close on click outside popup
-            modal.addEventListener('mousedown', (e) => {
-                if (e.target == modal) {
+                modal.appendChild(savePopup)
+                var inputName        = document.querySelector('.js-route-name')
+                var inputDescription = document.querySelector('.js-route-description')
+                inputName.addEventListener('change', () => data.name = inputName.value)
+                inputDescription.addEventListener('change', () => data.description = inputDescription.value)
+                // Close on click outside popup
+                modal.addEventListener('mousedown', (e) => {
+                    if (e.target == modal) {
+                        modal.style.display = 'none'
+                        resolve(false)
+                    }
+                })
+                // On click on "Yes" button, close the popup and return true
+                document.querySelector('#save').addEventListener('click', () => {
                     modal.remove()
+                    console.log(data)
+                    resolve(data)
+                } )
+                // On click on "Cancel" button, close the popup and return false
+                document.querySelector('#cancel').addEventListener('click', () => {
+                    modal.style.display = 'none'
                     resolve(false)
-                }
-            })
-            // On click on "Yes" button, close the popup and return true
-            document.querySelector('#save').addEventListener('click', () => {
-                modal.remove()
-                resolve(data)
-            } )
-            // On click on "Cancel" button, close the popup and return false
-            document.querySelector('#cancel').addEventListener('click', () => {
-                modal.remove()
-                resolve(false)
-            } )
+                } )
 
-            // If user has administation rights, display create segment button 
-            ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
-                if (session.rights == 'administrator') {
-                    var createSegmentButton = document.createElement('button')
-                    createSegmentButton.id = 'createSegment'
-                    createSegmentButton.className = 'mp-button bg-admin'
-                    createSegmentButton.innerText = 'セグメントを作成'
-                    document.querySelector('#saveButtons').before(createSegmentButton)
+                // If user has administation rights, display create segment button 
+                ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
+                    if (session.rights == 'administrator') {
+                        var createSegmentButton = document.createElement('button')
+                        createSegmentButton.id = 'createSegment'
+                        createSegmentButton.className = 'mp-button bg-admin'
+                        createSegmentButton.innerText = 'セグメントを作成'
+                        document.querySelector('#saveButtons').before(createSegmentButton)
 
-                    // On click of create segment button, display create segment form
-                    createSegmentButton.addEventListener('click', () => {
-                        // Set data default properties
-                        data.rank = 'local'
-                        data.advised = 'off'
-                        data.specs = {
-                            offroad: 'off',
-                            rindo: 'off',
-                            cyclinglane: 'off',
-                            cyclingroad: 'off'
-                        }
-                        data.tags = []
-                        data.seasons = []
-                        data.advice = {}
-                        data.category = 'segment'
-                        // Hide create segment button
-                        createSegmentButton.style.display = 'none'
-                        // Correct style top property of the popup
-                        savePopup.style.top = 'calc(30% - 100px)'
-                        savePopup.style.left = 'calc(50% - 20vw)'
-                        savePopup.style.maxWidth = '40vw'
-                        // Build tag checkboxes
-                        var $tags = ''
-                        this.tags.forEach(tag => {
-                            $tags += `
-                            <div class="mp-checkbox">
-                                <input type="checkbox" data-name="` + tag + `" id="tag` + tag + `" class="js-segment-tag" />
-                                <label for="tag` + tag + `">` + CFUtils.getTagString(tag) + `</label>
-                            </div>
-                            `
-                        } )
-                        // Create form
-                        var createSegmentForm = document.createElement('div')
-                        createSegmentForm.id = 'createSegmentForm'
-                        createSegmentForm.className = 'bg-admin'
-                        createSegmentForm.innerHTML = `
-                        <h5>セグメントプロパティ</h5>
-                        <p>
-                            <label>規模 :</label>
-                            <select id="rank" class="js-segment-rank fullwidth">
-                                <option value="local" selected>Local</option>
-                                <option value="regional">Regional</option>
-                                <option value="national">National</option>
-                            </select>
-                            <div class="mp-checkbox">
-                                <input type="checkbox" id="advised" class="js-segment-advised" />
-                                <label for="advised">cyclingfriendsのおススメ</label>
-                            </div>
-                        </p>
-                        <button id="addSeason" class="mp-button bg-white">「おススメ季節」を追加</button>
-                        <button id="addAdvice" class="mp-button bg-white">「ポイント」を追加</button>
-                        <div class="mb-2">
-                            <label>特徴 :</label><br>
-                            <div class="mp-checkbox">
-                                <input type="checkbox" id="specOffroad" class="js-segment-spec-offroad" />
-                                <label for="specOffroad">未舗装</label>
-                            </div>
-                            <div class="mp-checkbox">
-                                <input type="checkbox" id="specRindo" class="js-segment-spec-rindo" />
-                                <label for="specRindo">林道</label>
-                            </div>
-                            <div class="mp-checkbox">
-                                <input type="checkbox" id="specCyclinglane" class="js-segment-spec-cyclinglane" />
-                                <label for="specCyclinglane">サイクリングレーン</label>
-                            </div>
-                            <div class="mp-checkbox">
-                                <input type="checkbox" id="specCyclingroad" class="js-segment-spec-cyclingroad" />
-                                <label for="specCyclingroad">サイクリングロード</label>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label>タグ :</label><br>` + 
-                                $tags + `
-                        </div>`
-                        createSegmentButton.after(createSegmentForm)
-
-                        // On click on add season button
-                        var cursor = -1
-                        var addSeasonButton = document.querySelector('#addSeason')
-                        addSeasonButton.addEventListener('click', () => {
+                        // On click of create segment button, display create segment form
+                        createSegmentButton.addEventListener('click', () => {
                             // Set data default properties
-                            cursor++
-                            data.seasons[cursor] = {
-                                start: [1, 1],
-                                end: [3, 12],
-                                description: ''
+                            data.rank = 'local'
+                            data.advised = 'off'
+                            data.specs = {
+                                offroad: 'off',
+                                rindo: 'off',
+                                cyclinglane: 'off',
+                                cyclingroad: 'off'
                             }
-                            // Create form
-                            var seasonSection = document.createElement('div')
-                            seasonSection.id = 'period' + (cursor + 1)
-                            seasonSection.className = 'rt-section js-segment-season-section'
-                            seasonSection.innerHTML = `
-                            <label class="js-segment-period-title">時期 n°` + (cursor + 1) + `</label>
-                            <div class="d-flex">
-                                <div class="col-md-6">
-                                    <label>開始 :</label><br>
-                                    <div class="d-flex justify-content-center">
-                                        <select id="periodStart2">
-                                            <option value="1" selected>1月</option>
-                                            <option value="2">2月</option>
-                                            <option value="3">3月</option>
-                                            <option value="4">4月</option>
-                                            <option value="5">5月</option>
-                                            <option value="6">6月</option>
-                                            <option value="7">7月</option>
-                                            <option value="8">8月</option>
-                                            <option value="9">9月</option>
-                                            <option value="10">10月</option>
-                                            <option value="11">11月</option>
-                                            <option value="12">12月</option>
-                                        </select>
-                                        <select id="periodStart1">
-                                            <option value="1" selected>上旬</option>
-                                            <option value="2">中旬</option>
-                                            <option value="3">下旬</option>
-                                        </select>
-                                    </div>
+                            data.tags = []
+                            data.seasons = []
+                            data.advice = {}
+                            data.category = 'segment'
+                            // Hide create segment button
+                            createSegmentButton.style.display = 'none'
+                            // Correct style top property of the popup
+                            savePopup.style.maxWidth = '40vw'
+                            // Build tag checkboxes
+                            var $tags = ''
+                            this.tags.forEach(tag => {
+                                $tags += `
+                                <div class="mp-checkbox">
+                                    <input type="checkbox" data-name="` + tag + `" id="tag` + tag + `" class="js-segment-tag" />
+                                    <label for="tag` + tag + `">` + CFUtils.getTagString(tag) + `</label>
                                 </div>
-                                <div class="col-md-6">
-                                    <label>終了 :</label><br>
-                                    <div class="d-flex justify-content-center">
-                                        <select id="periodEnd2">
-                                            <option value="1">1月</option>
-                                            <option value="2">2月</option>
-                                            <option value="3">3月</option>
-                                            <option value="4">4月</option>
-                                            <option value="5">5月</option>
-                                            <option value="6">6月</option>
-                                            <option value="7">7月</option>
-                                            <option value="8">8月</option>
-                                            <option value="9">9月</option>
-                                            <option value="10">10月</option>
-                                            <option value="11">11月</option>
-                                            <option value="12" selected>12月</option>
-                                        </select>
-                                        <select id="periodEnd1">
-                                            <option value="1">上旬</option>
-                                            <option value="2">中旬</option>
-                                            <option value="3" selected>下旬</option>
-                                        </select>
-                                    </div>
+                                `
+                            } )
+                            // Create form
+                            var createSegmentForm = document.createElement('div')
+                            createSegmentForm.id = 'createSegmentForm'
+                            createSegmentForm.className = 'bg-admin'
+                            createSegmentForm.innerHTML = `
+                            <h5>セグメントプロパティ</h5>
+                            <p>
+                                <label>規模 :</label>
+                                <select id="rank" class="js-segment-rank fullwidth">
+                                    <option value="local" selected>Local</option>
+                                    <option value="regional">Regional</option>
+                                    <option value="national">National</option>
+                                </select>
+                                <div class="mp-checkbox">
+                                    <input type="checkbox" id="advised" class="js-segment-advised" />
+                                    <label for="advised">cyclingfriendsのおススメ</label>
+                                </div>
+                            </p>
+                            <button id="addSeason" class="mp-button bg-white">「おススメ季節」を追加</button>
+                            <button id="addAdvice" class="mp-button bg-white">「ポイント」を追加</button>
+                            <div class="mb-2">
+                                <label>特徴 :</label><br>
+                                <div class="mp-checkbox">
+                                    <input type="checkbox" id="specOffroad" class="js-segment-spec-offroad" />
+                                    <label for="specOffroad">未舗装</label>
+                                </div>
+                                <div class="mp-checkbox">
+                                    <input type="checkbox" id="specRindo" class="js-segment-spec-rindo" />
+                                    <label for="specRindo">林道</label>
+                                </div>
+                                <div class="mp-checkbox">
+                                    <input type="checkbox" id="specCyclinglane" class="js-segment-spec-cyclinglane" />
+                                    <label for="specCyclinglane">サイクリングレーン</label>
+                                </div>
+                                <div class="mp-checkbox">
+                                    <input type="checkbox" id="specCyclingroad" class="js-segment-spec-cyclingroad" />
+                                    <label for="specCyclingroad">サイクリングロード</label>
                                 </div>
                             </div>
-                            <label>紹介文 :</label>
-                            <textarea class="js-segment-period-description fullwidth"></textarea>
-                            <button id="removePeriod` + (cursor + 1) + `" class="mapboxgl-popup-close-button" type="button">×</button>`
-                            addSeasonButton.before(seasonSection)
+                            <div class="mb-2">
+                                <label>タグ :</label><br>` + 
+                                    $tags + `
+                            </div>`
+                            createSegmentButton.after(createSegmentForm)
 
-                            // On remove period
-                            document.querySelector('#removePeriod' + (cursor + 1)).addEventListener('click', (e) => {
-                                // Set variables
-                                cursor--
-                                let number = getIdFromString(e.target.id)
-                                // Update data
-                                for (let i = number; i < data.seasons.length; i++) data.seasons[i - 1] = data.seasons[i]
-                                data.seasons.pop()
-                                // Update elements
-                                seasonSection.remove()
-                                document.querySelectorAll('.js-segment-season-section').forEach( (section) => {
-                                    let id = getIdFromString(section.id)
-                                    if (id > number) {
-                                        section.id = 'season' + (id - 1) // Decrease section id number
-                                        section.querySelector('.js-segment-period-title').innerText = '時期 n°' + (id - 1) // Decrease section title number
-                                        section.querySelector('.mapboxgl-popup-close-button').id = 'removePeriod' + (id - 1) // Decrease section remove button id number
-                                    }
+                            // On click on add season button
+                            var cursor = -1
+                            var addSeasonButton = document.querySelector('#addSeason')
+                            addSeasonButton.addEventListener('click', () => {
+                                // Set data default properties
+                                cursor++
+                                data.seasons[cursor] = {
+                                    start: [1, 1],
+                                    end: [3, 12],
+                                    description: ''
+                                }
+                                // Create form
+                                var seasonSection = document.createElement('div')
+                                seasonSection.id = 'period' + (cursor + 1)
+                                seasonSection.className = 'rt-section js-segment-season-section'
+                                seasonSection.innerHTML = `
+                                <label class="js-segment-period-title">時期 n°` + (cursor + 1) + `</label>
+                                <div class="d-flex">
+                                    <div class="col-md-6">
+                                        <label>開始 :</label><br>
+                                        <div class="d-flex justify-content-center">
+                                            <select id="periodStart2">
+                                                <option value="1" selected>1月</option>
+                                                <option value="2">2月</option>
+                                                <option value="3">3月</option>
+                                                <option value="4">4月</option>
+                                                <option value="5">5月</option>
+                                                <option value="6">6月</option>
+                                                <option value="7">7月</option>
+                                                <option value="8">8月</option>
+                                                <option value="9">9月</option>
+                                                <option value="10">10月</option>
+                                                <option value="11">11月</option>
+                                                <option value="12">12月</option>
+                                            </select>
+                                            <select id="periodStart1">
+                                                <option value="1" selected>上旬</option>
+                                                <option value="2">中旬</option>
+                                                <option value="3">下旬</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>終了 :</label><br>
+                                        <div class="d-flex justify-content-center">
+                                            <select id="periodEnd2">
+                                                <option value="1">1月</option>
+                                                <option value="2">2月</option>
+                                                <option value="3">3月</option>
+                                                <option value="4">4月</option>
+                                                <option value="5">5月</option>
+                                                <option value="6">6月</option>
+                                                <option value="7">7月</option>
+                                                <option value="8">8月</option>
+                                                <option value="9">9月</option>
+                                                <option value="10">10月</option>
+                                                <option value="11">11月</option>
+                                                <option value="12" selected>12月</option>
+                                            </select>
+                                            <select id="periodEnd1">
+                                                <option value="1">上旬</option>
+                                                <option value="2">中旬</option>
+                                                <option value="3" selected>下旬</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label>紹介文 :</label>
+                                <textarea class="js-segment-period-description fullwidth"></textarea>
+                                <button id="removePeriod` + (cursor + 1) + `" class="mapboxgl-popup-close-button" type="button">×</button>`
+                                addSeasonButton.before(seasonSection)
+
+                                // On remove period
+                                document.querySelector('#removePeriod' + (cursor + 1)).addEventListener('click', (e) => {
+                                    // Set variables
+                                    cursor--
+                                    let number = getIdFromString(e.target.id)
+                                    // Update data
+                                    for (let i = number; i < data.seasons.length; i++) data.seasons[i - 1] = data.seasons[i]
+                                    data.seasons.pop()
+                                    // Update elements
+                                    seasonSection.remove()
+                                    document.querySelectorAll('.js-segment-season-section').forEach( (section) => {
+                                        let id = getIdFromString(section.id)
+                                        if (id > number) {
+                                            section.id = 'season' + (id - 1) // Decrease section id number
+                                            section.querySelector('.js-segment-period-title').innerText = '時期 n°' + (id - 1) // Decrease section title number
+                                            section.querySelector('.mapboxgl-popup-close-button').id = 'removePeriod' + (id - 1) // Decrease section remove button id number
+                                        }
+                                    } )
+                                } )
+
+                                // Data treatment
+                                var selectPeriodStart1     = seasonSection.querySelector('#periodStart1')
+                                var selectPeriodStart2     = seasonSection.querySelector('#periodStart2')
+                                var selectPeriodEnd1       = seasonSection.querySelector('#periodEnd1')
+                                var selectPeriodEnd2       = seasonSection.querySelector('#periodEnd2')
+                                var inputPeriodDescription = seasonSection.querySelector('.js-segment-period-description')
+                                selectPeriodStart1.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].start[0] = selectPeriodStart1.value)
+                                selectPeriodStart2.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].start[1] = selectPeriodStart2.value)
+                                selectPeriodEnd1.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].end[0] = selectPeriodEnd1.value)
+                                selectPeriodEnd2.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].end[1] = selectPeriodEnd2.value)
+                                inputPeriodDescription.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].description = inputPeriodDescription.value)
+                            } )
+
+                            // On click on add advice button
+                            var addAdviceButton = document.querySelector('#addAdvice')
+                            addAdviceButton.addEventListener('click', () => {
+                                // Set data default properties
+                                data.advice = {
+                                    name: '',
+                                    description: ''
+                                }
+                                // Create form
+                                var adviceSection = document.createElement('div')
+                                adviceSection.id = 'advice'
+                                adviceSection.className = 'rt-section js-segment-advice-section'
+                                adviceSection.innerHTML = `
+                                <label>ポイント</label><br>
+                                <label>タイトル :</label><br>
+                                <input type="text" class="js-segment-advice-name fullwidth" />
+                                <label>内容 :</label><br>
+                                <textarea class="js-segment-advice-description fullwidth"></textarea>
+                                <button id="removeAdvice" class="mapboxgl-popup-close-button" type="button">×</button>`
+                                addSeasonButton.after(adviceSection)
+                                // Hide add advice button
+                                addAdviceButton.style.display = 'none'
+
+                                // On remove advice
+                                document.querySelector('#removeAdvice').addEventListener('click', () => {
+                                    // Update elements
+                                    adviceSection.remove()
+                                    addAdviceButton.style.display = 'inline-block'
+                                    // Update data
+                                    adviceSection = {}
+                                } )
+
+                                // Data treatment
+                                var inputAdviceName        = document.querySelector('#advice .js-segment-advice-name')
+                                var inputAdviceDescription = document.querySelector('#advice .js-segment-advice-description')
+                                inputAdviceName.addEventListener('change', () => data.advice.name = inputAdviceName.value)
+                                inputAdviceDescription.addEventListener('change', () => data.advice.description = inputAdviceDescription.value)
+                            } )
+
+                            // Display save as route button
+                            var saveAsRouteButton = document.createElement('button')
+                            saveAsRouteButton.id = 'saveAsRoute'
+                            saveAsRouteButton.className = 'mp-button bg-darkred text-white'
+                            saveAsRouteButton.innerText = '閉じる'
+                            createSegmentForm.appendChild(saveAsRouteButton)
+                            saveAsRouteButton.addEventListener('click', () => {
+                                // Restore usual properties
+                                data.category = 'route'
+                                delete data.rank
+                                delete data.advised
+                                delete data.specs
+                                delete data.tags
+                                delete data.seasons
+                                delete data.advice
+                                createSegmentButton.style.display = 'inline-block'
+                                savePopup.style.top = 'calc(50% - 100px)'
+                                savePopup.style.left = 'calc(50% - 125px)'
+                                savePopup.style.maxWidth = '250px'
+                                createSegmentForm.remove()
+                            } )
+
+                            // Data treatment
+                            var selectRank            = document.querySelector('.js-segment-rank')
+                            var inputAdvised          = document.querySelector('.js-segment-advised')
+                            var inputSpecOffroad      = document.querySelector('.js-segment-spec-offroad')
+                            var inputSpecRindo        = document.querySelector('.js-segment-spec-rindo')
+                            var inputSpecCyclinglane  = document.querySelector('.js-segment-spec-cyclinglane')
+                            var inputSpecCyclingroad  = document.querySelector('.js-segment-spec-cyclingroad')
+                            var inputSpecRindo        = document.querySelector('.js-segment-spec-rindo')
+                            var inputTags             = document.querySelectorAll('.js-segment-tag')
+                            selectRank.addEventListener('change', () => data.rank = selectRank.value)
+                            inputAdvised.addEventListener('change', () => data.advised = inputAdvised.value)
+                            inputSpecOffroad.addEventListener('change', () => data.specs.offroad = inputSpecOffroad.value)
+                            inputSpecRindo.addEventListener('change', () => data.specs.rindo = inputSpecRindo.value)
+                            inputSpecCyclinglane.addEventListener('change', () => data.specs.cyclinglane = inputSpecCyclinglane.value)
+                            inputSpecCyclingroad.addEventListener('change', () => data.specs.cyclingroad = inputSpecCyclingroad.value)
+                            inputTags.forEach( (inputTag) => {
+                                inputTag.addEventListener('change', () => {
+                                    if (inputTag.value == 'on') data.tags.push(inputTag.dataset.name)
+                                    else if (inputTag.value == 'off') data.tags.splice(data.tags.indexOf(inputTag.dataset.name), 1)
                                 } )
                             } )
-
-                            // Data treatment
-                            var selectPeriodStart1     = seasonSection.querySelector('#periodStart1')
-                            var selectPeriodStart2     = seasonSection.querySelector('#periodStart2')
-                            var selectPeriodEnd1       = seasonSection.querySelector('#periodEnd1')
-                            var selectPeriodEnd2       = seasonSection.querySelector('#periodEnd2')
-                            var inputPeriodDescription = seasonSection.querySelector('.js-segment-period-description')
-                            selectPeriodStart1.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].start[0] = selectPeriodStart1.value)
-                            selectPeriodStart2.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].start[1] = selectPeriodStart2.value)
-                            selectPeriodEnd1.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].end[0] = selectPeriodEnd1.value)
-                            selectPeriodEnd2.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].end[1] = selectPeriodEnd2.value)
-                            inputPeriodDescription.addEventListener('change', (e) => data.seasons[getIdFromString(e.target.closest('.js-segment-season-section').id) - 1].description = inputPeriodDescription.value)
                         } )
-
-                        // On click on add advice button
-                        var addAdviceButton = document.querySelector('#addAdvice')
-                        addAdviceButton.addEventListener('click', () => {
-                            // Set data default properties
-                            data.advice = {
-                                name: '',
-                                description: ''
-                            }
-                            // Create form
-                            var adviceSection = document.createElement('div')
-                            adviceSection.id = 'advice'
-                            adviceSection.className = 'rt-section js-segment-advice-section'
-                            adviceSection.innerHTML = `
-                            <label>ポイント</label><br>
-                            <label>タイトル :</label><br>
-                            <input type="text" class="js-segment-advice-name fullwidth" />
-                            <label>内容 :</label><br>
-                            <textarea class="js-segment-advice-description fullwidth"></textarea>
-                            <button id="removeAdvice" class="mapboxgl-popup-close-button" type="button">×</button>`
-                            addSeasonButton.after(adviceSection)
-                            // Hide add advice button
-                            addAdviceButton.style.display = 'none'
-
-                            // On remove advice
-                            document.querySelector('#removeAdvice').addEventListener('click', () => {
-                                // Update elements
-                                adviceSection.remove()
-                                addAdviceButton.style.display = 'inline-block'
-                                // Update data
-                                adviceSection = {}
-                            } )
-
-                            // Data treatment
-                            var inputAdviceName        = document.querySelector('#advice .js-segment-advice-name')
-                            var inputAdviceDescription = document.querySelector('#advice .js-segment-advice-description')
-                            inputAdviceName.addEventListener('change', () => data.advice.name = inputAdviceName.value)
-                            inputAdviceDescription.addEventListener('change', () => data.advice.description = inputAdviceDescription.value)
-                        } )
-
-                        // Display save as route button
-                        var saveAsRouteButton = document.createElement('button')
-                        saveAsRouteButton.id = 'saveAsRoute'
-                        saveAsRouteButton.className = 'mp-button bg-darkred text-white'
-                        saveAsRouteButton.innerText = '閉じる'
-                        createSegmentForm.appendChild(saveAsRouteButton)
-                        saveAsRouteButton.addEventListener('click', () => {
-                            // Restore usual properties
-                            data.category = 'route'
-                            delete data.rank
-                            delete data.advised
-                            delete data.specs
-                            delete data.tags
-                            delete data.seasons
-                            delete data.advice
-                            createSegmentButton.style.display = 'inline-block'
-                            savePopup.style.top = 'calc(50% - 100px)'
-                            savePopup.style.left = 'calc(50% - 125px)'
-                            savePopup.style.maxWidth = '250px'
-                            createSegmentForm.remove()
-                        } )
-
-                        // Data treatment
-                        var selectRank            = document.querySelector('.js-segment-rank')
-                        var inputAdvised          = document.querySelector('.js-segment-advised')
-                        var inputSpecOffroad      = document.querySelector('.js-segment-spec-offroad')
-                        var inputSpecRindo        = document.querySelector('.js-segment-spec-rindo')
-                        var inputSpecCyclinglane  = document.querySelector('.js-segment-spec-cyclinglane')
-                        var inputSpecCyclingroad  = document.querySelector('.js-segment-spec-cyclingroad')
-                        var inputSpecRindo        = document.querySelector('.js-segment-spec-rindo')
-                        var inputTags             = document.querySelectorAll('.js-segment-tag')
-                        selectRank.addEventListener('change', () => data.rank = selectRank.value)
-                        inputAdvised.addEventListener('change', () => data.advised = inputAdvised.value)
-                        inputSpecOffroad.addEventListener('change', () => data.specs.offroad = inputSpecOffroad.value)
-                        inputSpecRindo.addEventListener('change', () => data.specs.rindo = inputSpecRindo.value)
-                        inputSpecCyclinglane.addEventListener('change', () => data.specs.cyclinglane = inputSpecCyclinglane.value)
-                        inputSpecCyclingroad.addEventListener('change', () => data.specs.cyclingroad = inputSpecCyclingroad.value)
-                        inputTags.forEach( (inputTag) => {
-                            inputTag.addEventListener('change', () => {
-                                if (inputTag.value == 'on') data.tags.push(inputTag.dataset.name)
-                                else if (inputTag.value == 'off') data.tags.splice(data.tags.indexOf(inputTag.dataset.name), 1)
-                            } )
-                        } )
-                    } )
-                }
-            } )
+                    }
+                } )
+            }
         } )
     }
 

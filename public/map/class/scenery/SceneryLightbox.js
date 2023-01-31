@@ -156,7 +156,7 @@ export default class SceneryLightbox extends Popup {
         }
         
         // Prepare toggle like function
-        if (this.data.popup._content.querySelector('#like-button')) this.prepareToggleLike()
+        if (this.data.popup._content && this.data.popup._content.querySelector('#like-button')) this.prepareToggleLike()
 
         // Remove on popup closing
         this.data.popup.on('close', () => this.modal.remove())

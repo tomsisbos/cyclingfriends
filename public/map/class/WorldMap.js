@@ -61,6 +61,41 @@ export default class WorldMap extends GlobalMap {
     }
     updateMapDataListener = () => this.updateMapData()
 
+    addStyleControl () {
+        // Get (or add) controller container
+        if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
+        else var controller = this.addController()
+        // Add style control
+        var selectStyleContainer = document.createElement('div')
+        selectStyleContainer.className = 'map-controller-block bold'
+        controller.appendChild(selectStyleContainer)
+        var selectStyleLabel = document.createElement('div')
+        selectStyleLabel.innerText = '地図 : '
+        selectStyleContainer.appendChild(selectStyleLabel)
+        this.selectStyle = document.createElement('select')
+        var seasons = document.createElement("option")
+        var satellite = document.createElement("option")
+        seasons.value = 'seasons'
+        seasons.text = '季節'
+        seasons.setAttribute('selected', 'selected')
+        seasons.id = 'cl07xga7c002616qcbxymnn5z'
+        satellite.id = 'cl0chu1or003a15nocgiodiir'
+        satellite.value = 'satellite'
+        satellite.text = '航空写真'
+        this.selectStyle.add(seasons)
+        this.selectStyle.add(satellite)
+        this.selectStyle.className = 'js-map-styles'
+        selectStyleContainer.appendChild(this.selectStyle)
+        this.selectStyle.onchange = (e) => {
+            var index = e.target.selectedIndex
+            var layerId = e.target.options[index].id
+            if (layerId === 'seasons') layerId = this.season
+            this.clearMapData()
+            this.setMapStyle(layerId)
+            this.map.once('idle', () => this.updateMapData())
+        }
+    }
+
     addOptionsControl () {
         // Get (or add) controller container
         if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
@@ -729,8 +764,6 @@ export default class WorldMap extends GlobalMap {
 
     displaySegment (segment) {
 
-        console.log(segment)
-
         // Build geojson
         var geojson = {
             type: 'Feature',
@@ -890,9 +923,9 @@ export default class WorldMap extends GlobalMap {
     }
 
     hideSegment (segment) {
-        this.map.removeLayer('segment' + segment.id)
-        this.map.removeLayer('segmentCap' + segment.id)
-        this.map.removeSource('segment' + segment.id)
+        if (this.map.getLayer('segment' + segment.id)) this.map.removeLayer('segment' + segment.id)
+        if (this.map.getLayer('segmentCap' + segment.id)) this.map.removeLayer('segmentCap' + segment.id)
+        if (this.map.getSource('segment' + segment.id)) this.map.removeSource('segment' + segment.id)
         this.map.off('click', 'segmentCap' + segment.id, this.clickOnSegment)
         if (segment.segmentPopup && segment.segmentPopup.popup) segment.segmentPopup.popup.remove()
     }

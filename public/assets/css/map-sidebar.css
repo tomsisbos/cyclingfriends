@@ -8,6 +8,8 @@
         transform: none !important;
         max-width: 350px !important;
         width: 350px !important;
+        line-height: unset;
+        font-size: unset !important;
     }
     .mapboxgl-popup-tip {
         display: none;

@@ -15,6 +15,7 @@ export default class Popup extends Model {
         this.markerHeight = settings.markerHeight
         this.markerRadius = settings.markerRadius
         this.linearOffset = settings.linearOffset
+        console.log(popupOptions)
         this.popup = new mapboxgl.Popup(Object.assign(this.defaultOptions, popupOptions))
     }
     

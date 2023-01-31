@@ -127,10 +127,10 @@ if (isAjax()) {
             $getTunnelsNumber = $db->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
             $getTunnelsNumber->execute([$segments[$i]['route_id']]);
             $tunnels_number = $getTunnelsNumber->rowCount();
-            if ($i < $tunnels_number) for ($i = 0 ; $i < $tunnels_number; $i++) {
+            for ($j = 0 ; $j < $tunnels_number; $j++) {
                 $getTunnelCoords = $db->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
-                $getTunnelCoords->execute([$i, $segments[$i]['route_id']]);
-                $tunnels[$i] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
+                $getTunnelCoords->execute([$j, $segments[$i]['route_id']]);
+                $tunnels[$j] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
             }
             $segments[$i]['tunnels'] = $tunnels;
             // Add tags

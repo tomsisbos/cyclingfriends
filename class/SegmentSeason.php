@@ -12,7 +12,6 @@ class SegmentSeason extends Segment {
         $this->period_start = ['month' => intval($data['period_start_month']), 'detail' => intval($data['period_start_detail'])];
         $this->period_end   = ['month' => intval($data['period_end_month']), 'detail' => intval($data['period_end_detail'])];
         $this->description  = $data['description'];
-        if (isset($data['featured_mkpoint_img_id_1'])) $this->featured_mkpoint_img = [$data['featured_mkpoint_img_id_1'], $data['featured_mkpoint_img_id_2'], $data['featured_mkpoint_img_id_3'], ];
     }
 
     // Build period string from an array containing period of the month and number of the month

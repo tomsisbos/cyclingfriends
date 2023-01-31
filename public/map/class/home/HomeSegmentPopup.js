@@ -6,6 +6,8 @@ export default class HomeSegmentPopup extends SegmentPopup {
 
     constructor (options, segment, instanceOptions) {
         super(options, segment, instanceOptions)
+        
+        console.log(options)
         this.data = segment
     }
 
@@ -34,13 +36,10 @@ export default class HomeSegmentPopup extends SegmentPopup {
         <div class="popup-img-container"></div>
         <div class="popup-content">
             <div class="popup-properties">
-                <div class="popup-properties-name">
-                    <a target="_blank" style="text-decoration: none" href="/segment/` + this.data.id + `">` + this.data.name + `</a>` +
+                <div class="popup-properties-name">` + this.data.name +
                     advised + `
-                    <div class="popup-tag ` + tagColor + `" >`+ capitalizeFirstLetter(this.data.rank) + `</div>
                 </div>
                 <div class="js-properties-location">` + this.inlineLoader + `</div>
-                <div class="popup-rating"></div>
                 <div id="profileBox" class="mt-2 mb-2" style="height: 100px; background-color: white;">
                     <canvas id="elevationProfile"></canvas>
                 </div>
@@ -54,60 +53,24 @@ export default class HomeSegmentPopup extends SegmentPopup {
         </div>`
     }
 
-    rating () {
-        var ratingDiv = this.popup._content.querySelector('.popup-rating')
+    init () {
         
-        // Display 5 stars with an unique id
-        if (ratingDiv.innerText == '') {
-            for (let i = 1; i < 6; i++) {
-                ratingDiv.innerHTML = ratingDiv.innerHTML + '<div number="' + i + '" class="star">☆</div>'
-            }
-        }
-        
-        var stars = this.popup._content.querySelectorAll('.star')
+        this.popup.once('open', async () => {
 
-        // Get current rating infos
-        ajaxGetRequest (this.apiUrl + "?get-rating=true&type=" + this.type + "&id=" + this.data.id, (ratingInfos) => {
+            // Setup general interactions
+            this.generateProfile({force: true})
 
-            var setRating = (ratingInfos) => {
-                if (ratingInfos.vote != false) {
-                    var number    = parseInt(ratingInfos.vote)
-                    var className = 'voted-star'
-                } else if (ratingInfos.grades_number > 0) {
-                    var number    = parseInt(ratingInfos.rating)
-                    var className = 'selected-star'
-                } else {
-                    var number    = 0
-                    var className = ''
-                }
-                // Fill stars according to number
-                for (let i = 1; i < number + 1; i++) {
-                    stars[round(i-1)].innerText = '★'
-                }
-                for (let i = number + 1; i < 6; i++) {
-                    stars[round(Math.floor(i)-1)].innerText = '☆'
-                }
-                // Set classes according to last declared response vote
-                stars.forEach( (star) => { star.className = 'star ' + className } )
+            // Query relevant mkpoints and photos
+            this.getMkpoints().then((mkpoints) => {
+                this.mkpoints = mkpoints
+                this.photos = this.getPhotos()
+                this.displayPhotos()
+                this.loadLightbox()
+                this.addIconButtons()
+            } )
 
-                // If rating details are already displayed, update them
-                if (this.popup._content.querySelector('.popup-rating-details')) {
-                    if (number == 0) { // If number is 0, remove rating details
-                        this.popup._content.querySelector('.popup-rating-details').remove()
-                    } else { // Else, update it
-                        this.popup._content.querySelector('.popup-rating-details').innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
-                    }
-                // Else, display them
-                } else if (ratingInfos.grades_number > 0) {
-                    var ratingDetails = document.createElement('div')
-                    ratingDetails.innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
-                    ratingDetails.className = 'popup-rating-details'
-                    ratingDiv.after(ratingDetails)
-                }
-            }
-            
-            setRating(ratingInfos)
-
+            // Query segment details and fill up the popup
+            this.populate()
         } )
     }
 
@@ -196,8 +159,8 @@ export default class HomeSegmentPopup extends SegmentPopup {
             var minusPhoto = () => { showPhotos (photoIndex -= 1) }
             var showPhotos = (n) => {
                 if (n > this.photos.length) {photoIndex = 1}
-                if (n < 1) {photoIndex = this.photos.length}
-                for (let i = 0; i < this.photos.length; i++) {
+                if (n < 1) {photoIndex = photos.length}
+                for (let i = 0; i < photos.length; i++) {
                     photos[i].style.display = 'none'
                 }
                 for (let i = 0; i < photosPeriods.length; i++) {

@@ -10,7 +10,7 @@ include '../includes/head.php'; ?>
 <link rel="stylesheet" href="/assets/css/ride.css" />
 <link rel="stylesheet" href="/assets/css/map-sidebar.css" />
 
-<body>
+<body class="relative-navbar">
 
 	<?php include '../includes/navbar.php'; ?>
 

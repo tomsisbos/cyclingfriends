@@ -105,4 +105,27 @@ class Segment extends Model {
         else return false;
     }
 
+    public function delete () {
+        // Delete route
+        $this->route->delete();
+        // Remove tags data
+        $removeSegmentTags = $this->getPdo()->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
+        $removeSegmentTags->execute(array('segment', $this->id));
+        // Remove favorite data
+        $removeSegmentFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE object_type = ? AND object_id = ?');
+        $removeSegmentFavorites->execute(array('segment', $this->id));
+        // Remove user segment data
+        $removeUserSegment = $this->getPdo()->prepare('DELETE FROM user_segments WHERE segment_id = ?');
+        $removeUserSegment->execute(array($this->id));
+        // Remove segment grades data
+        $removeSegmentGrades = $this->getPdo()->prepare('DELETE FROM segment_grade WHERE segment_id = ?');
+        $removeSegmentGrades->execute(array($this->id));
+        // Remove segment seasons data
+        $removeSegmentSeasons = $this->getPdo()->prepare('DELETE FROM segment_seasons WHERE segment_id = ?');
+        $removeSegmentSeasons->execute(array($this->id));
+        // Remove segment data
+        $removeSegment = $this->getPdo()->prepare('DELETE FROM segments WHERE id = ?');
+        $removeSegment->execute(array($this->id));
+    }
+
 }
