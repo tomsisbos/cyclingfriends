@@ -915,8 +915,8 @@ export default class WorldMap extends GlobalMap {
                 if (segment.id == entry.id) entry = segment
             } )
 
-            // Focus on segment
-            this.focus(this.map.getSource('segment' + segment.id)._data)
+            // Focus on segment and redraw profile to ensure full segment is covered
+            this.focus(this.map.getSource('segment' + segment.id)._data).then(() => segment.segmentPopup.generateProfile({force: true}))
 
             resolve(segment.segmentPopup.popup)
         } )

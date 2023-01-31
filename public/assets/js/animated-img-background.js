@@ -6,7 +6,6 @@ var text = document.querySelector('.js-scenery-info')
 
 // Request [imgsNumber] images with the most likes from mkpoint images table
 ajaxGetRequest ('/api/background.php' + "?get-background-imgs=" + imgsNumber, (imgs) => {
-	console.log(imgs)
 
 	// Preload images
 	imgs.forEach(img => new Image().src = img.url)

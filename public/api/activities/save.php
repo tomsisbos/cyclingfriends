@@ -105,9 +105,12 @@ if (is_array($data)) {
         // Compress it and move it into a new folder
         $path = $_SERVER["DOCUMENT_ROOT"]. "/media/activities/temp/photo_" .$img_name; // Set path variable
         imagejpeg($img, $path, 75); // Set new quality to 75
+        
+        // Set filename for blob server
+        $filename = 'img_' . rand(0, 999999999999) . '.jpg';
 
         // Build photo data
-        $img_blob = base64_encode(file_get_contents($path));
+        $img_blob = fopen($path, 'r');
         $img_size = $photo['size'];
         $img_name = $photo['name'];
         $img_type = $photo['type'];
@@ -116,6 +119,8 @@ if (is_array($data)) {
         $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
         if ($photo['featured'] == true) $featured = 1;
         else $featured = 0;
+        $lng = $photo['lng'];
+        $lat = $photo['lat'];
         
         // Prepare photos data to add to an existing mkpoint if necessary
         if (isset($data['mkpointPhotos'])) {
@@ -128,9 +133,28 @@ if (is_array($data)) {
             }
         }
 
-        // Insert photo in 'activity_photos' table
-        $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, img_blob, img_size, img_name, img_type, datetime, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-        $insert_photos -> execute(array($activity_id, $user_id, $img_blob, $img_size, $img_name, $img_type, $datetime->format('Y-m-d H:i:s'), $featured));
+        // Insert data in 'activity_photos' table
+        $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, filename) VALUES (?, ?, ?, ?, ?)');
+        $insert_photos->execute(array($activity_id, $user_id, $datetime->format('Y-m-d H:i:s'), $featured, $filename));
+
+        // Connect to blob storage
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+        // Send file to blob storage
+        $containername = 'activity-photos';
+        $blobClient->createBlockBlob($containername, $filename, $blob);
+        // Set file metadata
+        $metadata = [
+            'file_name' => $img_name,
+            'file_type' => $img_type,
+            'file_size' => $img_size,
+            'activity_id' => $activity_id,
+            'author_id' => $user_id,
+            'date' => $datetime->format('Y-m-d H:i:s'),
+            'lng' => $lng,
+            'lat' => $lat
+        ];
+        $blobClient->setBlobMetadata($containername, $filename, $metadata);
     }
 
     // Create a new mkpoint if necessary
@@ -202,12 +226,32 @@ if (is_array($data)) {
                             unlink($thumbpath);
                         }
 
-                        $mkpoint_photo['blob'] = base64_encode(file_get_contents($path));
+                        // Set blob and filename for blob server
+                        $mkpoint_photo['filename'] = 'img_' . rand(0, 999999999999) . '.jpg';
+                        $mkpoint_photo['blob'] = fopen($path, 'r');
+
+                        // Remove temp files
                         unlink($temp); unlink($path);
 
                         // Insert photos data
-                        $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                        $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['date'], $mkpoint['month'], $mkpoint_photo['blob'], $mkpoint_photo['size'], $mkpoint_photo['name'], $mkpoint_photo['type'], 0));
+                        $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+                        $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['date'], 0, $mkpoint_photo['filename']));
+
+                        // Send file to blob storage
+                        $containername = 'scenery-photos';
+                        $blobClient->createBlockBlob($containername, $mkpoint_photo['filename'], $mkpoint_photo['blob']);
+                        // Set file metadata
+                        $metadata = [
+                            'file_name' => $mkpoint_photo['name'],
+                            'file_type' => $mkpoint_photo['type'],
+                            'file_size' => $mkpoint_photo['size'],
+                            'scenery_id' => $mkpoint['id'],
+                            'author_id' => $mkpoint['user_id'],
+                            'date' => $mkpoint['publication_date'],
+                            'lat' => $mkpoint['lat'],
+                            'lng' => $mkpoint['lng']
+                        ];
+                        $blobClient->setBlobMetadata($containername, $mkpoint_photo['filename'], $metadata);
                     }
                 }
 
@@ -238,8 +282,32 @@ if (is_array($data)) {
     // If necessary, add selected photos to corresponding mkpoint
     if (isset($data['mkpointPhotos'])) {
         foreach ($data['mkpointPhotos'] as $entry) {
-            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
+            
+            // Insert table data
+            $entry['filename'] = 'img_' . rand(0, 999999999999) . '.jpg';
+            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+            $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], date('Y-m-d H:i:s'), 0, $entry['filename']));
+
+            // Get scenery lngLat data
+            $current_mkpoint = new Mkpoint($entry['mkpoint_id']);
+            $entry['lng'] = $current_mkpoint->lngLat->lng;
+            $entry['lat'] = $current_mkpoint->lngLat->lat;
+
+            // Send file to blob storage
+            $containername = 'scenery-photos';
+            $blobClient->createBlockBlob($containername, $entry['filename'], $entry['blob']);
+            // Set file metadata
+            $metadata = [
+                'file_name' => $entry['photo_name'],
+                'file_type' => $entry['type'],
+                'file_size' => $entry['size'],
+                'scenery_id' => $entry['mkpoint_id'],
+                'author_id' => $_SESSION['id'],
+                'date' => date('Y-m-d H:i:s'),
+                'lat' => $entry['lat'],
+                'lng' => $entry['lng']
+            ];
+            $blobClient->setBlobMetadata($containername, $mkpoint_photo['filename'], $metadata);
         }
     }
 

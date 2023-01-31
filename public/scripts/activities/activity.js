@@ -130,7 +130,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         // On click on the map, elsewhere than on a photo, reset default marker size
         map.on('click', (e) => {
             var isImageOnPath
-            e.originalEvent.path.forEach(entry => {
+            e.originalEvent.composedPath().forEach(entry => {
                 if (entry.className == 'pg-ac-map-img') isImageOnPath = true
             } )
             if (!isImageOnPath) {

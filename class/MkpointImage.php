@@ -65,4 +65,15 @@ class MkpointImage extends Model {
         return $blobClient->getBlobUrl($this->container_name, $this->filename);
     }
 
+    public function delete () {
+        // Connect to blob storage and delete blob
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+        $blobClient->deleteBlob($this->container_name, $this->filename);
+
+        // Remove database entry
+        $removeMkpointPhoto = $db->prepare('DELETE FROM img_mkpoint WHERE id = ?');
+        $removeMkpointPhoto->execute(array($this->id));
+    }
+
 }

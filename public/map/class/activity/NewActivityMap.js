@@ -1103,6 +1103,8 @@ export default class NewActivityMap extends ActivityMap {
                     size: photo.size,
                     name: photo.name,
                     type: photo.type,
+                    lng: this.getPhotoLocation(photo)[0],
+                    lat: this.getPhotoLocation(photo)[1],
                     datetime: photo.datetime,
                     featured: photo.featured
                 } )

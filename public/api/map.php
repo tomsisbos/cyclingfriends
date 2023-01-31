@@ -139,7 +139,7 @@ if (isAjax()) {
         // Send file to blob storage
         $containername = 'scenery-photos';
         $blobClient->createBlockBlob($containername, $filename, $blob);
-        // Set file metadata (except from mkpoint id which needs to be set later)
+        // Set file metadata
         $metadata = [
             'file_name' => $mkpoint['file_name'],
             'file_type' => $mkpoint['file_type'],
@@ -216,7 +216,7 @@ if (isAjax()) {
                 $containername = 'scenery-photos';
                 $filename = 'img_' . rand(0, 999999999999) . '.jpg';
                 $blobClient->createBlockBlob($containername, $filename, $blob);
-                // Set file metadata (except from mkpoint id which needs to be set later)
+                // Set file metadata
                 $mkpoint_instance = new Mkpoint($mkpointimg['mkpoint_id']);
                 $lngLat = $mkpoint_instance->lngLat;
                 $metadata = [
@@ -434,8 +434,8 @@ if (isAjax()) {
     // Delete one photo from a mkpoint
     if (isset($_GET['delete-mkpoint-photo'])) {
         $photo_id = $_GET['delete-mkpoint-photo'];
-        $removeMkpointPhoto = $db->prepare('DELETE FROM img_mkpoint WHERE id = ?');
-        $removeMkpointPhoto->execute(array($photo_id));
+        $photo = new MkpointImage($photo_id);
+        $photo->delete();
         echo json_encode(['photo_id' => $photo_id]);
     }
 

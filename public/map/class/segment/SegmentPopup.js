@@ -188,7 +188,7 @@ export default class SegmentPopup extends Popup {
         return photos
     }
 
-    async generateProfile (options = {force: false}) {
+    async generateProfile (profileOptions = {force: false}) {
         
         const map = this.data.mapInstance.map
         const route = map.getSource('segment' + this.data.id)
@@ -197,8 +197,8 @@ export default class SegmentPopup extends Popup {
         if (route) {
 
             // Prepare profile data
-            if (!this.profileData) {
-                this.profileData = await this.getProfileData(route, {remote: true})
+            if (profileOptions.force || !this.profileData) {
+                this.profileData = await this.getProfileData(route)
             
                 // Draw profile inside elevationProfile element
 
@@ -405,7 +405,7 @@ export default class SegmentPopup extends Popup {
     }
 
     // Build profile data
-    async getProfileData (route, options) { // options : remote = boolean
+    async getProfileData (route) {
         const map           = this.data.mapInstance.map
         const routeGeojson  = route._data
         const routeDistance = turf.length(routeGeojson)
