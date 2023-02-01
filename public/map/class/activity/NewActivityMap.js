@@ -771,7 +771,7 @@ export default class NewActivityMap extends ActivityMap {
             this.data.mkpoints.forEach(mkpoint => {
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
-                    if (CFUtils.compareCoords(mkpoint.lngLat, photoLocation, 3)) {
+                    if (CFUtils.compareCoords({lng: mkpoint.lng, lat: mkpoint.lat}, photoLocation, 3)) {
                         console.log(photo.name + ' could be added to ' + mkpoint.name + ' at a decimal level of 3.')
                         photosToAsk.push({photo, mkpoint})
                         // If any photo close to an existing mkpoint have been added to the create mkpoints list, discard it
@@ -953,7 +953,7 @@ export default class NewActivityMap extends ActivityMap {
                 `
                     
                 if (entry.closePhotos.length > 0) {
-                    content += '次の写真も、絶景スポットに追加することができます。追加しますか？<div class="new-ac-window-other-photos-container">'
+                    content += '次の写真も、この絶景スポットに追加することができます。追加しますか？<div class="new-ac-window-other-photos-container">'
                     content += await buildOtherPhotosElements(entry.closePhotos)
                     content += '</div>'
                 }
