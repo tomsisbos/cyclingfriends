@@ -35,6 +35,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.data.photos.forEach( (photo) => {
         photo.datetime = new Date(photo.datetime.date).getTime()
     } )
+    editActivityMap.data.mkpoints = await editActivityMap.loadCloseMkpoints(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
 
     // Display and prefill form
     hideResponseMessage()
@@ -75,13 +76,15 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.map.on('mouseleave', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'grab')
     editActivityMap.map.on('click', 'route', (e) => {
         editActivityMap.addMarkerOnRoute(e.lngLat)
-        console.log(editActivityMap.data.checkpoints)
         editActivityMap.updatePhotos()
     } )
     
     // Save activity treatment
     document.querySelector('#saveActivity').addEventListener('click', async () => {
-        editActivityMap.saveActivity()
+        var photosToShare = await editActivityMap.checkForCloseMkpoints()
+        if (editActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await editActivityMap.createMkpoints()
+        else var mkpointsToCreate = null
+        editActivityMap.saveActivity(photosToShare, mkpointsToCreate)
     } )
 
 } )

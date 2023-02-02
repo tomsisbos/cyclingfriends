@@ -8,7 +8,6 @@ include '../actions/activities/getActivityAction.php'; ?>
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/activity.css">
-<link rel="stylesheet" href="/assets/css/ride.css" />
 
 <body>
 

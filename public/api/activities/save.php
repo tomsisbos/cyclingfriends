@@ -160,10 +160,9 @@ if (is_array($data)) {
             $blobClient->setBlobMetadata($containername, $filename, $metadata);
         }
 
-        // Create a new mkpoint if necessary
+        // Create new mkpoints if necessary
         if (isset($data['mkpointsToCreate'])) {
 
-            // If necessary, create a new mkpoint
             forEach($data['mkpointsToCreate'] as $entry) {
 
                 // Prepare variables
@@ -268,8 +267,6 @@ if (is_array($data)) {
                     }
                 }
             }
-            
-            echo json_encode(true);
         }
 
         // Update user's cleared mkpoints
@@ -315,6 +312,8 @@ if (is_array($data)) {
                 $blobClient->setBlobMetadata($containername, $mkpoint_photo['filename'], $metadata);
             }
         }
+            
+        echo json_encode(true);
 
     // If any exception have been catched, response the error message set in the exception
     } catch(Exception $e) {

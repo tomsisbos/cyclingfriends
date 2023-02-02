@@ -69,11 +69,11 @@ class Mkpoint extends Model {
         // Connect to blob storage and delete relevant blobs
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
         require $folder . '/actions/blobStorageAction.php';
-        foreach ($this->getImages as $photo) $blobClient->deleteBlob($this->container_name, $photo->filename);
+        foreach ($this->getImages() as $photo) $blobClient->deleteBlob($this->container_name, $photo->filename);
 
         // Remove database entry
-        $removeMkpointPhoto = $db->prepare('DELETE FROM img_mkpoint WHERE id = ?');
-        $removeMkpointPhoto->execute(array($photo_id));
+        $removeMkpointPhoto = $this->getPdo()->prepare('DELETE FROM img_mkpoint WHERE id = ?');
+        foreach ($this->getImages() as $photo) $removeMkpointPhoto->execute(array($photo->id));
 
         // Remove mkpoint data
         $removeMkpoint = $this->getPdo()->prepare('DELETE FROM map_mkpoint WHERE id = ?');

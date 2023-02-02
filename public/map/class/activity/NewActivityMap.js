@@ -638,8 +638,12 @@ export default class NewActivityMap extends ActivityMap {
 
         return new Promise(async (resolve, reject) => {
 
-            if (photo.blob instanceof Blob) var dataUrl = await getDataURLFromBlob(photo.blob)
-            else var dataUrl = 'data:' + photo.type + ';base64,' + photo.blob
+            console.log(photo)
+
+            var dataUrl
+            if (photo.url) dataUrl = photo.url
+            else if (photo.blob instanceof Blob) dataUrl = await getDataURLFromBlob(photo.blob)
+            else dataUrl = 'data:' + photo.type + ';base64,' + photo.blob
 
             // Search for closest checkpoint to append
             var closestCheckpointNumber = this.findCheckpointNumberToAppend(photo)
@@ -746,7 +750,6 @@ export default class NewActivityMap extends ActivityMap {
 
     // Automatically highlight featured photo
     highlightFeaturedPhoto () {
-        var isSetFeatured = false
         this.data.photos.forEach(photo => {
             if (photo.featured) {
                 photo.$thumbnail.firstChild.classList.add('selected-marker')
@@ -776,7 +779,7 @@ export default class NewActivityMap extends ActivityMap {
                         photosToAsk.push({photo, mkpoint})
                         // If any photo close to an existing mkpoint have been added to the create mkpoints list, discard it
                         if (this.data.mkpointsToCreate) for (let i = 0; i < this.data.mkpointsToCreate.length; i++) {
-                            if (this.data.mkpointsToCreate[i].size == photo.size) {
+                            if (this.data.mkpointsToCreate[i].size && this.data.mkpointsToCreate[i].size == photo.size) {
                                 this.data.mkpointsToCreate.splice(i, 1)
                                 i--
                                 showResponseMessage({'error': photo.name + 'の位置が既存の絶景スポット「' + mkpoint.name + '」と一致しているため、新規の絶景スポットを作成できません。その代わり、写真として「' + mkpoint.name + '」に追加してください。'})
@@ -819,9 +822,14 @@ export default class NewActivityMap extends ActivityMap {
             photosToAsk.forEach(async (entry) => {
 
                 // Build photoToAsk elements
-                var dataUrl = await getDataURLFromBlob(entry.photo.blob)
                 var $entry = document.createElement('div')
-                $entry.dataset.photoname = entry.photo.name
+                if (entry.photo.blob instanceof Blob) {
+                    var dataUrl = await getDataURLFromBlob(entry.photo.blob)
+                    $entry.dataset.photoname = entry.photo.name
+                } else {
+                    var dataUrl = entry.photo.url
+                    $entry.dataset.photoname = entry.photo.filename
+                }
                 $entry.dataset.mkpointid = entry.mkpoint.id
                 $entry.innerHTML = `
                     <div class="new-ac-window-photo">
@@ -878,8 +886,6 @@ export default class NewActivityMap extends ActivityMap {
     }
 
     styleButtons ($clickedButton, $otherButton) {
-        console.log($clickedButton)
-        console.log($otherButton)
         if (!$clickedButton.classList.contains('new-ac-btn-kept')) $clickedButton.classList.add('new-ac-btn-kept')
         if ($clickedButton.classList.contains('new-ac-btn-discarded')) $clickedButton.classList.remove('new-ac-btn-discarded')
         if ($otherButton.classList.contains('new-ac-btn-kept')) $otherButton.classList.remove('new-ac-btn-kept')
@@ -910,10 +916,7 @@ export default class NewActivityMap extends ActivityMap {
             // Build window structure
             var modal = document.createElement('div')
             modal.classList.add('modal', 'd-block')
-            document.querySelector('body').appendChild(modal)/*
-            modal.addEventListener('mousedown', (e) => {
-                if (e.target === modal) modal.remove()
-            } )*/
+            document.querySelector('body').appendChild(modal)
             var confirmationPopup = document.createElement('div')
             confirmationPopup.classList.add('popup', 'fullscreen-popup')
             modal.appendChild(confirmationPopup)
@@ -942,7 +945,8 @@ export default class NewActivityMap extends ActivityMap {
                 } )
                 $tags += '</div>'
                 // Build photos section
-                var dataUrl = await getDataURLFromBlob(entry.blob)
+                if (entry.blob instanceof Blob) var dataUrl = await getDataURLFromBlob(entry.blob)
+                else var dataUrl = entry.url
                 content += `
                     <div class="new-ac-window-photo">
                         <img src="` + dataUrl + `" />
@@ -976,8 +980,6 @@ export default class NewActivityMap extends ActivityMap {
                         var $photo = $entriesContainer.querySelector('#otherPhoto' + entry.closePhotos[i].number)
                         var $yes = $photo.querySelector('.js-yes')
                         var $no = $photo.querySelector('.js-no')
-                        console.log($yes)
-                        console.log($no)
                         // On click on "Yes" button, close the popup and return true
                         $yes.addEventListener('click', (e) => {
                             entry.closePhotos[i].answer = 'keep'
@@ -1009,34 +1011,45 @@ export default class NewActivityMap extends ActivityMap {
             $validateButton.addEventListener('click', () => {
                 var mkpointsToCreate = []
                 var filled = true
+                var treatedMkpointsNumber = 0
                 this.data.mkpointsToCreate.forEach(async (entry) => {
-                    console.log('form' + entry.number)
                     var $mkpointForm = document.querySelector('#form' + entry.number)
-                    console.log($mkpointForm)
                     var name = $mkpointForm.querySelector('.js-mkpoint-name').value
                     var description = $mkpointForm.querySelector('.js-mkpoint-description').value
                     var tags = []
                     $mkpointForm.querySelectorAll('.js-segment-tag').forEach($tagInput => {
                         if ($tagInput.checked) tags.push($tagInput.dataset.name)
                     } )
-                    var photos = [{
-                        size: entry.size,
-                        name: entry.name,
-                        type: entry.type
-                    }]
+                    // Only attach photo filename if this photo is already registered in blob storage as an activity photo
+                    if (entry.filename) {
+                        photos = [{
+                            filename: entry.filename
+                        }]
+                    } else {
+                        var photos = [{
+                            size: entry.size,
+                            name: entry.name,
+                            type: entry.type
+                        }]
+                    }
                     entry.closePhotos.forEach(closePhoto => {
                         if (closePhoto.answer && closePhoto.answer == 'keep') {
-                            photos.push({
-                                size: closePhoto.size,
-                                name: closePhoto.name,
-                                type: closePhoto.type
-                            })
+                            // Only attach photo filename if this photo is already registered in blob storage as an activity photo
+                            if (closePhoto.filename) {
+                                photos.push(closePhoto.filename)
+                            } else {
+                                photos.push({
+                                    size: closePhoto.size,
+                                    name: closePhoto.name,
+                                    type: closePhoto.type
+                                })
+                            }
                         }
                     })
 
-                    console.log(this)
                     var lngLat = {lng: this.getPhotoLocation(entry)[0], lat: this.getPhotoLocation(entry)[1]}
                     var location = await this.getLocation(lngLat)
+                    console.log('push')
                     mkpointsToCreate.push( {
                         name,
                         description,
@@ -1048,14 +1061,16 @@ export default class NewActivityMap extends ActivityMap {
                         photos
                     } )
                     if (name == '' || description == '') filled = false
+                    treatedMkpointsNumber++
+                    if (treatedMkpointsNumber == this.data.mkpointsToCreate.length && filled) resolve(mkpointsToCreate)
+                    else if (treatedMkpointsNumber == this.data.mkpointsToCreate.length && !filled) showResponseMessage({'error': '絶景スポットにはタイトルと紹介文が必要です。必要に応じて、<a>絶景スポットの共有ルール</a>をご確認ください。'}, {element: document.querySelector('.popup')})
                 } )
-                if (filled) resolve(mkpointsToCreate)
-                else showResponseMessage({'error': '絶景スポットにはタイトルと紹介文が必要です。必要に応じて、<a>絶景スポットの共有ルール</a>をご確認ください。'}, {element: document.querySelector('.popup')})
             } )
 
             async function buildPhotoElement (photo) {
                 return new Promise(async (resolve, reject) => {
-                    var dataUrl = await getDataURLFromBlob(photo.blob)
+                    if (photo.blob instanceof Blob) var dataUrl = await getDataURLFromBlob(photo.blob)
+                    else var dataUrl = photo.url
                     resolve(`
                     <div class="new-ac-window-photo-element" id="otherPhoto` + photo.number + `">
                         <div class="new-ac-window-photo">
@@ -1121,7 +1136,6 @@ export default class NewActivityMap extends ActivityMap {
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
                     canvas.toBlob( async (blob) => {
                         cleanData.thumbnail = await blobToBase64(blob)
-                        console.log(cleanData)
                         // Send data to server
                         ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                             resolve(response)

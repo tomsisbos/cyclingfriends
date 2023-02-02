@@ -38,7 +38,7 @@ export default class EditActivityMap extends NewActivityMap {
         }
     }
 
-    async saveActivity () {
+    async saveActivity (mkpointPhotos = null, mkpointsToCreate = null) {
         return new Promise( async (resolve, reject) => {
             
             // Remove trackpoints and photos data
@@ -50,6 +50,12 @@ export default class EditActivityMap extends NewActivityMap {
             cleanData.checkpoints.forEach(checkpoint => {
                 delete checkpoint.marker
             } )
+
+            // If photos need to be added to a mkpoint, append info data
+            if (mkpointPhotos) cleanData.mkpointPhotos = mkpointPhotos
+            
+            // If mkpoints need to be created, append data
+            if (mkpointsToCreate) cleanData.mkpointsToCreate = mkpointsToCreate
 
             // Prepare photo blobs upload
             const photos = this.data.photos
@@ -74,6 +80,8 @@ export default class EditActivityMap extends NewActivityMap {
                                             size: photo.size,
                                             name: photo.name,
                                             type: photo.type,
+                                            lng: this.getPhotoLocation(photo)[0],
+                                            lat: this.getPhotoLocation(photo)[1],
                                             datetime: photo.datetime,
                                             featured: photo.featured
                                         } )
@@ -88,6 +96,9 @@ export default class EditActivityMap extends NewActivityMap {
                                     size: photo.size,
                                     name: photo.name,
                                     type: photo.type,
+                                    lng: this.getPhotoLocation(photo)[0],
+                                    lat: this.getPhotoLocation(photo)[1],
+                                    filename: photo.filename,
                                     datetime: photo.datetime,
                                     featured: photo.featured
                                 } )
