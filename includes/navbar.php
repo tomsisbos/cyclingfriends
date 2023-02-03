@@ -78,24 +78,22 @@
 		</div> <?php
 	} 
 	
-	$url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-	
-	// If the user is not connected and is on the signin page, displays the sign up button 
-	if (!isset($_SESSION['auth']) AND (strpos($url,'signin') == true)) { ?>
-		<div class="header-buttons">
+	$url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; ?>
+
+	<div class="header-buttons push"> <?php
+		// If the user is not connected and is on the signin page, displays the sign up button 
+		if (!isset($_SESSION['auth']) AND (strpos($url,'signin') == true)) { ?>
 			<a href="/signup">
 				<button class="btn button" name="validate" disabled>Sign up</button>
-			</a>
-		</div> <?php
+			</a> <?php
 
-	// Else, displays the sign in button 
-	} else if (!isset($_SESSION['auth'])) { ?>
-		<div class="header-buttons">
+		// Else, displays the sign in button		
+		} else if (!isset($_SESSION['auth'])) { ?>
 			<a href="/signin">
 				<button class="btn button" name="validate">Sign in</button>
-			</a>
-		</div> <?php
-	} ?>
+			</a> <?php
+		} ?>
+	</div> 
 		
 </nav>
 

@@ -77,11 +77,11 @@ export default class SceneryPopup extends Popup {
                         </div>
                         <div class="popup-properties-location"></div>
                         <div class="popup-rating"></div>
+                        <div class="popup-tags js-tags"></div>
                     </div>
                 </div>
             </div>
             <div class="popup-description">` + this.centerLoader + `</div>
-            <div class="js-tags"></div>
         </div>
         <div class="popup-buttons">
             <button id="showReviews" class="mp-button bg-button text-white">レビューを表示</button>
@@ -291,7 +291,7 @@ export default class SceneryPopup extends Popup {
 
         // Set up add photo button listener
         var form = this.popup._content.querySelector('#addphoto-button-form')
-        form.addEventListener('change', (e) => {
+        if (form) form.addEventListener('change', (e) => {
 
             // Prevents default behavior of the submit button
             e.preventDefault()
@@ -364,7 +364,7 @@ export default class SceneryPopup extends Popup {
 
             // Add delete photo button if necessary
             if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-            if (photos[photoIndex-1].$element.dataset.author == this.data.mapInstance.session.id) addDeletePhotoIcon() // ... And add it if connected user is photo author
+            if (photos[photoIndex-1].$element.dataset.author == this.getSession().id) addDeletePhotoIcon() // ... And add it if connected user is photo author
 
         // If there is only one photo in the database, remove arrows if needed
         } else removeArrows()
@@ -382,10 +382,17 @@ export default class SceneryPopup extends Popup {
         this.lightbox = new SceneryLightbox(lightboxData)
     }
 
+    getSession () {
+        if (this.session) return this.session
+        else if (this.data.mapInstance) return this.data.mapInstance.session
+    }
+
     async loadReviews () {
 
         // Get reviews on this mkpoint
         ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id, (reviews) => {
+
+            this.getSession()
                 
             if (document.querySelector('#mkpointReview')) {
                 // Clear reviews if necessary
@@ -403,10 +410,10 @@ export default class SceneryPopup extends Popup {
                     document.querySelector('.chat-reviews').appendChild($noReviewMessage)
                 }
                 // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
-                if (document.querySelector('#review-author-' + this.data.mapInstance.session.id)) {
+                if (document.querySelector('#review-author-' + this.getSession().id)) {
                     document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
                     reviews.forEach( (review) => {
-                        if (review.user.id == this.data.mapInstance.session.id) {
+                        if (review.user.id == this.getSession().id) {
                             document.querySelector('#mkpointReview').innerText = review.content
                         }
                     } )
@@ -465,7 +472,7 @@ export default class SceneryPopup extends Popup {
                 let $review = document.createElement('div')
                 $review.className = 'chat-line'
                 // Set review background in yellow if author is connected user 
-                if (this.data.mapInstance.session.id === review.user.id) {
+                if (this.getSession().id === review.user.id) {
                     $review.classList.add('bg-admin', 'p-2')
                 }
                 $review.id = 'review-author-' + review.user.id

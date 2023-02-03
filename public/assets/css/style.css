@@ -998,6 +998,8 @@ li.nav-item {
     padding: 0px 8px;
     border-radius: 5px;
     margin: 0px 2px;
+    height: fit-content;
+    align-self: center;
 }
 
 .tag-red {

@@ -25,23 +25,24 @@ include '../includes/head.php'; ?>
 
 			$mkpoint_photos = $mkpoint->getImages(8);
 			$main_color = getMainColor($mkpoint->thumbnail); ?>
-			<div class="container pg-sg-header" style="background-image: url('<?= $mkpoint_photos[0]->url ?>');">
-				<div class="header">
-					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
-						<h1><?= $mkpoint->name ?></h1>
+			<div class="container header" style="background-image: url('<?= $mkpoint_photos[0]->url ?>');">
+				<div class="header-block">
+					<div class="header-row">
+						<h2><?= $mkpoint->name ?></h2>
 					</div>
-					<div class="tag-light tag-blue"></div>
-					<div class="header-buttons">
-						<button class="btn button box-shadow js-favorite-button" type="button"> <?php
-							if ($mkpoint->isFavorite()) echo 'Remove from favorites';
-							else echo 'Add to favorites' ?>
+					<div class="header-row"> <?php
+						$mkpoint->getAuthor()->displayPropic(30, 30, 30) ?><p>by <a href="/rider/<?= $mkpoint->user_id ?>"><?= $mkpoint->getAuthor()->login ?></a></p>
+					</div>
+					<div class="header-row">
+						<button class="mp-button normal js-favorite-button" type="button"> <?php
+							if ($mkpoint->isFavorite()) echo 'お気に入りから削除';
+							else echo 'お気に入りに追加' ?>
 						</button>
 					</div>
 				</div>
 			</div>
 			
-			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>"> <?php
-				$mkpoint->getAuthor()->displayPropic() ?>
+			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>">
 				<div>
 					<div class="pg-sg-location">
 						<?= $mkpoint->city . ' (' . $mkpoint->prefecture . ') - ' . $mkpoint->elevation . 'm' ?>
@@ -62,8 +63,7 @@ include '../includes/head.php'; ?>
 							</a> <?php
 						} ?>
 					</div>
-					<div>by <a href="/rider/<?= $mkpoint->user_id ?>"><?= $mkpoint->getAuthor()->login ?></a></div>
-					<div><div class="popup-rating" style="color: darkgrey"></div></div>
+					<div class="popup-rating" style="color: darkgrey"></div>
 				</div>
 			</div>
 
@@ -86,7 +86,7 @@ include '../includes/head.php'; ?>
 				} ?>
 			</div>
 			<div class="container">
-				<h2>Latest public activities</h2>
+				<h3>最近のアクティビティ記録</h3>
 				<div class="mk-activities-container"> <?php
 					$activities = $mkpoint->findLastRelatedActivities(3);
 					if (!empty($activities)) {
@@ -97,7 +97,7 @@ include '../includes/head.php'; ?>
 				</div>
 			</div>
 			<div class="container p-0 pg-sg-map-box">
-				<iframe style="width: 100%; height: 100%" src="http://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
+				<iframe style="width: 100%; height: 100%" src="https://maps.google.com/maps?q=<?= $mkpoint->lngLat->lat ?>,<?= $mkpoint->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">レビュー</div>
 					<div class="chat-reviews pt-2"></div>

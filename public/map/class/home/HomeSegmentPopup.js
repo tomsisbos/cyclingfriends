@@ -7,7 +7,6 @@ export default class HomeSegmentPopup extends SegmentPopup {
     constructor (options, segment, instanceOptions) {
         super(options, segment, instanceOptions)
         
-        console.log(options)
         this.data = segment
     }
 
@@ -40,14 +39,14 @@ export default class HomeSegmentPopup extends SegmentPopup {
                     advised + `
                 </div>
                 <div class="js-properties-location">` + this.inlineLoader + `</div>
+                <div class="popup-tags">`
+                    + tags + `
+                </div>
                 <div id="profileBox" class="mt-2 mb-2" style="height: 100px; background-color: white;">
                     <canvas id="elevationProfile"></canvas>
                 </div>
             </div>
             <div class="popup-description">` + this.inlineLoader + `</div>
-            <div>`
-                + tags + `
-            </div>
             <div class="js-popup-advice"></div>
             <div class="popup-season-box"></div>
         </div>`

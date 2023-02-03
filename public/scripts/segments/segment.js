@@ -154,7 +154,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         var mkpoints = ''
         segmentMap.mkpoints.forEach(mkpoint => {
             console.log(mkpoint)
-            if (mkpoint.on_route) mkpoints += ',pin-s-' + Math.round(mkpoint.distance) + '+' + markerColor + '('  + mkpoint.lngLat.lng + ',' + mkpoint.lngLat.lat + ')'
+            if (mkpoint.on_route) mkpoints += ',pin-s-' + Math.round(mkpoint.distance) + '+' + markerColor + '('  + mkpoint.lng + ',' + mkpoint.lat + ')'
         } )
 
         // Set size

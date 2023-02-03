@@ -379,7 +379,7 @@ form#mkpointForm input[type="file" i] {
 
 .popup-rating {
     color: #afffaa;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     display: inline-block;
     vertical-align: middle;
@@ -474,6 +474,7 @@ form#mkpointForm input[type="file" i] {
 }
 .mp-button.normal, .mp-button-small.normal {
     background-color: #5C9999;
+    color: #fff;
 }
 .mp-button-small {
     padding: 0px 10px !important;
@@ -573,6 +574,9 @@ form#mkpointForm input[type="file" i] {
 }
 .ride-popup a, .segment-popup a {
     text-decoration: none;
+}
+.popup-tags {
+    display: inline-block;
 }
 .popup-tag {
     margin-left: 6px;

@@ -21,26 +21,26 @@ include '../includes/head.php'; ?>
 		
 		<div class="container-fluid">
 
-			<div class="container pg-sg-header" style="background-image: url(<?= $segment->getFeaturedImage() ?>);">
-				<div class="header">
-					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
-						<h1><?= $segment->name ?></h1>
-					</div> <?php 
-					if ($segment->advised) ?> <span class="popup-advised">★</span>
-					<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
-					<div class="header-buttons"> <?php
-						if ($connected_user->hasEditorRights()) { ?>
-							<a id="delete">
-								<button class="btn button box-shadow bg-admin text-black">削除</button>
-							</a> <?php
-						} ?>
-						<button class="btn button box-shadow js-favorite-button" type="button"> <?php
+			<div class="container header" style="background-image: url(<?= $segment->getFeaturedImage() ?>);">
+				<div class="header-block">
+					<div class="header-row">
+						<h2><?= $segment->name; 
+						if ($segment->advised) echo '<span style="color: pink"> ★</span>'; ?></h2>
+						<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
+					</div>
+					<div class="header-row">
+						<button class="mp-button normal js-favorite-button" type="button"> <?php
 							if (!$segment->isFavorite()) echo 'お気に入りに追加';
 							else echo 'お気に入りから削除'; ?>
 						</button>
 						<a id="export" download>
-							<button class="btn button box-shadow" type="button">エクスポート</button>
-						</a>
+							<button class="mp-button normal" type="button">エクスポート</button>
+						</a> <?php
+						if ($connected_user->hasEditorRights()) { ?>
+							<a id="delete">
+								<button class="mp-button danger">削除</button>
+							</a> <?php
+						} ?>
 					</div>
 				</div>
 			</div> <?php

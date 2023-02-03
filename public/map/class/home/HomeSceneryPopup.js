@@ -65,11 +65,11 @@ export default class HomeSceneryPopup extends SceneryPopup {
                         </div>
                         <div class="popup-properties-location"></div>
                         <div class="popup-rating"></div>
+                        <div class="popup-tags js-tags"></div>
                     </div>
                 </div>
             </div>
             <div class="popup-description">` + this.inlineLoader + `</div>
-            <div class="js-tags"></div>
         </div>`
     }
 
