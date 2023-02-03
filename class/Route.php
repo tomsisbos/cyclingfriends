@@ -72,7 +72,25 @@ class Route extends Model {
     }
 
     public function getFeaturedImage () {
-        return new RouteFeaturedImage($this->id);
+        // Get close mkpoints
+        $mkpoints_on_route = $this->getCloseMkpoints(300);
+
+        // If more than one mkpoint is on the course, use the most liked photo among them
+        if (count($mkpoints_on_route) > 0) {
+            $images = [];
+            foreach ($mkpoints_on_route as $mkpoint) array_push($images, $mkpoint->getImages(1)[0]);
+            usort($images, function ($a, $b) {
+                return $a->likes <=> $b->likes;
+            } );
+            return $images[0];
+        }
+
+        // If no mkpoint is on the course, check for a public activity photo
+        else {
+
+            ///$activity_photos = $this->getPublicPhotos();
+
+        }
     }
 
     public function getTunnels () {
@@ -192,6 +210,17 @@ class Route extends Model {
         else return false;
     }
 
+    /*
+    public function getPublicPhotos () {
+
+        // Get all activity photos registered in the database
+        $getMkpoints = $this->getPdo()->prepare('SELECT id, name, lng, lat FROM activity_photos');
+        $getMkpoints->execute();
+        $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        $mkpoints_in_range = [];
+        $number = 0;
+    }*/
+
     // Get Mkpoints that are less than [basis] km from the route
     public function getCloseMkpoints ($tolerance = 3000, $classFormat = true, $append_distance = false) { // m
 
@@ -202,9 +231,6 @@ class Route extends Model {
         $mkpoints_in_range = [];
         $number = 0;
 
-        // Get route coords
-        $routeCoords = $this->coordinates;
-
         // For each mkpoint, check remoteness to route
         for ($i = 0; $i < count($mkpoints); $i++) {
 
@@ -213,8 +239,8 @@ class Route extends Model {
             $range = $tolerance * 10;
 
             // Step of route coordinates to evaluate (defined accordingly to number of route coords for optimization purposes)
-            if (count($routeCoords) > 500) $step = 5;
-            else if (count($routeCoords) > 100 && count($routeCoords) < 500) $step = 2;
+            if (count($this->coordinates) > 500) $step = 5;
+            else if (count($this->coordinates) > 100 && count($this->coordinates) < 500) $step = 2;
             else $step = 1;
 
             // For mkpoints inside this range, test remoteness for each route segment on a step
@@ -222,19 +248,18 @@ class Route extends Model {
                 array_push($mkpoints_in_range, $mkpoints[$i]);
 
                 $remoteness_min = 500000000;
-                $routeCoords = $this->coordinates;
                 $simplifiedRouteCoords = [];
-                for ($j = 0; $j < count($routeCoords) - $step - 1; $j += $step) {
-                    array_push($simplifiedRouteCoords, $routeCoords[$j]);
+                for ($j = 0; $j < count($this->coordinates) - $step - 1; $j += $step) {
+                    array_push($simplifiedRouteCoords, $this->coordinates[$j]);
                     $line = new Line(
-                        new Coordinate($routeCoords[$j]->lat, $routeCoords[$j]->lng),
-                        new Coordinate($routeCoords[$j + $step]->lat, $routeCoords[$j + $step]->lng)
+                        new Coordinate($this->coordinates[$j]->lat, $this->coordinates[$j]->lng),
+                        new Coordinate($this->coordinates[$j + $step]->lat, $this->coordinates[$j + $step]->lng)
                     );
                     $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
                     $segment_remoteness = $pointToLineDistanceCalculator->getDistance($point, $line);
                     if ($segment_remoteness < $remoteness_min) { // If distance is the shortest calculated until this point, then erase distance_min record
                         $remoteness_min = $segment_remoteness;
-                        $closest_point = $routeCoords[$j];
+                        $closest_point = $this->coordinates[$j];
                     }
                 }
                 $mkpoints_in_range[$number]['remoteness'] = $remoteness_min;

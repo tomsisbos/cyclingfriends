@@ -35,22 +35,28 @@ include '../includes/head.php'; ?>
 		// Set and update all ride proprieties
 		include '../actions/rides/convertIntToStringValuesAction.php'; ?>
 
-		<div class="container rd-header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$ride->getFeaturedImage()['img']. '); background-size: cover;' ?>">
-			<div class="header">
-				<a href="/rider/<?= $ride->author->id ?>"><?php $ride->author->displayPropic(60, 60, 60); ?></a>
-				<div class="text-shadow"><h1><?= $ride->name ?></h1> </div>
-				<p class="text-shadow">by <strong><?= $ride->author->login ?></strong></p>
-				<div class="rd-status"> <?php
-					// Set text color depending on the status
-					$status_color = $ride->getStatusColor('background'); ?>
-					<p style="background-color: <?= $status_color ?>" class="tag-light text-light"><?= $ride->status;
-					// Only add substatus if there is one
-					if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
-					if ($ride->privacy == 'Friends only') { ?>
-						<p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->author->login; ?>の友達に限定</p> <?php
-					} ?>
+		<div class="container header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$ride->getFeaturedImage()['img']. '); background-size: cover;' ?>">
+			<div class="header-block">
+				<div class="header-row mb-2">
+					<div class="rd-status"> <?php
+						// Set text color depending on the status
+						$status_color = $ride->getStatusColor('background'); ?>
+						<p style="background-color: <?= $status_color ?>" class="tag-light text-light"><?= $ride->status;
+						// Only add substatus if there is one
+						if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
+						if ($ride->privacy == 'Friends only') { ?>
+							<p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->author->login; ?>の友達に限定</p> <?php
+						} ?>
+					</div>
 				</div>
-				<div class="header-buttons"> <?php
+				<div class="header-row">
+					<h2><?= $ride->name ?></h2>
+				</div>
+				<div class="header-row">
+					<a href="/rider/<?= $ride->author->id ?>"><?php $ride->author->displayPropic(30, 30, 30); ?></a>
+					<p>by <strong><?= $ride->author->login ?></strong></p>
+				</div>
+				<div class="header-row mt-2"> <?php
 					// Include admin buttons if the user has admin rights on this ride
 					if ($ride->author->id == $connected_user->id) include '../includes/rides/admin-buttons.php'; 
 					// Else, include participation buttons
@@ -115,7 +121,7 @@ include '../includes/head.php'; ?>
 				} ?>
 			
 				<div class="rd-course-infos">
-					<h2>コースについて</h2>
+					<h3>コースについて</h3>
 					<p><strong>距離 :</strong> <?php 
 						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->finish_place. " まで";
 						else echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->meeting_place. " まで"; ?></p>

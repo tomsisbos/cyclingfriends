@@ -1,5 +1,5 @@
 <div class="container margin-bottom container-admin">
-	<h2>管理ボード</h2>
+	<h3>管理ボード</h3>
 	<form class="admin-panel nav flex" enctype="multipart/form-data" method="POST">
 		<div class="d-flex flex-column">
 			<div>

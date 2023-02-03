@@ -102,6 +102,10 @@
 
 /* route */
 
+.rt-header h2, .rt-header p {
+    margin: 0;
+}
+
 .rt-slider {
     display: flex;
     overflow: auto;

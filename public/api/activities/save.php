@@ -137,8 +137,8 @@ if (is_array($data)) {
             }
 
             // Insert data in 'activity_photos' table
-            $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, filename) VALUES (?, ?, ?, ?, ?)');
-            $insert_photos->execute(array($activity_id, $user_id, $datetime->format('Y-m-d H:i:s'), $featured, $filename));
+            $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, lng, lat, filename) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $insert_photos->execute(array($activity_id, $user_id, $datetime->format('Y-m-d H:i:s'), $featured, $lng, $lat, $filename));
 
             // Connect to blob storage
             $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));

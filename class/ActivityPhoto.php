@@ -9,6 +9,7 @@ class ActivityPhoto extends Model {
     public $user_id;
     public $datetime;
     public $featured;
+    public $lngLat;
     public $filename;
     public $url;
 
@@ -21,6 +22,7 @@ class ActivityPhoto extends Model {
         $this->datetime    = new DateTime($data['datetime']);
         if (intval($data['featured']) == 1) $this->featured = true;
         else $this->featured = false;
+        $this->lngLat      = new LngLat($data['lng'], $data['lat']);
         $this->filename    = $data['filename'];
         $this->url         = $this->getUrl();
     }

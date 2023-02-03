@@ -114,7 +114,7 @@ export default class EditActivityMap extends NewActivityMap {
                     ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                         resolve(response)
                         window.location.replace('/' + this.session.login + '/activities')
-                    } )
+                    }, this.loader)
                 }
             )
 

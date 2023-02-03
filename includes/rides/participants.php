@@ -10,7 +10,7 @@ $participation = $ride->getParticipants();
 if (!empty($participation)) { ?>
 	<div class="container container-thin bg-user">
 		<div class="d-flex gap-20 nav">
-			<h2 class="title-with-subtitle">参加者 :</h2>
+			<h3 class="title-with-subtitle">参加者 :</h3>
 			<ul class="d-flex gap mb-0 p-0" id="participantsList"> <?php
 				for ($i=0; $i < count($participation); $i++) {
 					$participant = new User ($participation[$i]);
@@ -30,7 +30,7 @@ if (!empty($participation)) { ?>
 	<span class="close cursor" onclick="closeParticipantsWindow()">&times;</span>
 	<div class="modal-block modal-block-thin">
 		<div class="container bg-participant">
-			<h2 class=""><?= $ride->name. "の参加者"; ?></h2>
+			<h3 class=""><?= $ride->name. "の参加者"; ?></h3>
 		</div>
 		<div class="container overflow-400">
 			<div class="tr-row justify th-row bg-grey mb-2">

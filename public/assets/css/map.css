@@ -458,6 +458,22 @@ form#mkpointForm input[type="file" i] {
     border: 0px;
     background-color: #eee;
     align-self: start;
+    outline: 2px solid transparent;
+    transition: 0.3s outline;
+}
+.mp-button.success, .mp-button-small.success {
+    background-color: #00e06e;
+    color: #fff;
+}
+.mp-button.danger, .mp-button-small.danger {
+    background-color: #ff5555;
+    color: #fff;
+}
+.mp-button.admin, .mp-button-small.admin {
+    background-color: #fffa9c;
+}
+.mp-button.normal, .mp-button-small.normal {
+    background-color: #5C9999;
 }
 .mp-button-small {
     padding: 0px 10px !important;
@@ -465,7 +481,8 @@ form#mkpointForm input[type="file" i] {
     margin: 4px 0px !important;
 }
 .mp-button:hover, .mp-button-small:hover {
-    opacity: 0.8;
+    outline: 2px solid #fff;
+    transition: 0.3s outline;
 }
 .mp-checkbox {
     display: inline-block;

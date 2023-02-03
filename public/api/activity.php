@@ -32,7 +32,7 @@ $data = json_decode($json, true);
 
 if (is_array($data)) {
 
-    echo json_encode(true);
+    echo json_encode('You need to recompose this file (/api/activities.php).');/*
 
     // Build route data
     $author_id   = $connected_user->id;
@@ -158,6 +158,6 @@ if (is_array($data)) {
             $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, user_login, date, month, file_blob, file_size, file_name, file_type, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $_SESSION['login'], date('Y-m-d H:i:s'), date("n"), $entry['blob'], $entry['size'], $entry['photo_name'], $entry['type'], 0));
         }
-    }
+    }*/
 
 }

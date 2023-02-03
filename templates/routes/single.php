@@ -26,31 +26,37 @@ include '../includes/head.php'; ?>
                 $slug = array_slice($url_fragments, -2)[0];
                 $ride = new Ride($slug);
                 $route = $ride->route;
+            }
+            
+            
+            if ($route->getFeaturedImage() !== null) { ?>
+                <div class="container header" style="background-image: <?= 'url(' .$route->getFeaturedImage()->url. '); background-size: cover;' ?>"> <?php
+            } else { ?>
+                <div class="container" style="background-color: #bbb;"> <?php
             } ?>
-        
-            <div class="container">
-                <div class="header">
-                    <h2 class="top-title"><?= $route->name ?></h2>
-                    <div>by 
-                        <a href="/rider/<?= $route->author->id ?>">
-                            <strong><?= $route->author->login ?></strong>
-                        </a>
+                <div class="header-block">
+                    <div class="header-row">
+                        <h2><?= $route->name ?></h2>
                     </div>
-                    <div class="header-buttons"> <?php
+                    <div class="header-row">
+                        <a href="/rider/<?= $route->author->id ?>"><?php $route->author->displayPropic(30, 30, 30); ?></a>
+                        <p>by <strong><?= $route->author->login ?></strong></p>
+                    </div>
+                    <div class="header-row mt-2"> <?php
                         if (isset($ride)) { ?>
                             <a href="/ride/<?= $ride->id ?>">
-                                <button class="btn button" type="button">ライドページに戻る</button>
+                                <button class="mp-button normal" type="button">ライドページに戻る</button>
                             </a> <?php
-                        }
-                        if ($route->author->id == $connected_user->id) { ?>
-                            <a href="/route/<?= $route->id ?>/edit">
-                                <button class="btn button" type="button" name="edit">編集</button>
-                            </a>
-                            <button class="btn button" id="deleteRoute" data-id="<?= $route->id ?>" type="button" name="delete">削除</button> <?php
                         } ?>
                         <a id="export" download>
-                            <button class="btn button" type="button">エクスポート</button>
-                        </a>
+                            <button class="mp-button success" type="button">エクスポート</button>
+                        </a> <?php
+                        if ($route->author->id == $connected_user->id) { ?>
+                            <a href="/route/<?= $route->id ?>/edit">
+                                <button class="mp-button success" type="button" name="edit">編集</button>
+                            </a>
+                            <button class="mp-button danger" id="deleteRoute" data-id="<?= $route->id ?>" type="button" name="delete">削除</button> <?php
+                        } ?>
                     </div>
                 </div>
             </div>

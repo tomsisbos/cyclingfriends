@@ -11,7 +11,7 @@
 				<p class="bold text-danger">このライドは定員に達しました！誰かがキャンセルすることを待つか、他のライドにエントリーしてみましょう。</p> <?php
 			// Else, display Join button
 			} else { ?>
-				<button id="join" class="btn button button-success box-shadow">参加する</button> <?php 
+				<button id="join" class="mp-button success">参加する</button> <?php 
 			}
 			
 		// If entries are not open, display a text message instead of button
@@ -23,7 +23,7 @@
 		
 	// Else, display Quit button
 	} else { ?>
-		<button id="rd-quit" class="btn button button-danger box-shadow">キャンセルする</button> <?php
+		<button id="rd-quit" class="mp-button danger">キャンセルする</button> <?php
 	}
 	
 // Script ?>

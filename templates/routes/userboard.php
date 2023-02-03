@@ -49,14 +49,14 @@ include '../includes/head.php'; ?>
 								</div>
 							</div>
 						</div>
-						<div class="rt-buttons">
+						<div class="append-buttons">
 							<a href="/route/<?= $route->id ?>/edit">
-								<div class="mp-button btn bg-darkgreen text-white" type="button" name="edit">編集</div>
+								<div class="mp-button success" type="button" name="edit">編集</div>
 							</a>
 							<a id="export" data-id="<?= $route->id ?>" download>
-								<div class="mp-button btn bg-darkgreen text-white" type="button">*.gpx保存</div>
+								<div class="mp-button success" type="button">*.gpx保存</div>
 							</a>
-							<div class="mp-button btn bg-darkred text-white" data-id="<?= $route->id ?>" id="deleteRoute" type="button" name="delete">削除</div>
+							<div class="mp-button danger" data-id="<?= $route->id ?>" id="deleteRoute" type="button" name="delete">削除</div>
 						</div>
 					</div> <?php
 					

@@ -32,40 +32,38 @@ include '../includes/head.php'; ?>
 		
 		<div class="container-fluid"> <?php 
 
-			if ($activity->getFeaturedImage()) { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(' .$activity->getFeaturedImage()->url. '); background-size: cover;'?>;"> <?php
-			} else { ?> <div class="container pg-ac-header" style="background-image: <?= 'url(/media/default-photo-' . rand(1,9) .'.svg)'?>; background-size: cover;"> <?php } ?>
-				<div class="tr-row gap">
-					<div class="td-row">
-						<a href="/rider/<?= $activity->user->id ?>"><?php $activity->user->displayPropic(60, 60, 60); ?></a>
+			if ($activity->getFeaturedImage()) { ?> <div class="container header" style="background-image: <?= 'url(' .$activity->getFeaturedImage()->url. '); background-size: cover;'?>"> <?php }
+			else { ?> <div class="container header" style="background-image: <?= 'url(/media/default-photo-' . rand(1,9) .'.svg)'?>; background-size: cover;"> <?php } ?>
+				<div class="header-block">
+					<div class="header-row">
+						<h2><?= $activity->title ?></h2>
 					</div>
-					<div class="text-shadow d-flex flex-column" style="max-width: 50%">
-						<h1><?= $activity->title ?></h1>
+					<div class="header-row">
 						<p><?= $activity->datetime->format('Y/m/d') ?></p>
 					</div>
-					<div class="td-row text-shadow">
-						<p>by <a href="/rider/<?= $activity->user->id ?>"><strong><?= $activity->user->login ?></strong></a></p>
+					<div class="header-row">
+						<div class="header-column">
+							<a href="/rider/<?= $activity->user->id ?>"><?php $activity->user->displayPropic(30, 30, 30); ?></a>
+						</div>
+						<div class="header-column">
+							<p>by <a href="/rider/<?= $activity->user->id ?>"><strong><?= $activity->user->login ?></strong></a></p>
+						</div>
+						<div class="header-column"> <?php
+							if ($activity->privacy == 'private') { ?>
+								<p style="background-color: #ff5555" class="tag-light text-light">非公開</p> <?php
+							} else if ($activity->privacy == 'friends_only') { ?>
+								<p style="background-color: #ff5555" class="tag-light text-light">友達のみ</p> <?php
+							} ?>
+						</div>
 					</div>
-					<div class="td-row flex-column align-self-center"> <?php
-						if ($activity->privacy == 'private') { ?>
-							<p style="background-color: #ff5555" class="tag-light text-light">非公開</p> <?php
-						} else if ($activity->privacy == 'friends_only') { ?>
-							<p style="background-color: #ff5555" class="tag-light text-light">友達のみ</p> <?php
-						} ?>
-					</div>
-					<div class="header-buttons"> <?php
+					<div class="header-row mt-2"> <?php
 						// Include admin buttons if the user has admin rights on this activity
-						if ($activity->user == $connected_user) include '../includes/activities/admin-buttons.php'; /*
+						if ($activity->user == $connected_user) include '../includes/activities/admin-buttons.php';
 						// Else, include user buttons
-						else include 'includes/activities/user-buttons.php'; */?>
+						///else include '../includes/activities/user-buttons.php';?>
 					</div>
 				</div>
-			</div> <?php
-				
-			/*
-			// Include admin panel if the user has admin rights on this activity
-			if ($ride->author == $connected_user) {
-				include 'includes/activity/admin-panel.php';
-			}*/ ?>
+			</div>
 
 			<div class="container p-0 pg-ac-specs-container">
 				<div class="pg-ac-spec-container front border-0 <?= $activity->setBackgroundColor('distance')?>">

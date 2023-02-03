@@ -400,13 +400,6 @@
     overflow: hidden;
 }
 
-.pg-ac-header {
-    height: 350px;
-    background-position: center;
-}
-.pg-ac-header h1, .pg-ac-header p {
-    color: white;
-}
 .pg-ac-specs-container {
     display: flex;
     align-items: center;
@@ -623,6 +616,13 @@
 
 
 @media only screen and (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .header-block {
+        width: 100%;
+    }
     .pg-ac-specs-container {
         flex-direction: column;
         height: auto;
