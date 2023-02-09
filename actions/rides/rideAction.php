@@ -12,15 +12,16 @@
 
 	}
 	
-	// Instantiate Ride class
+	// Check if ride exists
 	if (is_numeric($slug)) {
 		
-		$ride = new Ride($slug);
-		
-		if ($ride->exists()) {
-		
-			// If exists, fetch data into $ride_data and display the ride infos
-			// $ride = $getRide->fetch(); 
+        $checkIfExists = $db->prepare('SELECT id FROM rides WHERE id = ?');
+        $checkIfExists->execute([$slug]);
+
+		// If exists, get ride data
+        if ($checkIfExists->rowCount() > 0) {
+
+			$ride = new Ride($slug);
 			
 			// If ride admin have submitted data, then replace existing data by submitted one
 			if (isset($_POST['save'])) {

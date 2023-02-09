@@ -10,7 +10,7 @@ include '../includes/head.php'; ?>
 <link rel="stylesheet" href="/assets/css/activity.css">
 <link rel="stylesheet" href="/assets/css/lightbox-style.css">
 
-<body>
+<body class="relative-navbar">
 
 <?php
 	// If set as private and connected user does not have admin rights on this activity, redirect to the dashboard

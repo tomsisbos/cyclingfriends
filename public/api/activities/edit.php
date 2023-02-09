@@ -158,7 +158,9 @@ if (is_array($data)) {
             $mkpoint['city']             = $entry['city'];
             $mkpoint['prefecture']       = $entry['prefecture'];
             $mkpoint['elevation']        = $entry['elevation'];
-            $mkpoint['date']             = date('Y-m-d H:i:s');
+            $mkpoint['date']             = new DateTime();
+            $mkpoint['date']->setTimestamp($entry['date'] / 1000);
+            $mkpoint['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             $mkpoint['month']            = date("n");
             $mkpoint['description']      = htmlspecialchars($entry['description']);
             $mkpoint['lng']              = $entry['lngLat']['lng'];
@@ -168,7 +170,7 @@ if (is_array($data)) {
 
             // Insert mkpoint data
             $insertMkpointData = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, lng, lat, publication_date, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertMkpointData->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date'], $mkpoint['popularity']));
+            $insertMkpointData->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date']->format('Y-m-d H:i:s'), $mkpoint['month'], $mkpoint['description'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date'], $mkpoint['popularity']));
             // Get mkpoint id
             $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
             $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
@@ -237,7 +239,7 @@ if (is_array($data)) {
 
                 // Insert photos data
                 $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-                $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['date'], 0, $mkpoint_photo['filename']));
+                $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['date']->format('Y-m-d H:i:s'), 0, $mkpoint_photo['filename']));
 
                 // Send file to blob storage
                 $containername = 'scenery-photos';

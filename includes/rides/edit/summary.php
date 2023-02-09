@@ -77,6 +77,9 @@ $previous_page = intval($stage_slug) - 1; ?>
 						<img src="data:<?= $checkpoints[$i]['img']['type'] ?>;base64,<?= $checkpoints[$i]['img']['blob'] ?>"> <?php
 					} else if (isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) { ?>
 						<img src="<?= $checkpoints[$i]['img'] ?>"> <?php
+					// Images that have been imported through mkpoint
+					} else if (isset($checkpoints[$i]['url'])) { ?>		
+						<img src="<?= $checkpoints[$i]['url']; ?>"> <?php
 					} else { ?> <img src="\media\default-photo-<?= rand(1,9); ?>.svg"> <?php }
 					if (($options['sf'] === true AND $i > 0 AND $i < (count($checkpoints))) OR ($options['sf'] === false AND $i > 0 AND $i < (count($checkpoints) - 1))) { ?>
 						<div class="summary-checkpoint-number"> 

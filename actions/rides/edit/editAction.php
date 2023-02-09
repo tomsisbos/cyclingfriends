@@ -84,11 +84,17 @@ if (isset($_POST['validate'])) {
 				if (isset($checkpoints[$i]['name'])) $name = htmlspecialchars($checkpoints[$i]['name']);
 				if (isset($checkpoints[$i]['description'])) $description = htmlspecialchars($checkpoints[$i]['description']);
 				// Treatment of images coming from the database
-				if (isset($checkpoints[$i]['img']['blob'])) {
+				if (isset($checkpoints[$i]['img']) AND isset($checkpoints[$i]['img']['blob'])) {
 					$img = $checkpoints[$i]['img']['blob'];
 					$img_size = $checkpoints[$i]['img']['size'];
 					$img_name = $checkpoints[$i]['img']['name'];
 					$img_type = $checkpoints[$i]['img']['type'];
+				// Treatment of images coming from blob server
+				} else if (isset($checkpoints[$i]['url'])) {
+					$img = file_get_contents($checkpoints[$i]['url']);
+					$img_name = $name;
+					$img_size = 0;
+					$img_type = 'image/jpeg';
 				// Treatment of uploaded images
 				} else if (isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) {
 					if (isset($checkpoints[$i]['img'])) $img = base64_decode(base64_encode(mb_substr($checkpoints[$i]['img'], 23)));

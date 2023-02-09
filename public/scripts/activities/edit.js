@@ -81,7 +81,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     
     // Save activity treatment
     document.querySelector('#saveActivity').addEventListener('click', async () => {
-        var photosToShare = await editActivityMap.checkForCloseMkpoints()
+        const photosToShare = null // In case of ride editing, don't check for mkpoints to which add photos
         if (editActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await editActivityMap.createMkpoints()
         else var mkpointsToCreate = null
         editActivityMap.saveActivity(photosToShare, mkpointsToCreate)

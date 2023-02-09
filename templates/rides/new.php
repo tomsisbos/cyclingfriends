@@ -2,7 +2,7 @@
 
 include '../actions/users/initSessionAction.php';
 require '../actions/rides/new/createAction.php';
-include '../includes/head.php';
+require_once '../includes/head.php';
 
 // Clear session form data if ride already posted
 if (isset($_SESSION['forms']['created'])) {

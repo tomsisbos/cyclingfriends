@@ -754,7 +754,6 @@ export default class NewActivityMap extends ActivityMap {
             if (photo.featured) {
                 photo.$thumbnail.firstChild.classList.add('selected-marker')
                 photo.$thumbnail.querySelector('.pg-ac-feature-button').style.color = "#ff5555"
-                isSetFeatured = true
             } else {
                 photo.$thumbnail.firstChild.classList.remove('selected-marker')
                 photo.$thumbnail.querySelector('.pg-ac-feature-button').style.color = "white"
@@ -774,6 +773,7 @@ export default class NewActivityMap extends ActivityMap {
             this.data.mkpoints.forEach(mkpoint => {
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
+                    // If photo and mkpoint have same coords
                     if (CFUtils.compareCoords({lng: mkpoint.lng, lat: mkpoint.lat}, photoLocation, 3)) {
                         console.log(photo.name + ' could be added to ' + mkpoint.name + ' at a decimal level of 3.')
                         photosToAsk.push({photo, mkpoint})
@@ -1016,6 +1016,7 @@ export default class NewActivityMap extends ActivityMap {
                     var $mkpointForm = document.querySelector('#form' + entry.number)
                     var name = $mkpointForm.querySelector('.js-mkpoint-name').value
                     var description = $mkpointForm.querySelector('.js-mkpoint-description').value
+                    var date = entry.datetime
                     var tags = []
                     $mkpointForm.querySelectorAll('.js-segment-tag').forEach($tagInput => {
                         if ($tagInput.checked) tags.push($tagInput.dataset.name)
@@ -1049,17 +1050,18 @@ export default class NewActivityMap extends ActivityMap {
 
                     var lngLat = {lng: this.getPhotoLocation(entry)[0], lat: this.getPhotoLocation(entry)[1]}
                     var location = await this.getLocation(lngLat)
-                    console.log('push')
                     mkpointsToCreate.push( {
                         name,
                         description,
                         tags,
+                        date,
                         lngLat,
                         city: location.city,
                         prefecture: location.prefecture,
                         elevation: Math.floor(this.map.queryTerrainElevation(lngLat)),
                         photos
                     } )
+                    console.log(mkpointsToCreate)
                     if (name == '' || description == '') filled = false
                     treatedMkpointsNumber++
                     if (treatedMkpointsNumber == this.data.mkpointsToCreate.length && filled) resolve(mkpointsToCreate)

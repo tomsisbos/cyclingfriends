@@ -1,6 +1,7 @@
 <?php
 
 include '../actions/databaseAction.php';
+include '../includes/functions.php';
 
 // If user clicks on submit button
 if (isset($_POST['validate'])) {
@@ -89,10 +90,19 @@ if (isset($_POST['validate'])) {
 				if ($i == count($checkpoints) - 1) $name = 'Goal';
 				if (isset($checkpoints[$i]['name'])) $name = htmlspecialchars($checkpoints[$i]['name']);
 				if (isset($checkpoints[$i]['description'])) $description = htmlspecialchars($checkpoints[$i]['description']);
-				if (isset($checkpoints[$i]['img'])) $img = base64_decode(base64_encode(mb_substr($checkpoints[$i]['img'], 23))); // $img = $checkpoints[$i]['img'];
-				if (isset($checkpoints[$i]['img_size'])) $img_size = $checkpoints[$i]['img_size'];
-				if (isset($checkpoints[$i]['img_name'])) $img_name = $checkpoints[$i]['img_name'];
-				if (isset($checkpoints[$i]['img_type'])) $img_type = $checkpoints[$i]['img_type'];
+				// Treatment of images coming from blob server
+				if (isset($checkpoints[$i]['url'])) {
+					$img = file_get_contents($checkpoints[$i]['url']);
+					$img_name = $name;
+					$img_size = 0;
+					$img_type = 'image/jpeg';
+				// Treatment of uploaded images
+				} else {
+					if (isset($checkpoints[$i]['img'])) $img = base64_decode(base64_encode(mb_substr($checkpoints[$i]['img'], 23)));
+					if (isset($checkpoints[$i]['img_size'])) $img_size = $checkpoints[$i]['img_size'];
+					if (isset($checkpoints[$i]['img_name'])) $img_name = $checkpoints[$i]['img_name'];
+					if (isset($checkpoints[$i]['img_type'])) $img_type = $checkpoints[$i]['img_type'];
+				}
 				$lng = $checkpoints[$i]['lngLat']['lng'];
 				$lat = $checkpoints[$i]['lngLat']['lat'];
 				$elevation = $checkpoints[$i]['elevation'];

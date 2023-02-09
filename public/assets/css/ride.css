@@ -175,6 +175,7 @@
 .rd-course-thumbnail img {
     width: 100%;
     object-fit: cover;
+    max-height: 500px;
     opacity: 100%;
     transition: opacity 0.2s;  
 }

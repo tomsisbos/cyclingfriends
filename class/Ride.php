@@ -3,6 +3,37 @@
 class Ride extends Model {
     
     protected $table = 'rides';
+
+    public $name;
+    public $date;
+    public $meeting_time;
+    public $departure_time;
+    public $finish_time;
+    public $nb_riders_min;
+    public $nb_riders_max;
+    public $level_beginner;
+    public $level_intermediate;
+    public $level_athlete;
+    public $citybike;
+    public $roadbike;
+    public $mountainbike;
+    public $gravelcxbike;
+    public $description;
+    public $meeting_place;
+    public $distance_about;
+    public $distance;
+    public $finish_place;
+    public $terrain;
+    public $course_description;
+    public $posting_date;
+    public $author;
+    public $privacy;
+    public $entry_start;
+    public $entry_end;
+    public $participants_number;
+    public $status;
+    public $substatus;
+    public $checkpoints;
     
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
@@ -377,8 +408,10 @@ class Ride extends Model {
         return array('participants_number' => $participants_number, 'participation_color' => $participation_color);
     }
 
-    public function exists () {
-        if (!empty($this->name)) return true;
+    public function exists ($id) {
+        $checkIfExists = $this->getPdo()->prepare('SELECT id FROM rides WHERE id = ?');
+        $checkIfExists->execute([$id]);
+        if ($checkIfExists->rowCount() > 0) return true;
         else return false;
     }
 

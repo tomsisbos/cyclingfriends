@@ -28,13 +28,9 @@
                     if (isset($checkpoint->name) && $checkpoint->name != 'Checkpoint n°0' && $checkpoint->name != 'Checkpoint n°'. (count($ride->checkpoints) - 1)) { 
                         echo $checkpoint->name. ' - ';
                     } else {
-                        if ($i === 0) {
-                            echo 'Start - ';
-                        } else if ($i == (count($ride->checkpoints) - 1)) {
-                            echo 'Goal - ';
-                        } else {
-                            echo 'Checkpoint n°' .$i. ' - ';
-                        }
+                        if ($i === 0) echo 'Start - ';
+                        else if ($i == (count($ride->checkpoints) - 1)) echo 'Goal - ';
+                        else echo 'Checkpoint n°' .$i. ' - ';
                     } 
                     if (isset($ride->route)) {
                         if ($checkpoint->number != 0 && $checkpoint->distance == 0) { ?>

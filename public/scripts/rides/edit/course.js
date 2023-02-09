@@ -121,7 +121,7 @@ async function displayForm () {
         ridePickMapIsLoaded = true // Prevents from multiple loading
 
         // Validating course before going to next step
-        document.querySelector('#js-pick button#next').addEventListener('click', validateCoursePick, 'capture')
+        document.querySelector('#js-pick button#next').addEventListener('click', (e) => ridePickMap.validateCourse(e), 'capture')
 
 
     } else if (method === 'draw' && !rideDrawMapIsLoaded) { // Only load if draw mode selected and if map have not been already loaded once
@@ -198,93 +198,12 @@ async function displayForm () {
             } )
 
             // Validating course before going to next step
-            document.querySelector('#js-draw button#next').addEventListener('click', validateCourseDraw, 'capture')
+            document.querySelector('#js-draw button#next').addEventListener('click', (e) => rideDrawMap.validateCourse(e), 'capture')
 
             // After everything has been loaded, enable save&next button
             document.querySelector('#js-draw button#next').disabled = false
         } )
 
     }
-
-    async function validateCoursePick (e) {
-
-        // If no checkpoint have been set
-        var $firstMarker = document.querySelector('.checkpoint-marker')
-        var markersNumber = map._markers.length
-        if (!$firstMarker || (markersNumber === 1 && $firstMarker.innerText == 'S')) {
-            e.preventDefault()
-            var error = '少なくとも、ライドのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'
-            if(document.querySelector('.error-block')){
-                document.querySelector('.error-block').remove()
-            }
-            var errorDiv = document.createElement('div')
-            errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-3')
-
-            var errorMessage = document.createElement('p')
-            errorMessage.innerHTML = error
-            errorMessage.classList.add('error-message')
-            errorDiv.appendChild(errorMessage)
-            document.querySelector('.container').before(errorDiv)
-            errorDiv.scrollIntoView()
-        
-            // Else, validate, send data to API and go to next page
-        } else {
-            e.preventDefault()
-            await ridePickMap.updateMeetingFinishPlace()
-            ridePickMap.updateSession( {
-                method: 'pick',
-                data: {
-                    'options': ridePickMap.options
-                }
-            })
-            document.getElementById('form').submit()
-
-        }
-        $map.addEventListener('click', removeError, 'once')
-    }
-
-    async function validateCourseDraw (e) {
-        e.preventDefault()
-
-        // If no route have been selected, display an error message
-        if (rideDrawMap.route == undefined) {
-            var error = 'ルートが選択されていません。下記のリストからルートを選択してください。'
-            if (document.querySelector('.error-block')) {
-                document.querySelector('.error-block').remove()
-            }
-            var errorDiv = document.createElement('div')
-            errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-3')
-            var errorMessage = document.createElement('p')
-            errorMessage.innerHTML = error
-            errorMessage.classList.add('error-message')
-            errorDiv.appendChild(errorMessage)
-            document.querySelector('.container').before(errorDiv)
-            errorDiv.scrollIntoView()
-
-        // Else, validate, send data to API and go to next page
-        } else {
-            // Update meeting place and finish place information (only if not set or having changed)
-            const coursedata = {
-                'myRoutes': rideDrawMap.route.id,
-                'terrain': terrainDiv.innerText,
-                'distance': parseFloat(distanceDiv.innerText.substring(0, distanceDiv.innerText.length - 2)),
-                'meetingplace': rideDrawMap.route.meetingplace,
-                'finishplace': rideDrawMap.route.finishplace,
-                'course-description': document.querySelector('#courseDescriptionTextarea').value
-            }
-            rideDrawMap.updateSession( {
-                method: 'draw',
-                data: coursedata
-            } )
-            document.getElementById('form').submit()
-        }
-        $map.addEventListener('click', removeError, 'once')
-    }
-    
-    function removeError () {
-            if(document.querySelector('.error-block')){
-                document.querySelector('.error-block').remove()
-            }
-        }
 
 }

@@ -1,4 +1,5 @@
 <?php // Set up previous page variable for the back button
+var_dump($_SESSION['forms']['2']['checkpoints']);
 $previous_page = intval($slug) - 1; ?>
 
 <!--Displays the Ride Infos form-->
@@ -73,6 +74,8 @@ $previous_page = intval($slug) - 1; ?>
 				<div class="summary-checkpoint-image"> <?php
 					if (isset($checkpoints[$i]['img'])) { ?>
 						<img src="<?= $checkpoints[$i]['img']; ?>"> <?php
+					} else if (isset($checkpoints[$i]['url'])) { ?>		
+						<img src="<?= $checkpoints[$i]['url']; ?>"> <?php
 					} else { ?>		
 						<img src="\media\default-photo-<?= rand(1,9); ?>.svg"> <?php
 					}

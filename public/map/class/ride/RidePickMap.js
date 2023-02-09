@@ -53,7 +53,7 @@ export default class RidePickMap extends RideMap {
         let popup = new Popup({closeButton: false, maxWidth: '180px'}, {markerHeight: 24}).popup
         popup.setHTML(content)
         marker.setPopup(popup)
-        popup.options.className = 'hidden' // Hide popup as creating in edit mode
+        popup.options.className = 'hidden'
         marker.addTo(this.map)
 
         // Update existing markers
@@ -134,7 +134,7 @@ export default class RidePickMap extends RideMap {
 
             // Set and add popup
             var popup = this.generateMarkerPopup(marker, j, this.data.checkpoints[j].name, this.data.checkpoints[j].description, this.data.checkpoints[j].img)
-            popup.options.className = 'hidden' // Hide popup as creating in edit mode
+            popup.options.className = 'hidden'
 
             // Create marker
             marker.addTo(this.map)
@@ -307,6 +307,32 @@ export default class RidePickMap extends RideMap {
             }
             resolve()
         } )
+    }
+
+    async validateCourse (e) {
+        e.preventDefault()
+
+        // Only submit if enough data is set (to prevent from submitting before session have been updated asynchronously)
+        if (this.session.course['options'] && this.session.course['route-id']) {
+
+            var $firstMarker = document.querySelector('.checkpoint-marker')
+            var markersNumber = map._markers.length
+            // If no checkpoint have been set
+            if (!$firstMarker || (markersNumber === 1 && $firstMarker.innerText == 'S')) showResponseMessage({error: '少なくとも、ライドのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'})
+            // Else, validate, send data to API and go to next page
+            else {
+                await this.updateMeetingFinishPlace()
+                this.updateSession( {
+                    method: 'pick',
+                    data: {
+                        'options': this.options
+                    }
+                }).then( () => document.getElementById('form').submit())
+            }
+
+        } else showResponseMessage({error: 'データの自動保存が終わっていない状態で進むと、エラーが発生するのでデータの送信を止めさせて頂きました。数秒後にもう一度お試しください。'})
+
+        this.$map.addEventListener('click', hideResponseMessage, 'once')
     }
 
 }

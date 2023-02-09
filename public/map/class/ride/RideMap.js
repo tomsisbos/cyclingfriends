@@ -1,6 +1,5 @@
 import GlobalMap from "/map/class/GlobalMap.js"
 import Popup from "/map/class/Popup.js"
-///import * as util from 'util'
 
 export default class RideMap extends GlobalMap {
 
@@ -13,7 +12,6 @@ export default class RideMap extends GlobalMap {
     data = {
         checkpoints: []
     }
-    mode = 'edit'
     edit = false
     session
     options = {
@@ -36,9 +34,17 @@ export default class RideMap extends GlobalMap {
             }
             // If edit property has been set to true, ask API to use 'edit-course' array name rather than default 'course'
             if (this.edit == true) cleanVariable.edit = true
+            console.log(cleanVariable)
             // Send data to server
             ajaxJsonPostRequest (this.apiUrl, cleanVariable, (response) => {
-                if (this.session) this.session.course = response
+                if (this.session) {
+                    var currentData = this.session.course
+                    this.session.course = {
+                        ...currentData,
+                        ...response
+                    }
+                    console.log(this.session.course)
+                }
                 resolve(response)
             } )
         } )

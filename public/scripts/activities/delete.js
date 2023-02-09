@@ -1,5 +1,3 @@
-window.location
-
 // Button handler
 document.querySelectorAll('#deleteButton').forEach( (element) => {
     const activityId = element.dataset.id

@@ -431,7 +431,7 @@ export default class RideDrawMap extends RideMap {
                                     elevation: Math.floor(this.map.queryTerrainElevation(marker.getLngLat())),
                                     name: popup.getElement().querySelector('#name').value,
                                     description: popup.getElement().querySelector('#description').innerHTML,
-                                    img: popup.getElement().querySelector('img').src,
+                                    url: popup.getElement().querySelector('img').src,
                                     marker
                                 } )
                                 // Sort checkpoints
@@ -725,6 +725,36 @@ export default class RideDrawMap extends RideMap {
                 checkpoints: this.data.checkpoints
             }
         } )
+    }
+
+    async validateCourse (e) {
+        e.preventDefault()
+
+        // Only submit if enough data is set (to prevent from submitting before session have been updated asynchronously)
+        if (this.session.course['options'] && this.session.course['route-id']) {
+
+            // If no route have been selected, display an error message
+            if (this.route == undefined) showResponseMessage({error: 'ルートが選択されていません。下記のリストからルートを選択してください。'})
+            // Else, validate, send data to API and go to next page
+            else {
+                // Update meeting place and finish place information (only if not set or having changed)
+                const coursedata = {
+                    'myRoutes': this.route.id,
+                    'terrain': terrainDiv.innerText,
+                    'distance': parseFloat(distanceDiv.innerText.substring(0, distanceDiv.innerText.length - 2)),
+                    'meetingplace': this.route.meetingplace,
+                    'finishplace': this.route.finishplace,
+                    'course-description': document.querySelector('#courseDescriptionTextarea').value
+                }
+                this.updateSession( {
+                    method: 'draw',
+                    data: coursedata
+                } ).then( () => document.getElementById('form').submit())
+            }
+
+        } else showResponseMessage({error: 'データの自動保存が終わっていない状態で進むと、エラーが発生するのでデータの送信を止めさせて頂きました。数秒後にもう一度お試しください。'})
+
+        this.$map.addEventListener('click', hideResponseMessage, 'once')
     }
 
 }
