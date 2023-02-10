@@ -474,7 +474,7 @@ class User extends Model {
     }
 
     public function getRides () {
-        $getRides = $this->getPdo()->prepare('SELECT * FROM rides WHERE author_id = ? ORDER BY posting_date DESC');
+        $getRides = $this->getPdo()->prepare('SELECT id FROM rides WHERE author_id = ? ORDER BY posting_date DESC');
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -512,7 +512,7 @@ class User extends Model {
         // Request activities
         $getActivities = $this->getPdo()->prepare(
             "SELECT
-            id, user_id, title, privacy
+            id, user_id, posting_date, title, privacy
             FROM
             activities
         WHERE 
@@ -538,7 +538,7 @@ class User extends Model {
 
         // If resulted array if shorter than [limit], complete with most liked public activities of last [period] days
         if ($results_number = count($activities) < $limit) {
-            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
+            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, posting_date, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
             $getFurtherActivities->execute(array($period));
             $further_activities = $getFurtherActivities->fetchAll(PDO::FETCH_ASSOC);
             foreach ($further_activities as $further_activity) {
@@ -552,7 +552,7 @@ class User extends Model {
 
         // If still shorter than [limit], complete with other most liked public activities, regardless of [period]
         if (count($activities) < $limit) {
-            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
+            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, posting_date, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
             $getFurtherActivities2->execute();
             $further_activities2 = $getFurtherActivities2->fetchAll(PDO::FETCH_ASSOC);
             foreach ($further_activities2 as $further_activity) {
@@ -693,14 +693,14 @@ class User extends Model {
         else if ($friends_and_following_number < 25) $period = 14;
         else $period = 10;
         // Request mkpoints
-        $getMkpoints = $this->getPdo()->prepare("SELECT id FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_following_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_following_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
         $getMkpoints->execute(array($period));
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Get currently saved cleared segments list
     public function getClearedSegments ($limit = 99999) {
-        $getClearedSegments = $this->getPdo()->prepare("SELECT DISTINCT u.segment_id, u.activity_id FROM user_segments AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
+        $getClearedSegments = $this->getPdo()->prepare("SELECT DISTINCT u.segment_id, u.activity_id, a.datetime FROM user_segments AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
         $getClearedSegments->execute(array($this->id));
         $cleared_segments = $getClearedSegments->fetchAll(PDO::FETCH_ASSOC);
         foreach ($cleared_segments as $cleared_segment) {
@@ -727,26 +727,23 @@ class User extends Model {
     public function getThread ($offset = 0, $limit = null) {
         $activities_data = $this->getPublicActivities();
         $mkpoint_data = $this->getPublicMkpoints();
-        // Build thread data
+        // Get thread data skeleton
         $thread_data = [];
         foreach ($activities_data as $data) {
-            $activity = new Activity($data['id']);
-            $activity->type = 'activity';
-            array_push($thread_data, $activity);
+            $data['type'] = 'activity';
+            array_push($thread_data, $data);
         }
         foreach ($mkpoint_data as $data) {
-            $mkpoint = new Mkpoint($data['id']);
-            $mkpoint->type = 'mkpoint';
-            $mkpoint->cleared = $mkpoint->isCleared();
-            array_push($thread_data, $mkpoint);
+            $data['type'] = 'mkpoint';
+            array_push($thread_data, $data);
         }
         // Sort thread data by date
         function sort_by_date ($a, $b) {
-            if (isset($a->publication_date)) $a->date = $a->publication_date;
-            else if (isset($a->datetime)) $a->date = $a->datetime;
-            if (isset($b->publication_date)) $b->date = $b->publication_date;
-            else if (isset($b->datetime)) $b->date = $b->datetime;
-            return $b->date <=> $a->date;
+            if (isset($a['publication_date'])) $a_date = $a['publication_date'];
+            else if (isset($a['posting_date'])) $a_date = $a['posting_date'];
+            if (isset($b['publication_date'])) $b_date = $b['publication_date'];
+            else if (isset($b['posting_date'])) $b_date = $b['posting_date'];
+            return $b_date <=> $a_date;
         }
         usort($thread_data, 'sort_by_date');
         return array_slice($thread_data, $offset, $limit);

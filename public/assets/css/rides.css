@@ -178,57 +178,62 @@
     }
 }
 
-.my-rd-th {
+.my-rd-card {
     display: flex;
-    text-align: center;
-    font-weight: bold;
+    margin: 10px 0px;
+    gap: 20px;
+    position: relative;
+    background-color: #fff;
 }
-.my-rd-tr {
-    width: 100%;
-    min-height: -webkit-fill-available;
-    padding: 5px 0px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 5px;
+
+.my-rd-thumbnail {
+    background-color: #ccc;
+    height: 140px;
+    width: 400px;
+    background-size: cover;
+    background-position: center;
 }
-.my-rd-td {
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 2;
+
+.my-rd-header {
+    position: relative;
+    top: 20px;
+    margin: 0px 20px;
+    width: calc(100% - 40px);
 }
-.my-rd-participants-number {
-    flex-direction: row !important;
-    column-gap: 5px;
-    flex-wrap: wrap;
+
+.my-rd-status {
+    width: fit-content;
+    margin-bottom: 5px;
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: fit-content;
 }
-.my-rd-button {
-    max-width: 100%;
-    width: unset !important;
-    min-width: min-content;
+
+.my-rd-details {
+    padding: 10px 0px;
 }
-.my-rd-button button {
-    min-width: fit-content;
-}
-.my-rd-responsive-label {
-    display: none;
+
+@media only screen and (max-width: 992px) {
+    .my-rd-card {
+        font-size: smaller;
+    }
+    .my-rd-thumbnail {
+        width: 300px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
-    .my-rd-tr.justify {
-        padding: 30px 0px !important;
-        border-bottom: 1px dashed #bbbbbb;
+    .my-rd-card {
+        flex-direction: column;
+        gap: unset;
+        margin: 20px 0px;
     }
-    .my-rd-th {
-        display: none;
+    .my-rd-thumbnail {
+        width: 100%;
     }
-    .my-rd-tr .my-rd-td, .my-rd-th .my-rd-td {
-        min-width: 100%;
-    }
-    .my-rd-responsive-label {
-        display: contents;
-        font-weight: bold;
+    .my-rd-details {
+        padding: 10px;
     }
 }

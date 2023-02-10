@@ -15,22 +15,29 @@ if (isAjax()) {
         $entries = [];
         foreach ($results as $result) {
             // Activity data preparation
-            if ($result->type === 'activity') {
-                $result->datetimeString = $result->datetime->format('Y/m/d');
-                $result->photosNumber = count($result->getPhotoIds());
-                $result->checkpoints = $result->getCheckpoints();
-                $result->routeThumbnail = $result->route->getThumbnail();
-                $result->photos = $result->getPreviewPhotos($preview_photos_quantity);
-                if (substr($result->duration->format('H'), 0, 1) == '0') $result->formattedDuration = substr($result->duration->format('H'), 1, strlen($result->duration->format('i'))) . '<span class="ac-spec-unit"> h </span>' . $result->duration->format('i');
-                else $result->formattedDuration = $result->duration->format('H') . '<span class="ac-spec-unit"> h </span>' . $result->duration->format('i');
-                $result->averagespeed = $result->getAverageSpeed();
-                $result->propic = $result->user->getPropicElement();
-                array_push($entries, $result);
+            if ($result['type'] === 'activity') {
+                $activity = new Activity($result['id']);
+                $activity->type = 'activity';
+                $activity->datetimeString = $activity->datetime->format('Y/m/d');
+                $activity->photosNumber = count($activity->getPhotoIds());
+                $activity->checkpoints = $activity->getCheckpoints();
+                $activity->routeThumbnail = $activity->route->getThumbnail();
+                $activity->photos = $activity->getPreviewPhotos($preview_photos_quantity);
+                if (substr($activity->duration->format('H'), 0, 1) == '0') $activity->formattedDuration = substr($activity->duration->format('H'), 1, strlen($activity->duration->format('i'))) . '<span class="ac-spec-unit"> h </span>' . $activity->duration->format('i');
+                else $activity->formattedDuration = $activity->duration->format('H') . '<span class="ac-spec-unit"> h </span>' . $activity->duration->format('i');
+                $activity->averagespeed = $activity->getAverageSpeed();
+                $activity->user_login = $activity->getAuthor()->login;
+                $activity->propic = $activity->getAuthor()->getPropicElement();
+                array_push($entries, $activity);
             // Mkpoint data preparation
-            } else if ($result->type === 'mkpoint') {
-                $result->propic = $result->user->getPropicElement();
-                $result->featuredimageUrl = $result->getImages()[0]->url;
-                array_push($entries, $result);
+            } else if ($result['type'] === 'mkpoint') {
+                $mkpoint = new Mkpoint($result['id']);
+                $mkpoint->type = 'mkpoint';
+                $mkpoint->cleared = $mkpoint->isCleared();
+                $mkpoint->user_login = $mkpoint->getAuthor()->login;
+                $mkpoint->propic = $mkpoint->getAuthor()->getPropicElement();
+                $mkpoint->featuredimageUrl = $mkpoint->getImages()[0]->url;
+                array_push($entries, $mkpoint);
             }
         }
 

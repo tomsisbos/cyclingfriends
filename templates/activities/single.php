@@ -14,12 +14,12 @@ include '../includes/head.php'; ?>
 
 <?php
 	// If set as private and connected user does not have admin rights on this activity, redirect to the dashboard
-	if ($activity->privacy == 'Private' AND $activity->user != $connected_user) {
+	if ($activity->privacy == 'Private' AND $activity->user_id != $connected_user->id) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the activity author, redirect to the dashboard
-	if ($activity->privacy == 'Friends only' AND $activity->user != $connected_user AND $activity->user->isFriend($connected_user) == false) {
+	if ($activity->privacy == 'Friends only' AND $activity->user_id != $connected_user->id AND $activity->getAuthor()->isFriend($connected_user) == false) {
 		header('Location: /');
 	}
 
@@ -43,10 +43,10 @@ include '../includes/head.php'; ?>
 					</div>
 					<div class="header-row">
 						<div class="header-column">
-							<a href="/rider/<?= $activity->user->id ?>"><?php $activity->user->displayPropic(30, 30, 30); ?></a>
+							<a href="/rider/<?= $activity->user_id ?>"><?php $activity->getAuthor()->displayPropic(30, 30, 30); ?></a>
 						</div>
 						<div class="header-column">
-							<p>by <a href="/rider/<?= $activity->user->id ?>"><strong><?= $activity->user->login ?></strong></a></p>
+							<p>by <a href="/rider/<?= $activity->user_id ?>"><strong><?= $activity->getAuthor()->login ?></strong></a></p>
 						</div>
 						<div class="header-column"> <?php
 							if ($activity->privacy == 'private') { ?>
@@ -58,7 +58,7 @@ include '../includes/head.php'; ?>
 					</div>
 					<div class="header-row mt-2"> <?php
 						// Include admin buttons if the user has admin rights on this activity
-						if ($activity->user == $connected_user) include '../includes/activities/admin-buttons.php';
+						if ($activity->user_id == $connected_user->id) include '../includes/activities/admin-buttons.php';
 						// Else, include user buttons
 						///else include '../includes/activities/user-buttons.php';?>
 					</div>

@@ -16,12 +16,12 @@ include '../includes/head.php'; ?>
 <body> <?php
 
 	// If set as private and connected user does not have admin rights on this ride, redirect to the dashboard
-	if ($ride->privacy == 'Private' AND $ride->author->id != $connected_user->id) {
+	if ($ride->privacy == 'Private' AND $ride->author_id != $connected_user->id) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the ride author, redirect to the dashboard
-	if ($ride->author->id != $connected_user->id AND $ride->privacy == 'Friends only' AND $ride->author->isFriend($connected_user) == false) {
+	if ($ride->author_id != $connected_user->id AND $ride->privacy == 'Friends only' AND $ride->getAuthor()->isFriend($connected_user) == false) {
 		header('Location: /');
 	}
 
@@ -45,7 +45,7 @@ include '../includes/head.php'; ?>
 						// Only add substatus if there is one
 						if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
 						if ($ride->privacy == 'Friends only') { ?>
-							<p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->author->login; ?>の友達に限定</p> <?php
+							<p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->getAuthor()->login; ?>の友達に限定</p> <?php
 						} ?>
 					</div>
 				</div>
@@ -53,12 +53,12 @@ include '../includes/head.php'; ?>
 					<h2><?= $ride->name ?></h2>
 				</div>
 				<div class="header-row">
-					<a href="/rider/<?= $ride->author->id ?>"><?php $ride->author->displayPropic(30, 30, 30); ?></a>
-					<p>by <strong><?= $ride->author->login ?></strong></p>
+					<a href="/rider/<?= $ride->author_id ?>"><?php $ride->getAuthor()->displayPropic(30, 30, 30); ?></a>
+					<p>by <strong><?= $ride->getAuthor()->login ?></strong></p>
 				</div>
 				<div class="header-row mt-2"> <?php
 					// Include admin buttons if the user has admin rights on this ride
-					if ($ride->author->id == $connected_user->id) include '../includes/rides/admin-buttons.php'; 
+					if ($ride->author_id == $connected_user->id) include '../includes/rides/admin-buttons.php'; 
 					// Else, include participation buttons
 					else include '../includes/rides/participation-buttons.php'; ?>
 				</div>
@@ -69,7 +69,7 @@ include '../includes/head.php'; ?>
 		<?php include '../includes/rides/participants.php';
 			
 			// Include admin panel if the user has admin rights on this ride
-			if ($ride->author->id == $connected_user->id) {
+			if ($ride->author_id == $connected_user->id) {
 				include '../includes/rides/admin-panel.php';
 			} ?>
 			
@@ -114,7 +114,7 @@ include '../includes/head.php'; ?>
 			<!-- Course section -->
 			<div class="container margin-bottom d-flow-root"> <?php
 				
-				if (isset($ride->route)) { ?>
+				if ($ride->getRoute() != null) { ?>
 					<div class="rd-course-thumbnail">
 						<a href="/ride/<?= $ride->id ?>/route"><img src="<?= $ride->getMapThumbnail() ?>"></img></a>
 					</div> <?php

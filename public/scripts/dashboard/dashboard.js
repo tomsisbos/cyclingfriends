@@ -1,22 +1,27 @@
+import LoaderCircle from '/map/class/loaders/LoaderCircle.js'
+
 // Infinite scroll
 
 const toleranceZone = 100 // Zone for infinite scroll to react in pixels
-var isInside = false
 const $cardsContainer = document.querySelector('#threadContainer')
 const photosquantity = parseInt($cardsContainer.dataset.photosquantity)
-const limit = parseInt($cardsContainer.dataset.limit)
+const limit = parseInt($cardsContainer.dataset.limit) - 2
+var isInside = false
+var isCurrentlyLoading = false
 var offset = 0
 if (document.querySelector('#infiniteScrollElement')) var infiniteScrollElement = document.querySelector('#infiniteScrollElement')
 else var infiniteScrollElement = document
+var loader = new LoaderCircle(document.querySelector('.js-loader-container'))
 
 infiniteScrollElement.addEventListener('scroll', function (e) {
 
     var element = e.target
 
     // When scroll to the bottom zone of the dashboard, get next elements from dashboard api and display cards
-    if (!isInside && ((element.scrollHeight - element.scrollTop) <= (element.clientHeight + toleranceZone))) {
+    if (!isInside && !isCurrentlyLoading && ((element.scrollHeight - element.scrollTop) <= (element.clientHeight + toleranceZone))) {
         isInside = true
         offset += limit
+        isCurrentlyLoading = true
         ajaxGetRequest('/api/dashboard.php?getThread=' + limit + ',' + offset + ',' + photosquantity, (response) => {
             response.forEach( (entry) => {
                 var $link = buildLink(entry)
@@ -24,7 +29,8 @@ infiniteScrollElement.addEventListener('scroll', function (e) {
                 $cardsContainer.appendChild($link)
                 $cardsContainer.appendChild($card)
             } )
-        } )
+            isCurrentlyLoading = false
+        }, loader)
     } else isInside = false
 
 } )
@@ -56,11 +62,11 @@ function buildCard (entry) {
             <div class="ac-infos-container">
                 <div class="ac-user-details">
                     <div class="ac-user-propic">
-                        <a href="/rider/` + activity.user.id + `">` + activity.propic + `</a>
+                        <a href="/rider/` + activity.user_id + `">` + activity.propic + `</a>
                     </div>
                     <div class="ac-details">
                         <div class="ac-user-name">
-                            <a href="/rider/` + activity.user.id + `">` + activity.user.login + `</a>
+                            <a href="/rider/` + activity.user_id + `">` + activity.user_login + `</a>
                         </div>
                         <div class="ac-name">
                             <a href="/activity/` + activity.id + `">
@@ -104,7 +110,7 @@ function buildCard (entry) {
         $photosContainer.className = 'ac-photos-container'
         var i = 1
         activity.photos.forEach( (photo) => {
-            $a = document.createElement('a')
+            var $a = document.createElement('a')
             $a.setAttribute('href', '/activity/' + activity.id)
             // Build variables
             if (photo.featured) var featured = ' featured'
@@ -150,7 +156,7 @@ function buildCard (entry) {
         <div class="mk-photo"><img src="` + mkpoint.featuredimageUrl + `"></div>
         <div class="mk-data">
             <div class="mk-top">
-                <a href="/rider/` + mkpoint.user.id + `">` +
+                <a href="/rider/` + mkpoint.user_id + `">` +
                     mkpoint.propic + `
                 </a>
                 <div class="mk-top-text">
@@ -163,7 +169,6 @@ function buildCard (entry) {
             <div class="mk-description">` + mkpoint.description + `</div>
         </div>`
     }
-    
 
     return $card
 }

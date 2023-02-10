@@ -26,50 +26,60 @@ class Ride extends Model {
     public $terrain;
     public $course_description;
     public $posting_date;
-    public $author;
+    public $author_id;
     public $privacy;
     public $entry_start;
     public $entry_end;
     public $participants_number;
     public $status;
     public $substatus;
+    public $lngLatFormat;
     public $checkpoints;
     
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
-        $this->id = $id;
+        $this->id                                      = $id;
         $data = $this->getData($this->table);
-        $this->name                                 = $data['name'];
-        $this->date                                 = $data['date'];
-        $this->meeting_time                         = $data['meeting_time'];
-        $this->departure_time                       = $data['departure_time'];
-        $this->finish_time                          = $data['finish_time'];
-        $this->nb_riders_min                        = $data['nb_riders_min'];
-        $this->nb_riders_max                        = $data['nb_riders_max'];
-        $this->level_beginner                       = $data['level_beginner'];
-        $this->level_intermediate                   = $data['level_intermediate'];
-        $this->level_athlete                        = $data['level_athlete'];
-        $this->citybike                             = $data['citybike'];
-        $this->roadbike                             = $data['roadbike'];
-        $this->mountainbike                         = $data['mountainbike'];
-        $this->gravelcxbike                         = $data['gravelcxbike'];
-        $this->description                          = $data['description'];
-        $this->meeting_place                        = $data['meeting_place'];
-        $this->distance_about                       = $data['distance_about'];
-        $this->distance                             = $data['distance'];
-        $this->finish_place                         = $data['finish_place'];
-        $this->terrain                              = $data['terrain'];
-        $this->course_description                   = $data['course_description'];
-        $this->posting_date                         = $data['posting_date'];
-        $this->author                               = new User ($data['author_id']);
-        $this->privacy                              = $data['privacy'];
-        $this->entry_start                          = $data['entry_start'];
-        $this->entry_end                            = $data['entry_end'];
-        $this->participants_number                  = $data['participants_number'];
-        if (isset($data['route_id'])) $this->route  = new Route ($data['route_id'], $lngLatFormat);
-        $this->status                               = $this->getStatus()['status'];
-        $this->substatus                            = $this->getStatus()['substatus'];
-        $this->checkpoints                          = $this->getCheckpoints();
+        $this->name                                    = $data['name'];
+        $this->date                                    = $data['date'];
+        $this->meeting_time                            = $data['meeting_time'];
+        $this->departure_time                          = $data['departure_time'];
+        $this->finish_time                             = $data['finish_time'];
+        $this->nb_riders_min                           = $data['nb_riders_min'];
+        $this->nb_riders_max                           = $data['nb_riders_max'];
+        $this->level_beginner                          = $data['level_beginner'];
+        $this->level_intermediate                      = $data['level_intermediate'];
+        $this->level_athlete                           = $data['level_athlete'];
+        $this->citybike                                = $data['citybike'];
+        $this->roadbike                                = $data['roadbike'];
+        $this->mountainbike                            = $data['mountainbike'];
+        $this->gravelcxbike                            = $data['gravelcxbike'];
+        $this->description                             = $data['description'];
+        $this->meeting_place                           = $data['meeting_place'];
+        $this->distance_about                          = $data['distance_about'];
+        $this->distance                                = $data['distance'];
+        $this->finish_place                            = $data['finish_place'];
+        $this->terrain                                 = $data['terrain'];
+        $this->course_description                      = $data['course_description'];
+        $this->posting_date                            = $data['posting_date'];
+        $this->author_id                               = $data['author_id'];
+        $this->privacy                                 = $data['privacy'];
+        $this->entry_start                             = $data['entry_start'];
+        $this->entry_end                               = $data['entry_end'];
+        $this->participants_number                     = $data['participants_number'];
+        if (isset($data['route_id'])) $this->route_id  = $data['route_id'];
+        $this->$lngLatFormat                           = $lngLatFormat;
+        $this->status                                  = $this->getStatus()['status'];
+        $this->substatus                               = $this->getStatus()['substatus'];
+        $this->checkpoints                             = $this->getCheckpoints();
+    }
+
+    public function getAuthor () {
+        return new User ($this->author_id);
+    }
+
+    public function getRoute () {
+        return new Route ($this->route_id, $this->lngLatFormat);
     }
 
     public function getFeaturedImage () {
@@ -453,7 +463,7 @@ class Ride extends Model {
 
     public function getMapThumbnail () {
         $getMapThumbnail = $this->getPdo()->prepare('SELECT thumbnail FROM routes WHERE id = ?');
-        $getMapThumbnail->execute(array($this->route->id));
+        $getMapThumbnail->execute(array($this->route_id));
         return $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
     }
 

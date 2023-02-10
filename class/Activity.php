@@ -4,7 +4,7 @@ class Activity extends Model {
     
     protected $table = 'activities';
     public $id;
-    public $user;
+    public $user_id;
     public $datetime;
     public $title;
     public $duration;
@@ -25,7 +25,7 @@ class Activity extends Model {
         parent::__construct();
         $this->id = intval($id);
         $data = $this->getData($this->table);
-        $this->user             = new User($data['user_id']);
+        $this->user_id          = $data['user_id'];
         $this->datetime         = new Datetime($data['datetime']);
         $this->title            = $data['title'];
         $this->duration         = new Datetime($data['duration']);
@@ -42,6 +42,10 @@ class Activity extends Model {
         $this->notes            = $data['notes'];
         $this->notes_privacy    = $data['notes_privacy'];
         $this->route            = new Route($data['route_id'], $lngLatFormat);
+    }
+
+    public function getAuthor () {
+        return new User($this->user_id);
     }
 
     public function getCheckpoints () {
@@ -234,11 +238,12 @@ class Activity extends Model {
     }
 
     public function hasAccess ($user) {
+        $author = $this->getAuthor();
         if ($this->privacy == 'friends_only') {
-            if ($user->isFriend($this->user) || $user == $this->user) return true;
+            if ($user->isFriend($author) || $user == $author) return true;
             else return false;
         } else if ($this->privacy == 'private') {
-            if ($this->user == $user) return true;
+            if ($author == $user) return true;
             else return false;
         } else return true;
     }

@@ -2,7 +2,7 @@
 
 function ajax (callback, loader) {
 	var xhr = getHttpRequest()
-	if (loader) loader.prepare()
+	if (loader && loader.prepare) loader.prepare()
 	xhr.onreadystatechange = async function () {
 		// On loading
 		if (xhr.readyState > 0) if (loader) loader.start()

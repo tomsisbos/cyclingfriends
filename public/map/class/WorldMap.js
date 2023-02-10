@@ -345,7 +345,9 @@ export default class WorldMap extends GlobalMap {
         this.mkpointsMarkerCollection.push(marker)
 
         // Build and attach popup
-        var popupOptions = {}
+        var popupOptions = {
+            closeOnMove: false
+        }
         var instanceOptions = {}
         var instanceData = {
             mapInstance: this,

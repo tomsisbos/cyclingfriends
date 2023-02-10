@@ -1,6 +1,6 @@
 <?php 
 
-$rides_date_range = 12; // Time range of next rides to display (in months)
+$rides_date_range = 3; // Time range of next rides to display (in months)
 
 $getRides = $db->prepare('SELECT id FROM rides
 WHERE 

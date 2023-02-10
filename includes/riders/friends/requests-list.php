@@ -78,34 +78,37 @@
 						<div class="rdr-container-right"> <?php
 							if (!empty($rider->level)) { ?>
 								<strong>レベル : </strong>
-								<span class="tag-<?= colorLevel($rider->level); ?>">
-									<?= $rider->level; ?>
+								<span class="tag-<?= $rider->colorLevel($rider->level); ?>">
+									<?= $rider->getLevelString(); ?>
 								</span> <?php
 							} 
 							// If bike is set and bike type is filled
 							if ($rider->getBikes()) { ?>
 								<div class="mt-1 mb-1">
 									<strong>バイク : </strong> <?php
-									foreach ($rider->getBikes() as $bike) { 
-										if (!empty($bike['bike_type'])) { ?>
-											<div class="tag"><?= $bike['bike_type']; ?></div>
+									foreach ($rider->getBikes() as $bike_data) {
+										$bike = new Bike($bike_data['id']);
+										if (!empty($bike->type)) { ?>
+											<div class="tag">
+												<?= $bike->type; ?>
+											</div>
 										<?php } 
 									} ?>
 								</div> <?php
 							} ?>
 						</div>
 				
-				
 						<!-- Buttons -->
 						<div class="rdr-container-buttons">
-							<button id="rdr-accept-<?= $rider->id; // Generates dynamic id ?>" data-login="<?= $rider->login; ?>" class="btn rdr-button success js-accept">
+							<button data-action="accept" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button success js-friend">
 								<span class="iconify-inline" data-icon="eva:person-done-outline" style="color: white;" data-width="20" data-height="20"></span>
 								Accept
 							</button>
-							<button id="rdr-dismiss-<?= $rider->id; // Generates dynamic id ?>" data-login="<?= $rider->login; ?>" class="btn rdr-button danger js-dismiss">
+							<button data-action="dismiss" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button danger js-friend">
 								<span class="iconify-inline" data-icon="eva:person-remove-outline" style="color: white;" data-width="20" data-height="20"></span>
 								Dismiss
 							</button>
+							</div>
 						</div>
 					
 					</div>

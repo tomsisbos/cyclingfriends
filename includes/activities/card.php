@@ -5,11 +5,11 @@
         <div class="ac-infos-container">
             <div class="ac-user-details">
                 <div class="ac-user-propic">
-                <a href="/rider/<?= $activity->user->id ?>"><?php $activity->user->displayPropic() ?></a>
+                <a href="/rider/<?= $activity->user_id ?>"><?php $activity->getAuthor()->displayPropic() ?></a>
                 </div>
                 <div class="ac-details">
                     <div class="ac-user-name">
-                        <a href="/rider/<?= $activity->user->id ?>"><?= $activity->user->login ?></a>
+                        <a href="/rider/<?= $activity->user_id ?>"><?= $activity->getAuthor()->login ?></a>
                     </div>
                     <div class="ac-name">
                         <a href="/activity/<?= $activity->id ?>">

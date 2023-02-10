@@ -19,7 +19,7 @@
 						}
 						?>>非公開</option>
 					<option value="Friends only"<?php // If some of the participants are not in ride author's friendlist
-						if (!$ride->isEveryParticipantInFriendsList($ride->author)) {
+						if (!$ride->isEveryParticipantInFriendsList($ride->getAuthor())) {
 							echo ' disabled';
 						} 
 						// First check if user has selected something and display it
@@ -51,7 +51,7 @@
 			</div>
 			
 			<?php // If some of the participants are not in ride author's friendlist
-			if (!$ride->isEveryParticipantInFriendsList($ride->author)) {
+			if (!$ride->isEveryParticipantInFriendsList($ride->getAuthor())) {
 				// Display a warning message ?>
 				<script src="/assets/js/friends-only-popup.js"></script><?php
 			} ?>

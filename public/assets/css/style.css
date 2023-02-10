@@ -1390,6 +1390,10 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: blue;
 }
 
+.js-loader-container {
+    height: 80px;
+}
+
 /* --- Animated backgrounds --- */
 
 /* body */

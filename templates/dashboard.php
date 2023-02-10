@@ -22,7 +22,8 @@ include '../includes/head.php'; ?>
 				include '../includes/dashboard/thread.php'; ?>
 			</div>
 		</div>
-		
+
+		<?php /*
 		<div class="sidebar-left sticky-sidebar">
 			<!-- Next rides panel -->
 			<div class="dashboard-container"> <?php 
@@ -37,12 +38,13 @@ include '../includes/head.php'; ?>
 				include '../includes/dashboard/cleared-mkpoints-stats.php'; ?>
 			</div>
 		</div>
+		*/ ?>
 
 	</div>
 
 </div>
 
-<script src="/scripts/dashboard/dashboard.js"></script>
+<script type="module" src="/scripts/dashboard/dashboard.js"></script>
 	
 </body>
 </html>

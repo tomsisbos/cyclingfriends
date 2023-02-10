@@ -32,7 +32,7 @@
                         else if ($i == (count($ride->checkpoints) - 1)) echo 'Goal - ';
                         else echo 'Checkpoint n°' .$i. ' - ';
                     } 
-                    if (isset($ride->route)) {
+                    if (isset($ride->route_id)) {
                         if ($checkpoint->number != 0 && $checkpoint->distance == 0) { ?>
                             <span style="font-weight: normal"><?= 'km ' .round($ride->distance, 1); ?></span> <?php
                         } else { ?>
@@ -82,7 +82,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
         <a class="next nav-link">&#10095;</a>
 
         <?php // Display name as an input if current user have ride admin rights
-        if ($connected_user->id == $ride->author->id) { ?>
+        if ($connected_user->id == $ride->author_id) { ?>
             <div class="lightbox-admin-panel container-admin name-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>
@@ -112,7 +112,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
         </div>
 
         <?php // Display caption as a text area if current user have ride admin rights
-        if ($connected_user == $ride->author) { ?>
+        if ($connected_user->id == $ride->author_id) { ?>
             <div class="lightbox-admin-panel container-admin caption-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>

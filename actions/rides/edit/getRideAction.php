@@ -24,7 +24,7 @@ if (isset($ride_slug) AND !empty($ride_slug)) {
 			$_SESSION['edit-forms'][1]['level'] = $ride->getAcceptedLevelsValues();
 			$_SESSION['edit-forms'][1]['accepted-bikes'] = $ride->getAcceptedBikesValues();
 			$_SESSION['edit-forms'][1]['ride-description'] = $ride->description;
-			if (isset($ride->route)) $_SESSION['edit-forms'][2]['method'] = 'draw';
+			if ($ride->getRoute() != null) $_SESSION['edit-forms'][2]['method'] = 'draw';
 			else $_SESSION['edit-forms'][2]['method'] = 'pick';
 			$_SESSION['edit-forms'][2]['meetingplace'] = $ride->meeting_place;
 			$_SESSION['edit-forms'][2]['distance-about'] = $ride->distance_about;
@@ -37,9 +37,9 @@ if (isset($ride_slug) AND !empty($ride_slug)) {
 			else $_SESSION['edit-forms'][2]['options'] = ['sf' => false]; // If route start coordinates equals route end coordinates, set SF options to true, else set to false
 			///var_dump($ride->checkpoints);die();
 			$_SESSION['edit-forms'][2]['checkpoints'] = $ride->checkpoints;
-			if (isset($ride->route)) $_SESSION['edit-forms'][2]['route-id'] = $ride->route->id;
+			if ($ride->getRoute() != null) $_SESSION['edit-forms'][2]['route-id'] = $ride->route_id;
 			// If not, redirect to my rides pages
-			if ($ride->author->id != $connected_user->id) header('location: /' . $connected_user->login . '/rides');
+			if ($ride->author_id != $connected_user->id) header('location: /' . $connected_user->login . '/rides');
 		}
 
 	} else header('location: /' . $connected_user->login . '/rides');

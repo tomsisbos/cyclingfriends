@@ -41,7 +41,7 @@ $getRideChatParents->execute(array($ride->id));
 		// First display messages which are not children messages
 		if (!$rideMessage->parent) {
 			// Displays chat-line in admin color if ride author has admin rights
-			if ($rideMessage->author == $ride->author) {
+			if ($rideMessage->author == $ride->getAuthor()) {
 				echo '<div class="chat-line chat-line-admin">';
 			} else {
 				echo '<div class="chat-line">';
@@ -54,7 +54,7 @@ $getRideChatParents->execute(array($ride->id));
 				echo '</div>';
 			echo '</div>';
 		} else {
-			if ($rideMessage->author == $ride->author) {
+			if ($rideMessage->author == $ride->getAuthor()) {
 				echo '<div class="chat-line chat-line-admin child">';
 			} else {
 				echo '<div class="chat-line child">';

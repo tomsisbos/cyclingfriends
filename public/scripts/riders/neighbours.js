@@ -1,6 +1,6 @@
-import NeighboursMap from "../../map/class/neighbours/NeighboursMap"
-import NeighbourPopup from "../../map/class/neighbours/NeighbourPopup"
-import CFUtils from "../../map/class/CFUtils"
+import NeighboursMap from "/map/class/neighbours/NeighboursMap.js"
+import NeighbourPopup from "/map/class/neighbours/NeighbourPopup.js"
+import CFUtils from "/map/class/CFUtils.js"
 
 var neighboursMap = new NeighboursMap()
 console.log(neighboursMap)
@@ -34,7 +34,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
         const marker = new mapboxgl.Marker($marker)
         marker.setLngLat(neighbour.lngLat)
         marker.addTo(map)
-        var neighbourPopup = new NeighbourPopup(neighbour)
+        var neighbourPopup = new NeighbourPopup(neighbour,)
         marker.setPopup(neighbourPopup.popup)
 
         // Add hovering event listeners
@@ -75,7 +75,9 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 } )
                 marker.togglePopup()
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 2))
+                console.log(marker.getLngLat())
+                console.log(neighboursMap.userLocation)
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: neighboursMap.userLocation[0], lat: neighboursMap.userLocation[1]}], 2))
                 neighboursMap.$map.scrollIntoView()
             } else {
                 $marker.querySelector('img').classList.remove('selected-marker')
@@ -117,7 +119,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
             } else {
                 neighboursMap.map._markers.forEach(mkr => {
                     mkr.getElement().style.display = "block"
-                    if (mkr.getPopup() && mkr.getPopup().getElement()) mkr.getPopup().getElement().style.display = "block"
+                    if (mkr.getPopup() && mkr.getPopup().getElement()) mkr.getPopup().getElement().style.display = "flex"
                 } )
                 neighboursMap.hideZoomMessage()
             }
