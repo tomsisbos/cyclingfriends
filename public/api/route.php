@@ -14,7 +14,7 @@ if (isAjax()) {
 
         if (isset($_GET['route-load-from-ride'])) {
             $ride = new Ride($_GET['route-load-from-ride']);
-            $route = $ride->route;
+            $route = $ride->getRoute();
             echo json_encode($route);
         }
 

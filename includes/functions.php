@@ -1463,4 +1463,8 @@ function luminanceLight($hexcolor, $percent) {
 	}
 
 	return '#' . implode($hexcolor);
+}
+
+function setFilename ($prefix) {
+	return $prefix . '_' . rand(0, 999999999999) . '.jpg';
 } ?>

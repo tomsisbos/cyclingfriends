@@ -90,7 +90,7 @@ export default class TempPopup extends Popup {
                         document.getElementById(id).remove()
                         resolve(response)
                     }
-                } )
+                }, this.loader)
             } )
         } )
     }

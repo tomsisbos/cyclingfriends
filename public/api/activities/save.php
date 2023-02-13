@@ -290,12 +290,25 @@ if (is_array($data)) {
                 // Insert table data
                 $entry['filename'] = 'img_' . rand(0, 999999999999) . '.jpg';
                 $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-                $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], date('Y-m-d H:i:s'), 0, $entry['filename']));
+                $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $datetime->format('Y-m-d H:i:s'), 0, $entry['filename']));
 
                 // Get scenery lngLat data
                 $current_mkpoint = new Mkpoint($entry['mkpoint_id']);
                 $entry['lng'] = $current_mkpoint->lngLat->lng;
                 $entry['lat'] = $current_mkpoint->lngLat->lat;
+
+                // Get corresponding blob
+                foreach ($data['photos'] as $photo) {
+                    if ($photo['name'] == $entry['photo_name']) $base64 = $photo['blob'];
+                }
+
+                // Prepare blob for upload to blob storage
+                $ext = strtolower(substr($entry['photo_name'], -3));
+                $img_name = 'temp.'.$ext;
+                $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
+                // Temporary upload raw file on the server
+                base64_to_jpeg($base64, $temp);
+                $entry['blob'] = fopen($temp, 'r');
 
                 // Send file to blob storage
                 $containername = 'scenery-photos';
@@ -307,11 +320,11 @@ if (is_array($data)) {
                     'file_size' => $entry['size'],
                     'scenery_id' => $entry['mkpoint_id'],
                     'author_id' => $_SESSION['id'],
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => $datetime->format('Y-m-d H:i:s'),
                     'lat' => $entry['lat'],
                     'lng' => $entry['lng']
                 ];
-                $blobClient->setBlobMetadata($containername, $mkpoint_photo['filename'], $metadata);
+                $blobClient->setBlobMetadata($containername, $entry['filename'], $metadata);
             }
         }
             

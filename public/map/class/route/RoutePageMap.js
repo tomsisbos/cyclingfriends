@@ -263,7 +263,7 @@ export default class RoutePageMap extends GlobalMap {
         // Add each checkpoint
         if (this.rideId) {
             for (let i = 0; i < this.ride.checkpoints.length; i++) {
-                if (this.ride.checkpoints[i].img.blob !== null) var thumbnailSrc = 'data:image/jpeg;base64,' + this.ride.checkpoints[i].img.blob
+                if (this.ride.checkpoints[i].img.filename) var thumbnailSrc = this.ride.checkpoints[i].img.url
                 else var thumbnailSrc = '/media/default-photo-' + Math.ceil(Math.random() * 9) + '.svg'
                 let entry = {
                     type: 'checkpoint',

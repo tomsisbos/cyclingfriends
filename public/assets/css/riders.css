@@ -78,14 +78,18 @@
     height: 80px;
     width: 80px;
     border-radius: 80px;
-	font-weight: bold;
+    font-weight: bold;
     line-height: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     text-align: center;
     color: #FFFFFF;
     border: none;
+    font-size: 12px;
     padding: 3px !important;
-	background-color: #5C9999;
+    background-color: #5C9999;
 }
 
 .no-click {

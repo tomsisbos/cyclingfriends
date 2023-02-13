@@ -68,7 +68,7 @@ class Ride extends Model {
         $this->entry_end                               = $data['entry_end'];
         $this->participants_number                     = $data['participants_number'];
         if (isset($data['route_id'])) $this->route_id  = $data['route_id'];
-        $this->$lngLatFormat                           = $lngLatFormat;
+        $this->lngLatFormat                           = $lngLatFormat;
         $this->status                                  = $this->getStatus()['status'];
         $this->substatus                               = $this->getStatus()['substatus'];
         $this->checkpoints                             = $this->getCheckpoints();
@@ -83,9 +83,10 @@ class Ride extends Model {
     }
 
     public function getFeaturedImage () {
-        $getFeaturedImage = $this->getPdo()->prepare('SELECT img, img_size, img_name, img_type FROM ride_checkpoints WHERE ride_id = ? AND featured = true');
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true');
         $getFeaturedImage->execute(array($this->id));
-        return $getFeaturedImage->fetch(PDO::FETCH_ASSOC);
+        $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
+        return new CheckpointImage($checkpoint_image_id);
     }
 
     function getAcceptedLevels () {
@@ -462,9 +463,17 @@ class Ride extends Model {
     }
 
     public function getMapThumbnail () {
-        $getMapThumbnail = $this->getPdo()->prepare('SELECT thumbnail FROM routes WHERE id = ?');
+        // Get thumbnail filename
+        $getMapThumbnail = $this->getPdo()->prepare('SELECT thumbnail_filename FROM routes WHERE id = ?');
         $getMapThumbnail->execute(array($this->route_id));
-        return $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
+        $thumbnail_filename = $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
+        
+        // Connect to blob storage
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+
+        // Retrieve blob url
+        return $blobClient->getBlobUrl('route-thumbnails', $thumbnail_filename);
     }
 
     public function getAdditionalFields () {

@@ -255,17 +255,20 @@ if (isAjax()) {
     }
 
     if (isset($_GET['mkpoints-closest-photo'])) { // Get photo whose period is the soonest for each mkpoint
-        $mkpoints_ids = explode(',', $_GET['mkpoints-closest-photo']);
-        $mkpoints = [];
-        foreach ($mkpoints_ids as $mkpoint_id) {
-            $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? AND MONTH(date) > ? ORDER BY date ASC');
-            $getMkpointPhoto->execute([$mkpoint_id, date('m')]);
-            if ($getMkpointPhoto->rowCount() == 0) {
-                $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY date DESC');
-                $getMkpointPhoto->execute([$mkpoint_id]);
+        if (strlen($_GET['mkpoints-closest-photo']) == 0) $mkpoints = [];
+        else {
+            $mkpoints_ids = explode(',', $_GET['mkpoints-closest-photo']);
+            $mkpoints = [];
+            foreach ($mkpoints_ids as $mkpoint_id) {
+                $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? AND MONTH(date) > ? ORDER BY date ASC');
+                $getMkpointPhoto->execute([$mkpoint_id, date('m')]);
+                if ($getMkpointPhoto->rowCount() == 0) {
+                    $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY date DESC');
+                    $getMkpointPhoto->execute([$mkpoint_id]);
+                }
+                $mkpointphoto = new MkpointImage($getMkpointPhoto->fetch(PDO::FETCH_ASSOC)['id']);
+                array_push($mkpoints,['id' => $mkpoint_id, 'data' => $mkpointphoto]);
             }
-            $mkpointphoto = new MkpointImage($getMkpointPhoto->fetch(PDO::FETCH_ASSOC)['id']);
-            array_push($mkpoints,['id' => $mkpoint_id, 'data' => $mkpointphoto]);
         }
         echo json_encode($mkpoints);
     }
@@ -617,28 +620,22 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-rides'])) {
-        define('RIDES_DATE_RANGE', 2); // Define interval in which rides must be displayed in months
-        $getRides = $db->prepare("SELECT id, name, date, level_beginner, level_intermediate, level_athlete, nb_riders_max, description, distance, author_id, author_login, privacy, status, substatus, participants_number, route_id FROM rides
+        define('RIDES_DATE_RANGE', 3); // Define interval in which rides must be displayed in months
+        $getRides = $db->prepare("SELECT id FROM rides
         WHERE
             (privacy = 'Public' OR (privacy = 'Friends only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
         AND
             date BETWEEN :today AND :datemax
         AND
             entry_start < NOW() AND entry_end > NOW()");
-            $today = new DateTime();
-            $getRides->execute(array(":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d H:i:s')));
-        $rides = $getRides->fetchAll(PDO::FETCH_ASSOC);
-        for ($i = 0; $i < count($rides); $i++) {
-            $getCourse = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ?');
-            $getCourse->execute([$rides[$i]['route_id']]);
-            $course = $getCourse->fetchAll(PDO::FETCH_NUM);
-            $rides[$i]['route'] = $course;
-        }
-        for ($i = 0; $i < count($rides); $i++) {
-            $getCheckpoints = $db->prepare('SELECT checkpoint_id, name, distance, lng, lat FROM ride_checkpoints WHERE ride_id = ? ORDER BY checkpoint_id');
-            $getCheckpoints->execute([$rides[$i]['id']]);
-            $checkpoints = $getCheckpoints->fetchAll(PDO::FETCH_ASSOC);
-            $rides[$i]['checkpoints'] = $checkpoints;
+        $today = new DateTime();
+        $getRides->execute(array(":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d H:i:s')));
+        $rides = [];
+        while ($ride_data = $getRides->fetch(PDO::FETCH_COLUMN)) {
+            $ride = new Ride($ride_data);
+            $ride->route = $ride->getRoute();
+            $ride->author_login = $ride->getAuthor()->login;
+            array_push($rides, $ride);
         }
         echo json_encode($rides);
     }

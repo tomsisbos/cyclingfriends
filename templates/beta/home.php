@@ -181,23 +181,75 @@ include '../includes/foot.php'; ?>
 <script type="module" src="/scripts/home/segment-map.js"></script>
 
 <?php
-/*
     require_once "../actions/blobStorageAction.php";
     include "../actions/databaseAction.php";
     
     ini_set('memory_limit', '1024M');
     ini_set('max_execution_time', '700');
+    
+    /* Ride checkpoint images batch storage change
+    // For each registered ride checkpoint in the database
+	$getCheckpointIds = $db->prepare('SELECT id, ride_id, checkpoint_id, img_size, img_name, img_type, lng, lat FROM ride_checkpoints');
+	$getCheckpointIds->execute(array());
+	while ($checkpoint_data = $getCheckpointIds->fetch(PDO::FETCH_ASSOC)) {
 
-    die();
+        // Get stream
+        $checkpoint_image = new CheckpointImage($checkpoint_data['id']);
+        $base64_string = 'data:image/jpeg;base64,' .$checkpoint_image->blob;
+        $file = base64_to_jpeg($base64_string, $_SERVER["DOCUMENT_ROOT"]. '/media/temp/img_temp.jpg');
+        $stream = fopen($file, "r");
 
-    // Upload file
-    $blobClient->createBlockBlob($container_name, $blob_name, $stream);
+        // Set blob variables
+        $container_name = 'checkpoint-images';
+        $blob_name = 'img_' . rand(0, 999999999999) . '.jpg';
+        $metadata = [
+            'ride_id' => $checkpoint_data['ride_id'],
+            'img_name' => $checkpoint_data['img_name'],
+            'img_size' => $checkpoint_data['img_size'],
+            'img_type' => $checkpoint_data['img_type'],
+            'checkpoint_number' => $checkpoint_data['checkpoint_id'],
+            'lng' => $checkpoint_data['lng'],
+            'lat' => $checkpoint_data['lat']
+        ];
 
-    // Set metadata
-    $blobClient->setBlobMetadata($container_name, $blob_name, $metadata);
+        // Upload file and set metadata
+        $blobClient->createBlockBlob($container_name, $blob_name, $stream);
+        $blobClient->setBlobMetadata($container_name, $blob_name, $metadata);
 
-    // Get blob
-    $img_src = $blobClient->getBlobUrl($container_name, '20230108_095455.jpg');
+        // Add filename to ride_checkpoints table
+        $updateRoutes = $db->prepare('UPDATE ride_checkpoints SET filename = ? WHERE id = ?');
+        $updateRoutes->execute(array($blob_name, $checkpoint_data['id']));
+    }
+    */
+
+    /* Route thumbnail batch storage change
+    // For each registered route in the database
+	$getRouteIds = $db->prepare('SELECT id FROM routes');
+	$getRouteIds->execute(array());
+	while ($route_id = $getRouteIds->fetch(PDO::FETCH_COLUMN)) {
+
+        // Get stream
+        $route = new Route($route_id);
+        $base64_string = $route->getThumbnail();
+        $file = base64_to_jpeg($base64_string, $_SERVER["DOCUMENT_ROOT"]. '/media/temp/thumb_temp.jpg');
+        $stream = fopen($file, "r");
+
+        // Set blob variables
+        $container_name = 'route-thumbnails';
+        $blob_name = 'thumb_' . rand(0, 999999999999) . '.jpg';
+        $metadata = [
+            'route_id' => $route_id,
+        ];
+
+        // Upload file and set metadata
+        $blobClient->createBlockBlob($container_name, $blob_name, $stream);
+        $blobClient->setBlobMetadata($container_name, $blob_name, $metadata);
+
+        // Add filename to routes table
+        $updateRoutes = $db->prepare('UPDATE routes SET thumbnail_filename = ? WHERE id = ?');
+        $updateRoutes->execute(array($blob_name, $route_id));
+    }
+    */
 
 
 
@@ -209,7 +261,7 @@ include '../includes/foot.php'; ?>
 
 
 
-    die();
+    die();/*
 
     // Prepare variables
     $container_name = 'cyclingfriends-data';
@@ -217,15 +269,5 @@ include '../includes/foot.php'; ?>
     $stream = fopen("HelloWorld.txt", "r");
     $metadata = [
         'folder' => 'test'
-    ];
-
-    // Upload file
-    $blobClient->createBlockBlob($container_name, $blob_name, $stream);
-
-    // Set metadata
-    $blobClient->setBlobMetadata($container_name, $blob_name, $metadata);    
-
-    // Get blob
-    $img_src = $blobClient->getBlobUrl($container_name, '20230108_095455.jpg');
-*/
+    ];*/
 ?>

@@ -25,9 +25,8 @@ include '../includes/head.php'; ?>
                 $url_fragments = explode('/', $_SERVER['REQUEST_URI']);
                 $slug = array_slice($url_fragments, -2)[0];
                 $ride = new Ride($slug);
-                $route = $ride->route;
+                $route = $ride->getRoute();
             }
-            
             
             if ($route->getFeaturedImage() !== null) { ?>
                 <div class="container header" style="background-image: <?= 'url(' .$route->getFeaturedImage()->url. '); background-size: cover;' ?>"> <?php

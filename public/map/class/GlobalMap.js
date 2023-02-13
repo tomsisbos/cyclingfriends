@@ -1960,9 +1960,7 @@ export default class GlobalMap extends Model {
     scaleMarkerAccordingToZoom (element) {
         var zoom = this.map.getZoom()
         var size = (zoom * 3 - 10) - 5
-        if (size < 15) {
-            size = 15
-        }
+        if (size < 15) size = 15
         element.style.height = size + 'px'
         element.style.width = size + 'px'
         element.style.border = size/15 + 'px solid white'

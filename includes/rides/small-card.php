@@ -1,6 +1,6 @@
 <div class="my-rd-card">
     <a href="/ride/<?= $ride->id ?>">
-        <div class="my-rd-thumbnail" style="background-image: url(data:image/jpeg;base64,<?= $ride->getFeaturedImage()['img']; ?>);">
+        <div class="my-rd-thumbnail" style="background-image: url(<?= $ride->getFeaturedImage()->url; ?>);">
             <div class="my-rd-header header-block"> <?php
                 // Set text color depending on the status
                 $status_color = $ride->getStatusColor(); ?>

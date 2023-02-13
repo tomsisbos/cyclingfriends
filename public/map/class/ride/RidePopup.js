@@ -14,18 +14,18 @@ export default class RidePopup extends Popup {
 
     load () {
         // Define tag color according to ride status
-        if (this.data.status == 'Open') var tagColor = 'tag-green'
-        else if (this.data.status == 'Full') var tagColor = 'tag-blue'
-        else if (this.data.status == 'Closed') var tagColor = 'tag-red'
+        if (this.data.status == 'Open' || this.data.status == '募集中') var tagColor = 'tag-green'
+        else if (this.data.status == 'Full' || this.data.status == '定員達成') var tagColor = 'tag-blue'
+        else if (this.data.status == 'Closed' || this.data.status == 'エントリー終了') var tagColor = 'tag-red'
 
         // Build checkpoints table
         var trs = ''
         this.data.checkpoints.forEach( (checkpoint) => {
-            if (checkpoint.checkpoint_id == 0) var number = 'Start'
-            else if (checkpoint.checkpoint_id == this.data.checkpoints.length - 1) {
+            if (checkpoint.number == 0) var number = 'Start'
+            else if (checkpoint.mumber == this.data.checkpoints.length - 1) {
                 var number = 'Goal'
                 checkpoint.distance = this.data.distance
-            } else var number = 'n°' + checkpoint.checkpoint_id
+            } else var number = 'n°' + checkpoint.number
             trs += `
                 <tr>
                     <td>` + number + `<td>
@@ -48,7 +48,7 @@ export default class RidePopup extends Popup {
         <div class="popup-content">
             <div class="popup-properties">
                 <div class="popup-properties-name">` + this.data.name + `
-                    <div class="popup-tag ` + tagColor + `" >`+ this.data.participants_number + `/` + this.data.nb_riders_max + `</div>
+                    <div title="参加者数" class="popup-tag ` + tagColor + `" >`+ this.data.participants_number + `/` + this.data.nb_riders_max + `</div>
                 </div>
                 <div class="">`+ this.data.date + ` - by 
                     <a target="_blank" href="/rider/` + this.data.author_id + `">` + this.data.author_login + `</a>
@@ -57,7 +57,7 @@ export default class RidePopup extends Popup {
             <div class="popup-description">`
                 + this.data.description + `
             </div>
-            <div class="popup-checkpoints">Checkpoints list</div>`
+            <div class="popup-checkpoints">コース詳細</div>`
             + checkpointsTable +
         `</div>
         <div class="d-flex">

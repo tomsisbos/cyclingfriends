@@ -13,7 +13,7 @@ export default class CheckpointPopup extends Popup {
 
     setContent () {
         // Build thumbnail src
-        if (this.data.img.blob) this.data.img.src = 'data:' + this.data.img.type + ';base64,' + this.data.img.blob
+        if (this.data.img.filename) this.data.img.src = this.data.img.url
         else this.data.img.src = '/media/default-photo-' + Math.ceil(Math.random() * 9) + '.svg'
         // Set thumbnail if there is one
         if (this.data.img.src) { var thumbnailContent = `

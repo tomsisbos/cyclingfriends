@@ -357,6 +357,12 @@ export default class WorldMap extends GlobalMap {
         let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
         marker.setPopup(sceneryPopup.popup)
 
+        // Display mkpoint name on hover
+        element.setAttribute('data-before', mkpoint.name)
+        element.style.setProperty('--scenery-hover-display', 'none')
+        element.addEventListener('mouseenter', () => element.style.setProperty('--scenery-hover-display', 'block'))
+        element.addEventListener('mouseleave', () => element.style.setProperty('--scenery-hover-display', 'none'))
+
         // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
         if (mkpoint.user_id === this.session.id && this.mode == 'edit') marker.setDraggable(true)
         else if (mkpoint.user_id === this.session.id && this.mode == 'default') marker.setDraggable(false)
@@ -527,7 +533,7 @@ export default class WorldMap extends GlobalMap {
             let i = 0
             while (i < this.ridesCollection.length) {
                 // If existing ride is not inside new bounds
-                if (!CFUtils.isInsideBounds(this.map.getBounds(), this.ridesCollection[i].route)) {
+                if (!CFUtils.isInsideBounds(this.map.getBounds(), this.ridesCollection[i].route.coordinates)) {
                     if (this.map.getLayer('ride' + this.ridesCollection[i].id)) this.hideRide(this.ridesCollection[i]) // Remove it from the map
                     this.ridesCollection.splice(i, 1) // Remove it from instance Nodelist
                     i--
@@ -540,7 +546,7 @@ export default class WorldMap extends GlobalMap {
                 // If ride is public and has a route data
                 if (ride.privacy == 'Public' && ride.route) {
                     // If ride is inside bounds
-                    if (CFUtils.isInsideBounds(this.map.getBounds(), ride.route)) {
+                    if (CFUtils.isInsideBounds(this.map.getBounds(), ride.route.coordinates)) {
                         // Verify it has not already been loaded
                         if (!this.isLinestringAlreadyDisplayed(ride)) {
                             this.ridesCollection.push(ride)
@@ -572,7 +578,7 @@ export default class WorldMap extends GlobalMap {
             },
             geometry: {
                 type: 'LineString',
-                coordinates: ride.route
+                coordinates: ride.route.coordinates
             }
         }
         
@@ -646,7 +652,7 @@ export default class WorldMap extends GlobalMap {
 
         // Don't open if there is a marker on top
         var markerInPath
-        e.originalEvent.path.forEach(elementInPath => {
+        e.originalEvent.composedPath().forEach(elementInPath => {
             if (elementInPath.className && elementInPath.className.includes('mapboxgl-marker')) markerInPath = true
         } )
         if (!markerInPath) {
@@ -664,7 +670,7 @@ export default class WorldMap extends GlobalMap {
                     anchor: 'bottom',
                     className: 'js-linestring marker-popup js-ride-popup'
                 }, ride)
-                ride.ridePopup.popup.setLngLat(ride.route[0])
+                ride.ridePopup.popup.setLngLat(ride.route.coordinates[0])
 
                 // Color ride cap in hovering style
                 this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.capColorHover)
@@ -679,14 +685,6 @@ export default class WorldMap extends GlobalMap {
                 } )
 
                 ride.ridePopup.popup.addTo(this.map)
-                
-                // Hide cap when popup is closed
-                ride.ridePopup.popup.on('close', () => {
-                    if (this.map.getLayer('rideCap' + ride.id)) {
-                        this.map.setPaintProperty('rideCap' + ride.id, 'line-opacity', 0)
-                        this.map.setPaintProperty('rideCap' + ride.id, 'line-color', this.rideCapColor)
-                    }
-                } )
 
                 // Dislpay featured image
                 this.displayFeaturedImage(ride)
@@ -712,7 +710,7 @@ export default class WorldMap extends GlobalMap {
 
     displayFeaturedImage (ride) {
         ajaxGetRequest (this.apiUrl + "?ride-featured-image=" + ride.id, (featuredCheckpoint) => {
-            document.querySelector('#rideFeaturedImage' + ride.id).src = 'data:image/jpeg;base64,' + featuredCheckpoint.img
+            if (document.querySelector('#rideFeaturedImage' + ride.id)) document.querySelector('#rideFeaturedImage' + ride.id).src = 'data:image/jpeg;base64,' + featuredCheckpoint.img
         } )
 
     }

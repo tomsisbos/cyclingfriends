@@ -250,7 +250,7 @@ export default class RideMap extends GlobalMap {
         if (this.data.checkpoints[number].img) {
             // If image data is stored as a blob (object coming from database)
             if (typeof this.data.checkpoints[number].img === 'object' && this.data.checkpoints[number].img !== null) {
-                if (this.data.checkpoints[number].img.blob) var img = 'data:' + this.data.checkpoints[number].img.type + ';base64,' + this.data.checkpoints[number].img.blob
+                if (this.data.checkpoints[number].img.filename) var img = this.data.checkpoints[number].img.url
             // Else
             } else {
                 if (!this.data.checkpoints[number].img_type || this.data.checkpoints[number].img.includes('data:' + this.data.checkpoints[number].img_type + ';base64,')) { // Add URL data type prefix if necessary

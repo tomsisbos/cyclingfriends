@@ -189,7 +189,7 @@ export default class CFUtils {
     }
 
     // Test if an array of coordinates has a part inside bounds
-    static isInsideBounds (bounds, rideCoords) {
+    static isInsideBounds (bounds, coordinates) {
 
         const precision = 10 // unity : number of coordinates
         const limit     = 100 // unity : number of tests
@@ -202,11 +202,11 @@ export default class CFUtils {
         }
 
         // Return true if any of every [precision] coordinates is inside bounds (max: [limit] number of tests)
-        var cursor = Math.floor(rideCoords.length / precision)
+        var cursor = Math.floor(coordinates.length / precision)
         if (cursor < 2) cursor = 2
         if (cursor > limit) cursor = limit
         for (let index = 0; index < cursor; index++) {
-            if (coordsInsideBounds(rideCoords[index * precision], bounds)) return true
+            if (coordsInsideBounds(coordinates[index * precision], bounds)) return true
         }
         return false
     }

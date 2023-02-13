@@ -35,7 +35,7 @@ include '../includes/head.php'; ?>
 		// Set and update all ride proprieties
 		include '../actions/rides/convertIntToStringValuesAction.php'; ?>
 
-		<div class="container header" style="background-image: <?= 'url(data:image/jpeg;base64,' .$ride->getFeaturedImage()['img']. '); background-size: cover;' ?>">
+		<div class="container header" style="background-image: <?= 'url(' .$ride->getFeaturedImage()->url. '); background-size: cover;' ?>">
 			<div class="header-block">
 				<div class="header-row mb-2">
 					<div class="rd-status"> <?php

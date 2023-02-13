@@ -8,6 +8,7 @@ use Location\Utility\PointToLineDistance;
 
 class Route extends Model {
     
+    private $container_name = 'route-thumbnails';
     protected $table = 'routes';
     public $id;
     public $author;
@@ -17,6 +18,7 @@ class Route extends Model {
     public $description;
     public $distance;
     public $elevation;
+    public $thumbnail_filename;
     public $coordinates;
     public $tunnels;
     
@@ -34,6 +36,7 @@ class Route extends Model {
         $this->startplace = $data['startplace'];
         $this->goalplace = $data['goalplace'];
         $this->coordinates = $this->getCoordinates($lngLatFormat);
+        $this->thumbnail_filename = $data['thumbnail_filename'];
         $this->time = $this->getTime();
         $this->tunnels = $this->getTunnels();
     }
@@ -66,9 +69,12 @@ class Route extends Model {
     }
 
     public function getThumbnail () {
-        $getThumbnail = $this->getPdo()->prepare('SELECT thumbnail FROM routes WHERE id = ?');
-        $getThumbnail->execute(array($this->id));
-        return $getThumbnail->fetch(PDO::FETCH_NUM)[0];
+        // Connect to blob storage
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+
+        // Retrieve blob url
+        return $blobClient->getBlobUrl($this->container_name, $this->thumbnail_filename);
     }
 
     public function getFeaturedImage () {

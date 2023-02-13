@@ -326,9 +326,9 @@
 /* Admin page */
 
 .rd-ad-navbar {
-    background-color: #fffddd;
-    padding: 0;
-    position: sticky;
+    background-color: #fffddd !important;
+    padding: 0 !important;
+    position: sticky !important;
     top: 80px;
     box-shadow: 0px 2px 2px #ddd;
 }

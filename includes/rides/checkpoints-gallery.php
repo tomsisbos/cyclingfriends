@@ -4,8 +4,8 @@
         $rand[$i] = rand(1,9); ?>
         <div class="summary-checkpoint" id="<?= $i; ?>">
             <div class="summary-checkpoint-image"> <?php
-                if (isset($checkpoint->img->blob)) { ?>
-                    <img data-number="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="<?= 'data:' .$checkpoint->img->type.  ';base64,' .$checkpoint->img->blob ?>"> <?php
+                if ($checkpoint->img->filename !== NULL) { ?>
+                    <img data-number="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="<?= $checkpoint->img->url ?>"> <?php
                 } else { ?>		
                     <img data-number="<?= $i + 1 ?>" class="js-clickable-thumbnail" src="\media\default-photo-<?= $rand[$i] ?>.svg"> <?php
                 }
@@ -70,8 +70,8 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             $checkpoint = $ride->checkpoints[$i]; ?>
             <div class="mySlides">
                 <div class="numbertext"><?= ($i+1). ' / ' .count($ride->checkpoints);?></div> <?php
-                if (isset($checkpoint->img->blob)) { ?>
-                    <img src="<?= 'data:image/jpeg;base64,' . $checkpoint->img->blob; ?>" style="width:100%"> <?php
+                if ($checkpoint->img->filename !== NULL) { ?>
+                    <img src="<?= $checkpoint->img->url; ?>" style="width:100%"> <?php
                 } else { ?>
                     <img src="\media\default-photo-<?= $rand[$i]; ?>.svg"> <?php
                 } ?>
@@ -106,7 +106,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             for ($i = 0; $i < count($ride->checkpoints); $i++) {
                 $checkpoint = $ride->checkpoints[$i]; ?>
                 <div class="column">
-                    <img class="demo cursor" src="<?php if (isset($checkpoint->img->blob)) { echo 'data:image/jpeg;base64,' . $checkpoint->img->blob; } else { echo '\media\default-photo-' .$rand[$i]. '.svg'; } ?>" style="width:100%" demoId="<?= $i + 1 ?>" alt="<?= $checkpoint->description ?>">
+                    <img class="demo cursor" src="<?php if ($checkpoint->img->filename !== NULL) { echo $checkpoint->img->url; } else { echo '\media\default-photo-' .$rand[$i]. '.svg'; } ?>" style="width:100%" demoId="<?= $i + 1 ?>" alt="<?= $checkpoint->description ?>">
                 </div> <?php
             } ?>
         </div>

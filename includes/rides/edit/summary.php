@@ -72,9 +72,9 @@ $previous_page = intval($stage_slug) - 1; ?>
 		for ($i = 0; $i < count($checkpoints); $i++) { ?>
 			<div class="summary-checkpoint" id="<?= $i; ?>">
 				<div class="summary-checkpoint-image"> <?php
-					// Images that have been got from the database are stored in the 'blob' variable, images that have been uploaded during editing phase are uploaded in the 'img' entry with the display prefix already set.
-					if (isset($checkpoints[$i]['img']['blob'])) { ?>
-						<img src="data:<?= $checkpoints[$i]['img']['type'] ?>;base64,<?= $checkpoints[$i]['img']['blob'] ?>"> <?php
+					// Treat both stored images and newly uploaded images
+					if (isset($checkpoints[$i]['img']['filename'])) { ?>
+						<img src="<?= $checkpoints[$i]['img']['url'] ?>"> <?php
 					} else if (isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) { ?>
 						<img src="<?= $checkpoints[$i]['img'] ?>"> <?php
 					// Images that have been imported through mkpoint
@@ -126,8 +126,8 @@ $previous_page = intval($stage_slug) - 1; ?>
 			<div class="summary-checkpoint">
 				<div class="summary-checkpoint-image"> <?php
 					// Images that have been got from the database are stored in the 'blob' variable, images that have been uploaded during editing phase are uploaded in the 'img' entry with the display prefix already set.
-					if (isset($checkpoints[0]['img']['blob'])) { ?>
-						<img src="data:<?= $checkpoints[0]['img']['type'] ?>;base64,<?= $checkpoints[0]['img']['blob'] ?>"> <?php
+					if (isset($checkpoints[0]['img']['filename'])) { ?>
+						<img src="<?= $checkpoints[0]['img']['url'] ?>"> <?php
 					} else if (isset($checkpoints[0]['img']) AND is_string($checkpoints[0]['img'])) { ?>
 						<img src="<?= $checkpoints[0]['img'] ?>"> <?php
 					} else { ?> <img src="\media\default-photo-<?= rand(1,9); ?>.svg"> <?php } ?>

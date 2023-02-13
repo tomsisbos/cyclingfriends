@@ -28,12 +28,27 @@ class Coordinates extends Model {
         $startplace = $startplace['city'] . ' (' . $startplace['prefecture'] . ')';
         $goalplace = $goalplace['city'] . ' (' . $goalplace['prefecture'] . ')';
 
+        // Generate filename and save thumbnail blob to blob server
+        $file = base64_to_jpeg($thumbnail, $_SERVER["DOCUMENT_ROOT"]. '/media/temp/thumb_temp.jpg');
+        $stream = fopen($file, "r");
+
+        $container_name = 'route-thumbnails';
+        $thumbnail_filename = 'thumb_' . rand(0, 999999999999) . '.jpg';
+        $metadata = [
+            'route_id' => $route_id,
+        ];
+
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+        $blobClient->createBlockBlob($container_name, $thumbnail_filename, $stream);
+        $blobClient->setBlobMetadata($container_name, $thumbnail_filename, $metadata);
+
         // If creation
         if ($route_id == 'new') {
             // Save route summary
             $posting_date = date('Y-m-d H:i:s');
-            $insertRoute = $this->getPdo()->prepare('INSERT INTO routes(author_id, category, posting_date, name, description, distance, elevation, startplace, goalplace, thumbnail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertRoute->execute(array($author_id, $category, $posting_date, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail));
+            $insertRoute = $this->getPdo()->prepare('INSERT INTO routes(author_id, category, posting_date, name, description, distance, elevation, startplace, goalplace, thumbnail_filename) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $insertRoute->execute(array($author_id, $category, $posting_date, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename));
             // Save route coords
             $getRouteId = $this->getPdo()->prepare('SELECT id FROM routes WHERE author_id = ? AND posting_date = ? AND name = ?');
             $getRouteId->execute(array($author_id, $posting_date, $name));
@@ -65,8 +80,8 @@ class Coordinates extends Model {
         // If update
         } else {
             // Update route summary
-            if ($thumbnail) {
-                $updateRoute = $this->getPdo()->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ?, thumbnail = ? WHERE id = ?');
+            if ($thumbnail_filename) {
+                $updateRoute = $this->getPdo()->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ?, thumbnail_filename = ? WHERE id = ?');
                 $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $route_id));
             } else {
                 $updateRoute = $this->getPdo()->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ? WHERE id = ?');
@@ -98,10 +113,10 @@ class Coordinates extends Model {
     }
 
     // Create a segment (and a route) from these coordinates
-    public function createSegment ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels, $rank, $advised, $seasons, $advice, $specs, $tags) {
+    public function createSegment ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename, $tunnels, $rank, $advised, $seasons, $advice, $specs, $tags) {
         
         // Create route
-        $route_id = $this->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels);
+        $route_id = $this->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename, $tunnels);
 
         // Prepare variables
         if ($advised == 'on') $advised = 1;

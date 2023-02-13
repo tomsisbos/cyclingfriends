@@ -5,7 +5,7 @@
         <a href="<?= 'ride/' .$ride->id;?>" class="fullwidth">
             <?php // Truncate ride name if more than 60 characters
             $featuredImage = $ride->getFeaturedImage(); ?>
-            <div class="rd-image" style="background-image: url(data:image/jpeg;base64,<?= $featuredImage['img']; ?>); background-color: lightgrey">
+            <div class="rd-image" style="background-image: url(<?= $featuredImage->url; ?>); background-color: lightgrey">
                 <div class="<?php if ($featuredImage){ echo 'rd-ride-title'; } else { echo 'rd-ride-name'; }?>"><?= $ride->name; ?></div>
                 <div class="<?php if ($featuredImage){ echo 'rd-ride-date'; } else { echo 'rd-ride-date'; }?>"><?= $ride->date; ?></div>
             </div>
@@ -42,8 +42,8 @@
                                 <div class="rd-cpt-name"><?= $checkpoint->name ?></div>
                             </div>
                             <div class="rd-cpt-thumbnail"> <?php
-                                if ($checkpoint->img->blob !== null) { ?>
-                                    <img src="data:<?= $checkpoint->img->type ?>;base64,<?= $checkpoint->img->blob ?>"> <?php
+                                if ($checkpoint->img->filename !== NULL) { ?>
+                                    <img src="<?= $checkpoint->img->url ?>"> <?php
                                 } else { ?>
                                     <img src="/media/default-photo-<?= rand(1, 9) ?>.svg"> <?php
                                 } ?>
