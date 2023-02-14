@@ -8,7 +8,7 @@ class Bike extends Model {
         parent::__construct();
         $this->id               = $id;
         $data = $this->getData($this->table);
-        $this->user             = new User ($data['user_id']);
+        $this->user             = new User($data['user_id']);
         $this->number           = $data['number'];
         $this->type             = $this->getType($data['type']);
         $this->model            = $data['model'];
