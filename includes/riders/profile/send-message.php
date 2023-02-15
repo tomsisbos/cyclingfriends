@@ -7,7 +7,7 @@
 
 		<div class="container d-flex flex-column gap-20">
             <div class="d-flex align-items-center gap"> <?php
-                $user->displayPropic(60, 60, 60); ?>
+                $user->getPropicElement(60, 60, 60); ?>
                 <h2> <?php
                     echo $user->login; ?>
                 </h2>

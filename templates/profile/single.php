@@ -158,6 +158,8 @@ include '../includes/head.php'; ?>
 				} ?>
 			</div>
 		</div>
+
+		<?php /*
 		
 		<div class="container bg-transparent margin-bottom p-0 pf-columns-container">
 			
@@ -181,7 +183,7 @@ include '../includes/head.php'; ?>
 				</div>
 			</div>
 
-		</div>
+		</div> */ ?>
 
 	
 	</div>

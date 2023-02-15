@@ -5,6 +5,7 @@ use Location\Distance\Vincenty;
 
 class User extends Model {
 
+    private $container_name = 'user-profile-pictures';
     private $plan;
     public $id;
     public $login;
@@ -318,6 +319,9 @@ class User extends Model {
 
     // Function for uploading a profile picture
     function uploadPropic () {
+
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require_once $folder .'/includes/functions.php';
         
         // Declaration of variables
         $img_blob   = '';
@@ -343,98 +347,76 @@ class User extends Model {
             // Sort upload data into variables
             $img_name = $_FILES['propicfile']['name'];
             $img_blob = file_get_contents($_FILES['propicfile']['tmp_name']);
-                            
+            $filename = setFilename('img');
+            $metadata = [
+                'user_id' => $this->id,
+                'datetime' => date('Y-m-d H:i:s')
+            ];
+
+            require $folder . '/actions/blobStorageAction.php';
+            $blobClient->createBlockBlob($this->container_name, $filename, $img_blob);
+            $blobClient->setBlobMetadata($this->container_name, $filename, $metadata);
+
             // Check if connected user has already uploaded a picture
             $checkUserId = $this->getPdo()->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
             $checkUserId->execute(array($this->id));
-                
+
             // If he does, update data in the database
             if ($checkUserId->rowCount() > 0) {
-                $updateImage = $this->getPdo()->prepare('UPDATE profile_pictures SET img = ?, size = ?, name = ?, type = ? WHERE user_id = ?');
-                $updateImage->execute(array($img_blob, $img_size, $img_name, $img_type, $this->id));
-                    
+                $updateImage = $this->getPdo()->prepare('UPDATE profile_pictures SET filename = ?, size = ?, name = ?, type = ? WHERE user_id = ?');
+                $updateImage->execute(array($filename, $img_size, $img_name, $img_type, $this->id));
+
             // If he doesn't, insert a new line into the database
             } else {
-                $insertImage = $this->getPdo()->prepare('INSERT INTO profile_pictures (user_id, img, size, name, type) VALUES (?, ?, ?, ?, ?)');
-                $insertImage->execute(array($this->id, $img_blob, $img_size, $img_name, $img_type));
+                $insertImage = $this->getPdo()->prepare('INSERT INTO profile_pictures (user_id, filename, size, name, type) VALUES (?, ?, ?, ?, ?)');
+                $insertImage->execute(array($this->id, $filename, $img_size, $img_name, $img_type));
             }
-                		
+
             return array('success' => 'プロフィール画像が更新されました !');
         }
     }
 
+    public function getDefaultPropicId () {
+        $getDefaultPropicId = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
+        $getDefaultPropicId->execute(array($this->id));
+        return $getDefaultPropicId->fetch(PDO::FETCH_COLUMN);
+    }
+
     // Function for downloading users's profile picture
-    public function downloadPropic () {
+    public function getPropicUrl () {
+
         // Check if there is an image that corresponds to connected user in the database
         $checkUserId = $this->getPdo()->prepare('SELECT user_id FROM profile_pictures WHERE user_id = ?');
         $checkUserId->execute(array($this->id));
         $checkUserId->fetch();
-        // If there is one, execute the code
+
+        // If there is one, get filename and return file url
         if ($checkUserId->rowCount() > 0) {	
-            $getImage = $this->getPdo()->prepare('SELECT * FROM profile_pictures WHERE user_id = ?');
+            $getImage = $this->getPdo()->prepare('SELECT filename FROM profile_pictures WHERE user_id = ?');
             $getImage->execute(array($this->id));
-            return $getImage->fetch(PDO::FETCH_ASSOC);	
-        } else return 'データベースから画像を取得できませんでした。';
+            $filename = $getImage->fetch(PDO::FETCH_COLUMN);
+
+            // Connect to blob storage
+            $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+            require $folder . '/actions/blobStorageAction.php';
+
+            // Retrieve blob url
+            return $blobClient->getBlobUrl($this->container_name, $filename);
+
+        // If there is not, return default propic url
+        } else return '\media\default-profile-' .$this->getDefaultPropicId(). '.jpg';
     }
 
     // Function for getting user's profile picture element with defined height, width and border-radius attributes
-    public function getPropicElement ($height = 60, $width = 60, $borderRadius = 60) {
-        $propic = $this->downloadPropic();
-        
-        // If the user has uploaded a picture, use it as profile picture
-        if (isset($propic['img'])) {
-            return '<div style="height: ' .$height. 'px; width: ' .$width. 'px;" class="free-propic-container"><img style="border-radius: ' .$borderRadius. 'px;" class="free-propic-img" src="data:image/jpeg;base64,' .base64_encode($propic['img']). '" /></div>';
-            
-        // Else, use a profile picture corresponding to user's randomly attribuated icon
-        } else {
-            require '../actions/databaseAction.php';
-            $getImage = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
-            $getImage->execute(array($this->id));
-            $picture = $getImage->fetch();
-            return `
-            <div style="height: ` .$height. `px; width: ` .$width. `px;" class="free-propic-container">
-                <img style="border-radius: ` .$borderRadius. `px;" class="free-propic-img" src="\media\default-profile-` .$picture['default_profilepicture_id']. `.jpg" />
-            </div>`;
-        }
+    public function getPropicElement ($height = 60, $width = 60, $border_radius = 60) { ?>
+        <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
+            <img style="border-radius: <?= $border_radius ?>px;" class="free-propic-img" src="<?= $this->getPropicUrl() ?>" />
+        </div> <?php
     }
 
-    // Function for downloading & displaying user's profile picture with defined height, width and border-radius attributes
-    public function displayPropic ($height = 60, $width = 60, $borderRadius = 60) {
-        $propic = $this->downloadPropic();
-        
-        // If the user has uploaded a picture, use it as profile picture
-        if (isset($propic['img'])) { ?>
-            <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
-                <img style="border-radius: <?= $borderRadius ?>px;" class="free-propic-img" src="data:image/jpeg;base64,<?= base64_encode($propic['img']) ?>" />
-            </div> <?php
-            
-        // Else, use a profile picture corresponding to user's randomly attribuated icon
-        } else {
-            require '../actions/databaseAction.php';
-            $getImage = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
-            $getImage->execute(array($this->id));
-            $picture = $getImage->fetch(); ?>
-            <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
-                <img style="border-radius: <?= $borderRadius ?>px;" class="free-propic-img" src="/media/default-profile-<?= $picture['default_profilepicture_id'] ?>.jpg" />
-            </div> <?php
-        }
-    }
-
-    // Get default profile picture of an user
-    public function getDefaultPropicId () {
-        $getDefaultPropicId = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
-        $getDefaultPropicId->execute(array($this->id));
-        return $getDefaultPropicId->fetch()[0];
-    }
-
-    public function getPropicSrc () {
-        $profile_picture = $this->downloadPropic();
-        if (!is_string($profile_picture)) {
-            return 'data:image/jpeg;base64,' . base64_encode($profile_picture['img']);
-        } else {
-            $picture = $this->getDefaultPropicId();
-            return '\media\default-profile-' . $picture . '.jpg';
-        }
+    // Get user profile picture element inside a string
+    public function getPropicHTML () {
+        return '<div style="height: ' .$height. 'px; width: ' .$width. 'px;" class="free-propic-container"><img style="border-radius: ' .$border_radius. 'px;" class="free-propic-img" src="'. $this->getPropicUrl() .'" /></div>';
     }
 
     // Get bikes infos of a specific user from the bikes table
@@ -621,7 +603,7 @@ class User extends Model {
                 } else {
                     $last_messages[$i]->friend = $last_messages[$i]->sender;
                 }
-                $last_messages[$i]->friend->propic = $last_messages[$i]->friend->getPropicSrc();
+                $last_messages[$i]->friend->propic = $last_messages[$i]->friend->getPropicUrl();
             // If no message with this user, remove it from results
             } else {
                 unset($last_messages[$i]);

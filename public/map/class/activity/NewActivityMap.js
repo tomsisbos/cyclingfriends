@@ -478,12 +478,12 @@ export default class NewActivityMap extends ActivityMap {
     }
 
     // Treat user left click on marker
-    removeOnClick (e) {
+    async removeOnClick (e) {
         var number = parseInt(e.target.innerHTML)
         this.data.checkpoints[number].marker.remove()
         this.data.checkpoints[number].form.remove()
         this.data.checkpoints.splice(number, 1)
-        this.sortCheckpoints(this.data.routeData)
+        await this.sortCheckpoints()
         this.updateMarkers()
         this.updatePhotos()
         this.cursor--

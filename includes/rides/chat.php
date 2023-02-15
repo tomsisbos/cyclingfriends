@@ -46,7 +46,7 @@ $getRideChatParents->execute(array($ride->id));
 			} else {
 				echo '<div class="chat-line">';
 			}
-				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->displayPropic(); ?></a><?php
+				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->getPropicElement(); ?></a><?php
 				echo '<div class="chat-message-block">';
 					echo '<div class="chat-login">' . $rideMessage->author->login . '</div>';
 					echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
@@ -59,7 +59,7 @@ $getRideChatParents->execute(array($ride->id));
 			} else {
 				echo '<div class="chat-line child">';
 			}
-				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->displayPropic(); ?></a><?php
+				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->getPropicElement(); ?></a><?php
 				echo '<div class="chat-message-block">';
 					echo '<div class="chat-login">' . $rideMessage->login . '</div>';
 					echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
@@ -87,7 +87,7 @@ if ($getRideChatParents->rowCount() > 0) {
 		echo '<div class="chat-line chat-line-admin">';
 	}else{
 		echo '<div class="chat-line">'; }
-			?><a href="/users/profile.php?id=<?= $parent->id ?>"><?php $parent->author->displayPropic(); ?></a><?php
+			?><a href="/users/profile.php?id=<?= $parent->id ?>"><?php $parent->author->getPropicElement(); ?></a><?php
 			echo '<div class="chat-message-block">';
 				echo '<div class="chat-login">' . $parent->login . '</div>';
 				echo ' - <div class="chat-time">' . $parent->time . '</div>';

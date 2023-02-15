@@ -33,7 +33,7 @@ class Coordinates extends Model {
         $stream = fopen($file, "r");
 
         $container_name = 'route-thumbnails';
-        $thumbnail_filename = 'thumb_' . rand(0, 999999999999) . '.jpg';
+        $thumbnail_filename = setFilename('thumb');
         $metadata = [
             'route_id' => $route_id,
         ];
@@ -82,7 +82,7 @@ class Coordinates extends Model {
             // Update route summary
             if ($thumbnail_filename) {
                 $updateRoute = $this->getPdo()->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ?, thumbnail_filename = ? WHERE id = ?');
-                $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $route_id));
+                $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename, $route_id));
             } else {
                 $updateRoute = $this->getPdo()->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ? WHERE id = ?');
                 $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $route_id));

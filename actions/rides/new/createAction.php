@@ -54,7 +54,6 @@ if (isset($_POST['validate'])) {
 			else $route_id = NULL;
 				
 			// Other data
-					
 			$ride_posting_date = date('Y/m/d H:i');
 			$ride_author_id = $_SESSION['id'];
 			$ride_author_login = $_SESSION['login'];
@@ -83,26 +82,14 @@ if (isset($_POST['validate'])) {
 				$numberOfEntries = count($checkpoints)+1;
 				$checkpoints[$numberOfEntries-1] = $checkpoints[0];
 			}
-			for ($i = 0 ; $i < count($checkpoints); $i++) { // count($checkpoints)
+
+			for ($i = 0 ; $i < count($checkpoints); $i++) {
 				$checkpoint_id = $i;
 				$name = 'Checkpoint n°' .$i; $description = ''; $img = NULL; $img_size = NULL; $img_name = NULL; $img_type = NULL;
 				if ($i == 0) $name = 'Start';
 				if ($i == count($checkpoints) - 1) $name = 'Goal';
 				if (isset($checkpoints[$i]['name'])) $name = htmlspecialchars($checkpoints[$i]['name']);
 				if (isset($checkpoints[$i]['description'])) $description = htmlspecialchars($checkpoints[$i]['description']);
-				// Treatment of images coming from blob server
-				if (isset($checkpoints[$i]['url'])) {
-					$img = file_get_contents($checkpoints[$i]['url']);
-					$img_name = $name;
-					$img_size = 0;
-					$img_type = 'image/jpeg';
-				// Treatment of uploaded images
-				} else {
-					if (isset($checkpoints[$i]['img'])) $img = base64_decode(base64_encode(mb_substr($checkpoints[$i]['img'], 23)));
-					if (isset($checkpoints[$i]['img_size'])) $img_size = $checkpoints[$i]['img_size'];
-					if (isset($checkpoints[$i]['img_name'])) $img_name = $checkpoints[$i]['img_name'];
-					if (isset($checkpoints[$i]['img_type'])) $img_type = $checkpoints[$i]['img_type'];
-				}
 				$lng = $checkpoints[$i]['lngLat']['lng'];
 				$lat = $checkpoints[$i]['lngLat']['lat'];
 				$elevation = $checkpoints[$i]['elevation'];
@@ -123,10 +110,47 @@ if (isset($_POST['validate'])) {
 				}
 				if ($i == $featured_image) $featured = 1; // true
 				else $featured = 0; // false
+				$filename = NULL; $img_size = NULL; $img_name = NULL; $img_type = NULL;
+
+				// If an image have been attached to the checkpoint
+				if (isset($checkpoints[$i]['img']) || isset($checkpoints[$i]['url'])) {
+					// Treatment of images coming from blob server
+					if (isset($checkpoints[$i]['url'])) {
+						$img = file_get_contents($checkpoints[$i]['url']);
+						$img_name = $name;
+						$img_size = 0;
+						$img_type = 'image/jpeg';
+					// Treatment of uploaded images
+					} else if (isset($checkpoints[$i]['img'])) {
+						$img = base64_to_jpeg($checkpoints[$i]['img'], $_SERVER["DOCUMENT_ROOT"]. '/media/temp/tmp.jpg');
+						$img_size = $checkpoints[$i]['img_size'];
+						$img_name = $checkpoints[$i]['img_name'];
+						$img_type = $checkpoints[$i]['img_type'];
+					}
+					$filename = setFilename('img');
+					$stream = fopen($img, "r");
+					$metadata = [
+						'ride_id' => $ride_id,
+						'img_name' => $img_name,
+						'img_size' => $img_size,
+						'img_type' => $img_type,
+						'checkpoint_number' => $checkpoint_id,
+						'lng' => $lng,
+						'lat' => $lat
+					];
+					$container_name = 'checkpoint-images';
+					
+					// Connect to blob storage
+					$folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+					require $folder . '/actions/blobStorageAction.php';
+					// Upload file and set metadata
+					$blobClient->createBlockBlob($container_name, $filename, $stream);
+					$blobClient->setBlobMetadata($container_name, $filename, $metadata);
+				}
 				
 				// Insert checkpoints in 'ride_checkpoints' table
-				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, img, img_size, img_name, img_type, lng, lat, elevation, distance, special, city, prefecture, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-				$insert_checkpoints -> execute(array($ride_id, $checkpoint_id, $name, $description, $img, $img_size, $img_name, $img_type, $lng, $lat, $elevation, $distance, $special, $city, $prefecture, $featured));
+				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, filename, img_size, img_name, img_type, lng, lat, elevation, distance, special, city, prefecture, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+				$insert_checkpoints->execute(array($ride_id, $checkpoint_id, $name, $description, $filename, $img_size, $img_name, $img_type, $lng, $lat, $elevation, $distance, $special, $city, $prefecture, $featured));
 			}
 
 			$_SESSION['forms']['created'] = $ride_id;
@@ -134,12 +158,7 @@ if (isset($_POST['validate'])) {
 
 		}
 				
-	} else {
-	
-		$errormessage = "必要な情報（*）を全てご記入ください。";
-	
-	}
-				
+	} else  $errormessage = "必要な情報（*）を全てご記入ください。";
 	
 }
 

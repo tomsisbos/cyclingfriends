@@ -38,7 +38,7 @@ include '../includes/head.php'; ?>
                         <h2><?= $route->name ?></h2>
                     </div>
                     <div class="header-row">
-                        <a href="/rider/<?= $route->author->id ?>"><?php $route->author->displayPropic(30, 30, 30); ?></a>
+                        <a href="/rider/<?= $route->author->id ?>"><?php $route->author->getPropicElement(30, 30, 30); ?></a>
                         <p>by <strong><?= $route->author->login ?></strong></p>
                     </div>
                     <div class="header-row mt-2"> <?php

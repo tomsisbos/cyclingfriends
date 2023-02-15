@@ -5,7 +5,7 @@
 	if ($requesters) { ?>
 		
 		<div class="container">
-			<h3>申請リスト</h2>
+			<h3>申請リスト</h3>
 		</div>
 			
 		<div class="container bg-white"> <?php
@@ -19,7 +19,7 @@
 			
 						<!-- Profile picture -->
 						<div class="rdr-propic">
-							<a href="/rider/<?= $rider->id ?>"><?php $rider->displayPropic(80, 80, 80); ?></a>
+							<a href="/rider/<?= $rider->id ?>"><?php $rider->getPropicElement(80, 80, 80); ?></a>
 						</div>
 				
 						<!-- Left container -->
@@ -102,13 +102,12 @@
 						<div class="rdr-container-buttons">
 							<button data-action="accept" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button success js-friend">
 								<span class="iconify-inline" data-icon="eva:person-done-outline" style="color: white;" data-width="20" data-height="20"></span>
-								Accept
+								承認する
 							</button>
 							<button data-action="dismiss" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button danger js-friend">
 								<span class="iconify-inline" data-icon="eva:person-remove-outline" style="color: white;" data-width="20" data-height="20"></span>
-								Dismiss
+								却下する
 							</button>
-							</div>
 						</div>
 					
 					</div>

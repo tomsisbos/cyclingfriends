@@ -32,7 +32,7 @@ include '../includes/head.php'; ?>
 			include '../includes/riders/friends/requests-list.php'; ?>
 		
 		<div class="container">
-			<h3>Friends list</h2>
+			<h3>友達リスト</h3>
 		</div>
 		
 		<div class="container end bg-white"> <?php 

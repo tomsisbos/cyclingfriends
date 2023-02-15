@@ -83,7 +83,7 @@ if (isAjax()) {
                 $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
 
                 // Set filename for blob server
-                $filename = 'img_' . rand(0, 999999999999) . '.jpg';
+                $filename = setFilename('img');
 
                 // Delete temporary files
                 unlink($temp); unlink($path); unlink($thumbpath);
@@ -214,7 +214,7 @@ if (isAjax()) {
                 require $folder . '/actions/blobStorageAction.php';
                 // Send file to blob storage
                 $containername = 'scenery-photos';
-                $filename = 'img_' . rand(0, 999999999999) . '.jpg';
+                $filename = setFilename('img');
                 $blobClient->createBlockBlob($containername, $filename, $blob);
                 // Set file metadata
                 $mkpoint_instance = new Mkpoint($mkpointimg['mkpoint_id']);
@@ -276,7 +276,7 @@ if (isAjax()) {
     if (isset($_GET['getpropic'])) {
         if (is_numeric($_GET['getpropic'])) $user = new User($_GET['getpropic']);
         else $user = $connected_user;
-        $profile_picture_src = $user->getPropicSrc();
+        $profile_picture_src = $user->getPropicUrl();
         echo json_encode([$profile_picture_src]);
     }
 
@@ -587,17 +587,17 @@ if (isAjax()) {
         $reviews = $mkpoint->getReviews();
         // Add profile picture src to the response
         for ($i = 0; $i < count($reviews); $i++) {
-            $propic = $reviews[$i]->user->getPropicSrc();
+            $propic = $reviews[$i]->user->getPropicUrl();
             $reviews[$i]->propic = $propic;
         }
         echo json_encode($reviews);
     }
 
     if (isset($_GET['add-review-mkpoint'])) {
-        $mkpoint    = new Mkpoint($_GET['add-review-mkpoint']);
-        $content    = $_GET['content'];
-        $time       = date('Y-m-d H:i:s');
-        $propic     = $connected_user->getPropicSrc();
+        $mkpoint = new Mkpoint($_GET['add-review-mkpoint']);
+        $content = $_GET['content'];
+        $time    = date('Y-m-d H:i:s');
+        $propic  = $connected_user->getPropicUrl();
         // Check if user has already posted a review
         $reviews = $mkpoint->getUserReview($connected_user);
         // If there is one..

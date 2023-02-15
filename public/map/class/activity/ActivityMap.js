@@ -35,10 +35,10 @@ export default class ActivityMap extends GlobalMap {
         return Math.ceil(elevation * 10) / 10
     }
 
-    addMarkerOnRoute (lngLat, type = false) {
+    async addMarkerOnRoute (lngLat, type = false) {
         // Generate new marker
         var marker = this.addMarker(lngLat, type)
-        this.sortCheckpoints(this.data.routeData)
+        await this.sortCheckpoints()
         this.updateMarkers()
         this.updateCheckpointForms()
         return marker

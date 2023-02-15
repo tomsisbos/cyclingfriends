@@ -14,7 +14,7 @@ if (!empty($participation)) { ?>
 			<ul class="d-flex gap mb-0 p-0" id="participantsList"> <?php
 				for ($i=0; $i < count($participation); $i++) {
 					$participant = new User ($participation[$i]);
-					echo $participant->displayPropic(60, 60, 60);
+					echo $participant->getPropicElement(60, 60, 60);
 				} ?>
 			</ul>
 		</div>
@@ -49,7 +49,7 @@ if (!empty($participation)) { ?>
 					$participant = new User ($participant_id); ?>
 					<div class="tr-row justify">
 						<div class="td-row element-30">
-							<a style="text-decoration: none;" href="/rider/<?= $participant->id; ?>"><?php $participant->displayPropic(60, 60, 60); ?></a>
+							<a style="text-decoration: none;" href="/rider/<?= $participant->id; ?>"><?php $participant->getPropicElement(60, 60, 60); ?></a>
 						</div>
 						<div class="td-row element-30">
 							<?= $participant->login; ?>

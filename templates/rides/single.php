@@ -2,7 +2,6 @@
 
 include '../actions/users/initSessionAction.php';
 include '../actions/rides/rideAction.php';
-include '../actions/rides/edit/adminPanelAction.php';
 include '../actions/rides/join&quitAction.php';
 include '../actions/rides/edit/galleryAction.php';
 include '../includes/head.php'; ?>
@@ -53,7 +52,7 @@ include '../includes/head.php'; ?>
 					<h2><?= $ride->name ?></h2>
 				</div>
 				<div class="header-row">
-					<a href="/rider/<?= $ride->author_id ?>"><?php $ride->getAuthor()->displayPropic(30, 30, 30); ?></a>
+					<a href="/rider/<?= $ride->author_id ?>"><?php $ride->getAuthor()->getPropicElement(30, 30, 30); ?></a>
 					<p>by <strong><?= $ride->getAuthor()->login ?></strong></p>
 				</div>
 				<div class="header-row mt-2"> <?php

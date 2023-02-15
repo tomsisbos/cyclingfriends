@@ -5,7 +5,7 @@
         <div class="ac-infos-container">
             <div class="ac-user-details">
                 <div class="ac-user-propic">
-                <a href="/rider/<?= $activity->user_id ?>"><?php $activity->getAuthor()->displayPropic() ?></a>
+                <a href="/rider/<?= $activity->user_id ?>"><?php $activity->getAuthor()->getPropicElement() ?></a>
                 </div>
                 <div class="ac-details">
                     <div class="ac-user-name">

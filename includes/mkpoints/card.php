@@ -4,7 +4,7 @@
         <div class="mk-top"> 
             <a href="/rider/<?= $mkpoint->user_id ?>"><?php
                 $user = new User($mkpoint->user_id);
-                $user->displayPropic(); ?>
+                $user->getPropicElement(); ?>
             </a>
             <div class="mk-top-text">
                 <a href="/scenery/<?= $mkpoint->id ?>"><div class="mk-title"><?= $mkpoint->name ?></div></a> <?php

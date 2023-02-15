@@ -1,5 +1,4 @@
 import RideMap from "/map/class/ride/RideMap.js"
-import Popup from "/map/class/Popup.js"
 
 export default class RidePickMap extends RideMap {
 
@@ -10,6 +9,7 @@ export default class RidePickMap extends RideMap {
     method = 'pick'
 
     addMarker (lngLat) {
+        var number = this.cursor
         var element = this.createCheckpointElement(this.cursor) 
         var marker = new mapboxgl.Marker(
             {
@@ -18,22 +18,23 @@ export default class RidePickMap extends RideMap {
                 element: element
             }
         )
-
         marker.setLngLat(lngLat)
+        marker.addTo(this.map)
 
         // Update and upload checkpoints data to API
-        this.data.checkpoints[this.cursor] = {
+        this.data.checkpoints[number] = {
             lngLat: marker.getLngLat(),
             elevation: Math.floor(this.map.queryTerrainElevation(marker.getLngLat())),
-            number: this.cursor,
+            number,
             marker
         }
         this.updateSession( {
             method: this.method,
-            data: {
-                'checkpoints': this.data.checkpoints
-            }
+            data: this.data
         })
+
+        // Generate popup
+        this.generateMarkerPopup(marker, number)
 
         // Ask marker to update checkpoints data after each dragging
         marker.on('dragend', (e) => {
@@ -41,20 +42,9 @@ export default class RidePickMap extends RideMap {
             this.data.checkpoints[e.target._element.id].elevation = Math.floor(this.map.queryTerrainElevation(e.target.getLngLat()))
             this.updateSession( {
                 method: this.method,
-                data: {
-                    'checkpoints': this.data.checkpoints
-                }
+                data: this.data
             })
         } )
-        var name = this.data.checkpoints[this.cursor].name, description = this.data.checkpoints[this.cursor].description
-        if (!name) { name = '' }
-        if (!description) { description = '' }
-        var content = this.setCheckpointPopupContent(name, description, {editable: true})
-        let popup = new Popup({closeButton: false, maxWidth: '180px'}, {markerHeight: 24}).popup
-        popup.setHTML(content)
-        marker.setPopup(popup)
-        popup.options.className = 'hidden'
-        marker.addTo(this.map)
 
         // Update existing markers
         this.updateMarkers({exceptSF: false})
@@ -63,8 +53,6 @@ export default class RidePickMap extends RideMap {
         this.setToSF(true)
         
         this.cursor++
-        console.log(this.cursor)
-        console.log(this.data.checkpoints)
         
         // Removing a marker and updating existing markers
         marker.getElement().addEventListener('contextmenu', (e) => this.removeOnClick(e))
@@ -78,34 +66,11 @@ export default class RidePickMap extends RideMap {
                 curve: 1
             } )
         } else this.defineBounds(marker) // Else, redefine bounds
-        
+
+        return marker        
     }
 
-    setCheckpointPopupContent (name, description, options = {editable: false}) {
-
-        if (options.editable == true) return `
-        <div class="checkpointMarkerForm">
-            <div class="checkpoint-popup-line">
-                <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
-                <input enctype="multipart/form-data" type="file" name="file" id="file" />
-                <label for="file" title="写真を変更する">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ic" width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"><path fill="currentColor" d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5s-5 2.24-5 5s2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2s-3.2 1.43-3.2 3.2z"></path></svg>
-                </label>
-                <input type="text" id="name" name="name" placeholder="タイトル" class="admin-field" value="` + name +  `"/>
-            </div>
-            <textarea name="description" placeholder="詳細..." id="description" class="admin-field">` + description + `</textarea>
-        </div>`
-
-        else return `
-        <div class="checkpointMarkerForm">
-            <div class="checkpoint-popup-line">
-                <div class="bold">` + name +  `</div>
-            </div>
-            <div>` + description + `</div>
-        </div>`
-    }
-
-    displayCheckpoints () {
+    /*displayCheckpoints () {
         for (let j = 0; j < this.data.checkpoints.length; j++) {    
             var element = this.createCheckpointElement(j)
             let marker = new mapboxgl.Marker(
@@ -123,9 +88,7 @@ export default class RidePickMap extends RideMap {
                 this.data.checkpoints[e.target._element.id].elevation = Math.floor(this.map.queryTerrainElevation(e.target.getLngLat()))                            
                 this.updateSession( {
                     method: this.method,
-                    data: {
-                        'checkpoints': this.data.checkpoints
-                    }
+                    data: this.data
                 })
             } )
 
@@ -149,7 +112,7 @@ export default class RidePickMap extends RideMap {
             console.log(this.cursor)
             console.log(this.data.checkpoints)
         }
-    }
+    }*/
 
     createCheckpointElement (i) {
         var element = document.createElement('div')
@@ -312,25 +275,19 @@ export default class RidePickMap extends RideMap {
     async validateCourse (e) {
         e.preventDefault()
 
-        // Only submit if enough data is set (to prevent from submitting before session have been updated asynchronously)
-        if (this.session.course['options'] && this.session.course['route-id']) {
-
-            var $firstMarker = document.querySelector('.checkpoint-marker')
-            var markersNumber = map._markers.length
-            // If no checkpoint have been set
-            if (!$firstMarker || (markersNumber === 1 && $firstMarker.innerText == 'S')) showResponseMessage({error: '少なくとも、ライドのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'})
-            // Else, validate, send data to API and go to next page
-            else {
-                await this.updateMeetingFinishPlace()
-                this.updateSession( {
-                    method: 'pick',
-                    data: {
-                        'options': this.options
-                    }
-                }).then( () => document.getElementById('form').submit())
-            }
-
-        } else showResponseMessage({error: 'データの自動保存が終わっていない状態で進むと、エラーが発生するのでデータの送信を止めさせて頂きました。数秒後にもう一度お試しください。'})
+        var $firstMarker = document.querySelector('.checkpoint-marker')
+        // If no checkpoint have been set
+        if (!$firstMarker || (this.data.checkpoints.length === 1 && $firstMarker.innerText == 'S')) showResponseMessage({error: '少なくとも、ライドのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'})
+        // Else, validate, send data to API and go to next page
+        else {
+            await this.updateMeetingFinishPlace()
+            this.updateSession( {
+                method: 'pick',
+                data: {
+                    'options': this.options
+                }
+            }).then( () => document.getElementById('form').submit())
+        }
 
         this.$map.addEventListener('click', hideResponseMessage, 'once')
     }

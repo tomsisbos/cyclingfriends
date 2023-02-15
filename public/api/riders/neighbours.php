@@ -9,7 +9,7 @@ if (isAjax()) {
 
     if (isset($_GET['get-neighbours'])) {
         include '../../../actions/riders/displayNeighboursAction.php';
-        foreach ($riders as $rider) $rider->propic = $rider->getPropicSrc();
+        foreach ($riders as $rider) $rider->propic = $rider->getPropicUrl();
         echo json_encode($riders);
     }
 
@@ -19,7 +19,7 @@ if (isAjax()) {
         $rider->clearedSegmentsNumber = $rider->countClearedSegments();
         $rider->clearedMkpointsNumber = $rider->countClearedMkpoints();
         $rider->lastActivityPhotos = $rider->getLastActivityPhotos(3);
-        $rider->propic = $rider->getPropicSrc();
+        $rider->propic = $rider->getPropicUrl();
         echo json_encode($rider);
     }
 

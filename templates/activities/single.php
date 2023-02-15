@@ -43,7 +43,7 @@ include '../includes/head.php'; ?>
 					</div>
 					<div class="header-row">
 						<div class="header-column">
-							<a href="/rider/<?= $activity->user_id ?>"><?php $activity->getAuthor()->displayPropic(30, 30, 30); ?></a>
+							<a href="/rider/<?= $activity->user_id ?>"><?php $activity->getAuthor()->getPropicElement(30, 30, 30); ?></a>
 						</div>
 						<div class="header-column">
 							<p>by <a href="/rider/<?= $activity->user_id ?>"><strong><?= $activity->getAuthor()->login ?></strong></a></p>

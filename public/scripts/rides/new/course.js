@@ -123,9 +123,8 @@ async function displayForm () {
                 if (course.options) {
                     rideDrawMap.options = course.options
                 }
-                // Update checkpoints and cursor value to the map instance
+                // Update checkpoints value to the map instance
                 rideDrawMap.data.checkpoints = course.checkpoints
-                if (course.checkpoints) rideDrawMap.cursor = course.checkpoints.length
             }
             // Display data
             if (rideDrawMap.session.course.myRoutes) {
@@ -135,6 +134,7 @@ async function displayForm () {
 
                 // Display checkpoints
                 rideDrawMap.displayCheckpoints()
+                rideDrawMap.treatRouteChange()
                 
                 // Display a helper
                 await RideCourseHelper.startGuidance(rideDrawMap.method)

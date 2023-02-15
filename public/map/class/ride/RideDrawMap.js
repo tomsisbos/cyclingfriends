@@ -415,7 +415,7 @@ export default class RideDrawMap extends RideMap {
                         this.generateProfile({force: true})
                         // Add "addToCheckpoints" button click event handler
                         var $button = popup._content.querySelector('#addToCheckpoints')
-                        $button.addEventListener('click', (e) => {
+                        $button.addEventListener('click', async (e) => {
                             var $button = e.target
                             // If this mkpoint have not been added to checkpoints yet, add it
                             if ($button.innerText == 'チェックポイントに追加') {
@@ -436,7 +436,7 @@ export default class RideDrawMap extends RideMap {
                                 } )
                                 // Sort checkpoints
                                 var current = {lng: mkpoint.lng, lat: mkpoint.lat}
-                                this.sortCheckpoints(this.map.getSource('route')._data)
+                                await this.sortCheckpoints()
                                 var number = this.getCheckpointNumber(this.data.checkpoints, current)
                                 this.updateMarkers()
                                 this.updateSession( {
@@ -467,7 +467,7 @@ export default class RideDrawMap extends RideMap {
                                 marker.getElement().innerHTML = formerElementHTML
                                 // Remove this checkpoint data
                                 this.data.checkpoints.splice(number, 1)
-                                this.sortCheckpoints(this.map.getSource('route')._data)
+                                await this.sortCheckpoints()
                                 this.updateSession( {
                                     method: this.method,
                                     data: {
@@ -574,48 +574,6 @@ export default class RideDrawMap extends RideMap {
         return number
     }
 
-    setCheckpointPopupContent (name, description, options = {editable: false, button: false}) {
-
-        var formContent = this.setCheckpointFormContent(name, description, options)
-
-        if (options.button == true) var button = `
-            <div class="checkpoint-popup-line">
-                <div id="addToCheckpoints" class="mp-button bg-button text-white m-2 mt-0">チェックポイントに追加</div>
-            </div>`
-        else var button = ''
-        return `
-        <div class="checkpointMarkerForm">`
-            + formContent + `
-        </div>` 
-            + button
-    }
-
-    setCheckpointFormContent (name, description, options = {editable: false}) {
-
-        if (options.editable == true) return `
-            <div class="checkpoint-popup-line">
-                <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
-                <input enctype="multipart/form-data" type="file" name="file" id="file" />
-                <label for="file" title="写真を変更する">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ic" width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"><path fill="currentColor" d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5s-5 2.24-5 5s2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2s-3.2 1.43-3.2 3.2z"></path></svg>
-                </label>
-                <input type="text" id="name" name="name" placeholder="タイトル" class="admin-field" value="` + name +  `"/>
-            </div>
-            <div class="checkpoint-popup-line">
-                <textarea name="description" placeholder="詳細..." id="description" class="admin-field">` + description + `</textarea>
-            </div>`
-        else {
-            if (description.length > 30) description = description.slice(0, 30) + '...' // Shorten description if necessary
-            return `
-                <div class="checkpoint-popup-line">
-                    <div class="bold">` + name +  `</div>
-                </div>
-                <div class="checkpoint-popup-line">
-                    <div>` + description + `</div>
-                </div>`
-        }
-    }
-
     async addStartGoalMarkers () {
         // If no start has been detected, add it
         if (!this.data.checkpoints[0]) {
@@ -644,7 +602,7 @@ export default class RideDrawMap extends RideMap {
                 }
             }
             // Update course infos
-            this.sortCheckpoints(this.map.getSource('route')._data)
+            await this.sortCheckpoints()
         // Else, simply set course data
         } else {
             var options = this.options
@@ -670,6 +628,8 @@ export default class RideDrawMap extends RideMap {
         var element = document.createElement('div')
         element.className = 'checkpoint-marker'
         element.id = i
+        console.log(this.cursor)
+        console.log(this.data.checkpoints.length)
         if (i === 0 && this.options.sf == false) { // If this is the first marker, set it to 'S'
             element.innerHTML = 'S'
             element.className = 'checkpoint-marker checkpoint-marker-start'
@@ -685,11 +645,11 @@ export default class RideDrawMap extends RideMap {
         return element
     }
 
-    removeOnClick (e) {
+    async removeOnClick (e) {
         var number = parseInt(e.target.innerHTML)
         this.data.checkpoints[number].marker.remove()
         this.data.checkpoints.splice(number, 1)
-        this.sortCheckpoints(this.map.getSource('route')._data)
+        await this.sortCheckpoints()
         this.updateMarkers()
 
         // Update and upload checkpoints data to API
@@ -713,11 +673,11 @@ export default class RideDrawMap extends RideMap {
         return number
     }
 
-    addMarkerOnRoute (lngLat) {
+    async addMarkerOnRoute (lngLat) {
         // Generate marker
         this.addMarker(lngLat)
         // Update checkpoints data
-        this.sortCheckpoints(this.map.getSource('route')._data)
+        await this.sortCheckpoints()
         this.updateMarkers()
         this.updateSession( {
             method: this.method,
@@ -755,6 +715,46 @@ export default class RideDrawMap extends RideMap {
         } else showResponseMessage({error: 'データの自動保存が終わっていない状態で進むと、エラーが発生するのでデータの送信を止めさせて頂きました。数秒後にもう一度お試しください。'})
 
         this.$map.addEventListener('click', hideResponseMessage, 'once')
+    }
+
+    async treatRouteChange () {
+        var checkpoints = this.data.checkpoints
+        const routeData = await this.getRouteData()
+        const routeCoords = routeData.geometry.coordinates
+
+        // If start or goal has changed (on route update), update it
+        if (this.options && this.options.sf !== null) {
+            if (this.options.sf == true) {
+                // Start/Goal
+                if ((checkpoints[0].lngLat.lng != routeCoords[0][0]) && (checkpoints[0].lngLat.lat != routeCoords[0][1])) {
+                    checkpoints[0].lngLat = {
+                        lng: routeCoords[0][0],
+                        lat: routeCoords[0][1]
+                    }
+                    checkpoints[0].marker.setLngLat(checkpoints[0].lngLat)
+                    console.log('start/goal updated')
+                }
+            } else {
+                // Start
+                if ([checkpoints[0].lngLat.lng, checkpoints[0].lngLat.lat] != routeCoords[0]) {
+                    checkpoints[0].lngLat = {
+                        lng: routeCoords[0][0],
+                        lat: routeCoords[0][1]
+                    }
+                    checkpoints[0].marker.setLngLat(checkpoints[0].lngLat)
+                    console.log('start updated')
+                }
+                // Goal
+                if ([checkpoints[checkpoints.length - 1].lngLat.lng, checkpoints[checkpoints.length - 1].lngLat.lat] != routeCoords[routeCoords.length - 1]) {
+                    checkpoints[checkpoints.length - 1].lngLat = {
+                        lng: routeCoords[routeCoords.length - 1][0],
+                        lat: routeCoords[routeCoords.length - 1][1]
+                    }
+                    checkpoints[checkpoints.length - 1].marker.setLngLat(checkpoints[checkpoints.length - 1].lngLat)
+                    console.log('goal updated')
+                }
+            }
+        }
     }
 
 }

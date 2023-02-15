@@ -56,7 +56,7 @@
 		<!-- Profile picture icon -->
 		<div class="nav-item d-flex align-items-center gap">
 			<a href="/rider/<?= $_SESSION['id']; ?>">
-				<?php $connected_user->displayPropic(60, 60, 60); ?>
+				<?php $connected_user->getPropicElement(60, 60, 60); ?>
 			</a>
 			<!-- Profile chevron dropdown -->
 			<div class="dropdown">

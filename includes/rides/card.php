@@ -56,7 +56,7 @@
         </div>
         <div class="rd-section-organizer">
             <a href="<?= 'rider/' .$ride->author_id; ?>">
-                <?= $ride->getAuthor()->displayPropic(60, 60, 60); ?>
+                <?= $ride->getAuthor()->getPropicElement(60, 60, 60); ?>
             </a>
             <div class="rd-organizer">
                 <div class="rd-login"><?= 'by <strong>@' .$ride->getAuthor()->login. '</strong>'; ?></div> <?php

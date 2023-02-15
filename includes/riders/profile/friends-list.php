@@ -9,7 +9,7 @@
 		for ($i = 0; $i < $number_to_display; $i++) {
 			$friend = new User ($friends[$i]); ?>
 			<div class="superpose"> <?php
-				$friend->displayPropic(40, 40, 40); ?>
+				$friend->getPropicElement(40, 40, 40); ?>
 			</div> <?php
 			if ($i == $limit - 1) echo '<span style="width: 100%; margin-left: 30px; align-self: center;">...他'. (count($friends) - $limit) .'名</span>';
 		}

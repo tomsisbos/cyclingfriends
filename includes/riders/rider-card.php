@@ -7,7 +7,7 @@
 
                 <!-- Profile picture -->
                 <div class="rdr-propic">
-                    <a href="/rider/<?= $rider->id ?>"><?php $rider->displayPropic(80, 80, 80); ?></a>
+                    <a href="/rider/<?= $rider->id ?>"><?php $rider->getPropicElement(80, 80, 80); ?></a>
                 </div>
 
                 <!-- Left container -->

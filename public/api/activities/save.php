@@ -110,7 +110,7 @@ if (is_array($data)) {
             imagejpeg($img, $path, 75); // Set new quality to 75
             
             // Set filename for blob server
-            $filename = 'img_' . rand(0, 999999999999) . '.jpg';
+            $filename = setFilename('img');
 
             // Build photo data
             $img_blob = fopen($path, 'r');
@@ -231,7 +231,7 @@ if (is_array($data)) {
                             }
 
                             // Set blob and filename for blob server
-                            $mkpoint_photo['filename'] = 'img_' . rand(0, 999999999999) . '.jpg';
+                            $mkpoint_photo['filename'] = setFilename('img');
                             $mkpoint_photo['blob'] = fopen($path, 'r');
 
                             // Remove temp files
@@ -288,7 +288,7 @@ if (is_array($data)) {
             foreach ($data['mkpointPhotos'] as $entry) {
                 
                 // Insert table data
-                $entry['filename'] = 'img_' . rand(0, 999999999999) . '.jpg';
+                $entry['filename'] = setFilename('img');
                 $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
                 $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $datetime->format('Y-m-d H:i:s'), 0, $entry['filename']));
 

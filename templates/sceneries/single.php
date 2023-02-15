@@ -31,7 +31,7 @@ include '../includes/head.php'; ?>
 						<h2><?= $mkpoint->name ?></h2>
 					</div>
 					<div class="header-row"> <?php
-						$mkpoint->getAuthor()->displayPropic(30, 30, 30) ?><p>by <a href="/rider/<?= $mkpoint->user_id ?>"><?= $mkpoint->getAuthor()->login ?></a></p>
+						$mkpoint->getAuthor()->getPropicElement(30, 30, 30) ?><p>by <a href="/rider/<?= $mkpoint->user_id ?>"><?= $mkpoint->getAuthor()->login ?></a></p>
 					</div>
 					<div class="header-row">
 						<button class="mp-button normal js-favorite-button" type="button"> <?php

@@ -90,7 +90,7 @@ if (is_array($data)) {
             imagejpeg($img, $path, 75); // Set new quality to 75
 
             // Set variables ready for upload
-            $filename = 'img_' . rand(0, 999999999999) . '.jpg';
+            $filename = setFilename('img');
             $img_blob = fopen($path, 'r');
             $img_size = $photo['size'];
             $img_name = $photo['name'];
@@ -231,7 +231,7 @@ if (is_array($data)) {
                 }
 
                 // Set blob and filename for blob server
-                $mkpoint_photo['filename'] = 'img_' . rand(0, 999999999999) . '.jpg';
+                $mkpoint_photo['filename'] = setFilename('img');
                 $mkpoint_photo['blob'] = fopen($path, 'r');
 
                 // Remove temp files

@@ -1,5 +1,4 @@
 <?php // Set up previous page variable for the back button
-var_dump($_SESSION['forms']['2']['checkpoints']);
 $previous_page = intval($slug) - 1; ?>
 
 <!--Displays the Ride Infos form-->
@@ -153,7 +152,7 @@ $previous_page = intval($slug) - 1; ?>
 			if (!empty($_SESSION['forms']['2']['distance'])) { ?>
 				<p><strong>距離 :</strong> 
 				<?php 
-				if ($_SESSION['forms']['2']['distance-about'] == 'about') echo 'about ';
+				if ($_SESSION['forms']['2']['distance-about'] == 'about') echo '約';
 				echo $_SESSION['forms']['2']['distance']. "km - " .$_SESSION['forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['forms']['2']['finishplace']['geolocation']['city']. " まで"; ?>
 				</p> <?php
 			} ?>

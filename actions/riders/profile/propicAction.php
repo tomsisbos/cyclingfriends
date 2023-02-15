@@ -8,4 +8,4 @@ if (isset($_FILES['propicfile'])) {
 }
 
 // Lauch downloading function
-$profile_picture = $connected_user->downloadPropic(); ?>
+$profile_picture = $connected_user->getPropicUrl(); ?>

@@ -34,7 +34,6 @@ export default class RideMap extends GlobalMap {
             }
             // If edit property has been set to true, ask API to use 'edit-course' array name rather than default 'course'
             if (this.edit == true) cleanVariable.edit = true
-            console.log(cleanVariable)
             // Send data to server
             ajaxJsonPostRequest (this.apiUrl, cleanVariable, (response) => {
                 if (this.session) {
@@ -43,7 +42,6 @@ export default class RideMap extends GlobalMap {
                         ...currentData,
                         ...response
                     }
-                    console.log(this.session.course)
                 }
                 resolve(response)
             } )
@@ -170,6 +168,7 @@ export default class RideMap extends GlobalMap {
         }
 
         var onUpload = (e) => {
+            console.log('here on upload')
             // Extract blob from the file
             let img = e.target.files[0]
             const maxSize = 10000000
@@ -196,7 +195,6 @@ export default class RideMap extends GlobalMap {
                     // In case of error
                     var $popup = popup.getElement()
                     if ('error' in response) {
-                        console.log('errorincheckpoints')
                         displayError($popup, response.error)
                     // If no error, display thumbnail
                     } else {
@@ -209,7 +207,6 @@ export default class RideMap extends GlobalMap {
                 }, false)
             // If size image exceeds max size
             } else {
-                console.log('errorsize')
                 var errorMessage = 'このファイルはサイズ制限を超えています (' + Math.round(maxSize / 1000000) + 'Mb)。'
                 displayError(popup, errorMessage)
             }
@@ -342,7 +339,8 @@ export default class RideMap extends GlobalMap {
     displayCheckpoints () {
         for (let j = 0; j < this.data.checkpoints.length; j++) {    
             // Create and add marker
-            var element = this.createCheckpointElement(j) 
+            if (this.options && this.options.sf == false && j == this.data.checkpoints.length - 1) var element = this.createCheckpointElement(j + 1) // Ensuire that last maker will be set as the finish one
+            else var element = this.createCheckpointElement(j)
             var marker = new mapboxgl.Marker(
                 {
                     draggable: false,

@@ -68,7 +68,7 @@ class Ride extends Model {
         $this->entry_end                               = $data['entry_end'];
         $this->participants_number                     = $data['participants_number'];
         if (isset($data['route_id'])) $this->route_id  = $data['route_id'];
-        $this->lngLatFormat                           = $lngLatFormat;
+        $this->lngLatFormat                            = $lngLatFormat;
         $this->status                                  = $this->getStatus()['status'];
         $this->substatus                               = $this->getStatus()['substatus'];
         $this->checkpoints                             = $this->getCheckpoints();
@@ -79,14 +79,27 @@ class Ride extends Model {
     }
 
     public function getRoute () {
-        return new Route ($this->route_id, $this->lngLatFormat);
+        if (isset($this->route_id)) return new Route ($this->route_id, $this->lngLatFormat);
+        else return false;
     }
 
     public function getFeaturedImage () {
-        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true');
+        // Select image if exists for checkpoint set as featured
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true AND filename IS NOT NULL');
         $getFeaturedImage->execute(array($this->id));
-        $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
-        return new CheckpointImage($checkpoint_image_id);
+        if ($getFeaturedImage->rowCount() > 0) {
+            $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
+            return new CheckpointImage($checkpoint_image_id);
+        // Else, select first checkpoint having an image set
+        } else {
+            $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND filename IS NOT NULL');
+            $getFeaturedImage->execute(array($this->id));
+            if ($getFeaturedImage->rowCount() > 0) {
+                $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
+                return new CheckpointImage($checkpoint_image_id);
+            // If still doesn't exist, return default image
+            } else return '\media\default-photo-' . rand(0, 9) . '.svg';
+        }
     }
 
     function getAcceptedLevels () {

@@ -109,7 +109,6 @@ async function displayForm () {
             map.on('click', (e) => {
                 // Prevent from adding a marker if a mkpoint or another marker is on the path
                 var markerIncludedOnPath = false
-                console.log(e)
                 e.originalEvent.composedPath().forEach( (element) => {
                     if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('mkpoint-marker'))) markerIncludedOnPath = true
                 } )
@@ -146,7 +145,6 @@ async function displayForm () {
             
             // Get course infos
             var course = rideDrawMap.session['edit-forms'][2]
-            console.log(course)
             rideDrawMap.options = course.options
             // Don't repeat the last checkpoint if SF option is true & has the same coordinates as the first checkpoint
             if (course.options.sf == true && CFUtils.compareCoords(course.checkpoints[course.checkpoints.length - 1].lngLat, course.checkpoints[0].lngLat, 3)) course.checkpoints.pop()
@@ -168,6 +166,8 @@ async function displayForm () {
                 rideDrawMap.clearMarkers()
                 rideDrawMap.hideMkpoints()
                 await rideDrawMap.loadRoute(selectRoute.value)
+                await rideDrawMap.sortCheckpoints()
+                rideDrawMap.treatRouteChange()
                 rideDrawMap.updateSession( {
                     method: rideDrawMap.method,
                     data: {
@@ -181,6 +181,8 @@ async function displayForm () {
 
             // Display checkpoints
             if (rideDrawMap.data.checkpoints) rideDrawMap.displayCheckpoints()
+            await rideDrawMap.sortCheckpoints()
+            rideDrawMap.treatRouteChange()
 
             // Add checkpoint on click
             map.on('click', 'route', (e) => {

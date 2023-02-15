@@ -76,7 +76,7 @@ if (isset($_POST['validate'])) {
 			$remove_checkpoints = $db->prepare('DELETE FROM ride_checkpoints WHERE ride_id = ?');
 			$remove_checkpoints->execute(array($ride_id));
 
-			for ($i = 0 ; $i < count($checkpoints); $i++) { // count($checkpoints)
+			for ($i = 0 ; $i < count($checkpoints); $i++) {
 				$checkpoint_id = $i;
 				$name = 'Checkpoint n°' .$i; $description = ''; $img = NULL; $img_size = NULL; $img_name = NULL; $img_type = NULL;
 				if ($i == 0) $name = 'Start';
@@ -103,6 +103,7 @@ if (isset($_POST['validate'])) {
 				}
 				if ($i == $featured_image) $featured = 1; // true
 				else $featured = 0; // false
+				$filename = NULL; $img_size = NULL; $img_name = NULL; $img_type = NULL;
 
 				// Treatment of images coming from previously stored checkpoints
 				if (isset($checkpoints[$i]['img']) AND isset($checkpoints[$i]['img']['filename'])) {
@@ -110,7 +111,7 @@ if (isset($_POST['validate'])) {
 					$img_size = $checkpoints[$i]['img']['size'];
 					$img_name = $checkpoints[$i]['img']['name'];
 					$img_type = $checkpoints[$i]['img']['type'];
-				} else {
+				} else if ((isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) || isset($checkpoints[$i]['url'])) {
 					// Treatment of images coming from sceneries
 					if (isset($checkpoints[$i]['url'])) {
 						$img = file_get_contents($checkpoints[$i]['url']);
@@ -159,11 +160,7 @@ if (isset($_POST['validate'])) {
 
 		}
 				
-	} else {
-	
-		$errormessage = "Please fill in all the required informations before validating";
-	
-	}
+	} else  $errormessage = "必要な情報（*）を全てご記入ください。";
 				
 	
 }

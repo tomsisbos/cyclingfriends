@@ -9,6 +9,7 @@ export default class GlobalMap extends Model {
     constructor (options) {
         super(options)
         this.setSeason()
+        console.log(this)
     }
 
     apiUrl = '/api/map.php'
@@ -3221,6 +3222,8 @@ export default class GlobalMap extends Model {
         const currentDistance = turf.length(subline)
         // If situated at the very beginning of the route, return 0 (as start)
         if (currentDistance == 0) return 0
+        // If first setting of goal, return 1
+        else if (Math.round(currentDistance * 10) / 10 == Math.round(routeDistance * 10) / 10 && checkpoints.length == 1) return 1
         // If situated at the very end of the route, return last checkpoint number (as goal)
         else if (Math.round(currentDistance * 10) / 10 == Math.round(routeDistance * 10) / 10) return checkpoints.length - 1
         // Else, return current position on the route among other checkpoints
@@ -3270,33 +3273,38 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    sortCheckpoints (lineString) {
-        var checkpoints = this.data.checkpoints
-        if (checkpoints) {
-            // Get each point distance
-            checkpoints.forEach( (checkpoint) => {
-                if (!checkpoint.distance) {
-                    if ((Math.round(checkpoint.lngLat.lng * 1000) / 1000 != Math.round(lineString.geometry.coordinates[0][0] * 1000) / 1000) && (Math.round(checkpoint.lngLat.lat * 1000) / 1000 != Math.round(lineString.geometry.coordinates[0][1] * 1000) / 1000)) {
+    async sortCheckpoints () {
+        return new Promise(async (resolve, reject) => {
+            var checkpoints = this.data.checkpoints
+            const routeData = await this.getRouteData()
+            const routeCoords = routeData.geometry.coordinates
+            if (checkpoints) {
+    
+                // Get each point distance
+                checkpoints.forEach( (checkpoint) => {
+                    if ((Math.round(checkpoint.lngLat.lng * 1000) / 1000 != Math.round(routeCoords[0][0] * 1000) / 1000) && (Math.round(checkpoint.lngLat.lat * 1000) / 1000 != Math.round(routeCoords[0][1] * 1000) / 1000)) {
                         let point = turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])
-                        let subline = turf.lineSlice(turf.point(lineString.geometry.coordinates[0]), point, lineString)
+                        let subline = turf.lineSlice(turf.point(routeCoords[0]), point, routeData)
                         checkpoint.distance = turf.length(subline)
                     } else checkpoint.distance = 0 // If checkpoint has the same coordinates (at a 0.001 precision) as linestring first waypoint, then automatically set distance to 0
-                }
-            } )
-            // Sort checkpoints
-            checkpoints.sort( (a, b) => {
-                return a.distance - b.distance
-            } )
-            // Update element except for start and goal 
-            var i = 0
-            checkpoints.forEach( (checkpoint) => {
-                checkpoint.number = i
-                if (checkpoint.form) checkpoint.form.id = 'checkpointForm' + i
-                i++
-            } )
-        }
-        // Update data
-        this.data.checkpoints = checkpoints
+                } )
+                // Sort checkpoints
+                checkpoints.sort( (a, b) => {
+                    return a.distance - b.distance
+                } )
+                // Update element except for start and goal 
+                var i = 0
+                checkpoints.forEach( (checkpoint) => {
+                    checkpoint.number = i
+                    if (checkpoint.form) checkpoint.form.id = 'checkpointForm' + i
+                    i++
+                } )
+            }
+
+            // Update data
+            this.data.checkpoints = checkpoints
+            resolve(true)
+        } )
     }
 
     setGrabber () {

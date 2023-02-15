@@ -21,6 +21,8 @@
 		// If exists, get ride data
         if ($checkIfExists->rowCount() > 0) {
 
+			include '../actions/rides/edit/adminPanelAction.php';
+
 			$ride = new Ride($slug);
 			
 			// If ride admin have submitted data, then replace existing data by submitted one

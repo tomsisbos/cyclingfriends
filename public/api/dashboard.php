@@ -27,7 +27,7 @@ if (isAjax()) {
                 else $activity->formattedDuration = $activity->duration->format('H') . '<span class="ac-spec-unit"> h </span>' . $activity->duration->format('i');
                 $activity->averagespeed = $activity->getAverageSpeed();
                 $activity->user_login = $activity->getAuthor()->login;
-                $activity->propic = $activity->getAuthor()->getPropicElement();
+                $activity->propic = $activity->getAuthor()->getPropicHTML();
                 array_push($entries, $activity);
             // Mkpoint data preparation
             } else if ($result['type'] === 'mkpoint') {
@@ -35,7 +35,7 @@ if (isAjax()) {
                 $mkpoint->type = 'mkpoint';
                 $mkpoint->cleared = $mkpoint->isCleared();
                 $mkpoint->user_login = $mkpoint->getAuthor()->login;
-                $mkpoint->propic = $mkpoint->getAuthor()->getPropicElement();
+                $mkpoint->propic = $mkpoint->getAuthor()->getPropicHTML();
                 $mkpoint->featuredimageUrl = $mkpoint->getImages()[0]->url;
                 array_push($entries, $mkpoint);
             }

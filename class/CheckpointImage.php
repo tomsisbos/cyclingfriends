@@ -27,7 +27,8 @@ class CheckpointImage extends Model {
         require $folder . '/actions/blobStorageAction.php';
 
         // Retrieve blob url
-        return $blobClient->getBlobUrl($this->container_name, $this->filename);
+        if (isset($this->filename)) return $blobClient->getBlobUrl($this->container_name, $this->filename);
+        else return false;
     }
 
 }
