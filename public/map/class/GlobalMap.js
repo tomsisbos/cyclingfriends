@@ -20,7 +20,7 @@ export default class GlobalMap extends Model {
     displayAmenitiesBox
     displayMkpointsBox
     loaded = false
-    defaultCenter = [138.69056, 35.183002]
+    defaultCenter = [139.7673068, 35.6809591]
     defaultZoom = 10
     mkpoints
     tunnelNumber = 0

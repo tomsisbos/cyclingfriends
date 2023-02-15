@@ -91,12 +91,12 @@ function getIcon (action) {
 
 function getActionName (action) {
 	switch (action) {
-		case 'follow': return 'Follow'
-		case 'unfollow': return 'Unfollow'
-		case 'add': return 'Become friends'
-		case 'remove': return 'Remove friend'
-		case 'accept': return 'Accept'
-		case 'dismiss': return 'Dismiss'
+		case 'follow': return 'フォローする'
+		case 'unfollow': return 'フォローを辞める'
+		case 'add': return '友達申請を送る'
+		case 'remove': return '友達を辞める'
+		case 'accept': return '友達申請を承認する'
+		case 'dismiss': return '友達申請を却下する'
 		case 'requested': return '送信済み...'
 	}
 }

@@ -2,7 +2,7 @@
 	<div class="col-md">
 		<div class="tr-row">
 			<label class="form-label td-row element-20">
-				検索
+				ユーザー名検索
 			</label>
 			<input class="form-control td-row element-50" type="text" name="friend_search" value="<?php if(isset($_POST['friend_search'])){echo $_POST['friend_search'];} ?>" onfocusout="this.form.submit();" />
 		</div>
@@ -17,10 +17,10 @@
 					ユーザーネーム</option>
 				<option value="last_name"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'last_name'){echo ' selected';}} ?>>
-					苗字</option>
+					姓</option>
 				<option value="first_name"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'first_name'){echo ' selected';}} ?>>
-					名前</option>
+					名</option>
 				<option value="place"
 				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'place'){echo ' selected';}} ?> disabled>
 					距離</option>

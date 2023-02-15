@@ -492,7 +492,7 @@ img.site-logo {
 
 .main-navbar  {
     position: sticky;
-    box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
+    box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
     z-index: 7;
 }
 .relative-navbar .main-navbar {
@@ -1269,10 +1269,17 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .success-block {
+    position: sticky;
+    box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
+    top: 80px;
     background: #00e06e;
     width: 100%;
     z-index: 5;
-	padding: 20px;
+    padding: 20px;
+}
+.relative-navbar .success-block {
+    position: relative;
+    top: unset;
 }
 .success-message {
     position: relative;

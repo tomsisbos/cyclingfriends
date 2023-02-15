@@ -40,7 +40,7 @@ class User extends Model {
         $this->gender                    = $data['gender'];
         $this->birthdate                 = $data['birthdate'];
         $this->location                  = new Geolocation($data['city'], $data['prefecture']);
-        $this->lngLat                    = new LngLat($data['lng'], $data['lat']);
+        if ($data['lng'] != null) $this->lngLat = new LngLat($data['lng'], $data['lat']);
         $this->level                     = $data['level'];
         $this->description               = $data['description'];
         $this->twitter                   = $data['twitter'];
@@ -212,10 +212,21 @@ class User extends Model {
 
     // Set a friend request to accepted
     public function acceptFriendRequest ($friend) {
+
         // Set friendship status to "accepted"
-        $acceptFriendsRequest = $this->getPdo()->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
-        $acceptFriendsRequest->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
-        if ($acceptFriendsRequest->rowCount() > 0) return array('success' => $friend->login .'が友達リストに追加されました !');
+        $registerAsFriend = $this->getPdo()->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
+        $registerAsFriend->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
+        if ($registerAsFriend->rowCount() > 0) {
+
+            // Set follower relation
+            $this->follow($friend);
+            $friend->follow($this);
+
+            // Return message
+            return array('success' => $friend->login .'が友達リストに追加されました !');
+        }
+
+        // If already friends, return message
         else return array('error' => $friend->login. 'とは既に友達になっています。');
     }
 
@@ -230,7 +241,7 @@ class User extends Model {
     public function getFriends () {
         $getFriends = $this->getPdo()->prepare('SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
         $getFriends->execute(array(":user_id" => $this->id));
-        return array_column($getFriends->fetchAll(PDO::FETCH_NUM), 0);
+        return $getFriends->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function isFriend ($friend) {
@@ -295,26 +306,28 @@ class User extends Model {
     public function getFollowedList () {
         $getFollowedList = $this->getPdo()->prepare('SELECT following_id FROM followers WHERE followed_id = ?');
         $getFollowedList->execute(array($this->id));
-        return array_column($getFollowedList->fetchAll(PDO::FETCH_NUM), 0);
+        return $getFollowedList->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function getFollowingList () {
         $getFollowingList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = ?');
         $getFollowingList->execute(array($this->id));
-        return array_column($getFollowingList->fetchAll(PDO::FETCH_NUM), 0);
+        return $getFollowingList->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function getFriendsAndFollowingList () {
         $getFriendsAndFollowingList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = :user_id UNION SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
         $getFriendsAndFollowingList->execute(array(':user_id' => $this->id));
-        return array_column($getFriendsAndFollowingList->fetchAll(PDO::FETCH_NUM), 0);
+        return $getFriendsAndFollowingList->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function getDistance ($user) {
-        $user_location = new Coordinate($user->lngLat->lat, $user->lngLat->lng);
-        $this_location = new Coordinate($this->lngLat->lat, $this->lngLat->lng);
-        $calculator = new Vincenty();
-        return round($calculator->getDistance($user_location, $this_location) / 1000, 1);
+        if ($this->lngLat != null && $user->lngLat != null) {
+            $user_location = new Coordinate($user->lngLat->lat, $user->lngLat->lng);
+            $this_location = new Coordinate($this->lngLat->lat, $this->lngLat->lng);
+            $calculator = new Vincenty();
+            return round($calculator->getDistance($user_location, $this_location) / 1000, 1);
+        } else return false;
     }
 
     // Function for uploading a profile picture

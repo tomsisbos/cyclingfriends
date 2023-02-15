@@ -43,11 +43,14 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link" href="/community">Community</a>
+					<a class="nav-link nav-dropdown-link" href="/neighbours">Community</a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" href="/neighbours">Neighbours</a>
+					<div class="dropdown-menu"> <?php
+						if ($connected_user->hasAdministratorRights()) { ?>
+							<a class="dropdown-item bg-admin" href="/community">Users list</a> <?php
+						} ?>
 						<a class="dropdown-item" href="/friends">Friends</a>
+						<a class="dropdown-item" href="/following">Following</a>
 					</div>
 				</li>
 			</ul>

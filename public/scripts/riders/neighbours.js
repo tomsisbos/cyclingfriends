@@ -9,6 +9,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
 
     neighboursMap.data.neighbours = neighbours
 
+
     // Setup map
     var map = await neighboursMap.load(neighboursMap.$map, neighboursMap.defaultStyle)
     neighboursMap.addSources()
@@ -24,6 +25,8 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
         var $markerImg = $marker.querySelector('img')
         $markerImg.classList.add('admin-marker')
         const marker = new mapboxgl.Marker($marker)
+        console.log(neighboursMap.session)
+        console.log(neighboursMap.userLocation)
         marker.setLngLat(neighboursMap.userLocation)
         marker.addTo(map)
     } )
@@ -125,5 +128,4 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
             }
         } )
     } )
-
 } )

@@ -102,11 +102,11 @@
 						<div class="rdr-container-buttons">
 							<button data-action="accept" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button success js-friend">
 								<span class="iconify-inline" data-icon="eva:person-done-outline" style="color: white;" data-width="20" data-height="20"></span>
-								承認する
+								友達申請を承認する
 							</button>
 							<button data-action="dismiss" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button danger js-friend">
 								<span class="iconify-inline" data-icon="eva:person-remove-outline" style="color: white;" data-width="20" data-height="20"></span>
-								却下する
+								友達申請を却下する
 							</button>
 						</div>
 					

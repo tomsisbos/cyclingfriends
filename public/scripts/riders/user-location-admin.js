@@ -21,7 +21,8 @@ button.addEventListener('click', async () => {
         draggable: true
     } )
     if (pickMap.currentPosition) marker.setLngLat(pickMap.currentPosition)
-    else marker.setLngLat(pickMap.userLocation)
+    else if (pickMap.userLocation != undefined) marker.setLngLat(pickMap.userLocation)
+    else marker.setLngLat(pickMap.defaultCenter)
     marker.addTo(map)
 
     // Update current position property to the marker new position
