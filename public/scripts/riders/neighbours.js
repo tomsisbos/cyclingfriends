@@ -3,7 +3,6 @@ import NeighbourPopup from "/map/class/neighbours/NeighbourPopup.js"
 import CFUtils from "/map/class/CFUtils.js"
 
 var neighboursMap = new NeighboursMap()
-console.log(neighboursMap)
 
 ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours) => {
 
@@ -25,8 +24,6 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
         var $markerImg = $marker.querySelector('img')
         $markerImg.classList.add('admin-marker')
         const marker = new mapboxgl.Marker($marker)
-        console.log(neighboursMap.session)
-        console.log(neighboursMap.userLocation)
         marker.setLngLat(neighboursMap.userLocation)
         marker.addTo(map)
     } )
@@ -78,9 +75,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 } )
                 marker.togglePopup()
                 neighboursMap.displaySelectedLink(neighbour)
-                console.log(marker.getLngLat())
-                console.log(neighboursMap.userLocation)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: neighboursMap.userLocation[0], lat: neighboursMap.userLocation[1]}], 2))
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 2))
                 neighboursMap.$map.scrollIntoView()
             } else {
                 $marker.querySelector('img').classList.remove('selected-marker')
@@ -99,7 +94,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                     }
                 } )
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: neighboursMap.userLocation[0], lat: neighboursMap.userLocation[1]}], 4))
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 4))
             } else {
                 marker.togglePopup()
                 $marker.querySelector('img').classList.remove('selected-marker')
@@ -112,13 +107,16 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
         map.on('dragend', () => document.querySelectorAll('.nbr-marker').forEach(($mkr) => neighboursMap.scaleMarkerAccordingToZoom($mkr)) )
         map.on('zoomend', () => {
             document.querySelectorAll('.nbr-marker').forEach(($mkr) => neighboursMap.scaleMarkerAccordingToZoom($mkr))
-            if (map.getZoom() > 13) {
+            if (map.getZoom() > 12) {
                 neighboursMap.map._markers.forEach(mkr => {
                     mkr.getElement().style.display = "none"
                     if (mkr.getPopup() && mkr.getPopup().getElement()) mkr.getPopup().getElement().style.display = "none"
                 } )
                 neighboursMap.displayZoomMessage()
-                neighbours.forEach(neighbour => neighboursMap.hideSelectedLink(neighbour))
+                neighbours.forEach(neighbour => {
+                    neighboursMap.hideHoverLink(neighbour)
+                    neighboursMap.hideSelectedLink(neighbour)
+                } )
             } else {
                 neighboursMap.map._markers.forEach(mkr => {
                     mkr.getElement().style.display = "block"

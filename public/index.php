@@ -65,6 +65,10 @@ $router->map('GET', '/following', 'community/following', 'following');
 $router->map('POST', '/following', 'community/following');
 $router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
 
+// Manual
+$router->map('GET', '/manual', 'community/manual', 'manual');
+$router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
+
 // User
 $router->map('GET', '/signin', 'user/signin', 'user-signin');
 $router->map('POST', '/signin', 'user/signin');

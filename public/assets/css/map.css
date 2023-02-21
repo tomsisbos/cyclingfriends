@@ -868,7 +868,9 @@ form#mkpointForm input[type="file" i] {
     pointer-events: none;
     justify-content: center;
     height: 100%;
-    position: relative;
+    width: 100%;
+    position: absolute;
+    top: 0;
 }
 .alert-window {
     padding: 20px;

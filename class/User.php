@@ -132,13 +132,10 @@ class User extends Model {
     }
 
     // Function for checking password strength : at least 6 characters
-    public function checkPasswordStrength($password){
+    public function checkPasswordStrength ($password) {
         $number = preg_match('@[0-9]@', $password);
-        if(strlen($password) < 6) {
-            return false;
-        }else{
-            return true;
-        }
+        if (strlen($password) < 8) return false;
+        else return true;
     }
 
     public function getPassword () {
@@ -428,7 +425,7 @@ class User extends Model {
     }
 
     // Get user profile picture element inside a string
-    public function getPropicHTML () {
+    public function getPropicHTML ($height = 60, $width = 60, $border_radius = 60) {
         return '<div style="height: ' .$height. 'px; width: ' .$width. 'px;" class="free-propic-container"><img style="border-radius: ' .$border_radius. 'px;" class="free-propic-img" src="'. $this->getPropicUrl() .'" /></div>';
     }
 

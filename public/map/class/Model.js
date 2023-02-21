@@ -4,11 +4,11 @@ import CFUtils from "/map/class/CFUtils.js"
 export default class Model {
 
     constructor (options) {
-        if (!options || !options.noSession) ajaxGetRequest (this.mainApiUrl + "?get-session=true", (session) => {
+        if ((!options || !options.noSession) && !this.session) ajaxGetRequest (this.mainApiUrl + "?get-session=true", (session) => {
             this.session = session
-            if (session.userLocation && session.userLocation.lng !== 0) this.userLocation = session.userLocation
+            if (session.lngLat && session.lngLat.lng !== 0) this.userLocation = session.lngLat
             else this.userLocation = this.defaultCenter
-            this.centerOnUserLocation()
+            if (this.centerOnUserLocation) this.centerOnUserLocation()
         } )
     }
 
@@ -31,9 +31,9 @@ export default class Model {
         start: () => this.loaderContainer.appendChild(this.loaderElement),
         stop: () => this.loaderElement.remove()
     }
-    centerOnUserLocation = () => {return}
     inlineLoader = '<div class="loader-inline"></div>'
     centerLoader = '<div class="loader-center"></div>'
+    centerOnUserLocation = () => {return}
 
     // Get location of a LngLat point
     async getLocation (lngLat) {

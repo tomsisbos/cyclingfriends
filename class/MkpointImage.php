@@ -72,7 +72,7 @@ class MkpointImage extends Model {
         $blobClient->deleteBlob($this->container_name, $this->filename);
 
         // Remove database entry
-        $removeMkpointPhoto = $db->prepare('DELETE FROM img_mkpoint WHERE id = ?');
+        $removeMkpointPhoto = $this->getPdo()->prepare('DELETE FROM img_mkpoint WHERE id = ?');
         $removeMkpointPhoto->execute(array($this->id));
     }
 

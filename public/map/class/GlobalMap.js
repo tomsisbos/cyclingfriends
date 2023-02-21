@@ -34,6 +34,10 @@ export default class GlobalMap extends Model {
     segmentRegionalColor = '#2bffff'
     segmentNationalColor = '#2bc8ff'
     segmentCapColor = '#fff'
+    
+    centerOnUserLocation = () => {
+        if (this.map) this.map.setCenter(this.userLocation)
+    }
 
     setSeason () {
         if (this.month == 12 || this.month == 1 || this.month == 2) {
@@ -319,8 +323,6 @@ export default class GlobalMap extends Model {
                 console.log(tile)
                 if (document.getElementById('elevationProfile')) this.generateProfile()
             } )*/
-
-            this.centerOnUserLocation()
         } )
     }
     

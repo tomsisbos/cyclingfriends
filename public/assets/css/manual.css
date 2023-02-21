@@ -1,0 +1,33 @@
+.manual {
+    text-align: justify;
+}
+
+.manual h1, h2, h3, h4 {
+    font-family: 'Noto Sans';
+}
+.manual h1 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+.manual h2 {
+    padding-top: 40px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+.manual h3 {
+    padding-top: 20px;
+    padding-left: 24px;
+}
+.manual h4 {
+    padding-top: 12px;
+    padding-left: 32px;
+}
+
+.m-point {
+    padding: 10px 20px;
+    background-color: #eee;
+}
+.m-point::before {
+    content: '※ ';
+}

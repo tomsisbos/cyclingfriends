@@ -178,7 +178,7 @@ if (isAjax()) {
                 } else if (!getimagesize($_FILES["file"]["tmp_name"])) {
                     throw new Exception('アップロードされたファイルは画像ではありません。');
                 } else if (!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
-                    throw new Exception('This file is not a raw photography taken with a camera device.');
+                    throw new Exception('この画像ファイルに撮影日時のデータが付随されていません。カメラデバイスから撮影された写真の生データしかご利用頂けません。');
                 }
                 
                 // Preparing variables
@@ -207,7 +207,9 @@ if (isAjax()) {
                 if ($_FILES['file']['size'] > 3000000) imagejpeg($img, $path, 75); // If uploaded file size exceeds 3Mb, set new quality
                 else imagejpeg($img, $path, 90); // If uploaded file size is between 1Mb and 3Mb set new quality
                 $blob = fopen($path, 'r'); // Get variable ready
-                unlink($temp); unlink($path); // Delete temporary files
+                // Delete temporary files
+                if (is_file($temp)) unlink($temp);
+                if (is_file($path)) unlink($path);
 
                 // Connect to blob storage
                 $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
@@ -245,8 +247,8 @@ if (isAjax()) {
         if ($checkIfSimilarImageExists->rowCount() == 0) {
             $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
             $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['date'], 0, $filename));    
-            echo json_encode($mkpointimg);
-        } else echo json_encode(['error' => $photo['file_name']. 'は既にアップロードされています。']);
+            echo json_encode(['success' => $mkpointimg['file_name']. 'は無事に追加されました！']);
+        } else echo json_encode(['error' => $mkpointimg['file_name']. 'は既にアップロードされています。']);
     }
 
     if (isset($_GET['mkpoint-photos'])) {
@@ -439,7 +441,7 @@ if (isAjax()) {
         $photo_id = $_GET['delete-mkpoint-photo'];
         $photo = new MkpointImage($photo_id);
         $photo->delete();
-        echo json_encode(['photo_id' => $photo_id]);
+        echo json_encode(['success' => '写真' .$photo->id. 'が削除されました。']);
     }
 
     if (isset($_GET['get-rating'])) {

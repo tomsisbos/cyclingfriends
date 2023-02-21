@@ -46,7 +46,6 @@ export default class WorldMap extends GlobalMap {
     capColorHover = '#ff5555'
     mode = 'default'
     highlight = false
-    centerOnUserLocation = () => this.map.setCenter(this.userLocation)
 
     loadMkpoints () {
         ajaxGetRequest (this.apiUrl + "?display-mkpoints=details", (mkpoints) => {

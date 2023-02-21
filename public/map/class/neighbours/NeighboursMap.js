@@ -30,13 +30,12 @@ export default class NeighboursMap extends GlobalMap {
         var zoom = this.map.getZoom()
         var size = (zoom * 3 - 10)
         if (size < 8) size = 8
-        console.log(size)
         element.style.height = size + 'px'
         element.style.width = size + 'px'
     }
 
     displayHoverLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], this.userLocation])
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
         this.map.addLayer( {
             id: 'hoverLink' + neighbour.id,
             type: 'line',
@@ -55,7 +54,8 @@ export default class NeighboursMap extends GlobalMap {
     }
 
     displaySelectedLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], this.userLocation])
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
+        console.log(link)
         this.map.addLayer( {
             id: 'selectedLink' + neighbour.id,
             type: 'line',

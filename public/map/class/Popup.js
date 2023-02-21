@@ -213,7 +213,6 @@ export default class Popup extends Model {
                 if (correspondingModalButton.classList.contains('liked')) correspondingModalLikeCounter.innerText = (previousLikesNumber + 1)
                 else correspondingModalLikeCounter.innerText = (previousLikesNumber - 1)
             } else if (buttonType == 'modal') {
-                console.log(clickedLikeButton)
                 clickedLikeButton.classList.toggle('liked')
                 var modalLikeCounter = clickedLikeButton.parentElement.querySelector('.mkpoint-img-likes')
                 var previousLikesNumber = parseInt(modalLikeCounter.innerText)
@@ -246,9 +245,7 @@ export default class Popup extends Model {
         
         // Set thumbnail like button default color depending on if user liked image or not
         if (thumbnailButton) {
-            console.log(img_id)
             ajaxGetRequest (this.apiUrl + "?islike-img=" + img_id, (islike) => {
-                console.log(islike)
                 if (islike === true) thumbnailButton.className = 'liked'
                 else thumbnailButton.classList.remove('liked')
             } )

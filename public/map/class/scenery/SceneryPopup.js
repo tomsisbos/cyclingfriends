@@ -1,6 +1,7 @@
 import Popup from "/map/class/Popup.js"
 import SceneryLightbox from "/map/class/scenery/SceneryLightbox.js"
 import CFUtils from "/map/class/CFUtils.js"
+import Loader from "/map/class/Loader.js"
 
 export default class SceneryPopup extends Popup {
 
@@ -179,9 +180,12 @@ export default class SceneryPopup extends Popup {
     displayPhotos () {
 
         var photosContainer = this.popup._content.querySelector('.popup-img-container')
-        const photos = this.data.mkpoint.photos
+        var photos = this.data.mkpoint.photos
+        var popupLoader = new Loader()
 
-        var addArrows = () => {
+        const addArrows = () => {
+
+            // Create and append arrow elements
             if (!photosContainer.querySelector('.small-prev')) {
                 var minusPhotoButton = document.createElement('a')
                 minusPhotoButton.classList.add('small-prev', 'lightbox-arrow')
@@ -192,16 +196,42 @@ export default class SceneryPopup extends Popup {
                 plusPhotoButton.innerText = '>'
                 photosContainer.appendChild(plusPhotoButton)
             }
+
+            // Set listeners
+            var photoIndex = 1
+            var plusPhoto = () => showPhotos(photoIndex += 1)
+            var minusPhoto = () => showPhotos(photoIndex -= 1)
+            var showPhotos = (n) => {
+                console.log(photoIndex)
+                photos = this.data.mkpoint.photos // Use latest photo data
+                if (n > photos.length) {photoIndex = 1}
+                if (n < 1) {photoIndex = photos.length}
+                for (let i = 0; i < photos.length; i++) {
+                    photos[i].$element.style.display = 'none'
+                    photos[i].$period.style.display = 'none'
+                }
+                photos[photoIndex - 1].$element.style.display = 'block'
+                photos[photoIndex - 1].$period.style.display = 'inline-block'
+                // Update like button color on every photo change                
+                this.colorLike()
+            }
+            this.popup._content.querySelector('.small-prev').addEventListener('click', minusPhoto)
+            this.popup._content.querySelector('.small-next').addEventListener('click', plusPhoto)
+            showPhotos(photoIndex)
+
+            // Add delete photo button if necessary
+            if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
+            if (photos[photoIndex - 1].$element.dataset.author == this.getSession().id) addDeletePhotoIcon() // ... And add it if connected user is photo author
         }
 
-        var removeArrows = () => {
+        const removeArrows = () => {
             if (photosContainer.querySelector('.small-prev')) {
                 photosContainer.querySelector('.small-prev').remove()
                 photosContainer.querySelector('.small-next').remove()
             }
         }
 
-        var addDeletePhotoIcon = () => {
+        const addDeletePhotoIcon = () => {
             // If delete photo button is not already displayed, display it
             if (!this.popup._content.querySelector('.deletephoto-button')) {
                 var deletePhoto = document.createElement('div')
@@ -212,7 +242,7 @@ export default class SceneryPopup extends Popup {
                 // Delete photo on click
                 deletePhoto.addEventListener('click', () => {
                     var modal = document.createElement('div')
-                    modal.classList.add('modal', 'd-block')
+                    modal.classList.add('modal', 'd-flex')
                     document.querySelector('body').appendChild(modal)
                     // Remove modal on clicking outside popup
                     modal.addEventListener('click', (e) => {
@@ -235,16 +265,17 @@ export default class SceneryPopup extends Popup {
                             }
                         } )
                         // Delete photo
-                        console.log(photo_id)
-                        ajaxGetRequest(this.apiUrl + "?delete-mkpoint-photo=" + photo_id, () => {
+                        popupLoader.prepare('写真を削除中...')
+                        ajaxGetRequest(this.apiUrl + "?delete-mkpoint-photo=" + photo_id, (response) => {
                             // Remove photo and period
                             currentPhoto.nextSibling.remove() // Period
                             currentPhoto.remove()
                             modal.remove()
                             deleteConfirmationPopup.remove()
                             // Reload photos
-                            ajaxGetRequest(this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, this.displayPhotos.bind(this))
-                        } )
+                            showResponseMessage(response, {element: this.popup._content})
+                            reloadPhotos()
+                        }, popupLoader.loader)
                     } )
                     // On click on "No" button, close the popup
                     document.querySelector('#no').addEventListener('click', () => {
@@ -282,6 +313,21 @@ export default class SceneryPopup extends Popup {
                 this.lightbox.open(id)
             } )
         }
+
+        // Reload photo and period elements with newest server data
+        const reloadPhotos = async () => {
+            ajaxGetRequest(this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, (newPhotos) => {
+                // Update popup instance
+                this.data.mkpoint.photos = newPhotos
+                // Clear current photo and period elements
+                photosContainer.querySelectorAll('.popup-img').forEach(element => element.remove())
+                photosContainer.querySelectorAll('.mkpoint-period').forEach(element => element.remove())
+                // Add newest photos
+                for (let i = 0; i < newPhotos.length; i++) addPhoto(newPhotos[i], i + 1)
+            } )
+            removeArrows()
+            addArrows()
+        }
         
         // Remove loader
         if (photosContainer.querySelector('.loader-center')) photosContainer.querySelector('.loader-center').remove()
@@ -302,30 +348,11 @@ export default class SceneryPopup extends Popup {
             newPhotoData.append('mkpoint_id', this.data.mkpoint.id)
 
             // Proceed AJAX request and treat data in the callback function
+            popupLoader.prepare('写真をアップロード中...')
             ajaxPostFormDataRequest(this.apiUrl, newPhotoData, (response) => {
-
-                // In case of error, display corresponding error message
-                if (response.error) {
-
-                    // If there is already a message displayed, remove it before
-                    if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
-                    var errorDiv = document.createElement('div')
-                    errorDiv.classList.add('error-block', 'fullwidth', 'm-0', 'p-2')
-                    var errorMessage = document.createElement('p')
-                    errorMessage.innerHTML = response.error
-                    errorMessage.classList.add('error-message')
-                    errorDiv.appendChild(errorMessage)
-                    document.querySelector('.mapboxgl-popup-content').prepend(errorDiv)
-
-                } else {
-
-                    // If upload process went successfully, remove the error message if one is displayed
-                    if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
-
-                    // Reload photos
-                    ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, this.displayPhotos.bind(this))
-                }
-            } )
+                showResponseMessage(response, {element: this.popup._content})
+                if (response.success) reloadPhotos() // Reload photos if succeeded
+            }, popupLoader.loader)
         } )
 
         // First clear container from previously displayed photos
@@ -335,39 +362,8 @@ export default class SceneryPopup extends Popup {
             addPhoto(photos[photos.length - 1], photos.length - 1)
         }
 
-        var photoIndex = 1
-
-        // If there is more than one photo in the database
-        if (photos.length > 1) {
-
-            // Add left and right arrows and attach event listeners to it
-            addArrows()
-        
-            var plusPhoto = () => { showPhotos (photoIndex += 1) }
-            var minusPhoto = () => { showPhotos (photoIndex -= 1) }
-            var showPhotos = (n) => {
-                if (n > photos.length) {photoIndex = 1}
-                if (n < 1) {photoIndex = photos.length}
-                for (let i = 0; i < photos.length; i++) {
-                    photos[i].$element.style.display = 'none'
-                    photos[i].$period.style.display = 'none'
-                }
-                photos[photoIndex-1].$element.style.display = 'block'
-                photos[photoIndex-1].$period.style.display = 'inline-block'
-                // Update like button color on every photo change                
-                this.colorLike()
-            }
-            
-            this.popup._content.querySelector('.small-prev').addEventListener('click', minusPhoto)
-            this.popup._content.querySelector('.small-next').addEventListener('click', plusPhoto)
-            showPhotos(photoIndex)
-
-            // Add delete photo button if necessary
-            if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-            if (photos[photoIndex-1].$element.dataset.author == this.getSession().id) addDeletePhotoIcon() // ... And add it if connected user is photo author
-
-        // If there is only one photo in the database, remove arrows if needed
-        } else removeArrows()
+        if (photos.length > 1) addArrows() // If there is more than one photo in the database, add left and right arrows and attach event listeners to it
+        else removeArrows() // else, remove arrows if needed
     }
 
     // Setup lightbox
