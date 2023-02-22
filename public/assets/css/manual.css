@@ -1,17 +1,82 @@
 .manual {
+    display: flex;
     text-align: justify;
 }
 
-.manual h1, h2, h3, h4 {
+.manual > div {
+    height: calc(100vh - 80px);
+    overflow: auto;
+}
+
+.m-sidebar {
+    min-width: 350px;
+    width: 350px;
+    padding: 20px
+}
+.m-sidebar ol {
+    padding-left: 20px;
+}
+.m-summary ul {
+    padding-left: 6px !important;
+}
+
+.m-summary > li {
+    font-weight: bold;
+}
+.m-summary-subtitle {
+    font-weight: lighter;
+    display: inline;
+    color: #aaa;
+}
+
+.m-summary-details li {
+    list-style: upper-latin inside;
+}
+
+.m-summary-h2 {
+    font-weight: bold;
+    font-size: small;
+}
+.m-summary-h3 {
+    font-size: x-small;
+}
+.m-summary-link {
+    display: inline;
+    cursor: default;
+    padding: 3px 6px;
+}
+.m-summary-link:hover {
+    background-color: #fff;
+}
+.m-summary-toggletag {
+    cursor: pointer;
+    display: inline;
+}
+
+.m-single {
+    width: -webkit-fill-available;
+    padding: 20px;
+    background-color: white;
+}
+
+.manual h1, h2, h3, h4, h5 {
     font-family: 'Noto Sans';
 }
 .manual h1 {
-    padding-top: 20px;
-    padding-bottom: 20px;
     text-align: center;
+    padding-top: 20px;
+    margin: 0;
+}
+.m-subtitle {
+    margin-bottom: 40px;
+    padding-bottom: 6px;
+    text-align: center;
+    border-bottom: 1px solid #000;
+    color: #555;
 }
 .manual h2 {
-    padding-top: 40px;
+    border-bottom: 1px solid;
+    padding-top: 100px;
     padding-bottom: 10px;
     padding-left: 10px;
 }
@@ -23,11 +88,53 @@
     padding-top: 12px;
     padding-left: 32px;
 }
+.manual h5 {
+    padding-top: 6px;
+    padding-left: 50px;
+}
+.manual h6 {
+    padding-top: 6px;
+    padding-left: 50px;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.m-path {
+    padding: 12px 20px;
+}
 
 .m-point {
     padding: 10px 20px;
+    margin: 12px 0;
     background-color: #eee;
 }
 .m-point::before {
-    content: '※ ';
+    content: '\203B\ ';
+}
+
+.manual table {
+    margin: 12px 0;
+}
+.manual th, .manual td {
+    padding: 6px 10px;
+    text-align: center;
+}
+.manual th {
+    background-color: #eee;
+}
+.manual td {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+}
+
+@media only screen and (max-width: 992px) {
+    .manual {
+        flex-direction: column;
+    }
+    .manual > div {
+        height: unset;
+    }
+    .m-sidebar {
+        width: unset;
+    }
 }

@@ -51,6 +51,7 @@
 						} ?>
 						<a class="dropdown-item" href="/friends">Friends</a>
 						<a class="dropdown-item" href="/following">Following</a>
+						<a class="dropdown-item" href="/manual">Manual</a>
 					</div>
 				</li>
 			</ul>

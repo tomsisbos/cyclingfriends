@@ -14,6 +14,26 @@ $router->map('GET', '/dashboard', 'dashboard');
 $router->map('GET', '/', 'beta/home');
 $router->map('POST', '/', 'beta/home');
 
+// User
+$router->map('GET', '/signin', 'user/signin', 'user-signin');
+$router->map('POST', '/signin', 'user/signin');
+$router->map('GET', '/signout', 'user/signout', 'user-signout');
+$router->map('POST', '/signout', 'user/signout');
+$router->map('GET', '/signup', 'user/signup', 'user-signup');
+$router->map('POST', '/signup', 'user/signup');
+$router->map('GET', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe');
+$router->map('POST', '/unsubscribe', 'user/unsubscribe');
+$router->map('GET', '/rider/[i:user_id]', 'profile/single', 'profile-single');
+$router->map('GET', '/profile/edit', 'profile/edit', 'profile-edit');
+$router->map('POST', '/profile/edit', 'profile/edit');
+$router->map('GET', '/settings', 'user/settings', 'user-settings');
+$router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-favorites-sceneries');
+$router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
+
+// Manual
+$router->map('GET', '/manual', 'community/manual', 'manual');
+$router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
+
 // World
 $router->map('GET', '/world', 'world/map');
 $router->map('GET', '/segment/[i:segment_id]', 'segments/single', 'segment-single');
@@ -61,29 +81,9 @@ $router->map('GET', '/ride/[i:ride_id]/route', 'routes/single', 'ride-route');
 $router->map('GET', '/community', 'community/community', 'community');
 $router->map('GET', '/friends', 'community/friends', 'friends');
 $router->map('POST', '/friends', 'community/friends');
-$router->map('GET', '/following', 'community/following', 'following');
-$router->map('POST', '/following', 'community/following');
+$router->map('GET', '/scouts', 'community/scouts', 'scouts');
+$router->map('POST', '/scouts', 'community/scouts');
 $router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
-
-// Manual
-$router->map('GET', '/manual', 'community/manual', 'manual');
-$router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
-
-// User
-$router->map('GET', '/signin', 'user/signin', 'user-signin');
-$router->map('POST', '/signin', 'user/signin');
-$router->map('GET', '/signout', 'user/signout', 'user-signout');
-$router->map('POST', '/signout', 'user/signout');
-$router->map('GET', '/signup', 'user/signup', 'user-signup');
-$router->map('POST', '/signup', 'user/signup');
-$router->map('GET', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe');
-$router->map('POST', '/unsubscribe', 'user/unsubscribe');
-$router->map('GET', '/rider/[i:user_id]', 'profile/single', 'profile-single');
-$router->map('GET', '/profile/edit', 'profile/edit', 'profile-edit');
-$router->map('POST', '/profile/edit', 'profile/edit');
-$router->map('GET', '/settings', 'user/settings', 'user-settings');
-$router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-favorites-sceneries');
-$router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
 
 // Treatment of results
 $match = $router->match();

@@ -306,16 +306,16 @@ class User extends Model {
         return $getFollowedList->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function getFollowingList () {
-        $getFollowingList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = ?');
-        $getFollowingList->execute(array($this->id));
-        return $getFollowingList->fetchAll(PDO::FETCH_COLUMN);
+    public function getScoutsList () {
+        $getScoutsList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = ?');
+        $getScoutsList->execute(array($this->id));
+        return $getScoutsList->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function getFriendsAndFollowingList () {
-        $getFriendsAndFollowingList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = :user_id UNION SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
-        $getFriendsAndFollowingList->execute(array(':user_id' => $this->id));
-        return $getFriendsAndFollowingList->fetchAll(PDO::FETCH_COLUMN);
+    public function getFriendsAndScoutsList () {
+        $getFriendsAndScoutsList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = :user_id UNION SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
+        $getFriendsAndScoutsList->execute(array(':user_id' => $this->id));
+        return $getFriendsAndScoutsList->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function getDistance ($user) {
@@ -493,12 +493,12 @@ class User extends Model {
 
         // Get period of rides to display
         $friends_list = $this->getFriends();
-        $following_list = $this->getFollowingList();
-        $following_number = count($this->getFriendsAndFollowingList());
-        if ($following_number < 3) $period = 999;
-        else if ($following_number < 8) $period = 28;
-        else if ($following_number < 18) $period = 20;
-        else if ($following_number < 25) $period = 14;
+        $scout_list = $this->getScoutsList();
+        $scout_number = count($this->getFriendsAndScoutsList());
+        if ($scout_number < 3) $period = 999;
+        else if ($scout_number < 8) $period = 28;
+        else if ($scout_number < 18) $period = 20;
+        else if ($scout_number < 25) $period = 14;
         else $period = 10;
 
         // Request activities
@@ -517,7 +517,7 @@ class User extends Model {
                     OR
                     (privacy = 'public' AND (
                         user_id IN ('".implode("','",$friends_list)."') OR
-                        user_id IN ('".implode("','",$following_list)."')
+                        user_id IN ('".implode("','",$scout_list)."')
                     )
                 )
             )
@@ -677,15 +677,15 @@ class User extends Model {
 
     public function getPublicMkpoints ($offset = 0, $limit = 20) {
         // Get period of mkpoints to display
-        $friends_and_following_list = $this->getFriendsAndFollowingList();
-        $friends_and_following_number = count($friends_and_following_list);
-        if ($friends_and_following_number < 3) $period = 999;
-        else if ($friends_and_following_number < 8) $period = 28;
-        else if ($friends_and_following_number < 18) $period = 20;
-        else if ($friends_and_following_number < 25) $period = 14;
+        $friends_and_scout_list = $this->getFriendsAndScoutsList();
+        $friends_and_scout_number = count($friends_and_scout_list);
+        if ($friends_and_scout_number < 3) $period = 999;
+        else if ($friends_and_scout_number < 8) $period = 28;
+        else if ($friends_and_scout_number < 18) $period = 20;
+        else if ($friends_and_scout_number < 25) $period = 14;
         else $period = 10;
         // Request mkpoints
-        $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_following_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
         $getMkpoints->execute(array($period));
         return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
     }

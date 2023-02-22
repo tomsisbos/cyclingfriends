@@ -15,16 +15,16 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		displayMessage(); ?>
 		
-		<h2 class="top-title">Following list</h2>
+		<h2 class="top-title">Scouts list</h2>
 		
 		<!-- Upper section -->
 		<div class="container"> <?php
 		
 			// Filter options
-			include '../includes/riders/followings/filter-options.php'; 
+			include '../includes/riders/scouts/filter-options.php'; 
 			
-			// Select followings from database according to filter queries
-			include '../actions/riders/followings/displayFollowingsAction.php'; ?>
+			// Select scouts from database according to filter queries
+			include '../actions/riders/scouts/displayScoutsAction.php'; ?>
 		
 		</div>
 		
@@ -34,10 +34,10 @@ include '../includes/head.php'; ?>
 		
 		<div class="container end bg-white"> <?php 
 		
-			if ($getFollowingsData->rowCount() > 0) {
+			if ($getScoutsData->rowCount() > 0) {
 
-				while ($following = $getFollowingsData->fetch()) {
-					$rider = new User ($following['id']);
+				while ($scout = $getScoutsData->fetch()) {
+					$rider = new User($scout['id']);
 					include '../includes/riders/rider-card.php';
 				}
 

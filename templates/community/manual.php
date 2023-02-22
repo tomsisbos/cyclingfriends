@@ -5,6 +5,8 @@ include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
+    
+<link rel="stylesheet" href="/assets/css/manual.css" />
 
 <body>
 
@@ -15,20 +17,24 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		displayMessage(); ?>
 		
-		<h1 class="top-title">User manual</h2>
+		<div class="container p-0 manual end">
 		
-		<!-- Upper section -->
-		<div class="container"> <?php
+			<div class="m-sidebar"> <?php
 
-			include '../templates/manual/single.php';
-			
-			Manual::title(1, $title);
+				Manual::summary(); ?>
 
-			Manual::intro($intro);
+			</div>
+
+			<div class="m-single">
 			
-			?>
+				<h1>ユーザーマニュアル</h1>
+				<div class="m-subtitle">User manual</div>
+
+				<p>このセクションでは、CyclingFriendsがどんな仕組みによって動いているのかについて、細かく記載させて頂いております。</p>
+				<p>左側のサイドバーからアクセスできる様々なチャプターに構成されています。</p>
+
+			</div>
 		</div>
-	
 	</div>
 	
 </body>

@@ -17,36 +17,76 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		displayMessage(); ?>
 		
-		<h1 class="top-title">User manual</h2>
-		
-		<!-- Upper section -->
-		<div class="container"> <?php
+		<div class="container p-0 manual end">
 
-            // Get chapter content
-            $chapter_name = explode('/manual/', $_SERVER['REQUEST_URI'])[1];
-            include '../includes/manual/' .$chapter_name. '.php';
-			
-            // Display chapter content ?>
-            <div class="manual"> <?php
+            <div class="m-sidebar"> <?php
 
-                Manual::title(1, $title);
+                Manual::summary(); ?>
 
-                Manual::intro($intro);
+            </div>
 
-                foreach ($content as $chapter) {
+            <div class="m-single"> <?php
 
-                    Manual::title(2, $chapter['title']);
-                    if (isset($chapter['path'])) Manual::path($chapter['path']);
-                    if (isset($chapter['text'])) Manual::text($chapter['text']);
-                    foreach ($chapter['content'] as $section){
+                // Get chapter content
+                $chapter_file = '../includes/manual/' .Manual::currentChapter(). '.php';
 
-                        Manual::title(3, $section['title']);
-                        Manual::text($section['text']);
+                // Title & intro
+                Manual::chapterTitle(Manual::currentChapter());
 
+                if (file_exists($chapter_file)) {
+
+                    include $chapter_file;
+
+                    Manual::intro($intro);
+
+                    // Sections
+                    foreach ($content as $section) { ?>
+                        <div class="m-section"> <?php
+                        if (isset($section['id'])) Manual::title(2, $section['title'], $section['id']);
+                        else Manual::title(2, $section['title']);
+                        if (isset($section['path'])) Manual::path($section['path']);
+                        if (isset($section['text'])) Manual::text($section['text']);
+
+                        // Parts
+                        if (isset($section['content'])) foreach ($section['content'] as $part) {?>
+                            <div class="m-part"> <?php
+                            if (isset($part['id'])) Manual::title(3, $part['title'], $part['id']);
+                            else Manual::title(3, $part['title']);
+                            if (isset($part['text'])) Manual::text($part['text']);
+
+                            // Fractions
+                            if (isset($part['content'])) foreach ($part['content'] as $fraction) {?>
+                                <div class="m-fraction"> <?php
+                                if (isset($fraction['id'])) Manual::title(4, $fraction['title'], $fraction['id']);
+                                else Manual::title(4, $fraction['title']);
+                                if (isset($fraction['text'])) Manual::text($fraction['text']);
+
+                                // Subfractions
+                                if (isset($fraction['content'])) foreach ($fraction['content'] as $subfraction) {?>
+                                    <div class="m-subfraction"> <?php
+                                    if (isset($subfraction['id'])) Manual::title(5, $subfraction['title'], $subfraction['id']);
+                                    else Manual::title(5, $subfraction['title']);
+                                    if (isset($subfraction['text'])) Manual::text($subfraction['text']);
+
+                                    // Microfractions
+                                    if (isset($subfraction['content'])) foreach ($subfraction['content'] as $microfraction) {?>
+                                        <div class="m-microfraction"> <?php
+                                        if (isset($microfraction['id'])) Manual::title(6, $microfraction['title'], $microfraction['id']);
+                                        else Manual::title(5, $microfraction['title']);
+                                        if (isset($microfraction['text'])) Manual::text($microfraction['text']); ?>
+                                        </div> <?php
+                                    } ?>
+                                    </div> <?php
+                                } ?>
+                                </div> <?php
+                            } ?>
+                            </div> <?php
+                        } ?>
+                        </div> <?php
                     }
-                }
-			
-			?>
+                } else include '../includes/manual/404.php'; 
+            
+            ?>
             </div>
 		</div>
 	
@@ -54,3 +94,5 @@ include '../includes/head.php'; ?>
 	
 </body>
 </html>
+
+<script src="/scripts/manual/single.js"></script>
