@@ -99,6 +99,13 @@
     text-decoration: underline;
 }
 
+.manual a {
+    color: #bbbbff;
+}
+.manual a:hover {
+    text-decoration: underline;
+}
+
 .m-path {
     padding: 12px 20px;
 }

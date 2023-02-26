@@ -8,7 +8,7 @@ class Model {
     function __construct () {
     }
 
-    protected function getPdo () {
+    protected static function getPdo () {
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
         require $folder . '/actions/databaseAction.php';
         return $db;

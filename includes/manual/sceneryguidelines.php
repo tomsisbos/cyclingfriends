@@ -9,6 +9,7 @@ $intro = [
 $content = [
     [
         'title' => 'タイトル',
+        'id' => 'title',
         'content' => [
             [
                 'title' => '基本ルール',

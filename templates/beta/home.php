@@ -251,16 +251,6 @@ include '../includes/foot.php'; ?>
     }
     */
 
-
-
-
-
-
-
-
-
-
-
     die();/*
 
     // Prepare variables

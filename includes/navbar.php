@@ -18,6 +18,11 @@
 			<ul class="navbar-nav cf-navbar">
 				<li class="nav-item dropdown">
 					<a class="nav-link" href="/world">World</a>
+					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="/favorites/sceneries">My favorite sceneries</a>
+						<a class="dropdown-item" href="/favorites/segments">My favorite segments</a>
+					</div>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link nav-dropdown-link" href="/activities">Activities</a>
@@ -51,7 +56,6 @@
 						} ?>
 						<a class="dropdown-item" href="/friends">Friends</a>
 						<a class="dropdown-item" href="/following">Following</a>
-						<a class="dropdown-item" href="/manual">Manual</a>
 					</div>
 				</li>
 			</ul>
@@ -69,9 +73,8 @@
 				</a>
 				<div class="dropdown-menu dropdown-menu-end" id="profileDropdownMenuLink">
 					<a class="dropdown-item" href="/rider/<?= $_SESSION['id'] ?>">My profile</a>
-					<a class="dropdown-item" href="/favorites/sceneries">My favorite sceneries</a>
-					<a class="dropdown-item" href="/favorites/segments">My favorite segments</a>
-					<a class="dropdown-item" href="/settings">Settings</a> <?php
+					<a class="dropdown-item" href="/settings">Settings</a>
+					<a class="dropdown-item" href="/manual">Manual</a> <?php
 					// If the user is connected, displays the sign out button 
 					if (isset($_SESSION['auth'])) { ?>
 					<hr class="dropdown-divider">

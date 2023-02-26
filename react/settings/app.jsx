@@ -31,7 +31,7 @@ function App () {
     return (
         <AppContext.Provider value={displayResponseMessage}>
             {message}
-            <div className="container p-0 d-flex gap end">
+            <div className="settings container p-0 d-flex gap end">
                 <Sidebar changePage={getPage} />
                 {board}
             </div>

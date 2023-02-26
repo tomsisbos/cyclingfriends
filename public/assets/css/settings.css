@@ -1,5 +1,9 @@
+.settings {
+    display: flex;
+}
+
 .stg-sidebar {
-    width: 280px;
+    width: 350px;
 }
 
 .stg-title-card {
@@ -45,4 +49,13 @@
 
 .stg-board input[type=checkbox] {
     margin: 0px 12px;
+}
+
+@media only screen and (max-width: 992px) {
+    .settings {
+        flex-direction: column;
+    }
+    .stg-sidebar {
+        width: 100%;
+    }
 }

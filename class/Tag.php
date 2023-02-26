@@ -21,6 +21,7 @@ class Tag extends Model {
             case 'culture': return '文化';
             case 'machinami': return '街並み';
             case 'shrines': return '宗教';
+            case 'ricefields': return '田んぼ';
             case 'teafields': return '茶畑';
             case 'sea': return '海';
             case 'mountains': return '山';

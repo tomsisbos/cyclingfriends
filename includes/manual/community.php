@@ -9,6 +9,7 @@ $intro = [
 $content = [
     [
         'title' => 'お隣さんページ',
+        'id' => 'neighbours',
         'path' => [
             'neighbours'
         ],

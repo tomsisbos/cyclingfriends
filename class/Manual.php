@@ -1,6 +1,6 @@
 <?php
 
-class Manual {
+class Manual extends Model {
 
     private static $chapters = [
         'world' => [
@@ -62,11 +62,11 @@ class Manual {
             'id' => 'segments'
         ],
         'activity-scenerymaking' => [
-            'chapter' => 'activity',
+            'chapter' => 'activities',
             'id' => 'scenerymaking'
         ],
         'activity-sceneryphotoadding' => [
-            'chapter' => 'activity',
+            'chapter' => 'activities',
             'id' => 'sceneryphotoadding'
         ],
         'routes-single' => [
@@ -119,10 +119,6 @@ class Manual {
         'user-bikes' => [
             'chapter' => 'user',
             'id' => 'bikes'
-        ],
-        'user-realname' => [
-            'chapter' => 'user',
-            'id' => 'realname'
         ],
         'user-location' => [
             'chapter' => 'user',
@@ -191,8 +187,70 @@ class Manual {
 
     public static function path ($path_data) {
         echo '<div class="m-path">';
-        foreach ($path_data as $path) echo '<div><a href="../' .$path. '">' .$path. '</a></div>';
+        foreach ($path_data as $path_string) {
+            
+            // If path in slug
+            $start = strpos($path_string, '[');
+            if ($start !== false) {
+                // Extract from path and get corresponding random slug number
+                $end = strpos($path_string, ']') - $start + 1;
+                $slug_string = substr($path_string, $start, $end);
+                $random_slug = self::getRandomSlug($slug_string);
+                // Replace slug string by slug random number
+                $path_url = str_replace($slug_string, $random_slug, $path_string);
+            } else $path_url = $path_string;
+
+            echo '<div><a href="../' .$path_url. '" target="_blank">' .$path_string. '</a></div>';
+        }
         echo '</div>';
+    }
+
+    private static function getRandomSlug ($slug) {
+        switch ($slug) {
+            // Get database table name depending on slug string
+            case '[user_id]': 
+                // If user is connected, return connected user id
+                if (isset($_SESSION['auth'])) $query_string = "SELECT id FROM users WHERE id = {$_SESSION['id']} ORDER BY RAND() LIMIT 1";
+                // Else return a random user
+                else $query_string = "SELECT id FROM users ORDER BY RAND() LIMIT 1";
+                break;
+            case '[user_login]':
+                // If user is connected, return connected user login
+                if (isset($_SESSION['auth'])) $query_string = "SELECT login FROM users WHERE id = {$_SESSION['id']}";
+                // Else return a random user
+                else $query_string = "SELECT login FROM users ORDER BY RAND() LIMIT 1";
+                break;
+            case '[activity_id]':
+                // If user is connected, return a random activity from connected user
+                if (isset($_SESSION['auth'])) $query_string = "SELECT id FROM activities WHERE user_id = {$_SESSION['id']} ORDER BY RAND() LIMIT 1";
+                // Else return a random activity
+                else $query_string = "SELECT id FROM activities WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                break;
+            case '[ride_id]': 
+                // If user is connected, return a random ride from connected user
+                if (isset($_SESSION['auth'])) $query_string = "SELECT id FROM rides WHERE author_id = {$_SESSION['id']} ORDER BY RAND() LIMIT 1";
+                // Else return a random activity
+                else $query_string = "SELECT id FROM rides WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                break;
+            case '[route_id]': 
+                // If user is connected, return a route among his routes if exists, else return a random public route
+                if (isset($_SESSION['auth'])) {
+                    $query_string = "SELECT id FROM routes WHERE
+                    IF (EXISTS (SELECT id FROM routes WHERE author_id = {$_SESSION['id']}), 
+                    author_id = {$_SESSION['id']},
+                    privacy = 'public')
+                    ORDER BY RAND() LIMIT 1";
+                // Else return a random public route
+                } else $query_string = "SELECT id FROM routes WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                break;
+            case '[scenery_id]': $query_string = "SELECT id FROM map_mkpoint ORDER BY RAND() LIMIT 1"; break;
+            case '[segment_id]': $query_string = "SELECT id FROM segments ORDER BY RAND() LIMIT 1"; break;
+        }
+        // Get number of entries and return a random number among it
+        $getEntries = self::getPdo()->prepare($query_string);
+        $getEntries->execute();
+        $slug = $getEntries->fetch(PDO::FETCH_COLUMN);
+        return $slug;
     }
 
     public static function intro ($paragraphs) { // paragraphs = array
