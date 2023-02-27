@@ -24,7 +24,7 @@ function ajax (callback, loader) {
 	return xhr
 }
 
-// XMLHttpRequest Function (function for preventing browser compatibility problems) */
+// XMLHttpRequest Function (function for preventing browser compatibility problems)
 function getHttpRequest () {
 	if (window.XMLHttpRequest) { // Mozilla, Safari, Chrome...
 		var httpRequest = new XMLHttpRequest()
@@ -74,9 +74,9 @@ function ajaxJsonPostRequest (url, jsonData, callback, loader = null) {
 // Function for truncating strings
 function truncateString (string, num) {
 	if (string.length > num) {
-		let substring = string.substring(0, num);
-		return substring + "...";
-	} else return string;
+		let substring = string.substring(0, num)
+		return substring + "..."
+	} else return string
 }
 
 function capitalizeFirstLetter (string) {

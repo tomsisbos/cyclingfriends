@@ -163,9 +163,8 @@
     height: 8px;
     background: #f7f7fa url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGAgMAAACHnudVAAAACVBMVEWmpqb%2F%2F%2F%2F%2B%2Fv7DQT26AAAAFUlEQVQI12MAgdDIAAgdCqHDIicAAB4GAziOJ42xAAAAAElFTkSuQmCC) no-repeat center;
     cursor: row-resize;
+    align-self: stretch;
 }
-
-
 
 .spec-table {
     background-color: #f9f9f9;

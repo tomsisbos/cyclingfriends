@@ -23,7 +23,7 @@ class Coordinates extends Model {
 
     // Create a route from these coordinates
     public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels = []) {
-        
+
         // Prepare start and goal place strings
         $startplace = $startplace['city'] . ' (' . $startplace['prefecture'] . ')';
         $goalplace = $goalplace['city'] . ' (' . $goalplace['prefecture'] . ')';
@@ -53,19 +53,19 @@ class Coordinates extends Model {
             $getRouteId = $this->getPdo()->prepare('SELECT id FROM routes WHERE author_id = ? AND posting_date = ? AND name = ?');
             $getRouteId->execute(array($author_id, $posting_date, $name));
             $route_id = $getRouteId->fetch()['id'];
+            
+            if ($this->time != NULL) $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat, datetime) VALUES (?, ?, ?, ?, ?)');
+            else $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
             for ($i = 0; $i < count($this->coordinates); $i++) {
-                $number   = $i;
-                $lng      = $this->coordinates[$i]->lng;
-                $lat      = $this->coordinates[$i]->lat;
+                $number = $i;
+                $lng    = $this->coordinates[$i]->lng;
+                $lat    = $this->coordinates[$i]->lat;
                 if ($this->time != NULL) {
                     $datetime = $this->time[$i];
-                    $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat, datetime) VALUES (?, ?, ?, ?, ?)');
                     $insertCoords->execute(array($route_id, $number, $lng, $lat, $datetime));
-                } else {
-                    $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
-                    $insertCoords->execute(array($route_id, $number, $lng, $lat));
-                }
+                } else $insertCoords->execute(array($route_id, $number, $lng, $lat));
             }
+
             // Save tunnels coords
             if (!empty($tunnels)) for ($tunnels_cursor = 0; $tunnels_cursor < count($tunnels); $tunnels_cursor++) {
                 for ($coords_cursor = 0; $coords_cursor < count($tunnels[$tunnels_cursor]); $coords_cursor++) {
@@ -90,21 +90,21 @@ class Coordinates extends Model {
             // Update route coords
             $deletePreviousCoords = $this->getPdo()->prepare('DELETE FROM coords WHERE segment_id = ?');
             $deletePreviousCoords->execute(array($route_id));
+            $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
             for ($i = 0; $i < count($this->coordinates); $i++) {
                 $number = $i;
                 $lng    = $this->coordinates[$i]->lng;
                 $lat    = $this->coordinates[$i]->lat;
-                $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
                 $insertCoords->execute(array($route_id, $number, $lng, $lat));
             }
             // Save tunnels coords
             $deletePreviousTunnels = $this->getPdo()->prepare('DELETE FROM tunnels WHERE segment_id = ?');
             $deletePreviousTunnels->execute(array($route_id));
+            $insertCoords = $this->getPdo()->prepare('INSERT INTO tunnels(tunnel_id, number, segment_id, lng, lat) VALUES (?, ?, ?, ?, ?)');
             for ($tunnels_cursor = 0; $tunnels_cursor < count($tunnels); $tunnels_cursor++) {
                 for ($coords_cursor = 0; $coords_cursor < count($tunnels[$tunnels_cursor]); $coords_cursor++) {
                     $lng = $tunnels[$tunnels_cursor][$coords_cursor][0];
                     $lat = $tunnels[$tunnels_cursor][$coords_cursor][1];
-                    $insertCoords = $this->getPdo()->prepare('INSERT INTO tunnels(tunnel_id, number, segment_id, lng, lat) VALUES (?, ?, ?, ?, ?)');
                     $insertCoords->execute(array($tunnels_cursor, $coords_cursor, $route_id, $lng, $lat));
                 }
             }

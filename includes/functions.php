@@ -4,6 +4,11 @@ use League\ColorExtractor\Palette;
 use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
 
+// Get root folder
+function root () {
+	return substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));	
+}
+
 // Check for an AJAX request
 function isAjax () {
 	return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -1467,4 +1472,11 @@ function luminanceLight($hexcolor, $percent) {
 
 function setFilename ($prefix) {
 	return $prefix . '_' . rand(0, 999999999999) . '.jpg';
+}
+
+function getNextAutoIncrement ($table_name) {
+	require root(). '/actions/databaseAction.php';
+    $getTableStatus = $db->prepare("SHOW TABLE STATUS LIKE '{$table_name}'");
+    $getTableStatus->execute();
+    return $getTableStatus->fetchAll(PDO::FETCH_ASSOC)[0]['Auto_increment'];
 } ?>

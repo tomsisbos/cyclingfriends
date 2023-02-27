@@ -28,7 +28,8 @@ class Route extends Model {
         $data = $this->getData($this->table);
         $this->author = new User($data['author_id']);
         $this->category = $data['category'];
-        $this->posting_date = $data['posting_date'];
+        $this->posting_date = new Datetime($data['posting_date']);
+        $this->posting_date->setTimezone(new DateTimeZone('Asia/Tokyo'));
         $this->name = $data['name'];
         $this->description = $data['description'];
         $this->distance = floatval($data['distance']);

@@ -4,11 +4,12 @@ require '../../../includes/api-head.php';
 
 use phpGPX\phpGPX;
 
+// On activity upload
 if (isset($_FILES['activity'])) {
 
+    // Filter file extensions
     define('ALLOWED_EXTENSIONS', ['gpx', 'tcx', 'fit']);
     $ext = checkFileExtension(ALLOWED_EXTENSIONS, $_FILES['activity']['name']);
-
     if ($ext) {
 
         // Create temp folder if necessary
@@ -23,34 +24,48 @@ if (isset($_FILES['activity'])) {
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
         require $folder . '/vendor/autoload.php';  // this file is in the project's root folder
 
-        // Upper memory allocation limit
-        ini_set('memory_limit', '240M');
-
+        // Treatment of gpx files
         if ($ext == 'gpx') {
 
-            /*echo json_encode(['success' => 'File has been correctly uploaded.', 'filetype' => 'gpx', 'file' => file_get_contents($url)], JSON_INVALID_UTF8_SUBSTITUTE);
-            exit;*/
-            $gpx = new phpGPX();
-            $file = $gpx->load($url);
-                
-            echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'gpx', 'file' => $file], JSON_INVALID_UTF8_SUBSTITUTE);
+            // On success, send analyzed data back to client
+            try {
+                $gpx = new phpGPX();
+                $file = $gpx->load($url);
+                echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'gpx', 'file' => $file], JSON_INVALID_UTF8_SUBSTITUTE);
+            
+            // On failure, return error message
+            } catch (Error $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+                die();
+            }
+            
             unset($file);
         
+        // Treatment of fit files
         } else if ($ext == 'fit') {
 
-            $pFFA = new adriangibbons\phpFITFileAnalysis($url);
-            $data = new FitData($pFFA->data_mesgs);
+            // On success, send analyzed data back to client
+            try {
+                $pFFA = new adriangibbons\phpFITFileAnalysis($url);
+                $data = new FitData($pFFA->data_mesgs);
+                echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'fit', 'file' => $data], JSON_INVALID_UTF8_SUBSTITUTE);
 
-            echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'fit', 'file' => $data], JSON_INVALID_UTF8_SUBSTITUTE);
+            // On failure, return error message
+            } catch (Error $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+                die();
+            }
 
             unset($data);
 
+        // Treatment of tcx files (unavailable at this time)
         } else if ($ext == 'tcx') {
 
             echo json_encode(['error' => '*.tcx形式ファイルはまだ対応しておりません。ご迷惑をお掛け致します。']);
 
         }
 
+    // If file extension is not supported
     } else {
 
         // Build extensions list

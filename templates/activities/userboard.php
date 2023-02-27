@@ -31,6 +31,16 @@ include '../includes/head.php'; ?>
 					$activity = new Activity($activity['id']); ?>
 
 					<div class="my-ac-panel">
+						
+						<div class="append-buttons">
+							<div class="my-ac-publication-date">
+								<strong>投稿時間：</strong><?= $activity->route->posting_date->format('Y-m-d H:i:s') ?>
+							</div>
+							<a href="/activity/<?= $activity->id ?>/edit">
+								<div class="mp-button success">編集</div>
+							</a>
+							<div class="mp-button danger" data-id="<?= $activity->id ?>" id="deleteButton">削除</div>
+						</div>
 
 						<div class="my-ac-card">
 
@@ -50,10 +60,10 @@ include '../includes/head.php'; ?>
 									</a>
 								</div>
 								<div class="ac-posting-date">
-									<?= $activity->datetime->format('Y/m/d') . ' from ' . $activity->datetime->format('H\hi') . ' to ' . $activity->getEndDateTime()->format('H\hi') ; ?>
+									<?= $activity->datetime->format('Y/m/d') . ' - 出発：' . $activity->datetime->format('H\:i') . ' 到着：' . $activity->getEndDateTime()->format('H\:i') ; ?>
 								</div>
 								<div class="ac-place">
-									<?= 'From ' . $activity->getPlace()['start']->toString() . ' to ' . $activity->getPlace()['goal']->toString(); ?>
+									<?= $activity->getPlace()['start']->toString() . ' から ' . $activity->getPlace()['goal']->toString() . ' まで'; ?>
 								</div>
 								<div class="ac-specs">
 									<div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">
@@ -86,13 +96,6 @@ include '../includes/head.php'; ?>
 								} ?>
 							</div>
 
-						</div>
-						
-						<div class="append-buttons">
-							<a href="/activity/<?= $activity->id ?>/edit">
-								<div class="mp-button success">編集</div>
-							</a>
-							<div class="mp-button danger" data-id="<?= $activity->id ?>" id="deleteButton">削除</div>
 						</div>
 
 					</div><?php
@@ -155,3 +158,4 @@ include '../includes/head.php'; ?>
 </html>
 
 <script src="/scripts/activities/delete.js"></script>
+<script src="/scripts/activities/userboard.js"></script>

@@ -1326,9 +1326,12 @@ input[type="range"]::-webkit-slider-thumb {
     position: fixed;
     height: 100vh;
     width: 100vw;
+    padding: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    gap: 30px;
 }
 .loading-modal-relative {
     background-color: #00000055;
@@ -1343,8 +1346,13 @@ input[type="range"]::-webkit-slider-thumb {
     justify-content: center;
 }
 .loading-text {
+    font-size: 18px;
     color: white;
     text-shadow: 1px 1px black;
+    text-align: center;
+}
+.loading-appendice {
+    font-size: 14px;
 }
 
 

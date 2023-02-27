@@ -14,6 +14,14 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     
     // Load activity data into map instance
     editActivityMap.data = activityData
+    
+    // Add photos treatment
+    document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
+        console.log('changed')
+        console.log(e.target.files)
+        editActivityMap.loadPhotos(e.target.files).then(() => editActivityMap.updatePhotos())
+    } )
+    document.querySelector('#clearPhotos').addEventListener('click', () => editActivityMap.clearPhotos())
 
     // Clean data architecture to match instance data format
     for (let i = 0; i < activityData.route.time.length; i++) {
@@ -63,13 +71,6 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.focus(editActivityMap.data.routeData)
     editActivityMap.displayCheckpointMarkers()
     editActivityMap.displayPhotos()
-
-    // Add photos treatment
-    document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
-        editActivityMap.loadPhotos(e.target.files).then( () => {
-            editActivityMap.updatePhotos()
-        } )
-    } )
 
     // Create new checkpoint on click on route
     editActivityMap.map.on('mouseenter', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'crosshair')

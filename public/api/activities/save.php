@@ -11,9 +11,17 @@ $data = json_decode($json, true);
 
 if (is_array($data)) {
 
+    // Get activity id
+    $activity_id = getNextAutoIncrement('activities');
+
+    // Set loading record
+    $loading_record = new LoadingRecord($connected_user->id, 'activity', $activity_id);
+    $loading_record->register();
+
     try {
 
         // Build route data
+        $loading_record->setStatus('pending', 'ルートデータ保存中...');
         $author_id   = $connected_user->id;
         $route_id    = 'new';
         $category    = 'activity';
@@ -31,6 +39,7 @@ if (is_array($data)) {
         $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels);
 
         // Build activity data
+        $loading_record->setStatus('pending', 'アクティビティデータ保存中...');
         $user_id          = $connected_user->id;
         $datetime         = new DateTime();
         $datetime->setTimestamp($data['checkpoints'][0]['datetime'] / 1000);
@@ -54,12 +63,8 @@ if (is_array($data)) {
         $insert_activity = $db->prepare('INSERT INTO activities(user_id, datetime, posting_date, title, duration, duration_running, temperature_min, temperature_avg, temperature_max, speed_max, altitude_max, slope_max, bike_id, privacy, route_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $insert_activity->execute(array($user_id, $datetime->format('Y-m-d H:i:s'), $posting_date->format('Y-m-d H:i:s'), $title, $duration, $duration_running, $temperature_min, $temperature_avg, $temperature_max, $speed_max, $altitude_max, $slope_max, $bike_id, $privacy, $route_id));
 
-        // Get activity id
-        $get_activity_id = $db->prepare('SELECT id FROM activities WHERE user_id = ? AND route_id = ?');
-        $get_activity_id->execute(array($user_id, $route_id));
-        $activity_id = $get_activity_id->fetch()['id'];
-
         // Build checkpoints data
+        $loading_record->setStatus('pending', 'チェックポイントデータ保存中...');
         foreach ($data['checkpoints'] as $checkpoint) {
             $number = $checkpoint['number'];
             $name = $checkpoint['name'];
@@ -88,9 +93,9 @@ if (is_array($data)) {
             $insert_checkpoints = $db->prepare('INSERT INTO activity_checkpoints(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, lng, lat, special) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insert_checkpoints -> execute(array($activity_id, $number, $name, $type, $story, $datetime->format('Y-m-d H:i:s'), $city, $prefecture, $elevation, $distance, $temperature, $lng, $lat, $special));
         }
-        
 
         // For each photo
+        $loading_record->setStatus('pending', '写真データ保存中...');
         foreach ($data['photos'] as $photo) {
 
             // Photo treatment
@@ -161,6 +166,7 @@ if (is_array($data)) {
         }
 
         // Create new mkpoints if necessary
+        $loading_record->setStatus('pending', '新規絶景スポット作成中...');
         if (isset($data['mkpointsToCreate'])) {
 
             forEach($data['mkpointsToCreate'] as $entry) {
@@ -272,18 +278,21 @@ if (is_array($data)) {
         }
 
         // Update user's cleared mkpoints
+        $loading_record->setStatus('pending', '絶景スポット訪問歴更新中...');
         foreach ($data['mkpoints'] as $mkpoint) {
             $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
             $addMkpoint->execute(array($connected_user->id, $mkpoint['id'], $activity_id));
         }
 
         // Update user's cleared segments
+        $loading_record->setStatus('pending', 'セグメント走行歴更新中...');
         foreach ($data['segments'] as $segment) {
             $addSegment = $db->prepare('INSERT INTO user_segments(user_id, segment_id, activity_id) VALUES (?, ?, ?)');
             $addSegment->execute(array($connected_user->id, $segment['id'], $activity_id));
         }
 
         // If necessary, add selected photos to corresponding mkpoint
+        $loading_record->setStatus('pending', '絶景スポットへ写真追加中...');
         if (isset($data['mkpointPhotos'])) {
             foreach ($data['mkpointPhotos'] as $entry) {
                 
@@ -327,13 +336,17 @@ if (is_array($data)) {
                 $blobClient->setBlobMetadata($containername, $entry['filename'], $metadata);
             }
         }
-            
+        
+        $loading_record->setStatus('success', '「' .$title. '」が無事に保存されました。詳細を<a href="/activity/' .$activity_id. '">こちら</a>でご確認ただけます。');
         echo json_encode(true);
 
     // If any exception have been catched, response the error message set in the exception
-    } catch(Exception $e) {
+    } catch (Error $e) {
+
+        $loading_record->setStatus('error', $e->getMessage());
         echo json_encode(['error' => $e->getMessage()]);
         die();
+
     }
 
 }

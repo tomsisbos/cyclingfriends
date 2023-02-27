@@ -235,7 +235,7 @@ if (isAjax()) {
             }
         
         // If any exception have been catched, response the error message set in the exception
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e->getMessage()]);
             die();
         }

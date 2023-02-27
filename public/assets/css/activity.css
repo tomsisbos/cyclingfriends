@@ -8,26 +8,34 @@
     align-items: center;
 }
 
-.new-ac-upload-photos-container {
+.new-ac-form-line {
     margin: 20px 0px;
     gap: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.new-ac-upload-photos-container > * {
+.new-ac-form-line > * {
     flex-grow: 1;
+}
+
+.new-ac-inputgroup {
+    display: flex;
+    flex-direction: column;
 }
 
 #activityMapContainer {
     height: 70vh;
     width: 100%;
+    overflow: hidden;
     display: flex;
+    align-items: center;
     flex-direction: column;
     background-color: white;
 }
 #activityMap {
-    height: 100%
+    height: 100%;
+    width: 100%;
 }
 
 #divCheckpoints {
@@ -299,6 +307,10 @@
     overflow: hidden;
 }
 
+.my-ac-publication-date {
+    align-self: center;
+}
+
 @media only screen and (max-width: 992px) {
     .my-ac-photos-container {
         display: none;
@@ -314,10 +326,10 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .ac-main-container, .new-ac-upload-photos-container {
+    .ac-main-container, .new-ac-form-line {
         flex-direction: column;
     }
-    .new-ac-upload-photos-container > * {
+    .new-ac-form-line > * {
         width: 100%;
     }
     .ac-infos-container {

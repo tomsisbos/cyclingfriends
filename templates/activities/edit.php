@@ -21,20 +21,30 @@ include '../actions/activities/getActivityAction.php'; ?>
 
             <div class="container">
 
-                <div class="mb-1">
-                    <label class="form-label">タイトル</label>
-                    <input type="text" id="inputTitle" class="form-control bold" value="<?= $activity->title ?>" />
+                <div class="new-ac-form-line">
+                    <div class="new-ac-inputgroup">
+                        <label class="form-label">タイトル</label>
+                        <input type="text" id="inputTitle" class="form-control bold" value="<?= $activity->title ?>" />
+                    </div>
                 </div>
 
-                <div class="mb-3 gap d-flex">
-                    <div class="col-6 gap d-flex align-items-center">
-                        <label for="uploadPhotos">
-                            <div class="btn smallbutton">写真を追加する</div>
-                        </label>
-                        <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple />
-                        <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
+                <div class="new-ac-form-line">
+                    <div class="new-ac-inputgroup">
+                        <label class="form-label">写真</label>
+                        <div class="new-ac-linegroup">
+                            <label for="uploadPhotos">
+                                <div class="btn smallbutton">写真を追加する</div>
+                            </label>
+                            <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple />
+                            <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
+                            <div class="btn smallbutton hidden" id="clearPhotos">写真を全て削除</div>
+                        </div>
                     </div>
-                    <div class="col-3">
+                    
+                </div>
+
+                <div class="new-ac-form-line">
+                    <div class="new-ac-inputgroup">
                         <label class="form-label">バイク</label>
                         <select id="selectBikes" class="form-select"> <?php
                             $bikes = $connected_user->getBikes();
@@ -44,7 +54,7 @@ include '../actions/activities/getActivityAction.php'; ?>
                             } ?>
                         </select>
                     </div>
-                    <div class="col-3">
+                    <div class="new-ac-inputgroup">
                         <label class="form-label">プライバシー設定</label>
                         <select id="selectPrivacy" class="form-select">
                             <option value="private" <?php if ($activity->privacy == 'private') echo 'selected'; ?>>非公開</option>

@@ -1,6 +1,7 @@
 import Modal from "/map/class/Modal.js"
 import ActivityMap from "/map/class/activity/ActivityMap.js"
 import CFUtils from "/map/class/CFUtils.js"
+import Loader from "/map/class/Loader.js"
 
 export default class NewActivityMap extends ActivityMap {
 
@@ -12,19 +13,6 @@ export default class NewActivityMap extends ActivityMap {
     apiUrl = '/api/activities/save.php'
     data
     cursor = 2
-    loader = {
-        prepare: () => {
-            this.loaderElement = document.createElement('div')
-            this.loaderElement.className = 'loading-modal'
-            let loaderIcon = document.createElement('div')
-            loaderIcon.innerText = 'アクティビティデータを処理しています...'
-            this.loaderElement.style.cursor = 'loading'
-            loaderIcon.className = 'loading-text'
-            this.loaderElement.appendChild(loaderIcon)
-        },
-        start: () => this.loaderContainer.appendChild(this.loaderElement),
-        stop: () => this.loaderElement.remove()
-    }
 
     // Parse file data and store it inside map instance
     async importDataFromGpx (gpx) {
@@ -494,13 +482,20 @@ export default class NewActivityMap extends ActivityMap {
         return new Promise( (resolve, reject) => {
             const acceptedFormats = ['image/jpeg', 'image/png']
             var acceptedFormatsString = acceptedFormats.join(', ')
+            
+            // Start loader
+            var loader = new Loader('写真を処理中...')
+            loader.prepare()
+            loader.start()
 
             // Get files into an array
             var files = []
             for (var property in uploadedFiles) {
                 if (Number.isInteger(parseInt(property))) files.push(uploadedFiles[property])
             }
+
             // Filter photos in double
+            loader.setText('複数回アップロードされた写真がないか確認中...')
             var filesLength = files.length
             var currentPhotosNumber = this.data.photos.length
             var filesInDouble = []
@@ -521,6 +516,7 @@ export default class NewActivityMap extends ActivityMap {
                 showResponseMessage({success: '\"' + filesInDoubleString + '\"は既にアップロードされています。再度アップロードすることが出来ません。'})
             }
             // Sort files by date
+            loader.setText('写真を整理中...')
             files.sort( (a, b) => {
                 return a.lastModified - b.lastModified
             } )
@@ -533,11 +529,13 @@ export default class NewActivityMap extends ActivityMap {
                 if (acceptedFormats.includes(files[i].type)) {
 
                     // Extract Exif data and start image treatment
+                    loader.setText('写真データをダウンロード中...')
                     var blobUrl = URL.createObjectURL(files[i])
                     let img = new Image()
                     img.src = blobUrl
                     img.addEventListener('load', () => {
-
+                        
+                        loader.setText('写真データを解析中...')
                         EXIF.getData(img, async() => {
                             // Extract date data
                             var exifDateTimeOriginal = EXIF.getTag(img, 'DateTimeOriginal')
@@ -557,9 +555,11 @@ export default class NewActivityMap extends ActivityMap {
                                 if (dateOriginal.getMonth() == checkpointDatetime.getMonth() && dateOriginal.getDay() == checkpointDatetime.getDay()) {
 
                                     // Resize and compress photo
+                                    loader.setText('写真データを処理中...')
                                     let blob = await resizeAndCompress(img, 1600, 900, 0.7)
 
                                     // Add photo to map instance
+                                    loader.setText('写真を追加中... ' + this.data.photos.length + ' / ' + filesLength)
                                     this.data.photos.push( {
                                         blob,
                                         size: files[i].size,
@@ -569,12 +569,14 @@ export default class NewActivityMap extends ActivityMap {
                                         featured: false,
                                         number
                                     } )
-                                    console.log(this.data.photos)
                                     
                                     number++
 
                                     // Resolve promise after last file has been treated
-                                    if (number == filesLength + currentPhotosNumber) resolve(true)
+                                    if (number == filesLength + currentPhotosNumber) {
+                                        loader.stop()
+                                        resolve(true)
+                                    }
 
                                 } else {
                                     showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。'})
@@ -620,6 +622,7 @@ export default class NewActivityMap extends ActivityMap {
             })}
         ) ().then( () => {
             this.highlightFeaturedPhoto()
+            this.updateClearPhotosButton()
         } )
     }
 
@@ -637,8 +640,6 @@ export default class NewActivityMap extends ActivityMap {
     async updatePhotoElement (photo) {
 
         return new Promise(async (resolve, reject) => {
-
-            console.log(photo)
 
             var dataUrl
             if (photo.url) dataUrl = photo.url
@@ -892,6 +893,24 @@ export default class NewActivityMap extends ActivityMap {
         if (!$otherButton.classList.contains('new-ac-btn-discarded')) $otherButton.classList.add('new-ac-btn-discarded')
     }
 
+    async clearPhotos () {
+        var answer = await openConfirmationPopup('全ての写真が削除されます。宜しいですか？')
+        if (answer) {
+            this.data.photos.forEach(photo => photo.$thumbnail.remove())
+            this.data.photos = []
+        }
+        this.updateClearPhotosButton()
+
+    }
+
+    updateClearPhotosButton () {
+        var clearPhotosButton = document.querySelector('#clearPhotos')
+        if (this.data.photos.length > 0) clearPhotosButton.classList.remove('hidden')
+        else {
+            if (!clearPhotosButton.classList.contains('hidden')) clearPhotosButton.classList.add('hidden')
+        }
+    }
+
     async createMkpoints () {
         return new Promise(async (resolve, reject) => {
             // Store close photos that could also be added
@@ -1133,22 +1152,37 @@ export default class NewActivityMap extends ActivityMap {
             // If mkpoints need to be created, append data
             if (mkpointsToCreate) cleanData.mkpointsToCreate = mkpointsToCreate
 
-            // Save canvas as a picture
-            this.map.once('idle', () => {
-                html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
-                    canvas.toBlob( async (blob) => {
-                        cleanData.thumbnail = await blobToBase64(blob)
-                        // Send data to server
-                        ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
-                            resolve(response)
-                            window.location.replace('/' + this.session.login + '/activities')
-                        }, this.loader)
-                    }, 'image/jpeg', 0.7)
-                } )     
-            } )
+            // Initialize loader
+            var loader = new Loader('データを準備中...')
+            loader.prepare()
+            loader.start()
+
+            // Resize to a 9:16 format
+            this.$map.style.width = '1600px'
+            this.$map.style.height = this.$map.offsetWidth * 9 / 16
+            this.map.resize()
+
+            // Focus on route
             var {lng, lat} = this.map.getCenter()
             this.map.setCenter({lng: lng + 0.01, lat: lat + 0.01})
             await this.focus(this.data.routeData)
+
+            // Save canvas as a picture
+            html2canvas(this.map.getCanvas()).then( (canvas) => {
+                canvas.toBlob( async (blob) => {
+                    cleanData.thumbnail = await blobToBase64(blob)
+
+                    // Send data to server and redirect user
+                    ajaxJsonPostRequest(this.apiUrl, cleanData, (response) => console.log(response))
+
+                    // Set pending record in sessionStorage
+                    sessionStorage.setItem('pending', 'activity')
+                    
+                    // Redirect to my rides page
+                    window.location.replace('/' + this.session.login + '/activities')
+
+                }, 'image/jpeg', 0.7)
+            } ) 
         } )
     }
 

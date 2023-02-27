@@ -8,160 +8,126 @@ var $form = document.querySelector('#activityForm')
 // On activity upload
 $upload.addEventListener('change', async (e) => {
 
-    // File treatment
-    new UploadFile(e.target, e.target.files[0], displayData)
+    // Initialize
+    var file = e.target.files[0]
+    var reader = new FileReader()
+    var xhr = new XMLHttpRequest()
+    xhr.open("POST", "/api/activities/upload.php")
+    var formData = new FormData()
+    formData.append('activity', file)
+    var loader = new Loader()
+    loader.prepare('データを準備中...')
+    loader.start()
+    window.setTimeout(() => {
+        if (loader.isSet()) loader.appendText('ファイルデーターが大きいと、解析に時間がかかる場合があります。お手数をおかけしますが、もうしばらくお待ちください。')
+    }, 10000)
 
-    function UploadFile (element, file, callback) {
+    // Start file upload
+    if (file instanceof Blob) reader.readAsArrayBuffer(file)
 
-        // Define throbber
-        var createThrobber = (element) => {
-            const throbberWidth = '100%'
-            const throbberHeight = 6
-            const throbber = document.createElement('canvas')
-            throbber.classList.add('upload-progress')
-            throbber.setAttribute('width', throbberWidth)
-            throbber.setAttribute('height', throbberHeight)
-            element.parentNode.appendChild(throbber)
-            throbber.ctx = throbber.getContext('2d')
-            throbber.ctx.fillStyle = 'orange'
-            throbber.update = (percent) => {
-                throbber.ctx.fillRect(0, 0, throbberWidth * percent / 100, throbberHeight)
-                if (percent === 100) {
-                    throbber.ctx.fillStyle = 'green'
-                }
-            }
-            throbber.update(0)
-            return throbber
-        }
-
-        var reader = new FileReader()
-        this.ctrl = createThrobber(element)
-        var xhr = new XMLHttpRequest()
-        const formData = new FormData()
-        formData.append('activity', file)
-        this.xhr = xhr
-        
-        var self = this
-        // Start loader
-        let loader = new Loader()
-        loader.prepare('ファイルをアップロードしています...')
-        loader.start()
-        this.xhr.upload.addEventListener("progress", (e) => {
-            if (e.lengthComputable) {
-                var percentage = Math.round((e.loaded * 100) / e.total)
-                self.ctrl.update(percentage)
-            }
-        }, false)
-        
-        xhr.upload.addEventListener("load", () => {
-            // Set throbber to 100
-            self.ctrl.update(100)
-            var canvas = self.ctrl.ctx.canvas
-            canvas.parentNode.removeChild(canvas)
-        }, false)
-
-        xhr.open("POST", "/api/activities/upload.php")
-        // xhr.overrideMimeType('text/plain; charset=x-user-defined-binary')
-
-        reader.onload = () => {
-            loader.setText('アクティビティデータを分析しています...')
-            xhr.send(formData)
-        }
-
-        xhr.onreadystatechange = () => {
-            // On success, execute callback
-            console.log(xhr.readyState)
-            if (xhr.readyState === 4) {
-                console.log('STOP')
-                loader.stop()
-                callback(JSON.parse(xhr.responseText))
-            }
-        }
-
-        reader.readAsBinaryString(file)
-
+    // When upload has finished, send it to server
+    reader.onload = () => {
+        loader.setText('データをダウンロード中... (1/2)')
+        xhr.send(formData)
     }
 
-    // After file upload
-    async function displayData (response) {
+    // When request has been sent
+    xhr.onreadystatechange = async () => {
 
-        // If file upload has succeed, display activity form
-        if (response.success) {
+        // When response is received
+        if (xhr.readyState === 4) {
+            
+            var response = JSON.parse(xhr.responseText)
 
-            // Separate top container with form
-            document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'
-            document.querySelector('#topContainer').style.marginBottom = '40px'
+            // If successful response, start parsing
+            if (xhr.status == '200') {
 
-            // Instantiate activity map
-            var newActivityMap = new NewActivityMap()
+                loader.setText('データを解析中... (2/2)')
 
-            // Clear data and elements if necessary
-            newActivityMap.clearForm()
+                // If file upload has succeed
+                if (response.success) {
 
-            // Format data from parsed js object
-            if (response.filetype == 'fit') var response = await newActivityMap.importDataFromFit(response.file)
-            else if (response.filetype == 'gpx') var response = await newActivityMap.importDataFromGpx(response.file)
+                    // Instantiate activity map
+                    var newActivityMap = new NewActivityMap()
 
-            // Get activity data
-            if (response.success) {
-                console.log(newActivityMap.data)
-                // Display and prefill form
-                hideResponseMessage()
-                $form.style.display = 'block'
-                newActivityMap.updateForm()
-                document.querySelector('#selectBikes').addEventListener('change', e => newActivityMap.data.bike_id = e.target.value)
-                document.querySelector('#selectPrivacy').addEventListener('change', e => newActivityMap.data.privacy = e.target.value)
+                    // Clear data and elements if necessary
+                    newActivityMap.clearForm()
 
-                // Load map on first upload
-                if (!newActivityMap.loaded) {
-                    newActivityMap.map = await newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
-                    newActivityMap.addRouteControl( {
-                        displayMkpoints: false,
-                        flyAlong: false
-                    } )
-                    newActivityMap.map.once('load', () => newActivityMap.map.resize())
+                    // Format data from parsed js object
+                    if (response.filetype == 'fit') var response = await newActivityMap.importDataFromFit(response.file)
+                    else if (response.filetype == 'gpx') var response = await newActivityMap.importDataFromGpx(response.file)
+
+                    loader.stop()
+
+                    // Get activity data
+                    if (response.success) {
+                        console.log(newActivityMap.data)
+
+                        // Display and prefill form
+                        document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'
+                        document.querySelector('#topContainer').style.marginBottom = '40px'
+                        hideResponseMessage()
+                        $form.style.display = 'block'
+                        newActivityMap.updateForm()
+                        document.querySelector('#selectBikes').addEventListener('change', e => newActivityMap.data.bike_id = e.target.value)
+                        document.querySelector('#selectPrivacy').addEventListener('change', e => newActivityMap.data.privacy = e.target.value)
+
+                        // Load map on first upload
+                        if (!newActivityMap.loaded) {
+                            newActivityMap.map = await newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+                            newActivityMap.addRouteControl( {
+                                displayMkpoints: false,
+                                flyAlong: false
+                            } )
+                            newActivityMap.map.once('load', () => newActivityMap.map.resize())
+                        }
+
+                        // Add route layer and paint route properties
+                        newActivityMap.setGrabber()
+                        newActivityMap.addSources()
+                        newActivityMap.addLayers()
+                        newActivityMap.addRouteLayer(newActivityMap.data.routeData)
+                        newActivityMap.displayStartGoalMarkers(newActivityMap.data.routeData)
+                        newActivityMap.updateDistanceMarkers()
+                        newActivityMap.focus(newActivityMap.data.routeData)
+
+                        // Add photos treatment
+                        document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
+                            newActivityMap.loadPhotos(e.target.files).then(() => newActivityMap.updatePhotos())
+                        } )
+                        document.querySelector('#clearPhotos').addEventListener('click', () => newActivityMap.clearPhotos())
+
+                        // Save activity treatment
+                        document.querySelector('#saveActivity').addEventListener('click', async () => {
+                            var photosToShare = await newActivityMap.checkForCloseMkpoints()
+                            if (newActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await newActivityMap.createMkpoints()
+                            else var mkpointsToCreate = null
+                            newActivityMap.saveActivity(photosToShare, mkpointsToCreate)
+                        } )
+
+                        // Create new checkpoint on click on route
+                        newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
+                        newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
+                        newActivityMap.map.on('click', 'route', (e) => {
+                            newActivityMap.addMarkerOnRoute(e.lngLat)
+                            newActivityMap.updatePhotos()
+                        } )
+
+                    // Else, display error message
+                    } else if (response.error) {
+                        loader.stop()
+                        showResponseMessage(response)
+                    }
+
+                } else if (response.error) {
+                    loader.stop()
+                    showResponseMessage(response)
                 }
 
-                // Add route layer and paint route properties
-                console.log(newActivityMap.data)
-                newActivityMap.setGrabber()
-                newActivityMap.addSources()
-                newActivityMap.addLayers()
-                newActivityMap.addRouteLayer(newActivityMap.data.routeData)
-                newActivityMap.displayStartGoalMarkers(newActivityMap.data.routeData)
-                newActivityMap.updateDistanceMarkers()
-                newActivityMap.focus(newActivityMap.data.routeData)
-
-                // Add photos treatment
-                document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
-            
-                    let loader = new Loader()
-                    loader.prepare('写真を処理しています...')
-                    loader.start()
-                    newActivityMap.loadPhotos(e.target.files).then( () => {
-                        loader.stop()
-                        newActivityMap.updatePhotos()
-                    } )
-                } )
-
-                // Save activity treatment
-                document.querySelector('#saveActivity').addEventListener('click', async () => {
-                    var photosToShare = await newActivityMap.checkForCloseMkpoints()
-                    if (newActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await newActivityMap.createMkpoints()
-                    else var mkpointsToCreate = null
-                    newActivityMap.saveActivity(photosToShare, mkpointsToCreate)
-                } )
-
-                // Create new checkpoint on click on route
-                newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
-                newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
-                newActivityMap.map.on('click', 'route', (e) => {
-                    newActivityMap.addMarkerOnRoute(e.lngLat)
-                    newActivityMap.updatePhotos()
-                } )
-            } else if (response.error) showResponseMessage(response)
-
-        // Else, display error message
-        } else if (response.error) showResponseMessage(response)
+            } else {
+                loader.stop()
+                showResponseMessage(response)
+            }
+        }
     }
 } )
