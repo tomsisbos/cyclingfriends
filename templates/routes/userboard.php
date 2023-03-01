@@ -38,9 +38,8 @@ include '../includes/head.php'; ?>
 							<a href="/route/<?= $route->id ?>">
 									<?= $route->name ?>
 								</a>
-								<div class="rt-posting-date"> <?php
-									$posting_date = new DateTime($route->posting_date);
-									echo $posting_date->format('Y/m/d \a\t H\hi'); ?>
+								<div class="rt-posting-date">
+									<?= $route->posting_date->format('Y/m/d \a\t H\hi'); ?>
 								</div>
 								<div class="rt-specs d-flex flex-column">
 									<div><?= '<strong>距離 : </strong>' .round($route->distance, 1). 'km' ?></div>

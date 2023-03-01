@@ -1479,4 +1479,12 @@ function getNextAutoIncrement ($table_name) {
     $getTableStatus = $db->prepare("SHOW TABLE STATUS LIKE '{$table_name}'");
     $getTableStatus->execute();
     return $getTableStatus->fetchAll(PDO::FETCH_ASSOC)[0]['Auto_increment'];
+}
+
+function exists ($table, $id) {
+	require root(). '/actions/databaseAction.php';
+    $checkIfExists = $db->prepare("SELECT id FROM {$table} WHERE id = ?");
+    $checkIfExists->execute(array($id));
+	if ($checkIfExists->rowCount() > 0) return true;
+	else return false;
 } ?>

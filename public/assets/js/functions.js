@@ -12,7 +12,7 @@ function ajax (callback, loader) {
 			document.body.cursor = 'auto'
 			// If an error has occured during the request
 			if (xhr.status != 200) {
-				await openAlertPopup('An error has occured during the request.')
+				await openAlertPopup(xhr.statusText)
 			} else { // If the request have been performed successfully
 				var response = JSON.parse(xhr.responseText)
 				

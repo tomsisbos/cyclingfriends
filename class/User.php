@@ -6,7 +6,6 @@ use Location\Distance\Vincenty;
 class User extends Model {
 
     private $container_name = 'user-profile-pictures';
-    private $plan;
     public $id;
     public $login;
     public $email;
@@ -47,8 +46,7 @@ class User extends Model {
         $this->facebook                  = $data['facebook'];
         $this->instagram                 = $data['instagram'];
         $this->strava                    = $data['strava'];
-        $this->rights                    = $data['rights'];
-        $this->plan                      = $data['plan'];
+        $this->rights                    = new Role($data['rights']);
     }
 
     // Register user into database
@@ -111,23 +109,23 @@ class User extends Model {
         }
     }
 
-    public function isPremium () {
-        if ($this->plan == 'premium') return true;
-        else return false;
-    }
-
     public function hasAdministratorRights () {
-        if ($this->rights == 'administrator') return true;
+        if ($this->rights->rank >= 40) return true;
         else return false;
     }
     
     public function hasModeratorRights () {
-        if ($this->rights == 'moderator' || $this->rights == 'administrator') return true;
+        if ($this->rights->rank >= 30) return true;
         else return false;
     }
     
     public function hasEditorRights () {
-        if ($this->rights == 'editor' || $this->rights == 'moderator' || $this->rights == 'administrator') return true;
+        if ($this->rights->rank >= 20) return true;
+        else return false;
+    }
+    
+    public function isPremium () {
+        if ($this->rights->rank >= 10) return true;
         else return false;
     }
 

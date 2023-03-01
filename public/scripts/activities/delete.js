@@ -5,7 +5,6 @@ document.querySelectorAll('#deleteButton').forEach( (element) => {
         var answer = await openConfirmationPopup('このアクティビティを削除します。宜しいですか？')
         if (answer) {
             ajaxGetRequest ('/api/activity.php' + "?delete=" + activityId, async (login) => {
-                console.log(login)
                 window.location.replace('/' + login + '/activities')
             } )
         }

@@ -1174,7 +1174,7 @@ export default class NewActivityMap extends ActivityMap {
 
                     // Send data to server and redirect user
                     ajaxJsonPostRequest(this.apiUrl, cleanData, (response) => console.log(response))
-
+                    
                     // Set pending record in sessionStorage
                     sessionStorage.setItem('pending', 'activity')
                     

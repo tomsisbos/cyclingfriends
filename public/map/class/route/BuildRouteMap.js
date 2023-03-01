@@ -1,5 +1,6 @@
 import CFUtils from "/map/class/CFUtils.js"
 import GlobalMap from "/map/class/GlobalMap.js"
+import Loader from "/map/class/Loader.js"
 
 export default class BuildRouteMap extends GlobalMap {
 
@@ -253,12 +254,22 @@ export default class BuildRouteMap extends GlobalMap {
                 this.map.setLayoutProperty('wayPoint' + i, 'visibility', 'none')
                 i++
             }
+            // Resize map
+            var mapWidth = this.$map.offsetWidth
+            var mapHeight = this.$map.offsetHeight
+            this.$map.style.width = '1600px'
+            this.$map.style.height = this.$map.offsetWidth * 9 / 16
+            this.map.resize()
             // Center camera
             var routeBounds = CFUtils.defineRouteBounds(this.map.getSource('route')._data.geometry.coordinates)
             this.map.fitBounds(routeBounds)
             // Open save popup
             var answer = await this.openSavePopup()
             if (answer) {
+                // Start loader
+                var loader = new Loader()
+                loader.prepare('ルートを保存中...')
+                loader.start()
                 console.log(answer)
                 // Save canvas as a picture
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
@@ -270,12 +281,16 @@ export default class BuildRouteMap extends GlobalMap {
                 } )            
             } else {
                 console.log('no answer')
-                // Restore waypoints
+                // Restore waypoints and map format
                 let i = 2
                 while (this.map.getSource('wayPoint' + i)) {
                     this.map.setLayoutProperty('wayPoint' + i, 'visibility', 'visible')
                     i++
                 }
+                this.$map.style.width = mapWidth + 'px'
+                this.$map.style.height = mapHeight + 'px'
+                this.map.resize()
+                this.map.fitBounds(routeBounds)
             }
         } )
         buttonSave.setAttribute('disabled', 'disabled')
@@ -1954,7 +1969,7 @@ export default class BuildRouteMap extends GlobalMap {
             console.log(response)
             if (route.category == 'segment') window.location.replace('/world')
             else window.location.replace('/' + this.session.login + '/routes')
-        }, this.loader)
+        } )
     }
 
 }

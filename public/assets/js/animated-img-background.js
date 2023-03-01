@@ -18,7 +18,7 @@ ajaxGetRequest ('/api/background.php' + "?get-background-imgs=" + imgsNumber, (i
 	function changeImg () {
 		var number = Math.floor(Math.random() * imgsNumber) // Randomly define an integer among imgsNumber
 		background.style.setProperty('--bgImage', 'url(' + imgs[number].url + ')') // Change background image
-		text.innerHTML = imgs[number].name + ' (' + imgs[number].month + '月)<br>' + imgs[number].city + ', ' + imgs[number].prefecture // Change meta information
+		if (text) text.innerHTML = imgs[number].name + ' (' + imgs[number].month + '月)<br>' + imgs[number].city + ', ' + imgs[number].prefecture // Change meta information
 	}
 
 	// Run [changeImg] function once, then every [interval] seconds

@@ -13,6 +13,8 @@ $router->map('GET', '/dashboard', 'dashboard');
 // Beta
 $router->map('GET', '/', 'beta/home');
 $router->map('POST', '/', 'beta/home');
+$router->map('GET', '/privatebeta/registration/[i:token]', 'beta/registration');
+$router->map('POST', '/privatebeta/registration/[i:token]', 'beta/registration');
 
 // User
 $router->map('GET', '/signin', 'user/signin', 'user-signin');
