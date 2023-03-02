@@ -28,16 +28,19 @@ if ($checkIfTokenIsValid->rowCount() > 0) {
                 $lastname = htmlspecialchars($_POST['lastname']);
                 $zipcode = htmlspecialchars($_POST['zipcode']);
                 $address = htmlspecialchars($_POST['address']);
-                $agreement = $_POST['agreement'] ?? 0; // storing boolean
+                if ($_POST['agreement'] == 'on') $agreement = true;
+                else $agreement = false;
 
                 // Check agreement
                 if (!$agreement) $errormessage = 'ご登録頂くには、利用規約に同意して頂く必要があります。';
 
                 // Check zipcode validity
                 $posturl = "http://zipcloud.ibsnet.co.jp/api/search?zipcode={$zipcode}";
-                $json = json_decode(file_get_contents($posturl), true);
-                $post_code = mb_convert_encoding($json, "SJIS-win", "UTF-8");
+                $post_code = json_decode(file_get_contents($posturl), true);
                 if ($post_code["results"] == null) $errormessage = "郵便番号は実在しません。";
+
+                // Check prefecture and zipcode matching
+                else if (substr($address, 0, strlen($post_code['results'][0]['address1'])) != $post_code['results'][0]['address1']) $errormessage = "ご記入頂いた郵便番号と住所が一致しません。正しい郵便番号と住所をご記入ください。";
 
                 // Check zipcode format
                 $zipcode = mb_convert_kana($zipcode, "n"); // Convert to alphanumeric
@@ -52,8 +55,13 @@ if ($checkIfTokenIsValid->rowCount() > 0) {
 
                 // If everything is correct, register member.
                 if (!isset($errormessage)) {
+
+                    $registerPrivateBetaInfos = $db->prepare("INSERT INTO privatebeta_members(token, email, first_name, last_name, zipcode, address, agreement) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $registerPrivateBetaInfos->execute(array($token, $email, $firstname, $lastname, $zipcode, $address, $agreement));
+
                     $successmessage = 'ご登録頂き、ありがとうございます！近日中にアカウント作成のご案内をお送りさせて頂きます。';
-                    /// Do treatment.
+
+                    $_POST = [];
                 }
 
             } else $errormessage = '全ての情報をご記入ください。';

@@ -19,8 +19,8 @@ class Role extends Model {
     
     // Get instance data from database
     protected function getData ($table) {
-        if ($this->id != NULL) {
-            $getData = $this->getPdo()->prepare("SELECT * FROM {$this->table} WHERE slug = {$this->slug}");
+        if ($this->slug != NULL) {
+            $getData = $this->getPdo()->prepare("SELECT * FROM {$this->table} WHERE slug = '{$this->slug}'");
             $getData->execute();
             return $getData->fetch();
         }

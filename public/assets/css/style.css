@@ -1367,6 +1367,11 @@ input[type="range"]::-webkit-slider-thumb {
 .terms-agreement {
     max-height: 100px;
     overflow: auto;
+    text-align: justify;
+}
+.terms-agreement strong {
+    font-weight: normal;
+    text-decoration: underline;
 }
 .opaque-container .terms-agreement {
     background-color: #00000099;
