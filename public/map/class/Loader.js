@@ -3,7 +3,7 @@ import Model from "/map/class/Model.js"
 export default class Loader extends Model {
 
     constructor (text = 'Loading...', container = document.body) {
-        super()
+        super({noSession: true})
         this.container = container
         this.text = text
     }

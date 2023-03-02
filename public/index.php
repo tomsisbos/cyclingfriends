@@ -15,6 +15,8 @@ $router->map('GET', '/', 'beta/home');
 $router->map('POST', '/', 'beta/home');
 $router->map('GET', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('POST', '/privatebeta/registration/[i:token]', 'beta/registration');
+$router->map('GET', '/privatebeta/signup/[i:token]', 'beta/signup');
+$router->map('POST', '/privatebeta/signup/[i:token]', 'beta/signup');
 
 // User
 $router->map('GET', '/signin', 'user/signin', 'user-signin');

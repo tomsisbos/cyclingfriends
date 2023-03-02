@@ -17,7 +17,7 @@ if (isset($_POST['validate'])) {
 			$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
 			// Create a new user
-			$user = new User;
+			$user = new User();
 
 			// Check if user already exists
 			if ($user->checkIfLoginAlreadyExists($login)) $errormessage = "このユーザーネームは既に登録されています。";
@@ -29,7 +29,7 @@ if (isset($_POST['validate'])) {
 				
 				else {
 					
-					if ($user->checkPasswordStrength($password)) {
+					if ($user->checkPasswordStrength($_POST['password'])) {
 				
 						$user->register($email, $login, $password);
 

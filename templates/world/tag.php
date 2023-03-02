@@ -23,7 +23,7 @@ include '../includes/head.php'; ?>
             // Space for error messages
             displayMessage(); ?>
 
-            <h2 class="top-title">Tag : <?= $tag->name ?></h2>
+            <h2 class="top-title">Tag : <?= $tag->getString() ?></h2>
 
             <div class="container d-flex flex-column gap-20"> <?php
 

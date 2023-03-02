@@ -1296,6 +1296,9 @@ input[type="range"]::-webkit-slider-thumb {
 	font-weight: bold;
 	color: white;
 }
+.success-message a {
+    color: pink;
+}
 
 .absolute {
     position: absolute;

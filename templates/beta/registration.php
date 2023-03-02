@@ -34,20 +34,20 @@ require '../actions/beta/registerAction.php'; ?>
 
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="floatingInput" placeholder="メールアドレス" name="email"<?php
-                                if (isset($zipcode)) echo 'value="' .$email. '"'; ?>
+                                if (isset($_POST['email'])) echo 'value="' .$_POST['email']. '"'; ?>
                             >
                         <label class="form-label required" for="floatingInput">メールアドレス</label>
                     </div>
                     <div class="d-flex gap mb-3">
                         <div class="form-floating col-3 flex-grow-1">
                             <input type="text" class="form-control" id="floatingInput1" placeholder="姓" name="lastname"<?php
-                                if (isset($zipcode)) echo 'value="' .$lastname. '"'; ?>
+                                if (isset($_POST['lastname'])) echo 'value="' .$_POST['lastname']. '"'; ?>
                             >
                             <label class="form-label required" for="floatingInput1">姓</label>
                         </div>
                         <div class="form-floating col-3 flex-grow-1">
                             <input type="text" class="form-control" id="floatingInput2" placeholder="名" name="firstname"<?php
-                                if (isset($firstname)) echo 'value="' .$firstname. '"'; ?>
+                                if (isset($_POST['firstname'])) echo 'value="' .$_POST['firstname']. '"'; ?>
                             >
                             <label class="form-label required" for="floatingInput2">名</label>
                         </div>
@@ -55,13 +55,14 @@ require '../actions/beta/registerAction.php'; ?>
                     <div class="d-flex gap mb-3">
                         <div class="form-floating col-3">
                             <input type="text" class="form-control" id="floatingInput" placeholder="郵便番号" name="zipcode"<?php
-                                if (isset($zipcode)) echo 'value="' .$zipcode. '"'; ?>
+                                if (isset($_POST['zipcode'])) echo 'value="' .$_POST['zipcode']. '"'; ?>
                             >
                             <label class="form-label required" for="floatingInput">郵便番号</label>
                         </div>
                         <div class="form-floating col-3 flex-grow-1">
                             <input type="text" class="form-control" id="floatingInput" placeholder="住所" name="address"<?php
-                                if (isset($_POST) && !empty($post_code['results'][0])) echo 'value="' .$post_code['results'][0]['address1'] . $post_code['results'][0]['address2'] . $post_code['results'][0]['address3']. '"'; ?>
+                                if (!empty($_POST) && !empty($post_code['results'][0]) && substr($_POST['address'], 0, 2) != substr($post_code['results'][0]['address1'], 0, 2)) echo 'value="' .$post_code['results'][0]['address1'] . $post_code['results'][0]['address2'] . $post_code['results'][0]['address3']. '"';
+                                else if (!empty($_POST) && !empty($_POST['address'])) echo 'value="' .$_POST['address']. '"'; ?>
                             >
                             <label class="form-label required" for="floatingInput">住所</label>
                         </div>

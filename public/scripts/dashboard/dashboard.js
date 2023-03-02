@@ -37,10 +37,10 @@ infiniteScrollElement.addEventListener('scroll', function (e) {
 
 function buildLink (entry) {
     if (entry.type === 'activity') {
-        var title = 'Activity'
+        var title = 'アクティビティ'
         var url = 'activities'
     } else if (entry.type === 'mkpoint') {
-        var title = 'Scenery point'
+        var title = '絶景スポット'
         var url = 'world'
     }
     var $link = document.createElement('div')

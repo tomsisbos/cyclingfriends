@@ -28,25 +28,27 @@ class User extends Model {
     
     function __construct($id = NULL) {
         parent::__construct();
-        $this->id                        = $id;
-        $data = $this->getData($this->table);
-        $this->login                     = $data['login'];
-        $this->email                     = $data['email'];
-        $this->default_profilepicture_id = $data['default_profilepicture_id'];
-        $this->inscription_date          = $data['inscription_date'];
-        $this->first_name                = $data['first_name'];
-        $this->last_name                 = $data['last_name'];
-        $this->gender                    = $data['gender'];
-        $this->birthdate                 = $data['birthdate'];
-        $this->location                  = new Geolocation($data['city'], $data['prefecture']);
-        if ($data['lng'] != null) $this->lngLat = new LngLat($data['lng'], $data['lat']);
-        $this->level                     = $data['level'];
-        $this->description               = $data['description'];
-        $this->twitter                   = $data['twitter'];
-        $this->facebook                  = $data['facebook'];
-        $this->instagram                 = $data['instagram'];
-        $this->strava                    = $data['strava'];
-        $this->rights                    = new Role($data['rights']);
+        if ($id != NULL) {
+            $this->id                        = $id;
+            $data = $this->getData($this->table);
+            $this->login                     = $data['login'];
+            $this->email                     = $data['email'];
+            $this->default_profilepicture_id = $data['default_profilepicture_id'];
+            $this->inscription_date          = $data['inscription_date'];
+            $this->first_name                = $data['first_name'];
+            $this->last_name                 = $data['last_name'];
+            $this->gender                    = $data['gender'];
+            $this->birthdate                 = $data['birthdate'];
+            $this->location                  = new Geolocation($data['city'], $data['prefecture']);
+            if ($data['lng'] != null) $this->lngLat = new LngLat($data['lng'], $data['lat']);
+            $this->level                     = $data['level'];
+            $this->description               = $data['description'];
+            $this->twitter                   = $data['twitter'];
+            $this->facebook                  = $data['facebook'];
+            $this->instagram                 = $data['instagram'];
+            $this->strava                    = $data['strava'];
+            $this->rights                    = new Role($data['rights']);
+        }
     }
 
     // Register user into database
@@ -58,7 +60,9 @@ class User extends Model {
         $register = $this->getPdo()->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
         $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 1));
         // Get id
-        $this->id = $this->getData($this->table)['id'];
+        $getId = $this->getPdo()->prepare("SELECT id FROM users WHERE email = ? AND login = ?");
+        $getId->execute([$email, $login]);
+        $this->id = $getId->fetch(PDO::FETCH_COLUMN);
     }
 
     // Set session according to user data
