@@ -49,7 +49,7 @@ include '../includes/head.php'; ?>
 
 			} else {
 				
-				$errormessage = '「お隣機能」を利用するには、自分の居住地を設定する必要があります。<a href="/profile/edit">こちら</a>にアクセスし、「場所」を「地図で選択」ボタンをクリックして設定してください。';
+				$errormessage = '「お隣機能」を利用するには、活動拠点を設定する必要があります。<a href="/profile/edit">こちら</a>にアクセスし、「場所」を「地図で選択」ボタンをクリックして設定してください。';
 			
 			}
 			
@@ -62,4 +62,5 @@ include '../includes/head.php'; ?>
 </body>
 </html>
 
-<script src="/scripts/riders/friends.js"></script>
+<script src="/scripts/riders/friends.js"></script> <?php
+if ($connected_user->lngLat == null) echo '<script src="/scripts/helpers/community/neighbours.js"></script>'; ?>

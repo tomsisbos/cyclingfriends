@@ -4,7 +4,7 @@ $previous_page = intval($slug) - 1; ?>
 <div class="container smaller page">
 
 	<!-- Page title -->
-	<h1 class="text-center">ライド編集</h1>
+	<h1 class="text-center">ライド開催</h1>
 	<legend>コース情報</legend>
 
 	<!-- Displays an error message if needed -->
@@ -16,7 +16,6 @@ $previous_page = intval($slug) - 1; ?>
 		<select id="formMethodSelect" class="form-select" name="method">
 			<option <?php if (empty($_SESSION['forms'][CFG_STAGE_ID]['method'])) {echo 'selected';} ?> hidden disabled value="none">方法を選ぶ...</option>
 			<option <?php if ($_SESSION['forms'][CFG_STAGE_ID]['method'] == 'pick') {echo 'selected';} ?> value="pick">地図上にクリックしてチェックポイントを作る</option>
-			<option <?php if ($_SESSION['forms'][CFG_STAGE_ID]['method'] == 'import') {echo 'selected';} ?> value="import" disabled>*.gpxファイルをインポートする</option>
 			<option <?php if ($_SESSION['forms'][CFG_STAGE_ID]['method'] == 'draw') {echo 'selected';} ?> value="draw">自分のルートの中から選ぶ</option>
 		</select>
 
@@ -80,7 +79,8 @@ $previous_page = intval($slug) - 1; ?>
 								$posting_date = date_format(new Datetime($route['posting_date']), 'Y/m/d');
 								echo $posting_date. ' - ' .$route['name']. ' (' .round($route['distance'], 1). 'km)' ?>
 							</option> <?php
-						} ?>
+						}
+						if (empty($routes)) echo '<option disabled>保存されているルートがありません。</option>' ?>
 					</select>
 				</div>
 				<div class="mb-3 row g-2">

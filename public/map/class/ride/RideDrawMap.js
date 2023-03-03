@@ -628,8 +628,6 @@ export default class RideDrawMap extends RideMap {
         var element = document.createElement('div')
         element.className = 'checkpoint-marker'
         element.id = i
-        console.log(this.cursor)
-        console.log(this.data.checkpoints.length)
         if (i === 0 && this.options.sf == false) { // If this is the first marker, set it to 'S'
             element.innerHTML = 'S'
             element.className = 'checkpoint-marker checkpoint-marker-start'
@@ -712,7 +710,7 @@ export default class RideDrawMap extends RideMap {
                 } ).then( () => document.getElementById('form').submit())
             }
 
-        } else showResponseMessage({error: 'データの自動保存が終わっていない状態で進むと、エラーが発生するのでデータの送信を止めさせて頂きました。数秒後にもう一度お試しください。'})
+        } else showResponseMessage({error: '必要データを全て入力してください。'})
 
         this.$map.addEventListener('click', hideResponseMessage, 'once')
     }
@@ -732,7 +730,6 @@ export default class RideDrawMap extends RideMap {
                         lat: routeCoords[0][1]
                     }
                     checkpoints[0].marker.setLngLat(checkpoints[0].lngLat)
-                    console.log('start/goal updated')
                 }
             } else {
                 // Start
@@ -742,7 +739,6 @@ export default class RideDrawMap extends RideMap {
                         lat: routeCoords[0][1]
                     }
                     checkpoints[0].marker.setLngLat(checkpoints[0].lngLat)
-                    console.log('start updated')
                 }
                 // Goal
                 if ([checkpoints[checkpoints.length - 1].lngLat.lng, checkpoints[checkpoints.length - 1].lngLat.lat] != routeCoords[routeCoords.length - 1]) {
@@ -751,7 +747,6 @@ export default class RideDrawMap extends RideMap {
                         lat: routeCoords[routeCoords.length - 1][1]
                     }
                     checkpoints[checkpoints.length - 1].marker.setLngLat(checkpoints[checkpoints.length - 1].lngLat)
-                    console.log('goal updated')
                 }
             }
         }

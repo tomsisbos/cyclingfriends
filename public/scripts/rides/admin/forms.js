@@ -45,7 +45,6 @@ var deleteEntryButton = document.querySelector('#deleteEntry')
 if (deleteEntryButton) deleteEntryButton.addEventListener('click', async (e) => {
     e.preventDefault()
     var deleteForm = e.target.closest('form')
-    console.log(deleteForm)
     var answer = await openConfirmationPopup('この質問と共に、参加者の回答データも削除されます。宜しいですか？')
     if (answer) {
         var id = getIdFromString(deleteForm.id)
@@ -59,7 +58,6 @@ if (deleteEntryButton) deleteEntryButton.addEventListener('click', async (e) => 
 
 // Open a confirmation popup before deleting an entry
 var saveEntryButton = document.querySelector('#editSave')
-console.log(saveEntryButton)
 if (saveEntryButton) saveEntryButton.addEventListener('click', async (e) => {
     if (saveEntryButton.closest('form').querySelector('.rd-ad-options-container').querySelectorAll('input').length < 2) {
         e.preventDefault()

@@ -16,7 +16,7 @@ include '../includes/head.php'; ?>
 		
 		<h2 class="top-title">My Activities</h2>
 		
-		<div class="container end bg-transparent">
+		<div class="container">
 			
 			<div class="my-ac-container"> <?php
 
@@ -100,13 +100,14 @@ include '../includes/head.php'; ?>
 
 					</div><?php
 
-				} ?>
-			</div> <?php
+				}
 			
-			// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
-			if (empty($connected_user->getActivities())) { ?>
-				<div class="errormessage">表示できるデータがありません。</div> <?php		
-			}
+				// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
+				if (empty($connected_user->getActivities())) { ?>
+					<div class="error-block"><div class="error-message">表示するデータがありません。</div></div> <?php		
+				} ?>
+
+			</div> <?php
 			
 			// Set pagination system
 			if (isset($_GET['p'])) $p = $_GET['p'];

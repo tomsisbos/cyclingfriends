@@ -55,7 +55,7 @@
 							<a class="dropdown-item bg-admin" href="/community">Users list</a> <?php
 						} ?>
 						<a class="dropdown-item" href="/friends">Friends</a>
-						<a class="dropdown-item" href="/following">Following</a>
+						<a class="dropdown-item" href="/scouts">Scouts</a>
 					</div>
 				</li>
 			</ul>
@@ -102,6 +102,6 @@
 		} ?>
 	</div> 
 		
-</nav>
+</nav> <?php
 
-
+if (isset($_SESSION['auth'])) echo '<script src="/scripts/dev/note.js"></script>'; ?>

@@ -140,6 +140,11 @@ function getBaseLog(x, y) {
     return Math.log(y) / Math.log(x);
 }
 
+/**
+ * 
+ * @param {string} sentence 
+ * @returns {Promise} true when clicked on OK button
+ */
 async function openAlertPopup (sentence) {
 	return new Promise ((resolve, reject) => {
 		var modal = document.createElement('div')
@@ -158,6 +163,84 @@ async function openAlertPopup (sentence) {
 			modal.remove()
 			resolve(true)
 		} )
+	} )
+}
+
+/**
+ * Open an alert popup with a visual link indicating [element].
+ * @param {string} sentence 
+ * @param {HTMLElement} element 
+ * @param {Object} options
+ * @param options.position position to set among topleft, topright, bottomleft and bottomright.
+ * @returns {Promise}
+ */
+async function openGuidancePopup (sentence, element, options = {}) {
+	return new Promise ((resolve, reject) => {
+		// Build Modal
+		var modal = document.createElement('div')
+		modal.classList.add('modal', 'd-flex', 'guidance-modal')
+		document.querySelector('body').appendChild(modal)
+		var confirmationPopup = document.createElement('div')
+		confirmationPopup.classList.add('popup', 'guidance-popup')
+		if (options.position) confirmationPopup.classList.add(options.position)
+		confirmationPopup.innerHTML = sentence + '<div class="d-flex justify-content-center"><div id="ok" class="mp-button bg-darkgreen text-white">了解</div></div>'
+		modal.appendChild(confirmationPopup)
+		// Build link element
+		linkElements(confirmationPopup, element, modal)
+		// On click on "Ok" button, close the popup and return true
+		document.querySelector('#ok').addEventListener('click', () => {
+			modal.remove()
+			resolve(true)
+		} )
+	} )
+}
+
+function linkElements (a, b, container = document.body) {
+
+	const drawLink = () => {
+		// Clear previous canvas
+		if (document.querySelector('.canvas-line')) document.querySelector('.canvas-line').remove()
+		// Build canvas
+		var canvas = document.createElement("canvas")
+		canvas.setAttribute('width', document.body.clientWidth)
+		canvas.setAttribute('height', document.body.clientHeight)
+		canvas.className = "canvas-line"
+		container.prepend(canvas)
+		// Set positions
+		const aPos = a.getBoundingClientRect()
+		const aCenterX = aPos.left + ((aPos.right - aPos.left) / 2)
+		const aCenterY = aPos.top + ((aPos.bottom - aPos.top) / 2)
+		const bPos = b.getBoundingClientRect()
+		const bCenterX = bPos.left + ((bPos.right - bPos.left) / 2)
+		const bCenterY = bPos.top + ((bPos.bottom - bPos.top) / 2)
+		console.log([aPos.left, aPos.top])
+		console.log([bPos.left, bPos.top])
+		// Draw stroke
+		var ctx = canvas.getContext("2d")
+		ctx.strokeStyle = "#fff"
+		ctx.lineWidth = 1
+		ctx.beginPath()
+		ctx.moveTo(aCenterX, aCenterY)
+		ctx.lineTo(bCenterX, bCenterY)
+		ctx.stroke()
+		// Draw circle
+		ctx.fillStyle = "#fff"
+		ctx.beginPath()
+		ctx.arc(bCenterX, bCenterY, 5, 0, 2 * Math.PI)
+		ctx.fill()
+	}
+
+	// Draw it first
+	drawLink()
+
+	// Redraw it on every scroll event
+	document.addEventListener('scroll', () => {
+		drawLink()
+	} )
+	
+	// Redraw it on every resize event
+	window.addEventListener('resize', () => {
+		drawLink()
 	} )
 }
 
@@ -373,4 +456,52 @@ function getCircularReplacer () {
 		}
 		return value;
 	}
+}
+
+/**
+ * Make an element draggable
+ * @param {Element} element 
+ */
+function setDraggable (element) {
+	element.style.cursor = "pointer"
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0
+    if (document.getElementById(element.id + "header")) {
+        // if present, the header is where you move the DIV from:
+        document.getElementById(element.id + "header").onmousedown = dragMouseDown
+    } else {
+        // otherwise, move the DIV from anywhere inside the DIV:
+        element.onmousedown = dragMouseDown
+    }
+
+    function dragMouseDown (e) {
+		element.style.cursor = "grabbing"
+        e = e || window.event
+        e.preventDefault()
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX
+        pos4 = e.clientY
+        document.onmouseup = closeDragElement
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag
+    }
+
+    function elementDrag (e) {
+        e = e || window.event
+        e.preventDefault()
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX
+        pos2 = pos4 - e.clientY
+        pos3 = e.clientX
+        pos4 = e.clientY
+        // set the element's new position:
+        element.style.top = (element.offsetTop - pos2) + "px"
+        element.style.left = (element.offsetLeft - pos1) + "px"
+    }
+
+    function closeDragElement () {
+		element.style.cursor = "pointer"
+        // stop moving when mouse button is released:
+        document.onmouseup = null
+        document.onmousemove = null
+    }
 }

@@ -168,7 +168,6 @@ export default class RideMap extends GlobalMap {
         }
 
         var onUpload = (e) => {
-            console.log('here on upload')
             // Extract blob from the file
             let img = e.target.files[0]
             const maxSize = 10000000

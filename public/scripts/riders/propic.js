@@ -1,15 +1,6 @@
-var propicModal = document.getElementById("propicModal")
-var modalBlock  = document.querySelector(".modal-block")
+import Modal from "/map/class/Modal.js"
 
-    document.querySelector('#propic').addEventListener('click', () => {
-        
-        propicModal.style.display = "block";
-        
-        // Close on clicking outside modal-block
-        propicModal.onclick = function (e) {
-            var eTarget = e ? e.target : event.srcElement
-            if ((eTarget === modalBlock) || (eTarget === propicModal)) closePropicModal()
-        }
-    } )
-    
-    const closePropicModal = () => propicModal.style.display = "none"
+var propic = document.querySelector('#propic').querySelector('img')
+var modal = new Modal(propic.src)
+propic.after(modal.element)
+propic.addEventListener('click', () => modal.open())

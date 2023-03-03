@@ -3,7 +3,6 @@ import WorldMap from "/map/class/WorldMap.js"
 import AmenityPopup from "/map/class/AmenityPopup.js"
 
 var worldMap = new WorldMap()
-console.log(worldMap)
 
 // Set default layer according to current season
 var map = await worldMap.load(document.querySelector('#worldMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
@@ -11,8 +10,6 @@ var map = await worldMap.load(document.querySelector('#worldMap'), 'mapbox://sty
 // Load CF sources and layers
 worldMap.addSources()
 worldMap.addLayers()
-
-console.log(worldMap.session)
 
 /* -- Controls -- */
 
@@ -58,8 +55,6 @@ amenities.forEach( (amenity) => {
         map.queryRenderedFeatures(e.point).forEach( (thisFeature) => {
             if (thisFeature.layer.id == amenity) {
                 feature = thisFeature
-                console.log(feature)
-                console.log(map.queryRenderedFeatures(e.point))
                 amenityPopup.data = feature.properties
             }
         } )
@@ -135,7 +130,6 @@ amenities.forEach( (amenity) => {
         // Add to map
         amenityPopup.popup.setLngLat(e.lngLat)
         amenityPopup.popup.addTo(map)
-        console.log(map.getZoom())
     } )
 
     map.on('mouseout', amenity, (e) => {

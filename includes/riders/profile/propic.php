@@ -22,4 +22,4 @@ if (isset($propic['img'])) { ?>
 
 } ?>
 
-<script defer src="/scripts/riders/propic.js"></script>
+<script defer type="module" src="/scripts/riders/propic.js"></script>

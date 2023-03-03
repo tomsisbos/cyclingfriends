@@ -109,7 +109,6 @@ export default class EditActivityMap extends NewActivityMap {
                 } )
             } ) ().then(
                 () => {
-                    console.log(cleanData)
                     // Send data to server
                     ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                         resolve(response)

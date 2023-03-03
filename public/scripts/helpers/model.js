@@ -9,7 +9,6 @@ export default class Helper {
             var modal = document.createElement('div')
             modal.classList.add('modal', 'd-flex')
             document.querySelector('body').appendChild(modal)
-            console.log('appended')
             modal.addEventListener('click', (e) => {
                 var eTarget = e ? e.target : event.srcElement
                 if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()

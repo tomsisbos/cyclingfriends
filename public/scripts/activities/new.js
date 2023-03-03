@@ -61,7 +61,6 @@ $upload.addEventListener('change', async (e) => {
 
                     // Get activity data
                     if (response.success) {
-                        console.log(newActivityMap.data)
 
                         // Display and prefill form
                         document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'

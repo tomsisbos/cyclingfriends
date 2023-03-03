@@ -84,9 +84,7 @@ export default class EditRouteMap extends BuildRouteMap {
                 thumbnail: details.thumbnail
             }
         }
-        console.log(route)
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
-            console.log(response)
             window.location.replace('/route/' + this.routeData.id)
         } )
     }

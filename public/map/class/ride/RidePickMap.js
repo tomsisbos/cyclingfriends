@@ -109,8 +109,6 @@ export default class RidePickMap extends RideMap {
             this.defineBounds(marker)
 
             this.cursor++
-            console.log(this.cursor)
-            console.log(this.data.checkpoints)
         }
     }*/
 
@@ -201,8 +199,6 @@ export default class RidePickMap extends RideMap {
         })
 
         this.cursor--
-        console.log(this.cursor)
-        console.log(this.data.checkpoints)
     }
 
     // Update meeting place and finish place information (only if not set or having changed)
@@ -232,7 +228,6 @@ export default class RidePickMap extends RideMap {
                             data: geolocationdata
                         } )
                     }
-                    console.log('Meeting point data (or finish point data if SF option on) does not match previously registered coords. Updating meeting point coords')
                 }
                 // If finish place has been changed
                 if (this.options.sf === false) {
@@ -241,7 +236,6 @@ export default class RidePickMap extends RideMap {
                         var finishplacelngLat = this.data.checkpoints[this.cursor-1].lngLat
                         var finishplace = {'geolocation': finishplacegeolocation, 'lngLat': finishplacelngLat}
                         var geolocationdata = {'finishplace': finishplace}
-                        console.log('Finish point data does not match the last marker coords. Updating finish point coords')
                         this.updateSession( {
                             method: this.method,
                             data: geolocationdata
@@ -250,7 +244,6 @@ export default class RidePickMap extends RideMap {
                 }
             // If meeting place is undefined
             } else {
-                console.log('No geolocation data have been set yet. Requesting map server for geolocation data')
                 var meetingplacelngLat = this.data.checkpoints[0].lngLat
                 var meetingplacegeolocation = await this.getCourseGeolocation(meetingplacelngLat)
                 var meetingplace = {'geolocation': meetingplacegeolocation, 'lngLat': meetingplacelngLat}
@@ -262,7 +255,6 @@ export default class RidePickMap extends RideMap {
                     var finishplace = meetingplace
                 }
                 var geolocationdata = {'meetingplace': meetingplace, 'finishplace': finishplace}
-                console.log(geolocationdata)
                 this.updateSession( {
                     method: this.method,
                     data: geolocationdata

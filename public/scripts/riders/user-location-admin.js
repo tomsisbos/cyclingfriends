@@ -1,7 +1,6 @@
 import PickMap from "../../map/class/PickMap"
 
 var pickMap = new PickMap()
-console.log(pickMap)
 const originalPosition = pickMap.currentPosition
 
 const button = document.querySelector('#userLocationButton')
@@ -29,7 +28,6 @@ button.addEventListener('click', async () => {
     marker.on('dragend', (e) => pickMap.currentPosition = e.target._lngLat)
 
     map.on('click', (e) => {
-        console.log(e)
         marker.setLngLat(e.lngLat)
         pickMap.currentPosition = e.lngLat
     } )

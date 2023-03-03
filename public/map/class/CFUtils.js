@@ -68,7 +68,6 @@ export default class CFUtils {
             if (distance - difference > 0) var pointSubstractedDifference = turf.along(routeData, distance - difference)
             if (distance + difference < routeDistance && Math.abs(turf.distance(turf.point(pointCoords), pointAddedDifference)) < 0.5) var twinDistance = Math.floor((distance + difference) * 10) / 10
             else if (distance - difference > 0 && Math.abs(turf.distance(turf.point(pointCoords), pointSubstractedDifference)) < 0.5) var twinDistance = Math.floor((distance - difference) * 10) / 10
-            /*console.log('Twin : ' + twinPointDistance + ', Original :' + distance + ', Difference : ' + difference)*/
         }
         return {distance, twinDistance}
     }

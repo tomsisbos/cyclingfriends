@@ -5,8 +5,6 @@ import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
 var segmentMap = new SegmentMap()
 
-console.log(segmentMap)
-
 var $map = document.getElementById('segmentMap')
 const exportButton = document.querySelector('#export')
 const deleteButton = document.querySelector('#delete')
@@ -153,7 +151,6 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         const markerColor = 'fff'
         var mkpoints = ''
         segmentMap.mkpoints.forEach(mkpoint => {
-            console.log(mkpoint)
             if (mkpoint.on_route) mkpoints += ',pin-s-' + Math.round(mkpoint.distance) + '+' + markerColor + '('  + mkpoint.lng + ',' + mkpoint.lat + ')'
         } )
 
@@ -181,8 +178,6 @@ url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(
 &before_layer=landuse
 &access_token=pk.eyJ1Ijoic2lzYm9zIiwiYSI6ImNsMDdndjY1bTI4OTUzZG5wOGs5ZWVsNnUifQ.2BcHCFVvk0SWQOb5PejCdQ
 `
-
-console.log(url.length)
 
         // Display static map inside container
         $map.querySelector('img').src = url

@@ -3,68 +3,14 @@ var apiUrl = '/api/riders/profile.php'
 // Adding a new bike block
 document.querySelector('button#addBike').addEventListener('click', () => {
     // If a new block has already been added, just scroll to it
-    if (document.getElementById('bikeImageFileNew')) {
-        document.getElementById('bikeImageFileNew').scrollIntoView()
+    if (document.getElementById('newBikeForm')) {
+        document.getElementById('newBikeForm').scrollIntoView()
     // Else, add a new block
     } else {
-        var randnumber = Math.floor(Math.random() * 10)
-        if (randnumber == 0) {randnumber = 1}
-        var newBikeBlock = document.createElement('div')
-        newBikeBlock.className = 'container container-admin js-bike-container d-flex flex-column gap'
-        newBikeBlock.setAttribute('bike_id', 'new')
-        newBikeBlock.innerHTML = `
-        <div class="d-flex gap-20">
-            <form title="Upload image" class="js-bike-image-form col-4" name="bike-image-form" enctype="multipart/form-data" method="post" action="/actions/riders/profile/bikeImageAction.php">
-                <div class="bike-image-container">
-                    <img class="bike-image-img" src="/media/default-bike-` + randnumber + `.svg">
-                    <div class="image-icon-container">
-                        <label for="bikeImageFileNew">
-                            <span class="image-icon iconify" data-icon="ic:baseline-add-a-photo" data-width="20" data-height="20"></span>
-                        </label>
-                        <input id="bikeImageFileNew" type="file" class="js-bike-input hidden" name="bikeimagefile" size=50 />
-                        <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
-                        <input type="hidden" name="bike-id" value="new" />
-                        <div title="Delete bike" class="js-delete-bike" >
-                            <span class="image-icon iconify" data-icon="el:remove-circle" data-width="20" data-height="20"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="js-file-preview filename"></div>
-            </form>
-            <form method="post" bike_id="new" class="fullwidth">
-                <div class="row">
-                    <div class="col mb-3">
-                        <label><strong>車種 : </strong></label>
-                        <select name="bike-type" class="js-bike-type admin-field">
-                            <option value="Other">その他</option>
-                            <option value="City bike">ママチャリ</option>
-                            <option value="Road bike">ロードバイク</option>
-                            <option value="Mountain bike">マウンテンバイク</option>
-                            <option value="Gravel/Cyclocross bike">グラベル／シクロクロスバイク</option>
-                        </select>
-                    </div>
-                    <div class="col mb-3">
-                        <label><strong>モデル : </strong></label>
-                        <input type="text" name="bike-model" class="js-bike-model admin-field">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-3">
-                        <label><strong>ホイール : </strong></label>
-                        <input type="text" name="bike-wheels" class="js-bike-wheels admin-field">
-                    </div>
-                    <div class="col mb-3">
-                        <label><strong>コンポネント : </strong></label>
-                        <input type="text" name="bike-components" class="js-bike-components admin-field">
-                    </div>
-                </div>
-                <div class="col mb-3">
-                    <label><strong>紹介文 : </strong></label>
-                    <textarea name="bike-description" class="js-bike-description col-9 admin-field d-block fullwidth"></textarea>
-                </div>
-            </form>
-        </div>`
-        document.getElementById('bikes').appendChild(newBikeBlock)
+        const bikesContainer = document.getElementById('bikes')
+        const template = document.querySelector('#bikeTemplate')
+        var newBikeBlock = template.content.firstElementChild.cloneNode(true)
+        bikesContainer.appendChild(newBikeBlock)
         newBikeBlock.scrollIntoView()
         addListeners()
     }
@@ -98,14 +44,11 @@ function addListeners() {
     document.querySelectorAll('.js-delete-bike').forEach( (deleteBikeButton) => { 
         deleteBikeButton.addEventListener('click', async (e) => {
             var bikeId = e.target.closest('.js-bike-container').getAttribute('bike_id')
-            console.log(bikeId)
             var bikeDiv = e.target.closest('.container-admin')
             answer = await openConfirmationPopup('このバイクを削除します。宜しいですか？')
             if (answer) {
                 ajaxGetRequest (apiUrl + '?deleteBike=' + bikeId, (response) => {
-                    if (response[0] == true) {
-                        bikeDiv.remove()
-                    }
+                    if (response[0] == true) bikeDiv.remove()
                     showResponseMessage(response)
                 } )
             }

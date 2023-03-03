@@ -84,4 +84,5 @@ include '../includes/head.php'; ?>
 <script src="/scripts/riders/friends.js"></script>
 <script src="/scripts/riders/infos-admin.js"></script>
 <script src="/scripts/riders/bikes-admin.js"></script>
-<script type="module" src="/scripts/riders/user-location-admin.js"></script>
+<script type="module" src="/scripts/riders/user-location-admin.js"></script> <?php
+if ($connected_user->userInfoQuantitySet() < 30 && empty($_POST)) echo '<script src="/scripts/helpers/profile/on-empty-profile.js"></script>' ?> 

@@ -270,7 +270,6 @@ export default class BuildRouteMap extends GlobalMap {
                 var loader = new Loader()
                 loader.prepare('ルートを保存中...')
                 loader.start()
-                console.log(answer)
                 // Save canvas as a picture
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {
                     canvas.toBlob( async (blob) => {
@@ -280,7 +279,6 @@ export default class BuildRouteMap extends GlobalMap {
                     }, 'image/jpeg', 0.7)
                 } )            
             } else {
-                console.log('no answer')
                 // Restore waypoints and map format
                 let i = 2
                 while (this.map.getSource('wayPoint' + i)) {
@@ -618,7 +616,6 @@ export default class BuildRouteMap extends GlobalMap {
         // Update tunnels
         this.updateTunnels(this.map.getSource('route')._data.properties.tunnels)
 
-        console.log('State modified in removeWaypoint()')
         this.addState()
     }
 
@@ -913,9 +910,7 @@ export default class BuildRouteMap extends GlobalMap {
                         this.hideProfile()
                         this.hideDistanceMarkers()
                     }
-                    this.addState()
-                    console.log('State modified in configureEndPoint()')
-
+                    this.addState()                    
                     this.waypointNumber--
                 }
             }
@@ -1110,7 +1105,6 @@ export default class BuildRouteMap extends GlobalMap {
         } else this.start = Object.keys(e.lngLat).map((key) => e.lngLat[key])
 
         this.addState()
-        console.log('State modified in onUpStartEnd()')
     }
 
     async generateProfile (options = {force: false}) {
@@ -1402,7 +1396,6 @@ export default class BuildRouteMap extends GlobalMap {
                 // On click on "Yes" button, close the popup and return true
                 document.querySelector('#save').addEventListener('click', () => {
                     modal.remove()
-                    console.log(data)
                     resolve(data)
                 } )
                 // On click on "Cancel" button, close the popup and return false
@@ -1788,13 +1781,11 @@ export default class BuildRouteMap extends GlobalMap {
             this.configureStartPoint()
         }
         this.addState()
-        console.log('State modified in routeBuilding()')
     }
 
     routeEditing = (e) => {
         this.addIntermediateWaypoint([e.lngLat.lng, e.lngLat.lat])
         this.addState()
-        console.log('State modified in routeEditing()')
     }
 
     async addState () {
@@ -1895,8 +1886,6 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     updateStateButtons () {
-        console.log('state length : ' + this.state.length)
-        console.log('current state : ' + this.currentState)
         // Update undo/redo buttons depending on the state
         if (this.state.length == 1) {
             this.buttonUndo.setAttribute('disabled', 'disabled')
@@ -1966,7 +1955,6 @@ export default class BuildRouteMap extends GlobalMap {
             }
         }
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
-            console.log(response)
             if (route.category == 'segment') window.location.replace('/world')
             else window.location.replace('/' + this.session.login + '/routes')
         } )

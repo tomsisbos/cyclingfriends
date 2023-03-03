@@ -86,7 +86,6 @@ async function displayForm () {
             map.on('click', (e) => {
                 // Prevent from adding a marker if a mkpoint or another marker is on the path
                 var markerIncludedOnPath = false
-                console.log(e)
                 e.originalEvent.composedPath().forEach( (element) => {
                     if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('mkpoint-marker'))) markerIncludedOnPath = true
                 } )
@@ -104,7 +103,6 @@ async function displayForm () {
     } else if (method === 'draw' && !rideDrawMapIsLoaded) { // Only load if draw mode selected and if map have not been already loaded once
     
         var rideDrawMap = new RideDrawMap()
-        console.log(rideDrawMap)
         var $map = document.getElementById('newDrawMap')
 
         // Set default layer according to current season
@@ -158,7 +156,6 @@ async function displayForm () {
             map.on('click', 'route', (e) => {
                 // Prevent from adding a marker if a mkpoint or another marker is on the path
                 var markerIncludedOnPath = false
-                console.log(e)
                 e.originalEvent.composedPath().forEach( (element) => {
                     if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('mkpoint-marker'))) markerIncludedOnPath = true
                 } )

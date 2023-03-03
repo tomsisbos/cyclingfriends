@@ -338,7 +338,7 @@ class User extends Model {
         // Declaration of variables
         $img_blob   = '';
         $img_size   = 0;
-        $max_size   = 500000;
+        $max_size   = 5000000;
         $img_name   = '';
         $img_type   = '';
             
@@ -350,15 +350,22 @@ class User extends Model {
                 
             // Displays an error message if file size exceeds $max_size
             $img_size = $_FILES['propicfile']['size'];
-            if ($img_size > $max_size) return array('error' => 'アップロードしたファイルがサイズ制限（500kb）を超えています。サイズを縮小して再度試してください。');
+            if ($img_size > $max_size) return array('error' => 'アップロードしたファイルがサイズ制限（5Mb）を超えています。サイズを縮小して再度試してください。');
             
             // Displays an error message if format is not accepted
             $img_type = $_FILES['propicfile']['type'];
             if ($img_type != 'image/jpeg') return array('error' => 'アップロードしたファイルは*.jpg形式のファイルではありません。*.jpg形式のファイルで再度試してください。');
-                
+            
+            // Resize and compress image
+            $temp_path = $_SERVER["DOCUMENT_ROOT"]. '/media/temp/propic_' .$this->id. '.jpg';
+            move_uploaded_file($_FILES['propicfile']['tmp_name'], $temp_path);
+            $img = imagecreatefromjpegexif($temp_path);
+            if ($_FILES['propicfile']['size'] > 3000000) imagejpeg($img, $temp_path, 15);
+            else imagejpeg($img, $temp_path, 30);
+
             // Sort upload data into variables
             $img_name = $_FILES['propicfile']['name'];
-            $img_blob = file_get_contents($_FILES['propicfile']['tmp_name']);
+            $img_blob = file_get_contents($temp_path);
             $filename = setFilename('img');
             $metadata = [
                 'user_id' => $this->id,
@@ -465,6 +472,16 @@ class User extends Model {
         }
         // If no match have been found, return false
         return false;
+    }
+
+    /**
+     *  Returns percentage of setable user info set
+     */
+    public function userInfoQuantitySet () {
+        $user_info = [$this->first_name, $this->last_name, $this->gender, $this->birthdate, $this->place, $this->lngLat, $this->level, $this->description, $this->location->prefecture];
+        $set_info = [];
+        foreach ($user_info as $item) if ($item != null) array_push($set_info, $item);
+        return count($set_info) * 100 / count($user_info);
     }
 
     public function getRides () {

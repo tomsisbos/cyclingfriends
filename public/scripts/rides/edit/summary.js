@@ -9,23 +9,16 @@ var header = document.querySelector('.ride-header')
 
 // Get session infos
 ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
-    console.log(session)
     rideMap.session = session
     rideMap.method = session['edit-course'].method
 
     // Set default header image to the first checkpoint image set, and select it among thumbnails
     if (defaultSrc) {
-        console.log('defaultSrc')
         if (session['edit-course'].featuredimage) {
-            console.log('featured image')
-            console.log(session)
             let src = document.getElementById(session['edit-course'].featuredimage).querySelector('img').src
             header.style.backgroundImage = 'url("' + src + '")'
             photos[session['edit-course'].featuredimage].classList.add('photo-selected')
-        } else {
-            console.log('no featured image')
-            header.style.backgroundImage = 'url("' + defaultSrc + '")'
-        }
+        } else header.style.backgroundImage = 'url("' + defaultSrc + '")'
     }
 
     // Change header image on clicking on any checkpoint image

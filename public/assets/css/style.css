@@ -1085,8 +1085,6 @@ a .strava:hover {
 }
 .popup.fullscreen-popup {
     max-width: 90%;
-    left: 5%;
-    top: 5%;
 }
 
 .classy-title {
@@ -1207,6 +1205,14 @@ input[type="range"]::-webkit-slider-thumb {
 	max-height: fit-content !important;
 }
 
+.guidance-modal {
+    overflow: hidden !important;
+}
+.canvas-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
 /* Links */
 
@@ -1383,6 +1389,23 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: 10px;
 }
 
+.dev-note {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fffa9c;
+    padding: 20px;
+    border-radius: 99px;
+    z-index: 10;
+    cursor: pointer;
+}
+.dev-note path {
+    fill: #fff;
+    stroke: #00e06e;
+}
+
 
 /* --- Loaders ---  */
 
@@ -1435,6 +1458,31 @@ input[type="range"]::-webkit-slider-thumb {
 
 .js-loader-container {
     height: 80px;
+}
+
+.topleft {
+    position: absolute;
+    margin: 20px;
+    top: 0;
+    left: 0;
+}
+.topright {
+    position: absolute;
+    margin: 20px;
+    top: 0;
+    right: 0;
+}
+.bottomleft {
+    position: absolute;
+    margin: 20px;
+    bottom: 0;
+    left: 0;
+}
+.bottomright {
+    position: absolute;
+    margin: 20px;
+    bottom: 0;
+    right: 0;
 }
 
 /* --- Animated backgrounds --- */

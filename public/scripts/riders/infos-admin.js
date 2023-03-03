@@ -12,7 +12,5 @@ document.querySelector('.js-level').addEventListener('change', updateInfo)
 document.querySelector('.js-description').addEventListener('change', updateInfo)
 
 function updateInfo (e) {
-	ajaxGetRequest (apiUrl + '?' + e.target.name + '=' + e.target.value, (response) => {
-		console.log(response)
-	} )
+	ajaxGetRequest (apiUrl + '?' + e.target.name + '=' + e.target.value, (response) => {} )
 }

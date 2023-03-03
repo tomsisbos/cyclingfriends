@@ -26,7 +26,6 @@ export default class NewActivityMap extends ActivityMap {
             var trackpoints = []
             var routeCoords = []
             var routeTime = []
-            console.log(gpx)
             for (let i = 0; i < trkpt.length; i++) {
                 if (trkpt[i].time == null) return resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
                 else {
@@ -176,7 +175,6 @@ export default class NewActivityMap extends ActivityMap {
     // Parse file data and store it inside map instance
     async importDataFromFit (fit) {
         return new Promise(async (resolve, reject) => {
-            console.log(fit)
 
             // Build trackpoints and routeCoords
             const record = fit.record
@@ -199,8 +197,6 @@ export default class NewActivityMap extends ActivityMap {
                 routeCoords.push([record.position_long[i], record.position_lat[i]])
                 routeTime.push(record.timestamp[i] * 1000)
             }
-
-            console.log(trackpoints)
 
             // Build max altitude
             const session = fit.session
@@ -717,7 +713,6 @@ export default class NewActivityMap extends ActivityMap {
                     photo.$thumbnail.firstChild.classList.remove('admin-marker')
                     photo.$thumbnail.querySelector('.pg-ac-createmkpoint-button').style.color = 'white'
                 }
-                console.log(this.data.mkpointsToCreate)
             } )
 
             // Delete photo listener
@@ -776,7 +771,6 @@ export default class NewActivityMap extends ActivityMap {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
                     // If photo and mkpoint have same coords
                     if (CFUtils.compareCoords({lng: mkpoint.lng, lat: mkpoint.lat}, photoLocation, 3)) {
-                        console.log(photo.name + ' could be added to ' + mkpoint.name + ' at a decimal level of 3.')
                         photosToAsk.push({photo, mkpoint})
                         // If any photo close to an existing mkpoint have been added to the create mkpoints list, discard it
                         if (this.data.mkpointsToCreate) for (let i = 0; i < this.data.mkpointsToCreate.length; i++) {
@@ -789,10 +783,8 @@ export default class NewActivityMap extends ActivityMap {
                     }
                 } )
             } )
-            console.log(photosToAsk)
             if (photosToAsk.length > 0) var photosToShare = await this.openSelectPhotosToShareModal(photosToAsk)
             else var photosToShare = []
-            console.log(photosToShare)
             resolve(photosToShare)
         } )
     }
@@ -923,7 +915,6 @@ export default class NewActivityMap extends ActivityMap {
                 } )
             }
             // Open modal and get user input data
-            console.log(this.data.mkpointsToCreate)
             var mkpointsToCreate = await this.openCreateMkpointsModal()
             resolve(mkpointsToCreate)
         } )
@@ -947,7 +938,6 @@ export default class NewActivityMap extends ActivityMap {
 
             // Build each mkpoint element
             this.data.mkpointsToCreate.forEach(async (entry) => {
-                console.log(this.data.routeData)
                 var distance = turf.length(turf.lineSlice(this.data.routeData.geometry.coordinates[0], this.getPhotoLocation(entry), this.data.routeData))
                 var content = ''
                 var mkpointElement = document.createElement('div')
@@ -1080,7 +1070,6 @@ export default class NewActivityMap extends ActivityMap {
                         elevation: Math.floor(this.map.queryTerrainElevation(lngLat)),
                         photos
                     } )
-                    console.log(mkpointsToCreate)
                     if (name == '' || description == '') filled = false
                     treatedMkpointsNumber++
                     if (treatedMkpointsNumber == this.data.mkpointsToCreate.length && filled) resolve(mkpointsToCreate)
@@ -1173,7 +1162,7 @@ export default class NewActivityMap extends ActivityMap {
                     cleanData.thumbnail = await blobToBase64(blob)
 
                     // Send data to server and redirect user
-                    ajaxJsonPostRequest(this.apiUrl, cleanData, (response) => console.log(response))
+                    ajaxJsonPostRequest(this.apiUrl, cleanData, (response) => {})
                     
                     // Set pending record in sessionStorage
                     sessionStorage.setItem('pending', 'activity')

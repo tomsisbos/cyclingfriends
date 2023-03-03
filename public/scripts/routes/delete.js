@@ -4,10 +4,7 @@ if (document.querySelector('#deleteRoute')) {
         element.addEventListener('click', async () => {
             var answer = await openConfirmationPopup('このルートが削除されます。宜しいですか？')
             if (answer) {
-                ajaxGetRequest ('/api/route.php' + "?route-delete=" + routeId, async (response) => {
-                    console.log(response)
-                    window.location.replace('/routes')
-                } )
+                ajaxGetRequest ('/api/route.php' + "?route-delete=" + routeId, async (response) => window.location.replace('/routes'))
             }
         } )
     } )

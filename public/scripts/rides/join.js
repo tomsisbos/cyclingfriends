@@ -25,7 +25,6 @@ if (quitButton) {
 
 function join () {
     ajaxGetRequest(apiUrl + "?get-questions=" + rideId, async (questions) => {
-        console.log(questions)
         var phase = 0
         var answers = {
             type: 'post-answers',
@@ -38,11 +37,8 @@ function join () {
                 answer
             } )
             phase++
-            console.log(answer)
         }
-        console.log(answers)
         ajaxJsonPostRequest(apiUrl, answers, (response) => {
-            console.log(response)
             window.location.href = "/ride/" + rideId + "/join"
         } )
     } )
@@ -50,7 +46,6 @@ function join () {
 
 function openPopup (question) {
 	return new Promise ((resolve, reject) => {
-        console.log(question.question)
 		var modal = document.createElement('div')
 		modal.classList.add('modal', 'd-flex')
 		document.querySelector('body').appendChild(modal)

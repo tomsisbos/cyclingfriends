@@ -2,7 +2,7 @@
 <div class="container smaller page">
 
 	<!-- Page title -->
-	<h1 class="text-center">New Ride</h1>
+	<h1 class="text-center">ライド開催</h1>
 
 	<!--Displays the Ride Infos form-->
 	<form class="container smaller inner" method="POST" action="<?= $base_uri . (CFG_STAGE_ID + 1) ?>">

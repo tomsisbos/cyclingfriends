@@ -4,8 +4,6 @@ import EditRouteMap from "/map/class/route/EditRouteMap.js"
 
 var editRouteMap = new EditRouteMap()
 
-console.log(editRouteMap)
-
 // Set default layer according to current season
 var map = await editRouteMap.load(document.getElementById('EditRouteMap'), 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
 
@@ -26,10 +24,8 @@ const canvas = map.getCanvasContainer()
 /* -- Route initialization -- */
 
 // Get and display route information from the server
-console.log(editRouteMap.routeId)
 ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, async (response) => {
     editRouteMap.routeData = response
-    console.log(response)
     // Add route layer
     var coordinates = []
     editRouteMap.routeData.coordinates.forEach( (coordinate) => {
@@ -115,7 +111,6 @@ editRouteMap.modeSelect.value = 'addWaypoints'
 editRouteMap.setMode()
 
 // Display start guidance window
-console.log(EditRouteHelper)
 await EditRouteHelper.startGuidance()
 
 // Profile container

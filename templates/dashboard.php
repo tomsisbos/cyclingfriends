@@ -11,7 +11,10 @@ include '../includes/head.php'; ?>
 
 <body>
 
-<?php include '../includes/navbar.php'; ?>
+<?php include '../includes/navbar.php';
+
+// Start guidance if poor user info is set
+if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>' ?> 
 
 <div class="main dashboard" id="infiniteScrollElement">
 
@@ -45,6 +48,6 @@ include '../includes/head.php'; ?>
 </div>
 
 <script type="module" src="/scripts/dashboard/dashboard.js"></script>
-	
+
 </body>
 </html>

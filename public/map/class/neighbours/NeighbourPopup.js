@@ -20,8 +20,6 @@ export default class AmenityPopup extends Popup {
 
         ajaxGetRequest (this.apiUrl + "?get-rider-data=" + this.data.id, (data) => {
 
-            console.log(data)
-
             // Prepare variables
             data.distance = parseFloat(document.querySelector('#card' + data.id).querySelector('.nbr-distance').innerText)
 

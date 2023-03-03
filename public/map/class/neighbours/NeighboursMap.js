@@ -55,7 +55,6 @@ export default class NeighboursMap extends GlobalMap {
 
     displaySelectedLink (neighbour) {
         var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
-        console.log(link)
         this.map.addLayer( {
             id: 'selectedLink' + neighbour.id,
             type: 'line',

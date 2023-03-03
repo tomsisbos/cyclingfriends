@@ -32,6 +32,4 @@ ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (response) => {
 			} )
 		} )
 	} )
-
-	console.log(sceneryPopup)
 } )

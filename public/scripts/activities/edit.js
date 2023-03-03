@@ -17,8 +17,6 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     
     // Add photos treatment
     document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
-        console.log('changed')
-        console.log(e.target.files)
         editActivityMap.loadPhotos(e.target.files).then(() => editActivityMap.updatePhotos())
     } )
     document.querySelector('#clearPhotos').addEventListener('click', () => editActivityMap.clearPhotos())
@@ -61,7 +59,6 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     }
 
     // Add route layer and paint route properties
-    console.log(editActivityMap)
     editActivityMap.setGrabber()
     editActivityMap.addSources()
     editActivityMap.addLayers()

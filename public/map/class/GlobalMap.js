@@ -9,7 +9,6 @@ export default class GlobalMap extends Model {
     constructor (options) {
         super(options)
         this.setSeason()
-        console.log(this)
     }
 
     apiUrl = '/api/map.php'
@@ -2236,7 +2235,6 @@ export default class GlobalMap extends Model {
 
             // Get segments fitting the route
             ajaxGetRequest ('/api/map.php' + "?display-segments=" + this.routeId, async (segments) => {
-                console.log(segments)
 
                 const remotenessTolerance = 0.1
                 const range = 2

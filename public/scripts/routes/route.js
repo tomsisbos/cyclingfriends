@@ -1,11 +1,8 @@
 import CFUtils from "/map/class/CFUtils.js"
 import RoutePageMap from "/map/class/route/RoutePageMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
-console.log(Polyline)
 
 var routePageMap = new RoutePageMap()
-
-console.log(routePageMap)
 
 var $map = document.getElementById('routePageMap')
 
@@ -100,7 +97,6 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         } )
 
         var fittingSegments = await routePageMap.getFittingSegments()
-        console.log(fittingSegments)
         fittingSegments.forEach( (segment) => {
             routePageMap.displaySegment(segment)
         } )
@@ -185,8 +181,6 @@ url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(
 &before_layer=landuse
 &access_token=pk.eyJ1Ijoic2lzYm9zIiwiYSI6ImNsMDdndjY1bTI4OTUzZG5wOGs5ZWVsNnUifQ.2BcHCFVvk0SWQOb5PejCdQ
 `
-
-console.log(url.length)
 
         // Display static map inside container
         $map.querySelector('img').src = url

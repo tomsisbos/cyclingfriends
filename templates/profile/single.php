@@ -101,7 +101,7 @@ include '../includes/head.php'; ?>
 							}
 							if (!empty($user->location->city)) { ?>
 								<div class="col-md">
-									<strong>場所 : </strong><?= $user->location->toString(); ?>
+									<strong>活動拠点 : </strong><?= $user->location->toString(); ?>
 								</div> <?php
 							} ?>
 						</div>

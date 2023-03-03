@@ -70,12 +70,28 @@
     background-color: #ebf1f1;
     gap: 10px;
 }
+.pf-bike-row {
+    display: flex;
+    gap: 6px;
+}
+.pf-bike-row input, .pf-bike-row select, .pf-bike-row textarea {
+    width: 100px;
+    flex-grow: 1;
+}
+.pf-bike-column {
+    display: flex;
+    width: 100%;
+    max-width: inherit;
+    gap: 6px;
+    align-items: center;
+}
 .pf-bike-infos-container {
     display: flex;
     flex-flow: column;
 }
 .pf-bike-image-container {
-	height: 200px;
+    height: 200px;
+    width: 300px;
 }
 .pf-bike-image {
     width: 100%;
@@ -99,6 +115,20 @@
 
 .pf-column {
     width: 50%;
+}
+
+@media only screen and (max-width: 992px) {
+    .pf-bike-container {
+        flex-direction: column;
+        gap: 0px;
+    }
+    .pf-bike-row {
+        flex-direction: column;
+        gap: 0px;
+    }
+    .pf-bike-image-container {
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 576px) {

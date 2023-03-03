@@ -202,7 +202,6 @@ export default class SceneryPopup extends Popup {
             var plusPhoto = () => showPhotos(photoIndex += 1)
             var minusPhoto = () => showPhotos(photoIndex -= 1)
             var showPhotos = (n) => {
-                console.log(photoIndex)
                 photos = this.data.mkpoint.photos // Use latest photo data
                 if (n > photos.length) {photoIndex = 1}
                 if (n < 1) {photoIndex = photos.length}
@@ -694,7 +693,7 @@ export default class SceneryPopup extends Popup {
         deleteButton.addEventListener('click', async () => {
             var answer = await openConfirmationPopup('この絶景スポットが削除されます。宜しいですか？')
             if (answer) { // If yes, remove the mkpoint and close the popup
-                ajaxGetRequest (this.apiUrl + "?delete-mkpoint=" + this.data.mkpoint.id, (response) => { console.log(response) } )
+                ajaxGetRequest (this.apiUrl + "?delete-mkpoint=" + this.data.mkpoint.id, (response) => {} )
                 // Remove current marker
                 document.querySelector('#mkpoint' + this.data.mkpoint.id).remove()
                 // Also remove from map instance

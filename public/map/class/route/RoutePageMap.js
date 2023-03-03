@@ -203,7 +203,6 @@ export default class RoutePageMap extends GlobalMap {
                     } )
                     if (document.querySelector('#displayMkpointsBox') && document.querySelector('#displayMkpointsBox').checked) {
                         // Fly to the marker location
-                        console.log(entry)
                         this.map.flyTo( {
                             center: [entry.lngLat.lng, entry.lngLat.lat],
                             zoom: 14,
@@ -340,7 +339,6 @@ export default class RoutePageMap extends GlobalMap {
                             if (tr.id != entry.type + entry.id) tr.classList.remove('selected-entry')
                         } )
                         // Fly to the marker location
-                        console.log(entry)
                         this.map.flyTo( {
                             center: entry.lngLat,
                             zoom: 14,
@@ -397,12 +395,10 @@ export default class RoutePageMap extends GlobalMap {
 
     displayCheckpoints () {
         this.ride.checkpoints.forEach( (checkpoint) => {
-            console.log(checkpoint)
             if (this.ride.options.sf != true || checkpoint.number != this.ride.checkpoints.length - 1) this.addMarker(checkpoint)
             // Remove mkpoints in double
             this.mkpoints.forEach( (mkpoint) => {
                 if (Math.ceil(checkpoint.distance * 100) / 100 == Math.ceil(mkpoint.distance * 100) / 100) {
-                    console.log(checkpoint.name + ' and ' + mkpoint.name + ' are in double')
                     document.querySelector('#mkpoint' + mkpoint.id).style.display = 'none'
                 }
             } )

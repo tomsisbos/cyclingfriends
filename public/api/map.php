@@ -51,7 +51,7 @@ if (isAjax()) {
 
                 /* Photo treatment */
                 $img_name = 'temp.'.$ext; // Set image name
-                $temp = $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
+                $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
                 // Temporary upload raw file on the server
                 move_uploaded_file($_FILES['file']['tmp_name'], $temp);
                 // Get the file into $img thanks to imagecreatefromjpeg

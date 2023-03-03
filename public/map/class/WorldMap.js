@@ -1034,7 +1034,6 @@ export default class WorldMap extends GlobalMap {
             this.map.getCanvas().classList.add('edit-mode')
             // Enable dragging on temp markers
             this.tempMarkerCollection.forEach((marker) => marker.setDraggable(true))
-            console.log('editModeMarker has been enabled.')
 
         // If box is not checked
         } else {
@@ -1059,13 +1058,10 @@ export default class WorldMap extends GlobalMap {
             this.map.getCanvas().classList.remove('edit-mode')
             // Disable dragging on temp markers
             this.tempMarkerCollection.forEach((marker) => marker.setDraggable(false))
-            console.log('editModeMarker has been disabled.')
         }
     }
 
     addMkpoint (mkpoint) {
-        console.log(mkpoint)
-        console.log(this.data.mkpoints[0])
         this.data.mkpoints.push(mkpoint)
         this.updateMkpoints()
     }
