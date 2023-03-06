@@ -18,14 +18,14 @@
             <?= $p ?>
         </div>
     </a> <?php
-    if ($p < $total_pages) { ?>
+    if ($p < ceil($total_pages)) { ?>
         <a href="<?= $url. '?p=' .($p + 1) ?>">
             <div class="pages-number">
                 <?= $p + 1; ?>
             </div>
         </a> <?php
     }
-    if ($p < $total_pages - 1) { ?>
+    if ($p < ceil($total_pages - 1)) { ?>
         <a href="<?= $url. '?p=' .($p + 2) ?>">
             <div class="pages-number">
                 <?= $p + 2; ?>

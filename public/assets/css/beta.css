@@ -1,0 +1,123 @@
+/* Board */
+
+.dvnt-board-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.dvnt-board-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 60px;
+    color: #000;
+}
+.dvnt-board-item.answered {
+    background-color: #a0ffc3;
+}
+.dvnt-board-propic {
+    display: block;
+}
+.dvnt-board-login {
+    display: none;
+    font-weight: bold;
+}
+.dvnt-board-specs {
+    width: 240px;
+    min-width: 240px;
+    text-align: center;
+}
+.dvnt-board-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: bold;
+}
+
+@media only screen and (max-width: 768px) {
+    .dvnt-board-item {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+    }
+    .dvnt-board-propic {
+        display: none;
+    }
+    .dvnt-board-login {
+        display: block;
+    }
+    .dvnt-board-title {
+        width: 100%;
+        min-width: 100%;
+    }
+}
+
+
+/* Single */
+
+.dvnt-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.dvnt-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.dvnt-column {
+    display: flex;
+    flex-direction: column;
+}
+.dvnt-login {
+    font-weight: bold;
+}
+.dvnt-title {
+    text-align: center;
+    font-weight: bold;
+}
+
+.dvnt-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.dvnt-chat-message {
+    display: flex;
+    gap: 20px;
+}
+.dvnt-message {
+    padding: 20px;
+    background-color: #eee;
+    border-radius: 0px 10px 10px 10px;
+}
+.dvnt-bubble {
+    display: flex;
+}
+.dvnt-bubble::before {
+    content: '';
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 20px);
+    width: 20px;
+    background-color: #eee;
+}
+.dvnt-chat-message.admin {
+    flex-direction: row-reverse;
+}
+.dvnt-bubble.admin {
+    flex-direction: row-reverse;
+}
+.admin .dvnt-bubble::before {
+    width: 0px;
+}
+.admin .dvnt-bubble::after {
+    content: '';
+    clip-path: polygon(0 0, 100% 0, 0px 20px, 0 20px);
+    width: 20px;
+    background-color: #fffa9c;
+}
+.admin .dvnt-message {
+    border-radius: 10px 0px 10px 10px;
+    background-color: #fffa9c;
+}

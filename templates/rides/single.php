@@ -29,7 +29,7 @@ include '../includes/head.php'; ?>
 	<div class="main container-shrink"> <?php
 
 		// Space for general error messages
-		displayMessage();	
+		include '../includes/result-message.php';	
 			
 		// Set and update all ride proprieties
 		include '../actions/rides/convertIntToStringValuesAction.php'; ?>

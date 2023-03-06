@@ -45,7 +45,7 @@ include '../includes/head.php'; ?>
                         if (isset($section['id'])) Manual::title(2, $section['title'], $section['id']);
                         else Manual::title(2, $section['title']);
                         if (isset($section['path'])) Manual::path($section['path']);
-                        if (isset($section['text'])) Manual::text($section['text']);
+                        if (isset($section['text'])) Manual::intro($section['text']);
 
                         // Parts
                         if (isset($section['content'])) foreach ($section['content'] as $part) {?>

@@ -24,7 +24,7 @@ if (isset($_SESSION['forms']['created'])) {
 	<div class="main"> <?php
 
 		// Space for general error messages
-		displayMessage(); ?>
+		include '../includes/result-message.php'; ?>
 		
 		<h2 class="top-title">My rides</h2>
 

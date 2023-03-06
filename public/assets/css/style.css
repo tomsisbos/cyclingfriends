@@ -1390,7 +1390,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .dev-note {
-    position: absolute;
+    position: fixed;
     width: 60px;
     height: 60px;
     bottom: 20px;

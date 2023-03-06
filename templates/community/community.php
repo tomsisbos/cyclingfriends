@@ -13,7 +13,7 @@ include '../includes/head.php'; ?>
 	<div class="main"> <?php
 	
 		// Space for error messages
-		displayMessage(); ?>
+		include '../includes/result-message.php'; ?>
 		
 		<h2 class="top-title">Community</h2>
 		

@@ -19,7 +19,7 @@ include '../includes/head.php'; ?>
 	<div class="main"> <?php
 
 		// Space for general error messages
-		displayMessage(); ?>
+		include '../includes/result-message.php'; ?>
 		
 		<div class="container-fluid"> <?php
 

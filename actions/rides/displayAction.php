@@ -3,7 +3,7 @@
 	require '../actions/databaseAction.php';
 					
 	// If min date filter is empty, set it as current date
-	if (empty($_POST['filter_date_min'])) $_POST['filter_date_min'] = date('Y-m-d');
+	if (empty($_POST['filter_date_min'])) $_POST['filter_date_min'] = date('1970-01-01');
 		
 	// If max date filter is empty, set it as 2099-12-31
 	if (empty($_POST['filter_date_max'])) $_POST['filter_date_max'] = date('2099-12-31');

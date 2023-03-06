@@ -16,7 +16,7 @@ include '../includes/head.php'; ?>
 	<div class="main"> <?php
 
 		// Space for error messages
-		displayMessage(); ?>
+		include '../includes/result-message.php'; ?>
 		
 		<div id="settings"></div>
 	

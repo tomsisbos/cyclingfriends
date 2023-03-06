@@ -17,6 +17,10 @@ $router->map('GET', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('POST', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('GET', '/privatebeta/signup/[i:token]', 'beta/signup');
 $router->map('POST', '/privatebeta/signup/[i:token]', 'beta/signup');
+$router->map('GET', '/beta/board', 'beta/board');
+$router->map('POST', '/beta/board', 'beta/board');
+$router->map('GET', '/beta/devnote/[i:note_id]', 'beta/single');
+$router->map('POST', '/beta/devnote/[i:note_id]', 'beta/single');
 
 // User
 $router->map('GET', '/signin', 'user/signin', 'user-signin');

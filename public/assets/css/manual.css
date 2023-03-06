@@ -8,6 +8,21 @@
     overflow: auto;
 }
 
+.manual a {
+    color: #00e06e;
+}
+.manual a:hover {
+    text-decoration: underline;
+}
+.m-single a:visited {
+    color: pink;
+}
+
+.manual p {
+    color: #444;
+    font-weight: 100;
+}
+
 .m-sidebar {
     min-width: 350px;
     width: 350px;
@@ -22,6 +37,9 @@
 
 .m-summary > li {
     font-weight: bold;
+}
+.m-summary a {
+    color: #649eae;
 }
 .m-summary-subtitle {
     font-weight: lighter;
@@ -55,14 +73,15 @@
 
 .m-single {
     width: -webkit-fill-available;
-    padding: 20px;
     background-color: white;
 }
 
 .manual h1, h2, h3, h4, h5 {
     font-family: 'Noto Sans';
+    color: #444;
 }
 .manual h1 {
+    color: #649eae;
     text-align: center;
     padding-top: 20px;
     margin: 0;
@@ -75,14 +94,15 @@
     color: #555;
 }
 .manual h2 {
-    border-bottom: 1px solid;
-    padding-top: 100px;
-    padding-bottom: 10px;
-    padding-left: 10px;
+    margin-top: 100px;
+    padding: 20px;
+    background-color: #f9f9f9;
 }
 .manual h3 {
     padding-top: 20px;
     padding-left: 24px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ddd;
 }
 .manual h4 {
     padding-top: 12px;
@@ -99,21 +119,18 @@
     text-decoration: underline;
 }
 
-.manual a {
-    color: #bbbbff;
-}
-.manual a:hover {
-    text-decoration: underline;
-}
-
 .m-path {
     padding: 12px 20px;
+}
+
+.m-intro, .m-part {
+    padding: 20px;
 }
 
 .m-point {
     padding: 10px 20px;
     margin: 12px 0;
-    background-color: #eee;
+    background-color: #fffa9c;
 }
 .m-point::before {
     content: '\203B\ ';

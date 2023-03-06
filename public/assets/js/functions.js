@@ -159,7 +159,7 @@ async function openAlertPopup (sentence) {
 		confirmationPopup.innerHTML = sentence + '<div class="d-flex justify-content-center"><div id="ok" class="mp-button bg-darkgreen text-white">了解</div></div>'
 		modal.appendChild(confirmationPopup)
 		// On click on "Ok" button, close the popup and return true
-		document.querySelector('#ok').addEventListener('click', () => {
+		modal.querySelector('#ok').addEventListener('click', () => {
 			modal.remove()
 			resolve(true)
 		} )
@@ -172,6 +172,7 @@ async function openAlertPopup (sentence) {
  * @param {HTMLElement} element 
  * @param {Object} options
  * @param options.position position to set among topleft, topright, bottomleft and bottomright.
+ * @param options.class add another class if necessary (medium-popup, fullscreen-popup)
  * @returns {Promise}
  */
 async function openGuidancePopup (sentence, element, options = {}) {
@@ -183,12 +184,13 @@ async function openGuidancePopup (sentence, element, options = {}) {
 		var confirmationPopup = document.createElement('div')
 		confirmationPopup.classList.add('popup', 'guidance-popup')
 		if (options.position) confirmationPopup.classList.add(options.position)
+		if (options.class) confirmationPopup.classList.add(options.class)
 		confirmationPopup.innerHTML = sentence + '<div class="d-flex justify-content-center"><div id="ok" class="mp-button bg-darkgreen text-white">了解</div></div>'
 		modal.appendChild(confirmationPopup)
 		// Build link element
 		linkElements(confirmationPopup, element, modal)
 		// On click on "Ok" button, close the popup and return true
-		document.querySelector('#ok').addEventListener('click', () => {
+		modal.querySelector('#ok').addEventListener('click', () => {
 			modal.remove()
 			resolve(true)
 		} )
@@ -213,8 +215,6 @@ function linkElements (a, b, container = document.body) {
 		const bPos = b.getBoundingClientRect()
 		const bCenterX = bPos.left + ((bPos.right - bPos.left) / 2)
 		const bCenterY = bPos.top + ((bPos.bottom - bPos.top) / 2)
-		console.log([aPos.left, aPos.top])
-		console.log([bPos.left, bPos.top])
 		// Draw stroke
 		var ctx = canvas.getContext("2d")
 		ctx.strokeStyle = "#fff"
@@ -498,10 +498,24 @@ function setDraggable (element) {
         element.style.left = (element.offsetLeft - pos1) + "px"
     }
 
-    function closeDragElement () {
+    function closeDragElement (e) {
 		element.style.cursor = "pointer"
         // stop moving when mouse button is released:
         document.onmouseup = null
         document.onmousemove = null
+    }
+}
+
+function getClientBrowserName () {
+    var agent = window.navigator.userAgent.toLowerCase()
+    switch (true) {
+        case agent.indexOf("edge") > -1: return "MS Edge"
+        case agent.indexOf("edg/") > -1: return "Edge (chromium based)"
+        case agent.indexOf("opr") > -1 && !!window.opr: return "Opera"
+        case agent.indexOf("chrome") > -1 && !!window.chrome: return "Chrome"
+        case agent.indexOf("trident") > -1: return "MS IE"
+        case agent.indexOf("firefox") > -1: return "Mozilla Firefox"
+        case agent.indexOf("safari") > -1: return "Safari"
+        default: return "Other"
     }
 }
