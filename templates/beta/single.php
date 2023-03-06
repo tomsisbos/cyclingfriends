@@ -19,7 +19,7 @@ include '../includes/head.php'; ?>
 	<div class="main">
 
         <!-- Content -->
-        <div class="container dvnt-header">
+        <div class="container bg-admin dvnt-header">
             <div class="dvnt-row">
                 <div class="dvnt-user"><a href="/rider/<?= $dev_note->user_id ?>"><?php $dev_note->getUser()->getPropicElement() ?></a></div>
                 <div class="dvnt-column">

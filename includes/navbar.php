@@ -54,7 +54,7 @@
 						if ($connected_user->hasAdministratorRights()) { ?>
 							<a class="dropdown-item bg-admin" href="/community">Users list</a> <?php
 						} ?>
-						<a class="dropdown-item bg-admin" href="/beta/board">Beta test</a>
+						<a class="dropdown-item bg-admin" href="/beta/board">Test reports</a>
 						<a class="dropdown-item" href="/friends">Friends</a>
 						<a class="dropdown-item" href="/scouts">Scouts</a>
 					</div>

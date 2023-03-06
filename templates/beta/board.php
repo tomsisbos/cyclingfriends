@@ -20,7 +20,7 @@ include '../includes/head.php'; ?>
 
 	<div class="main">
 
-        <div class="container">
+        <div class="container bg-admin">
             <h2>表示設定</h2> <?php
             include '../includes/beta/filter.php'; ?>
         </div>

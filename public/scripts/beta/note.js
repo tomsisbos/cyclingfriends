@@ -39,7 +39,7 @@ async function openNotePopup () {
         modal.classList.add('modal', 'd-flex')
         document.querySelector('body').appendChild(modal)
         var confirmationPopup = document.createElement('div')
-        confirmationPopup.classList.add('popup', 'medium-popup', 'text-center')
+        confirmationPopup.classList.add('popup', 'medium-popup', 'text-center', 'bg-admin')
         confirmationPopup.innerHTML = `
             <p>
                 このページについて、不具合を発見した場合や、機能等について意見があった場合に、<strong>開発チームに報告して頂くためのフォーム</strong>です。<br>
