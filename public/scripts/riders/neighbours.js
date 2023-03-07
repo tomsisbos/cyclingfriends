@@ -76,7 +76,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 marker.togglePopup()
                 neighboursMap.displaySelectedLink(neighbour)
                 map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 2))
-                neighboursMap.$map.scrollIntoView()
+                document.querySelector('.main').scrollIntoView()///neighboursMap.$map.scrollIntoView()
             } else {
                 $marker.querySelector('img').classList.remove('selected-marker')
                 $card.classList.remove('selected-marker')

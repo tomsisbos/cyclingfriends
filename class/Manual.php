@@ -257,6 +257,8 @@ class Manual extends Model {
         echo '<div class="m-intro">';
         foreach ($paragraphs as $class => $text) {
             if (is_numeric($class)) echo '<p>' .$text. '</p>';
+            else if ($class == 'list') self::list($text['style'], $text['content']);
+            else if ($class == 'table') self::table($text);
             else echo '<div class="m-' .$class. '">' .$text. '</div>';
         }
         echo '</div>';
@@ -295,6 +297,10 @@ class Manual extends Model {
         $ref_data = self::$refs[$ref_name];
         if (isset($ref_data['id'])) return '<a href="' .self::baseUri(). '/' .$ref_data['chapter']. '#' .$ref_data['id']. '">' .$text. '</a>';
         else return '<a href="' .self::baseUri(). '/' .$ref_data['chapter']. '">' .$text. '</a>';
+    }
+
+    public static function temp (string $text) {
+        return '<span class="m-temp" title="現時点では、この機能はまだ開発中です。">' .$text. '</span>';
     }
     
     public static function point ($point) {

@@ -10,8 +10,9 @@
                     <?= $rider->getLevelString(); ?>
                 </span> <?php
             } ?>
-        </div>
-        <?= datetimeToDate($rider->friendsSince($connected_user->id)). ' から友達'; ?>
+        </div> <?php
+        $friends_since = new Datetime($rider->friendsSince($user->id));
+        echo $friends_since->format('Y-m-d'). ' から友達'; ?>
     </div> <?php
     include '../includes/riders/friends/buttons.php'; ?>
 </div>

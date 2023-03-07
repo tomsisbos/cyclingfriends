@@ -1,4 +1,4 @@
-import PickMap from "../../map/class/PickMap"
+import PickMap from "/map/class/PickMap.js"
 
 var pickMap = new PickMap()
 const originalPosition = pickMap.currentPosition

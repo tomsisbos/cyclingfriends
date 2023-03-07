@@ -16,6 +16,7 @@
 		<link rel="stylesheet" href="/assets/css/routes.css" />
 		<link rel="stylesheet" href="/assets/css/mailbox.css" />
 		<link rel="stylesheet" href="/assets/css/map.css" />
+		<link rel="stylesheet" href="/assets/css/tooltip.css" />
 		<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css'/>
 	
 	<!-- php -->

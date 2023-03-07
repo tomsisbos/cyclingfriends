@@ -132,7 +132,7 @@ export default class CFUtils {
 
     static getWiderBounds (bbox, margin) {
         var m = margin / 10
-        return [[bbox[0].lng - m, bbox[0].lat - m], [bbox[1].lng + m, bbox[1].lat + m]]
+        return [[bbox[0].lng - m, bbox[0].lat + m], [bbox[1].lng + m, bbox[1].lat - m]]
     }
 
     // Getting city and prefecture data from mapbox reverse geocoding API request response (used as a callback function)

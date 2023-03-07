@@ -203,8 +203,8 @@ class User extends Model {
             
         // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
         } else {
-            $createNewFriendship = $this->getPdo()->prepare('INSERT INTO friends(inviter_id, inviter_login, receiver_id, receiver_login, invitation_date) VALUES (?, ?, ?, ?, ?)');
-            $createNewFriendship->execute(array($this->id, $this->login, $friend->id, $friend->login, date('Y-m-d')));
+            $createNewFriendship = $this->getPdo()->prepare('INSERT INTO friends(inviter_id, receiver_id, invitation_date) VALUES (?, ?, ?)');
+            $createNewFriendship->execute(array($this->id, $friend->id, date('Y-m-d')));
             return array('success' => $friend->login. "に友達申請を送りました !");
         }
     }
@@ -264,10 +264,10 @@ class User extends Model {
 
     public function friendsSince ($friend_id) {
         $friendslist = $this->getFriends();
-        $getApprovalDate = $this->getPdo()->prepare('SELECT approval_date FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id)');
-        $getApprovalDate->execute(array(":user_id" => $friend_id));
-        $approval_date = $getApprovalDate->fetch();
-        return $approval_date[0];
+        $getApprovalDate = $this->getPdo()->prepare('SELECT approval_date FROM friends WHERE CASE WHEN inviter_id = :user_id THEN receiver_id = :friend_id WHEN receiver_id = :user_id THEN inviter_id = :friend_id END');
+        $getApprovalDate->execute(array(":user_id" => $this->id, ":friend_id" => $friend_id));
+        $approval_date = $getApprovalDate->fetch(PDO::FETCH_COLUMN);
+        return $approval_date;
     }
 
     // Insert a new entry in followers table
@@ -646,8 +646,8 @@ class User extends Model {
 
     // Insert a new message in the message table
     public function sendMessage ($receiver, $message){        
-        $addMessage = $this->getPdo()->prepare('INSERT INTO messages (sender_id, sender_login, receiver_id, receiver_login, message, time) VALUES (?, ?, ?, ?, ?, ?)');
-        $addMessage->execute(array($this->id, $this->login, $receiver->id, $receiver->login, $message, date('Y-m-d H:i:s')));
+        $addMessage = $this->getPdo()->prepare('INSERT INTO messages (sender_id, receiver_id, message, time) VALUES (?, ?, ?, ?)');
+        $addMessage->execute(array($this->id, $receiver->id, $message, date('Y-m-d H:i:s')));
     }
 
     public function getFavorites ($type, $offset = 0, $limit = 9999) {

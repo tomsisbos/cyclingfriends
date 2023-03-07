@@ -1,5 +1,8 @@
 <a href="/beta/devnote/<?= $dev_note->id ?>">
-    <div class="dvnt-board-item<?php if ($dev_note->isAnswered()) echo ' answered' ?>">
+    <div class="dvnt-board-item<?php
+        if ($dev_note->isAnswered()) echo ' answered';
+        else if ($dev_note->getUser()->hasModeratorRights()) echo ' bg-admin' ?>
+    ">
         <div class="dvnt-board-user">
             <div class="dvnt-board-propic"> <?php
                 $dev_note->getUser()->getPropicElement(); ?>

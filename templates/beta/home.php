@@ -129,10 +129,10 @@ include '../includes/navbar.php'; ?>
         <h2>本格スタートに向けて</h2>
         
         <div class="home-schedule-container">
-            <div class="home-schedule-block">
+            <div class="home-schedule-block" style="border-color: #ff5555;">
                 <div class="home-schedule-subtitle">Stage 1</div>
-                <div class="home-schedule-title">プライベートベータ公開</div>
-                <p>2023年2月予定</p>
+                <div class="home-schedule-title" style="color: #ff5555;">プライベートベータ公開</div>
+                <p>開始しました！</p>
             </div>
             <svg height="60" width="10">
                 <polygon points="0,00 10,30 0,60" />

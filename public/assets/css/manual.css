@@ -119,6 +119,13 @@
     text-decoration: underline;
 }
 
+.m-temp {
+    display: inline;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: help;
+}
+
 .m-path {
     padding: 12px 20px;
 }

@@ -201,7 +201,7 @@ function linkElements (a, b, container = document.body) {
 
 	const drawLink = () => {
 		// Clear previous canvas
-		if (document.querySelector('.canvas-line')) document.querySelector('.canvas-line').remove()
+		if (container.querySelector('.canvas-line')) container.querySelector('.canvas-line').remove()
 		// Build canvas
 		var canvas = document.createElement("canvas")
 		canvas.setAttribute('width', document.body.clientWidth)

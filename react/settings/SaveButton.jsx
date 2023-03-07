@@ -8,11 +8,7 @@ export default function SaveButton ({ settings, type = 'settings', text = 'ä¿å­
 
     function saveSettings () {
         settings.type = type
-        console.log(settings)
-        axios.post('/api/settings.php', settings).then(response => {
-            console.log(response)
-            displayResponseMessage(response.data)
-        } )
+        axios.post('/api/settings.php', settings).then(response => displayResponseMessage(response.data))
     }
     
     return (

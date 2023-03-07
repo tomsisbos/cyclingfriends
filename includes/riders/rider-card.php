@@ -45,8 +45,9 @@
                                 <a target="_blank" href="<?= $rider->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a> <?php
                             } ?>
                         </div> <?php
-                        if ($rider->isFriend($connected_user)) { ?>
-                            <?= datetimeToDate($rider->friendsSince($connected_user->id)). ' から友達'; 
+                        if ($rider->isFriend($connected_user)) {
+                            $friends_since = new Datetime($rider->friendsSince($connected_user->id));
+                            echo $friends_since->format('Y-m-d'). ' から友達'; 
                         } ?>
                     </div>
                 </div>

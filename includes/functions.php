@@ -14,13 +14,6 @@ function isAjax () {
 	return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
 
-// Converts a date from 'Y-m-d H:i:s' format to 'Y-m-d' format
-function datetimeToDate($date){
-	$date = date('Y-m-d H:i:s');
-	$date_timestamp = strtotime($date);
-	return $new_date = date('Y-m-d', $date_timestamp); 
-}
-
 // Function for replacing <br /> tags with new lines
 function br2nl($input){
 	    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));

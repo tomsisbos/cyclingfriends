@@ -39,7 +39,7 @@ $router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-fa
 $router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
 
 // Manual
-$router->map('GET', '/manual', 'community/manual', 'manual');
+$router->map('GET', '/manual', 'manual/home', 'manual');
 $router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
 
 // World

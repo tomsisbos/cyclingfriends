@@ -51,6 +51,7 @@
 
 .rdr-login {
 	display: inline;
+    word-break: break-word;
 	font-size: 30px;
 	font-family: gaegu;
 	font-weight: bold;

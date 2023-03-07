@@ -55,8 +55,8 @@ class PrivateBetaMember extends Model {
         $getUserId->execute([$this->email]);
         if ($getUserId->rowCount() > 0) {
             $user_id = $getUserId->fetch(PDO::FETCH_COLUMN);
-            $updateUserId = $this->getPdo()->prepare("UPDATE privatebeta_members SET user_id = ?");
-            $updateUserId->execute([$user_id]);
+            $updateUserId = $this->getPdo()->prepare("UPDATE privatebeta_members SET user_id = ? WHERE email = ?");
+            $updateUserId->execute([$user_id, $this->email]);
             $this->user_id = $user_id;
         }
     }

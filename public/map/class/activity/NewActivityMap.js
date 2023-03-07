@@ -525,14 +525,14 @@ export default class NewActivityMap extends ActivityMap {
                 if (acceptedFormats.includes(files[i].type)) {
 
                     // Extract Exif data and start image treatment
-                    loader.setText('写真データをダウンロード中...')
+                    loader.setText('写真データをアップロード中...')
                     var blobUrl = URL.createObjectURL(files[i])
                     let img = new Image()
                     img.src = blobUrl
                     img.addEventListener('load', () => {
                         
                         loader.setText('写真データを解析中...')
-                        EXIF.getData(img, async() => {
+                        EXIF.getData(img, async () => {
                             // Extract date data
                             var exifDateTimeOriginal = EXIF.getTag(img, 'DateTimeOriginal')
                             var exifDateTime         = EXIF.getTag(img, 'DateTime')
@@ -567,21 +567,18 @@ export default class NewActivityMap extends ActivityMap {
                                     } )
                                     
                                     number++
-
-                                    // Resolve promise after last file has been treated
-                                    if (number == filesLength + currentPhotosNumber) {
-                                        loader.stop()
-                                        resolve(true)
-                                    }
+                                    stopIfFinished(number, filesLength, currentPhotosNumber)
 
                                 } else {
                                     showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。'})
                                     filesLength--
+                                    stopIfFinished(number, filesLength, currentPhotosNumber)
                                 }
 
                             } else {
                                 showResponseMessage({error: '\"' + files[i].name + '\"にはタイムデータが付随されていません。未加工のファイルをアップロードしてください。'})
                                 filesLength--
+                                stopIfFinished(number, filesLength, currentPhotosNumber)
                             }
 
                         } )
@@ -591,6 +588,17 @@ export default class NewActivityMap extends ActivityMap {
                 } else {
                     showResponseMessage({error: '\"' + files[i].name + '\"のファイル形式に対応していません。対応しているファイル形式は次の通り：' + acceptedFormatsString + '.'})
                     filesLength--
+                    stopIfFinished(number, filesLength, currentPhotosNumber)
+                }
+            }
+
+            stopIfFinished(number, filesLength, currentPhotosNumber)
+
+            // Resolve promise after last file has been treated
+            function stopIfFinished (number, filesLength, currentPhotosNumber) {
+                if (number == filesLength + currentPhotosNumber) {
+                    loader.stop()
+                    resolve(true)
                 }
             }
         } )
@@ -619,6 +627,7 @@ export default class NewActivityMap extends ActivityMap {
         ) ().then( () => {
             this.highlightFeaturedPhoto()
             this.updateClearPhotosButton()
+            document.querySelector('#divCheckpoints').scrollIntoView()
         } )
     }
 

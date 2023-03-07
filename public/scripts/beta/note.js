@@ -21,9 +21,7 @@ noteIcon.addEventListener('click', async () => {
         else {
             var noteData = await openNotePopup()
             if (noteData != false) {
-                console.log(noteData)
                 ajaxJsonPostRequest(apiUrl, noteData, (response) => {
-                    console.log(response)
                     showResponseMessage(response)
                 } )
             }

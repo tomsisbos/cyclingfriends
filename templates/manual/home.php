@@ -30,8 +30,10 @@ include '../includes/head.php'; ?>
 				<h1>ユーザーマニュアル</h1>
 				<div class="m-subtitle">User manual</div>
 
-				<p>このセクションでは、CyclingFriendsがどんな仕組みによって動いているのかについて、細かく記載させて頂いております。</p>
-				<p>左側のサイドバーからアクセスできる様々なチャプターに構成されています。</p>
+				<div class="m-intro">
+					<p>このセクションでは、CyclingFriendsがどんな仕組みによって動いているのかについて、細かく記載させて頂いております。</p>
+					<p>左側のサイドバーからアクセスできる様々なチャプターに構成されています。</p>
+				</div>
 
 			</div>
 		</div>

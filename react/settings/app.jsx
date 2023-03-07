@@ -24,7 +24,6 @@ function App () {
     }
 
     const displayResponseMessage = (response) => {
-        console.log(response)
         setMessage(<ResponseMessage response={response}/>)
     }
   

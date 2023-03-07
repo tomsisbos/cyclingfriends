@@ -37,7 +37,7 @@ include '../includes/head.php'; ?>
         </div>
 
         <!-- Chat -->
-        <div class="container bg-white end"> <?php
+        <div class="container bg-white"> <?php
             if (!empty($dev_note->chat)) { ?>
                 <div class="dvnt-chat"> <?php
                     foreach ($dev_note->chat as $message) { ?>
@@ -49,7 +49,9 @@ include '../includes/head.php'; ?>
                         </div> <?php
                     } ?>
                 </div> <?php
-            } else echo '<div class="error-block"><div class="error-message">開発チームから回答させて頂きます。暫くお待ちください。</div></div>' ?>
+            } else {
+                if (!$dev_note->getUser()->hasModeratorRights()) echo '<div class="error-block"><div class="error-message">開発チームから回答させて頂きます。暫くお待ちください。</div></div>';
+            } ?>
         </div>
 
         <!-- New message -->

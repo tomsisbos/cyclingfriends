@@ -48,7 +48,7 @@ function friendAction (action, friend_id, callback) {
 function afterClick (button, user_id, response) {
 	showResponseMessage(response)
 	var action = getTwinAction(button.dataset.action)
-	button.className = 'btn rdr-button ' + getClass(action)
+	button.className = 'rdr-button ' + getClass(action)
 	button.dataset.id = user_id
 	button.dataset.action = action
 	button.innerHTML = getIcon(action) + ' ' + getActionName(action)
