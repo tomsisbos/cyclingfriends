@@ -27,7 +27,7 @@ $upload.addEventListener('change', async (e) => {
 
     // When upload has finished, send it to server
     reader.onload = () => {
-        loader.setText('データをダウンロード中... (1/2)')
+        loader.setText('データをアップロード中... (1/2)')
         xhr.send(formData)
     }
 
