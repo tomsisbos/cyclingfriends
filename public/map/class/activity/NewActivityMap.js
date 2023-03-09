@@ -475,8 +475,8 @@ export default class NewActivityMap extends ActivityMap {
 
     // Treat user photos upload
     async loadPhotos (uploadedFiles) {
-        return new Promise( (resolve, reject) => {
-            const acceptedFormats = ['image/jpeg', 'image/png']
+        return new Promise(async (resolve, reject) => {
+            const acceptedFormats = ['jpg', 'png', 'HEIC']
             var acceptedFormatsString = acceptedFormats.join(', ')
             
             // Start loader
@@ -522,11 +522,24 @@ export default class NewActivityMap extends ActivityMap {
             for (let i = 0; i < filesLength; i++) {
 
                 // If the photo format is accepted
-                if (acceptedFormats.includes(files[i].type)) {
+                var ext = files[i].name.split('.').pop()
+                if (acceptedFormats.includes(ext)) {
+
+                    // If HEIC file, ask server for jpg conversion
+                    if (ext == 'HEIC') {
+                        var jpgblob = await (function () {
+                            return new Promise((resolve, reject) => sendFile(files[i], '/api/utils/heic-converter.php', (response) => {
+                                console.log(window.location.origin + response.path)
+                                fetch(window.location.origin + response.path).then(response => response.blob()).then(blob => resolve(blob))
+                            }))
+                        } ) ()
+
+                    } else var jpgblob = files[i]
+                    console.log(jpgblob)
 
                     // Extract Exif data and start image treatment
                     loader.setText('写真データをアップロード中...')
-                    var blobUrl = URL.createObjectURL(files[i])
+                    var blobUrl = URL.createObjectURL(jpgblob)
                     let img = new Image()
                     img.src = blobUrl
                     img.addEventListener('load', () => {
@@ -627,7 +640,6 @@ export default class NewActivityMap extends ActivityMap {
         ) ().then( () => {
             this.highlightFeaturedPhoto()
             this.updateClearPhotosButton()
-            document.querySelector('#divCheckpoints').scrollIntoView()
         } )
     }
 

@@ -1,6 +1,6 @@
 /* Global functions */
 
-function ajax (callback, loader) {
+function ajax (callback, loader = null) {
 	var xhr = getHttpRequest()
 	if (loader && loader.prepare) loader.prepare()
 	xhr.onreadystatechange = async function () {
@@ -69,6 +69,23 @@ function ajaxJsonPostRequest (url, jsonData, callback, loader = null) {
 	xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')
 	xhr.setRequestHeader('Content-Type', 'application/json')
 	xhr.send(JSON.stringify(jsonData))
+}
+
+/**
+ * Send a file to url and execute callback
+ * @param File file
+ * @param string url 
+ * @param callable callback 
+ */
+function sendFile (file, url, callback) {
+	const xhr = new XMLHttpRequest()
+	const fd = new FormData()
+	xhr.open("POST", url, true)
+	xhr.onreadystatechange = () => {
+		if (xhr.readyState == 4 && xhr.status == 200) callback(JSON.parse(xhr.responseText))
+	}
+	fd.append('file', file)
+	xhr.send(fd)
 }
 
 // Function for truncating strings

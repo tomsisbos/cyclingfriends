@@ -23,7 +23,7 @@ if (isAjax()) {
 
                 // Store image in jpg format
                 $temp_image = new TempImage($_FILES['file']['name']);
-                $temp_image->convert($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+                $temp_image->convert($_FILES['file']['tmp_name']);
                 if (!$temp_image->temp_path) throw new Exception('アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
                 
                 if (!isset(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
@@ -146,7 +146,7 @@ if (isAjax()) {
 
                 // Store image in jpg format
                 $temp_image = new TempImage($_FILES['file']['name']);
-                $temp_image->convert($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+                $temp_image->convert($_FILES['file']['tmp_name']);
                 if (!$temp_image->temp_path) throw new Exception('アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
                 
                 if (!isset(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal

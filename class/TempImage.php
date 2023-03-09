@@ -65,16 +65,16 @@ class TempImage {
      * Convert a file from $accepted_formats to jpg
      * @return string file path
      */
-    public function convert (string $file, string $name) {
+    public function convert (string $file) {
 
         // Get file format (extension)
-        $ext = pathinfo($name, PATHINFO_EXTENSION);
+        $ext = pathinfo($this->name, PATHINFO_EXTENSION);
 
         // If file format is accepted
         if (in_array($ext, $this->accepted_formats)) {
 
             // Prepare file name and path
-            $this->setName(pathinfo($name, PATHINFO_FILENAME). '.jpg');
+            $this->setName(pathinfo($this->name, PATHINFO_FILENAME). '.jpg');
             $this->temp_path = $this->temp_folder . $this->temp_name;
 
             // jpg

@@ -355,7 +355,7 @@ class User extends Model {
             if ($img_size > $max_size) return array('error' => 'アップロードしたファイルがサイズ制限（5Mb）を超えています。サイズを縮小して再度試してください。');
 
             // Store temp file as *.jpg
-            $temp_image->convert($_FILES['propicfile']['tmp_name'], $_FILES['propicfile']['name']);
+            $temp_image->convert($_FILES['propicfile']['tmp_name']);
             if (!$temp_image->temp_path) return array('error' => 'アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
 
             // Sort upload data into variables
