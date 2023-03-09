@@ -73,25 +73,13 @@ if (is_array($data)) {
 
         // If first photo upload (as photo is posted with a base 64 string), treat/compress data
         if (!empty($photo['blob']) && substr($photo['blob'], 0, 4) == 'data') {
-            // Photo treatment
-            $ext = strtolower(substr($photo['name'], -3));
-            $img_name = 'temp.'.$ext;
-            $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
-            // Temporary upload raw file on the server
-            base64_to_jpeg($photo['blob'], $temp);
-            // Get the file into $img thanks to imagecreatefromjpeg
-            $img = imagecreatefromjpegexif($temp);
-            if (imagesx($img) > 1600) $img = imagescale($img, 1600); // Only scale if img is wider than 1600px
-            // Correct image gamma and contrast
-            imagegammacorrect($img, 1.0, 1.1);
-            imagefilter($img, IMG_FILTER_CONTRAST, -5);
-            // Compress it and move it into a new folder
-            $path = $_SERVER["DOCUMENT_ROOT"]. "/media/activities/temp/photo_" .$img_name; // Set path variable
-            imagejpeg($img, $path, 75); // Set new quality to 75
+            
+            // Get blob ready to upload
+            $temp_image = new TempImage($photo['name']);
+            $img_blob = $temp_image->treatBase64($photo['blob']);
 
             // Set variables ready for upload
             $filename = setFilename('img');
-            $img_blob = fopen($path, 'r');
             $img_size = $photo['size'];
             $img_name = $photo['name'];
             $img_type = $photo['type'];
@@ -195,47 +183,22 @@ if (is_array($data)) {
                     }
                 }
 
-                // Prepare blob
-                $ext = strtolower(substr($entry['name'], -3));
-                $img_name = 'temp.'.$ext;
-                $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
-
-                // Temporary upload raw file on the server
-                base64_to_jpeg($base64, $temp);
-                // Get the file into $img thanks to imagecreatefromjpeg
-                $img = imagecreatefromjpegexif($temp);
-                if (imagesx($img) > 1600) $img = imagescale($img, 1600); // Only scale if img is wider than 1600px
-                // Correct image gamma and contrast
-                imagegammacorrect($img, 1.0, 1.1);
-                imagefilter($img, IMG_FILTER_CONTRAST, -5);
-                // Compress it and move it into a new folder
-                $path = $_SERVER["DOCUMENT_ROOT"]. "/media/activities/temp/photo_" .$img_name; // Set path variable
-                imagejpeg($img, $path, 75); // Set new quality to 75
+                // Get blob ready to upload
+                $temp_image = new TempImage($photo['name']);
+                $mkpoint_photo['filename'] = setFilename('img');
+                $mkpoint_photo['blob'] = $temp_image->treatBase64($photo['blob']);
 
                 // Build and append mkpoint thumbnail
                 if (!$thumbnail_set) {
-                    // Get image and scale it to thumbnail size
-                    $thumbnail = imagecreatefromjpegexif($path);
-                    $thumbnail = imagescale($thumbnail, 48, 36);
-                    // Correct image gamma and contrast
-                    imagegammacorrect($thumbnail, 1.0, 1.275);
-                    imagefilter($thumbnail, IMG_FILTER_CONTRAST, -12);
-                    $thumbpath = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/thumb_' .$img_name; // Set path variable
-                    imagejpeg($thumbnail, $thumbpath);
+
+                    // Get thumbnail
+                    $mkpoint['thumbnail'] = $temp_image->getThumbnail();
+
                     // Insert mkpoint data
-                    $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
                     $insertMkpointThumbnail = $db->prepare('UPDATE map_mkpoint SET thumbnail = ? WHERE id = ?');
                     $insertMkpointThumbnail->execute(array($mkpoint['thumbnail'], $mkpoint['id']));
                     $thumbnail_set = true;
-                    unlink($thumbpath);
                 }
-
-                // Set blob and filename for blob server
-                $mkpoint_photo['filename'] = setFilename('img');
-                $mkpoint_photo['blob'] = fopen($path, 'r');
-
-                // Remove temp files
-                unlink($temp); unlink($path);
 
                 // Insert photos data
                 $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');

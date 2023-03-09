@@ -17,15 +17,17 @@ if (isAjax()) {
             if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
                 throw new Exception('アップロード中に問題が発生しました。');
             } else {
-                // Get extension from file name
-                $ext = strtolower(substr($_FILES['file']['name'], -3));
 
-                if ($_FILES['file']['error'] == 2) { // If error is file_exceed_limit
-                    throw new Exception('アップロードされたファイルがサイズ制限を超えています（10Mb）。サイズを縮小して再度お試しください。');
-                } else if (!getimagesize($_FILES["file"]["tmp_name"])) {
-                    throw new Exception('アップロードされたファイルは画像ではありません。');
-                } else if (!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
-                    throw new Exception('この画像にはタイムデータが付随されていません。未加工のファイルをアップロードしてください。');
+                // If error is file_exceed_limit
+                if ($_FILES['file']['error'] == 2) throw new Exception('アップロードされたファイルがサイズ制限を超えています（10Mb）。サイズを縮小して再度お試しください。');
+
+                // Store image in jpg format
+                $temp_image = new TempImage($_FILES['file']['name']);
+                $temp_image->convert($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+                if (!$temp_image->temp_path) throw new Exception('アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
+                
+                if (!isset(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
+                    throw new Exception('この画像ファイルに撮影日時のデータが付随されていません。カメラデバイスから撮影された写真の生データしかご利用頂けません。');
                 }
                 
                 // Preparing variables
@@ -36,8 +38,8 @@ if (isAjax()) {
                 $mkpoint['city']             = $_POST['city'];
                 $mkpoint['prefecture']       = $_POST['prefecture'];
                 $mkpoint['elevation']        = $_POST['elevation'];
-                $mkpoint['date']             = exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'];
-                $mkpoint['month']            = date("n", strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
+                $mkpoint['date']             = exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal'];
+                $mkpoint['month']            = date("n", strtotime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']));
                 $mkpoint['description']      = htmlspecialchars($_POST['description']);
                 $mkpoint['tags']             = explode(",", $_POST['tags']);
                 $mkpoint['file_size']        = $_FILES['file']['size'];
@@ -49,44 +51,12 @@ if (isAjax()) {
                 $mkpoint['error']            = $_FILES['file']['error'];
                 $mkpoint['popularity']       = 30;
 
-                /* Photo treatment */
-                $img_name = 'temp.'.$ext; // Set image name
-                $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
-                // Temporary upload raw file on the server
-                move_uploaded_file($_FILES['file']['tmp_name'], $temp);
-                // Get the file into $img thanks to imagecreatefromjpeg
-                $img = imagecreatefromjpegexif($temp);
-                // Only scale if img is wider than 1600px
-                if (imagesx($img) > 1600) $img = imagescale($img, 1600);
-                // Correct image gamma and contrast
-                imagegammacorrect($img, 1.0, 1.1);
-                imagefilter($img, IMG_FILTER_CONTRAST, -5);
-                // Compress it and move it into a new folder
-                $path = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/photo_' .$img_name; // Set path variable
-                // If uploaded file size exceeds 3Mb, set new quality to 15
-                if ($_FILES['file']['size'] > 3000000) imagejpeg($img, $path, 75);
-                // If uploaded file size is between 1Mb and 3Mb set new quality to 30
-                else imagejpeg($img, $path, 90);
-                // Get variable ready
-                $blob = fopen($path, 'r');
-                
-                /* Thumbnail treatment */
-                // Get image and scale it to thumbnail size
-                $thumbnail = imagecreatefromjpegexif($path);
-                $thumbnail = imagescale($thumbnail, 48, 36);
-                // Correct image gamma and contrast
-                imagegammacorrect($thumbnail, 1.0, 1.275);
-                imagefilter($thumbnail, IMG_FILTER_CONTRAST, -12);
-                $thumbpath = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/thumb_' .$img_name; // Set path variable
-                imagejpeg($thumbnail, $thumbpath);
-                // Get variable ready
-                $mkpoint['thumbnail'] = base64_encode(file_get_contents($thumbpath));
-
-                // Set filename for blob server
+                // Get blob ready to upload
+                $blob = $temp_image->treatFile($temp_image->temp_path);
                 $filename = setFilename('img');
-
-                // Delete temporary files
-                unlink($temp); unlink($path); unlink($thumbpath);
+                    
+                // Build thumbnail
+                $mkpoint['thumbnail'] = $temp_image->getThumbnail();
             }
         
         // If any exception have been catched, response the error message set in the exception
@@ -170,14 +140,16 @@ if (isAjax()) {
             if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
                 throw new Exception('アップロード中に問題が発生しました。');
             } else {
-                // Get extension from file name
-                $ext = strtolower(substr($_FILES['file']['name'], -3));
 
-                if ($_FILES['file']['error'] == 2) { // If error is file_exceed_limit
-                    throw new Exception('アップロードされたファイルがサイズ制限を超えています（10Mb）。サイズを縮小して再度お試しください。');
-                } else if (!getimagesize($_FILES["file"]["tmp_name"])) {
-                    throw new Exception('アップロードされたファイルは画像ではありません。');
-                } else if (!isset(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
+                // If error is file_exceed_limit
+                if ($_FILES['file']['error'] == 2) throw new Exception('アップロードされたファイルがサイズ制限を超えています（10Mb）。サイズを縮小して再度お試しください。');
+
+                // Store image in jpg format
+                $temp_image = new TempImage($_FILES['file']['name']);
+                $temp_image->convert($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+                if (!$temp_image->temp_path) throw new Exception('アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
+                
+                if (!isset(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal'])) { // If image header doesn't contain DateTimeOriginal
                     throw new Exception('この画像ファイルに撮影日時のデータが付随されていません。カメラデバイスから撮影された写真の生データしかご利用頂けません。');
                 }
                 
@@ -186,30 +158,14 @@ if (isAjax()) {
                 $mkpointimg['mkpoint_id']  = $_POST['mkpoint_id'];
                 $mkpointimg['user_id']     = $user->id;
                 $mkpointimg['user_login']  = $user->login;
-                $mkpointimg['date']        = date('Y-m-d H:i:s', strtotime(exif_read_data($_FILES['file']['tmp_name'], 0, true)['EXIF']['DateTimeOriginal']));
+                $mkpointimg['date']        = date('Y-m-d H:i:s', strtotime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']));
                 $mkpointimg['file_size']   = $_FILES['file']['size'];
                 $mkpointimg['file_name']   = $_FILES['file']['name'];
                 $mkpointimg['file_type']   = $_FILES['file']['type'];
                 $mkpointimg['error']       = $_FILES['file']['error'];
 
-                /* Photo treatment */
-                $img_name = 'img.'.$ext; // Set image name
-                $temp = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/' .$img_name; // Set temp path
-                move_uploaded_file($_FILES['file']['tmp_name'], $temp); // Temporary upload raw file on the server
-                // Get the file into $img thanks to imagecreatefromjpeg
-                $img = imagecreatefromjpegexif($temp);
-                $img = imagescale($img, 1600, 900);
-                // Correct image gamma and contrast
-                imagegammacorrect($img, 1.0, 1.1);
-                imagefilter($img, IMG_FILTER_CONTRAST, -5);
-                // Compress it and read data inside $blob
-                $path = $_SERVER["DOCUMENT_ROOT"]. '/map/media/temp/photo_' .$img_name; // Set path variable
-                if ($_FILES['file']['size'] > 3000000) imagejpeg($img, $path, 75); // If uploaded file size exceeds 3Mb, set new quality
-                else imagejpeg($img, $path, 90); // If uploaded file size is between 1Mb and 3Mb set new quality
-                $blob = fopen($path, 'r'); // Get variable ready
-                // Delete temporary files
-                if (is_file($temp)) unlink($temp);
-                if (is_file($path)) unlink($path);
+                // Get blob ready to upload
+                $blob = $temp_image->treatFile($temp_image->temp_path);
 
                 // Connect to blob storage
                 $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));

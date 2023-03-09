@@ -17,7 +17,7 @@ worldMap.addStyleControl()
 worldMap.addOptionsControl()
 worldMap.addFilterControl()
 worldMap.addFullscreenControl()
-if (worldMap.session.rights === 'administrator' || worldMap.session.rights === 'editor') worldMap.addEditorControl()
+if (worldMap.session.rights.rank >= 20) worldMap.addEditorControl()
 
 // Prepare and display mkpoints data
 ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=details", (mkpoints) => {

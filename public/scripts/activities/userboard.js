@@ -7,7 +7,7 @@ if (sessionStorage.getItem('pending')) {
         ajaxGetRequest ("/api/loading.php?record-type=activity", (record) => {
 
             // First show a common message
-            showResponseMessage({'success': record.message})
+            showResponseMessage({'success': record.message}, {scrollIntoView: false})
 
             // If upload is finished, clear interval and session storage
             if (record.status == 'success') {

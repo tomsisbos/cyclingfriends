@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b4bfe1fab14d9c3567c539c0851c0302",
+    "content-hash": "7091ec39bba0dbf9c16d5ff655fb9d0d",
     "packages": [
         {
             "name": "adriangibbons/php-fit-file-analysis",
@@ -566,6 +566,47 @@
                 "source": "https://github.com/thephpleague/color-extractor/tree/0.4.0"
             },
             "time": "2022-09-24T15:57:16+00:00"
+        },
+        {
+            "name": "maestroerror/php-heic-to-jpg",
+            "version": "v0.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MaestroError/php-heic-to-jpg.git",
+                "reference": "ff64285e4cf1a61db379d27a75cfb18664e36e41"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MaestroError/php-heic-to-jpg/zipball/ff64285e4cf1a61db379d27a75cfb18664e36e41",
+                "reference": "ff64285e4cf1a61db379d27a75cfb18664e36e41",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/heicToJpg",
+                "bin/heicToJpgWin"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Maestroerror\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "maestroerror",
+                    "email": "revaz.gh@gmail.com"
+                }
+            ],
+            "description": "Converts HEIC/HEIF image to JPG type, without any dependencies",
+            "support": {
+                "issues": "https://github.com/MaestroError/php-heic-to-jpg/issues",
+                "source": "https://github.com/MaestroError/php-heic-to-jpg/tree/v0.3.2"
+            },
+            "time": "2023-03-03T20:25:35+00:00"
         },
         {
             "name": "microsoft/azure-storage-blob",
@@ -1163,16 +1204,16 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "1ee04c65529dea5d8744774d474e7cbd2f1206d3"
+                "reference": "e2d1534420bd723d0ef5aec58a22c5fe60ce6f5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/1ee04c65529dea5d8744774d474e7cbd2f1206d3",
-                "reference": "1ee04c65529dea5d8744774d474e7cbd2f1206d3",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/e2d1534420bd723d0ef5aec58a22c5fe60ce6f5e",
+                "reference": "e2d1534420bd723d0ef5aec58a22c5fe60ce6f5e",
                 "shasum": ""
             },
             "require": {
@@ -1210,7 +1251,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.2.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.2.1"
             },
             "funding": [
                 {
@@ -1226,7 +1267,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-25T10:21:52+00:00"
+            "time": "2023-03-01T10:25:55+00:00"
         }
     ],
     "packages-dev": [],

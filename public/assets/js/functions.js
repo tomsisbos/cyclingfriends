@@ -271,7 +271,7 @@ async function openConfirmationPopup (question) {
 }
 
 // Show corresponding message after request
-function showResponseMessage (message, options = {element: false, absolute: false}) {
+function showResponseMessage (message, options = {element: false, absolute: false, scrollIntoView: true}) {
 
 	hideResponseMessage()
 
@@ -310,7 +310,7 @@ function showResponseMessage (message, options = {element: false, absolute: fals
 	closeButton.addEventListener('click', hideResponseMessage)
 	
 	// Scroll to message
-	element.scrollIntoView()
+	if (options.scrollIntoView) element.scrollIntoView()
 }
 
 function hideResponseMessage () {

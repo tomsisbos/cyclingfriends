@@ -7,6 +7,7 @@ include '../includes/head.php'; ?>
 <html lang="en">
 
 <body> <?php
+phpinfo();
 	
 	include '../includes/navbar.php'; ?>
 	

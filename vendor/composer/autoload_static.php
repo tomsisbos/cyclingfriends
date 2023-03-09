@@ -41,6 +41,7 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
         array (
             'MicrosoftAzure\\Storage\\Common\\' => 30,
             'MicrosoftAzure\\Storage\\Blob\\' => 28,
+            'Maestroerror\\' => 13,
         ),
         'L' => 
         array (
@@ -108,6 +109,10 @@ class ComposerStaticInit728cb20bf5f2ba84885f409a0fd997ce
         'MicrosoftAzure\\Storage\\Blob\\' => 
         array (
             0 => __DIR__ . '/..' . '/microsoft/azure-storage-blob/src/Blob',
+        ),
+        'Maestroerror\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maestroerror/php-heic-to-jpg/src',
         ),
         'Location\\' => 
         array (

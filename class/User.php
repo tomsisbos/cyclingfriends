@@ -347,25 +347,21 @@ class User extends Model {
             return array('error' => "ファイルアップロード中に問題が発生しました。");
                 
         } else {
+            
+            $temp_image = new TempImage($_FILES['propicfile']['name']);
                 
             // Displays an error message if file size exceeds $max_size
             $img_size = $_FILES['propicfile']['size'];
             if ($img_size > $max_size) return array('error' => 'アップロードしたファイルがサイズ制限（5Mb）を超えています。サイズを縮小して再度試してください。');
-            
-            // Displays an error message if format is not accepted
-            $img_type = $_FILES['propicfile']['type'];
-            if ($img_type != 'image/jpeg') return array('error' => 'アップロードしたファイルは*.jpg形式のファイルではありません。*.jpg形式のファイルで再度試してください。');
-            
-            // Resize and compress image
-            $temp_path = $_SERVER["DOCUMENT_ROOT"]. '/media/temp/propic_' .$this->id. '.jpg';
-            move_uploaded_file($_FILES['propicfile']['tmp_name'], $temp_path);
-            $img = imagecreatefromjpegexif($temp_path);
-            if ($_FILES['propicfile']['size'] > 3000000) imagejpeg($img, $temp_path, 15);
-            else imagejpeg($img, $temp_path, 30);
+
+            // Store temp file as *.jpg
+            $temp_image->convert($_FILES['propicfile']['tmp_name'], $_FILES['propicfile']['name']);
+            if (!$temp_image->temp_path) return array('error' => 'アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
 
             // Sort upload data into variables
-            $img_name = $_FILES['propicfile']['name'];
-            $img_blob = file_get_contents($temp_path);
+            $img_type = $_FILES['propicfile']['type'];
+            $img_name = $temp_image->name;
+            $img_blob = $temp_image->treatFile($temp_image->temp_path);
             $filename = setFilename('img');
             $metadata = [
                 'user_id' => $this->id,

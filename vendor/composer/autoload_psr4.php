@@ -18,6 +18,7 @@ return array(
     'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
     'MicrosoftAzure\\Storage\\Common\\' => array($vendorDir . '/microsoft/azure-storage-common/src/Common'),
     'MicrosoftAzure\\Storage\\Blob\\' => array($vendorDir . '/microsoft/azure-storage-blob/src/Blob'),
+    'Maestroerror\\' => array($vendorDir . '/maestroerror/php-heic-to-jpg/src'),
     'Location\\' => array($vendorDir . '/mjaschen/phpgeo/src'),
     'League\\ColorExtractor\\' => array($vendorDir . '/league/color-extractor/src'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
