@@ -1275,10 +1275,12 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .error-block {
+    position: relative;
     background: #ff5555;
-    width: 100%;
     z-index: 5;
 	padding: 20px;
+    width: 100%;
+    box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
 }
 .error-message {
     position: relative;
@@ -1288,13 +1290,12 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .success-block {
-    /*position: sticky;*/
-    box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
-    top: 80px;
+    position: relative;
     background: #00e06e;
-    width: 100%;
     z-index: 5;
     padding: 20px;
+    width: 100%;
+    box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
 }
 .relative-navbar .success-block {
     position: relative;

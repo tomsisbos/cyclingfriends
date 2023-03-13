@@ -31,12 +31,15 @@ export default class Loader extends Model {
         this.element.innerText = text
     }
 
+    setHTML (html) {
+        this.element.innerHTML = html
+    }
+
     appendText (text) {
         this.appendice = document.createElement('div')
         this.appendice.innerText = text
         this.appendice.className = 'loading-text loading-appendice'
         this.modal.appendChild(this.appendice)
-
     }
 
     isSet () {

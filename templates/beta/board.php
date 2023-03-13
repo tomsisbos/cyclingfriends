@@ -1,7 +1,7 @@
 <?php
 
 include '../actions/users/initSessionAction.php';
-include '../actions/beta/devNotesAction.php';
+include '../actions/dev/devNotesAction.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -22,13 +22,13 @@ include '../includes/head.php'; ?>
 
         <div class="container bg-admin">
             <h2>表示設定</h2> <?php
-            include '../includes/beta/filter.php'; ?>
+            include '../includes/dev/filter.php'; ?>
         </div>
 
         <div class="container bg-white end">
             <h2>開発ノート一覧</h2>
             <div class="dvnt-board-container"> <?php
-                if (!empty($dev_notes)) foreach ($dev_notes as $dev_note) include '../includes/beta/devnote-card.php';
+                if (!empty($dev_notes)) foreach ($dev_notes as $dev_note) include '../includes/dev/devnote-card.php';
                 else echo '<div class="error-block"><div class="error-message">表示するデータがありません。</div></div>' ?>
             </div>
         </div> <?php

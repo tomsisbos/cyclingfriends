@@ -41,8 +41,8 @@ class TempImage {
      */
     private function formatImage (GdImage $img) {
         if (imagesx($img) > 1600) $img = imagescale($img, 1600); // only scale if img is wider than 1600px
-        imagegammacorrect($img, 1.0, 1.1); // enhance gamma
-        imagefilter($img, IMG_FILTER_CONTRAST, -5); // enhance contrast
+        ///imagegammacorrect($img, 1.0, 1.1); // enhance gamma
+        ///imagefilter($img, IMG_FILTER_CONTRAST, -5); // enhance contrast
         $this->temp_path = $this->temp_folder. "formated_" .$this->name;
         imagejpeg($img, $this->temp_path, $this->compression_percentage); // compress
         return $this->temp_path;
@@ -93,7 +93,7 @@ class TempImage {
     public function treatBase64 (string $base64) {
 
         // Get image data as a *.jpeg file
-        $this->image = $this->base64ToJpeg($base64, $this->name);
+        $this->image = $this->base64ToJpeg($base64);
 
         // Get path to formated image
         $this->temp_path = $this->formatImage($this->image, $this->name);

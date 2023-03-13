@@ -15,7 +15,7 @@ if (is_array($data)) {
     $activity_id = getNextAutoIncrement('activities');
 
     // Set loading record
-    $loading_record = new LoadingRecord($connected_user->id, 'activity', $activity_id);
+    $loading_record = new LoadingRecord($connected_user->id, 'activities', $activity_id);
     $loading_record->register();
 
     try {
@@ -36,7 +36,7 @@ if (is_array($data)) {
 
         // Insert data in 'routes' table
         $routeCoordinates = new Coordinates($data['routeData']['geometry']['coordinates'], $data['routeData']['properties']['time']);
-        $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels);
+        $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels, $loading_record);
 
         // Build activity data
         $loading_record->setStatus('pending', 'アクティビティデータ保存中...');
@@ -94,9 +94,11 @@ if (is_array($data)) {
             $insert_checkpoints -> execute(array($activity_id, $number, $name, $type, $story, $datetime->format('Y-m-d H:i:s'), $city, $prefecture, $elevation, $distance, $temperature, $lng, $lat, $special));
         }
 
+        $photo_number = 1;
         // For each photo
-        $loading_record->setStatus('pending', '写真データ保存中...');
+
         foreach ($data['photos'] as $photo) {
+            $loading_record->setStatus('pending', '写真データ保存中... (' .$photo_number. '/' .count($data['photos']). ')');
 
             // Get blob ready to upload
             $temp_image = new TempImage($photo['name']);
@@ -148,6 +150,8 @@ if (is_array($data)) {
                 'lat' => $lat
             ];
             $blobClient->setBlobMetadata($containername, $filename, $metadata);
+
+            $photo_number++;
         }
 
         // Create new mkpoints if necessary
@@ -309,7 +313,6 @@ if (is_array($data)) {
     } catch (Error $e) {
 
         $loading_record->setStatus('error', $e->getMessage() .' ('. $e->getTraceAsString(). ')');
-        echo json_encode(['error' => $e->getMessage()]);
         die();
 
     }

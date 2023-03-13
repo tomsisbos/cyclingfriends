@@ -107,8 +107,8 @@ $upload.addEventListener('change', async (e) => {
                         // Create new checkpoint on click on route
                         newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
                         newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
-                        newActivityMap.map.on('click', 'route', (e) => {
-                            newActivityMap.addMarkerOnRoute(e.lngLat)
+                        newActivityMap.map.on('click', 'route', async (e) => {
+                            await newActivityMap.addMarkerOnRoute(e.lngLat)
                             newActivityMap.updatePhotos()
                         } )
 

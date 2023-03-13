@@ -1130,7 +1130,7 @@ function getGenderAsIcon($user_id){
 	}
 	
 }
-
+/*
 // Function for downloading & displaying profile gallery
 function displayProfileGallery($user_id){
 	$profile_gallery = downloadProfileGallery($user_id);
@@ -1160,7 +1160,7 @@ function displayProfileGallery($user_id){
 			echo '<img class="gallery-picture" src="data:image/jpeg;base64,' . base64_encode($profile_gallery[4]['img4']) . '" />';
 		echo '</div>';
 	}
-}
+}*/
 
 // Function for calculating the number of remaining days to a certain date
 function nbDaysLeftToDate($date) {
@@ -1413,10 +1413,11 @@ function base64_to_jpeg ($base64_string, $output_file) {
     // Split the string on commas
     // $data[ 0 ] == "data:image/png;base64"
     // $data[ 1 ] == <actual base64 string>
-    $data = explode(',', $base64_string);
+    if (strpos($base64_string, ',')) $data = explode(',', $base64_string)[1];
+	else $data = $base64_string;
 
     // We could add validation here with ensuring count( $data ) > 1
-    fwrite($ifp, base64_decode($data[1]));
+    fwrite($ifp, base64_decode($data));
 
     // Clean up the file resource
     fclose($ifp); 

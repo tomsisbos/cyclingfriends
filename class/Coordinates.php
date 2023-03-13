@@ -22,7 +22,7 @@ class Coordinates extends Model {
     }
 
     // Create a route from these coordinates
-    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels = []) {
+    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels = [], $loading_record = NULL) {
 
         // Prepare start and goal place strings
         $startplace = $startplace['city'] . ' (' . $startplace['prefecture'] . ')';
@@ -52,18 +52,16 @@ class Coordinates extends Model {
             // Save route coords
             $getRouteId = $this->getPdo()->prepare('SELECT id FROM routes WHERE author_id = ? AND posting_date = ? AND name = ?');
             $getRouteId->execute(array($author_id, $posting_date, $name));
-            $route_id = $getRouteId->fetch()['id'];
+            $route_id = $getRouteId->fetch(PDO::FETCH_COLUMN);
             
             if ($this->time != NULL) $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat, datetime) VALUES (?, ?, ?, ?, ?)');
             else $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
             for ($i = 0; $i < count($this->coordinates); $i++) {
-                $number = $i;
-                $lng    = $this->coordinates[$i]->lng;
-                $lat    = $this->coordinates[$i]->lat;
-                if ($this->time != NULL) {
-                    $datetime = $this->time[$i];
-                    $insertCoords->execute(array($route_id, $number, $lng, $lat, $datetime));
-                } else $insertCoords->execute(array($route_id, $number, $lng, $lat));
+                if (is_int($i / 250) && $loading_record !== NULL) $loading_record->setStatus('pending', 'ルートデータ保存中...' . ' (' . intval($i * 100 / count($this->coordinates)) . '%)'); // If loading record has been passed as an argument, set a new status every 250 coords
+                if (count($this->coordinates) < 1000 || count($this->coordinates) > 1000 && is_int($i / 2)) { // Skip 1/2 coordinates if more than 1000 for performance reasons
+                    if ($this->time != NULL) $insertCoords->execute(array($route_id, $i, $this->coordinates[$i]->lng, $this->coordinates[$i]->lat, $this->time[$i]));
+                    else $insertCoords->execute(array($route_id, $i, $this->coordinates[$i]->lng, $this->coordinates[$i]->lat));
+                }
             }
 
             // Save tunnels coords

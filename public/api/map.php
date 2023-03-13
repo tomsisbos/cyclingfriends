@@ -224,7 +224,7 @@ if (isAjax()) {
                     $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY date DESC');
                     $getMkpointPhoto->execute([$mkpoint_id]);
                 }
-                $mkpointphoto = new MkpointImage($getMkpointPhoto->fetch(PDO::FETCH_ASSOC)['id']);
+                $mkpointphoto = new MkpointImage($getMkpointPhoto->fetch(PDO::FETCH_COLUMN));
                 array_push($mkpoints,['id' => $mkpoint_id, 'data' => $mkpointphoto]);
             }
         }

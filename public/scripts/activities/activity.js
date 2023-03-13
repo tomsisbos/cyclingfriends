@@ -73,7 +73,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         activityMap.generateProfile()
         ///activityMap.displayStartGoalMarkers(activityMap.data.routeData)
         activityMap.updateDistanceMarkers()
-        activityMap.focus(activityMap.data.routeData)
+        activityMap.focus(activityMap.data.routeData).then(() => activityMap.generateProfile())
         activityMap.displayCheckpointMarkers()
         activityMap.displayPhotos()
 

@@ -1,0 +1,29 @@
+.dev-new-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0px 10px 0px;
+    border-top: 1px dotted;
+}
+.dev-new-top {
+    display: flex;
+    gap: 20px;
+}
+.dev-new-title {
+    font-weight: bold;
+}
+.dev-new-type {
+    font-style: italic;
+}
+
+@media only screen and (max-width: 768px) {
+    .dev-new-top {
+        display: block;
+    }
+    .dev-new-title {
+        display: block !important;
+    }
+    .dev-new-top > div {
+        display: inline-block;
+    }
+}

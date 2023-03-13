@@ -7,7 +7,6 @@ include '../includes/head.php'; ?>
 <html lang="en">
 
 <body> <?php
-phpinfo();
 	
 	include '../includes/navbar.php'; ?>
 	
@@ -18,12 +17,12 @@ phpinfo();
 		
 		<h2 class="top-title">Community</h2>
 		
-		<div class="container"> <?php
+		<?php /*<div class="container"> <?php
 		
 			// Filter options
-			/// include 'includes/riders/neighbours/filter-options.php'; ?>
+			include 'includes/riders/neighbours/filter-options.php'; ?>
 			
-		</div> <?php 
+		</div> <?php*/ 
 
 			// Select riders from database according to filter queries
 			include '../actions/riders/displayRidersAction.php'; ?>

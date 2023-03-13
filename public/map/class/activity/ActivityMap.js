@@ -36,12 +36,14 @@ export default class ActivityMap extends GlobalMap {
     }
 
     async addMarkerOnRoute (lngLat, type = false) {
-        // Generate new marker
-        var marker = this.addMarker(lngLat, type)
-        await this.sortCheckpoints()
-        this.updateMarkers()
-        this.updateCheckpointForms()
-        return marker
+        return new Promise(async (resolve, reject) => {
+            // Generate new marker
+            var marker = this.addMarker(lngLat, type)
+            await this.sortCheckpoints()
+            this.updateMarkers()
+            this.updateCheckpointForms()
+            resolve(marker)
+        } )
     }
 
     // Generate new marker

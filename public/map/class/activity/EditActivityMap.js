@@ -1,4 +1,5 @@
 import NewActivityMap from "/map/class/activity/NewActivityMap.js"
+import Loader from "/map/class/Loader.js"
 
 export default class EditActivityMap extends NewActivityMap {
 
@@ -32,9 +33,9 @@ export default class EditActivityMap extends NewActivityMap {
         this.updateCheckpointForms()
     }
 
-    displayCheckpointMarkers () {
+    async displayCheckpointMarkers () {
         for (let i = 1; i < this.data.checkpoints.length - 1; i++) {
-            this.data.checkpoints[i].marker = this.addMarkerOnRoute(this.data.checkpoints[i].lngLat, 'default')
+            this.data.checkpoints[i].marker = await this.addMarkerOnRoute(this.data.checkpoints[i].lngLat, 'default')
         }
     }
 
@@ -112,8 +113,8 @@ export default class EditActivityMap extends NewActivityMap {
                     // Send data to server
                     ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
                         resolve(response)
-                        window.location.replace('/' + this.session.login + '/activities')
-                    }, this.loader)
+                        window.location.replace('/activity/' + this.data.id)
+                    }, new Loader('保存中...'))
                 }
             )
 

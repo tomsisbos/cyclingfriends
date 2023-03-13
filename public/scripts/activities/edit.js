@@ -63,7 +63,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.addSources()
     editActivityMap.addLayers()
     editActivityMap.addRouteLayer(editActivityMap.data.routeData)
-    ///editActivityMap.displayStartGoalMarkers(editActivityMap.data.routeData)
+    editActivityMap.displayStartGoalMarkers(editActivityMap.data.routeData)
     editActivityMap.updateDistanceMarkers()
     editActivityMap.focus(editActivityMap.data.routeData)
     editActivityMap.displayCheckpointMarkers()
@@ -72,8 +72,8 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     // Create new checkpoint on click on route
     editActivityMap.map.on('mouseenter', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'crosshair')
     editActivityMap.map.on('mouseleave', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'grab')
-    editActivityMap.map.on('click', 'route', (e) => {
-        editActivityMap.addMarkerOnRoute(e.lngLat)
+    editActivityMap.map.on('click', 'route', async (e) => {
+        await editActivityMap.addMarkerOnRoute(e.lngLat)
         editActivityMap.updatePhotos()
     } )
     

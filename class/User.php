@@ -129,7 +129,7 @@ class User extends Model {
     }
     
     public function isPremium () {
-        if ($this->rights->rank >= 10) return true;
+        if ($this->rights->rank >= 0) return true; /// Set back to 10 when premium version release
         else return false;
     }
 

@@ -174,7 +174,7 @@ if (is_array($data)) {
                     $mkpoint_photo['size'] = $metadata['file_size'];
                     $mkpoint_photo['type'] = $metadata['file_type'];
                     $mkpoint_photo['name'] = $metadata['file_name'];
-                    $base64 = 'data:' .$mkpoint_photo['type']. ';base64,' .base64_encode(file_get_contents($blobClient->getBlobUrl('activity-photos', $mkpoint_photo['filename'])));
+                    $base64 = base64_encode(file_get_contents($blobClient->getBlobUrl('activity-photos', $mkpoint_photo['filename'])));
 
                 // Else, search for corresponding blob using original file name
                 } else {
@@ -184,9 +184,9 @@ if (is_array($data)) {
                 }
 
                 // Get blob ready to upload
-                $temp_image = new TempImage($photo['name']);
                 $mkpoint_photo['filename'] = setFilename('img');
-                $mkpoint_photo['blob'] = $temp_image->treatBase64($photo['blob']);
+                $temp_image = new TempImage($mkpoint_photo['filename']);
+                $mkpoint_photo['blob'] = $temp_image->treatBase64($base64);
 
                 // Build and append mkpoint thumbnail
                 if (!$thumbnail_set) {

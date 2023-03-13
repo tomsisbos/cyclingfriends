@@ -476,7 +476,7 @@ export default class NewActivityMap extends ActivityMap {
     // Treat user photos upload
     async loadPhotos (uploadedFiles) {
         return new Promise(async (resolve, reject) => {
-            const acceptedFormats = ['jpg', 'png', 'HEIC']
+            const acceptedFormats = ['jpg', 'jpeg', 'png', 'heic']
             var acceptedFormatsString = acceptedFormats.join(', ')
             
             // Start loader
@@ -522,20 +522,19 @@ export default class NewActivityMap extends ActivityMap {
             for (let i = 0; i < filesLength; i++) {
 
                 // If the photo format is accepted
-                var ext = files[i].name.split('.').pop()
+                var ext = files[i].name.split('.').pop().toLowerCase()
                 if (acceptedFormats.includes(ext)) {
 
                     // If HEIC file, ask server for jpg conversion
-                    if (ext == 'HEIC') {
+                    if (ext == 'heic') {
+                        loader.setText(files[i].name + 'を*.jpgに変換中...')
                         var jpgblob = await (function () {
                             return new Promise((resolve, reject) => sendFile(files[i], '/api/utils/heic-converter.php', (response) => {
-                                console.log(window.location.origin + response.path)
                                 fetch(window.location.origin + response.path).then(response => response.blob()).then(blob => resolve(blob))
                             }))
                         } ) ()
 
                     } else var jpgblob = files[i]
-                    console.log(jpgblob)
 
                     // Extract Exif data and start image treatment
                     loader.setText('写真データをアップロード中...')
@@ -564,7 +563,6 @@ export default class NewActivityMap extends ActivityMap {
                                 if (dateOriginal.getMonth() == checkpointDatetime.getMonth() && dateOriginal.getDay() == checkpointDatetime.getDay()) {
 
                                     // Resize and compress photo
-                                    loader.setText('写真データを処理中...')
                                     let blob = await resizeAndCompress(img, 1600, 900, 0.7)
 
                                     // Add photo to map instance
@@ -1129,6 +1127,11 @@ export default class NewActivityMap extends ActivityMap {
 
     async saveActivity (mkpointPhotos = null, mkpointsToCreate = null) {
         return new Promise(async (resolve, reject) => {
+
+            // Start loader
+            var loader = new Loader('準備中...')
+            loader.prepare()
+            loader.start()
             
             // Remove trackpoints and photos data
             var cleanData = {}
@@ -1162,11 +1165,6 @@ export default class NewActivityMap extends ActivityMap {
             // If mkpoints need to be created, append data
             if (mkpointsToCreate) cleanData.mkpointsToCreate = mkpointsToCreate
 
-            // Initialize loader
-            var loader = new Loader('データを準備中...')
-            loader.prepare()
-            loader.start()
-
             // Resize to a 9:16 format
             this.$map.style.width = '1600px'
             this.$map.style.height = this.$map.offsetWidth * 9 / 16
@@ -1181,15 +1179,62 @@ export default class NewActivityMap extends ActivityMap {
             html2canvas(this.map.getCanvas()).then( (canvas) => {
                 canvas.toBlob( async (blob) => {
                     cleanData.thumbnail = await blobToBase64(blob)
-
-                    // Send data to server and redirect user
-                    ajaxJsonPostRequest(this.apiUrl, cleanData, (response) => {})
                     
                     // Set pending record in sessionStorage
                     sessionStorage.setItem('pending', 'activity')
+
+                    // Send data to server and redirect user
+                    ajaxSaveActivity(this.apiUrl, cleanData, (response) => {
                     
-                    // Redirect to my rides page
-                    window.location.replace('/' + this.session.login + '/activities')
+                        // Redirect to my rides page
+                        window.location.replace('/' + this.session.login + '/activities')
+
+                    }, loader)
+
+                    // Ajax POST json request generic function
+                    function ajaxSaveActivity (url, jsonData, callback, loader = null) {
+                        // If a 'pending' key is set inside sessionStorage
+                        if (sessionStorage.getItem('pending')) {
+
+                            // Get id new activity will be saved at
+                            ajaxGetRequest ("/api/loading.php?request-type=next-entry-id&entry-table=activities", (entryId) => {
+
+                                // Ask server very second for upload status
+                                const uploadStatusCheck = window.setInterval(() => {
+
+                                    ajaxGetRequest ("/api/loading.php?request-type=record&entry-table=activities&entry-id=" + entryId, (record) => {
+
+                                        // First show a common message
+                                        if (record.message != undefined) loader.setHTML(record.message)
+
+                                        // If upload is finished, clear interval and session storage
+                                        if (record.status == 'success') {
+                                            window.clearInterval(uploadStatusCheck)
+                                            sessionStorage.clear()
+                                        } else if (record.status == 'error') {
+                                            window.clearInterval(uploadStatusCheck)
+                                            showResponseMessage({'error': record.message})
+                                            sessionStorage.clear()
+                                        }
+                                    } )
+
+                                }, 1000)
+                            } )
+                        }
+                        var xhr = getHttpRequest()
+                        xhr.onreadystatechange = async function () {                            
+                            // When request have been received
+                            if (xhr.readyState === 4) {
+                                if (loader) loader.stop()
+                                callback(JSON.parse(xhr.responseText))
+                            }
+                        }
+                        // Send request through POST method
+                        xhr.open('POST', url, true)
+                        xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')
+                        xhr.setRequestHeader('Content-Type', 'application/json')
+                        xhr.send(JSON.stringify(jsonData))
+                    }
 
                 }, 'image/jpeg', 0.7)
             } ) 

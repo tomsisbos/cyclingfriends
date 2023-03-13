@@ -1,7 +1,7 @@
 <?php
 
 include '../actions/users/initSessionAction.php';
-include '../actions/beta/devNoteAction.php';
+include '../actions/dev/devNoteAction.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

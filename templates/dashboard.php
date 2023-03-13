@@ -23,10 +23,12 @@ if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/hel
 
 	<div class="container">
 
-		<div class="sidebar-main">
-			<div class="dashboard-container"> <?php
-				include '../includes/dashboard/thread.php'; ?>
-			</div>
+		<div class="dashboard-container"> <?php
+
+			include '../includes/dev/board.php';
+
+			include '../includes/dashboard/thread.php'; ?>
+
 		</div>
 
 		<?php /*
