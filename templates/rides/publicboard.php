@@ -19,7 +19,12 @@ include '../includes/head.php'; ?>
 		<div class="container end">
 		
 			<?php // Filter options
-			include '../includes/rides/filter-options.php'; 
+			include '../includes/rides/filter-options.php';
+		
+			// Define offset and number of rides to query
+			$limit = 6;
+			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+			else $offset = 0;
 			
 			// Select rides from database according to filter queries
 			include '../actions/rides/displayAction.php'; 

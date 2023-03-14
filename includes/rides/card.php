@@ -54,33 +54,35 @@
                 </div>
             </div>
         </div>
-        <div class="rd-section-organizer">
-            <a href="<?= 'rider/' .$ride->author_id; ?>">
-                <?= $ride->getAuthor()->getPropicElement(60, 60, 60); ?>
-            </a>
-            <div class="rd-organizer">
-                <div class="rd-login"><?= 'by <strong>@' .$ride->getAuthor()->login. '</strong>'; ?></div> <?php
-                if ($ride->privacy === 'Friends only') { ?>
-                    <p style="background-color: #ff5555" class="tag-light text-light">友達のみ</p> <?php
-                } ?>
+        <div class="rd-section-organization">
+            <div class="rd-section-organizer">
+                <a href="<?= 'rider/' .$ride->author_id; ?>">
+                    <?= $ride->getAuthor()->getPropicElement(60, 60, 60); ?>
+                </a>
+                <div class="rd-organizer">
+                    <div class="rd-login"><?= 'by <strong>@' .$ride->getAuthor()->login. '</strong>'; ?></div> <?php
+                    if ($ride->privacy === 'Friends only') { ?>
+                        <p style="background-color: #ff5555" class="tag-light text-light">友達のみ</p> <?php
+                    } ?>
+                </div>
             </div>
-        </div>
-        <div class="rd-section-entry" style="background-color: <?= $ride->getStatusColor(); ?>;">
-            <span style="vertical-align: -webkit-baseline-middle;">
-                <?= '<strong>Entry : </strong>' .$ride->status;
-                if ($ride->entry_start > date('Y-m-d')) {
-                    if (nbDaysLeftToDate($ride->entry_start) == 1) echo '<br><div class="xsmallfont">明日開始</div>';
-                    else echo '<br><div class="xsmallfont">エントリー開始まで残り' .nbDaysLeftToDate($ride->entry_start). '日</div>';
-                } else if ($ride->entry_start <= date('Y-m-d') AND date('Y-m-d') <= $ride->entry_end) {
-                    if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont">本日締切</div>';
-                    else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日締切</div>';
-                    else echo '<br><div class="xsmallfont">締め切りまで残り' .nbDaysLeftToDate($ride->entry_end). '日</div>';
-                } else if ($ride->entry_end <= date('Y-m-d') AND date('Y-m-d') <= $ride->date) {
-                    if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont text-danger">本日出発</div>';
-                    else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日出発</div>';
-                    else echo '<br><div class="xsmallfont">出発まで残り' .nbDaysLeftToDate($ride->date). '日</div>';
-                } ?>
-            </span>
+            <div class="rd-section-entry" style="background-color: <?= $ride->getStatusColor(); ?>;">
+                <span style="vertical-align: -webkit-baseline-middle;">
+                    <?= '<strong>Entry : </strong>' .$ride->status;
+                    if ($ride->entry_start > date('Y-m-d')) {
+                        if (nbDaysLeftToDate($ride->entry_start) == 1) echo '<br><div class="xsmallfont">明日開始</div>';
+                        else echo '<br><div class="xsmallfont">エントリー開始まで残り' .nbDaysLeftToDate($ride->entry_start). '日</div>';
+                    } else if ($ride->entry_start <= date('Y-m-d') AND date('Y-m-d') <= $ride->entry_end) {
+                        if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont">本日締切</div>';
+                        else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日締切</div>';
+                        else echo '<br><div class="xsmallfont">締め切りまで残り' .nbDaysLeftToDate($ride->entry_end). '日</div>';
+                    } else if ($ride->entry_end <= date('Y-m-d') AND date('Y-m-d') <= $ride->date) {
+                        if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont text-danger">本日出発</div>';
+                        else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日出発</div>';
+                        else echo '<br><div class="xsmallfont">出発まで残り' .nbDaysLeftToDate($ride->date). '日</div>';
+                    } ?>
+                </span>
+            </div>
         </div>
     </div>
 

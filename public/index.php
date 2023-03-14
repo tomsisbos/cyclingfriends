@@ -93,6 +93,10 @@ $router->map('GET', '/scouts', 'community/scouts', 'scouts');
 $router->map('POST', '/scouts', 'community/scouts');
 $router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
 
+// Admin
+$router->map('GET', '/admin', 'admin/news', 'admin/news');
+$router->map('POST', '/admin', 'admin/news');
+
 // Treatment of results
 $match = $router->match();
 if (is_array($match)) {

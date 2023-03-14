@@ -15,7 +15,7 @@ class DevNew extends Model {
 
     private function insertIntoTable() {
         $insertIntoTable = $this->getPdo()->prepare("INSERT INTO {$this->table} (title, content, type, datetime) VALUES (?, ?, ?, ?)");
-        $insertIntoTable->execute(array($this->title, $this->content, $this->type, date()));
+        $insertIntoTable->execute(array($this->title, $this->content, $this->type, date('Y-m-d H:i:s')));
     }
 
     public function create ($title, $type, $content) {
@@ -32,5 +32,12 @@ class DevNew extends Model {
         $this->content = $data['content'];
         $this->type = $data['type'];
         $this->datetime = new Datetime($data['datetime']);
+    }
+
+    public function getTypeString () {
+        switch ($this->type) {
+            case 'general': return '<div class="general">一般</div>';
+            case 'dev': return '<div class="dev">開発</div>';
+        }
     }
 }

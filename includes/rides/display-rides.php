@@ -19,6 +19,20 @@
             }
         
         }
+				
+        if ($getResultsNumber->rowCount() > $limit) {
+    
+            // Set pagination system
+            if (isset($_GET['p'])) $p = $_GET['p'];
+            else $p = 1;
+            $url = strtok($_SERVER["REQUEST_URI"], '?');
+            $total_pages = $getResultsNumber->rowCount() / $limit;
+            
+            // Build pagination menu
+            include '../includes/pagination.php';
+
+        }
+        
     } ?>
 
 </div>

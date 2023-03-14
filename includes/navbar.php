@@ -58,7 +58,12 @@
 						<a class="dropdown-item" href="/friends">Friends</a>
 						<a class="dropdown-item" href="/scouts">Scouts</a>
 					</div>
-				</li>
+				</li> <?php
+				if ($connected_user->hasModeratorRights()) { ?>
+					<li class="nav-item dropdown bg-admin">
+						<a class="nav-link nav-dropdown-link" href="/admin">Admin</a>
+					</li> <?php
+				} ?>
 			</ul>
 		</div>
 		

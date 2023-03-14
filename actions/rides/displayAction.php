@@ -21,7 +21,7 @@
 	// Get data from database.
 		// Use "status = status" to display all results in case of no filter
 		// Puts Friends only rides at the top thanks to the order by case query
-	$getRides = $db->prepare("SELECT * FROM rides WHERE 
+		$query = "SELECT * FROM rides WHERE 
 		privacy != 'private'
 			AND 
 		date BETWEEN :datemin AND :datemax 
@@ -50,8 +50,13 @@
 				WHEN privacy = 'Friends only' THEN 0
 				ELSE 1
 			END),
-			date, meeting_time ASC");
-		
+			date, meeting_time ASC";
+	// Get results total number (without limit)
+	$getResultsNumber = $db->prepare($query);
+	$getResultsNumber->execute(array(":name" => '%' .$_POST['filter_name']. '%', ":datemin" => $_POST['filter_date_min'], ":datemax" =>  $_POST['filter_date_max'], ":level" => $_POST['filter_level'], ":status" => $_POST['filter_status'], ":friends" => $_POST['filter_friends_only']));
+	// Get paginated results
+	$result_query = $query .= " LIMIT {$limit} OFFSET {$offset}";
+	$getRides = $db->prepare($result_query);
 	$getRides->execute(array(":name" => '%' .$_POST['filter_name']. '%', ":datemin" => $_POST['filter_date_min'], ":datemax" =>  $_POST['filter_date_max'], ":level" => $_POST['filter_level'], ":status" => $_POST['filter_status'], ":friends" => $_POST['filter_friends_only']));
 	 
 ?>

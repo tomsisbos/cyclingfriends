@@ -21,10 +21,15 @@ include '../includes/head.php'; ?>
 		</div> <?php 
 		
 			// Select riders from database according to filter queries
-			include '../actions/riders/displayNeighboursAction.php'; ?>
+			include '../actions/riders/displayNeighboursAction.php';
+			
+			// Define offset (limit is defined in the action script)
+			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+			else $offset = 0; ?>
 			
 		<div class="nbr-container container bg-white"> <?php
 
+			// Only allow display if connected user has specified location
 			if ($connected_user->lngLat != null) {
 
 				if ($getRiders->rowCount() > 0) {
@@ -37,6 +42,8 @@ include '../includes/head.php'; ?>
 							</div>
 						</div> <?php
 					}
+					
+					if ($getRiders->rowCount() > $limit) echo '...and others';
 
 				} else {
 					

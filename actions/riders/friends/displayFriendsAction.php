@@ -17,10 +17,10 @@
 		
 	// Get user data of each friend id from the database according to filter queries
 	$query = 
-		"SELECT * FROM users WHERE
+		"SELECT id FROM users WHERE
 				login LIKE '%' :query '%'
 			AND
-				id IN ('".implode("','",$friends)."')
+				id IN ('".implode("','",$friends)."') 
 		ORDER BY
 			CASE
 				WHEN :index = 'level' THEN 
@@ -37,9 +37,13 @@
 				WHEN :index = 'first_name' THEN first_name
 				WHEN :index = 'birthdate' THEN birthdate
 				ELSE (SELECT NULL)
-			END
-		";
-	$getFriendsData = $db->prepare($query);
+			END DESC";
+	// Get results total number (without limit)
+	$getResultsNumber = $db->prepare($query);
+	$getResultsNumber->execute(array(":query" => $_POST['friend_search'], ":index" => $_POST['friend_orderby']));
+	// Get paginated results
+	$result_query = $query .= " LIMIT {$limit} OFFSET {$offset}";
+	$getFriendsData = $db->prepare($result_query);
 	$getFriendsData->execute(array(":query" => $_POST['friend_search'], ":index" => $_POST['friend_orderby']));
 	
 ?>

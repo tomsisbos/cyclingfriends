@@ -22,6 +22,11 @@ include '../includes/head.php'; ?>
 		
 			// Filter options
 			include '../includes/riders/scouts/filter-options.php'; 
+		
+			// Define offset and number of scouts to query
+			$limit = 20;
+			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+			else $offset = 0;
 			
 			// Select scouts from database according to filter queries
 			include '../actions/riders/scouts/displayScoutsAction.php'; ?>
@@ -39,6 +44,19 @@ include '../includes/head.php'; ?>
 				while ($scout = $getScoutsData->fetch()) {
 					$rider = new User($scout['id']);
 					include '../includes/riders/rider-card.php';
+				}
+				
+				if ($getResultsNumber->rowCount() > $limit) {
+			
+					// Set pagination system
+					if (isset($_GET['p'])) $p = $_GET['p'];
+					else $p = 1;
+					$url = strtok($_SERVER["REQUEST_URI"], '?');
+					$total_pages = $getResultsNumber->rowCount() / $limit;
+					
+					// Build pagination menu
+					include '../includes/pagination.php';
+
 				}
 
 			} else {

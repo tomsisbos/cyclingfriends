@@ -916,7 +916,10 @@ li.nav-item {
 }
 
 .fullwidth {
-	width: 100%;
+	width: 100% !important;
+}
+.fullheight {
+    height: 100% !important;
 }
 
 .smallfont {

@@ -1346,7 +1346,7 @@ function img_compress ($filename, $filesize) {
 */
 
 // Display success or error message if one is set
-function displayMessage () {
+function displayMessage ($errormessage = null, $successmessage = null) {
 	// If is set inside session variable
 	if (isset($_SESSION['errormessage'])) {
 		$errormessage = $_SESSION['errormessage'];

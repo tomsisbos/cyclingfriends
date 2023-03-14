@@ -39,7 +39,12 @@
 				ELSE (SELECT NULL)
 			END
 		";
-	$getScoutsData = $db->prepare($query);
+	// Get results total number (without limit)
+	$getResultsNumber = $db->prepare($query);
+	$getResultsNumber->execute(array(":query" => $_POST['scout_search'], ":index" => $_POST['scout_orderby']));
+	// Get paginated results
+	$result_query = $query .= " LIMIT {$limit} OFFSET {$offset}";
+	$getScoutsData = $db->prepare($result_query);
 	$getScoutsData->execute(array(":query" => $_POST['scout_search'], ":index" => $_POST['scout_orderby']));
 	
 ?>

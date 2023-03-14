@@ -21,10 +21,7 @@ include '../includes/head.php'; ?>
 		<div class="container"> <?php
 		
 			// Filter options
-			include '../includes/riders/friends/filter-options.php'; 
-			
-			// Select friends from database according to filter queries
-			include '../actions/riders/friends/displayFriendsAction.php'; ?>
+			include '../includes/riders/friends/filter-options.php'; ?>
 		
 		</div> <?php
 		
@@ -37,11 +34,32 @@ include '../includes/head.php'; ?>
 		
 		<div class="container end bg-white"> <?php 
 		
+			// Define offset and number of friends to query
+			$limit = 20;
+			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+			else $offset = 0;
+			
+			// Select friends from database according to filter queries
+			include '../actions/riders/friends/displayFriendsAction.php';
+		
 			if ($getFriendsData->rowCount() > 0) {
 
 				while ($friend = $getFriendsData->fetch()) {
-					$rider = new User ($friend['id']);
+					$rider = new User($friend['id']);
 					include '../includes/riders/rider-card.php';
+				}
+
+				if ($getResultsNumber->rowCount() > $limit) {
+			
+					// Set pagination system
+					if (isset($_GET['p'])) $p = $_GET['p'];
+					else $p = 1;
+					$url = strtok($_SERVER["REQUEST_URI"], '?');
+					$total_pages = $getResultsNumber->rowCount() / $limit;
+					
+					// Build pagination menu
+					include '../includes/pagination.php';
+
 				}
 
 			} else {

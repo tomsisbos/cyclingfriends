@@ -480,10 +480,16 @@ class User extends Model {
         return count($set_info) * 100 / count($user_info);
     }
 
-    public function getRides () {
-        $getRides = $this->getPdo()->prepare('SELECT id FROM rides WHERE author_id = ? ORDER BY posting_date DESC');
+    public function getRides ($offset = 0, $limit = 20) {
+        $getRides = $this->getPdo()->prepare("SELECT id FROM rides WHERE author_id = ? ORDER BY posting_date DESC LIMIT " .$offset. ", " .$limit);
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getRidesNumber () {
+        $getRides = $this->getPdo()->prepare('SELECT id FROM rides WHERE author_id = ?');
+	    $getRides->execute(array($this->id));
+        return $getRides->rowCount();
     }
 
     public function getRoutes ($offset = 0, $limit = 20) {

@@ -129,6 +129,11 @@
     object-fit: cover;
 }
 
+.rd-section-organization {
+    display: flex;
+    min-width: 400px;
+    flex-direction: column;
+}
 .rd-section-organizer {
     min-width: 200px;
     display: flex;
@@ -136,14 +141,13 @@
     gap: 10px;
     background-color: #f2f2f2;
 }
-
 .rd-section-entry {
     min-width: 200px;
     flex-grow: 4;
     display: flex;
 }
 
-.rd-bottom-container > div {
+.rd-details, .rd-section-organizer, .rd-section-entry {
     padding: 10px;
 }
 
@@ -174,6 +178,11 @@
 
 @media only screen and (max-width: 1200px) {
     .rd-bottom-container {
+        flex-wrap: wrap;
+    }
+    .rd-section-organization {
+        min-width: 100%;
+        flex-direction: row;
         flex-wrap: wrap;
     }
 }

@@ -29,15 +29,34 @@ if (isset($_SESSION['forms']['created'])) {
 		<h2 class="top-title">My rides</h2>
 
 		<div class="container end"> <?php
+		
+			// Define offset and number of rides to query
+			$limit = 20;
+			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+			else $offset = 0;
 
-			$rides = $connected_user->getRides();
+			$rides = $connected_user->getRides($offset, $limit);
 
 			if (!empty($rides)) {
+
 				forEach ($rides as $ride) {
 					$ride = new Ride ($ride['id']);
 					
 					include '../includes/rides/small-card.php';
 
+				}
+				
+				if ($connected_user->getRidesNumber() > $limit) {
+    
+					// Set pagination system
+					if (isset($_GET['p'])) $p = $_GET['p'];
+					else $p = 1;
+					$url = strtok($_SERVER["REQUEST_URI"], '?');
+					$total_pages = $connected_user->getRidesNumber() / $limit;
+					
+					// Build pagination menu
+					include '../includes/pagination.php';
+		
 				}
 
 			} else {

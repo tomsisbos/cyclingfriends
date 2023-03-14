@@ -31,5 +31,13 @@
                 <?= $p + 2; ?>
             </div>
         </a> <?php
+    }
+    if (ceil($total_pages) - $p > 2) { ?>
+        ...
+        <a href="<?= $url. '?p=' .($total_pages) ?>">
+            <div class="pages-number">
+                <?= $total_pages; ?>
+            </div>
+        </a> <?php
     } ?>
 </div>
