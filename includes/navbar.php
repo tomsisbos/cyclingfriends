@@ -55,15 +55,11 @@
 							<a class="dropdown-item bg-admin" href="/community">Users list</a> <?php
 						} ?>
 						<a class="dropdown-item bg-admin" href="/beta/board">Test reports</a>
+						<a class="dropdown-item" href="/news">News</a>
 						<a class="dropdown-item" href="/friends">Friends</a>
 						<a class="dropdown-item" href="/scouts">Scouts</a>
 					</div>
-				</li> <?php
-				if ($connected_user->hasModeratorRights()) { ?>
-					<li class="nav-item dropdown bg-admin">
-						<a class="nav-link nav-dropdown-link" href="/admin">Admin</a>
-					</li> <?php
-				} ?>
+				</li>
 			</ul>
 		</div>
 		

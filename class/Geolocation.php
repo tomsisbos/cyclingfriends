@@ -11,7 +11,7 @@ class Geolocation {
     }
 
     public function toString () {
-        return $this->city . ' (' . $this->prefecture . ')';
+        return $this->city . '（' . $this->prefecture . '）';
     }
 
 }

@@ -4,7 +4,7 @@ class TempImage {
 
     private string $temp_folder;
     private int $compression_percentage = 85;
-    public array $accepted_formats = ['jpg', 'jpeg', 'HEIC'];
+    public array $accepted_formats = ['jpg', 'jpeg', 'heic', 'png'];
     public string $temp_name = 'temp.jpg';
     public string $name;
     public string $temp_path;
@@ -21,7 +21,7 @@ class TempImage {
     private function base64ToJpeg (string $base64) {
         $this->temp_path = $this->temp_folder . $this->temp_name;
         base64_to_jpeg($base64, $this->temp_path);
-        return imagecreatefromjpegexif($this->temp_path);
+        return imagecreateexif($this->temp_path);
     }
 
     /**
@@ -57,6 +57,14 @@ class TempImage {
         return $this->getBase64($this->thumbnail);
     }
 
+    /**
+     * change temp name
+     */
+    public function setTempName ($temp_name) {
+        $this->temp_name = $temp_name;
+        $this->temp_path = $this->temp_folder . $this->temp_name;
+    }
+
     public function setName (string $name) {
         $this->name = $name;
     }
@@ -68,7 +76,7 @@ class TempImage {
     public function convert (string $file) {
 
         // Get file format (extension)
-        $ext = pathinfo($this->name, PATHINFO_EXTENSION);
+        $ext = strtolower(pathinfo($this->name, PATHINFO_EXTENSION));
 
         // If file format is accepted
         if (in_array($ext, $this->accepted_formats)) {
@@ -80,8 +88,16 @@ class TempImage {
             // jpg
             if ($ext == 'jpg' || $ext == 'jpeg') move_uploaded_file($file, $this->temp_path);
 
+            // png
+            if ($ext == 'png') {
+                $this->setTempName('temp.png');
+                move_uploaded_file($file, $this->temp_path);
+            }
+
             // HEIC to jpg conversion
-            else if ($ext == 'HEIC') Maestroerror\HeicToJpg::convert($file)->saveAs($this->temp_path);
+            else if ($ext == 'heic') $result = Maestroerror\HeicToJpg::convert($file)->saveAs($this->temp_path);
+
+            return true;
 
         } else return false;
         
@@ -110,7 +126,7 @@ class TempImage {
         // Get image data as a gd file
         $this->temp_path = $this->temp_folder. $this->temp_name;
         move_uploaded_file($temp_path, $this->temp_path);
-        $this->image = imagecreatefromjpegexif($this->temp_path);
+        $this->image = imagecreateexif($this->temp_path);
 
         // Get path to formated image
         $this->temp_path = $this->formatImage($this->image, $this->name);

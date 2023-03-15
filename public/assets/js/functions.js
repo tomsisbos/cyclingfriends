@@ -326,8 +326,8 @@ function showResponseMessage (message, options = {element: false, absolute: fals
 	$message.appendChild(closeButton)
 	closeButton.addEventListener('click', hideResponseMessage)
 	
-	// Scroll to message
-	if (options.scrollIntoView) element.scrollIntoView()
+	// Scroll to message)
+	if (options.scrollIntoView) $message.scrollIntoView({behavior: 'smooth', block: 'start'})
 }
 
 function hideResponseMessage () {

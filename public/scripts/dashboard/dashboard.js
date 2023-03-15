@@ -5,7 +5,7 @@ import LoaderCircle from '/map/class/loaders/LoaderCircle.js'
 const toleranceZone = 100 // Zone for infinite scroll to react in pixels
 const $cardsContainer = document.querySelector('#threadContainer')
 const photosquantity = parseInt($cardsContainer.dataset.photosquantity)
-const limit = parseInt($cardsContainer.dataset.limit) - 2
+const limit = parseInt($cardsContainer.dataset.limit) / 2
 var isInside = false
 var isCurrentlyLoading = false
 var offset = 0
@@ -23,17 +23,23 @@ infiniteScrollElement.addEventListener('scroll', function (e) {
         offset += limit
         isCurrentlyLoading = true
         ajaxGetRequest('/api/dashboard.php?getThread=' + limit + ',' + offset + ',' + photosquantity, (response) => {
-            response.forEach( (entry) => {
-                var $link = buildLink(entry)
-                var $card = buildCard(entry)
-                $cardsContainer.appendChild($link)
-                $cardsContainer.appendChild($card)
-            } )
+            response.forEach( (entry) => $cardsContainer.appendChild(buildDashboardCard(entry)))
             isCurrentlyLoading = false
         }, loader)
     } else isInside = false
 
 } )
+
+function buildDashboardCard (entry) {
+    var $dashboardCard = document.createElement('div')
+    $dashboardCard.className = 'dashboard-card'
+    $dashboardCard.classList.add(entry.type)
+    var $link = buildLink(entry)
+    var $card = buildCard(entry)
+    $dashboardCard.appendChild($link)
+    $dashboardCard.appendChild($card)
+    return $dashboardCard
+}
 
 function buildLink (entry) {
     if (entry.type === 'activity') {

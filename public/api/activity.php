@@ -115,7 +115,7 @@ if (is_array($data)) {
         // Temporary upload raw file on the server
         base64_to_jpeg($photo['blob'], $temp);
         // Get the file into $img thanks to imagecreatefromjpeg
-        $img = imagecreatefromjpegexif($temp);
+        $img = imagecreateexif($temp);
         if (imagesx($img) > 1600) $img = imagescale($img, 1600); // Only scale if img is wider than 1600px
         // Correct image gamma and contrast
         imagegammacorrect($img, 1.0, 1.1);

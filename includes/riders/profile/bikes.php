@@ -37,4 +37,4 @@ if (!empty($user->getBikes())) { ?>
 } ?>
 
 
-<script src="/scripts/riders/bikes.js"></script>
+<script type="module" src="/scripts/riders/bikes.js"></script>

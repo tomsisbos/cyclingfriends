@@ -45,7 +45,7 @@ include '../includes/head.php'; ?>
 			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>">
 				<div>
 					<div class="pg-sg-location">
-						<?= $mkpoint->city . ' (' . $mkpoint->prefecture . ') - ' . $mkpoint->elevation . 'm' ?>
+						<?= $mkpoint->city . '（' . $mkpoint->prefecture . '） ' . $mkpoint->elevation . 'm' ?>
 					</div> <?php
 					$cleared_activity_id = $mkpoint->isCleared();
 					if ($cleared_activity_id) { ?>

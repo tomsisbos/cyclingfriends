@@ -4,7 +4,6 @@
 </div>
 
 <div id="bikes"> <?php
-
 	forEach ($user->getBikes() as $bike) {
 		$bike = new Bike ($bike['id']); 
 		include 'bike-admin-single.php';

@@ -22,34 +22,18 @@ if (isAjax()) {
         $index   = substr($request, 5);
         $value   = $_GET[$request];
         $id      = $_GET['id'];
+        $bike = new Bike();
+
         // If value is 'new', create a new entry in bikes table and return the corresponding bike id
         if ($id == 'new') {
-            $bikes           = $connected_user->getBikes();
-            $new_bike_number = count($bikes) + 1;
-            $type            = '';
-            $model           = '';
-            $components      = '';
-            $wheels          = '';
-            $description     = '';
-            switch ($index) {
-                case 'type': $type = $index; break;
-                case 'model': $model = $index; break;
-                case 'components': $components = $index; break;
-                case 'wheels': $wheels = $index; break;
-                case 'description': $description = $index; break;
-            }
-            $createBike = $db->prepare('INSERT INTO bikes(user_id, number, type, model, components, wheels, description) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $createBike->execute(array($connected_user->id, $new_bike_number, $type, $model, $components, $wheels, $description));
-            $getBikeId = $db->prepare('SELECT id FROM bikes WHERE user_id = ? AND number = ?');
-            $getBikeId->execute(array($connected_user->id, $new_bike_number));
-            $id = $getBikeId->fetch()[0];
-            echo json_encode([$id, $index, $value]);
+            $bike->create($connected_user->id);
+            $id = $bike->id;
+            
         // Else, update existing bike
-        } else {
-            $updateInfo = $db->prepare("UPDATE bikes SET {$index} = ? WHERE id = ?");
-            $updateInfo->execute(array($value, $id));
-            echo json_encode([$id, $index, $value]);
-        }
+        } else $bike->load($id);
+        
+        $bike->updateValue($index, $value);
+        echo json_encode([$id, $index, $value]);
     }
 
     // Bike deleting

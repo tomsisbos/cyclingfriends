@@ -1,8 +1,8 @@
 <?php
 
-class DevNew extends Model {
+class Post extends Model {
     
-    protected $table = 'dev_news';
+    protected $table = 'posts';
     public $id;
     public $title;
     public $content;

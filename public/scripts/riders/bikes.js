@@ -1,3 +1,5 @@
+import Modal from '/map/class/Modal.js'
+
 // If show bikes button displayed (= if more than one bike registered)
 if (document.getElementById('showBike')) {
     var showButton = document.getElementById('showBike')
@@ -14,7 +16,7 @@ if (document.getElementById('showBike')) {
 
 // Open modal on bike image click
 document.querySelectorAll('.pf-bike-image').forEach( (bikeImage) => {
-    bikeImage.addEventListener('click', (e) => {
-        openSingleModal(e.target.src)
-    } )
+    var modal = new Modal(bikeImage.src)
+    bikeImage.after(modal.element)
+    bikeImage.addEventListener('click', () => modal.open())
 } )

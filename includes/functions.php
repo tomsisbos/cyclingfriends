@@ -1277,10 +1277,14 @@ function scaleImageFileToBlob($file, $max_width, $max_height) {
 }
 
 // Adds treating of orientation to GD original 'imagecreatefromjpeg' function 
-function imagecreatefromjpegexif($filename){
-	$img = imagecreatefromjpeg($filename);
-	$exif = exif_read_data($filename);
-	if ($img && $exif && isset($exif['Orientation']))
+function imagecreateexif ($filename) {
+	$ext = pathinfo($filename, PATHINFO_EXTENSION);
+	if ($ext == 'jpg' || $ext == 'jpeg') {
+		$img = imagecreatefromjpeg($filename);
+		$exif = exif_read_data($filename);
+	} else if ($ext == 'png') $img = imagecreatefrompng($filename);
+	else throw new Error('*.' .$ext. 'ファイル形式に対応していません。');
+	if (isset($img) && isset($exif) && isset($exif['Orientation']))
 	{
 		$ort = $exif['Orientation'];
 
@@ -1318,7 +1322,7 @@ function img_compress ($filename, $filesize) {
 		// Temporary upload raw file on the server
 		move_uploaded_file($filename, $temp);
 		// Get the file into $img thanks to imagecreatefromjpeg
-		$img = imagecreatefromjpegexif($temp);
+		$img = imagecreateexif($temp);
 		if (imagesx($img) > 1600) {
 			$img = imagescale($img, 1600); // Only scale if img is wider than 1600px
 		}

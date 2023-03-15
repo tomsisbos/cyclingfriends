@@ -26,9 +26,7 @@
 }
 
 .dashboard-container {
-    border-radius: 10px;
     overflow: hidden;
-    margin: 10px;
 }
 
 .dashboard-title {
@@ -67,14 +65,51 @@
 
 .dashboard-thread-container {
     gap: 10px;
-    display: flex;
-    flex-direction: column;
+    margin: 0px 50px;
+    display: grid;
+    grid-auto-flow: dense;
+    justify-content: space-around;
+    grid-template-columns: 30% 30% 30%;
 }
 .dashboard-cards {
     gap: 4px;
     display: flex;
     flex-direction: column;
 }
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dashboard-card.activity {
+    grid-column: 1 / span 2;
+}
+
+.dashboard-card .mk-card, .dashboard-card .ac-card {
+    flex-grow: 1;
+}
+
+@media only screen and (max-width: 992px) {
+    .dashboard-thread-container {
+        grid-template-columns: 50% 50%;
+        margin: 0px 20px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .dashboard-thread-container {
+        grid-template-columns: 100%;
+        margin: 0px 10px;
+    }
+    .dashboard-card.activity {
+        grid-column: 1;
+    }
+}
+
+
+
+
+
 
 .cleared-mkpoints-list {
     max-height: 200px;

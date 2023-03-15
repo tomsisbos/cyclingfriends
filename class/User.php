@@ -6,6 +6,7 @@ use Location\Distance\Vincenty;
 class User extends Model {
 
     private $container_name = 'user-profile-pictures';
+    protected $table = 'users';
     public $id;
     public $login;
     public $email;
@@ -24,7 +25,6 @@ class User extends Model {
     public $instagram;
     public $strava;
     public $rights;
-    protected $table = 'users';
     
     function __construct($id = NULL) {
         parent::__construct();
@@ -354,9 +354,9 @@ class User extends Model {
             $img_size = $_FILES['propicfile']['size'];
             if ($img_size > $max_size) return array('error' => 'アップロードしたファイルがサイズ制限（5Mb）を超えています。サイズを縮小して再度試してください。');
 
-            // Store temp file as *.jpg
-            $temp_image->convert($_FILES['propicfile']['tmp_name']);
-            if (!$temp_image->temp_path) return array('error' => 'アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
+            // Store temp file as *jpg or *png
+            $result = $temp_image->convert($_FILES['propicfile']['tmp_name']);
+            if (!$result) return array('error' => 'アップロードしたファイル形式は対応しておりません。対応可能なファイル形式：' .implode(', ', $temp_image->accepted_formats));
 
             // Sort upload data into variables
             $img_type = $_FILES['propicfile']['type'];
@@ -458,7 +458,7 @@ class User extends Model {
             if ($boolean) {
                 // Check if there is a bike type matching in user's bike list
                 foreach ($user_bikes as $entry) {
-                    $user_bike = new Bike ($entry['id']);
+                    $user_bike = new Bike();
                     if (getBikesFromColumnName($ride_bike_type) == $user_bike->type) {
                         // If there is one, return true
                         return true;

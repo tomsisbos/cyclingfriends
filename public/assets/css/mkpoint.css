@@ -1,20 +1,7 @@
-
-@media only screen and (min-width: 1200px) {
-    .mk-card {
-        display: flex;
-        flex-direction: row !important;
-        height: 200px !important;
-    }
-    .mk-photo {
-        width: 50% !important;
-        min-width: 50%;
-        height: 200px;
-        padding: 0px 10px 0px 0px;
-    }
-}
-
 .mk-card {
     background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
 }
 .mk-data {
     padding: 10px;

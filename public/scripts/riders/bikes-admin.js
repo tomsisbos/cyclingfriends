@@ -1,3 +1,6 @@
+import Modal from '/map/class/Modal.js'
+import TimerPopup from '/map/class/TimerPopup.js'
+
 var apiUrl = '/api/riders/profile.php'
 
 // Adding a new bike block
@@ -12,40 +15,33 @@ document.querySelector('button#addBike').addEventListener('click', () => {
         var newBikeBlock = template.content.firstElementChild.cloneNode(true)
         bikesContainer.appendChild(newBikeBlock)
         newBikeBlock.scrollIntoView()
-        addListeners()
+        addListeners(newBikeBlock)
     }
 } )
 
-addListeners()
+document.querySelectorAll('.js-bike-container').forEach(bikeBlock => addListeners(bikeBlock))
 
-function addListeners() {
+function addListeners(bikeBlock) {
 
-    // Display file name, size preview and submit button on bike image upload
-    var inputs = document.querySelectorAll('.js-bike-input')
+    // Auto submit bike image on change
+    var inputs = bikeBlock.querySelectorAll('.js-bike-input')
     inputs.forEach( (input) => {
-        input.addEventListener('change', (e) => {
-            var input = e.target
-            var output = input.closest('.js-bike-container').querySelector('.js-file-preview')
-            if (input.files[0]) {
-                output.innerHTML = input.files[0].name + ' (' + input.files[0].size.toString().slice(0, -3) + 'Ko)' + `
-                <input type="submit" value="送信" class="btn smallbutton" />`
-            }
-        } )
+        input.addEventListener('change', () => input.closest('form').submit())
     } )
 
     // API update on input changes
-    document.querySelectorAll('.js-bike-type').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
-    document.querySelectorAll('.js-bike-model').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
-    document.querySelectorAll('.js-bike-wheels').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
-    document.querySelectorAll('.js-bike-components').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
-    document.querySelectorAll('.js-bike-description').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
+    bikeBlock.querySelectorAll('.js-bike-type').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
+    bikeBlock.querySelectorAll('.js-bike-model').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
+    bikeBlock.querySelectorAll('.js-bike-wheels').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
+    bikeBlock.querySelectorAll('.js-bike-components').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
+    bikeBlock.querySelectorAll('.js-bike-description').forEach( (input) => { input.addEventListener('change', updateInfo) } ) 
 
     // Delete a bike
-    document.querySelectorAll('.js-delete-bike').forEach( (deleteBikeButton) => { 
+    bikeBlock.querySelectorAll('.js-delete-bike').forEach((deleteBikeButton) => { 
         deleteBikeButton.addEventListener('click', async (e) => {
             var bikeId = e.target.closest('.js-bike-container').getAttribute('bike_id')
             var bikeDiv = e.target.closest('.container-admin')
-            answer = await openConfirmationPopup('このバイクを削除します。宜しいですか？')
+            var answer = await openConfirmationPopup('このバイクを削除します。宜しいですか？')
             if (answer) {
                 ajaxGetRequest (apiUrl + '?deleteBike=' + bikeId, (response) => {
                     if (response[0] == true) bikeDiv.remove()
@@ -56,16 +52,17 @@ function addListeners() {
     } )
 
     // Open modal on bike image click
-    document.querySelectorAll('.bike-image-img').forEach( (bikeImage) => {
-        bikeImage.addEventListener('click', (e) => {
-            openSingleModal(e.target.src)
-        } )
+    bikeBlock.querySelectorAll('.pf-bike-image').forEach( (bikeImage) => {
+        var modal = new Modal(bikeImage.src)
+        bikeImage.after(modal.element)
+        bikeImage.addEventListener('click', () => modal.open())
     } )
 
 }
 
 function updateInfo (e) {
     var bikeId = e.target.closest('.js-bike-container').getAttribute('bike_id')
+    var timerPopup = new TimerPopup({type: 'success', text: 'バイクの変更を保存しました！'}, 2)
 	ajaxGetRequest (apiUrl + '?' + e.target.name + '=' + e.target.value + '&id=' + bikeId, (response) => {
         // After database update, update bike id element attributes
         if (!document.querySelector('#bikeImageFile' + bikeId)) {
@@ -75,6 +72,6 @@ function updateInfo (e) {
         }
         e.target.closest('form').setAttribute('bike_id', response[0])
         e.target.closest('.js-bike-container').setAttribute('bike_id', response[0])
-	} )
+        timerPopup.show()
+	})
 }
-

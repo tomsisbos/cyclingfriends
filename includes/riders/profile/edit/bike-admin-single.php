@@ -2,7 +2,7 @@
     if (isset($bike)) echo $bike->id;
     else echo 'new'; ?>
 ">
-    <form title="Upload image" class="js-bike-image-form" <?php if (!isset($bike)) echo 'id="newBikeForm" '; ?>name="bike-image-form" enctype="multipart/form-data" method="post" action="..\actions\riders\profile\bikeImageAction.php">
+    <form title="Upload image" class="js-bike-image-form" <?php if (!isset($bike)) echo 'id="newBikeForm" '; ?>name="bike-image-form" enctype="multipart/form-data" method="post" onchange="'submit()'">
         <div class="pf-bike-image-container"> <?php
             if (isset($bike)) $bike->displayImage();
             else echo '<img class="pf-bike-image" src="/media/default-bike-' .rand(1, 9). '.svg">' ?>
@@ -50,7 +50,7 @@
                 </select>
             </div>
             <div class="pf-bike-column">
-                <label><strong>車種 : </strong></label>
+                <label><strong>モデル : </strong></label>
                 <input type="text" name="bike-model" class="js-bike-model admin-field" value="<?php if (isset($bike)) echo $bike->model; ?>">
             </div>
         </div>

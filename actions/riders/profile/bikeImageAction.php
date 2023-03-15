@@ -1,9 +1,29 @@
 <?php
+ 
+require '../actions/databaseAction.php';
+require '../includes/functions.php';
 
-session_start();
-require $_SERVER["DOCUMENT_ROOT"] . '/includes/head.php';
-require $_SERVER["DOCUMENT_ROOT"] . '/actions/users/securityAction.php';
+if (isset($_FILES['bikeimagefile'])) {
+	
+	if (!is_uploaded_file($_FILES['bikeimagefile']['tmp_name'])) {
+		return array('error' => "ファイルアップロード中に問題が発生しました。");
+			
+	} else {
 
+		$bike = new Bike();
+
+		// In case of a new bike, create it before
+		if ($_POST['bike-id'] == 'new') $bike->create($connected_user->id);
+		// Else, load existing data
+		else $bike->load($_POST['bike-id']);
+		
+		$result = $bike->uploadImage($_FILES['bikeimagefile']);
+		if (isset($result['error'])) $errormessage = $result['error'];
+		if (isset($result['success'])) $successmessage = $result['success'];
+	}
+}
+
+/*
 if (isset($_POST['bike-id'])) {
 	// Lauch uploading to database function if a file has been uploaded
 	if (isset($_FILES)) {
@@ -30,6 +50,6 @@ if (isset($_POST['bike-id'])) {
 	}
 }
 
-header('Location: /riders/profile/edit.php');
+header('Location: /riders/profile/edit.php');*/
 
 ?>

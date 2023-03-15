@@ -21,11 +21,11 @@ if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/hel
 
 <div class="main dashboard" id="infiniteScrollElement">
 
-	<div class="container">
+	<div>
 
 		<div class="dashboard-container"> <?php
 
-			include '../includes/dev/board.php';
+			include '../includes/posts/board.php';
 
 			include '../includes/dashboard/thread.php'; ?>
 

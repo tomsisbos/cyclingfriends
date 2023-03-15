@@ -193,5 +193,4 @@ include '../includes/head.php'; ?>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/riders/friends.js"></script>
 <script src="/assets/js/friends-list.js"></script>
-<!--<script src="/scripts/riders/gallery.js"></script>-->
 <script src="/assets/js/send-message.js"></script>	
