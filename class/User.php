@@ -205,6 +205,7 @@ class User extends Model {
         } else {
             $createNewFriendship = $this->getPdo()->prepare('INSERT INTO friends(inviter_id, receiver_id, invitation_date) VALUES (?, ?, ?)');
             $createNewFriendship->execute(array($this->id, $friend->id, date('Y-m-d')));
+            $this->notify($friend->id, 'friends_request');
             return array('success' => $friend->login. "に友達申請を送りました !");
         }
     }
@@ -220,6 +221,8 @@ class User extends Model {
             // Set follower relation
             $this->follow($friend);
             $friend->follow($this);
+            
+            $this->notify($friend->id, 'friends_approval');
 
             // Return message
             return array('success' => $friend->login .'が友達リストに追加されました !');
@@ -274,7 +277,10 @@ class User extends Model {
     public function follow ($user) {
         $follow = $this->getPdo()->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
         $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
-        if ($follow->rowCount() > 0) return array('success' => $user->login . 'をフォローしました !');
+        if ($follow->rowCount() > 0) {
+            $this->notify($user->id, 'follow');
+            return array('success' => $user->login . 'をフォローしました !');
+        }
         else return array('error' => $user->login . 'を既にフォローしています。');
     }
 
@@ -318,6 +324,14 @@ class User extends Model {
         $getFriendsAndScoutsList = $this->getPdo()->prepare('SELECT followed_id FROM followers WHERE following_id = :user_id UNION SELECT CASE WHEN inviter_id = :user_id THEN receiver_id WHEN receiver_id = :user_id THEN inviter_id END FROM friends WHERE (inviter_id = :user_id OR receiver_id = :user_id) AND accepted = 1');
         $getFriendsAndScoutsList->execute(array(':user_id' => $this->id));
         return $getFriendsAndScoutsList->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function getNotifications ($offset = 0, $limit = 10) {
+        $getNotifications = $this->getPdo()->prepare("SELECT id FROM notifications WHERE user_id = ? ORDER BY checked ASC, datetime DESC LIMIT {$offset}, {$limit}");
+        $getNotifications->execute([$this->id]);
+        $notifications = [];
+        while ($id = $getNotifications->fetch(PDO::FETCH_COLUMN)) array_push($notifications, new Notification($id));
+        return $notifications;
     }
 
     public function getDistance ($user) {

@@ -24,22 +24,22 @@ class Route extends Model {
     
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
-        $this->id = $id;
+        $this->id                 = $id;
         $data = $this->getData($this->table);
-        $this->author = new User($data['author_id']);
-        $this->category = $data['category'];
-        $this->posting_date = new Datetime($data['posting_date']);
+        $this->author             = new User($data['author_id']);
+        $this->category           = $data['category'];
+        $this->posting_date       = new Datetime($data['posting_date']);
         $this->posting_date->setTimezone(new DateTimeZone('Asia/Tokyo'));
-        $this->name = $data['name'];
-        $this->description = $data['description'];
-        $this->distance = floatval($data['distance']);
-        $this->elevation = floatval($data['elevation']);
-        $this->startplace = $data['startplace'];
-        $this->goalplace = $data['goalplace'];
-        $this->coordinates = $this->getCoordinates($lngLatFormat);
+        $this->name               = $data['name'];
+        $this->description        = $data['description'];
+        $this->distance           = floatval($data['distance']);
+        $this->elevation          = floatval($data['elevation']);
+        $this->startplace         = $data['startplace'];
+        $this->goalplace          = $data['goalplace'];
+        $this->coordinates        = $this->getCoordinates($lngLatFormat);
         $this->thumbnail_filename = $data['thumbnail_filename'];
-        $this->time = $this->getTime();
-        $this->tunnels = $this->getTunnels();
+        $this->time               = $this->getTime();
+        $this->tunnels            = $this->getTunnels();
     }
 
     private function getCoordinates ($lngLatFormat) {

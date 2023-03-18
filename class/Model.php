@@ -14,7 +14,9 @@ class Model {
         return $db;
     }
 
-    // Get instance data from database
+    /**
+     * Get instance data from database
+     */
     protected function getData ($table) {
         if ($this->id != NULL) {
             $getData = $this->getPdo()->prepare("SELECT * FROM {$this->table} WHERE id = {$this->id}");
@@ -31,6 +33,14 @@ class Model {
             case 3 : return 'red'; 
             default : return 'black';
         }
+    }
+
+    /**
+     * Generate a new notification for this instance
+     */
+    public function notify ($user_id, $type) {
+        $notification = new Notification();
+        $notification->register($user_id, $type, $this->table, $this->id);
     }
 
 }

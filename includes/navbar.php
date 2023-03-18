@@ -65,9 +65,12 @@
 		
 		<!-- Profile picture icon -->
 		<div class="nav-item d-flex align-items-center gap">
-			<a href="/rider/<?= $_SESSION['id']; ?>">
-				<?php $connected_user->getPropicElement(60, 60, 60); ?>
-			</a>
+			<div>
+				<a href="/rider/<?= $_SESSION['id']; ?>">
+					<?php $connected_user->getPropicElement(60, 60, 60); ?>
+				</a>
+				<div id="notificationsContainer"></div>
+			</div>
 			<!-- Profile chevron dropdown -->
 			<div class="dropdown">
 				<a class="nav-link" href="#" data-bs-toggle="dropdown">
@@ -107,4 +110,7 @@
 </nav> <?php
 
 // Display dev note adding icon on session pages
-if (isset($_SESSION['auth'])) echo '<script src="/scripts/beta/note.js"></script>'; ?>
+if (isset($_SESSION['auth'])) echo '<script src="/scripts/beta/note.js"></script>';
+
+// Request and show notifications
+if (isset($_SESSION['auth'])) echo '<script type="module" src="/scripts/user/notifications.js"></script>'; ?>
