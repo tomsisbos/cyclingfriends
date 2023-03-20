@@ -103,6 +103,33 @@ class Mkpoint extends Model {
         return $reviews;
     }
 
+    public function postReview ($content) {
+        $connected_user = new User($_SESSION['id']);
+        $propic  = $connected_user->getPropicUrl();
+        $time    = date('Y-m-d H:i:s');
+
+        // Check if user has already posted a review
+        $reviews = $this->getUserReview($connected_user);
+        // If there is one..
+        if (!empty($reviews)) {
+            // ..and if content is not empty, update it
+            if (!empty($content)) {
+                $updateReview = $this->getPdo()->prepare('UPDATE mkpoint_reviews SET content = ?, time = ? WHERE mkpoint_id = ? AND user_id = ?');
+                $updateReview->execute(array($content, $time, $this->id, $connected_user->id));
+            // ..and if content is empty, delete it
+            } else {
+                $deleteReview = $this->getPdo()->prepare('DELETE FROM mkpoint_reviews WHERE mkpoint_id = ? AND user_id = ?');
+                $deleteReview->execute(array($this->id, $connected_user->id));
+            }
+
+        // Else, insert into mkpoint_reviews table
+        } else {
+            $insertReview = $this->getPdo()->prepare('INSERT INTO mkpoint_reviews(mkpoint_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
+            $insertReview->execute(array($this->id, $connected_user->id, $connected_user->login, $content, $time));
+            $this->notify($this->user_id, 'scenery_review_posting');
+        }
+    }
+
     public function getTags () {
         $getTags = $this->getPdo()->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
         $getTags->execute(array($this->type, $this->id));
@@ -132,8 +159,8 @@ class Mkpoint extends Model {
     public function getUserReview ($user) {
         $getUserReview = $this->getPdo()->prepare('SELECT id FROM mkpoint_reviews WHERE mkpoint_id = ? AND user_id = ?');
         $getUserReview->execute(array($this->id, $user->id));
-        $review_id = $getUserReview->fetch(PDO::FETCH_NUM)[0];
-        if (!empty($review_id)) return new MkpointReview($review_id);
+        $review_id = $getUserReview->fetch(PDO::FETCH_COLUMN);
+        if ($review_id) return new MkpointReview($review_id);
         else return false;
     }
 

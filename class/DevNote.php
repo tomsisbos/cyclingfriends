@@ -55,4 +55,11 @@ class DevNote extends Model {
         }
     }
 
+    public function post ($message) {
+        $postDevChatMessage = $this->getPdo()->prepare("INSERT INTO dev_chat (note_id, number, user_id, content) VALUES (?, ?, ?, ?)");
+        $postDevChatMessage->execute(array($this->id, count($this->chat) + 1, $_SESSION['id'], $message));
+        $this->notify($this->user_id, 'dev_message_post');
+        $this->chat = $this->getMessages(); // Update chat content
+    }
+
 } ?>

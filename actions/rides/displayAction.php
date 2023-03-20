@@ -47,7 +47,7 @@
 			END)
 		ORDER BY 
 			(CASE 
-				WHEN privacy = 'Friends only' THEN 0
+				WHEN privacy = 'friends_only' THEN 0
 				ELSE 1
 			END),
 			date, meeting_time ASC";

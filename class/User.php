@@ -278,7 +278,7 @@ class User extends Model {
         $follow = $this->getPdo()->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
         $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
         if ($follow->rowCount() > 0) {
-            $this->notify($user->id, 'follow');
+            if (!$this->isFriend($user)) $this->notify($user->id, 'follow');
             return array('success' => $user->login . 'をフォローしました !');
         }
         else return array('error' => $user->login . 'を既にフォローしています。');

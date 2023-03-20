@@ -915,14 +915,6 @@ function getPrivacyAndStatus($ride_id){
 	}
 }*/
 
-function getPrivacyString ($privacy) {
-	switch ($privacy) {
-		case 'public': return '公開';
-		case 'friends_only': return '友達のみ';
-		case 'private': return '非公開';
-	}
-}
-
 // Check if ride name is already set in the database
 function checkIfRideIsAlreadySet($ride_name) {
 	require '../actions/databaseAction.php';
@@ -931,9 +923,7 @@ function checkIfRideIsAlreadySet($ride_name) {
 	$getRideInfos->execute();
 	// Compare every ride name to the ride name parameter and returns true if finds the same, else return false after the loop
 	while ($currentRideTable = $getRideInfos->fetch()) {
-		if ($currentRideTable['name'] == $ride_name) {
-			return true;
-		}
+		if ($currentRideTable['name'] == $ride_name) return true;
 	}
 	return false;
 }

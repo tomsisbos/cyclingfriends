@@ -7,15 +7,12 @@ class RideMessage extends Model {
     
     function __construct($id = NULL) {
         parent::__construct();
-        $this->id                        = $id;
+        $this->id      = $id;
         $data = $this->getData($this->table);
-        $this->ride                      = new Ride ($data['ride_id']);
-        $this->author                    = new User ($data['author_id']);
-        $this->message                   = $data['message'];
-        $this->time                      = $data['time'];
-        if ($data['parent_id']) {
-            $this->parent                = new RideMessage ($data['parent_id']);
-        }
+        $this->ride    = new Ride ($data['ride_id']);
+        $this->author  = new User ($data['author_id']);
+        $this->message = $data['message'];
+        $this->time    = $data['time'];
+        if ($data['parent_id']) $this->parent = new RideMessage($data['parent_id']);
     }
-    
 }

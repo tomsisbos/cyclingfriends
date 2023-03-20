@@ -1,4 +1,4 @@
-var apiUrl = '/api/beta.php'
+var apiUrl = '/api/dev.php'
 
 var noteIcon = document.createElement('div')
 noteIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 21V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H8l-4 4m8-13v3m0 3v.01"/></svg>'
@@ -41,7 +41,7 @@ async function openNotePopup () {
         confirmationPopup.innerHTML = `
             <p>
                 このページについて、不具合を発見した場合や、機能等について意見があった場合に、<strong>開発チームに報告して頂くためのフォーム</strong>です。<br>
-                送信して頂いた内容は、<a href="/beta/board" target="_blank">ベータテスト管理パネル</a>に開発ノートとして表示されます。出来る限り、開発チームからご回答させて頂きますので、ぜひとも一緒にプラットフォームの機能を磨いていきましょう！
+                送信して頂いた内容は、<a href="/dev/board" target="_blank">ベータテスト管理パネル</a>に開発ノートとして表示されます。出来る限り、開発チームからご回答させて頂きますので、ぜひとも一緒にプラットフォームの機能を磨いていきましょう！
             </p>
             <form id="noteForm" class="d-flex flex-column">
                 <label><strong>報告タイプ</strong></label>

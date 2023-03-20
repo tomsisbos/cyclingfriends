@@ -6,6 +6,7 @@ class Notification extends Model {
     public $id;
     public $user_id;
     public $type;
+    public $actor_id;
     public $entry_table;
     public $entry_id;
     public $checked;
@@ -23,27 +24,34 @@ class Notification extends Model {
         $data = $this->getData($this->table);
         $this->user_id     = $data['user_id'];
         $this->type        = $data['type'];
+        $this->actor_id    = $data['actor_id'];
         $this->entry_table = $data['entry_table'];
         $this->entry_id    = $data['entry_id'];
         $this->checked     = (intval($data['checked']) === 1);
         $this->datetime    = new Datetime($data['datetime']);
     }
 
-    public function register ($user_id, $type, $entry_table, $entry_id) {
-        $checkIfExists = $this->getPdo()->prepare("SELECT id FROM {$this->table} WHERE user_id = ? AND type = ? AND entry_table = ? AND entry_id = ?");
+    public function register ($user_id, $type, $entry_table, $entry_id, $actor_id = NULL) {
+        $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require_once $base_directory. 'includes/functions.php';
+        if ($actor_id != NULL) $query = "SELECT id FROM {$this->table} WHERE user_id = ? AND type = ? AND actor_id = {$actor_id} AND entry_table = ? AND entry_id = ?";
+        else $query = "SELECT id FROM {$this->table} WHERE user_id = ? AND type = ? AND entry_table = ? AND entry_id = ?";
+        $checkIfExists = $this->getPdo()->prepare($query);
         $checkIfExists->execute([$user_id, $type, $entry_table, $entry_id]);
         // If similar entry exists, reset checked and datetime values
         if ($checkIfExists->rowCount() > 0) {
-            $updateNotification = $this->getPdo()->prepare("UPDATE {$this->table} SET checked = 0, datetime = NOW()");
-            $updateNotification->execute();
+            $current_notification_id = $checkIfExists->fetch(PDO::FETCH_COLUMN);
+            $updateNotification = $this->getPdo()->prepare("UPDATE {$this->table} SET checked = 0, datetime = NOW() WHERE id = ?");
+            $updateNotification->execute([$current_notification_id]);
         // Else, insert it
         } else {
             $id = getNextAutoIncrement($this->table);
-            $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, entry_table, entry_id) VALUES (?, ?, ?, ?)");
-            $createNotification->execute([$user_id, $type, $entry_table, $entry_id]);
+            $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, actor_id, entry_table, entry_id) VALUES (?, ?, ?, ?, ?)");
+            $createNotification->execute([$user_id, $type, $actor_id, $entry_table, $entry_id]);
             $this->id          = $id;
             $this->user_id     = $user_id;
             $this->type        = $type;
+            $this->actor_id    = $actor_id;
             $this->entry_table = $entry_table;
             $this->entry_id    = $entry_id;
             $this->checked     = false;
@@ -63,11 +71,12 @@ class Notification extends Model {
      */
     public function getEntry () {
         switch ($this->entry_table) {
-            case 'activities': return new Activity($this->entry_id);
-            case 'routes': return new Route($this->entry_id);
-            case 'rides': return new Ride($this->entry_id);
-            case 'users': return new User($this->entry_id);
-            case 'map_mkpoint': return new Mkpoint($this->entry_id);
+            case 'activities': return new Activity($this->entry_id); break;
+            case 'routes': return new Route($this->entry_id); break;
+            case 'rides': return new Ride($this->entry_id); break;
+            case 'users': return new User($this->entry_id); break;
+            case 'map_mkpoint': return new Mkpoint($this->entry_id); break;
+            case 'dev_notes': return new DevNote($this->entry_id); break;
             /// [...]
         }
     }
@@ -80,6 +89,7 @@ class Notification extends Model {
         $entry = $this->getEntry();
 
         switch ($this->type) {
+            // Users
             case 'friends_request':
                 $this->text = $entry->login. 'から友達リクエストが届いています。';
                 $this->ref = 'friends';
@@ -92,6 +102,49 @@ class Notification extends Model {
                 $this->text = $entry->login. 'がフォローしてくれました。';
                 $this->ref = 'rider/' .$entry->id;
                 break;
+            // Sceneries
+            case 'scenery_review_posting':
+                $this->text = '絶景スポット「' .$entry->name. '」に新しいコメントが投稿されました。';
+                $this->ref = 'scenery/' .$entry->id;
+                break;
+            // Rides
+            case 'ride_join':
+                $actor = new User($this->actor_id);
+                $this->text = $actor->login. 'が「' .$entry->name. '」にエントリーしました！';
+                $this->ref = 'ride/' .$entry->id. '/admin';
+                break;
+            case 'ride_quit':
+                $actor = new User($this->actor_id);
+                $this->text = $actor->login. 'が「' .$entry->name. '」への参加をキャンセルしました。';
+                $this->ref = 'ride/' .$entry->id. '/admin';
+                break;
+            case 'ride_message_post':
+                $actor = new User($this->actor_id);
+                $this->text = $actor->login. 'が「' .$entry->name. '」で新規メッセージを投稿しました。';
+                $this->ref = 'ride/' .$entry->id. '#chat';
+                break;
+            case 'ride_edited':
+                $this->text = 'エントリーしている「' .$entry->name. '」の開催概要が主催者によって編集されました。変更がないか、再度ご確認することをおススメします。';
+                $this->ref = 'ride/' .$entry->id;
+                break;
+            case 'ride_privacy_change':
+                $this->text = 'エントリーしている「' .$entry->name. '」のプライバシー設定が主催者によって「' .$entry->getPrivacyString(). '」に変更されました。';
+                $this->ref = 'ride/' .$entry->id;
+                break;
+            case 'ride_entry_start_change':
+                $this->text = 'エントリーしている「' .$entry->name. '」のエントリー開始日が主催者によって' .$entry->entry_start. 'に変更されました。';
+                $this->ref = 'ride/' .$entry->id;
+                break;
+            case 'ride_entry_end_change':
+                $this->text = 'エントリーしている「' .$entry->name. '」のエントリー締切日が主催者によって' .$entry->entry_end. 'に変更されました。';
+                $this->ref = 'ride/' .$entry->id;
+                break;
+            // Dev notes
+            case 'dev_message_post':
+                $this->text = '開発ノート「' .$entry->title. '」に新しいメッセージが投稿されました。';
+                $this->ref = 'dev/note/' .$entry->id;
+                break;
+            default: '通知内容を取得できませんでした。';
         }
     }
 

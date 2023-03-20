@@ -5,47 +5,24 @@
 			<div>
 				<label class="form-label">プライバシー設定</label>
 				<select class="admin-field" name="privacy" id="privacySelect">
-					<option value="Private"<?php
+					<option value="private"<?php
 						// First check if user has selected something and display it
-						if (isset($_POST['privacy'])) {
-							if ($_POST['privacy'] == 'Private') {
-								echo ' selected';
-							}
+						if (isset($_POST['privacy']) && $_POST['privacy'] == 'private') echo ' selected';
 						// If user hasn't selected anything yet, check for existing data in ride table
-						} else if (isset($ride->privacy)) {
-							if ($ride->privacy == 'Private') {
-								echo ' selected';
-							}
-						}
+						else if (isset($ride->privacy) && $ride->privacy == 'private') echo ' selected';
 						?>>非公開</option>
-					<option value="Friends only"<?php // If some of the participants are not in ride author's friendlist
-						if (!$ride->isEveryParticipantInFriendsList($ride->getAuthor())) {
-							echo ' disabled';
-						} 
+					<option value="friends_only"<?php // If some of the participants are not in ride author's friendlist
+						if (!$ride->isEveryParticipantInFriendsList($ride->getAuthor())) echo ' disabled';
 						// First check if user has selected something and display it
-						if (isset($_POST['privacy'])) {
-							if ($_POST['privacy'] == 'Friends only') {
-								echo ' selected';
-							}
+						if (isset($_POST['privacy']) && $_POST['privacy'] == 'friends_only') echo ' selected';
 						// If user hasn't selected anything yet, check for existing data in ride table
-						} else if (isset($ride->privacy)) {
-							if ($ride->privacy == 'Friends only') {
-								echo ' selected';
-							}
-						}
+						else if (isset($ride->privacy) && $ride->privacy == 'friends_only') echo ' selected';
 						?>>友達のみ</option>
-					<option value="Public"<?php
+					<option value="public"<?php
 						// First check if user has selected something and display it
-						if (isset($_POST['privacy'])) {
-							if ($_POST['privacy'] == 'Public') {
-								echo ' selected';
-							}
+						if (isset($_POST['privacy']) && $_POST['privacy'] == 'public') echo ' selected';
 						// If user hasn't selected anything yet, check for existing data in ride table
-						} else if (isset($ride->privacy)) {
-							if($ride->privacy == 'Public'){
-								echo ' selected';
-							}
-						}
+						else if (isset($ride->privacy) && $ride->privacy == 'public') echo ' selected';
 						?>>公開</option>
 				</select>
 			</div>
@@ -63,24 +40,18 @@
 				<label class="form-label">募集期間</label>
 				<input type="date" class="admin-field" name="entry_start" value="<?php
 				// First check if user has selected something and display it
-				if (isset($_POST['entry_start'])) {
-					echo $_POST['entry_start'];
+				if (isset($_POST['entry_start'])) echo $_POST['entry_start'];
 				// If user hasn't selected anything yet, check for existing data in ride table
-				} else if (isset($ride->entry_start)) {
-					echo $ride->entry_start;
-				// If there is on data in the table, set default date to current date
-				} else {
-					echo date('Y-m-d'); }?>" min="" max="<?= $oneDayBeforeRide; ?>">
+				else if (isset($ride->entry_start)) echo $ride->entry_start;
+				// If there is no data in the table, set default date to current date
+				else echo date('Y-m-d'); ?>" min="" max="<?= $oneDayBeforeRide; ?>">
 				<input type="date" class="admin-field" name="entry_end" value="<?php
 				// First check if user has selected something and display it
-				if (isset($_POST['entry_end'])) {
-					echo $_POST['entry_end'];
+				if (isset($_POST['entry_end'])) echo $_POST['entry_end'];
 				// If user hasn't selected anything yet, check for existing data in ride table
-				} else if (isset($ride->entry_end)) {
-					echo $ride->entry_end;
-				// If there is on data in the table, set default date to ride's previous day
-				}else{
-					echo date($oneDayBeforeRide); }?>" min="<?php if (isset($ride->entry_start)) { echo $ride->entry_start; } ?>" max="<?= $oneDayBeforeRide ?>">
+				else if (isset($ride->entry_end)) echo $ride->entry_end;
+				// If there is no data in the table, set default date to ride's previous day
+				else echo date($oneDayBeforeRide); ?>" min="<?php if (isset($ride->entry_start)) { echo $ride->entry_start; } ?>" max="<?= $oneDayBeforeRide ?>">
 			</div>
 		</div>
 		

@@ -25,7 +25,9 @@ class Model {
         }
     }
     
-    // Attribute a color depending on the level
+    /**
+     * Attribute a color depending on the level
+     */
     public function colorLevel ($level) {
         switch ($level) {
             case 1 : return 'green';
@@ -35,12 +37,20 @@ class Model {
         }
     }
 
+    public function getPrivacyString () {
+        switch ($this->privacy) {
+            case 'public': return '公開';
+            case 'friends_only': return '友達のみ';
+            case 'private': return '非公開';
+        }
+    }
+
     /**
      * Generate a new notification for this instance
      */
-    public function notify ($user_id, $type) {
+    public function notify ($user_id, $type, $actor_id = NULL) {
         $notification = new Notification();
-        $notification->register($user_id, $type, $this->table, $this->id);
+        $notification->register($user_id, $type, $this->table, $this->id, $actor_id);
     }
 
 }

@@ -48,7 +48,7 @@
                 <img class="ac-map-thumbnail" src="<?= $activity->route->getThumbnail() ?>">
             </a> <?php
             if ($activity->privacy != 'public') { ?>
-                <p style="background-color: #ff5555" class="tag-on-div tag-light text-light"><?= getPrivacyString($activity->privacy) ?></p> <?php
+                <p style="background-color: #ff5555" class="tag-on-div tag-light text-light"><?= $activity->getPrivacyString() ?></p> <?php
             } ?>
         </div>
 

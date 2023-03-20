@@ -1,4 +1,4 @@
-import NotificationsHandler from "/map/class/NotificationsHandler"
+import NotificationsHandler from "/map/class/NotificationsHandler.js"
 
 // Get notifications from server
 ajaxGetRequest('/api/notifications.php?get=true&reset=true', (notifications) => {

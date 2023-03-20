@@ -1,43 +1,31 @@
-<h3>チャット</h3> <?php
+<h3 id="chat">チャット</h3> <?php
 
-include '../actions/databaseAction.php';
+/*include '../actions/databaseAction.php';*/
 
 // Space for error messages
-if(isset($chaterror)){ echo '<div class="error-block"><p class="error-message">' .$chaterror. '</p></div>'; }
+if (isset($chaterror)) echo '<div class="error-block"><p class="error-message">' .$chaterror. '</p></div>';
 
 // Signup form validation
-if(isset($_POST['send'])) {
+if (isset($_POST['send'])) {
 	 
 	// Check if user wrote something to post
-	if(!empty($_POST['message'])){
+	if (!empty($_POST['message'])) {
 		 
 		// Prepare all variables
-		$message    = nl2br(htmlspecialchars($_POST['message']));
-		$time       = date('Y-m-d H:i:s');
-		
-		// Send variables into database
-		$insertChatMessage = $db->prepare('INSERT INTO ride_chat(ride_id, author_id, user_login, message, time) VALUES (?, ?, ?, ?, ?)');
-		$insertChatMessage->execute(array($ride->id, $connected_user->id, $connected_user->login, $message, $time));
-		
-		unset($message);
-		unset($_POST);
-		
+		$ride->postMessage(nl2br(htmlspecialchars($_POST['message'])));
+		$_POST = [];
 	
-	}else{
-		
-		$chaterror = 'Please write something into the chatbox.';
-		
-	}
+	} else $chaterror = '入力フォームが空欄になっています。';
 }
 
 // Prepare request of chat parent lines of a specific ride_id
-$getRideChatParents = $db->prepare('SELECT * FROM ride_chat WHERE ride_id = ? AND parent_id IS NULL ORDER BY time ASC');
-$getRideChatParents->execute(array($ride->id));
+/*$getRideChatParents = $db->prepare('SELECT * FROM ride_chat WHERE ride_id = ? AND parent_id IS NULL ORDER BY time ASC');
+$getRideChatParents->execute(array($ride->id));*/
 
 
 	$chat = $ride->getChat();
 	forEach ($chat as $rideMessage){
-		$rideMessage = new RideMessage ($rideMessage['id']);
+		$rideMessage = new RideMessage($rideMessage['id']);
 		// First display messages which are not children messages
 		if (!$rideMessage->parent) {
 			// Displays chat-line in admin color if ride author has admin rights

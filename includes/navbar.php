@@ -54,7 +54,7 @@
 						if ($connected_user->hasAdministratorRights()) { ?>
 							<a class="dropdown-item bg-admin" href="/community">Users list</a> <?php
 						} ?>
-						<a class="dropdown-item bg-admin" href="/beta/board">Test reports</a>
+						<a class="dropdown-item bg-admin" href="/dev/board">Test reports</a>
 						<a class="dropdown-item" href="/news">News</a>
 						<a class="dropdown-item" href="/friends">Friends</a>
 						<a class="dropdown-item" href="/scouts">Scouts</a>
@@ -110,7 +110,7 @@
 </nav> <?php
 
 // Display dev note adding icon on session pages
-if (isset($_SESSION['auth'])) echo '<script src="/scripts/beta/note.js"></script>';
+if (isset($_SESSION['auth'])) echo '<script src="/scripts/dev/note.js"></script>';
 
 // Request and show notifications
 if (isset($_SESSION['auth'])) echo '<script type="module" src="/scripts/user/notifications.js"></script>'; ?>

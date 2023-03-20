@@ -2,6 +2,7 @@
 
 include '../actions/users/initSessionAction.php';
 include '../actions/rides/rideAction.php';
+include '../actions/rides/edit/adminPanelAction.php';
 include '../actions/rides/join&quitAction.php';
 include '../actions/rides/edit/galleryAction.php';
 include '../includes/head.php'; ?>
@@ -15,12 +16,12 @@ include '../includes/head.php'; ?>
 <body> <?php
 
 	// If set as private and connected user does not have admin rights on this ride, redirect to the dashboard
-	if ($ride->privacy == 'Private' AND $ride->author_id != $connected_user->id) {
+	if ($ride->privacy == 'private' AND $ride->author_id != $connected_user->id) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the ride author, redirect to the dashboard
-	if ($ride->author_id != $connected_user->id AND $ride->privacy == 'Friends only' AND $ride->getAuthor()->isFriend($connected_user) == false) {
+	if ($ride->author_id != $connected_user->id AND $ride->privacy == 'friends_only' AND $ride->getAuthor()->isFriend($connected_user) == false) {
 		header('Location: /');
 	}
 
@@ -43,7 +44,7 @@ include '../includes/head.php'; ?>
 						<p style="background-color: <?= $status_color ?>" class="tag-light text-light"><?= $ride->status;
 						// Only add substatus if there is one
 						if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
-						if ($ride->privacy == 'Friends only') { ?>
+						if ($ride->privacy == 'friends_only') { ?>
 							<p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->getAuthor()->login; ?>の友達に限定</p> <?php
 						} ?>
 					</div>
@@ -64,13 +65,11 @@ include '../includes/head.php'; ?>
 			</div>
 		</div>
 			
-		<!-- Displays ride participants -->
-		<?php include '../includes/rides/participants.php';
+		<!-- Displays ride participants --> <?php
+		include '../includes/rides/participants.php';
 			
 			// Include admin panel if the user has admin rights on this ride
-			if ($ride->author_id == $connected_user->id) {
-				include '../includes/rides/admin-panel.php';
-			} ?>
+			if ($ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; ?>
 			
 			<!-- Infos section -->
 			<div class="container margin-bottom">
@@ -142,10 +141,6 @@ include '../includes/head.php'; ?>
 
 </body>
 </html>
-
-<?php // Update changes before reloading of the page
-include '../actions/rides/edit/adminPanelAction.php';
-include '../actions/rides/rideAction.php'; ?>
 
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/rides/checkpoints-gallery.js"></script>

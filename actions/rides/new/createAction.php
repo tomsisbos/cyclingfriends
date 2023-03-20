@@ -57,7 +57,7 @@ if (isset($_POST['validate'])) {
 			$ride_posting_date = date('Y/m/d H:i');
 			$ride_author_id = $_SESSION['id'];
 			$ride_author_login = $_SESSION['login'];
-			$privacy = 'Private';
+			$privacy = 'private';
 			$entry_start = NULL;
 			$entry_end = NULL;
 			$participants_number = 1;

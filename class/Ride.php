@@ -252,13 +252,15 @@ class Ride extends Model {
     public function join ($participant) {
         // Add a line into participation database
         $joinRide = $this->getPdo()->prepare('INSERT INTO participation(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
-        $joinRide->execute(array($participant->id, $this->id, date('Y-m-d H:i:s')));	
+        $joinRide->execute(array($participant->id, $this->id, date('Y-m-d H:i:s')));
+        $this->notify($this->author_id, 'ride_join', $participant->id);
     }
 
     public function quit ($participant) {
         // Remove an user from participation database
 		$quitRide = $this->getPdo()->prepare('DELETE FROM participation WHERE user_id = ? AND ride_id = ?');
-		$quitRide->execute(array($_SESSION['id'], $this->id));	
+		$quitRide->execute(array($_SESSION['id'], $this->id));
+        $this->notify($this->author_id, 'ride_quit', $participant->id);
     }
 
     public function isOpen () {
@@ -283,15 +285,12 @@ class Ride extends Model {
         else return false;
     }
 
-    // Function for getting an array with participants list and the total number of them
+    // Get an array with participants list
     public function getParticipants () {
         $getParticipants = $this->getPdo()->prepare('SELECT user_id FROM participation WHERE ride_id = ?');
         $getParticipants->execute(array($this->id));
-        if ($getParticipants->rowCount() > 0) {
-            // Regroup user ids in one array
-            $participants = array_column($getParticipants->fetchAll(PDO::FETCH_ASSOC), 'user_id');
-            return $participants;
-        } else return NULL;
+        if ($getParticipants->rowCount() > 0) return $getParticipants->fetchAll(PDO::FETCH_COLUMN);
+        else return NULL;
     }
 
     // Check if a ride is full or not
@@ -315,14 +314,9 @@ class Ride extends Model {
         if ($participants) {
             $participating_friends = array_intersect($friends, $participants);
             $participants_not_friends = array_diff($participants, $participating_friends);
-            if (count($participants_not_friends) == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
+            if (count($participants_not_friends) == 0) return true;
+            else return false;
+        } else return true;
     }
 
     private function getStatus () {
@@ -337,20 +331,20 @@ class Ride extends Model {
             $status = '定員達成'; } // status is Full
             
         // If privacy is set as private
-        else if ($this->privacy == 'Private') {
+        else if ($this->privacy == 'private') {
             $status = '非公開'; } // status is Private
             
         // If not set as Finished, Full or Private
         else {
             
             // If not set as private, ride date is yet to come and entry start date is yet to come
-            if (($this->privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start > date('Y-m-d'))) {
+            if (($this->privacy != 'private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start > date('Y-m-d'))) {
                 $status = '募集期間外'; // status is Closed
                 $substatus = 'まもなく開始'; // substatus is opening soon
             }
     
             // If not set as private, ride date is yet to come and entries are open
-            else if (($this->privacy != 'Private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start <= date('Y-m-d') AND $this->entry_end >= date('Y-m-d'))) {
+            else if (($this->privacy != 'private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start <= date('Y-m-d') AND $this->entry_end >= date('Y-m-d'))) {
                 // If number of applicants is lower than minimum number set
                 $participants_number = $this->setParticipationInfos()['participants_number'];
                 if ($participants_number < $this->nb_riders_min) {
@@ -363,7 +357,7 @@ class Ride extends Model {
             }
     
             // If not set as private, ride date is yet to come but entries are closed
-            else if (($this->privacy != 'Private') AND ($this->date >= date('Y-m-d')) AND ($this->entry_start < date('Y-m-d') AND $this->entry_end < date('Y-m-d'))) {
+            else if (($this->privacy != 'private') AND ($this->date >= date('Y-m-d')) AND ($this->entry_start < date('Y-m-d') AND $this->entry_end < date('Y-m-d'))) {
                 $status = 'エントリー終了'; // status is Closed
                 $substatus = 'まもなく開催'; //substatus is ready to depart
             }
@@ -473,6 +467,14 @@ class Ride extends Model {
         $getChat = $this->getPdo()->prepare('SELECT * FROM ride_chat WHERE ride_id = ?');
         $getChat->execute(array($this->id));
         return $getChat->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function postMessage ($content) {
+        $connected_user = new User($_SESSION['id']);
+        // Send variables into database
+		$insertChatMessage = $this->getPdo()->prepare('INSERT INTO ride_chat(ride_id, author_id, user_login, message, time) VALUES (?, ?, ?, ?, ?)');
+		$insertChatMessage->execute(array($this->id, $connected_user->id, $connected_user->login, $content, date('Y-m-d H:i:s')));
+        $this->notify($this->author_id, 'ride_message_post', $_SESSION['id']);
     }
 
     public function getMapThumbnail () {

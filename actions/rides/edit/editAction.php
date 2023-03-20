@@ -155,6 +155,10 @@ if (isset($_POST['validate'])) {
 			unset($_SESSION['edit-forms']);
 			unset($_SESSION['edit-course']);
 
+			$ride = new Ride($ride_id);
+			// Notify participants of ride details edition by organizer
+			foreach ($ride->getParticipants() as $participant_id) $ride->notify($participant_id, 'ride_edited');
+
 			// Redirect to ride page
 			header('location: /ride/' . $ride_id);
 

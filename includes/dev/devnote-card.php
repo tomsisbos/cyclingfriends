@@ -1,4 +1,4 @@
-<a href="/beta/devnote/<?= $dev_note->id ?>">
+<a href="/dev/note/<?= $dev_note->id ?>">
     <div class="dvnt-board-item<?php
         if ($dev_note->isAnswered()) echo ' answered';
         else if ($dev_note->getUser()->hasModeratorRights()) echo ' bg-admin' ?>

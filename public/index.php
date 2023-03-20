@@ -17,10 +17,10 @@ $router->map('GET', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('POST', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('GET', '/privatebeta/signup/[i:token]', 'beta/signup');
 $router->map('POST', '/privatebeta/signup/[i:token]', 'beta/signup');
-$router->map('GET', '/beta/board', 'beta/board');
-$router->map('POST', '/beta/board', 'beta/board');
-$router->map('GET', '/beta/devnote/[i:note_id]', 'beta/single');
-$router->map('POST', '/beta/devnote/[i:note_id]', 'beta/single');
+$router->map('GET', '/dev/board', 'dev/board');
+$router->map('POST', '/dev/board', 'dev/board');
+$router->map('GET', '/dev/note/[i:note_id]', 'dev/note');
+$router->map('POST', '/dev/note/[i:note_id]', 'dev/note');
 
 // User
 $router->map('GET', '/signin', 'user/signin', 'user-signin');
@@ -100,7 +100,6 @@ $match = $router->match();
 if (is_array($match)) {
     // If target is a function, call it with relevant params
     if (is_callable($match['target'])) {
-        ///var_dump($match); die;
         call_user_func_array($match['target'], $match['params']);
     // If target is a string,
     } else {

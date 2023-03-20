@@ -552,28 +552,14 @@ if (isAjax()) {
     }
 
     if (isset($_GET['add-review-mkpoint'])) {
-        $mkpoint = new Mkpoint($_GET['add-review-mkpoint']);
-        $content = $_GET['content'];
-        $time    = date('Y-m-d H:i:s');
+        // Prepare data
+        $content = nl2br(htmlspecialchars($_GET['content']));
         $propic  = $connected_user->getPropicUrl();
-        // Check if user has already posted a review
-        $reviews = $mkpoint->getUserReview($connected_user);
-        // If there is one..
-        if (!empty($reviews)) {
-            // ..and if content is not empty, update it
-            if (!empty($content)) {
-                $updateReview = $db->prepare('UPDATE mkpoint_reviews SET content = ?, time = ? WHERE mkpoint_id = ? AND user_id = ?');
-                $updateReview->execute(array($content, $time, $mkpoint->id, $connected_user->id));
-            // ..and if content is empty, delete it
-            } else {
-                $deleteReview = $db->prepare('DELETE FROM mkpoint_reviews WHERE mkpoint_id = ? AND user_id = ?');
-                $deleteReview->execute(array($mkpoint->id, $connected_user->id));
-            }
-        } else {
-            // Insert into mkpoint_reviews table
-            $insertReview = $db->prepare('INSERT INTO mkpoint_reviews(mkpoint_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
-            $insertReview->execute(array($mkpoint->id, $connected_user->id, $connected_user->login, $content, $time));
-        }
+        $time    = date('Y-m-d H:i:s');
+        // Post review
+        $mkpoint = new Mkpoint($_GET['add-review-mkpoint']);
+        $mkpoint->postReview($content);
+        // Return necessary data
         echo json_encode(['mkpoint_id' => $mkpoint->id, "user" => ["id" => $connected_user->id, "login" => $connected_user->login], "content" => $content, "time" => $time, "propic" => $propic]);
     }
 
@@ -581,7 +567,7 @@ if (isAjax()) {
         define('RIDES_DATE_RANGE', 3); // Define interval in which rides must be displayed in months
         $getRides = $db->prepare("SELECT id FROM rides
         WHERE
-            (privacy = 'Public' OR (privacy = 'Friends only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
+            (privacy = 'public' OR (privacy = 'friends_only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
         AND
             date BETWEEN :today AND :datemax
         AND
