@@ -376,10 +376,6 @@ export default class NewActivityMap extends ActivityMap {
                     var $type = buildCheckpointSelectType(checkpoint.type)
                     $type.className = 'form-select'
                 }
-                var $story = document.createElement('textarea')
-                if (checkpoint.story) $story.innerText = checkpoint.story
-                $story.className = 'form-control'
-                $story.placeholder = 'ストーリー...'
                 $properties.appendChild($distance)
                 $properties.appendChild($datetime)
                 $topline.appendChild($name)
@@ -387,7 +383,13 @@ export default class NewActivityMap extends ActivityMap {
                 $topline.appendChild($type)
                 checkpoint.form.appendChild($photosContainer)
                 checkpoint.form.appendChild($topline)
-                checkpoint.form.appendChild($story)
+                if (checkpoint.type != 'Goal') { // Don't build story field for goal
+                    var $story = document.createElement('textarea')
+                    if (checkpoint.story) $story.innerText = checkpoint.story
+                    $story.className = 'form-control'
+                    $story.placeholder = 'ストーリー...'
+                    checkpoint.form.appendChild($story)
+                }
                 // Append element
                 if (document.querySelector('#checkpointForm' + (checkpoint.number - 1))) {
                     document.querySelector('#checkpointForm' + (checkpoint.number - 1)).after(checkpoint.form)
@@ -409,7 +411,7 @@ export default class NewActivityMap extends ActivityMap {
                 $name.addEventListener('change', e => {
                     checkpoint.name = e.target.value
                 } )
-                $story.addEventListener('change', e => checkpoint.story = e.target.value)
+                if ($story) $story.addEventListener('change', e => checkpoint.story = e.target.value)
                 $type.addEventListener('change', e => checkpoint.type = e.target.value)
             }
         } )
@@ -1187,7 +1189,7 @@ export default class NewActivityMap extends ActivityMap {
                     ajaxSaveActivity(this.apiUrl, cleanData, (response) => {
                     
                         // Redirect to my rides page
-                        window.location.replace('/' + this.session.login + '/activities')
+                        window.location.replace('/user/activities')
 
                     }, loader)
 

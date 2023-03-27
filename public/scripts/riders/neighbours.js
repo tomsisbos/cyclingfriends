@@ -1,6 +1,7 @@
+import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 import NeighboursMap from "/map/class/neighbours/NeighboursMap.js"
 import NeighbourPopup from "/map/class/neighbours/NeighbourPopup.js"
-import CFUtils from "/map/class/CFUtils.js"
 
 var neighboursMap = new NeighboursMap()
 
@@ -15,18 +16,16 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
     neighboursMap.addLayers()
 
     // Add connected user marker
-    ajaxGetRequest ('/api/map.php' + "?getpropic=true", (src) => {
-        let neighbour = {
-            id: neighboursMap.session.id,
-            propic: src
-        }
-        var $marker = neighboursMap.buildMarkerElement(neighbour)
-        var $markerImg = $marker.querySelector('img')
-        $markerImg.classList.add('admin-marker')
-        const marker = new mapboxgl.Marker($marker)
-        marker.setLngLat(neighboursMap.userLocation)
-        marker.addTo(map)
-    } )
+    let neighbour = {
+        id: await CFSession.get('id'),
+        propic: await CFSession.getPropic()
+    }
+    var $marker = neighboursMap.buildMarkerElement(neighbour)
+    var $markerImg = $marker.querySelector('img')
+    $markerImg.classList.add('admin-marker')
+    const marker = new mapboxgl.Marker($marker)
+    marker.setLngLat(neighboursMap.userLocation)
+    marker.addTo(map)
     
     // Add all neighbours markers
     neighbours.forEach( (neighbour) => {

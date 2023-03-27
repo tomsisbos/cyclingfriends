@@ -539,7 +539,7 @@ class User extends Model {
         // Request activities
         $getActivities = $this->getPdo()->prepare(
             "SELECT
-            id, user_id, posting_date, title, privacy
+            id, user_id, datetime, posting_date, title, privacy
             FROM
             activities
         WHERE 
@@ -565,7 +565,7 @@ class User extends Model {
 
         // If resulted array if shorter than [limit], complete with most liked public activities of last [period] days
         if ($results_number = count($activities) < $limit) {
-            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, posting_date, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
+            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, datetime, posting_date, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
             $getFurtherActivities->execute(array($period));
             $further_activities = $getFurtherActivities->fetchAll(PDO::FETCH_ASSOC);
             foreach ($further_activities as $further_activity) {
@@ -579,7 +579,7 @@ class User extends Model {
 
         // If still shorter than [limit], complete with other most liked public activities, regardless of [period]
         if (count($activities) < $limit) {
-            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, posting_date, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
+            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, datetime, posting_date, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
             $getFurtherActivities2->execute();
             $further_activities2 = $getFurtherActivities2->fetchAll(PDO::FETCH_ASSOC);
             foreach ($further_activities2 as $further_activity) {
@@ -715,14 +715,20 @@ class User extends Model {
         $friends_and_scout_list = $this->getFriendsAndScoutsList();
         $friends_and_scout_number = count($friends_and_scout_list);
         if ($friends_and_scout_number < 3) $period = 999;
-        else if ($friends_and_scout_number < 8) $period = 28;
-        else if ($friends_and_scout_number < 18) $period = 20;
-        else if ($friends_and_scout_number < 25) $period = 14;
-        else $period = 10;
+        else if ($friends_and_scout_number < 8) $period = 60;
+        else if ($friends_and_scout_number < 18) $period = 28;
+        else if ($friends_and_scout_number < 25) $period = 21;
+        else $period = 14;
         // Request mkpoints
-        $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
-        $getMkpoints->execute(array($period));
-        return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        if ($friends_and_scout_number == 0) $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)");
+        else $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getMkpoints->execute();
+        if ($getMkpoints->rowCount() > 2) return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        else { // If this request has returned less than 3 results, return scenery spots shared in the last 14 days
+            $getOtherMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)");
+            $getOtherMkpoints->execute();
+            return $getOtherMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     // Get currently saved cleared segments list
@@ -767,9 +773,9 @@ class User extends Model {
         // Sort thread data by date
         function sort_by_date ($a, $b) {
             if (isset($a['publication_date'])) $a_date = $a['publication_date'];
-            else if (isset($a['posting_date'])) $a_date = $a['posting_date'];
+            else if (isset($a['datetime'])) $a_date = $a['datetime'];
             if (isset($b['publication_date'])) $b_date = $b['publication_date'];
-            else if (isset($b['posting_date'])) $b_date = $b['posting_date'];
+            else if (isset($b['datetime'])) $b_date = $b['datetime'];
             return $b_date <=> $a_date;
         }
         usort($thread_data, 'sort_by_date');

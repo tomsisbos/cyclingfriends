@@ -24,7 +24,8 @@ if (is_array($data)) {
     // Build activity data
     $activity_id = $data['id'];
     $title       = $data['title'];
-    $bike_id     = $data['bike'];
+    if (isset($data['bike'])) $bike_id = $data['bike'];
+    else $bike_id = null;
     $privacy     = $data['privacy'];
 
     // Update data in 'activities' table

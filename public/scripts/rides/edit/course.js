@@ -1,4 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 import RideMap from "/map/class/ride/RideMap.js"
 import RidePickMap from "/map/class/ride/RidePickMap.js"
 import RideDrawMap from "/map/class/ride/RideDrawMap.js"
@@ -59,7 +60,7 @@ async function displayForm () {
         ridePickMap.setController()
 
         // Get session information from the server
-        ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
+        CFSession.getSession().then(session => {
             
             // Update map instance properties
             ridePickMap.session = session
@@ -138,7 +139,7 @@ async function displayForm () {
         rideDrawMapIsLoaded = true
 
         // Get session information from the server
-        ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
+        CFSession.getSession().then(async session => {
 
             // Update map instance properties
             rideDrawMap.session = session

@@ -1,4 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 import WorldMap from "/map/class/WorldMap.js"
 import AmenityPopup from "/map/class/AmenityPopup.js"
 
@@ -17,7 +18,10 @@ worldMap.addStyleControl()
 worldMap.addOptionsControl()
 worldMap.addFilterControl()
 worldMap.addFullscreenControl()
-if (worldMap.session.rights.rank >= 20) worldMap.addEditorControl()
+CFSession.hasRights('editor').then((response) => {
+    console.log(response)
+    if (response === true) worldMap.addEditorControl()
+} )
 
 // Prepare and display mkpoints data
 ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=details", (mkpoints) => {

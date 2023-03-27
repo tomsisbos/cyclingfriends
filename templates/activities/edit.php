@@ -33,10 +33,11 @@ include '../actions/activities/getActivityAction.php'; ?>
                         <label class="form-label">バイク</label>
                         <select id="selectBikes" class="form-select"> <?php
                             $bikes = $connected_user->getBikes();
-                            foreach ($bikes as $entry) {
+                            if (count($bikes) > 0) foreach ($bikes as $entry) {
                                 $bike = new Bike($entry['id']) ?>
                                 <option value="<?= $bike->id ?>" <?php if ($activity->bike == $entry['id']) echo 'selected'; ?>><?= $bike->model . ' (' . $bike->type . ')' ?></option><?php
-                            } ?>
+                            }
+                            else echo '<option value="null" disabled>登録バイクがありません。</option>' ?>
                         </select>
                     </div>
                     <div class="new-ac-inputgroup">

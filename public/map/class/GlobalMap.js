@@ -1,4 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 import Model from "/map/class/Model.js"
 import SceneryPopup from "/map/class/scenery/SceneryPopup.js"
 import cover from '/node_modules/@mapbox/tile-cover/index.js'
@@ -2786,18 +2787,19 @@ export default class GlobalMap extends Model {
                 positionMarker.setLngLat(routeData.geometry.coordinates[0])
                 positionMarker.addTo(this.map)
                 // If user is connected, update marker element with connected user profile picture
-                if (this.session && this.session.id) ajaxGetRequest ('/api/map.php' + "?getpropic=" + this.session.id, (src) => {
-                    $marker.querySelector('img').style.backgroundImage = 'url(' + src + ')'
-                    positionMarker = new mapboxgl.Marker($marker)
-                    positionMarker.setLngLat(routeData.geometry.coordinates[0])
-                    positionMarker.addTo(this.map)
+                CFSession.getPropic().then(src => {
+                    if (src) {
+                        $marker.querySelector('img').style.backgroundImage = 'url(' + src + ')'
+                        positionMarker = new mapboxgl.Marker($marker)
+                        positionMarker.setLngLat(routeData.geometry.coordinates[0])
+                        positionMarker.addTo(this.map)
+                    // Else, simply build marker element
+                    } else {
+                        positionMarker = new mapboxgl.Marker($marker)
+                        positionMarker.setLngLat(routeData.geometry.coordinates[0])
+                        positionMarker.addTo(this.map)
+                    }
                 } )
-                // Else, simply build marker element
-                else {
-                    positionMarker = new mapboxgl.Marker($marker)
-                    positionMarker.setLngLat(routeData.geometry.coordinates[0])
-                    positionMarker.addTo(this.map)
-                }
 
                 var frame = async (time) => {
 

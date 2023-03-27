@@ -1,6 +1,7 @@
+import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 import Popup from "/map/class/Popup.js"
 import SceneryLightbox from "/map/class/scenery/SceneryLightbox.js"
-import CFUtils from "/map/class/CFUtils.js"
 import Loader from "/map/class/Loader.js"
 
 export default class SceneryPopup extends Popup {
@@ -183,7 +184,7 @@ export default class SceneryPopup extends Popup {
         var photos = this.data.mkpoint.photos
         var popupLoader = new Loader()
 
-        const addArrows = () => {
+        const addArrows = async () => {
 
             // Create and append arrow elements
             if (!photosContainer.querySelector('.small-prev')) {
@@ -220,7 +221,8 @@ export default class SceneryPopup extends Popup {
 
             // Add delete photo button if necessary
             if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-            if (photos[photoIndex - 1].$element.dataset.author == this.getSession().id) addDeletePhotoIcon() // ... And add it if connected user is photo author
+            sessionId = await CFSession.get('id')
+            if (photos[photoIndex - 1].$element.dataset.author == sessionId) addDeletePhotoIcon() // ... And add it if connected user is photo author
         }
 
         const removeArrows = () => {
@@ -375,11 +377,6 @@ export default class SceneryPopup extends Popup {
             photos: this.data.mkpoint.photos
         }
         this.lightbox = new SceneryLightbox(lightboxData)
-    }
-
-    getSession () {
-        if (this.session) return this.session
-        else if (this.data.mapInstance) return this.data.mapInstance.session
     }
 
     async loadReviews () {

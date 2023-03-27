@@ -1,4 +1,5 @@
 import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 import WorldHelper from "/scripts/helpers/map.js"
 import GlobalMap from "/map/class/GlobalMap.js"
 import SceneryPopup from "/map/class/scenery/SceneryPopup.js"
@@ -316,7 +317,7 @@ export default class WorldMap extends GlobalMap {
         } )
     }
 
-    setMkpoint (mkpoint) {
+    async setMkpoint (mkpoint) {
         
         // Build element
         let element = document.createElement('div')
@@ -352,7 +353,8 @@ export default class WorldMap extends GlobalMap {
             mapInstance: this,
             mkpoint
         }
-        if (mkpoint.user_id == this.session.id) instanceOptions.admin = true // Add administration panel if connected user has admin rights
+        var sessionId = await CFSession.get('id')
+        if (mkpoint.user_id == sessionId) instanceOptions.admin = true // Add administration panel if connected user has admin rights
         let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
         marker.setPopup(sceneryPopup.popup)
 
@@ -363,8 +365,8 @@ export default class WorldMap extends GlobalMap {
         element.addEventListener('mouseleave', () => element.style.setProperty('--scenery-hover-display', 'none'))
 
         // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-        if (mkpoint.user_id === this.session.id && this.mode == 'edit') marker.setDraggable(true)
-        else if (mkpoint.user_id === this.session.id && this.mode == 'default') marker.setDraggable(false)
+        if (mkpoint.user_id === sessionId && this.mode == 'edit') marker.setDraggable(true)
+        else if (mkpoint.user_id === sessionId && this.mode == 'default') marker.setDraggable(false)
     }
 
     updateMkpoints () {
@@ -1009,9 +1011,10 @@ export default class WorldMap extends GlobalMap {
     }
 
     // Create a numeral marker that can be deleted on right click
-    editMode () {
+    async editMode () {
 
         var editModeBox = document.querySelector('#editModeBox')
+        var sessionId = await CFSession.get('id')
 
         // If box is checked
         if (editModeBox.checked) {
@@ -1028,7 +1031,7 @@ export default class WorldMap extends GlobalMap {
             this.mkpointsMarkerCollection.forEach((mkpoint) => mkpoint.getPopup().options.className = 'marker-popup, hidden')
             // Highlight mkpoints
             this.mkpointsMarkerCollection.forEach((mkpoint) => {
-                if (mkpoint._popup.user_id == this.session.id) mkpoint._element.firstChild.classList.add('admin-marker')
+                if (mkpoint._popup.user_id == sessionId) mkpoint._element.firstChild.classList.add('admin-marker')
             } )
             // Change cursor style
             this.map.getCanvas().classList.add('edit-mode')
@@ -1052,7 +1055,7 @@ export default class WorldMap extends GlobalMap {
             this.mkpointsMarkerCollection.forEach((mkpoint) => mkpoint.getPopup().options.className = 'marker-popup')
             // Remove highlighting from markers
             this.mkpointsMarkerCollection.forEach((mkpoint) =>  {
-                if (mkpoint._popup.user_id == this.session.id) mkpoint._element.firstChild.classList.remove('admin-marker')
+                if (mkpoint._popup.user_id == sessionId) mkpoint._element.firstChild.classList.remove('admin-marker')
             } )
             // Change cursor style
             this.map.getCanvas().classList.remove('edit-mode')
@@ -1067,9 +1070,10 @@ export default class WorldMap extends GlobalMap {
     }
 
     // Highlighting connected user markers 
-    highlightMyMkpointsMode () {
+    async highlightMyMkpointsMode () {
 
         var highlightMyMkpointsBox = document.querySelector('#highlightMyMkpointsBox')
+        var sessionId = await CFSession.get('id')
 
         if (highlightMyMkpointsBox.checked) {
             this.highlight = true

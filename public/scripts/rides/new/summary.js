@@ -1,3 +1,4 @@
+import CFSession from "/map/class/CFSession.js"
 import RideMap from "/map/class/ride/RideMap.js"
 
 var rideMap = new RideMap()
@@ -7,7 +8,7 @@ var photos = document.querySelectorAll('.summary-checkpoint-image img')
 var header = document.querySelector('.ride-header')
 
 // Get session infos
-ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
+CFSession.getSession().then(session => {
     rideMap.session = session
     rideMap.method = session.course.method
 

@@ -1404,9 +1404,9 @@ export default class BuildRouteMap extends GlobalMap {
                     resolve(false)
                 } )
 
-                // If user has administation rights, display create segment button 
-                ajaxGetRequest ('/api/map.php' + "?get-session=true", async (session) => {
-                    if (session.rights == 'administrator') {
+                // If user has administation rights, display create segment button
+                CFSession.hasRights('editor').then(async response => {
+                    if (response === true) {
                         var createSegmentButton = document.createElement('button')
                         createSegmentButton.id = 'createSegment'
                         createSegmentButton.className = 'mp-button bg-admin'
@@ -1956,7 +1956,7 @@ export default class BuildRouteMap extends GlobalMap {
         }
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
             if (route.category == 'segment') window.location.replace('/world')
-            else window.location.replace('/' + this.session.login + '/routes')
+            else window.location.replace('/routes')
         } )
     }
 

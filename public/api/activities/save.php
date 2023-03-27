@@ -56,7 +56,8 @@ if (is_array($data)) {
         $speed_max        = $data['speed_max'];
         $altitude_max     = $data['altitude_max'];
         $slope_max        = $data['slope_max'];
-        $bike_id          = $data['bike_id'];
+        if (isset($data['bike_id'])) $bike_id = $data['bike_id'];
+        else $bike_id = null;
         $privacy          = $data['privacy'];
 
         // Insert data in 'activities' table
