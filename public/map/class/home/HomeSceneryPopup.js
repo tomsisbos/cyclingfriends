@@ -91,9 +91,9 @@ export default class HomeSceneryPopup extends SceneryPopup {
                 </a>`
             } )
 
-            this.popup.getElement().querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
-            this.popup.getElement().querySelector('.popup-description').innerHTML = this.data.mkpoint.description
-            this.popup.getElement().querySelector('.js-tags').innerHTML = tags
+            this.popup._container.querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
+            this.popup._container.querySelector('.popup-description').innerHTML = this.data.mkpoint.description
+            this.popup._container.querySelector('.js-tags').innerHTML = tags
 
             resolve(true)
         } )

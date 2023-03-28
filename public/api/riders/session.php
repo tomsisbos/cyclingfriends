@@ -2,10 +2,10 @@
 
 header('Content-Type: application/json, charset=UTF-8');
 
-// Return false in any case if session does not exist
-if (!isset($_SESSION['auth'])) echo json_encode(false); die();
-
 require '../../../includes/api-head.php';
+
+// Return false in any case if session does not exist
+if (!isset($_SESSION['auth'])) echo json_encode(false);
 
 // In case an Ajax request have been detected
 if (isAjax()) {

@@ -19,7 +19,6 @@ worldMap.addOptionsControl()
 worldMap.addFilterControl()
 worldMap.addFullscreenControl()
 CFSession.hasRights('editor').then((response) => {
-    console.log(response)
     if (response === true) worldMap.addEditorControl()
 } )
 

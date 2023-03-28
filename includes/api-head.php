@@ -5,7 +5,7 @@ require_once $base_directory . '/vendor/autoload.php';
 require_once $base_directory . '/class/Autoloader.php'; 
 Autoloader::register();
 require $base_directory . '/includes/functions.php';
-require $base_directory . '/actions/users/initSessionAction.php';
+require $base_directory . '/actions/users/initPublicSessionAction.php';
 require $base_directory . '/actions/databaseAction.php';
 
 

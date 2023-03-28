@@ -7,9 +7,26 @@ import cover from '/node_modules/@mapbox/tile-cover/index.js'
 // Global class initialization
 export default class GlobalMap extends Model {
 
-    constructor (options) {
-        super(options)
+    constructor () {
+        super()
         this.setSeason()
+        this.userLocation = this.defaultCenter
+        // On first load, query user location data and store it in the browser
+        if (!localStorage.getItem('userLocationLng') || !localStorage.getItem('userLocationLat')) {
+            CFSession.get('lngLat').then(userLocation => {
+                if (userLocation && userLocation.lng != 0) this.userLocation = userLocation
+                else this.userLocation = this.defaultCenter
+                localStorage.setItem('userLocationLng', this.userLocation.lng)
+                localStorage.setItem('userLocationLat', this.userLocation.lat)
+                if (this.map) this.centerOnUserLocation()
+            } )
+        // If entry already exists in local storage, use it
+        } else {
+            this.userLocation = {
+                lng: parseFloat(localStorage.getItem('userLocationLng')),
+                lat: parseFloat(localStorage.getItem('userLocationLat'))
+            }
+        }
     }
 
     apiUrl = '/api/map.php'
@@ -36,7 +53,7 @@ export default class GlobalMap extends Model {
     segmentCapColor = '#fff'
     
     centerOnUserLocation = () => {
-        if (this.map) this.map.setCenter(this.userLocation)
+        this.map.setCenter(this.userLocation)
     }
 
     setSeason () {
@@ -282,7 +299,7 @@ export default class GlobalMap extends Model {
         )
     }
 
-    async load (element, style, center = this.defaultCenter) {
+    async load (element, style, center = this.userLocation) {
         return new Promise ((resolve, reject) => {
             this.$map = element
             this.map = new mapboxgl.Map ( {

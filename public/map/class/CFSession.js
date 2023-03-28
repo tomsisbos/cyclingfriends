@@ -20,7 +20,8 @@ export default class CFSession {
      */
     static get (key) {
         return new Promise((resolve, reject) => {
-            ajaxGetRequest(this.apiUrl + '?get=' + key, (value) => resolve(value))
+            if (localStorage.getItem(key)) resolve(localStorage.getItem(key))
+            else ajaxGetRequest(this.apiUrl + '?get=' + key, (value) => resolve(value))
         } )
     }
 

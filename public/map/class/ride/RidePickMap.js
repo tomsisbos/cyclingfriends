@@ -22,6 +22,8 @@ export default class RidePickMap extends RideMap {
         marker.addTo(this.map)
 
         // Update and upload checkpoints data to API
+        console.log(this.data)
+        console.log(this.data.checkpoints)
         this.data.checkpoints[number] = {
             lngLat: marker.getLngLat(),
             elevation: Math.floor(this.map.queryTerrainElevation(marker.getLngLat())),

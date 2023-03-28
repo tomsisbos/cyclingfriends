@@ -221,7 +221,7 @@ export default class SceneryPopup extends Popup {
 
             // Add delete photo button if necessary
             if (this.popup._content.querySelector('.deletephoto-button')) this.popup._content.querySelector('.deletephoto-button').remove() // If delete photo button is displayed, remove it...
-            sessionId = await CFSession.get('id')
+            var sessionId = await CFSession.get('id')
             if (photos[photoIndex - 1].$element.dataset.author == sessionId) addDeletePhotoIcon() // ... And add it if connected user is photo author
         }
 
@@ -382,9 +382,7 @@ export default class SceneryPopup extends Popup {
     async loadReviews () {
 
         // Get reviews on this mkpoint
-        ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id, (reviews) => {
-
-            this.getSession()
+        ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id,async  (reviews) => {
                 
             if (document.querySelector('#mkpointReview')) {
                 // Clear reviews if necessary
@@ -402,12 +400,10 @@ export default class SceneryPopup extends Popup {
                     document.querySelector('.chat-reviews').appendChild($noReviewMessage)
                 }
                 // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
-                if (document.querySelector('#review-author-' + this.getSession().id)) {
+                if (document.querySelector('#review-author-' + await CFSession.get('id'))) {
                     document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
-                    reviews.forEach( (review) => {
-                        if (review.user.id == this.getSession().id) {
-                            document.querySelector('#mkpointReview').innerText = review.content
-                        }
+                    reviews.forEach(async (review) => {
+                        if (review.user.id == await CFSession.get('id')) document.querySelector('#mkpointReview').innerText = review.content
                     } )
                 }
             }
@@ -447,7 +443,7 @@ export default class SceneryPopup extends Popup {
         } )
     }
 
-    displayReview = (review, options = {new: false}) => {
+    displayReview = async (review, options = {new: false}) => {
         if (document.querySelector('#mkpointReview')) {
             // If review is already displayed, update it and move it to the top
             if (document.getElementById('review-author-' + review.user.id)) {
@@ -463,10 +459,9 @@ export default class SceneryPopup extends Popup {
                 var chatReviews = document.querySelector('.chat-reviews')
                 let $review = document.createElement('div')
                 $review.className = 'chat-line'
-                // Set review background in yellow if author is connected user 
-                if (this.getSession().id === review.user.id) {
-                    $review.classList.add('bg-admin', 'p-2')
-                }
+                // Set review background in yellow if author is connected user
+                let sessionId = await CFSession.get('id') 
+                if (sessionId === review.user.id) $review.classList.add('bg-admin', 'p-2')
                 $review.id = 'review-author-' + review.user.id
                 if (options.new) chatReviews.prepend($review)
                 else chatReviews.appendChild($review)

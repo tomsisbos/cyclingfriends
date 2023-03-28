@@ -1,15 +1,10 @@
 import Env from "/map/Env.js"
 import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 
 export default class Model {
 
-    constructor (options) {
-        if ((!options || !options.noSession) && !this.session) ajaxGetRequest (this.mainApiUrl + "?get-session=true", (session) => {
-            this.session = session
-            if (session.lngLat && session.lngLat.lng !== 0) this.userLocation = session.lngLat
-            else this.userLocation = this.defaultCenter
-            if (this.centerOnUserLocation) this.centerOnUserLocation()
-        } )
+    constructor () {
     }
 
     apiKey = Env.mapboxApiKey
@@ -17,7 +12,6 @@ export default class Model {
 
     defaultStyle = 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z'
     tags = ['hanami', 'kouyou', 'ajisai', 'culture', 'machinami', 'shrines', 'teafields', 'ricefields', 'sea', 'mountains', 'forest', 'rivers', 'lakes']
-    userLocation
     loaderContainer = document.body
     loader = {
         prepare: () => {
