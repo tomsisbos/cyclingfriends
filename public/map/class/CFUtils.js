@@ -187,27 +187,30 @@ export default class CFUtils {
         else return false
     }
 
-    // Test if an array of coordinates has a part inside bounds
-    static isInsideBounds (bounds, coordinates) {
+    /**
+     * Test if an array of coordinates has a part inside bounds
+     * @param {float[] || array[]} coordinates coordinates or array of coordinates
+     * @param {array[]} bounds array of two coordinates
+     * @returns {boolean}
+     */
+    static isInsideBounds (coordinates, bounds) {
 
-        const precision = 10 // unity : number of coordinates
-        const limit     = 100 // unity : number of tests
+        if (typeof coordinates[0] === 'number') return coordInsideBounds(coordinates, bounds)
+        else coordinates.forEach(coordinate => {
+            if (coordInsideBounds(coordinate, bounds)) return true
+        } )
 
-        // Function for calculating a pair of coordinates are inside bounds
-        function coordsInsideBounds(coords, bounds) {
-            if ((coords[1] < bounds._ne.lat && coords[1] > bounds._sw.lat) && (coords[0] < bounds._ne.lng && coords[0] > bounds._sw.lng)) {
+        /**
+         * Function for calculating a pair of coordinates are inside bounds
+         * @param {float[]} coords
+         * @param {array[]} bounds array of two coordinates
+         * @returns {boolean}
+         */
+        function coordInsideBounds (coords, bounds) {
+            if ((coords[0] > bounds[0][0] && coords[0] < bounds[1][0]) && (coords[1] > bounds[0][1] && coords[1] < bounds[1][1])) {
                 return true
             }
         }
-
-        // Return true if any of every [precision] coordinates is inside bounds (max: [limit] number of tests)
-        var cursor = Math.floor(coordinates.length / precision)
-        if (cursor < 2) cursor = 2
-        if (cursor > limit) cursor = limit
-        for (let index = 0; index < cursor; index++) {
-            if (coordsInsideBounds(coordinates[index * precision], bounds)) return true
-        }
-        return false
     }
     
     // Return GPX file URL from a geojson source

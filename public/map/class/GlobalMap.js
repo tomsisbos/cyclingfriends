@@ -14,10 +14,10 @@ export default class GlobalMap extends Model {
         // On first load, query user location data and store it in the browser
         if (!localStorage.getItem('userLocationLng') || !localStorage.getItem('userLocationLat')) {
             CFSession.get('lngLat').then(userLocation => {
-                if (userLocation && userLocation.lng != 0) this.userLocation = userLocation
+                if (userLocation != false) this.userLocation = [userLocation.lng, userLocation.lat]
                 else this.userLocation = this.defaultCenter
-                localStorage.setItem('userLocationLng', this.userLocation.lng)
-                localStorage.setItem('userLocationLat', this.userLocation.lat)
+                localStorage.setItem('userLocationLng', this.userLocation[0])
+                localStorage.setItem('userLocationLat', this.userLocation[1])
                 if (this.map) this.centerOnUserLocation()
             } )
         // If entry already exists in local storage, use it
@@ -330,16 +330,165 @@ export default class GlobalMap extends Model {
                 this.loadImages()
             } )
             
-            /*this.map.on('contextmenu', async () => {
-                var limits = {
+            this.map.on('contextmenu', async () => {
+
+                // Set tile query properties
+                const limits = {
                     min_zoom: 10,
                     max_zoom: 12
-                };
+                }
+                var pointsData = []
+                var tilesAnalyzed = 0
+
+                // Get route tiles info (tile = tile address, geom = corresponding bounding box coordinates)
                 var routeData = await this.getRouteData()
-                var tile = cover.tiles(routeData.geometry, limits)
-                console.log(tile)
-                if (document.getElementById('elevationProfile')) this.generateProfile()
-            } )*/
+                var tiles = cover.tiles(routeData.geometry, limits)
+                console.log(tiles)
+                var geom = cover.geojson(routeData.geometry, limits)
+                console.log(geom)
+
+                // For each tile
+                for (let i = 0; i < tiles.length; i++) {
+
+                    // Query raster image
+                    const zoom = limits.max_zoom
+                    const x = tiles[i][0]
+                    const y = tiles[i][1]
+                    const url = 'https://api.mapbox.com/v4/mapbox.terrain-rgb/' + zoom + '/' + x + '/' + y + '@2x.pngraw?access_token=' + this.apiKey
+                    const bbox = getTileBbox(geom.features[i].geometry.coordinates[0])
+                    
+                    // Retrieve tile as data url
+                    fetch(url)
+                    .then((response) => response.body)
+                    .then((body) => {
+                        const reader = body.getReader()
+                    
+                        return new ReadableStream({
+                            start(controller) {
+                                return pump()
+
+                                function pump() {
+                                    return reader.read().then(({ done, value }) => {
+                                        // When no more data needs to be consumed, close the stream
+                                        if (done) {
+                                            controller.close()
+                                            return
+                                        }
+
+                                        // Enqueue the next data chunk into our target stream
+                                        controller.enqueue(value)
+                                        return pump()
+                                    })
+                                }
+                            },
+                        })
+                    } )
+                    .then((stream) => new Response(stream))
+                    .then((response) => response.blob())
+                    .then((blob) => URL.createObjectURL(blob))
+                    .then((url) => {
+                        // Draw tile on canvas
+                        var canvas = document.createElement('canvas')
+                        canvas.height = 512
+                        canvas.width = 512
+                        canvas.style.height = canvas.height + 'px'
+                        canvas.style.width = canvas.width + 'px'
+                        ///document.body.prepend(canvas)
+                        const ctx = canvas.getContext('2d', {willReadFrequently: true})
+                        const img = new Image()
+                        img.onload = (event) => {
+                            URL.revokeObjectURL(event.target.src)
+                            ctx.drawImage(event.target, 0, 0)
+
+                            // Find route coordinates inside this tile
+                            routeData.geometry.coordinates.forEach(routeCoord => {
+                                if (CFUtils.isInsideBounds(routeCoord, bbox)) {
+
+                                    // Get corresponding pixel
+                                    var pixel = getPixelPair(routeCoord, bbox)                                
+                                    
+                                    /*// Color pixel on the canvas
+                                    ctx.fillStyle = '#ff0000'
+                                    ctx.fillRect(pixel[0], pixel[1], 3, 3)*/
+
+                                    // Get elevation for this pixel
+                                    const elevation = getPixelElevation(ctx, pixel)
+                                    const distance = CFUtils.findDistanceWithTwins(routeData, {lng: routeCoord[0], lat: routeCoord[1]}).distance
+
+                                    pointsData.push({
+                                        x: distance,
+                                        y: elevation
+                                    } )
+                                }
+                            } )
+
+                            tilesAnalyzed++
+                            console.log(tilesAnalyzed + '/' + tiles.length)
+
+                            // When last tile have been analyzed
+                            if (tilesAnalyzed == tiles.length) {
+                                // Sort points data by distance
+                                pointsData.sort((a, b) => a.x - b.x)
+                                console.log(pointsData)
+                            }
+                        }
+                        img.src = url
+                    } )
+                    .catch((err) => console.error(err))
+                }
+
+                /**
+                 * Retrieve bbox from a geojson formatted tile
+                 * @param {float[][]} tileCoords array of coords
+                 * @returns {float[][]} bbox
+                 */
+                function getTileBbox (tileCoords) {
+                    var lowestLng = 180
+                    var lowestLat = 180
+                    var highestLng = 0
+                    var highestLat = 0
+                    tileCoords.forEach(coord => {
+                        if (coord[0] < lowestLng) lowestLng = coord[0]
+                        if (coord[0] > highestLng) highestLng = coord[0]
+                        if (coord[1] < lowestLat) lowestLat = coord[1]
+                        if (coord[1] > highestLat) highestLat = coord[1]
+                    })
+                    return [[lowestLng, lowestLat], [highestLng, highestLat]]
+                }
+
+                /**
+                 * Get corresponding paix of pixels (x,y) on a tile from a pair of coordinates (lng,lat)
+                 * @param {float[]} coords coordinates to locate
+                 * @param {float[][]} bbox tile bouding box
+                 */
+                function getPixelPair (coords, bbox) {
+                    var percentagePair = getPercentagePair(coords, bbox)
+                    return [Math.round(percentagePair[0] * 511 / 100), Math.round(percentagePair[1] * 511 / 100)]
+
+                    function getPercentagePair (coords, bbox) {
+                        var xTotalDifference = bbox[1][0] - bbox[0][0]
+                        var xLngDifference = bbox[1][0] - coords[0]
+                        var yTotalDifference = bbox[1][1] - bbox[0][1]
+                        var yLatDifference = bbox[1][1] - coords[1]
+                        return [100 - ((xLngDifference / xTotalDifference) * 100), (yLatDifference / yTotalDifference) * 100]
+                    }
+                }
+
+                /**
+                 * Retrieve elevation of (x,y) pixel and retrieve elevation
+                 * @param {CanvasRenderingContext2D} ctx
+                 * @param {int[]} pixel [x,y] pixel position
+                 * @returns {int} elevation in meters
+                 */
+                function getPixelElevation (ctx, pixel) {
+                    var pixelData = ctx.getImageData(pixel[0], pixel[1], 1, 1).data
+                    const r = pixelData[0]
+                    const g = pixelData[1]
+                    const b = pixelData[2]
+                    var elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1)
+                    return Math.floor(elevation * 10) / 10
+                }
+            } )
         } )
     }
     
@@ -2536,12 +2685,12 @@ export default class GlobalMap extends Model {
         }
 
         return {
-            profilePoints: profilePoints,
-            pointsElevation: pointsElevation,
-            profilePointsCoordinates: profilePointsCoordinates,
-            averagedPointsElevation: averagedPointsElevation,
-            pointData: pointData,
-            labels: labels
+            profilePoints,
+            pointsElevation,
+            profilePointsCoordinates,
+            averagedPointsElevation,
+            pointData,
+            labels
         }
 
         // Define profile averaging basis on a 100m unit

@@ -505,6 +505,7 @@ export default class SceneryPopup extends Popup {
                 if (response != false) {
                     var number = parseInt(response)
                     // Remove stars previously displayed
+                    console.log(review)
                     document.querySelector('#review-author-' + review.user.id).querySelectorAll('.selected-star').forEach($star => $star.remove())
                     // Display new stars
                     for (let i = 1; i < number + 1; i++) {
