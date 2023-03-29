@@ -71,7 +71,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         routePageMap.addRouteLayer(geojson)
         
         // Generate profile on idle
-        map.once('idle', () => routePageMap.generateProfile())
+        map.once('idle', () => routePageMap.profile.generate())
         
         // Focus
         var routeBounds = CFUtils.defineRouteBounds(coordinates)

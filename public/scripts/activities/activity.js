@@ -70,10 +70,16 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         activityMap.addSources()
         activityMap.addLayers()
         activityMap.addRouteLayer(activityMap.data.routeData)
-        activityMap.generateProfile()
+        activityMap.profile.generate()
         ///activityMap.displayStartGoalMarkers(activityMap.data.routeData)
         activityMap.updateDistanceMarkers()
-        activityMap.focus(activityMap.data.routeData).then(() => activityMap.generateProfile())
+        activityMap.focus(activityMap.data.routeData).then(() => {
+            activityMap.profile.generate({
+                poiData: {
+                    activityCheckpoints: activityMap.data.checkpoints
+                }
+            })
+        })
         activityMap.displayCheckpointMarkers()
         activityMap.displayPhotos()
 

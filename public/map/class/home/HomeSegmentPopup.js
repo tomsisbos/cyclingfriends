@@ -57,7 +57,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
         this.popup.once('open', async () => {
 
             // Setup general interactions
-            this.generateProfile({force: true})
+            this.profile.generate({sourceName: 'segment' + this.data.id})
 
             // Query relevant mkpoints and photos
             this.getMkpoints().then((mkpoints) => {

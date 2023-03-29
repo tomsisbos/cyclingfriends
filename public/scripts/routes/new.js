@@ -67,7 +67,7 @@ map.once('idle', () => {
     // When route is updated and loaded
     map.on('sourcedata', async (e) => {
         if (e.sourceId == 'route' && (e.sourceDataType == 'content' || e.sourceDataType == 'metadata')) { // On a source data change different from visibility (ex.: tiles unloading on move)
-            buildRouteMap.generateProfile()
+            buildRouteMap.profile.generate()
             buildRouteMap.updateDistanceMarkers()
         }
     } )

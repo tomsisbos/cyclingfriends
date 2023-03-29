@@ -917,7 +917,7 @@ export default class WorldMap extends GlobalMap {
             } )
 
             // Focus on segment and redraw profile to ensure full segment is covered
-            this.focus(this.map.getSource('segment' + segment.id)._data).then(() => segment.segmentPopup.generateProfile({force: true}))
+            this.focus(this.map.getSource('segment' + segment.id)._data).then(() => segment.segmentPopup.profile.generate({sourceName: 'segment' + segment.id}))
 
             resolve(segment.segmentPopup.popup)
         } )

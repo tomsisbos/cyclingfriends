@@ -250,13 +250,6 @@ export default class ActivityMap extends GlobalMap {
         return turf.length(segment)
     }
 
-    getFormattedTimeFromLngLat (lngLat) {
-        var routeClosestCoordinate = CFUtils.replaceOnRoute(lngLat, this.data.routeData)
-        var index = this.data.routeData.geometry.coordinates.findIndex((element) => element == routeClosestCoordinate)
-        var timestamp = this.data.routeData.properties.time[index] - this.data.routeData.properties.time[0]
-        return getFormattedDurationFromTimestamp(timestamp)
-    }
-
     displayPhotos () {
         this.data.photos.forEach( (photo) => {
             var lngLat = this.getPhotoLocation(photo)

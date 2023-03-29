@@ -230,7 +230,6 @@ export default class RoutePageMap extends GlobalMap {
                         }
                     } )
                 }
-                ///this.generateProfile()
             } )
         } )
     }
@@ -382,13 +381,18 @@ export default class RoutePageMap extends GlobalMap {
                 else ride.options = {sf: false}
                 this.ride = ride
 
-                await this.generateCheckpointPoi()
+                await this.generateCheckpointsPoi(this.ride.checkpoints)
 
                 resolve()
 
                 // Display ride checkpoints on the course
                 this.displayCheckpoints(ride)
-                this.generateProfile()
+                this.profile.generate({
+                    poiData: {
+                        mkpoints: this.mkpoints,
+                        rideCheckpoints: this.ride.checkpoints
+                    }
+                })
             } )
         } )
     }
@@ -402,40 +406,6 @@ export default class RoutePageMap extends GlobalMap {
                     document.querySelector('#mkpoint' + mkpoint.id).style.display = 'none'
                 }
             } )
-        } )
-    }
-
-    generateCheckpointPoi () {
-        return new Promise( (resolve, reject) => {
-            this.ride.checkpoints.forEach( (checkpoint) => {
-                let canvas = document.createElement('canvas')
-                canvas.height = 50
-                canvas.width = 50
-                let ctx = canvas.getContext("2d")
-                ctx.font = "bold 35px Noto Sans"
-                if (checkpoint.number == 0) {
-                    ctx.fillStyle = 'green'
-                    var text = 'S'
-                } else if (checkpoint.number == this.ride.checkpoints.length - 1) {
-                    ctx.fillStyle = 'red'
-                    var text = 'F'
-                } else {
-                    ctx.fillStyle = 'blue'
-                    var text = checkpoint.number
-                }
-                ctx.rect(0, 0, 50, 50)
-                ctx.fill()
-                ctx.fillStyle = 'white'
-                ctx.fillText(text, 15, 40)
-                var img = new Image()
-                ctx.drawImage (img, 0, 0)
-                img.src = canvas.toDataURL()
-                img.classList.add('js-poi-icon')
-                img.id = 'checkpointPoiIcon' + checkpoint.number
-                img.style.display = 'none'
-                document.querySelector('#elevationProfile').appendChild(img)
-            } )
-            resolve(true)
         } )
     }
 
@@ -457,7 +427,12 @@ export default class RoutePageMap extends GlobalMap {
         popup.on('open', () => {
             this.unselectMarkers()
             checkpointPopup.select()
-            this.generateProfile()
+            this.profile.generate({
+                poiData: {
+                    mkpoints: this.mkpoints,
+                    rideCheckpoints: this.ride.checkpoints
+                }
+            })
             checkpointPopup.setTarget() // Set target button
         } )
         popup.on('close', () => {

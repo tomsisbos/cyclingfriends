@@ -1,8 +1,8 @@
 import CFUtils from "/map/class/CFUtils.js"
 import CFSession from "/map/class/CFSession.js"
+import Profile from "/map/class/Profile.js"
 import Model from "/map/class/Model.js"
 import SceneryPopup from "/map/class/scenery/SceneryPopup.js"
-import cover from '/node_modules/@mapbox/tile-cover/index.js'
 
 // Global class initialization
 export default class GlobalMap extends Model {
@@ -11,6 +11,7 @@ export default class GlobalMap extends Model {
         super()
         this.setSeason()
         this.userLocation = this.defaultCenter
+
         // On first load, query user location data and store it in the browser
         if (!localStorage.getItem('userLocationLng') || !localStorage.getItem('userLocationLat')) {
             CFSession.get('lngLat').then(userLocation => {
@@ -31,6 +32,7 @@ export default class GlobalMap extends Model {
 
     apiUrl = '/api/map.php'
     map
+    profile
     $map
     selectStyle
     dislayKonbinisBox
@@ -41,7 +43,6 @@ export default class GlobalMap extends Model {
     defaultZoom = 10
     mkpoints
     tunnelNumber = 0
-    profileData
     month = new Date().getMonth() + 1
     season
     routeColor = '#0000ff'
@@ -241,11 +242,13 @@ export default class GlobalMap extends Model {
                 if (this.displayMkpointsBox.checked) {
                     this.addMkpoints(this.mkpoints)
                     if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'flex'
-                    this.generateProfile()
+                    this.profile.generate( {
+
+                    } )
                 } else {
                     this.hideMkpoints()
                     if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'none'
-                    this.generateProfile()
+                    this.profile.generate()
                 }
             } )
         }
@@ -329,6 +332,9 @@ export default class GlobalMap extends Model {
                 this.loadTerrain()
                 this.loadImages()
             } )
+
+            // Instanciate profile
+            this.profile = new Profile(this.map)
         } )
     }
     
@@ -1491,324 +1497,6 @@ export default class GlobalMap extends Model {
             })
         }
     }
-
-    async generateProfile (options = {force: false, time: false, precise: true}) {
-        
-        const routeData = await this.getRouteData()
-
-        // If a route is displayed on the map
-        if (routeData) {
-
-            // Prepare profile data
-            if (!this.profileData || this.profileData == undefined) this.profileData = await this.getProfileData(routeData, {remote: true})
-            if (options.precise) this.profileData = await this.queryPreciseProfileData(this.profileData)
-            
-            // Draw profile inside elevationProfile element
-
-            // Prepare profile settings
-            const ctx = document.getElementById('elevationProfile').getContext('2d')
-            const downtwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y + 2 ? value : undefined
-            const flat = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 2 ? value : undefined
-            const uptwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 6 ? value : undefined
-            const upsix = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 10 ? value : undefined
-            const upten = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined
-            const data = {
-                labels: this.profileData.labels,
-                datasets: [ {
-                    data: this.profileData.pointData,
-                    fill: {
-                        target: 'origin',
-                        above: '#fffa9ccc'
-                    },
-                    borderColor: '#bbbbff',
-                    tension: 0.1
-                } ],
-            }
-            const backgroundColor = {
-                id: 'backgroundColor',
-                beforeDraw: (chart) => {
-                    const ctx = chart.canvas.getContext('2d')
-                    ctx.save()
-                    ctx.globalCompositeOperation = 'destination-over'
-                    var lingrad = ctx.createLinearGradient(0, 0, 0, 150);
-                    lingrad.addColorStop(0, '#f9f9f9');
-                    lingrad.addColorStop(0.5, '#fff');
-                    ctx.fillStyle = lingrad
-                    ctx.fillRect(0, 0, chart.width, chart.height)
-                    ctx.restore()
-                }
-            }
-            const displayPois = {
-                id: 'displayPois',
-                afterRender: (chart) => {
-                    const ctx = chart.canvas.getContext('2d')
-                    const routeDistance = turf.length(routeData)
-                    var drawPoi = async (poi, type) => {
-                        // Get X position
-                        const pointDistance = poi.distance
-                        var roughPositionProportion = pointDistance / routeDistance * 100
-                        var roughPositionPixel = roughPositionProportion * (chart.scales.x._maxLength - chart.scales.x.left - chart.scales.x.paddingRight) / 100
-                        poi.position = roughPositionPixel + chart.scales.x.left
-                        // Get Y position
-                        const dataX = chart.scales.x.getPixelForValue(pointDistance)
-                        const dataY = chart.scales.y.getPixelForValue(this.profileData.averagedPointsElevation[Math.floor(pointDistance * 10)])
-                        // Draw a line
-                        var cursorLength = 10
-                        ctx.strokeStyle = '#d6d6d6'
-                        ctx.lineWidth = 1
-                        ctx.beginPath()
-                        ctx.moveTo(poi.position, dataY)
-                        ctx.lineTo(poi.position, dataY - cursorLength)
-                        ctx.stroke()
-                        ctx.closePath()
-
-                        // Format icon
-                        if (type == 'mkpoint') {
-                            poi.number = poi.id
-                            var img = document.querySelector('#' + type + poi.number).querySelector('img')
-                        } else if (type == 'rideCheckpoint') var img = document.querySelector('#' + 'checkpointPoiIcon' + poi.number)
-                        else if (type == 'activityCheckpoint') {
-                            var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
-                            var img = new Image()
-                            img.src = 'https://api.iconify.design/' + svgElement.dataset.icon.replace(':', '/') + '.svg'
-                            img.height = 24
-                            img.width = 24
-                        }
-                        // Prepare profile drawing variables
-                        var width  = 15
-                        var height = 15
-                        const positionX = poi.position - width / 2
-                        const positionY = dataY - cursorLength - height
-                        // If first loading, wait for img to load if not loaded yet, else use it directly
-                        if (!document.querySelector('canvas#offscreenCanvas' + poi.number)) {
-                            if (img.complete) drawOnCanvas(img)
-                            else img.addEventListener('load', () => drawOnCanvas(img))
-
-                            function drawOnCanvas (img) {
-                                if (img.classList.contains('admin-marker')) {
-                                    ctx.strokeStyle = 'yellow'
-                                    ctx.lineWidth = 3
-                                }
-                                if (img.classList.contains('selected-marker')) {
-                                    ctx.strokeStyle = '#ff5555'
-                                    ctx.lineWidth = 3
-                                }
-        
-                                var abstract = {}
-                                abstract.offscreenCanvas = document.createElement("canvas")
-                                abstract.offscreenCanvas.width = width
-                                abstract.offscreenCanvas.height = height
-                                abstract.offscreenContext = abstract.offscreenCanvas.getContext("2d")
-                                const ctx2 = abstract.offscreenContext
-                                ctx2.drawImage(img, 0, 0, width, height)
-                                ctx2.globalCompositeOperation = 'destination-atop'
-                                ctx2.arc(0 + width/2, 0 + height/2, width/2, 0, Math.PI * 2)
-                                ctx2.closePath()
-                                ctx2.fillStyle = "#fff"
-                                ctx2.fill()
-                                // Keep offscreenCanvas 'in cache' for next profile generating 
-                                abstract.offscreenCanvas.style.display = 'none'
-                                abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
-                                document.body.appendChild(abstract.offscreenCanvas)
-        
-                                // Draw icon
-                                ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
-                                ctx.beginPath()
-                                ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
-                                ctx.closePath()
-                                ctx.stroke()
-                            }
-                        // If img has already been loaded, direcly use it for preventing unnecessary loading time
-                        } else {
-                            var offscreenCanvas = document.querySelector('canvas#offscreenCanvas' + poi.number)
-                            // Draw icon on profile
-                            ctx.drawImage(offscreenCanvas, positionX, positionY)
-                            ctx.beginPath()
-                            ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
-                            ctx.closePath()
-                            ctx.stroke()
-                        }
-                    }
-                    // For mkpoints
-                    if (this.mkpoints) this.mkpoints.forEach( (mkpoint) => {
-                            if (mkpoint.on_route && this.displayMkpointsBox.checked) drawPoi(mkpoint, 'mkpoint')
-                        } )
-                    // For ride checkpoints
-                    if (this.ride) {
-                        this.ride.checkpoints.forEach( (checkpoint) => {
-                            drawPoi(checkpoint, 'rideCheckpoint')
-                        } )
-                    }
-                    // For activity checkpoints
-                    if (this.activityId) {
-                        this.data.checkpoints.forEach( (checkpoint) => {
-                            drawPoi(checkpoint, 'activityCheckpoint')
-                        } )
-                    }
-                }
-            }
-            const cursorOnHover = {
-                id: 'cursorOnHover',
-                afterEvent: (chart, args) => {
-                    var e = args.event
-                    if (e.type == 'mousemove' && args.inChartArea == true) {
-                        // Get relevant data
-                        const dataX        = chart.scales.x.getValueForPixel(e.x)
-                        const distance     = Math.floor(dataX * 10) / 10
-                        const maxDistance  = chart.scales.x._endValue
-                        const altitude     = this.profileData.pointsElevation[distance * 10]
-                        // Slope
-                        if (this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
-                            var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.profileData.averagedPointsElevation[Math.floor(distance * 10)]
-                        } else { // Only calculate on previous 100m for the last index (because no next index)
-                            var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10)] - this.profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
-                        }
-                        // As mouse is inside route profile area
-                        if (distance >= 0 && distance <= maxDistance) {
-                            // Reload canvas
-                            this.elevationProfile.destroy()
-                            this.elevationProfile = new Chart(ctx, chartSettings)
-                            // Draw a line
-                            ctx.strokeStyle = 'black'
-                            ctx.lineWidth = 1
-                            ctx.beginPath()
-                            ctx.moveTo(e.x, 0)
-                            ctx.lineTo(e.x, 9999)
-                            ctx.stroke()
-                            // Display corresponding point on route
-                            var routePoint = turf.along(routeData, distance, {units: 'kilometers'})
-                            if (slope <= 2 && slope >= -2) var circleColor = 'white'
-                            else var circleColor = this.setSlopeStyle(slope).color
-                            if (!this.map.getLayer('profilePoint')) {
-                                this.map.addLayer( {
-                                    id: 'profilePoint',
-                                    type: 'circle',
-                                    source: {
-                                        type: 'geojson',
-                                        data: routePoint
-                                    },
-                                    paint: {
-                                        'circle-radius': 5,
-                                        'circle-color': circleColor
-                                    }
-                                } )
-                            } else {
-                                this.map.getSource('profilePoint').setData(routePoint)
-                                this.map.setPaintProperty('profilePoint', 'circle-color', circleColor)
-                            }
-                            // Display tooltip
-                            this.clearTooltip()
-                            this.drawTooltip(routeData, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
-                            // Highlight corresponding mkpoint data
-                            if (this.mkpoints && (!this.displayMkpointsBox || this.displayMkpointsBox.checked)) {
-                                this.mkpoints.forEach( (mkpoint) => {
-                                    if (document.getElementById(mkpoint.id) && mkpoint.distance < (distance + 1) && mkpoint.distance > (distance - 1)) {
-                                        // Highlight preview image
-                                        document.getElementById(mkpoint.id).querySelector('img').classList.add('admin-marker')
-                                        // Highlight marker
-                                        document.querySelector('#mkpoint' + mkpoint.id).querySelector('img').classList.add('admin-marker')
-                                    } else if (document.getElementById(mkpoint.id) && mkpoint.on_route == true) {
-                                        document.getElementById(mkpoint.id).querySelector('img').classList.remove('admin-marker')
-                                        document.querySelector('#mkpoint' + mkpoint.id).querySelector('img').classList.remove('admin-marker')
-                                    }
-                                } )
-                            }
-                        }    
-                    } else if (e.type == 'mouseout' || args.inChartArea == false) {
-                        // Clear tooltip if one
-                        this.clearTooltip()
-                        // Reload canvas
-                        this.elevationProfile.destroy()
-                        this.elevationProfile = new Chart(ctx, chartSettings)
-                        // Remove corresponding point on route
-                        if (this.map.getLayer('profilePoint')) {
-                            this.map.removeLayer('profilePoint')
-                            this.map.removeSource('profilePoint')
-                        }
-                    }  
-                }              
-            }
-            const chartOptions = {
-                parsing: false,
-                animation: false,
-                maintainAspectRatio: false,
-                pointRadius: 0,
-                pointHitRadius: 0,
-                pointHoverRadius: 0,
-                events: ['mousemove', 'mouseout'],
-                segment: {
-                    borderColor: ctx => downtwo(ctx, '#00e06e') || flat(ctx, 'yellow') || uptwo(ctx, 'orange') || upsix(ctx, '#ff5555') || upten(ctx, 'black'),
-                },
-                scales: {
-                    x: {
-                        type: 'linear',
-                        bounds: 'data',
-                        grid: {
-                            color: '#00000000',
-                            tickColor: 'lightgrey'
-                        },
-                        ticks: {
-                            format: {
-                                style: 'unit',
-                                unit: 'kilometer'
-                            },
-                            autoSkip: true,
-                            autoSkipPadding: 50,
-                            maxRotation: 0
-                        },
-                        beginAtZero: true,
-                    },
-                    y: {
-                        grid: {
-                            borderDash: [5, 5],
-                            drawTicks: false
-                        },
-                        ticks: {
-                            format: {
-                                style: 'unit',
-                                unit: 'meter'
-                            },
-                            autoSkipPadding: 20,
-                            padding: 8
-                        }
-                    }
-                },
-                interaction: {
-                    mode: 'point',
-                    axis: 'x',
-                    intersect: false
-                },
-                plugins: {
-                    legend: {
-                        display: false,
-                        labels: {
-                            boxWidth: 100
-                        }
-                    },
-                    // Define background color
-                    backgroundColor: backgroundColor,
-                    // Draw a vertical cursor on hover
-                    cursorOnHover: cursorOnHover,
-                    tooltip: {
-                        enabled: false
-                    },
-                },
-            }
-            const chartSettings = {
-                type: 'line',
-                data: data,
-                options: chartOptions,
-                plugins: [backgroundColor, cursorOnHover, displayPois]
-            }
-
-            // Reset canvas
-            if (this.elevationProfile) {
-                this.elevationProfile.destroy()
-            }
-            // Bound chart to canvas
-            this.elevationProfile = new Chart(ctx, chartSettings)
-        }
-    }
     
     // Remove 'selected-marker' class from all selected markers
     unselectMarkers () {
@@ -1838,7 +1526,6 @@ export default class GlobalMap extends Model {
                 poiIcon.classList.remove('selected-marker')
             }
         } )
-        this.generateProfile()
     }
 
     closeControlsOnMobile () {
@@ -2083,7 +1770,7 @@ export default class GlobalMap extends Model {
                 if (options.displayOnMap) this.addMkpoints(mkpoints)
 
                 // Update mkpoints cursors on profile
-                if (options.generateProfile) this.generateProfile()
+                if (options.generateProfile) this.profile.generate()
                 
                 // Display thumbnails
                 // Get mkpoints on route number
@@ -2322,22 +2009,6 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    getRouteData () {
-        return new Promise ( (resolve, reject) => {
-            if (this.data && this.data.routeData) {
-                resolve(this.data.routeData)
-            } else if (this.map.getSource('route')) {
-                resolve(this.map.getSource('route')._data)
-            } else {
-                this.map.once('sourcedata', 'route', (e) => {
-                    if (e.isSourceLoaded == true) {
-                        resolve(this.map.getSource('route')._data)
-                    }
-                } )
-            }
-        } )
-    }
-
     hideMkpoints () {
         let i = 0
         while (i < this.map._markers.length) {
@@ -2345,463 +2016,6 @@ export default class GlobalMap extends Model {
             else i++
         }
         if (this.mkpointsMarkerCollection) this.mkpointsMarkerCollection = []
-    }
-
-    // Prepare tooltip display
-    prepareTooltip () {
-        this.map.on('mousemove', 'route', async (e) => {
-            // Clear previous tooltip if displayed
-            this.clearTooltip()
-            // Prepare information to display
-            this.drawTooltip(this.map.getSource('route')._data, e.lngLat.lng, e.lngLat.lat, e.point.x, e.point.y)
-        } )
-        this.map.on('mouseout', 'route', () => {
-            // Clear tooltip
-            this.clearTooltip()
-        } )
-    }
-
-    // Prepare data of [lng, lat] route point and draw tooltip at pointX/pointY position
-    async drawTooltip (routeData, lng, lat, pointX, pointY = false, options) {
-        var $profileBox = document.querySelector('#profileBox')
-        var $elevationProfile = document.querySelector('#elevationProfile')
-        
-        // Distance and twin distance if there is one
-        var result = CFUtils.findDistanceWithTwins(routeData, {lng, lat})
-        var distance = result.distance
-        var twinDistance = result.twinDistance
-
-        // Altitude
-        var profileData = await this.getProfileData(routeData, {remote: false})
-        var altitude = profileData.averagedPointsElevation[Math.floor(distance * 10)]
-
-        // Slope
-        if (profileData.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
-            var slope = profileData.averagedPointsElevation[Math.floor(distance * 10) + 1] - profileData.averagedPointsElevation[Math.floor(distance * 10)]
-        } else { // Only calculate on previous 100m for the last index (because no next index)
-            var slope = profileData.averagedPointsElevation[Math.floor(distance * 10)] - profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
-        }
-        /*
-        if (!this.profileData) this.profileData = await this.getProfileData(routeData, {remote: false})
-        var altitude = this.profileData.averagedPointsElevation[Math.floor(distance * 10)]
-
-        // Slope
-        if (this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
-            var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.profileData.averagedPointsElevation[Math.floor(distance * 10)]
-        } else { // Only calculate on previous 100m for the last index (because no next index)
-            var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10)] - this.profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
-        }*/
-
-        // Build tooltip element
-        var tooltip = document.createElement('div')
-        tooltip.className = 'map-tooltip'
-        if (twinDistance) {
-            if (distance < twinDistance) {
-                var dst1 = distance
-                var dst2 = twinDistance
-            } else {
-                var dst1 = twinDistance
-                var dst2 = distance
-            }
-            tooltip.innerHTML = `
-            距離 : ` + dst1 + `km, ` + dst2 + `km<br>
-            勾配 : <div class="map-slope">` + slope + `%</div><br>
-            標高 : ` + altitude + `m`
-        } else {
-            tooltip.innerHTML = `
-            距離 : ` + distance + `km<br>
-            勾配 : <div class="map-slope">` + slope + `%</div><br>
-            標高 : ` + altitude + `m`
-        }
-        // In case of an activity, add time data
-        if (this.activityId) tooltip.innerHTML += '<br>時間 : ' + this.getFormattedTimeFromLngLat([lng, lat])
-        
-        // Position tooltip on the page
-        // If height argument has been given, display on the map
-        if (pointY) {
-            this.$map.appendChild(tooltip)
-            tooltip.style.left = pointX + 10 + 'px'
-            tooltip.style.top = pointY + 10 + 'px'
-            tooltip.style.borderRadius = '0px 10px 10px 10px'
-        // Else, display on top of the profile by default
-        } else {
-            $profileBox.appendChild(tooltip)
-            tooltip.style.left = pointX + 'px'
-            tooltip.style.top = 0 - tooltip.offsetHeight + 'px'
-            tooltip.style.borderRadius = '10px 10px 10px 0px'
-            // Prevent tooltip from overflowing at the end of the profile
-            if ((pointX + tooltip.offsetWidth) > $elevationProfile.offsetWidth - 10) {
-                var corrector = (pointX + tooltip.offsetWidth) - ($elevationProfile.offsetWidth)
-                tooltip.style.left = pointX - corrector + 'px'
-            }
-        }
-
-        // Dynamic styling
-        var slopeStyle = document.querySelector('.map-slope')
-        slopeStyle.style.color = this.setSlopeStyle(slope).color
-        slopeStyle.style.fontWeight = this.setSlopeStyle(slope).weight
-        if (options) {
-            if (options.backgroundColor) tooltip.style.backgroundColor = options.backgroundColor
-            if (options.mergeWithCursor) tooltip.style.borderRadius = '4px 4px 4px 0px'
-        }
-    }
-
-    clearTooltip () {
-        var tooltip = document.querySelector('.map-tooltip')
-        if (tooltip) tooltip.remove()
-    }
-
-    setSlopeStyle (slope) {
-        if (slope <= -2) return {color: '#00e06e', weight: 'bold'}
-        else if (slope > -2 && slope <= 2) return {color: '#000000', weight: 'normal'}
-        else if (slope > 2 && slope <= 6) return {color: '#ffa500', weight: 'bold'}
-        else if (slope > 6 && slope <= 9) return {color: '#ff5555', weight: 'bold'}
-        else if (slope > 9) return {color: '#000000', weight: 'bold'}
-    }
-
-    // Build profile data
-    async getProfileData (routeData, options) { // options : remote = boolean
-
-        var profileData = {}
-        const routeDistance = turf.length(routeData)
-        const tunnels       = routeData.properties.tunnels
-        // Get as many times of 100m distance as it fits inside route distance into an array
-        var distances = []
-        for (let i = 0; i < routeDistance; i += 0.1) {
-            distances.push(i)
-        }
-        // Get an array of points to check for building route profile
-        profileData.profilePoints = getPointsToCheck(routeData, distances)
-        if (options) {
-            if (options.remote == true) {
-                // If profile is displayed, set map bounds to route bounds and wait for map elevation data to load
-                if (document.querySelector('.show-profile')) {
-                    var routeBounds = CFUtils.defineRouteBounds(routeData.geometry.coordinates)
-                    this.map.fitBounds(routeBounds)
-                    await this.map.once('idle')
-                }
-            }
-        }
-        // Get an array of elevation data for each profile point
-        profileData.pointsElevation = []
-        for (let i = 0; i < profileData.profilePoints.length; i++) {
-            var thisPointElevation = Math.floor(this.map.queryTerrainElevation(profileData.profilePoints[i].geometry.coordinates, {exaggerated: false}))
-            profileData.pointsElevation.push(thisPointElevation)
-        }
-        // Cut tunnels
-        profileData.profilePointsCoordinates = []
-        profileData.profilePoints.forEach( (point) => {
-            profileData.profilePointsCoordinates.push(point.geometry.coordinates)
-        } )
-        if (tunnels) profileData = this.cutTunnels(profileData, tunnels)
-        // Average elevation
-        profileData.averagedPointsElevation = this.averageElevation(profileData.pointsElevation, routeDistance)
-        // Build labels
-        var labels = []
-        for (let i = 0; i < (profileData.averagedPointsElevation.length); i++) labels.push((i / 10) + ' km')
-        // Build points at regular format
-        profileData.pointData = []
-        for (let i = 0; i < (profileData.profilePoints.length); i++) {
-            profileData.pointData.push({x: distances[i], y: profileData.averagedPointsElevation[i]})
-        }
-
-        this.profileData = profileData
-
-        return profileData
-
-        function getPointsToCheck (lineString, distancesToCheck) {     
-            let points = [] 
-            distancesToCheck.forEach( (distance) => {
-                let feature = turf.along(lineString, distance, {units: "kilometers"} )
-                feature.properties.distanceAlongLine = distance * 1000
-                points.push(feature)
-            } )     
-            return points
-        }
-    }
-
-    /**
-     * Cut tunnel sections in profileData
-     * @param {Object} profileData profileData object
-     * @param {[][]} tunnels array of tunnels coordinate arrays
-     * @returns updated profileData object
-     */
-    cutTunnels (profileData, tunnels) {
-        tunnels.forEach( (tunnel) => {
-            var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profileData.profilePointsCoordinates)
-            var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates))
-            var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profileData.profilePointsCoordinates)
-            var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates))
-            if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
-            var toSlice = endKey - startKey + 1
-            var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
-            // Replace in array
-            toInsert.reverse()
-            profileData.pointsElevation.splice(startKey, toSlice)
-            for (let i = 0; i < toInsert.length; i++) {
-                profileData.pointsElevation.splice(startKey, 0, toInsert[i])
-            }
-        } )
-        return profileData
-
-        function averageElevationFromTips (start, end, index) {
-            var section = []
-            for (let i = 0; i < index; i++) {
-                var point = []
-                for (let j = index; j > i; j--) {
-                    point.push(start)
-                }
-                for (let k = 0; k < i; k++) {
-                    point.push(end)
-                }
-                section.push(Math.floor(calculateAverage(point)))
-            }
-            return section
-        }
-    }
-
-    /**
-     * Average pointsElevation data
-     * @param {[]} pointsElevation profileData pointsElevation
-     * @param {int} routeDistance 
-     * @returns {[]} corrected profileData pointsElevation
-     */
-    averageElevation (pointsElevation, routeDistance) {
-            
-        const basis = defineBasis(routeDistance)
-
-        var averagedPointsElevation = []
-        // Add [basis/2] first points at the start (deal with points which can't be averaged because not enough first points. For them, average will be calculated on available points)
-        for (var i = 0; i < Math.ceil(basis / 2); i++) { // i = 1, 2, 3... basis/2
-            var firstPoints = []
-            for (let j = 0; j <= i; j++) { // i = 0 / j = 0... basis/2
-                firstPoints[j] = pointsElevation[i - j]
-            }
-            let averagedPoint = Math.abs(Math.floor(calculateAverage(firstPoints)))
-            averagedPointsElevation.push(averagedPoint)
-        }
-        // Add averaged points to averagedPointsElevation array
-        for (var i = 0; i < (pointsElevation.length - basis); i++) {
-            // Calculate the average of the next [basis] points
-            var nextPoints = []
-            for (let j = 0; j < basis; j++) { 
-                nextPoints[j] = pointsElevation[i + j]
-            }
-            let averagedPoint = Math.abs(Math.floor(calculateAverage(nextPoints)))
-            averagedPointsElevation.push(averagedPoint)
-        }
-        // Add [basis/2] last points at the end (deal with points which can't be averaged because not enough next points. For them, average will be calculated on remaining points)
-        for (var i = Math.floor(basis / 2); i > 0; i--) { // i = 10, 9, 8, 7... 0
-            var lastPoints = []
-            for (let j = 0; j < i; j++) { // i = 10 / j = 0, 1, 2, 3... 10
-                lastPoints[j] = pointsElevation[pointsElevation.length - i + j]
-            }
-            let averagedPoint = Math.abs(Math.floor(calculateAverage(lastPoints)))
-            averagedPointsElevation.push(averagedPoint)
-        }
-        return averagedPointsElevation
-
-        /**
-         * Define profile averaging basis on a 100m unit (ex: for a basis of 5, take 5 next altitude points and average them)
-         * @param {int} distance
-         * @returns {int}
-         */
-        function defineBasis (distance) {
-            if (distance < 5) return 3
-            else if (distance >= 5 && distance < 30) return 4
-            else if (distance >= 30 && distance < 80) return 5
-            else if (distance >= 80) return 6
-            else return 5
-        }
-    }
-
-    /**
-     * Retrieve precise profile data by analyzing elevation tiles of each road coordinate
-     * @param {Object} routeData geojson linestring
-     * @returns {Promise}
-     */
-    async queryPreciseProfileData (profileData) {
-
-        return new Promise((resolve, reject) => {
-
-            // Set tile query properties
-            const profileDataGeometry = {
-                coordinates: profileData.profilePointsCoordinates,
-                type: 'LineString'
-            }
-            const limits = {
-                min_zoom: 10,
-                max_zoom: 12
-            }
-            var tilesAnalyzed = 0
-
-            // Get route tiles info (tile = tile address, geom = corresponding bounding box coordinates)
-            var tiles = cover.tiles(profileDataGeometry, limits)
-            var geom = cover.geojson(profileDataGeometry, limits)
-
-            // For each tile
-            for (let i = 0; i < tiles.length; i++) {
-
-                // Query raster image
-                const zoom = limits.max_zoom
-                const x = tiles[i][0]
-                const y = tiles[i][1]
-                const url = 'https://api.mapbox.com/v4/mapbox.terrain-rgb/' + zoom + '/' + x + '/' + y + '@2x.pngraw?access_token=' + this.apiKey
-                const bbox = getTileBbox(geom.features[i].geometry.coordinates[0])
-                
-                // Retrieve tile as data url
-                fetch(url)
-                .then((response) => response.body)
-                .then((body) => {
-                    const reader = body.getReader()
-                
-                    return new ReadableStream({
-                        start(controller) {
-                            return pump()
-
-                            function pump() {
-                                return reader.read().then(({ done, value }) => {
-                                    // When no more data needs to be consumed, close the stream
-                                    if (done) {
-                                        controller.close()
-                                        return
-                                    }
-
-                                    // Enqueue the next data chunk into our target stream
-                                    controller.enqueue(value)
-                                    return pump()
-                                })
-                            }
-                        },
-                    })
-                } )
-                .then((stream) => new Response(stream))
-                .then((response) => response.blob())
-                .then((blob) => URL.createObjectURL(blob))
-                .then((url) => {
-                    // Draw tile on canvas
-                    var canvas = document.createElement('canvas')
-                    canvas.height = 512
-                    canvas.width = 512
-                    canvas.style.height = canvas.height + 'px'
-                    canvas.style.width = canvas.width + 'px'
-                    ///document.body.prepend(canvas)
-                    const ctx = canvas.getContext('2d', {willReadFrequently: true})
-                    const img = new Image()
-                    img.onload = async (event) => {
-                        URL.revokeObjectURL(event.target.src)
-                        ctx.drawImage(event.target, 0, 0)
-
-                        // Find route coordinates inside this tile
-                        for (let i = 0; i < profileData.pointData.length; i++) {
-                            if (CFUtils.coordInsideBounds(profileData.profilePointsCoordinates[i], bbox)) {
-
-                                // Get corresponding pixel
-                                var pixel = getPixelPair(profileData.profilePointsCoordinates[i], bbox)                                
-                                
-                                /*// Color pixel on the canvas
-                                ctx.fillStyle = '#ff0000'
-                                ctx.fillRect(pixel[0], pixel[1], 3, 3)*/
-
-                                // Get elevation for this pixel
-                                const elevation = getPixelElevation(ctx, pixel)
-
-                                profileData.pointData[i].y = elevation
-                                profileData.pointsElevation[i] = elevation
-                            }
-                        }
-
-                        tilesAnalyzed++
-
-                        // When last tile have been analyzed
-                        if (tilesAnalyzed == tiles.length) {
-
-                            // Cut tunnels if data exists
-                            var routeData = await this.getRouteData()
-                            const tunnels = routeData.properties.tunnels
-                            if (tunnels) profileData = this.cutTunnels(profileData, tunnels)
-
-                            // Average elevation
-                            profileData.averagedPointsElevation = this.averageElevation(profileData.pointsElevation, turf.length(routeData))
-
-                            // Update pointData (data to be drawn on profile)
-                            for (let i = 0; i < (profileData.profilePoints.length); i++) {
-                                profileData.pointData[i].y = profileData.averagedPointsElevation[i]
-                            }
-
-                            this.profileData = profileData
-
-                            resolve(profileData)
-                        }
-                    }
-                    img.src = url
-                } )
-                .catch((err) => console.error(err))
-            }
-
-            /**
-             * Retrieve bbox from a geojson formatted tile
-             * @param {float[][]} tileCoords array of coords
-             * @returns {float[][]} bbox
-             */
-            function getTileBbox (tileCoords) {
-                var lowestLng = 180
-                var lowestLat = 180
-                var highestLng = 0
-                var highestLat = 0
-                tileCoords.forEach(coord => {
-                    if (coord[0] < lowestLng) lowestLng = coord[0]
-                    if (coord[0] > highestLng) highestLng = coord[0]
-                    if (coord[1] < lowestLat) lowestLat = coord[1]
-                    if (coord[1] > highestLat) highestLat = coord[1]
-                })
-                return [[lowestLng, lowestLat], [highestLng, highestLat]]
-            }
-
-            /**
-             * Get corresponding paix of pixels (x,y) on a tile from a pair of coordinates (lng,lat)
-             * @param {float[]} coords coordinates to locate
-             * @param {float[][]} bbox tile bouding box
-             */
-            function getPixelPair (coords, bbox) {
-                var percentagePair = getPercentagePair(coords, bbox)
-                return [Math.round(percentagePair[0] * 511 / 100), Math.round(percentagePair[1] * 511 / 100)]
-
-                function getPercentagePair (coords, bbox) {
-                    var xTotalDifference = bbox[1][0] - bbox[0][0]
-                    var xLngDifference = bbox[1][0] - coords[0]
-                    var yTotalDifference = bbox[1][1] - bbox[0][1]
-                    var yLatDifference = bbox[1][1] - coords[1]
-                    return [100 - ((xLngDifference / xTotalDifference) * 100), (yLatDifference / yTotalDifference) * 100]
-                }
-            }
-
-            /**
-             * Retrieve elevation of (x,y) pixel and retrieve elevation
-             * @param {CanvasRenderingContext2D} ctx
-             * @param {int[]} pixel [x,y] pixel position
-             * @returns {int} elevation in meters
-             */
-            function getPixelElevation (ctx, pixel) {
-                var pixelData = ctx.getImageData(pixel[0], pixel[1], 1, 1).data
-                const r = pixelData[0]
-                const g = pixelData[1]
-                const b = pixelData[2]
-                var elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1)
-                return Math.floor(elevation * 10) / 10
-            }
-        } )    
-    }
-
-    async calculateElevation (routeData) {
-        var profileData = await this.getProfileData(routeData)
-        var elevation = 0
-        for (let i = 1; i < profileData.averagedPointsElevation.length - 1; i++) {
-            if (profileData.averagedPointsElevation[i] > profileData.averagedPointsElevation[i - 1]) {
-                elevation += (profileData.averagedPointsElevation[i] - profileData.averagedPointsElevation[i - 1])
-            }
-        }
-        return elevation
     }
 
     // Get tunnels info from a mapbox Directions API request result
@@ -3430,6 +2644,46 @@ export default class GlobalMap extends Model {
             } )
             return number
         }
+    }
+
+    /**
+     * Pregenerate checkpoint elements to display on profile
+     * @param {Object[]} checkpoints array of checkpoints
+     * @returns {Promise}
+     */
+    generateCheckpointsPoi (checkpoints) {
+        if (checkpoints.length == 0) return false // If no checkpoint, return false
+        return new Promise((resolve, reject) => {
+            checkpoints.forEach((checkpoint) => {
+                let canvas = document.createElement('canvas')
+                canvas.height = 50
+                canvas.width = 50
+                let ctx = canvas.getContext("2d")
+                ctx.font = "bold 35px Noto Sans"
+                if (checkpoint.number == 0) {
+                    ctx.fillStyle = 'green'
+                    var text = 'S'
+                } else if (checkpoint.number == checkpoints.length - 1) {
+                    ctx.fillStyle = 'red'
+                    var text = 'F'
+                } else {
+                    ctx.fillStyle = 'blue'
+                    var text = checkpoint.number
+                }
+                ctx.rect(0, 0, 50, 50)
+                ctx.fill()
+                ctx.fillStyle = 'white'
+                ctx.fillText(text, 15, 40)
+                var img = new Image()
+                ctx.drawImage (img, 0, 0)
+                img.src = canvas.toDataURL()
+                img.classList.add('js-poi-icon')
+                img.id = 'checkpointPoiIcon' + checkpoint.number
+                img.style.display = 'none'
+                document.querySelector('#elevationProfile').appendChild(img)
+            } )
+            resolve(true)
+        } )
     }
 
     // Sort markers array by distance from start of lineString

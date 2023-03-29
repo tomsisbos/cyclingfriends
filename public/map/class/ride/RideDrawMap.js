@@ -10,7 +10,6 @@ export default class RideDrawMap extends RideMap {
 
     route
     routeSource
-    profileData = {}
     method = 'draw'
 
     async loadRoute (routeId) {
@@ -61,301 +60,21 @@ export default class RideDrawMap extends RideMap {
                 await this.map.once('idle')
                 document.querySelector('#profileBox').style.display = 'block'
                 document.querySelector('#js-draw .rd-course-fields').style.paddingTop = 'calc(420px + 15vh)'
-                this.generateProfile()
+                this.profile.generate()
                 this.addStartGoalMarkers()
                 await this.displayCloseMkpoints(0.5)
-                this.generateProfile()
-                resolve()
+                    .then(async () => {
+                        await this.generateCheckpointsPoi(this.data.checkpoints)
+                        this.profile.generate({
+                            poiData: {
+                                rideCheckpoints: this.data.checkpoints,
+                                mkpoints: this.mkpoints
+                            }
+                        })
+                    })
+                    .then(() => resolve(true))
             } )
         } )
-    }
-
-    async generateProfile (options = {force: false}) {
-        
-        const routeSource = this.map.getSource('route')
-
-        // If route has been changed since last profile update
-        if (routeSource != this.routeSource || options.force == true) {
-
-            // If a route is displayed on the map
-            if (routeSource) {
-
-                // Prepare profile data
-                this.profileData = await this.getProfileData(routeSource._data, {remote: true})
-                
-                // Draw profile inside elevationProfile element
-
-                // Prepare profile settings
-                const ctx = document.getElementById('elevationProfile').getContext('2d')
-                const downtwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y + 2 ? value : undefined
-                const flat = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 2 ? value : undefined
-                const uptwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 6 ? value : undefined
-                const upsix = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 10 ? value : undefined
-                const upten = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined                    
-                const data = {
-                    labels: this.profileData.labels,
-                    datasets: [ {
-                        data: this.profileData.pointData,
-                        fill: {
-                            target: 'origin',
-                            above: '#fffa9ccc'
-                        },
-                        borderColor: '#bbbbff',
-                        tension: 0.1
-                    } ],
-                }
-                const backgroundColor = {
-                    id: 'backgroundColor',
-                    beforeDraw: (chart) => {
-                        const ctx = chart.canvas.getContext('2d')
-                        ctx.save()
-                        ctx.globalCompositeOperation = 'destination-over'
-                        var lingrad = ctx.createLinearGradient(0, 0, 0, 150);
-                        lingrad.addColorStop(0, '#f9f9f9');
-                        lingrad.addColorStop(0.5, '#fff');
-                        ctx.fillStyle = lingrad
-                        ctx.fillRect(0, 0, chart.width, chart.height)
-                        ctx.restore()
-                    }
-                }
-                const displayMkpoints = {
-                    id: 'displayMkpoints',
-                    afterRender: (chart) => {
-                        const ctx = chart.canvas.getContext('2d')
-                        const routeData = routeSource._data
-                        const routeDistance = turf.length(routeData)
-                        if (this.mkpoints) {
-                            this.mkpoints.forEach( (mkpoint) => {
-                                // If mkpoint is on route and has not been converted to a checkpoint
-                                if (mkpoint.on_route && document.querySelector('#mkpoint' + mkpoint.id)) {
-                                    // Get X position
-                                    const mkpointDistance = mkpoint.distance
-                                    var roughPositionProportion = mkpointDistance / routeDistance * 100
-                                    var roughPositionPixel = roughPositionProportion * (chart.scales.x._maxLength - chart.scales.x.left - chart.scales.x.paddingRight - chart.scales.x._margins.right) / 100
-                                    mkpoint.position = roughPositionPixel + chart.scales.x.left
-                                    // Get Y position
-                                    const dataX = chart.scales.x.getPixelForValue(mkpoint.distance)
-                                    const dataY = chart.scales.y.getPixelForValue(this.profileData.pointsElevation[Math.floor(mkpoint.distance * 10)])
-                                    // Draw a line
-                                    var cursorLength = 10
-                                    ctx.strokeStyle = '#d6d6d6'
-                                    ctx.lineWidth = 1
-                                    ctx.beginPath()
-                                    ctx.moveTo(mkpoint.position, dataY)
-                                    ctx.lineTo(mkpoint.position, dataY - cursorLength)
-                                    ctx.stroke()
-                                    ctx.closePath()
-
-                                    // Format icon
-                                    var img    = document.querySelector('#mkpoint' + mkpoint.id).querySelector('img')
-                                    var width  = 15
-                                    var height = 15
-                                    const positionX = mkpoint.position - width/2
-                                    const positionY = dataY - cursorLength - height
-                                    if (img.classList.contains('admin-marker')) {
-                                        ctx.strokeStyle = 'yellow'
-                                        ctx.lineWidth = 3
-                                    }
-                                    if (img.classList.contains('selected-marker')) {
-                                        ctx.strokeStyle = '#ff5555'
-                                        ctx.lineWidth = 3
-                                    }
-
-                                    var abstract = {}
-                                    abstract.offscreenCanvas = document.createElement("canvas")
-                                    abstract.offscreenCanvas.width = width
-                                    abstract.offscreenCanvas.height = height
-                                    abstract.offscreenContext = abstract.offscreenCanvas.getContext("2d")
-                                    const ctx2 = abstract.offscreenContext
-                                    ctx2.drawImage(img, 0, 0, width, height)
-                                    ctx2.globalCompositeOperation = 'destination-atop'
-                                    ctx2.arc(0 + width/2, 0 + height/2, width/2, 0, Math.PI * 2)
-                                    ctx2.closePath()
-                                    ctx2.fill()
-
-                                    // Draw icon
-                                    ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
-                                    ctx.beginPath()
-                                    ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
-                                    ctx.closePath()
-                                    ctx.stroke()
-                                }
-                            } )
-                        }
-                    }
-                }
-                const cursorOnHover = {
-                    id: 'cursorOnHover',
-                    afterEvent: (chart, args) => {
-                        var e = args.event
-                        if (e.type == 'mousemove' && args.inChartArea == true) {
-                            // Get relevant data
-                            const dataX        = chart.scales.x.getValueForPixel(e.x)
-                            const routeData = routeSource._data
-                            const distance     = Math.floor(dataX * 10) / 10
-                            const maxDistance  = chart.scales.x._endValue
-                            const altitude     = this.profileData.pointsElevation[distance * 10]
-                            // Slope
-                            if (this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
-                                var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.profileData.averagedPointsElevation[Math.floor(distance * 10)]
-                            } else { // Only calculate on previous 100m for the last index (because no next index)
-                                var slope = this.profileData.averagedPointsElevation[Math.floor(distance * 10)] - this.profileData.averagedPointsElevation[Math.floor(distance * 10) - 1]
-                            }
-                            // As mouse is inside route profile area
-                            if (distance >= 0 && distance <= maxDistance) {
-                                // Reload canvas
-                                this.elevationProfile.destroy()
-                                this.elevationProfile = new Chart(ctx, chartSettings)
-                                // Draw a line
-                                ctx.strokeStyle = 'black'
-                                ctx.lineWidth = 1
-                                ctx.beginPath()
-                                ctx.moveTo(e.x, 0)
-                                ctx.lineTo(e.x, 9999)
-                                ctx.stroke()
-                                // Display corresponding point on route
-                                var routePoint = turf.along(routeData, distance, {units: 'kilometers'})
-                                if (slope <= 2 && slope >= -2) {
-                                    var circleColor = 'white'
-                                } else {
-                                    var circleColor = this.setSlopeStyle(slope).color
-                                }
-                                if (!this.map.getLayer('profilePoint')) {
-                                    this.map.addLayer( {
-                                        id: 'profilePoint',
-                                        type: 'circle',
-                                        source: {
-                                            type: 'geojson',
-                                            data: routePoint
-                                        },
-                                        paint: {
-                                            'circle-radius': 5,
-                                            'circle-color': circleColor
-                                        }
-                                    } )
-                                } else {
-                                    this.map.getSource('profilePoint').setData(routePoint)
-                                    this.map.setPaintProperty('profilePoint', 'circle-color', circleColor)
-                                }
-                                // Display tooltip
-                                this.clearTooltip()
-                                this.drawTooltip(routeData, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, this.$map.offsetHeight - 90, {backgroundColor: '#ffffff'})
-                                // Highlight corresponding mkpoint data
-                                if (this.mkpoints && (!document.querySelector('#boxShowMkpoints') || document.querySelector('#boxShowMkpoints').checked)) {
-                                    this.mkpoints.forEach( (mkpoint) => {
-                                        if (document.getElementById(mkpoint.id) && mkpoint.distance < (distance + 1) && mkpoint.distance > (distance - 1)) {
-                                            // Highlight preview image
-                                            document.getElementById(mkpoint.id).querySelector('img').classList.add('admin-marker')
-                                            // Highlight marker
-                                            document.querySelector('#mkpoint' + mkpoint.id).querySelector('img').classList.add('admin-marker')
-                                        } else if (document.getElementById(mkpoint.id) && mkpoint.on_route == true) {
-                                            document.getElementById(mkpoint.id).querySelector('img').classList.remove('admin-marker')
-                                            document.querySelector('#mkpoint' + mkpoint.id).querySelector('img').classList.remove('admin-marker')
-                                        }
-                                    } )
-                                }
-                            }
-                        } else if (e.type == 'mouseout' || args.inChartArea == false) {
-                            // Clear tooltip if one
-                            this.clearTooltip()
-                            // Reload canvas
-                            this.elevationProfile.destroy()
-                            this.elevationProfile = new Chart(ctx, chartSettings)
-                            // Remove corresponding point on route
-                            if (this.map.getLayer('profilePoint')) {
-                                this.map.removeLayer('profilePoint')
-                                this.map.removeSource('profilePoint')
-                            }
-                        }  
-                    }              
-                }
-                const options = {
-                    parsing: false,
-                    animation: false,
-                    maintainAspectRatio: false,
-                    pointRadius: 0,
-                    pointHitRadius: 0,
-                    pointHoverRadius: 0,
-                    events: ['mousemove', 'mouseout'],
-                    segment: {
-                        borderColor: ctx => downtwo(ctx, '#00e06e') || flat(ctx, 'yellow') || uptwo(ctx, 'orange') || upsix(ctx, '#ff5555') || upten(ctx, 'black'),
-                    },
-                    layout: {
-                        padding: {
-                            right: 15
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            bounds: 'data',
-                            grid: {
-                                color: '#00000000',
-                                tickColor: 'lightgrey'
-                            },
-                            ticks: {
-                                format: {
-                                    style: 'unit',
-                                    unit: 'kilometer'
-                                },
-                                autoSkip: true,
-                                autoSkipPadding: 50,
-                                maxRotation: 0
-                            },
-                            beginAtZero: true,
-                        },
-                        y: {
-                            grid: {
-                                borderDash: [5, 5],
-                                drawTicks: false
-                            },
-                            ticks: {
-                                format: {
-                                    style: 'unit',
-                                    unit: 'meter'
-                                },
-                                autoSkipPadding: 20,
-                                padding: 8
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'point',
-                        axis: 'x',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: {
-                            display: false,
-                            labels: {
-                                boxWidth: 100
-                            }
-                        },
-                        // Define background color
-                        backgroundColor: backgroundColor,
-                        // Draw a vertical cursor on hover
-                        cursorOnHover: cursorOnHover,
-                        tooltip: {
-                            enabled: false
-                        },
-                    },
-                }
-                const chartSettings = {
-                    type: 'line',
-                    data: data,
-                    options: options,
-                    plugins: [backgroundColor, cursorOnHover, displayMkpoints]
-                }
-
-                // Reset canvas
-                if (this.elevationProfile) this.elevationProfile.destroy()
-                // Bound chart to canvas
-                this.elevationProfile = new Chart(ctx, chartSettings)
-            }
-
-            this.routeSource = routeSource
-
-        }
     }
 
     async displayCloseMkpoints (range) {
@@ -369,9 +88,6 @@ export default class RideDrawMap extends RideMap {
 
                 // Display on map
                 this.addMkpoints(this.mkpoints)
-                
-                // Update mkpoints cursors on profile
-                this.generateProfile()
                 
                 // Display thumbnails
                 // Get mkpoints on route number
@@ -412,7 +128,12 @@ export default class RideDrawMap extends RideMap {
                         photoInput.innerHTML = '<img class="checkpoint-popup-img" />'
                         popup.getElement().querySelector('.checkpointMarkerForm').before(photoInput)
                         popup.getElement().querySelector('.checkpoint-popup-img').src = mkpoint.url
-                        this.generateProfile({force: true})
+                        this.profile.generate({
+                            poiData: {
+                                rideCheckpoints: this.data.checkpoints,
+                                mkpoints: this.mkpoints
+                            }
+                        })
                         // Add "addToCheckpoints" button click event handler
                         var $button = popup._content.querySelector('#addToCheckpoints')
                         $button.addEventListener('click', async (e) => {

@@ -89,7 +89,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         segmentMap.addRouteLayer(geojson)
         
         // Generate profile on idle
-        map.once('idle', () => segmentMap.generateProfile())
+        map.once('idle', () => segmentMap.profile.generate())
         
         // Focus
         segmentMap.map.jumpTo( {
@@ -109,6 +109,13 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
 
             // Load mkpoints into map instance
             segmentMap.mkpoints = mkpoints
+
+            // Regenerate profile to display them
+            segmentMap.profile.generate({
+                poiData: {
+                    mkpoints: segmentMap.mkpoints
+                }
+            })
         } )
 
     // If map is static
