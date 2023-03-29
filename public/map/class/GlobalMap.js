@@ -300,7 +300,7 @@ export default class GlobalMap extends Model {
     }
 
     async load (element, style, center = this.userLocation) {
-        return new Promise ((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.$map = element
             this.map = new mapboxgl.Map ( {
                 container: element,
@@ -324,170 +324,14 @@ export default class GlobalMap extends Model {
             // Style and data
             this.map.once('load', () => {
                 this.loaded = true
-                resolve (this.map)
+                resolve(this.map)
                 this.styleSeason()
                 this.loadTerrain()
                 this.loadImages()
             } )
             
             this.map.on('contextmenu', async () => {
-
-                // Set tile query properties
-                const limits = {
-                    min_zoom: 10,
-                    max_zoom: 12
-                }
-                var pointsData = []
-                var tilesAnalyzed = 0
-
-                // Get route tiles info (tile = tile address, geom = corresponding bounding box coordinates)
-                var routeData = await this.getRouteData()
-                var tiles = cover.tiles(routeData.geometry, limits)
-                console.log(tiles)
-                var geom = cover.geojson(routeData.geometry, limits)
-                console.log(geom)
-
-                // For each tile
-                for (let i = 0; i < tiles.length; i++) {
-
-                    // Query raster image
-                    const zoom = limits.max_zoom
-                    const x = tiles[i][0]
-                    const y = tiles[i][1]
-                    const url = 'https://api.mapbox.com/v4/mapbox.terrain-rgb/' + zoom + '/' + x + '/' + y + '@2x.pngraw?access_token=' + this.apiKey
-                    const bbox = getTileBbox(geom.features[i].geometry.coordinates[0])
-                    
-                    // Retrieve tile as data url
-                    fetch(url)
-                    .then((response) => response.body)
-                    .then((body) => {
-                        const reader = body.getReader()
-                    
-                        return new ReadableStream({
-                            start(controller) {
-                                return pump()
-
-                                function pump() {
-                                    return reader.read().then(({ done, value }) => {
-                                        // When no more data needs to be consumed, close the stream
-                                        if (done) {
-                                            controller.close()
-                                            return
-                                        }
-
-                                        // Enqueue the next data chunk into our target stream
-                                        controller.enqueue(value)
-                                        return pump()
-                                    })
-                                }
-                            },
-                        })
-                    } )
-                    .then((stream) => new Response(stream))
-                    .then((response) => response.blob())
-                    .then((blob) => URL.createObjectURL(blob))
-                    .then((url) => {
-                        // Draw tile on canvas
-                        var canvas = document.createElement('canvas')
-                        canvas.height = 512
-                        canvas.width = 512
-                        canvas.style.height = canvas.height + 'px'
-                        canvas.style.width = canvas.width + 'px'
-                        ///document.body.prepend(canvas)
-                        const ctx = canvas.getContext('2d', {willReadFrequently: true})
-                        const img = new Image()
-                        img.onload = (event) => {
-                            URL.revokeObjectURL(event.target.src)
-                            ctx.drawImage(event.target, 0, 0)
-
-                            // Find route coordinates inside this tile
-                            routeData.geometry.coordinates.forEach(routeCoord => {
-                                if (CFUtils.isInsideBounds(routeCoord, bbox)) {
-
-                                    // Get corresponding pixel
-                                    var pixel = getPixelPair(routeCoord, bbox)                                
-                                    
-                                    /*// Color pixel on the canvas
-                                    ctx.fillStyle = '#ff0000'
-                                    ctx.fillRect(pixel[0], pixel[1], 3, 3)*/
-
-                                    // Get elevation for this pixel
-                                    const elevation = getPixelElevation(ctx, pixel)
-                                    const distance = CFUtils.findDistanceWithTwins(routeData, {lng: routeCoord[0], lat: routeCoord[1]}).distance
-
-                                    pointsData.push({
-                                        x: distance,
-                                        y: elevation
-                                    } )
-                                }
-                            } )
-
-                            tilesAnalyzed++
-                            console.log(tilesAnalyzed + '/' + tiles.length)
-
-                            // When last tile have been analyzed
-                            if (tilesAnalyzed == tiles.length) {
-                                // Sort points data by distance
-                                pointsData.sort((a, b) => a.x - b.x)
-                                console.log(pointsData)
-                            }
-                        }
-                        img.src = url
-                    } )
-                    .catch((err) => console.error(err))
-                }
-
-                /**
-                 * Retrieve bbox from a geojson formatted tile
-                 * @param {float[][]} tileCoords array of coords
-                 * @returns {float[][]} bbox
-                 */
-                function getTileBbox (tileCoords) {
-                    var lowestLng = 180
-                    var lowestLat = 180
-                    var highestLng = 0
-                    var highestLat = 0
-                    tileCoords.forEach(coord => {
-                        if (coord[0] < lowestLng) lowestLng = coord[0]
-                        if (coord[0] > highestLng) highestLng = coord[0]
-                        if (coord[1] < lowestLat) lowestLat = coord[1]
-                        if (coord[1] > highestLat) highestLat = coord[1]
-                    })
-                    return [[lowestLng, lowestLat], [highestLng, highestLat]]
-                }
-
-                /**
-                 * Get corresponding paix of pixels (x,y) on a tile from a pair of coordinates (lng,lat)
-                 * @param {float[]} coords coordinates to locate
-                 * @param {float[][]} bbox tile bouding box
-                 */
-                function getPixelPair (coords, bbox) {
-                    var percentagePair = getPercentagePair(coords, bbox)
-                    return [Math.round(percentagePair[0] * 511 / 100), Math.round(percentagePair[1] * 511 / 100)]
-
-                    function getPercentagePair (coords, bbox) {
-                        var xTotalDifference = bbox[1][0] - bbox[0][0]
-                        var xLngDifference = bbox[1][0] - coords[0]
-                        var yTotalDifference = bbox[1][1] - bbox[0][1]
-                        var yLatDifference = bbox[1][1] - coords[1]
-                        return [100 - ((xLngDifference / xTotalDifference) * 100), (yLatDifference / yTotalDifference) * 100]
-                    }
-                }
-
-                /**
-                 * Retrieve elevation of (x,y) pixel and retrieve elevation
-                 * @param {CanvasRenderingContext2D} ctx
-                 * @param {int[]} pixel [x,y] pixel position
-                 * @returns {int} elevation in meters
-                 */
-                function getPixelElevation (ctx, pixel) {
-                    var pixelData = ctx.getImageData(pixel[0], pixel[1], 1, 1).data
-                    const r = pixelData[0]
-                    const g = pixelData[1]
-                    const b = pixelData[2]
-                    var elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1)
-                    return Math.floor(elevation * 10) / 10
-                }
+                this.generateProfile()
             } )
         } )
     }
@@ -1652,15 +1496,16 @@ export default class GlobalMap extends Model {
         }
     }
 
-    async generateProfile (options = {force: false, time: false}) {
+    async generateProfile (options = {force: false, time: false, precise: true}) {
         
-        const route = this.map.getSource('route')
+        const routeData = await this.getRouteData()
 
         // If a route is displayed on the map
-        if (route) {
+        if (routeData) {
 
             // Prepare profile data
-            /*if (!this.profileData)*/ this.profileData = await this.getProfileData(route._data, {remote: true})
+            if (!this.profileData || this.profileData == undefined) this.profileData = await this.getProfileData(routeData, {remote: true})
+            if (options.precise) this.profileData = await this.queryPreciseProfileData(this.profileData)
             
             // Draw profile inside elevationProfile element
 
@@ -1701,7 +1546,6 @@ export default class GlobalMap extends Model {
                 id: 'displayPois',
                 afterRender: (chart) => {
                     const ctx = chart.canvas.getContext('2d')
-                    const routeData = route._data
                     const routeDistance = turf.length(routeData)
                     var drawPoi = async (poi, type) => {
                         // Get X position
@@ -1814,7 +1658,6 @@ export default class GlobalMap extends Model {
                     if (e.type == 'mousemove' && args.inChartArea == true) {
                         // Get relevant data
                         const dataX        = chart.scales.x.getValueForPixel(e.x)
-                        const routeData    = route._data
                         const distance     = Math.floor(dataX * 10) / 10
                         const maxDistance  = chart.scales.x._endValue
                         const altitude     = this.profileData.pointsElevation[distance * 10]
@@ -1838,11 +1681,8 @@ export default class GlobalMap extends Model {
                             ctx.stroke()
                             // Display corresponding point on route
                             var routePoint = turf.along(routeData, distance, {units: 'kilometers'})
-                            if (slope <= 2 && slope >= -2) {
-                                var circleColor = 'white'
-                            } else {
-                                var circleColor = this.setSlopeStyle(slope).color
-                            }
+                            if (slope <= 2 && slope >= -2) var circleColor = 'white'
+                            else var circleColor = this.setSlopeStyle(slope).color
                             if (!this.map.getLayer('profilePoint')) {
                                 this.map.addLayer( {
                                     id: 'profilePoint',
@@ -1862,7 +1702,7 @@ export default class GlobalMap extends Model {
                             }
                             // Display tooltip
                             this.clearTooltip()
-                            this.drawTooltip(this.map.getSource('route')._data, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
+                            this.drawTooltip(routeData, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
                             // Highlight corresponding mkpoint data
                             if (this.mkpoints && (!this.displayMkpointsBox || this.displayMkpointsBox.checked)) {
                                 this.mkpoints.forEach( (mkpoint) => {
@@ -1892,7 +1732,7 @@ export default class GlobalMap extends Model {
                     }  
                 }              
             }
-            const options = {
+            const chartOptions = {
                 parsing: false,
                 animation: false,
                 maintainAspectRatio: false,
@@ -1961,7 +1801,7 @@ export default class GlobalMap extends Model {
             const chartSettings = {
                 type: 'line',
                 data: data,
-                options: options,
+                options: chartOptions,
                 plugins: [backgroundColor, cursorOnHover, displayPois]
             }
 
@@ -2625,6 +2465,8 @@ export default class GlobalMap extends Model {
 
     // Build profile data
     async getProfileData (routeData, options) { // options : remote = boolean
+
+        var profileData = {}
         const routeDistance = turf.length(routeData)
         const tunnels       = routeData.properties.tunnels
         // Get as many times of 100m distance as it fits inside route distance into an array
@@ -2633,7 +2475,7 @@ export default class GlobalMap extends Model {
             distances.push(i)
         }
         // Get an array of points to check for building route profile
-        var profilePoints = getPointsToCheck(routeData, distances)
+        profileData.profilePoints = getPointsToCheck(routeData, distances)
         if (options) {
             if (options.remote == true) {
                 // If profile is displayed, set map bounds to route bounds and wait for map elevation data to load
@@ -2645,68 +2487,31 @@ export default class GlobalMap extends Model {
             }
         }
         // Get an array of elevation data for each profile point
-        var pointsElevation = []
-        for (let i = 0; i < profilePoints.length; i++) {
-            var thisPointElevation = Math.floor(this.map.queryTerrainElevation(profilePoints[i].geometry.coordinates, {exaggerated: false}))
-            pointsElevation.push(thisPointElevation)
+        profileData.pointsElevation = []
+        for (let i = 0; i < profileData.profilePoints.length; i++) {
+            var thisPointElevation = Math.floor(this.map.queryTerrainElevation(profileData.profilePoints[i].geometry.coordinates, {exaggerated: false}))
+            profileData.pointsElevation.push(thisPointElevation)
         }
         // Cut tunnels
-        var profilePointsCoordinates = []
-        profilePoints.forEach( (point) => {
-            profilePointsCoordinates.push(point.geometry.coordinates)
+        profileData.profilePointsCoordinates = []
+        profileData.profilePoints.forEach( (point) => {
+            profileData.profilePointsCoordinates.push(point.geometry.coordinates)
         } )
-        if (tunnels) {
-            tunnels.forEach( (tunnel) => {
-                var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profilePointsCoordinates)
-                var startKey = parseInt(getKeyByValue(profilePointsCoordinates, startClosestSectionCoordinates))
-                var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profilePointsCoordinates)
-                var endKey = parseInt(getKeyByValue(profilePointsCoordinates, endClosestSectionCoordinates))
-                if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
-                var toSlice = endKey - startKey + 1
-                var toInsert = averageElevationFromTips(pointsElevation[startKey], pointsElevation[endKey], toSlice)
-                // Replace in array
-                toInsert.reverse()
-                pointsElevation.splice(startKey, toSlice)
-                for (let i = 0; i < toInsert.length; i++) {
-                    pointsElevation.splice(startKey, 0, toInsert[i])
-                }
-            } )
-        }
+        if (tunnels) profileData = this.cutTunnels(profileData, tunnels)
         // Average elevation
-        var basis = defineBasis(routeDistance)
-        var averagedPointsElevation = averageElevation(pointsElevation, basis)
+        profileData.averagedPointsElevation = this.averageElevation(profileData.pointsElevation, routeDistance)
         // Build labels
         var labels = []
-        for (let i = 0; i < (averagedPointsElevation.length); i++) labels.push((i / 10) + ' km')
+        for (let i = 0; i < (profileData.averagedPointsElevation.length); i++) labels.push((i / 10) + ' km')
         // Build points at regular format
-        var pointData = []
-        for (let i = 0; i < (profilePoints.length); i++) {
-            pointData.push({x: distances[i], y: averagedPointsElevation[i]})
+        profileData.pointData = []
+        for (let i = 0; i < (profileData.profilePoints.length); i++) {
+            profileData.pointData.push({x: distances[i], y: profileData.averagedPointsElevation[i]})
         }
 
-        return {
-            profilePoints,
-            pointsElevation,
-            profilePointsCoordinates,
-            averagedPointsElevation,
-            pointData,
-            labels
-        }
+        this.profileData = profileData
 
-        // Define profile averaging basis on a 100m unit
-        function defineBasis (distance) {
-            if (distance < 5) {
-                return 7
-            } else if (distance >= 5 && distance < 30) {
-                return 8
-            } else if (distance >= 30 && distance < 80) {
-                return 9
-            } else if (distance >= 80) {
-                return 10
-            } else {
-                return 8
-            }
-        }
+        return profileData
 
         function getPointsToCheck (lineString, distancesToCheck) {     
             let points = [] 
@@ -2717,40 +2522,32 @@ export default class GlobalMap extends Model {
             } )     
             return points
         }
+    }
 
-        function averageElevation (pointsElevation, basis) { // ex: for a basis of 5, take 5 next altitude points and average them
-            var averagedPointsElevation = []
-            // Add [basis/2] first points at the start (deal with points which can't be averaged because not enough first points. For them, average will be calculated on available points)
-            for (var i = 0; i < Math.ceil(basis / 2); i++) { // i = 1, 2, 3... basis/2
-                var firstPoints = []
-                for (let j = 0; j <= i; j++) { // i = 0 / j = 0... basis/2
-                    firstPoints[j] = pointsElevation[i - j]
-                }
-                let averagedPoint = Math.abs(Math.floor(calculateAverage(firstPoints)))
-                averagedPointsElevation.push(averagedPoint)
+    /**
+     * Cut tunnel sections in profileData
+     * @param {Object} profileData profileData object
+     * @param {[][]} tunnels array of tunnels coordinate arrays
+     * @returns updated profileData object
+     */
+    cutTunnels (profileData, tunnels) {
+        tunnels.forEach( (tunnel) => {
+            var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profileData.profilePointsCoordinates)
+            var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates))
+            var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profileData.profilePointsCoordinates)
+            var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates))
+            if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
+            var toSlice = endKey - startKey + 1
+            var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
+            // Replace in array
+            toInsert.reverse()
+            profileData.pointsElevation.splice(startKey, toSlice)
+            for (let i = 0; i < toInsert.length; i++) {
+                profileData.pointsElevation.splice(startKey, 0, toInsert[i])
             }
-            // Add averaged points to averagedPointsElevation array
-            for (var i = 0; i < (pointsElevation.length - basis); i++) {
-                // Calculate the average of the next [basis] points
-                var nextPoints = []
-                for (let j = 0; j < basis; j++) { 
-                    nextPoints[j] = pointsElevation[i + j]
-                }
-                let averagedPoint = Math.abs(Math.floor(calculateAverage(nextPoints)))
-                averagedPointsElevation.push(averagedPoint)
-            }
-            // Add [basis/2] last points at the end (deal with points which can't be averaged because not enough next points. For them, average will be calculated on remaining points)
-            for (var i = Math.floor(basis / 2); i > 0; i--) { // i = 10, 9, 8, 7... 0
-                var lastPoints = []
-                for (let j = 0; j < i; j++) { // i = 10 / j = 0, 1, 2, 3... 10
-                    lastPoints[j] = pointsElevation[pointsElevation.length - i + j]
-                }
-                let averagedPoint = Math.abs(Math.floor(calculateAverage(lastPoints)))
-                averagedPointsElevation.push(averagedPoint)
-            }
-            return averagedPointsElevation
-        }
-    
+        } )
+        return profileData
+
         function averageElevationFromTips (start, end, index) {
             var section = []
             for (let i = 0; i < index; i++) {
@@ -2765,6 +2562,239 @@ export default class GlobalMap extends Model {
             }
             return section
         }
+    }
+
+    /**
+     * Average pointsElevation data
+     * @param {[]} pointsElevation profileData pointsElevation
+     * @param {int} routeDistance 
+     * @returns {[]} corrected profileData pointsElevation
+     */
+    averageElevation (pointsElevation, routeDistance) {
+            
+        const basis = defineBasis(routeDistance)
+
+        var averagedPointsElevation = []
+        // Add [basis/2] first points at the start (deal with points which can't be averaged because not enough first points. For them, average will be calculated on available points)
+        for (var i = 0; i < Math.ceil(basis / 2); i++) { // i = 1, 2, 3... basis/2
+            var firstPoints = []
+            for (let j = 0; j <= i; j++) { // i = 0 / j = 0... basis/2
+                firstPoints[j] = pointsElevation[i - j]
+            }
+            let averagedPoint = Math.abs(Math.floor(calculateAverage(firstPoints)))
+            averagedPointsElevation.push(averagedPoint)
+        }
+        // Add averaged points to averagedPointsElevation array
+        for (var i = 0; i < (pointsElevation.length - basis); i++) {
+            // Calculate the average of the next [basis] points
+            var nextPoints = []
+            for (let j = 0; j < basis; j++) { 
+                nextPoints[j] = pointsElevation[i + j]
+            }
+            let averagedPoint = Math.abs(Math.floor(calculateAverage(nextPoints)))
+            averagedPointsElevation.push(averagedPoint)
+        }
+        // Add [basis/2] last points at the end (deal with points which can't be averaged because not enough next points. For them, average will be calculated on remaining points)
+        for (var i = Math.floor(basis / 2); i > 0; i--) { // i = 10, 9, 8, 7... 0
+            var lastPoints = []
+            for (let j = 0; j < i; j++) { // i = 10 / j = 0, 1, 2, 3... 10
+                lastPoints[j] = pointsElevation[pointsElevation.length - i + j]
+            }
+            let averagedPoint = Math.abs(Math.floor(calculateAverage(lastPoints)))
+            averagedPointsElevation.push(averagedPoint)
+        }
+        return averagedPointsElevation
+
+        /**
+         * Define profile averaging basis on a 100m unit (ex: for a basis of 5, take 5 next altitude points and average them)
+         * @param {int} distance
+         * @returns {int}
+         */
+        function defineBasis (distance) {
+            if (distance < 5) return 3
+            else if (distance >= 5 && distance < 30) return 4
+            else if (distance >= 30 && distance < 80) return 5
+            else if (distance >= 80) return 6
+            else return 5
+        }
+    }
+
+    /**
+     * Retrieve precise profile data by analyzing elevation tiles of each road coordinate
+     * @param {Object} routeData geojson linestring
+     * @returns {Promise}
+     */
+    async queryPreciseProfileData (profileData) {
+
+        return new Promise((resolve, reject) => {
+
+            // Set tile query properties
+            const profileDataGeometry = {
+                coordinates: profileData.profilePointsCoordinates,
+                type: 'LineString'
+            }
+            const limits = {
+                min_zoom: 10,
+                max_zoom: 12
+            }
+            var tilesAnalyzed = 0
+
+            // Get route tiles info (tile = tile address, geom = corresponding bounding box coordinates)
+            var tiles = cover.tiles(profileDataGeometry, limits)
+            var geom = cover.geojson(profileDataGeometry, limits)
+
+            // For each tile
+            for (let i = 0; i < tiles.length; i++) {
+
+                // Query raster image
+                const zoom = limits.max_zoom
+                const x = tiles[i][0]
+                const y = tiles[i][1]
+                const url = 'https://api.mapbox.com/v4/mapbox.terrain-rgb/' + zoom + '/' + x + '/' + y + '@2x.pngraw?access_token=' + this.apiKey
+                const bbox = getTileBbox(geom.features[i].geometry.coordinates[0])
+                
+                // Retrieve tile as data url
+                fetch(url)
+                .then((response) => response.body)
+                .then((body) => {
+                    const reader = body.getReader()
+                
+                    return new ReadableStream({
+                        start(controller) {
+                            return pump()
+
+                            function pump() {
+                                return reader.read().then(({ done, value }) => {
+                                    // When no more data needs to be consumed, close the stream
+                                    if (done) {
+                                        controller.close()
+                                        return
+                                    }
+
+                                    // Enqueue the next data chunk into our target stream
+                                    controller.enqueue(value)
+                                    return pump()
+                                })
+                            }
+                        },
+                    })
+                } )
+                .then((stream) => new Response(stream))
+                .then((response) => response.blob())
+                .then((blob) => URL.createObjectURL(blob))
+                .then((url) => {
+                    // Draw tile on canvas
+                    var canvas = document.createElement('canvas')
+                    canvas.height = 512
+                    canvas.width = 512
+                    canvas.style.height = canvas.height + 'px'
+                    canvas.style.width = canvas.width + 'px'
+                    ///document.body.prepend(canvas)
+                    const ctx = canvas.getContext('2d', {willReadFrequently: true})
+                    const img = new Image()
+                    img.onload = async (event) => {
+                        URL.revokeObjectURL(event.target.src)
+                        ctx.drawImage(event.target, 0, 0)
+
+                        // Find route coordinates inside this tile
+                        for (let i = 0; i < profileData.pointData.length; i++) {
+                            if (CFUtils.isInsideBounds(profileData.profilePointsCoordinates[i], bbox)) {
+
+                                // Get corresponding pixel
+                                var pixel = getPixelPair(profileData.profilePointsCoordinates[i], bbox)                                
+                                
+                                /*// Color pixel on the canvas
+                                ctx.fillStyle = '#ff0000'
+                                ctx.fillRect(pixel[0], pixel[1], 3, 3)*/
+
+                                // Get elevation for this pixel
+                                const elevation = getPixelElevation(ctx, pixel)
+
+                                profileData.pointData[i].y = elevation
+                                profileData.pointsElevation[i] = elevation
+                            }
+                        }
+
+                        tilesAnalyzed++
+
+                        // When last tile have been analyzed
+                        if (tilesAnalyzed == tiles.length) {
+
+                            // Cut tunnels if data exists
+                            var routeData = await this.getRouteData()
+                            const tunnels = routeData.properties.tunnels
+                            if (tunnels) profileData = this.cutTunnels(profileData, tunnels)
+
+                            // Average elevation
+                            profileData.averagedPointsElevation = this.averageElevation(profileData.pointsElevation, turf.length(routeData))
+
+                            // Update pointData (data to be drawn on profile)
+                            for (let i = 0; i < (profileData.profilePoints.length); i++) {
+                                profileData.pointData[i].y = profileData.averagedPointsElevation[i]
+                            }
+
+                            this.profileData = profileData
+
+                            resolve(profileData)
+                        }
+                    }
+                    img.src = url
+                } )
+                .catch((err) => console.error(err))
+            }
+
+            /**
+             * Retrieve bbox from a geojson formatted tile
+             * @param {float[][]} tileCoords array of coords
+             * @returns {float[][]} bbox
+             */
+            function getTileBbox (tileCoords) {
+                var lowestLng = 180
+                var lowestLat = 180
+                var highestLng = 0
+                var highestLat = 0
+                tileCoords.forEach(coord => {
+                    if (coord[0] < lowestLng) lowestLng = coord[0]
+                    if (coord[0] > highestLng) highestLng = coord[0]
+                    if (coord[1] < lowestLat) lowestLat = coord[1]
+                    if (coord[1] > highestLat) highestLat = coord[1]
+                })
+                return [[lowestLng, lowestLat], [highestLng, highestLat]]
+            }
+
+            /**
+             * Get corresponding paix of pixels (x,y) on a tile from a pair of coordinates (lng,lat)
+             * @param {float[]} coords coordinates to locate
+             * @param {float[][]} bbox tile bouding box
+             */
+            function getPixelPair (coords, bbox) {
+                var percentagePair = getPercentagePair(coords, bbox)
+                return [Math.round(percentagePair[0] * 511 / 100), Math.round(percentagePair[1] * 511 / 100)]
+
+                function getPercentagePair (coords, bbox) {
+                    var xTotalDifference = bbox[1][0] - bbox[0][0]
+                    var xLngDifference = bbox[1][0] - coords[0]
+                    var yTotalDifference = bbox[1][1] - bbox[0][1]
+                    var yLatDifference = bbox[1][1] - coords[1]
+                    return [100 - ((xLngDifference / xTotalDifference) * 100), (yLatDifference / yTotalDifference) * 100]
+                }
+            }
+
+            /**
+             * Retrieve elevation of (x,y) pixel and retrieve elevation
+             * @param {CanvasRenderingContext2D} ctx
+             * @param {int[]} pixel [x,y] pixel position
+             * @returns {int} elevation in meters
+             */
+            function getPixelElevation (ctx, pixel) {
+                var pixelData = ctx.getImageData(pixel[0], pixel[1], 1, 1).data
+                const r = pixelData[0]
+                const g = pixelData[1]
+                const b = pixelData[2]
+                var elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1)
+                return Math.floor(elevation * 10) / 10
+            }
+        } )    
     }
 
     async calculateElevation (routeData) {
