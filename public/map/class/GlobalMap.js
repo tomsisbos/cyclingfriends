@@ -329,10 +329,6 @@ export default class GlobalMap extends Model {
                 this.loadTerrain()
                 this.loadImages()
             } )
-            
-            this.map.on('contextmenu', async () => {
-                this.generateProfile()
-            } )
         } )
     }
     
@@ -2698,7 +2694,7 @@ export default class GlobalMap extends Model {
 
                         // Find route coordinates inside this tile
                         for (let i = 0; i < profileData.pointData.length; i++) {
-                            if (CFUtils.isInsideBounds(profileData.profilePointsCoordinates[i], bbox)) {
+                            if (CFUtils.coordInsideBounds(profileData.profilePointsCoordinates[i], bbox)) {
 
                                 // Get corresponding pixel
                                 var pixel = getPixelPair(profileData.profilePointsCoordinates[i], bbox)                                

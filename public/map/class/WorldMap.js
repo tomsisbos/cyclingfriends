@@ -534,7 +534,7 @@ export default class WorldMap extends GlobalMap {
             let i = 0
             while (i < this.ridesCollection.length) {
                 // If existing ride is not inside new bounds
-                if (!CFUtils.isInsideBounds(this.ridesCollection[i].route.coordinates, this.map.getBounds().toArray())) {
+                if (!CFUtils.lineCoordsInsideBounds(this.ridesCollection[i].route.coordinates, this.map.getBounds().toArray())) {
                     if (this.map.getLayer('ride' + this.ridesCollection[i].id)) this.hideRide(this.ridesCollection[i]) // Remove it from the map
                     this.ridesCollection.splice(i, 1) // Remove it from instance Nodelist
                     i--
@@ -547,7 +547,7 @@ export default class WorldMap extends GlobalMap {
                 // If ride is public and has a route data
                 if (ride.privacy == 'Public' && ride.route) {
                     // If ride is inside bounds
-                    if (CFUtils.isInsideBounds(ride.route.coordinates, this.map.getBounds().toArray())) {
+                    if (CFUtils.lineCoordsInsideBounds(ride.route.coordinates, this.map.getBounds().toArray())) {
                         // Verify it has not already been loaded
                         if (!this.isLinestringAlreadyDisplayed(ride)) {
                             this.ridesCollection.push(ride)
@@ -728,7 +728,7 @@ export default class WorldMap extends GlobalMap {
                 let i = 0
                 while (i < this.segmentsCollection.length) {
                     // If existing segment is not inside new bounds, or if it is not displayable at this zoom level
-                    if (!CFUtils.isInsideBounds(this.segmentsCollection[i].coordinates, this.map.getBounds().toArray()) || !this.isSegmentToDisplay(this.segmentsCollection[i])) {
+                    if (!CFUtils.lineCoordsInsideBounds(this.segmentsCollection[i].coordinates, this.map.getBounds().toArray()) || !this.isSegmentToDisplay(this.segmentsCollection[i])) {
                         if (this.map.getLayer('segment' + this.segmentsCollection[i].id)) this.hideSegment(this.segmentsCollection[i]) // Remove it from the map
                         this.segmentsCollection.splice(i, 1) // Remove it from instance Nodelist
                         i--
@@ -741,7 +741,7 @@ export default class WorldMap extends GlobalMap {
                     // If segment is public and has a route data
                     if (this.isSegmentToDisplay(segment)) {
                         // If segment is inside bounds
-                        if (CFUtils.isInsideBounds(segment.coordinates, this.map.getBounds().toArray())) {
+                        if (CFUtils.lineCoordsInsideBounds(segment.coordinates, this.map.getBounds().toArray())) {
                             // Verify it has not already been loaded
                             if (!this.isLinestringAlreadyDisplayed(segment)) {
                                 this.segmentsCollection.push(segment)

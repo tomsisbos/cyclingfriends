@@ -576,7 +576,7 @@ if (isAjax()) {
         $getRides->execute(array(":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d H:i:s')));
         $rides = [];
         while ($ride_data = $getRides->fetch(PDO::FETCH_COLUMN)) {
-            $ride = new Ride($ride_data);
+            $ride = new Ride($ride_data, false);
             $ride->route = $ride->getRoute();
             $ride->author_login = $ride->getAuthor()->login;
             array_push($rides, $ride);

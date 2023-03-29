@@ -189,27 +189,27 @@ export default class CFUtils {
 
     /**
      * Test if an array of coordinates has a part inside bounds
-     * @param {float[] || array[]} coordinates coordinates or array of coordinates
+     * @param {array[]} coordinates array of coordinate arrays
      * @param {array[]} bounds array of two coordinates
      * @returns {boolean}
      */
-    static isInsideBounds (coordinates, bounds) {
+    static lineCoordsInsideBounds (coordinates, bounds) {        
+        var inside = false
+        for (let i = 0; i < coordinates.length && !inside; i++) {
+            if (CFUtils.coordInsideBounds(coordinates[i], bounds)) inside = true
+        }
+        return inside
+    }
 
-        if (typeof coordinates[0] === 'number') return coordInsideBounds(coordinates, bounds)
-        else coordinates.forEach(coordinate => {
-            if (coordInsideBounds(coordinate, bounds)) return true
-        } )
-
-        /**
-         * Function for calculating a pair of coordinates are inside bounds
-         * @param {float[]} coords
-         * @param {array[]} bounds array of two coordinates
-         * @returns {boolean}
-         */
-        function coordInsideBounds (coords, bounds) {
-            if ((coords[0] > bounds[0][0] && coords[0] < bounds[1][0]) && (coords[1] > bounds[0][1] && coords[1] < bounds[1][1])) {
-                return true
-            }
+    /**
+     * Function for calculating a pair of coordinates are inside bounds
+     * @param {float[]} coords
+     * @param {array[]} bounds array of two coordinates
+     * @returns {boolean}
+     */
+    static coordInsideBounds (coords, bounds) {
+        if ((coords[0] > bounds[0][0] && coords[0] < bounds[1][0]) && (coords[1] > bounds[0][1] && coords[1] < bounds[1][1])) {
+            return true
         }
     }
     
