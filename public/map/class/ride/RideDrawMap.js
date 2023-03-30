@@ -64,6 +64,7 @@ export default class RideDrawMap extends RideMap {
                 this.addStartGoalMarkers()
                 await this.displayCloseMkpoints(0.5)
                     .then(async () => {
+                        this.profile.data = undefined
                         this.profile.generate({
                             poiData: {
                                 rideCheckpoints: this.data.checkpoints,
@@ -196,6 +197,12 @@ export default class RideDrawMap extends RideMap {
                                 })
                                 this.cursor--
                             }
+                            this.profile.generate({
+                                poiData: {
+                                    rideCheckpoints: this.data.checkpoints,
+                                    mkpoints: this.mkpoints
+                                }
+                            })
                         } )
                     }
                     return marker 
@@ -378,7 +385,14 @@ export default class RideDrawMap extends RideMap {
             }
         })
 
-        this.cursor--        
+        this.cursor--
+
+        this.profile.generate({
+            poiData: {
+                rideCheckpoints: this.data.checkpoints,
+                mkpoints: this.mkpoints
+            }
+        })
     }
 
     getCheckpointNumber (checkpoints, current) {
@@ -403,6 +417,12 @@ export default class RideDrawMap extends RideMap {
                 checkpoints: this.data.checkpoints
             }
         } )
+        this.profile.generate({
+            poiData: {
+                rideCheckpoints: this.data.checkpoints,
+                mkpoints: this.mkpoints
+            }
+        })
     }
 
     async validateCourse (e) {
