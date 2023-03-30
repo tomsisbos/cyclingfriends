@@ -243,8 +243,6 @@
 
     .pg-sg-season-descriptions {
         display: block;
-        height: 100% !important;
-        max-height: 100%;
     }
     .pg-sg-season-description {
         position: relative;

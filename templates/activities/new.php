@@ -47,7 +47,7 @@ include '../includes/head.php'; ?>
                                 <label class="form-label">バイク</label>
                                 <select id="selectBikes" class="form-select"> <?php
                                     $bikes = $connected_user->getBikes();
-                                    if ($count($bikes) > 0) foreach ($bikes as $entry) {
+                                    if (count($bikes) > 0) foreach ($bikes as $entry) {
                                         $bike = new Bike($entry['id']) ?>
                                         <option value="<?= $bike->id ?>"><?= $bike->model . '(' . $bike->type . ')' ?></option><?php
                                     }

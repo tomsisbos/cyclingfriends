@@ -84,8 +84,10 @@ export default class Model {
         var twinDistance = result.twinDistance
 
         // Altitude
-        if (this.profile) var profileData = this.profile.data
-        else var profileData = this.data
+        if (this.profile) var profile = this.profile
+        else var profile = this
+        if (profile.data == undefined) var profileData = this.getData()
+        else var profileData = profile.data
         var altitude = profileData.averagedPointsElevation[Math.floor(distance * 10)]
 
         // Slope

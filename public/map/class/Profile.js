@@ -18,7 +18,7 @@ export default class Profile extends Model {
 
         var profileData = {}
         const routeDistance = turf.length(routeData)
-        const tunnels       = routeData.properties.tunnels
+        const tunnels = routeData.properties.tunnels
         // Get as many times of 100m distance as it fits inside route distance into an array
         var distances = []
         for (let i = 0; i < routeDistance; i += 0.1) {
@@ -81,9 +81,9 @@ export default class Profile extends Model {
     cutTunnels (profileData, tunnels) {
         tunnels.forEach( (tunnel) => {
             var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profileData.profilePointsCoordinates)
-            var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates))
+            var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates)) - 1
             var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profileData.profilePointsCoordinates)
-            var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates))
+            var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates)) + 1
             if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
             var toSlice = endKey - startKey + 1
             var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
@@ -415,6 +415,7 @@ export default class Profile extends Model {
                     const ctx = chart.canvas.getContext('2d')
                     const routeDistance = turf.length(routeData)
                     var drawPoi = async (poi, type) => {
+                        if (poi.number !== undefined && poi.number == 1) console.log(poi)
                         // Get X position
                         const pointDistance = poi.distance
                         var roughPositionProportion = pointDistance / routeDistance * 100
@@ -436,8 +437,18 @@ export default class Profile extends Model {
                         // Format icon
                         if (type == 'mkpoint') {
                             poi.number = poi.id
-                            var img = document.querySelector('#' + type + poi.number).querySelector('img')
-                        } else if (type == 'rideCheckpoint') var img = document.querySelector('#' + 'checkpointPoiIcon' + poi.number)
+                            if (document.querySelector('#' + type + poi.number).querySelector('img')) var img = document.querySelector('#' + type + poi.number).querySelector('img')
+                            else return
+                        } else if (type == 'rideCheckpoint') {
+                            if (document.querySelector('#checkpointPoiIcon' + poi.number)) {
+                                console.log('top')
+                                var img = document.querySelector('#checkpointPoiIcon' + poi.number)
+                            }
+                            else {
+                                console.log('bottom')
+                                var img = await this.generateCheckpointPoiElement(poi)
+                            }
+                        }
                         else if (type == 'activityCheckpoint') {
                             var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
                             var img = new Image()
@@ -478,7 +489,7 @@ export default class Profile extends Model {
                                 ctx2.fillStyle = "#fff"
                                 ctx2.fill()
                                 // Keep offscreenCanvas 'in cache' for next profile generating 
-                                abstract.offscreenCanvas.style.display = 'none'
+                                ///abstract.offscreenCanvas.style.display = 'none'
                                 abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
                                 document.body.appendChild(abstract.offscreenCanvas)
         
@@ -675,5 +686,49 @@ export default class Profile extends Model {
             // Bound chart to canvas
             this.canvas = new Chart(ctx, chartSettings)
         }
+    }
+
+    
+
+    /**
+     * Pregenerate checkpoint elements to display on profile
+     * @param {Object} poi poi data
+     * @returns {Promise}
+     */
+    generateCheckpointPoiElement (poi) {
+        return new Promise((resolve, reject) => {
+            const element = poi.marker._element
+            const canvas = document.createElement('canvas')
+            canvas.height = 50
+            canvas.width = 50
+            var ctx = canvas.getContext("2d")
+            ctx.font = "bold 35px Noto Sans"
+            if (element.innerText == 'S' || element.innerText == 'SF' && poi.number == 0) {
+                ctx.fillStyle = 'green'
+                var text = 'S'
+            } else if (element.innerText == 'F') {
+                ctx.fillStyle = 'red'
+                var text = 'F'
+            } else {
+                ctx.fillStyle = 'blue'
+                var text = poi.number
+            }
+            ctx.rect(0, 0, 50, 50)
+            ctx.fill()
+            ctx.fillStyle = 'white'
+            ctx.fillText(text, 15, 40)
+            var img = new Image()
+            img.src = canvas.toDataURL()
+            console.log('beforeload')
+            img.addEventListener('load', () => {
+                ctx.drawImage (img, 0, 0)
+                img.classList.add('js-poi-icon')
+                img.id = 'checkpointPoiIcon' + poi.number
+                ///img.style.display = 'none'
+                document.querySelector('#elevationProfile').appendChild(img)
+                console.log('afterload')
+                resolve(img)
+            })
+        } )
     }
 }

@@ -242,9 +242,11 @@ export default class GlobalMap extends Model {
                 if (this.displayMkpointsBox.checked) {
                     this.addMkpoints(this.mkpoints)
                     if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'flex'
-                    this.profile.generate( {
-
-                    } )
+                    this.profile.generate({
+                        poiData: {
+                            mkpoints: this.mkpoints
+                        }
+                    })
                 } else {
                     this.hideMkpoints()
                     if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'none'
@@ -2644,46 +2646,6 @@ export default class GlobalMap extends Model {
             } )
             return number
         }
-    }
-
-    /**
-     * Pregenerate checkpoint elements to display on profile
-     * @param {Object[]} checkpoints array of checkpoints
-     * @returns {Promise}
-     */
-    generateCheckpointsPoi (checkpoints) {
-        if (checkpoints.length == 0) return false // If no checkpoint, return false
-        return new Promise((resolve, reject) => {
-            checkpoints.forEach((checkpoint) => {
-                let canvas = document.createElement('canvas')
-                canvas.height = 50
-                canvas.width = 50
-                let ctx = canvas.getContext("2d")
-                ctx.font = "bold 35px Noto Sans"
-                if (checkpoint.number == 0) {
-                    ctx.fillStyle = 'green'
-                    var text = 'S'
-                } else if (checkpoint.number == checkpoints.length - 1) {
-                    ctx.fillStyle = 'red'
-                    var text = 'F'
-                } else {
-                    ctx.fillStyle = 'blue'
-                    var text = checkpoint.number
-                }
-                ctx.rect(0, 0, 50, 50)
-                ctx.fill()
-                ctx.fillStyle = 'white'
-                ctx.fillText(text, 15, 40)
-                var img = new Image()
-                ctx.drawImage (img, 0, 0)
-                img.src = canvas.toDataURL()
-                img.classList.add('js-poi-icon')
-                img.id = 'checkpointPoiIcon' + checkpoint.number
-                img.style.display = 'none'
-                document.querySelector('#elevationProfile').appendChild(img)
-            } )
-            resolve(true)
-        } )
     }
 
     // Sort markers array by distance from start of lineString

@@ -88,6 +88,11 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
             // Load mkpoints into map instance
             routePageMap.mkpoints = mkpoints
             
+            // Generate profile with mkpoints data
+            routePageMap.profile.generate({
+                poiData: {mkpoints}
+            })
+            
             // If ride ID is found inside query string parameters, get ride data from server
             if (routePageMap.rideId) await routePageMap.loadRide()
                 

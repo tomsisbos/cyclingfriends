@@ -381,8 +381,6 @@ export default class RoutePageMap extends GlobalMap {
                 else ride.options = {sf: false}
                 this.ride = ride
 
-                await this.generateCheckpointsPoi(this.ride.checkpoints)
-
                 resolve()
 
                 // Display ride checkpoints on the course

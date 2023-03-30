@@ -384,10 +384,12 @@ export default class SceneryPopup extends Popup {
         // Get reviews on this mkpoint
         ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id,async  (reviews) => {
                 
-            if (document.querySelector('#mkpointReview')) {
+            const $popup = this.popup._element
+
+            if ($popup.querySelector('#mkpointReview')) {
                 // Clear reviews if necessary
-                if (document.querySelector('.chat-line')) {
-                    document.querySelectorAll('.chat-line').forEach( (chatline) => {
+                if ($popup.querySelector('.chat-line')) {
+                    $popup.querySelectorAll('.chat-line').forEach( (chatline) => {
                         chatline.remove()
                     } )
                 }
@@ -397,39 +399,39 @@ export default class SceneryPopup extends Popup {
                     var $noReviewMessage = document.createElement('div')
                     $noReviewMessage.innerText = 'この絶景スポットはまだレビューがありません。'
                     $noReviewMessage.className = 'chat-default pb-2'
-                    document.querySelector('.chat-reviews').appendChild($noReviewMessage)
+                    $popup.querySelector('.chat-reviews').appendChild($noReviewMessage)
                 }
                 // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
-                if (document.querySelector('#review-author-' + await CFSession.get('id'))) {
-                    document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
+                if ($popup.querySelector('#review-author-' + await CFSession.get('id'))) {
+                    $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
                     reviews.forEach(async (review) => {
-                        if (review.user.id == await CFSession.get('id')) document.querySelector('#mkpointReview').innerText = review.content
+                        if (review.user.id == await CFSession.get('id')) $popup.querySelector('#mkpointReview').innerText = review.content
                     } )
                 }
             }
 
             // Treat posting of a new review
-            var textareaReview   = document.querySelector('#mkpointReview')
-            var buttonReview     = document.querySelector('#mkpointReviewSend')
+            var textareaReview   = $popup.querySelector('#mkpointReview')
+            var buttonReview     = $popup.querySelector('#mkpointReviewSend')
             if (buttonReview) buttonReview.addEventListener('click', () => {
                 let content = textareaReview.value
                 ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.mkpoint.id + '&content=' + content, (review) => {
                     // If content is empty, remove review element and but button text back
                     if (review.content == '') {
-                        document.querySelector('#review-author-' + review.user.id).remove()
-                        document.querySelector('#mkpointReviewSend').innerText = 'レビューを投稿'
+                        $popup.querySelector('#review-author-' + review.user.id).remove()
+                        $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを投稿'
                     // Else, display new review on top and change button text
                     } else {
                         this.displayReview(review, {new: true})
-                        document.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
+                        $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
                     }
                 } )
             } )
 
             // Show review on button click
-            if (document.querySelector('#showReviews')) document.querySelector('#showReviews').onclick = function () {
-                let chatbox = document.querySelector('.chat-box')
-                let button = document.querySelector('#showReviews')
+            if ($popup.querySelector('#showReviews')) $popup.querySelector('#showReviews').onclick = function () {
+                let chatbox = $popup.querySelector('.chat-box')
+                let button = $popup.querySelector('#showReviews')
                 if (button.innerText == '表示') {
                     chatbox.style.visibility = 'visible'
                     chatbox.style.height = 'auto'
