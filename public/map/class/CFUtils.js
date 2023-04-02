@@ -338,4 +338,17 @@ export default class CFUtils {
             else return false
         }
     }
+
+    /**
+     * Get privacy string from privacy value
+     * @param {String} value
+     */
+    static getPrivacyString (value) {
+        switch (value) {
+            case 'public': return '公開';
+            case 'friends_only': return '友達のみ';
+            case 'limited': return '限定公開';
+            case 'private': return '非公開';
+        }
+    }
 }

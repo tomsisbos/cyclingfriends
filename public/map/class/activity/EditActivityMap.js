@@ -84,7 +84,8 @@ export default class EditActivityMap extends NewActivityMap {
                                             lng: this.getPhotoLocation(photo)[0],
                                             lat: this.getPhotoLocation(photo)[1],
                                             datetime: photo.datetime,
-                                            featured: photo.featured
+                                            featured: photo.featured,
+                                            privacy: photo.privacy
                                         } )
                                         numberOfBlobsTreated++
                                         if (numberOfBlobs == numberOfBlobsTreated) resolve()
@@ -101,7 +102,8 @@ export default class EditActivityMap extends NewActivityMap {
                                     lat: this.getPhotoLocation(photo)[1],
                                     filename: photo.filename,
                                     datetime: photo.datetime,
-                                    featured: photo.featured
+                                    featured: photo.featured,
+                                    privacy: photo.privacy
                                 } )
                             }
                             if (numberOfBlobs == 0) resolve()

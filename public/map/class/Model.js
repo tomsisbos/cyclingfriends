@@ -86,7 +86,7 @@ export default class Model {
         // Altitude
         if (this.profile) var profile = this.profile
         else var profile = this
-        if (profile.data == undefined) var profileData = this.getData()
+        if (profile.data == undefined) var profileData = await profile.getData(routeData)
         else var profileData = profile.data
         var altitude = profileData.averagedPointsElevation[Math.floor(distance * 10)]
 

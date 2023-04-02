@@ -505,37 +505,31 @@
     width: 100%;
     object-fit: cover;
 }
-.pg-ac-close-button {
+.pg-ac-photo-button {
     position: absolute;
-    top: 0;
-    right: 0;
     padding: 16px;
     color: white;
     margin: 2px;
     cursor: pointer;
     z-index: 3;
+}
+.pg-ac-close-button {
+    top: 0;
+    right: 0;
 }
 .pg-ac-feature-button {
-    position: absolute;
     top: 0;
     left: 0;
-    padding: 16px;
-    color: white;
-    margin: 2px;
-    cursor: pointer;
-    z-index: 3;
 }
 .pg-ac-createmkpoint-button {
-    position: absolute;
     bottom: 0;
     right: 0;
-    padding: 16px;
-    color: white;
-    margin: 2px;
-    cursor: pointer;
-    z-index: 3;
 }
-.pg-ac-close-button:hover, .pg-ac-feature-button:hover, .pg-ac-createmkpoint-button:hover {
+.pg-ac-privacy-button {
+    bottom: 0;
+    left: 0;
+}
+.pg-ac-photo-button:hover {
     background-color: #ffffff44;
 }
 .pg-ac-map-img-container {

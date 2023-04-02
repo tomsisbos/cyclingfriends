@@ -643,14 +643,33 @@ export default class NewActivityMap extends ActivityMap {
         } )
     }
 
-    setFeatured (photoToFeature) {
-        if (!photoToFeature.featured) {
+    setFeatured (thisPhoto) {
+        if (!thisPhoto.featured) {
             this.data.photos.forEach((photo) => {
-                if (photo == photoToFeature) photo.featured = true
+                if (photo == thisPhoto) photo.featured = true
                 else photo.featured = false
             } )
-        } else photoToFeature.featured = false
+        } else thisPhoto.featured = false
         this.highlightFeaturedPhoto()
+    }
+
+    /**
+     * Toggle activity photo privacy setting
+     * @param {Object} thisPhoto activity photo data object
+     */
+    switchPrivacy (thisPhoto) {
+        if (thisPhoto.privacy == 'public') thisPhoto.privacy = 'private'
+        else if (thisPhoto.privacy == 'private') thisPhoto.privacy = 'limited'
+        else if (thisPhoto.privacy == 'limited') thisPhoto.privacy = 'public'
+        this.updatePrivacyButton(thisPhoto)
+    }
+
+    /**
+     * Automatically highlight featured photo
+     * @param {Object} photo activity photo data object
+     */
+    updatePrivacyButton (photo) {
+        photo.$thumbnail.querySelector('.pg-ac-privacy-button').innerHTML = CFUtils.getPrivacyString(photo.privacy)
     }
 
     // Append photo element before the next checkpoint
@@ -680,22 +699,28 @@ export default class NewActivityMap extends ActivityMap {
             photo.$thumbnail.appendChild($img)
             // Delete button
             var $deleteButton = document.createElement('div')
-            $deleteButton.className = 'pg-ac-close-button'
+            $deleteButton.className = 'pg-ac-photo-button pg-ac-close-button'
             $deleteButton.innerText = 'x'
             $deleteButton.title = '写真を削除する'
             photo.$thumbnail.appendChild($deleteButton)
             // Feature button
             var $featureButton = document.createElement('div')
-            $featureButton.className = 'pg-ac-feature-button'
+            $featureButton.className = 'pg-ac-photo-button pg-ac-feature-button'
             $featureButton.innerHTML = '<span class="iconify" data-icon="mdi:feature-highlight"></span>'
             $featureButton.title = 'ハイライト写真に選定する'
             photo.$thumbnail.appendChild($featureButton)
             // Create mkpoint button
             var $createMkpointButton = document.createElement('div')
-            $createMkpointButton.className = 'pg-ac-createmkpoint-button'
+            $createMkpointButton.className = 'pg-ac-photo-button pg-ac-createmkpoint-button'
             $createMkpointButton.innerHTML = '<span class="iconify" data-icon="material-symbols:add-location-alt"></span>'
             $createMkpointButton.title = 'この写真を元に絶景スポットを新規作成する'
             photo.$thumbnail.appendChild($createMkpointButton)
+            // Set privacy button
+            var $setPrivacyButton = document.createElement('div')
+            $setPrivacyButton.className = 'pg-ac-photo-button pg-ac-privacy-button'
+            $setPrivacyButton.innerHTML = CFUtils.getPrivacyString(photo.privacy)
+            $setPrivacyButton.title = 'この写真の公開設定を変更する'
+            photo.$thumbnail.appendChild($setPrivacyButton)
             // If first photo of this checkpoint, append to parent, else find previous child and insert if after
             var $parent = document.querySelector('#checkpointForm' + closestCheckpointNumber + ' .pg-ac-photos-container')
             var $previousChildNumber = 0
@@ -746,6 +771,11 @@ export default class NewActivityMap extends ActivityMap {
                         this.data.photos[i].number--
                     }
                 }
+            } )
+
+            // Set photo privacy listener
+            $setPrivacyButton.addEventListener('click', () => {
+                this.switchPrivacy(photo)
             } )
 
             resolve(true)
@@ -1157,7 +1187,8 @@ export default class NewActivityMap extends ActivityMap {
                     lng: this.getPhotoLocation(photo)[0],
                     lat: this.getPhotoLocation(photo)[1],
                     datetime: photo.datetime,
-                    featured: photo.featured
+                    featured: photo.featured,
+                    privacy: photo.privacy
                 } )
             })
 

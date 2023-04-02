@@ -12,6 +12,7 @@ class ActivityPhoto extends Model {
     public $lngLat;
     public $filename;
     public $url;
+    public $privacy;
 
     function __construct ($id = NULL) {
         parent::__construct();
@@ -25,6 +26,7 @@ class ActivityPhoto extends Model {
         $this->lngLat      = new LngLat($data['lng'], $data['lat']);
         $this->filename    = $data['filename'];
         $this->url         = $this->getUrl();
+        $this->privacy     = $data['privacy'];
     }
 
     private function getUrl () {

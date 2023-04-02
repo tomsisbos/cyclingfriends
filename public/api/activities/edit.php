@@ -91,10 +91,11 @@ if (is_array($data)) {
             $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             if ($photo['featured'] == true) $featured = 1;
             else $featured = 0;
+            $privacy = $photo['privacy'];
             
             // Insert photo in 'activity_photos' table
-            $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, lng, lat, filename) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $insert_photos -> execute(array($activity_id, $connected_user->id, $datetime->format('Y-m-d H:i:s'), $featured, $lng, $lat, $filename));
+            $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, lng, lat, filename, privacy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+            $insert_photos -> execute(array($activity_id, $connected_user->id, $datetime->format('Y-m-d H:i:s'), $featured, $lng, $lat, $filename, $privacy));
             
             // Send file to blob storage
             $containername = 'activity-photos';
@@ -108,7 +109,8 @@ if (is_array($data)) {
                 'author_id' => $connected_user->id,
                 'date' => $datetime->format('Y-m-d H:i:s'),
                 'lng' => $lng,
-                'lat' => $lat
+                'lat' => $lat,
+                'privacy' => $privacy
             ];
             $blobClient->setBlobMetadata($containername, $filename, $metadata);
         
@@ -118,11 +120,12 @@ if (is_array($data)) {
             // Add file name to filenames array
             if ($photo['filename']) array_push($filenames, "'" .$photo['filename']. "'");
 
-            // Update featured entry if necessary
+            // Update featured and privacy entry if necessary
             if ($photo['featured'] == true) $featured = 1;
             else $featured = 0;
-            $updateFeatured = $db->prepare('UPDATE activity_photos SET featured = ? WHERE filename = ?');
-            $updateFeatured -> execute(array($featured, $photo['filename']));
+            $privacy = $photo['privacy'];
+            $updateFeatured = $db->prepare('UPDATE activity_photos SET featured = ?, privacy = ? WHERE filename = ?');
+            $updateFeatured -> execute(array($featured, $privacy, $photo['filename']));
         
         }
 

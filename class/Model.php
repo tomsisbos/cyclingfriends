@@ -37,10 +37,14 @@ class Model {
         }
     }
 
+    /**
+     * Get privacy string from instance privacy property
+     */
     public function getPrivacyString () {
         switch ($this->privacy) {
             case 'public': return '公開';
             case 'friends_only': return '友達のみ';
+            case 'limited': return '限定公開';
             case 'private': return '非公開';
         }
     }
