@@ -4,7 +4,7 @@ class Manual extends Model {
 
     private static $chapters = [
         'world' => [
-            'title' => 'サイクリングガイドマップ',
+            'title' => 'サイクリングマップ',
             'subtitle' => 'World'
         ],
         'activities' => [

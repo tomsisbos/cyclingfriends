@@ -247,6 +247,7 @@ export default class WorldMap extends GlobalMap {
         this.seasonsSelect.addEventListener('change', () => {
             this.month = this.seasonsSelect.value
             this.setSeason()
+            this.reloadSegments()
             if (this.selectStyle.value == 'seasons') this.styleSeason()
         } )
         
@@ -353,8 +354,6 @@ export default class WorldMap extends GlobalMap {
             mapInstance: this,
             mkpoint
         }
-        var sessionId = await CFSession.get('id')
-        if (mkpoint.user_id == sessionId) instanceOptions.admin = true // Add administration panel if connected user has admin rights
         let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
         marker.setPopup(sceneryPopup.popup)
 
@@ -363,10 +362,6 @@ export default class WorldMap extends GlobalMap {
         element.style.setProperty('--scenery-hover-display', 'none')
         element.addEventListener('mouseenter', () => element.style.setProperty('--scenery-hover-display', 'block'))
         element.addEventListener('mouseleave', () => element.style.setProperty('--scenery-hover-display', 'none'))
-
-        // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-        if (mkpoint.user_id === sessionId && this.mode == 'edit') marker.setDraggable(true)
-        else if (mkpoint.user_id === sessionId && this.mode == 'default') marker.setDraggable(false)
     }
 
     updateMkpoints () {
@@ -711,7 +706,7 @@ export default class WorldMap extends GlobalMap {
 
     displayFeaturedImage (ride) {
         ajaxGetRequest (this.apiUrl + "?ride-featured-image=" + ride.id, (featuredCheckpoint) => {
-            if (document.querySelector('#rideFeaturedImage' + ride.id)) document.querySelector('#rideFeaturedImage' + ride.id).src = 'data:image/jpeg;base64,' + featuredCheckpoint.img
+            if (document.querySelector('#rideFeaturedImage' + ride.id)) document.querySelector('#rideFeaturedImage' + ride.id).src = featuredCheckpoint.url
         } )
 
     }
@@ -763,6 +758,19 @@ export default class WorldMap extends GlobalMap {
         } )
     }
 
+    /**
+     * Relauch a segments update from scratch
+     */
+    reloadSegments () {
+        // Hide all segments and clear instance property
+        this.segmentsCollection.forEach( (segment) => {
+            if (this.map.getLayer('segment' + segment.id)) this.hideSegment(segment)
+        } )
+        this.segmentsCollection = []
+        // Reupdate segments
+        this.updateSegments()
+    }
+
     displaySegment (segment) {
 
         // Build geojson
@@ -807,8 +815,8 @@ export default class WorldMap extends GlobalMap {
 
         // Define segment color
         if (segment.rank == 'local') var segmentColor = this.segmentLocalColor
-        if (segment.rank == 'regional') var segmentColor = this.segmentRegionalColor
-        if (segment.rank == 'national') var segmentColor = this.segmentNationalColor
+        else if (segment.rank == 'regional') var segmentColor = this.segmentRegionalColor
+        else if (segment.rank == 'national') var segmentColor = this.segmentNationalColor
 
         // Add segment layer
         this.map.addLayer( {
@@ -823,6 +831,27 @@ export default class WorldMap extends GlobalMap {
                 'line-color': segmentColor,
                 'line-width': 3,
                 'line-opacity': 1
+            }
+        } )
+
+        // If current month corresponds to advised season, add segment season cap layer
+        var isAdvisedSeason = false
+        segment.seasons.forEach(season => {
+            if (CFUtils.monthInsidePeriod(this.month, [season['period_start_month'], season['period_end_month']])) isAdvisedSeason = true
+        })
+        if (isAdvisedSeason)this.map.addLayer( {
+            id: 'segmentSeasonCap' + segment.id,
+            type: 'line',
+            source: 'segment' + segment.id,
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': this.segmentSeasonColor,
+                'line-width': 2,
+                'line-opacity': 0.5,
+                'line-gap-width': 2
             }
         } )
 
@@ -926,6 +955,7 @@ export default class WorldMap extends GlobalMap {
     hideSegment (segment) {
         if (this.map.getLayer('segment' + segment.id)) this.map.removeLayer('segment' + segment.id)
         if (this.map.getLayer('segmentCap' + segment.id)) this.map.removeLayer('segmentCap' + segment.id)
+        if (this.map.getLayer('segmentSeasonCap' + segment.id)) this.map.removeLayer('segmentSeasonCap' + segment.id)
         if (this.map.getSource('segment' + segment.id)) this.map.removeSource('segment' + segment.id)
         this.map.off('click', 'segmentCap' + segment.id, this.clickOnSegment)
         if (segment.segmentPopup && segment.segmentPopup.popup) segment.segmentPopup.popup.remove()
@@ -1078,14 +1108,14 @@ export default class WorldMap extends GlobalMap {
         if (highlightMyMkpointsBox.checked) {
             this.highlight = true
             document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
-                if ($icon.parentElement.dataset.user_id === this.session.id) {
+                if ($icon.parentElement.dataset.user_id === sessionId) {
                     $icon.classList.add('admin-marker')
                 }
             } )
         } else {
             this.highlight = false
             document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
-                if ($icon.parentElement.dataset.user_id === this.session.id) {
+                if ($icon.parentElement.dataset.user_id === sessionId) {
                     $icon.classList.remove('admin-marker')
                 }
             } )

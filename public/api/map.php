@@ -585,9 +585,10 @@ if (isAjax()) {
     }
 
     if (isset($_GET['ride-featured-image'])) {
-        $getRideFeaturedImage = $db->prepare('SELECT * FROM ride_checkpoints WHERE ride_id = ? AND featured = 1');
+        $getRideFeaturedImage = $db->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = 1');
         $getRideFeaturedImage->execute([$_GET['ride-featured-image']]);
-        $featured_image = $getRideFeaturedImage->fetch(PDO::FETCH_ASSOC);
+        $featured_image_id = $getRideFeaturedImage->fetch(PDO::FETCH_COLUMN);
+        $featured_image = new CheckpointImage($featured_image_id);
         echo json_encode($featured_image);
     }
 
@@ -616,6 +617,11 @@ if (isAjax()) {
             $getTags->execute(['segment', $segments[$i]['id']]);
             $tags = $getTags->fetchAll(PDO::FETCH_COLUMN);
             $segments[$i]['tags'] = $tags;
+            // Add seasons
+            $getSeasons = $db->prepare('SELECT number, period_start_month, period_start_detail, period_end_month, period_end_detail, description FROM segment_seasons WHERE segment_id = ?');
+            $getSeasons->execute([$segments[$i]['id']]);
+            $seasons = $getSeasons->fetchAll(PDO::FETCH_ASSOC);
+            $segments[$i]['seasons'] = $seasons;
         }
         echo json_encode($segments);
     }

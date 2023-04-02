@@ -64,7 +64,7 @@ export default class RideDrawMap extends RideMap {
                 this.addStartGoalMarkers()
                 await this.displayCloseMkpoints(0.5)
                     .then(async () => {
-                        this.profile.data = undefined
+                        this.profile.clearData()
                         this.profile.generate({
                             poiData: {
                                 rideCheckpoints: this.data.checkpoints,

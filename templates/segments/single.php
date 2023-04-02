@@ -175,8 +175,10 @@ include '../includes/head.php'; ?>
 			<div class="container p-0">
 
 				<div class="pg-sg-map-box">
-					<div class="cf-map" id="segmentMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
-                    	<img class="staticmap"></img>
+					<div class="cf-map" id="segmentMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
+					if (!$connected_user->isPremium()) { ?>
+						<img class="staticmap"></img> <?php
+					} ?>
 					</div>
 					<div class="pg-sg-itinerary">
 						<div class="pg-sg-itinerary-title">行程</div> <?php

@@ -106,10 +106,8 @@ export default class BuildRouteMap extends GlobalMap {
         buttonFly.innerText = '走行再現'
         buttonFly.setAttribute('title', 'スタートからゴールまで、実際に走行しているかのようにコースを辿っていく。走行再現モードでコース全体のイメージを掴んでみよう。')
         line6.appendChild(buttonFly)
-        buttonFly.addEventListener('click', () => {
-            if (this.map.getSource('route')) {
-                this.flyAlong(this.data.routeData)
-            }
+        buttonFly.addEventListener('click', async () => {
+            if (this.map.getSource('route')) this.flyAlong(await this.getRouteData())
         } )
         // Edition buttons
         let line7 = document.createElement('div')
@@ -1111,7 +1109,8 @@ export default class BuildRouteMap extends GlobalMap {
     toggleProfile () {
         document.querySelector('#profileBox').classList.toggle('show-profile')
         this.updateProfileTag()
-        if (document.querySelector('.show-profile')) this.profile.generate()
+        this.profile.clearData()
+        if (document.querySelector('.show-profile')) this.profile.generate({precise: false})
     }
 
     // Hide profile

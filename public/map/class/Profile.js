@@ -73,6 +73,13 @@ export default class Profile extends Model {
     }
 
     /**
+     * Clear all profile data
+     */
+    clearData () {
+        this.data = undefined
+    }
+
+    /**
      * Cut tunnel sections in profileData
      * @param {Object} profileData profileData object
      * @param {[][]} tunnels array of tunnels coordinate arrays
@@ -368,16 +375,18 @@ export default class Profile extends Model {
     async generate ({sourceName = 'route', poiData = {}, precise = true} = {}) {
         
         const routeData = await this.getRouteData(sourceName)
+        const profileElement = document.getElementById('elevationProfile')
 
-        // If a route is displayed on the map
-        if (routeData) {
+        // If a route and a profile container is displayed
+        if (routeData && profileElement) {
 
             // Prepare profile data
             if (!this.data || this.data == undefined) this.data = await this.getData(routeData, {remote: true})
             if (precise) this.data = await this.queryPreciseData(this.data, sourceName)
+            if (!profileElement) return // If profile element as been removed during process, stop here
 
             // Prepare profile settings
-            const ctx = document.getElementById('elevationProfile').getContext('2d')
+            const ctx = profileElement.getContext('2d')
             const downtwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y + 2 ? value : undefined
             const flat = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 2 ? value : undefined
             const uptwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 6 ? value : undefined

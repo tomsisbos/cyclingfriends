@@ -322,4 +322,20 @@ export default class CFUtils {
             ajaxGetRequest('/api/map.php?get-icon=' + filename, (response) => resolve(response))
         } )
     }
+
+    /**
+     * Check if a month is inside a period in months
+     * @param {int} month month to check
+     * @param {int[]} period array of two months representing a period 
+     */
+    static monthInsidePeriod (month, period) {
+        if (period[0] < period[1]) {
+            if ((month >= period[0] && month <= period[1])) return true
+            else return false
+        // In case end of period corresponds to following year (ex: november to january)
+        } else {
+            if (month >= period[0]) return true
+            else return false
+        }
+    }
 }

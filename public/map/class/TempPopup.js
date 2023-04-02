@@ -1,5 +1,6 @@
 import Popup from "/map/class/Popup.js"
 import CFUtils from "/map/class/CFUtils.js"
+import Loader from "/map/class/Loader.js"
 
 export default class TempPopup extends Popup {
 
@@ -90,7 +91,7 @@ export default class TempPopup extends Popup {
                         document.getElementById(id).remove()
                         resolve(response)
                     }
-                }, this.loader)
+                }, new Loader('絶景スポット保存中...'))
             } )
         } )
     }

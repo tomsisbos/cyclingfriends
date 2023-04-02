@@ -6,6 +6,12 @@ import Loader from "/map/class/Loader.js"
 
 export default class SceneryPopup extends Popup {
 
+    /**
+     * @param {Object} options Mapbox GL JS popup options
+     * @param {Object} data Data to be saved in this instance
+     * @param {Object} instanceOptions Options for this popup
+     * @param {Boolean} noPopup If this option is set, popup will not be loaded
+     */
     constructor (options, data, instanceOptions) {
         super(options, {}, instanceOptions)
         this.data = data
@@ -13,21 +19,6 @@ export default class SceneryPopup extends Popup {
         if (!instanceOptions.noPopup) {
             // Set popup element
             var content = this.setContent(data.mkpoint)
-            if (instanceOptions.admin) { // Build and insert admin panel if admin option is true
-                var adminPanel = `
-                    <div id="mkpointAdminPanel" class="popup-content container-admin">
-                        <div class="popup-head">管理者ツール</div>
-                        <div class="popup-buttons">
-                            <button class="mp-button bg-button text-white" id="mkpointEdit">情報編集</button>
-                            <button class="mp-button bg-button text-white" id="mkpointMove">位置変更</button>
-                            <button class="mp-button bg-danger text-white" id="mkpointDelete">削除</button>
-                        </div>
-                    </div>
-                `
-                // Insert admin panel before the popup content
-                var index = content.indexOf('<div id="popup-content"')
-                content = content.slice(0, index) + adminPanel + content.slice(index)
-            }
             this.popup.setHTML(content)
         }
 
@@ -132,11 +123,32 @@ export default class SceneryPopup extends Popup {
                 </a>`
             } )
 
+            // Add administration panel if connected user has admin rights
+            var sessionId = await CFSession.get('id')
+            if (mkpoint.user_id == sessionId) {
+                var adminPanel = document.createElement('div')
+                adminPanel.id = 'mkpointAdminPanel'
+                adminPanel.className = 'popup-content container-admin'
+                adminPanel.innerHTML = `
+                    <div class="popup-head">管理者ツール</div>
+                    <div class="popup-buttons">
+                        <button class="mp-button bg-button text-white" id="mkpointEdit">情報編集</button>
+                        <button class="mp-button bg-button text-white" id="mkpointMove">位置変更</button>
+                        <button class="mp-button bg-danger text-white" id="mkpointDelete">削除</button>
+                    </div>
+                `
+                // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
+                var marker = this.getMarker()
+                if (this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
+                else if (this.data.mapInstance.mode == 'default') marker.setDraggable(false)
+            }
+
             if (this.data.mkpoint.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
             if (this.data.mkpoint.isCleared) this.popup._content.querySelector('.popup-icons').appendChild(visitedIcon)
             this.popup._content.querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
             this.popup._content.querySelector('.popup-description').innerHTML = this.data.mkpoint.description
             this.popup._content.querySelector('.js-tags').innerHTML = tags
+            this.popup._content.querySelector('#popup-content').before(adminPanel)
 
             resolve(true)
         } )
@@ -384,7 +396,7 @@ export default class SceneryPopup extends Popup {
         // Get reviews on this mkpoint
         ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id,async  (reviews) => {
                 
-            const $popup = this.popup._element
+            const $popup = this.popup._content
 
             if ($popup.querySelector('#mkpointReview')) {
                 // Clear reviews if necessary
@@ -539,6 +551,18 @@ export default class SceneryPopup extends Popup {
         } )
     }
 
+    /**
+     * Get the marker element corresponding to popup instance data mkpoint id
+     * @returns {mapboxgl.Marker}
+     */
+    getMarker () {
+        var marker
+        this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
+            if (_marker.getElement().id == 'mkpoint' + this.data.mkpoint.id) marker = _marker
+        } )
+        return marker
+    }
+
     setFavorite () {
         if (this.popup._content) var $button = this.popup._content.querySelector('.js-favorite-button')
         else var $button = document.querySelector('.js-favorite-button')
@@ -550,10 +574,7 @@ export default class SceneryPopup extends Popup {
                     absolute: true
                 } )
                 this.popup.once('close', hideResponseMessage)
-                var marker
-                this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
-                    if (_marker.getElement().id == 'mkpoint' + this.data.mkpoint.id) marker = _marker
-                } )
+                var marker = this.getMarker()
                 // Update data in map instance for ensuring display update
                 marker.isFavorite = !marker.isfavorite
                 
@@ -675,10 +696,7 @@ export default class SceneryPopup extends Popup {
             moveButton.innerText = '編集'
             moveButton.onclick = moveMkpoint
         }
-        var marker
-        this.data.mapInstance.map._markers.forEach( (_marker) => { // Get current marker instance
-            if (_marker.getElement().id == 'mkpoint' + this.data.mkpoint.id) marker = _marker
-        } )
+        var marker = this.getMarker()
         var $marker = marker.getElement()
         var moveButton = this.popup._content.querySelector('#mkpointMove')
         moveButton.onclick = moveMkpoint

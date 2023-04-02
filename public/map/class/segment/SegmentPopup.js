@@ -346,7 +346,7 @@ export default class SegmentPopup extends Popup {
         var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("mkpoint-period")
 
         // If there is more than one photo in the database
-        if (this.photos.length > 1) {
+        if (photos.length > 1) {
 
             var photoIndex = 1
 
@@ -358,7 +358,7 @@ export default class SegmentPopup extends Popup {
             var showPhotos = (n) => {
                 if (n > this.photos.length) {photoIndex = 1}
                 if (n < 1) {photoIndex = this.photos.length}
-                for (let i = 0; i < this.photos.length; i++) {
+                for (let i = 0; i < photos.length; i++) {
                     photos[i].style.display = 'none'
                 }
                 for (let i = 0; i < photosPeriods.length; i++) {

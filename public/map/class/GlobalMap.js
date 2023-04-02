@@ -19,7 +19,8 @@ export default class GlobalMap extends Model {
                 else this.userLocation = this.defaultCenter
                 localStorage.setItem('userLocationLng', this.userLocation[0])
                 localStorage.setItem('userLocationLat', this.userLocation[1])
-                if (this.map) this.centerOnUserLocation()
+                // Center on user location if map have not been moved during query
+                if (this.map && (this.map.getCenter().lng == this.defaultCenter[0] && this.map.getCenter().lat == this.defaultCenter[1])) this.centerOnUserLocation()
             } )
         // If entry already exists in local storage, use it
         } else {
@@ -52,6 +53,7 @@ export default class GlobalMap extends Model {
     segmentRegionalColor = '#2bffff'
     segmentNationalColor = '#2bc8ff'
     segmentCapColor = '#fff'
+    segmentSeasonColor = '#ff5555'
     
     centerOnUserLocation = () => {
         this.map.setCenter(this.userLocation)

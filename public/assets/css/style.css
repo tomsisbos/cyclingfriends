@@ -580,6 +580,15 @@ li.nav-item {
     background-color: #fff;
 }
 
+.main-navbar a.nav-link {
+    flex-direction: column;
+    align-items: center;
+}
+.main-navbar .subitem {
+    font-size: 8px;
+    margin-top: -3;
+}
+
 /* Button */
 
 .btn {
