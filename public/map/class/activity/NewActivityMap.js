@@ -576,6 +576,7 @@ export default class NewActivityMap extends ActivityMap {
                                         type: files[i].type,
                                         datetime: dateOriginal.getTime(),
                                         featured: false,
+                                        privacy: 'public',
                                         number
                                     } )
                                     
@@ -639,7 +640,7 @@ export default class NewActivityMap extends ActivityMap {
             })}
         ) ().then( () => {
             this.highlightFeaturedPhoto()
-            this.updateClearPhotosButton()
+            this.updatePhotosButtons()
         } )
     }
 
@@ -669,7 +670,19 @@ export default class NewActivityMap extends ActivityMap {
      * @param {Object} photo activity photo data object
      */
     updatePrivacyButton (photo) {
-        photo.$thumbnail.querySelector('.pg-ac-privacy-button').innerHTML = CFUtils.getPrivacyString(photo.privacy)
+        photo.$thumbnail.querySelector('.pg-ac-privacy-button').innerHTML = this.colorPrivacyString(CFUtils.getPrivacyString(photo.privacy))
+    }
+    
+    /**
+     * Set color in accordance with privacy string
+     * @param {string} privacyString
+     */
+    colorPrivacyString (privacyString) {
+        switch (privacyString) {
+            case '公開': return '<div class="pg-ac-public">' + privacyString + '</>'
+            case '非公開': return '<div class="pg-ac-private">' + privacyString + '</>'
+            case '限定公開': return '<div class="pg-ac-limited">' + privacyString + '</>'
+        }
     }
 
     // Append photo element before the next checkpoint
@@ -718,7 +731,7 @@ export default class NewActivityMap extends ActivityMap {
             // Set privacy button
             var $setPrivacyButton = document.createElement('div')
             $setPrivacyButton.className = 'pg-ac-photo-button pg-ac-privacy-button'
-            $setPrivacyButton.innerHTML = CFUtils.getPrivacyString(photo.privacy)
+            $setPrivacyButton.innerHTML = this.colorPrivacyString(CFUtils.getPrivacyString(photo.privacy))
             $setPrivacyButton.title = 'この写真の公開設定を変更する'
             photo.$thumbnail.appendChild($setPrivacyButton)
             // If first photo of this checkpoint, append to parent, else find previous child and insert if after
@@ -942,15 +955,30 @@ export default class NewActivityMap extends ActivityMap {
             this.data.photos.forEach(photo => photo.$thumbnail.remove())
             this.data.photos = []
         }
-        this.updateClearPhotosButton()
-
+        this.updatePhotosButtons()
     }
 
-    updateClearPhotosButton () {
-        var clearPhotosButton = document.querySelector('#clearPhotos')
-        if (this.data.photos.length > 0) clearPhotosButton.classList.remove('hidden')
-        else {
+    async changePhotosPrivacy () {
+        var answer = await openChoicePopup('全ての写真のプライバシー設定が次のように変更されます。', [
+            {value: 'public', text: '公開'},
+            {value: 'private', text: '非公開'},
+            {value: 'limited', text: '限定公開'}
+        ])
+        this.data.photos.forEach(photo => {
+            photo.privacy = answer
+            this.updatePrivacyButton(photo)
+        })
+    }
+
+    updatePhotosButtons () {
+        const clearPhotosButton = document.querySelector('#clearPhotos')
+        const changePhotosPrivacyButton = document.querySelector('#changePhotosPrivacy')
+        if (this.data.photos.length > 0) {
+            clearPhotosButton.classList.remove('hidden')
+            changePhotosPrivacyButton.classList.remove('hidden')
+        } else {
             if (!clearPhotosButton.classList.contains('hidden')) clearPhotosButton.classList.add('hidden')
+            if (!changePhotosPrivacyButton.classList.contains('hidden')) changePhotosPrivacyButton.classList.add('hidden')
         }
     }
 

@@ -95,6 +95,7 @@ $upload.addEventListener('change', async (e) => {
                             newActivityMap.loadPhotos(e.target.files).then(() => newActivityMap.updatePhotos())
                         } )
                         document.querySelector('#clearPhotos').addEventListener('click', () => newActivityMap.clearPhotos())
+                        document.querySelector('#changePhotosPrivacy').addEventListener('click', () => newActivityMap.changePhotosPrivacy())
 
                         // Save activity treatment
                         document.querySelector('#saveActivity').addEventListener('click', async () => {

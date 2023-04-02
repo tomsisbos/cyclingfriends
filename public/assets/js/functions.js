@@ -158,7 +158,7 @@ function getBaseLog(x, y) {
 }
 
 /**
- * 
+ * Open a popup seeking for confirmation
  * @param {string} sentence 
  * @returns {Promise} true when clicked on OK button
  */
@@ -179,6 +179,52 @@ async function openAlertPopup (sentence) {
 		modal.querySelector('#ok').addEventListener('click', () => {
 			modal.remove()
 			resolve(true)
+		} )
+	} )
+}
+
+/**
+ * Open a popup seeking for confirmation
+ * @param {string} sentence 
+ * @param {Object[]} choice array of choices
+ * @param {string} choice[].value choice value
+ * @param {string} choice[].text choice text display
+ * @returns {Promise} selected value
+ */
+async function openChoicePopup (sentence, choices) {
+	return new Promise ((resolve, reject) => {
+		var modal = document.createElement('div')
+		modal.classList.add('modal', 'd-flex')
+		document.querySelector('body').appendChild(modal)
+		modal.addEventListener('click', (e) => {
+			var eTarget = e ? e.target : event.srcElement
+			if ((eTarget != confirmationPopup && eTarget != confirmationPopup.firstElementChild) && (eTarget === modal)) modal.remove()
+		} )
+		// Build select
+		var $select = document.createElement('select')
+		var $defaultChoice = document.createElement('option')
+		$defaultChoice.innerHTML = '選択...'
+		$defaultChoice.setAttribute('selected', 'selected')
+		$defaultChoice.setAttribute('disabled', 'disabled')
+		$select.appendChild($defaultChoice)
+		choices.forEach(choice => {
+			var $choice = document.createElement('option')
+			$choice.value = choice.value
+			$choice.innerText = choice.text
+			$select.appendChild($choice)
+		})
+		// Build popup
+		var confirmationPopup = document.createElement('div')
+		confirmationPopup.classList.add('popup')
+		var $sentence = document.createElement('div')
+		$sentence.innerText = sentence
+		confirmationPopup.appendChild($sentence)
+		confirmationPopup.appendChild($select)
+		modal.appendChild(confirmationPopup)
+		// On click on "Ok" button, close the popup and return true
+		$select.addEventListener('change', (e) => {
+			modal.remove()
+			resolve(e.target.value)
 		} )
 	} )
 }

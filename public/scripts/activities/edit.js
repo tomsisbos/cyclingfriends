@@ -20,6 +20,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
         editActivityMap.loadPhotos(e.target.files).then(() => editActivityMap.updatePhotos())
     } )
     document.querySelector('#clearPhotos').addEventListener('click', () => editActivityMap.clearPhotos())
+    document.querySelector('#changePhotosPrivacy').addEventListener('click', () => editActivityMap.changePhotosPrivacy())
 
     // Clean data architecture to match instance data format
     for (let i = 0; i < activityData.route.time.length; i++) {

@@ -8,22 +8,6 @@
     align-items: center;
 }
 
-.new-ac-form-line {
-    margin: 20px 0px;
-    gap: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.new-ac-form-line > * {
-    flex-grow: 1;
-}
-
-.new-ac-inputgroup {
-    display: flex;
-    flex-direction: column;
-}
-
 #activityMapContainer {
     height: 70vh;
     width: 100%;
@@ -44,13 +28,55 @@
     flex-direction: column;
     gap: 20px;
 }
+
+
+
+#activityForm h3 {
+    display: flex;
+    padding: 10px 40px;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+}
+
+.new-ac-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.new-ac-part {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 100%;
+}
+
+.new-ac-columns {
+    display: flex;
+    gap: 10px;
+}
+
+.new-ac-part-columns {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.new-ac-columns > * {
+    width: 50%;
+}
+
+.new-ac-part-line {
+    display: flex;
+    flex-direction: column;
+}
+
 .new-ac-properties-container {
     display: flex;
     padding: 1rem !important;
     gap: 10px;
     border-top: 1px dashed #ced4da;
 }
-
 
 .new-ac-checkpoint {
     display: flex;
@@ -326,11 +352,8 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .ac-main-container, .new-ac-form-line {
+    .ac-main-container {
         flex-direction: column;
-    }
-    .new-ac-form-line > * {
-        width: 100%;
     }
     .ac-infos-container {
         padding: 10px;
@@ -528,6 +551,16 @@
 .pg-ac-privacy-button {
     bottom: 0;
     left: 0;
+    font-weight: bold;
+}
+.pg-ac-public {
+    color: #00e06e;
+}
+.pg-ac-private {
+    color: #ff5555;
+}
+.pg-ac-limited {
+    color: #b2e0e5;
 }
 .pg-ac-photo-button:hover {
     background-color: #ffffff44;

@@ -86,24 +86,22 @@ include '../includes/head.php'; ?>
                         <div class="cf-map" id="activityMap"></div>
                         <div class="grabber"></div>
                     </div>
-
-                    <div class="container inner">
-                        <div class="new-ac-form-line">
-                            <div class="new-ac-inputgroup">
-                                <div class="new-ac-linegroup">
-                                    <label for="uploadPhotos">
-                                        <div class="btn smallbutton">写真を追加</div>
-                                    </label>
-                                    <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple/>
-                                    <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
-                                    <div class="btn smallbutton hidden" id="clearPhotos">写真を全て削除</div>
-                                </div>
+                    
+                    <div class="new-ac-form-line">
+                        <div class="new-ac-inputgroup">
+                            <label class="form-label">写真</label>
+                            <div class="new-ac-linegroup">
+                                <label for="uploadPhotos">
+                                    <div class="btn smallbutton">追加</div>
+                                </label>
+                                <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple/>
+                                <div class="btn smallbutton hidden" id="clearPhotos">削除</div>
+                                <div class="btn smallbutton hidden" id="changePhotosPrivacy">プライバシー設定変更</div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="divCheckpoints" class="container inner">
-                    </div>
+                    <div id="divCheckpoints" class="container inner"></div>
 
                     <div class="container inner">
 
