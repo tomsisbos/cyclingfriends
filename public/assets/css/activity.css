@@ -2,7 +2,6 @@
 /* New */
 
 .new-ac-upload-container {
-    margin-bottom: 40px;
     gap: 10px;
     display: flex;
     align-items: center;
@@ -697,9 +696,6 @@
     display: flex;
     color: unset !important;
     gap: 10px;
-}
-.acsm-container:hover {
-    background-color: #fff;
 }
 .acsm-list {
     height: 200px;

@@ -179,11 +179,18 @@ export default class CFUtils {
         return { city, prefecture }
     }
 
-    static compareCoords (coords1, coords2, decimal = 1) {
+    /**
+     * Check if two coordinates are similar or not at a certain decimal extent
+     * @param {mapboxgl.lngLat} coords1 
+     * @param {mapboxgl.lngLat} coords2 
+     * @param {int} decimal number of decimals to round at before comparing
+     * @returns {boolean}
+     */
+    static compareCoords (coords1, coords2, decimal = 4) {
         const multiplicator = Math.pow(10, decimal)
         var rounded1 = {lng: Math.round(coords1.lng * multiplicator) / multiplicator, lat: Math.round(coords1.lat * multiplicator) / multiplicator}
         var rounded2 = {lng: Math.round(coords2.lng * multiplicator) / multiplicator, lat: Math.round(coords2.lat * multiplicator) / multiplicator}
-        if (rounded1.lat == rounded2.lat && rounded1.lng == rounded2.lng) return true
+        if (rounded1.lng == rounded2.lng && rounded1.lat == rounded2.lat) return true
         else return false
     }
 

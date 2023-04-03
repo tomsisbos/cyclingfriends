@@ -13,16 +13,28 @@ class Post extends Model {
         parent::__construct();
     }
 
+    /**
+     * Create a new post entry in the database
+     * @return boolean
+     */
     private function insertIntoTable() {
-        $insertIntoTable = $this->getPdo()->prepare("INSERT INTO {$this->table} (title, content, type, datetime) VALUES (?, ?, ?, ?)");
-        $insertIntoTable->execute(array($this->title, $this->content, $this->type, date('Y-m-d H:i:s')));
+        // Check if no similar data
+        $checkSimilarData = $this->getPdo()->prepare("SELECT id FROM {$this->table} WHERE content = ?");
+        $checkSimilarData->execute(array($this->content));
+        // If no similar data exists, insert data
+        if ($checkSimilarData->rowCount() == 0) {
+            $insertIntoTable = $this->getPdo()->prepare("INSERT INTO {$this->table} (title, content, type, datetime) VALUES (?, ?, ?, ?)");
+            $insertIntoTable->execute(array($this->title, $this->content, $this->type, date('Y-m-d H:i:s')));
+            return true;
+        } else return false;
     }
 
     public function create ($title, $type, $content) {
         $this->title = $title;
         $this->type = $type;
         $this->content = $content;
-        $this->insertIntoTable();
+        $result = $this->insertIntoTable();
+        return $result;
     }
 
     public function load ($id) {

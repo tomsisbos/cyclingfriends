@@ -2694,11 +2694,13 @@ export default class GlobalMap extends Model {
     
                 // Get each point distance
                 checkpoints.forEach( (checkpoint) => {
-                    if ((Math.round(checkpoint.lngLat.lng * 1000) / 1000 != Math.round(routeCoords[0][0] * 1000) / 1000) && (Math.round(checkpoint.lngLat.lat * 1000) / 1000 != Math.round(routeCoords[0][1] * 1000) / 1000)) {
+                    if (checkpoint.special == 'start') checkpoint.distance = 0 // If checkpoint has the same coordinates (at a 0.001 precision) as linestring first waypoint, then automatically set distance to 0
+                    else if (checkpoint.special == 'goal') checkpoint.distance = turf.length(routeData)
+                    else {
                         let point = turf.point([checkpoint.lngLat.lng, checkpoint.lngLat.lat])
                         let subline = turf.lineSlice(turf.point(routeCoords[0]), point, routeData)
                         checkpoint.distance = turf.length(subline)
-                    } else checkpoint.distance = 0 // If checkpoint has the same coordinates (at a 0.001 precision) as linestring first waypoint, then automatically set distance to 0
+                    }
                 } )
                 // Sort checkpoints
                 checkpoints.sort( (a, b) => {

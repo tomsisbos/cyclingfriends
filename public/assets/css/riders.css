@@ -1,7 +1,6 @@
 .rdr-card {
-    border-radius: 50px;
     min-height: 100px;
-	margin: 20px 0px;
+	margin: 10px 0px;
 }
 .rdr-card:hover {
 	box-shadow: 2px 2px 5px darkgrey;
@@ -144,11 +143,7 @@
 .nbr-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-.nbr-card {
-    border-radius: 50px 50px 50px 50px;
-	overflow: hidden;
+    gap: 10px;
 }
 .nbr-card:hover {
 	box-shadow: 3px 0px 3px grey; 

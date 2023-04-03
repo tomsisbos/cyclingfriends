@@ -23,6 +23,11 @@ include '../includes/head.php'; ?>
 			include 'includes/riders/neighbours/filter-options.php'; ?>
 			
 		</div> <?php*/ 
+		
+			// Define offset and number of users to query
+			$limit = 20;
+			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+			else $offset = 0;
 
 			// Select riders from database according to filter queries
 			include '../actions/riders/displayRidersAction.php'; ?>
@@ -30,12 +35,27 @@ include '../includes/head.php'; ?>
 		<div class="container end bg-white"> <?php
 
 			if ($getRiders->rowCount() > 0) {
+
 				while ($rider = $getRiders->fetch()) {
 					
 					$rider = new User($rider['id']);
 					include '../includes/riders/rider-card.php';
 
 				}
+
+				if ($getResultsNumber->rowCount() > $limit) {
+			
+					// Set pagination system
+					if (isset($_GET['p'])) $p = $_GET['p'];
+					else $p = 1;
+					$url = strtok($_SERVER["REQUEST_URI"], '?');
+					$total_pages = $getResultsNumber->rowCount() / $limit;
+					
+					// Build pagination menu
+					include '../includes/pagination.php';
+
+				}
+
 			} else {
 				
 				$error = 'There is no rider to display.';

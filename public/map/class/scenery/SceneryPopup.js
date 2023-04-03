@@ -398,7 +398,7 @@ export default class SceneryPopup extends Popup {
                 
             const $popup = this.popup._content
 
-            if ($popup.querySelector('#mkpointReview')) {
+            if ($popup && $popup.querySelector('#mkpointReview')) {
                 // Clear reviews if necessary
                 if ($popup.querySelector('.chat-line')) {
                     $popup.querySelectorAll('.chat-line').forEach( (chatline) => {
@@ -420,38 +420,38 @@ export default class SceneryPopup extends Popup {
                         if (review.user.id == await CFSession.get('id')) $popup.querySelector('#mkpointReview').innerText = review.content
                     } )
                 }
-            }
 
-            // Treat posting of a new review
-            var textareaReview   = $popup.querySelector('#mkpointReview')
-            var buttonReview     = $popup.querySelector('#mkpointReviewSend')
-            if (buttonReview) buttonReview.addEventListener('click', () => {
-                let content = textareaReview.value
-                ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.mkpoint.id + '&content=' + content, (review) => {
-                    // If content is empty, remove review element and but button text back
-                    if (review.content == '') {
-                        $popup.querySelector('#review-author-' + review.user.id).remove()
-                        $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを投稿'
-                    // Else, display new review on top and change button text
-                    } else {
-                        this.displayReview(review, {new: true})
-                        $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
-                    }
+                // Treat posting of a new review
+                var textareaReview   = $popup.querySelector('#mkpointReview')
+                var buttonReview     = $popup.querySelector('#mkpointReviewSend')
+                if (buttonReview) buttonReview.addEventListener('click', () => {
+                    let content = textareaReview.value
+                    ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.mkpoint.id + '&content=' + content, (review) => {
+                        // If content is empty, remove review element and but button text back
+                        if (review.content == '') {
+                            $popup.querySelector('#review-author-' + review.user.id).remove()
+                            $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを投稿'
+                        // Else, display new review on top and change button text
+                        } else {
+                            this.displayReview(review, {new: true})
+                            $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
+                        }
+                    } )
                 } )
-            } )
 
-            // Show review on button click
-            if ($popup.querySelector('#showReviews')) $popup.querySelector('#showReviews').onclick = function () {
-                let chatbox = $popup.querySelector('.chat-box')
-                let button = $popup.querySelector('#showReviews')
-                if (button.innerText == '表示') {
-                    chatbox.style.visibility = 'visible'
-                    chatbox.style.height = 'auto'
-                    button.innerText = '非表示'
-                } else if (button.innerText == '非表示') {
-                    chatbox.style.visibility = 'hidden'
-                    chatbox.style.height = '0px'
-                    button.innerText = '表示'
+                // Show review on button click
+                if ($popup.querySelector('#showReviews')) $popup.querySelector('#showReviews').onclick = function () {
+                    let chatbox = $popup.querySelector('.chat-box')
+                    let button = $popup.querySelector('#showReviews')
+                    if (button.innerText == '表示') {
+                        chatbox.style.visibility = 'visible'
+                        chatbox.style.height = 'auto'
+                        button.innerText = '非表示'
+                    } else if (button.innerText == '非表示') {
+                        chatbox.style.visibility = 'hidden'
+                        chatbox.style.height = '0px'
+                        button.innerText = '表示'
+                    }
                 }
             }
         } )

@@ -7,7 +7,6 @@
 }
 
 .rd-card {
-    border-radius: 10px;
     overflow: hidden;
 }
 .rd-card:hover {
@@ -15,7 +14,7 @@
 }
 
 .rd-top-container {
-    height: 240px;
+    height: 180px;
     display: flex;
 }
 
@@ -51,6 +50,7 @@
 
 .rd-bottom-container {
     display: flex;
+    font-size: 14px;
 }
 
 .rd-section-address {
@@ -61,7 +61,7 @@
 .rd-details {
     background-color: #fff;
     width: 100%;
-    padding: 20px !important;
+    padding: 12px !important;
     line-height: 1.2;
 }
 
@@ -71,6 +71,7 @@
 }
 
 .rd-checkpoints {
+    padding-top: 6px;
     display: flex;
     flex-wrap: wrap;
     column-gap: 20px;
@@ -99,26 +100,24 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.rd-cpt-header {
-    display: flex;
-    gap: 5px;
-}
 .rd-cpt-number {
     background-color: #000;
+    margin-right: 6px;
     color: #fff;
     border-radius: 10px;
     align-items: center;
     justify-content: center;
-    display: flex;
+    display: inline-flex;
     width: 16px;
     height: 16px;
     text-align: center;
 }
 .rd-cpt-distance {
-    display: inline;
-}
-.rd-cpt-name {
-    display: inline;
+    font-size: 12px;
+    position: absolute;
+    bottom: 6;
+    left: 6;
+    color: #fff;
 }
 .rd-cpt-thumbnail {
     height: 60px;

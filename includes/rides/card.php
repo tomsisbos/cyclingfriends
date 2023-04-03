@@ -22,42 +22,37 @@
                     <p><strong><?= $ride->meeting_place; ?></strong><?= ' - ' .$ride->meeting_time; ?></p>
                 </div>
             </div>
-            <div class="rd-section-text">
-                <p><?= $ride->getAcceptedLevelTags(). ' (' .$ride->getAcceptedBikesString(). ')'; ?></p>
-                <div class="rd-distance">
-                    <p><strong>距離 : </strong><?php if ($ride->distance_about === 'about') { echo '約'; } echo $ride->distance. 'km'; ?></p>
-                    <?= $ride->getTerrainIcon() ?>
-                </div>
-                <div class="rd-checkpoints"> <?php
-                    if (isset($ride->checkpoints)) {
-                        $i = 0;
-                        foreach ($ride->checkpoints as $checkpoint) {
-                        $i++ ?>
-                        <div class="rd-checkpoint <?php if ($i < count($ride->checkpoints)) echo 'arrow' ?>">
-                            <div class="rd-cpt-details">
-                                <div class="rd-cpt-header">
-                                    <div class="rd-cpt-number"><?= $checkpoint->number ?></div>
-                                    <div class="rd-cpt-distance"><?php if ($checkpoint->distance > 0) echo 'km ' . round($checkpoint->distance, 1) ?></div>
-                                </div>
-                                <div class="rd-cpt-name"><?= $checkpoint->name ?></div>
-                            </div>
-                            <div class="rd-cpt-thumbnail"> <?php
-                                if ($checkpoint->img->filename !== NULL) { ?>
-                                    <img src="<?= $checkpoint->img->url ?>"> <?php
-                                } else { ?>
-                                    <img src="/media/default-photo-<?= rand(1, 9) ?>.svg"> <?php
-                                } ?>
-                            </div>
-                        </div> <?php
-                        }
-                    } ?>
-                </div>
+            <div class="rd-section-text"><?php
+                if ($ride->distance_about === 'about') { echo '約'; } echo $ride->distance. 'km'; ?>
+                <?= $ride->getTerrainIcon() ?>
+                <?= $ride->getAcceptedLevelTags(). ' (' .$ride->getAcceptedBikesString(). ')'; ?>
+            </div>
+            <div class="rd-checkpoints"> <?php
+                if (isset($ride->checkpoints)) {
+                    $i = 0;
+                    foreach ($ride->checkpoints as $checkpoint) {
+                    $i++ ?>
+                    <div class="rd-checkpoint <?php if ($i < count($ride->checkpoints)) echo 'arrow' ?>">
+                        <div class="rd-cpt-details">
+                            <div class="rd-cpt-number"><?= $checkpoint->number ?></div><?= $checkpoint->name ?>
+                        </div>
+                        <div class="rd-cpt-thumbnail"> <?php
+                            if ($checkpoint->img->filename !== NULL) { ?>
+                                <img src="<?= $checkpoint->img->url ?>"> <?php
+                            } else { ?>
+                                <img src="/media/default-photo-<?= rand(1, 9) ?>.svg"> <?php
+                            } ?>
+                            <div class="rd-cpt-distance"><?php if ($checkpoint->distance > 0) echo 'km ' . round($checkpoint->distance, 1) ?></div>
+                        </div>
+                    </div> <?php
+                    }
+                } ?>
             </div>
         </div>
         <div class="rd-section-organization">
             <div class="rd-section-organizer">
                 <a href="<?= 'rider/' .$ride->author_id; ?>">
-                    <?= $ride->getAuthor()->getPropicElement(60, 60, 60); ?>
+                    <?= $ride->getAuthor()->getPropicElement(30, 30, 30); ?>
                 </a>
                 <div class="rd-organizer">
                     <div class="rd-login"><?= 'by <strong>@' .$ride->getAuthor()->login. '</strong>'; ?></div> <?php

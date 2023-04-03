@@ -1,7 +1,7 @@
 <?php
 
 $featured_image = $activity->getFeaturedImage() ?>
-<a class="acsm-container" href="/activity/<?= $activity->id ?>">
+<a class="acsm-container interactive" href="/activity/<?= $activity->id ?>">
     <div class="acsm-photo"> <?php
         if ($featured_image) { ?>
             <img src="<?= $featured_image->url ?>" /> <?php

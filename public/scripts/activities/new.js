@@ -64,7 +64,6 @@ $upload.addEventListener('change', async (e) => {
 
                         // Display and prefill form
                         document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'
-                        document.querySelector('#topContainer').style.marginBottom = '40px'
                         hideResponseMessage()
                         $form.style.display = 'block'
                         newActivityMap.updateForm()
