@@ -75,6 +75,7 @@ include '../actions/activities/getActivityAction.php'; ?>
 
         <div class="container new-ac-container">
             <h3>写真</h3>
+            <div id="photosNumberElement">写真は付随されていません。</div>
             <div class="new-ac-buttons">
                 <label for="uploadPhotos">
                     <div class="btn smallbutton">追加</div>
@@ -85,7 +86,7 @@ include '../actions/activities/getActivityAction.php'; ?>
             </div>
         </div>
 
-        <div class="container inner">
+        <div class="container">
         
             <h3>ストーリー</h3>
 

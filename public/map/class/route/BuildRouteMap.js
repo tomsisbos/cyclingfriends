@@ -131,7 +131,7 @@ export default class BuildRouteMap extends GlobalMap {
         else var controller = this.addController()
         // Route options container
         var routeContainer = document.createElement('div')
-        routeContainer.className = 'map-controller-block fullwidth flex-column'
+        routeContainer.className = 'map-controller-block flex-column'
         controller.appendChild(routeContainer)
         // Label
         var routeOptionsLabel = document.createElement('div')
@@ -335,6 +335,7 @@ export default class BuildRouteMap extends GlobalMap {
                 point._data.features[0].geometry.coordinates = correctedCoordinates
                 point.setData(point._data)
             }
+            this.updateProfileTag()
             resolve(true)
         } )
     }
@@ -1117,7 +1118,7 @@ export default class BuildRouteMap extends GlobalMap {
     hideProfile () {
         document.querySelector('#profileBox').classList.remove('show-profile')
         document.querySelector('.map-profile-tag').classList.remove('cursor-pointer')
-        document.querySelector('.map-profile-tag').innerText = 'No elevation data to display.'
+        document.querySelector('.map-profile-tag').innerText = '表示できる標高データはありません。'
     }
 
     // Update profile tag
@@ -1126,14 +1127,12 @@ export default class BuildRouteMap extends GlobalMap {
         if (this.map.getSource('endPoint')) {
             document.querySelector('.map-profile-tag').classList.add('cursor-pointer')
             if (document.querySelector('#profileBox').classList.contains('show-profile')) {
-                document.querySelector('.map-profile-tag').innerText = 'Hide profile ▼'
-            } else {
-                document.querySelector('.map-profile-tag').innerText = 'Show profile ▲'
-            }
+                document.querySelector('.map-profile-tag').innerText = 'プロファイルを非表示 ▼'
+            } else document.querySelector('.map-profile-tag').innerText = 'プロファイルを表示 ▲'
         // If there is no elevation data, display a message explaining it 
         } else {
             document.querySelector('.map-profile-tag').classList.remove('cursor-pointer')
-            document.querySelector('.map-profile-tag').innerText = 'No elevation data to display.'
+            document.querySelector('.map-profile-tag').innerText = '表示できる標高データはありません。'
         }
 
     }

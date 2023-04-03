@@ -97,10 +97,11 @@ include '../includes/head.php'; ?>
                             <input type="file" id="uploadPhotos" class="hidden" name="uploadPhotos" multiple/>
                             <div class="btn smallbutton hidden" id="clearPhotos">削除</div>
                             <div class="btn smallbutton hidden" id="changePhotosPrivacy">プライバシー設定変更</div>
+                            <div id="photosNumberElement">写真は付随されていません。</div>
                         </div>
                     </div>
 
-                    <div class="container inner">
+                    <div class="container">
                     
                         <h3>ストーリー</h3>
 

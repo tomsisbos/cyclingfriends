@@ -418,6 +418,17 @@
         padding: 10px 20px;
         background-color: #eee;
     }
+
+    .new-ac-columns {
+        flex-direction: column;
+        min-width: 100%;
+    }
+    .new-ac-columns .new-ac-columns {
+        flex-direction: row;
+    }
+    .new-ac-part {
+        min-width: 100%;
+    }
     
     .new-ac-properties-container {
         flex-direction: column;
@@ -551,6 +562,7 @@
     bottom: 0;
     left: 0;
     font-weight: bold;
+    text-shadow: 0px 0px 3px #000;
 }
 .pg-ac-public {
     color: #00e06e;

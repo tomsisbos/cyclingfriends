@@ -784,6 +784,7 @@ export default class NewActivityMap extends ActivityMap {
                         this.data.photos[i].number--
                     }
                 }
+                this.updatePhotosButtons()
             } )
 
             // Set photo privacy listener
@@ -973,12 +974,15 @@ export default class NewActivityMap extends ActivityMap {
     updatePhotosButtons () {
         const clearPhotosButton = document.querySelector('#clearPhotos')
         const changePhotosPrivacyButton = document.querySelector('#changePhotosPrivacy')
+        const photosNumberElement = document.querySelector('#photosNumberElement')
         if (this.data.photos.length > 0) {
             clearPhotosButton.classList.remove('hidden')
             changePhotosPrivacyButton.classList.remove('hidden')
+            photosNumberElement.innerText = this.data.photos.length + '枚の写真が付随されています。'
         } else {
             if (!clearPhotosButton.classList.contains('hidden')) clearPhotosButton.classList.add('hidden')
             if (!changePhotosPrivacyButton.classList.contains('hidden')) changePhotosPrivacyButton.classList.add('hidden')
+            photosNumberElement.innerText = '写真は付随されていません。'
         }
     }
 
