@@ -1,6 +1,7 @@
 import CFUtils from "/map/class/CFUtils.js"
 import GlobalMap from "/map/class/GlobalMap.js"
 import Loader from "/map/class/Loader.js"
+import CFSession from "/map/class/CFSession.js"
 
 export default class BuildRouteMap extends GlobalMap {
 
@@ -1715,7 +1716,7 @@ export default class BuildRouteMap extends GlobalMap {
                 name: details.name,
                 description: details.description,
                 distance: turf.length(routeData),
-                elevation: await this.calculateElevation(routeData),
+                elevation: await this.profile.calculateElevation(routeData),
                 startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
                 goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
                 thumbnail: details.thumbnail
@@ -1730,7 +1731,7 @@ export default class BuildRouteMap extends GlobalMap {
                 name: details.name,
                 description: details.description,
                 distance: turf.length(routeData),
-                elevation: await this.calculateElevation(routeData),
+                elevation: await this.profile.calculateElevation(routeData),
                 startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
                 goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
                 thumbnail: details.thumbnail,

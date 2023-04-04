@@ -69,6 +69,45 @@ class Route extends Model {
         return $time;
     }
 
+    
+
+    /**
+     * Check if a point is inside a certain range from route
+     * @param Coordinate $point point to check for
+     * @param int $range range
+     * @return boolean|array false if outside range, array containing remoteness and closest point if inside range
+     */
+    private function inRange ($point, $range) {
+
+        $closest_point = [];
+
+        // Step of route coordinates to evaluate (defined accordingly to number of route coords for optimization purposes)
+        if (count($this->coordinates) > 500) $step = 5;
+        else if (count($this->coordinates) > 100 && count($this->coordinates) < 500) $step = 2;
+        else $step = 1;
+
+        // For points inside this range, test remoteness for each route segment on a step
+        if ($this->isPointInRoughArea($point, $range)) {
+
+            $remoteness_min = 500000000;
+            $simplifiedRouteCoords = [];
+            for ($j = 0; $j < count($this->coordinates) - $step - 1; $j += $step) {
+                array_push($simplifiedRouteCoords, $this->coordinates[$j]);
+                $line = new Line(
+                    new Coordinate($this->coordinates[$j]->lat, $this->coordinates[$j]->lng),
+                    new Coordinate($this->coordinates[$j + $step]->lat, $this->coordinates[$j + $step]->lng)
+                );
+                $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
+                $segment_remoteness = $pointToLineDistanceCalculator->getDistance($point, $line);
+                if ($segment_remoteness < $remoteness_min) { // If distance is the shortest calculated until this point, then erase distance_min record
+                    $remoteness_min = $segment_remoteness;
+                    $closest_point = $this->coordinates[$j];
+                }
+            }
+            return ['remoteness' => $remoteness_min, 'closest_point' => $closest_point];
+        } else return false;
+    }
+
     public function getThumbnail () {
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
@@ -92,11 +131,20 @@ class Route extends Model {
             return $images[0];
         }
 
-        // If no mkpoint is on the course, check for a public activity photo
+        // If no mkpoint is on the course, return closest activity photo from the route
         else {
 
-            ///$activity_photos = $this->getPublicPhotos();
-
+            $activity_photos = $this->getPublicPhotos();
+            $photos = [];
+            foreach ($activity_photos as $photo_data) {
+                $photo = new ActivityPhoto($photo_data['id']);
+                $photo->remoteness = $photo_data['remoteness'];
+                $photo->closest_point = $photo_data['closest_point'];
+                array_push($photos, $photo);
+            }
+            $remoteness_column = array_column($photos, 'remoteness');
+            array_multisort($remoteness_column , SORT_ASC, $photos);
+            return $photos[0];
         }
     }
 
@@ -217,18 +265,44 @@ class Route extends Model {
         else return false;
     }
 
-    /*
-    public function getPublicPhotos () {
+    /**
+     * Get public photos on the route (with remoteness and distance to start appended if $append_distance param is true)
+     * @param int $tolerance tolerance remoteness from route in meters
+     * @param boolean $append_distance whether append remoteness and distance or not
+     */
+    public function getPublicPhotos ($tolerance = 3000, $append_distance = true) {
 
-        // Get all activity photos registered in the database
-        $getMkpoints = $this->getPdo()->prepare('SELECT id, name, lng, lat FROM activity_photos');
-        $getMkpoints->execute();
-        $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        $mkpoints_in_range = [];
-        $number = 0;
-    }*/
+        // Get all public activity photos registered in the database
+        $getPublicPhotos = $this->getPdo()->prepare("SELECT id, lng, lat FROM activity_photos WHERE lng IS NOT NULL AND privacy = 'public'");
+        $getPublicPhotos->execute();
+        $public_photos = $getPublicPhotos->fetchAll(PDO::FETCH_ASSOC);
+        $photos_in_range = [];
 
-    // Get Mkpoints that are less than [basis] km from the route
+        // Filter activity photos inside a certain range from route
+        for ($i = 0; $i < count($public_photos); $i++) {
+            if ($public_photos[$i]['lng']) { // Necessary to filter photos uploaded before implementation of lnglat data
+                $range_data = $this->inRange(new Coordinate($public_photos[$i]['lat'], $public_photos[$i]['lng']), $tolerance);
+                if ($range_data) {
+                    $public_photos[$i]['remoteness'] = $range_data['remoteness'];
+                    $public_photos[$i]['closest_point'] = $range_data['closest_point'];
+                    array_push($photos_in_range, $public_photos[$i]);
+                }
+            }
+        }
+
+        // Return an array of photos less than [tolerance] from route
+        if (isset($photos_in_range[0]['distance'])) {
+            $distance_column = array_column($photos_in_range, 'distance');
+            array_multisort($distance_column, SORT_ASC, $photos_in_range);
+        }
+
+        return $photos_in_range;
+    }
+
+    /** Get Mkpoints that are less than [basis] km from the route (with remoteness and distance to start appended if $append_distance param is true)
+     * @param int $tolerance tolerance remoteness from route in meters
+     * @return Mkpoint[]
+     */
     public function getCloseMkpoints ($tolerance = 3000, $classFormat = true, $append_distance = false) { // m
 
         // Get all Mkpoints registered in the database
@@ -236,46 +310,18 @@ class Route extends Model {
         $getMkpoints->execute();
         $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
         $mkpoints_in_range = [];
-        $number = 0;
 
-        // For each mkpoint, check remoteness to route
+        // Filter mkpoints inside a certain range from route
         for ($i = 0; $i < count($mkpoints); $i++) {
-
-            $point = new Coordinate($mkpoints[$i]['lat'], $mkpoints[$i]['lng']);
-            $closest_point = [];
-            $range = $tolerance * 10;
-
-            // Step of route coordinates to evaluate (defined accordingly to number of route coords for optimization purposes)
-            if (count($this->coordinates) > 500) $step = 5;
-            else if (count($this->coordinates) > 100 && count($this->coordinates) < 500) $step = 2;
-            else $step = 1;
-
-            // For mkpoints inside this range, test remoteness for each route segment on a step
-            if ($this->isPointInRoughArea($point, $range)) {
+            $range_data = $this->inRange(new Coordinate($mkpoints[$i]['lat'], $mkpoints[$i]['lng']), $tolerance * 10);
+            if ($range_data) {
+                $mkpoints[$i]['remoteness'] = $range_data['remoteness'];
+                $mkpoints[$i]['closest_point'] = $range_data['closest_point'];
                 array_push($mkpoints_in_range, $mkpoints[$i]);
-
-                $remoteness_min = 500000000;
-                $simplifiedRouteCoords = [];
-                for ($j = 0; $j < count($this->coordinates) - $step - 1; $j += $step) {
-                    array_push($simplifiedRouteCoords, $this->coordinates[$j]);
-                    $line = new Line(
-                        new Coordinate($this->coordinates[$j]->lat, $this->coordinates[$j]->lng),
-                        new Coordinate($this->coordinates[$j + $step]->lat, $this->coordinates[$j + $step]->lng)
-                    );
-                    $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
-                    $segment_remoteness = $pointToLineDistanceCalculator->getDistance($point, $line);
-                    if ($segment_remoteness < $remoteness_min) { // If distance is the shortest calculated until this point, then erase distance_min record
-                        $remoteness_min = $segment_remoteness;
-                        $closest_point = $this->coordinates[$j];
-                    }
-                }
-                $mkpoints_in_range[$number]['remoteness'] = $remoteness_min;
-                $mkpoints_in_range[$number]['closest_point'] = $closest_point;
-                $number++;
             }
         }
 
-        // Return an array of Mkpoints less than [tolerance] from the line
+        // Return an array of Mkpoints less than [tolerance] from route
         $close_mkpoints = array();
         if (isset($mkpoints_in_range[0]['distance'])) {
             $distance_column = array_column($mkpoints_in_range, 'distance');

@@ -1,6 +1,7 @@
 import GlobalMap from "/map/class/GlobalMap.js"
 import Popup from "/map/class/Popup.js"
 import CFUtils from "/map/class/CFUtils.js"
+import CFSession from "/map/class/CFSession.js"
 
 export default class ActivityMap extends GlobalMap {
 
@@ -250,10 +251,14 @@ export default class ActivityMap extends GlobalMap {
         return turf.length(segment)
     }
 
-    displayPhotos () {
+    async displayPhotos () {
+        var sessionId = parseInt(await CFSession.get('id'))
         this.data.photos.forEach( (photo) => {
-            var lngLat = this.getPhotoLocation(photo)
-            photo.marker = this.addPhoto(photo, lngLat)
+            // Only add photos which privacy is not set to true, except for the author
+            if (photo.privacy != 'private' || sessionId == this.data.user_id) {
+                var lngLat = this.getPhotoLocation(photo)
+                photo.marker = this.addPhoto(photo, lngLat)
+            }
         } )
     }
 

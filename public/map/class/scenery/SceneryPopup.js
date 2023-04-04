@@ -138,7 +138,8 @@ export default class SceneryPopup extends Popup {
                     </div>
                 `
                 // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-                var marker = this.getMarker()
+                if (this.popup) var marker = this.getMarker()
+                else resolve(false)
                 if (this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
                 else if (this.data.mapInstance.mode == 'default') marker.setDraggable(false)
             }
@@ -171,14 +172,16 @@ export default class SceneryPopup extends Popup {
                 this.data.mapInstance.unselectMarkers()
             } )
 
-            await this.populate().then(() => {
-                this.displayPhotos()
-                this.loadLightbox()
-                this.popup.on('open', () => {
+            await this.populate().then((stillExists) => {
+                if (stillExists) {
+                    this.displayPhotos()
                     this.loadLightbox()
-                    this.colorLike()
-                    this.prepareToggleLike()
-                } )
+                    this.popup.on('open', () => {
+                        this.loadLightbox()
+                        this.colorLike()
+                        this.prepareToggleLike()
+                    } )
+                }
             } )
 
             // Setup interactions depending on content

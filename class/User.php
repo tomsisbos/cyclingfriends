@@ -247,6 +247,7 @@ class User extends Model {
     }
 
     public function isFriend ($friend) {
+        require_once $this->root_folder .'/includes/functions.php';
         $friendslist = $this->getFriends();
         if (in_array_r($friend->id, $friendslist)) return true;
         else return false;
@@ -346,8 +347,7 @@ class User extends Model {
     // Function for uploading a profile picture
     function uploadPropic () {
 
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require_once $folder .'/includes/functions.php';
+        require_once $this->root_folder .'/includes/functions.php';
         
         // Declaration of variables
         $img_blob   = '';

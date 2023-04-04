@@ -4,13 +4,14 @@ class Model {
     
     protected $table;
     protected $db;
+    protected static $root_folder;
 
     function __construct () {
+        Model::$root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
     }
 
     protected static function getPdo () {
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/databaseAction.php';
+        require Model::$root_folder . '/actions/databaseAction.php';
         return $db;
     }
 

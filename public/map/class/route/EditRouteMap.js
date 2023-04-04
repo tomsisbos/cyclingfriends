@@ -78,7 +78,7 @@ export default class EditRouteMap extends BuildRouteMap {
                 name: details.name,
                 description: details.description,
                 distance: turf.length(routeData),
-                elevation: await this.calculateElevation(routeData),
+                elevation: await this.profile.calculateElevation(routeData),
                 startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
                 goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
                 thumbnail: details.thumbnail

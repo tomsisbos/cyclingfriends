@@ -112,6 +112,16 @@ $upload.addEventListener('change', async (e) => {
                             newActivityMap.updatePhotos()
                         } )
 
+                        // Change photos privacy to private if activity privacy is set to private
+                        document.querySelector('#selectPrivacy').addEventListener('change', (e) => {
+                            if (e.target.value == 'private') {
+                                newActivityMap.data.photos.forEach(photo => {
+                                    photo.privacy = 'private'
+                                    newActivityMap.updatePrivacyButton(photo)
+                                })
+                            }
+                        })
+
                     // Else, display error message
                     } else if (response.error) {
                         loader.stop()

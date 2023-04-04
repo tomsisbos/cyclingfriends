@@ -77,6 +77,16 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
         await editActivityMap.addMarkerOnRoute(e.lngLat)
         editActivityMap.updatePhotos()
     } )
+
+    // Change photos privacy to private if activity privacy is set to private
+    document.querySelector('#selectPrivacy').addEventListener('change', (e) => {
+        if (e.target.value == 'private') {
+            editActivityMap.data.photos.forEach(photo => {
+                photo.privacy = 'private'
+                editActivityMap.updatePrivacyButton(photo)
+            })
+        }
+    })
     
     // Save activity treatment
     document.querySelector('#saveActivity').addEventListener('click', async () => {

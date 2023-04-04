@@ -147,10 +147,13 @@ include '../includes/head.php'; ?>
 						foreach ($activity->getCheckpoints() as $checkpoint) { ?>
 							<div class="pg-ac-checkpoint-container" id="checkpoint<?= $checkpoint->number ?>" data-number="<?= $checkpoint->number ?>">
 								<div class="pg-ac-photos-container"> <?php
-									foreach ($checkpoint->getPhotos() as $photo) { ?>
-										<div class="pg-ac-photo-container">
-											<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="<?= $photo->url ?>" />
-										</div> <?php
+									foreach ($checkpoint->getPhotos() as $photo) {
+										// Only add photos which privacy is not set to true, except for the author
+										if ($photo->privacy != 'private' || $activity->user_id == $connected_user->id) { ?>
+											<div class="pg-ac-photo-container">
+												<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="<?= $photo->url ?>" />
+											</div> <?php
+										}
 									} ?>
 								</div>
 								<div class="pg-ac-checkpoint-topline">

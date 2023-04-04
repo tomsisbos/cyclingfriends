@@ -2,7 +2,9 @@
 
 include '../actions/users/initSessionAction.php';
 include '../includes/head.php';
-include '../actions/activities/getActivityAction.php'; ?>
+include '../actions/activities/getActivityAction.php';
+
+if ($connected_user->id != $activity->user_id) header('location: /' .$connected_user->login. '/activities') ?>
 
 <!DOCTYPE html>
 <html lang="en">
