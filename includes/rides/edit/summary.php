@@ -9,38 +9,35 @@ $previous_page = intval($stage_slug) - 1; ?>
 		<h1 class="text-center"><?= $_SESSION['edit-forms']['1']['ride-name'];?></h1>
 		<legend>サマリー</legend>
 
-	</div>
+	</div> <?php
+
+	// Displays an error message if needed
+	if (isset($errormessage)) {
+		echo '<div class="container error-block"><p class="error-message">' .$errormessage. '</p></div>'; 
+	} else if (isset($successmessage)) {
+		echo '<div class="container success-block"><p class="success-message">' .$successmessage. '</p></div>';
+	} ?>
 
 	<div class="container">
-		
-		<?php 
-		// Displays an error message if needed
-			if (isset($errormessage)) {
-				echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>'; 
-			} else if (isset($successmessage)) {
-				echo '<div class="success-block"><p class="success-message">' .$successmessage. '</p></div>';
-			}
-		
-		include '../actions/rides/convertIntToStringValuesAction.php'; ?>
 		
 		<!-- Displays the summary -->
 		<h2>About the ride</h2>
 		<div class="row">
-			<div class="col">
+			<div id="date" class="col">
 				<p><strong>開催日 :</strong> <?= $_SESSION['edit-forms']['1']['date'];?></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>集合時間 :</strong> <?= $_SESSION['edit-forms']['1']['meeting-time'];?></p>
+				<p id="meeting-time"><strong>集合時間 :</strong> <?= $_SESSION['edit-forms']['1']['meeting-time'];?></p>
 			</div>
 			<div class="col">
-				<p><strong>集合場所 :</strong> <?= $_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
-				<p><strong>解散場所 :</strong> <?= $_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
+				<p id="meetingplace"><strong>集合場所 :</strong> <?= $_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
+				<p id="finishplace"><strong>解散場所 :</strong> <?= $_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
+			<div id="departure-time" class="col">
 				<p><strong>出発時間 :</strong> <?= $_SESSION['edit-forms']['1']['departure-time']. " (finish around " .$_SESSION['edit-forms']['1']['finish-time']. ")";?></p>
 			</div>
 		</div>
@@ -50,7 +47,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
+			<div id="level" class="col">
 				<p><strong>レベル :</strong> <?= levelFromArray($_SESSION['edit-forms']['1']['level']); ?></p>
 			</div>
 			<div class="col">
@@ -58,8 +55,8 @@ $previous_page = intval($stage_slug) - 1; ?>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col text-justify">
-				<p><?= nl2br($_SESSION['edit-forms']['1']['ride-description']);?></p>
+			<div id="ride-description" class="col text-justify">
+				<p><strong>紹介文 :</strong><?= nl2br($_SESSION['edit-forms']['1']['ride-description']);?></p>
 			</div>
 		</div>
 
@@ -159,7 +156,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 	<div class="container">
 
 		<h2>About the course</h2>
-		<div class="row"> <?php
+		<div id="distance" class="row"> <?php
 			if (!empty($_SESSION['edit-forms']['2']['distance'])) { ?>
 				<p><strong>距離 :</strong> 
 				<?php 
@@ -168,30 +165,29 @@ $previous_page = intval($stage_slug) - 1; ?>
 				</p> <?php
 			} ?>
 		</div>
-		<div class="row">
-			<p><strong>起伏 :</strong> <?php 
+		<div id="terrain" class="row">
+			<p><strong>起伏 :</strong> <?php
 				if (isset($_SESSION['edit-course']) AND $_SESSION['edit-course']['method'] == 'draw') echo $_SESSION['edit-course']['terrain'];
-				else echo $terrain_value; ?>
+				else echo getTerrainFromValue($_SESSION['edit-forms']['2']['terrain']); ?>
 			</p>
 		</div>
 
 
 		<div class="row">
-			<div class="col text-justify">
-				<p><?= nl2br($_SESSION['edit-forms']['2']['course-description']);?></p>
+			<div id="course-description" class="col text-justify">
+				<p><strong>紹介文 :</strong><?= nl2br($_SESSION['edit-forms']['2']['course-description']);?></p>
 			</div>
-		</div>	
+		</div> <?php
 		
-		<?php // Hide the Create Ride button if a success message is displayed (prevents from creating multiple entries in the database)
+		// Hide the Create Ride button if a success message is displayed (prevents from creating multiple entries in the database)
 		if (!isset($successmessage)) { ?>
 			<div>
 				<a href="<?= $previous_page?>">
 					<button type="button" class="btn button btnleft">戻る</button>
 				</a>
-				<button type="submit" class="btn button btnright btn-success" name="validate">確定</button>
-		<?php }
-		?>
-		</div>
+				<button type="submit" class="btn button btnright btn-success" name="validate">確定</button> 
+			</div> <?php
+		} ?>
 	
 	</div>
 	

@@ -12,6 +12,6 @@ if (isset($slug)) $ride = new Ride($slug);
 else header('location: /' . $connected_user->login . '/rides');
 
 // Only allow access to ride admin
-if ($ride->author_id != $connected_user->id) header('location: /' . $connected_user->login . '/rides') ?>
+if ($ride->author_id != $connected_user->id) header('location: ' .$router->generate('ride-organizations')) ?>
 
 <link rel="stylesheet" href="/assets/css/ride.css" />

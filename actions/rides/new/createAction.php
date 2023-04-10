@@ -154,11 +154,11 @@ if (isset($_POST['validate'])) {
 			}
 
 			$_SESSION['forms']['created'] = $ride_id;
-			header('location: /' . $connected_user->login . '/rides');
+			header('location: ' .$router->generate('ride-organizations'));
 
 		}
 				
-	} else  $errormessage = "必要な情報（*）を全てご記入ください。";
+	} else  $errormessage = "必要な情報を全てご記入ください。";
 	
 }
 

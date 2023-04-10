@@ -3,7 +3,6 @@
 include '../actions/users/initSessionAction.php';
 include '../actions/rides/rideAction.php';
 include '../actions/rides/edit/adminPanelAction.php';
-include '../actions/rides/join&quitAction.php';
 include '../actions/rides/edit/galleryAction.php';
 include '../includes/head.php'; ?>
 
@@ -30,10 +29,7 @@ include '../includes/head.php'; ?>
 	<div class="main container-shrink"> <?php
 
 		// Space for general error messages
-		include '../includes/result-message.php';	
-			
-		// Set and update all ride proprieties
-		include '../actions/rides/convertIntToStringValuesAction.php'; ?>
+		include '../includes/result-message.php'; ?>
 
 		<div class="container header" style="background-image: <?= 'url(' .$ride->getFeaturedImage()->url. '); background-size: cover;' ?>">
 			<div class="header-block">

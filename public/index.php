@@ -68,8 +68,6 @@ $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" wh
 // Rides
 $router->map('GET', '/ride/[i:ride_id]', 'rides/single', 'ride-single');
 $router->map('POST', '/ride/[i:ride_id]', 'rides/single');
-$router->map('GET', '/ride/[i:ride_id]/join', 'rides/single');
-$router->map('GET', '/ride/[i:ride_id]/quit', 'rides/single');
 $router->map('GET', '/ride/new', 'rides/new', 'ride-new');
 $router->map('GET', '/ride/new/[i:stage]', 'rides/new');
 $router->map('POST', '/ride/new/[i:stage]', 'rides/new');
@@ -82,7 +80,8 @@ $router->map('GET', '/ride/[i:ride_id]/admin/forms', 'rides/admin/forms', 'ride-
 $router->map('POST', '/ride/[i:ride_id]/admin/forms', 'rides/admin/forms');
 $router->map('GET', '/rides', 'rides/publicboard', 'rides-publicboard');
 $router->map('POST', '/rides', 'rides/publicboard');
-$router->map('GET', '/[*:user_login]/rides', 'rides/userboard', 'rides-userboard');
+$router->map('GET', '/ride/organizations', 'rides/organizations', 'ride-organizations');
+$router->map('GET', '/ride/participations', 'rides/participations', 'ride-participations');
 $router->map('GET', '/ride/[i:ride_id]/route', 'routes/single', 'ride-route');
 
 // Community

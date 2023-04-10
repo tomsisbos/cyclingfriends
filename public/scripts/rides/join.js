@@ -1,3 +1,5 @@
+import LoaderCircle from "/map/class/loaders/LoaderCircle.js"
+
 var apiUrl = "/api/ride.php"
 
 var joinButton = document.getElementById('join')
@@ -5,21 +7,55 @@ var quitButton = document.getElementById('rd-quit')
 var rideId = getIdFromString(location.pathname)
 
 if (joinButton) {
-    joinButton.addEventListener('click', () => {
-        ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
-            if (response.answer　|| response.bikes_list == '車種問わず') join()
-            else {
-                var answer = await openConfirmationPopup ('このライドで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
-                if (answer) join()
-            }
-        } )
-    } )
+    joinButton.addEventListener('click', async () => {
+
+        var loader = new LoaderCircle(joinButton)
+        loader.start()
+
+        // Check if proper bike has been registered
+        return new Promise((resolve, reject) => {
+            ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
+                loader.stop()
+                if (response.answer || response.bikes_list == '車種問わず') resolve(true)
+                else {
+                    var answer = await openConfirmationPopup ('このライドで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
+                    if (answer) resolve(true)
+                }
+            })
+
+        // Check if real name and birthdate have been registered
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                ajaxGetRequest (apiUrl + "?get-missing-information=" + rideId, async (response) => {
+                    console.log(response)
+                    if (response.length > 0)  {
+                        var string = response.join('、')
+                        var answer = await openAlertPopup('ライドに申し込むためには、次の情報の記入が必要です：' + string + '。<a href="/profile/edit" target="_blank">プロフィールページ</a>にてご記入頂けます。')
+                        if (answer) resolve(false)
+                    }
+                    else resolve(true)
+                })
+            })
+        }).then((result) => {
+            if (result) join()
+            else return
+        })
+    })
 }
 
 if (quitButton) {
+
     quitButton.addEventListener('click', () => {
-        window.location.href = "/ride/" + rideId + "/quit"
-    } )
+
+        var loader = new LoaderCircle(quitButton)
+        loader.start()
+        
+        ajaxGetRequest(apiUrl + "?quit=" + rideId, async (response) => {
+            loader.stop()
+            showResponseMessage(response)
+            window.location.href = "/ride/participations"
+        })
+    })
 }
 
 
@@ -27,6 +63,7 @@ function join () {
     ajaxGetRequest(apiUrl + "?get-questions=" + rideId, async (questions) => {
         var phase = 0
         var answers = {
+            id: rideId,
             type: 'post-answers',
             data: []
         }
@@ -35,13 +72,14 @@ function join () {
             answers.data.push( {
                 id: questions[phase].id,
                 answer
-            } )
+            })
             phase++
         }
         ajaxJsonPostRequest(apiUrl, answers, (response) => {
-            window.location.href = "/ride/" + rideId + "/join"
-        } )
-    } )
+            showResponseMessage(response)
+            window.location.href = "/ride/participations"
+        })
+    })
 }
 
 function openPopup (question) {
@@ -59,7 +97,7 @@ function openPopup (question) {
             var $options = ''
             question.options.forEach(option => {
                 $options += '<option value="' + option + '">' + option + '</option>'
-            } )
+            })
             confirmationPopup.innerHTML = question.question + '<select id="answer">' + $options + '</select><div class="d-flex p-2 justify-content-center"><div class="btn smallbutton bg-darkred" id="cancel">戻る</div><div class="btn smallbutton bg-darkgreen" id="ok">確定</div></div>'
         }
 
@@ -70,12 +108,12 @@ function openPopup (question) {
             var answer = document.querySelector('#answer').value
 			modal.remove()
 			resolve(answer)
-		} )
+		})
         
 		// On click on cancel button, close the popup
 		document.querySelector('#cancel').addEventListener('click', () => {
 			modal.remove()
 			reject()
-		} )
-	} )
+		})
+	})
 }

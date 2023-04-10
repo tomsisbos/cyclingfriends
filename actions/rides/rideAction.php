@@ -35,14 +35,14 @@
 		} else {
 			
 		// If id doesn't exist, redirect to my rides page
-		header('location: /' . $connected_user->login . '/rides');
+		header('location: ' .$router->generate('ride-organizations'));
 		
 		}
 	
 	} else {
 		
-	// If id is not set, redirect to my rides page
-		header('location: /' . $connected_user->login . '/rides');
+		// If id is not set, redirect to my rides page
+		header('location: ' .$router->generate('ride-organizations'));
 		
 	}
 ?>

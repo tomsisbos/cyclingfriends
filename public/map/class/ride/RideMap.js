@@ -389,4 +389,18 @@ export default class RideMap extends GlobalMap {
         } )
         return popup
     }
+
+    /**
+     * Highlights unfilled fields in the new ride creating summary page
+     * @param {Object} forms
+     */
+    highlightUnfilledFields (forms) {
+        forms = [forms[1], forms[2]]
+        const fieldNames = ['date', 'meeting-time', 'departure-time', 'meetingplace', 'finishplace', 'level', 'ride-description', 'distance', 'terrain', 'course-description']
+        fieldNames.forEach((field) => {
+            forms.forEach((form) => {
+                if (form[field] != undefined && form[field] == '') document.querySelector('#' + field).classList.add('unfilled')
+            })
+        })
+    }
 }

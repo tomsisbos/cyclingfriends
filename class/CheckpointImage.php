@@ -23,8 +23,7 @@ class CheckpointImage extends Model {
 
     private function getUrl() {
         // Connect to blob storage
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require CheckpointImage::$root_folder . '/actions/blobStorageAction.php';
 
         // Retrieve blob url
         if (isset($this->filename)) return $blobClient->getBlobUrl($this->container_name, $this->filename);

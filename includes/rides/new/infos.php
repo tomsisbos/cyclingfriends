@@ -37,12 +37,17 @@
 		<div class="mb-3 form-floating">
 			<input type="time" class="form-control" name="finish-time" value="<?= $_SESSION['forms'][CFG_STAGE_ID]['finish-time']; ?>">
 			<label for="floatingInputGrid" class="required">解散時間</label>
-		</div>
+		</div> <?php
+
+		// Set max riders number depending on if user has guide or moderator rights or not
+		if ($connected_user->hasModeratorRights() || $connected_user->isGuide()) $nb_riders_max = 30;
+		else $nb_riders_max = 7; ?>
+
 		<div class="mb-3 row g-2">
 			<div class="col-md">
 				<div class="form-floating">
 					<div class="with-range-output required">最低催行人数</div>
-					<input type="range" class="form-range" min="1" max="30" name="nb-riders-min" value="<?php
+					<input type="range" class="form-range" min="1" max="<?= $nb_riders_max ?>" name="nb-riders-min" value="<?php
 						if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-min'])) echo 1;
 						else echo $_SESSION['forms'][CFG_STAGE_ID]['nb-riders-min']; ?>"
 						oninput="this.nextElementSibling.value = this.value">
@@ -55,11 +60,11 @@
 			<div class="col-md">
 				<div class="form-floating">
 					<div class="with-range-output required">定員</div>
-					<input type="range" class="form-range" min="1" max="30" name="nb-riders-max" value="<?php
-					if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max'])) echo 8;
+					<input type="range" class="form-range" min="1" max="<?= $nb_riders_max ?>" name="nb-riders-max" value="<?php
+					if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max'])) echo 7;
 					else echo $_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max']; ?>" oninput="this.nextElementSibling.value = this.value">
 					<output><?php
-						if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max'])) echo 8;
+						if (empty($_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max'])) echo 7;
 						else echo $_SESSION['forms'][CFG_STAGE_ID]['nb-riders-max']; ?>
 					</output>
 				</div>

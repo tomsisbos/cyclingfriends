@@ -67,8 +67,7 @@ class Mkpoint extends Model {
 
     public function delete () {
         // Connect to blob storage and delete relevant blobs
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require Mkpoint::$root_folder . '/actions/blobStorageAction.php';
         foreach ($this->getImages() as $photo) $blobClient->deleteBlob($this->container_name, $photo->filename);
 
         // Remove database entry

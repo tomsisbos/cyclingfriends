@@ -39,9 +39,9 @@ if (isset($ride_slug) AND !empty($ride_slug)) {
 			$_SESSION['edit-forms'][2]['checkpoints'] = $ride->checkpoints;
 			if ($ride->getRoute() != null) $_SESSION['edit-forms'][2]['route-id'] = $ride->route_id;
 			// If not, redirect to my rides pages
-			if ($ride->author_id != $connected_user->id) header('location: /' . $connected_user->login . '/rides');
+			if ($ride->author_id != $connected_user->id) header('location: ' .$router->generate('ride-organizations'));
 		}
 
-	} else header('location: /' . $connected_user->login . '/rides');
+	} else header('location: ' .$router->generate('ride-organizations'));
 
-} else header('location: /' . $connected_user->login . '/rides'); ?>
+} else header('location: ' .$router->generate('ride-organizations')); ?>

@@ -44,7 +44,8 @@
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/ride/new"><div class="mainitem">新規開催</div><div class="subitem">New</div></a>
-						<a class="dropdown-item interactive" href="/<?= $connected_user->login ?>/rides"><div class="mainitem">マイライド</div><div class="subitem">My rides</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div><div class="subitem">My organizations</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('ride-participations') ?>"><div class="mainitem">参加一覧</div><div class="subitem">My participations</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">

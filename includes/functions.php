@@ -931,12 +931,11 @@ function checkIfRideIsAlreadySet($ride_name) {
 // Build a level list made of array values separated by commas
 function levelFromArray($array){
 	$i = 0; $string = '';
-	foreach($array as $key => $value){
-		if($value){
+	foreach ($array as $key => $value) {
+		if ($value) {
+			if ($value == 'Anyone') return 'レベル問わず';
 			// Insert commas between level
-			if($i > 0){
-				$string .= ', ';
-			}
+			if ($i > 0) $string .= ', ';
 			$string .= getLevelFromKey($value);
 			$i++;
 		}
@@ -982,6 +981,7 @@ function bikesFromArray ($array) {
 	$i = 0; $string = '';
 	foreach ($array as $key => $value) {
 		if ($value) {
+			if ($value == 'All bikes') return '車種問わず';
 			// Insert commas between level
 			if ($i > 0) {
 				$string .= ', ';
@@ -992,6 +992,16 @@ function bikesFromArray ($array) {
 	}
 	return $string;
 }
+
+function getTerrainFromValue ($value) {
+	switch ($value) {
+		case 1: return '<img class="terrain-icon" src="\media\flat.svg" />';
+		case 2: return '<img class="terrain-icon" src="\media\smallhills.svg" />';
+		case 3: return '<img class="terrain-icon" src="\media\hills.svg" />';
+		case 4: return '<img class="terrain-icon" src="\media\mountain.svg" />';
+		default : return 'unknown'; 
+	}
+} 
 
 /*
 // Build a bikes list made of array values separated by commas from an array using booleans
@@ -1044,7 +1054,7 @@ function getBikeFromKey ($key) {
 }
 
 // Change the bike column name to the proper bike name
-function getBikesFromColumnName($bike) {
+function getBikesFromColumnName ($bike) {
 	switch ($bike) {
 		case 'citybike': return 'ママチャリ＆その他の自転車';
 		case 'roadbike': return 'ロードバイク';

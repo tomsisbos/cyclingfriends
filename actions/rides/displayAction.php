@@ -21,6 +21,7 @@
 	// Get data from database.
 		// Use "status = status" to display all results in case of no filter
 		// Puts Friends only rides at the top thanks to the order by case query
+		// Then puts opened rides at the top thanks to the order by case query
 		$query = "SELECT * FROM rides WHERE 
 		privacy != 'private'
 			AND 
@@ -48,6 +49,10 @@
 		ORDER BY 
 			(CASE 
 				WHEN privacy = 'friends_only' THEN 0
+				ELSE 1
+			END),
+			(CASE 
+				WHEN entry_end > CURDATE() THEN 0
 				ELSE 1
 			END),
 			date, meeting_time ASC";

@@ -1158,6 +1158,15 @@ a .strava:hover {
     opacity: 1;
 }
 
+.unfilled {
+    color: #ff5555;
+    display: inherit;
+}
+.unfilled::after {
+    content: '入力してください。';
+    padding: 0px 5px;
+}
+
 /* 
 --- Containers ---
 */

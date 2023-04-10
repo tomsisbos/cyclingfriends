@@ -18,29 +18,31 @@ $previous_page = intval($slug) - 1; ?>
 		echo '<div class="container success-block"><p class="success-message">' .$successmessage. '</p></div>';
 	} ?>
 
-	<div class="container"> <?php
-
-		include '../actions/rides/convertIntToStringValuesAction.php'; ?>
+	<div class="container">
 		
 		<!-- Displays the summary -->
 		<h2>About the ride</h2>
 		<div class="row">
-			<div class="col">
+			<div id="date" class="col">
 				<p><strong>開催日 :</strong> <?= $_SESSION['forms']['1']['date'];?></p>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
+			<div id="meeting-time" class="col">
 				<p><strong>集合時間 :</strong> <?= $_SESSION['forms']['1']['meeting-time'];?></p>
 			</div>
 			<div class="col">
-				<p><strong>集合場所 :</strong> <?= $_SESSION['forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
-				<p><strong>解散場所 :</strong> <?= $_SESSION['forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
+				<p id="meetingplace"><strong>集合場所 :</strong> <?= $_SESSION['forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
+				<p id="finishplace"><strong>解散場所 :</strong> <?= $_SESSION['forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
-				<p><strong>出発時間 :</strong> <?= $_SESSION['forms']['1']['departure-time']. " (finish around " .$_SESSION['forms']['1']['finish-time']. ")";?></p>
+			<div id="departure-time" class="col">
+				<p>
+					<strong>出発時間 :</strong>
+					<?= $_SESSION['forms']['1']['departure-time'];
+					if (!empty($_SESSION['forms']['1']['finish-time'])) echo " (" .$_SESSION['forms']['1']['finish-time']. "頃に解散予定)";?>
+				</p>
 			</div>
 		</div>
 		<div class="row">
@@ -49,7 +51,7 @@ $previous_page = intval($slug) - 1; ?>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
+			<div id="level" class="col">
 				<p><strong>レベル :</strong> <?= levelFromArray($_SESSION['forms']['1']['level']); ?></p>
 			</div>
 			<div class="col">
@@ -57,8 +59,8 @@ $previous_page = intval($slug) - 1; ?>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col text-justify">
-				<p><?= nl2br($_SESSION['forms']['1']['ride-description']);?></p>
+			<div id="ride-description" class="col text-justify">
+				<p><strong>紹介文 :</strong><?= nl2br($_SESSION['forms']['1']['ride-description']);?></p>
 			</div>
 		</div>
 
@@ -148,7 +150,7 @@ $previous_page = intval($slug) - 1; ?>
 	<div class="container">
 
 		<h2>About the course</h2>
-		<div class="row"> <?php
+		<div id="distance" class="row"> <?php
 			if (!empty($_SESSION['forms']['2']['distance'])) { ?>
 				<p><strong>距離 :</strong> 
 				<?php 
@@ -157,16 +159,16 @@ $previous_page = intval($slug) - 1; ?>
 				</p> <?php
 			} ?>
 		</div>
-		<div class="row">
+		<div id="terrain" class="row">
 			<p><strong>起伏 :</strong> <?php 
 				if (isset($_SESSION['course']) AND $_SESSION['course']['method'] == 'draw') echo $_SESSION['course']['terrain'];
-				else echo $terrain_value; ?>
+				else echo getTerrainFromValue($terrain_value); ?>
 			</p>
 		</div>
 
 		<div class="row">
-			<div class="col text-justify">
-				<p><?= nl2br($_SESSION['forms']['2']['course-description']);?></p>
+			<div id="course-description" class="col text-justify">
+				<p><strong>紹介文 :</strong><?= nl2br($_SESSION['forms']['2']['course-description']);?></p>
 			</div>
 		</div>	
 		

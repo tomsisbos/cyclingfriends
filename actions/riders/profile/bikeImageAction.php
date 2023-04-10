@@ -1,7 +1,7 @@
 <?php
  
 require '../actions/databaseAction.php';
-require '../includes/functions.php';
+require_once '../includes/functions.php';
 
 if (isset($_FILES['bikeimagefile'])) {
 	

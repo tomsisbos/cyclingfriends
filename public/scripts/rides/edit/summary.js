@@ -13,6 +13,9 @@ CFSession.getSession().then(session => {
     rideMap.session = session
     rideMap.method = session['edit-course'].method
 
+    console.log(session)
+    rideMap.highlightUnfilledFields(rideMap.session['edit-forms'])
+
     // Set default header image to the first checkpoint image set, and select it among thumbnails
     if (defaultSrc) {
         if (session['edit-course'].featuredimage) {

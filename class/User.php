@@ -106,11 +106,8 @@ class User extends Model {
     public function checkIfEmailAlreadyExists ($email) {
         $checkIfEmailAlreadyExists = $this->getPdo()->prepare('SELECT email FROM users WHERE email = ?');
         $checkIfEmailAlreadyExists->execute(array($email));
-        if($checkIfEmailAlreadyExists->rowCount() > 0){
-            return true;
-        }else{
-            return false;
-        }
+        if ($checkIfEmailAlreadyExists->rowCount() > 0) return true;
+        else return false;
     }
 
     public function hasAdministratorRights () {
@@ -125,6 +122,17 @@ class User extends Model {
     
     public function hasEditorRights () {
         if ($this->rights->rank >= 20) return true;
+        else return false;
+    }
+
+    /**
+     * Check if user is registered as a guide in the cyclingfriends guide database
+     * @return boolean
+     */
+    public function isGuide () {
+        $isGuide = $this->getPdo()->prepare("SELECT id FROM user_guides WHERE id = ?");
+        $isGuide->execute([$this->id]);
+        if ($isGuide->rowCount() > 0) return true;
         else return false;
     }
     
@@ -247,7 +255,7 @@ class User extends Model {
     }
 
     public function isFriend ($friend) {
-        require_once $this->root_folder .'/includes/functions.php';
+        require_once User::$root_folder .'/includes/functions.php';
         $friendslist = $this->getFriends();
         if (in_array_r($friend->id, $friendslist)) return true;
         else return false;
@@ -347,7 +355,7 @@ class User extends Model {
     // Function for uploading a profile picture
     function uploadPropic () {
 
-        require_once $this->root_folder .'/includes/functions.php';
+        require_once User::$root_folder .'/includes/functions.php';
         
         // Declaration of variables
         $img_blob   = '';
@@ -382,7 +390,7 @@ class User extends Model {
                 'datetime' => date('Y-m-d H:i:s')
             ];
 
-            require $folder . '/actions/blobStorageAction.php';
+            require User::$root_folder . '/actions/blobStorageAction.php';
             $blobClient->createBlockBlob($this->container_name, $filename, $img_blob);
             $blobClient->setBlobMetadata($this->container_name, $filename, $metadata);
 
@@ -426,8 +434,7 @@ class User extends Model {
             $filename = $getImage->fetch(PDO::FETCH_COLUMN);
 
             // Connect to blob storage
-            $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-            require $folder . '/actions/blobStorageAction.php';
+            require User::$root_folder . '/actions/blobStorageAction.php';
 
             // Retrieve blob url
             return $blobClient->getBlobUrl($this->container_name, $filename);
@@ -502,6 +509,18 @@ class User extends Model {
 
     public function getRidesNumber () {
         $getRides = $this->getPdo()->prepare('SELECT id FROM rides WHERE author_id = ?');
+	    $getRides->execute(array($this->id));
+        return $getRides->rowCount();
+    }
+
+    public function getRideParticipations ($offset = 0, $limit = 20) {
+        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM participation WHERE user_id = ? ORDER BY entry_date DESC LIMIT " .$offset. ", " .$limit);
+	    $getRides->execute(array($this->id));
+        return $getRides->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getRideParticipationsNumber () {
+        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM participation WHERE user_id = ?");
 	    $getRides->execute(array($this->id));
         return $getRides->rowCount();
     }

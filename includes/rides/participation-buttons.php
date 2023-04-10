@@ -28,4 +28,4 @@
 	
 // Script ?>
 
-<script src="/scripts/rides/join.js"></script>
+<script type="module" src="/scripts/rides/join.js"></script>

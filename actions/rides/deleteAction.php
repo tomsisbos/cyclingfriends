@@ -25,7 +25,7 @@ if (isset($_GET['id']) AND !empty($_GET['id'])) {
 			$deleteThisRide = $db->prepare('DELETE FROM rides WHERE id = ?');
 			$deleteThisRide->execute(array($ride_id));
 			
-			header('Location: ' . $connected_user->login . '/rides');
+			header('Location: /ride/organizations');
 		
 		} else {
 		

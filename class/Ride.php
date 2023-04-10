@@ -438,6 +438,8 @@ class Ride extends Model {
         $deleteCheckpoints->execute(array($this->id));
         $deleteChat = $this->getPdo()->prepare('DELETE FROM ride_chat WHERE ride_id = ?');
         $deleteChat->execute(array($this->id));
+        $deleteParticipation = $this->getPdo()->prepare('DELETE FROM participation WHERE ride_id = ?');
+        $deleteParticipation->execute(array($this->id));
         $deleteRide = $this->getPdo()->prepare('DELETE FROM rides WHERE id = ?');
         $deleteRide->execute(array($this->id));
         return true;
@@ -484,8 +486,7 @@ class Ride extends Model {
         $thumbnail_filename = $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
         
         // Connect to blob storage
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require Ride::$root_folder . '/actions/blobStorageAction.php';
 
         // Retrieve blob url
         return $blobClient->getBlobUrl('route-thumbnails', $thumbnail_filename);

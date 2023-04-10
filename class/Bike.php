@@ -95,8 +95,7 @@ class Bike extends Model {
         if (isset($this->filename)) { 
 
             // Connect to blob storage
-            $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-            require $folder . '/actions/blobStorageAction.php';
+            require Bike::$root_folder . '/actions/blobStorageAction.php';
 
             // Retrieve blob url
             echo '<img class="pf-bike-image" src="' .$blobClient->getBlobUrl($this->container_name, $this->filename). '" />';
@@ -127,8 +126,7 @@ class Bike extends Model {
         ];
 
         // Connect to blob storage
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require Bike::$root_folder . '/actions/blobStorageAction.php';
 
         $blobClient->createBlockBlob($this->container_name, $filename, $img_blob);
         $blobClient->setBlobMetadata($this->container_name, $filename, $metadata);

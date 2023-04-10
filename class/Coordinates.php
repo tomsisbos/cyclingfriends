@@ -38,8 +38,7 @@ class Coordinates extends Model {
             'route_id' => $route_id,
         ];
 
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require Coordinates::$root_folder . '/actions/blobStorageAction.php';
         $blobClient->createBlockBlob($container_name, $thumbnail_filename, $stream);
         $blobClient->setBlobMetadata($container_name, $thumbnail_filename, $metadata);
 

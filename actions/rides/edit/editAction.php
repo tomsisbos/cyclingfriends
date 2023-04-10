@@ -164,8 +164,7 @@ if (isset($_POST['validate'])) {
 
 		}
 				
-	} else  $errormessage = "必要な情報（*）を全てご記入ください。";
-				
+	} else  $errormessage = "必要な情報を全てご記入ください。";
 	
 }
 
