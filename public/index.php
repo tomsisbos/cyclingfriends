@@ -1,7 +1,8 @@
 <?php
 require_once '../vendor/autoload.php';
-require_once '../class/Autoloader.php';
-Autoloader::register();
+require_once '../class/CFAutoloader.php';
+CFAutoloader::register();
+include_once("../vendor/phayes/geophp/geoPHP.inc");
 
 $uri = $_SERVER['REQUEST_URI'];
 $router = new AltoRouter();
@@ -45,8 +46,8 @@ $router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
 // World
 $router->map('GET', '/world', 'world/map');
 $router->map('GET', '/segment/[i:segment_id]', 'segments/single', 'segment-single');
-$router->map('GET', '/scenery/[i:mkpoint_id]', 'sceneries/single', 'scenery-single');
-$router->map('GET', '/tag/[a:tag]', 'world/tag', 'tag');
+$router->map('GET', '/scenery/[i:scenery_id]', 'sceneries/single', 'scenery-single');
+$router->map('GET', '/tag/[a:tagcategory]-[a:tagname]', 'world/tag', 'tag');
 
 // Activities
 $router->map('GET', '/activity/[i:activity_id]', 'activities/single', 'activity-single');

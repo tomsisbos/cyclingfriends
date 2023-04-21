@@ -42,7 +42,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.data.photos.forEach( (photo) => {
         photo.datetime = new Date(photo.datetime.date).getTime()
     } )
-    editActivityMap.data.mkpoints = await editActivityMap.loadCloseMkpoints(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
+    editActivityMap.mapdata.sceneries = await editActivityMap.loadCloseSceneries(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
 
     // Display and prefill form
     hideResponseMessage()
@@ -90,10 +90,10 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     
     // Save activity treatment
     document.querySelector('#saveActivity').addEventListener('click', async () => {
-        const photosToShare = null // In case of ride editing, don't check for mkpoints to which add photos
-        if (editActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await editActivityMap.createMkpoints()
-        else var mkpointsToCreate = null
-        editActivityMap.saveActivity(photosToShare, mkpointsToCreate)
+        const photosToShare = null // In case of ride editing, don't check for sceneries to which add photos
+        if (editActivityMap.data.sceneriesToCreate) var sceneriesToCreate = await editActivityMap.createSceneries()
+        else var sceneriesToCreate = null
+        editActivityMap.saveActivity(photosToShare, sceneriesToCreate)
     } )
 
 } )

@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="/assets/css/activity.css">
-<link rel="stylesheet" href="/assets/css/mkpoint.css"> <?php
+<link rel="stylesheet" href="/assets/css/scenery.css"> <?php
 
 define("THREAD_LIMIT", 12);
 define("PREVIEW_PHOTOS_QUANTITY", 5); ?>
@@ -16,13 +16,13 @@ define("PREVIEW_PHOTOS_QUANTITY", 5); ?>
                 include '../includes/activities/card.php'; ?>
             </div> <?php
         
-        // Get mkpoint card if entry type is mkpoint
-        } else if ($entry['type'] == 'mkpoint') {
-            $mkpoint = new Mkpoint($entry['id']);
-            $mkpoint->cleared = $mkpoint->isCleared(); ?>
-            <div class="dashboard-card mkpoint"> 
+        // Get scenery card if entry type is scenery
+        } else if ($entry['type'] == 'scenery') {
+            $scenery = new Scenery($entry['id']);
+            $scenery->cleared = $scenery->isCleared(); ?>
+            <div class="dashboard-card scenery"> 
                 <div class="top-link"><a href="/world">絶景スポット</a></div> <?php
-                include '../includes/mkpoints/card.php'; ?>
+                include '../includes/sceneries/card.php'; ?>
             </div> <?php
         }
 

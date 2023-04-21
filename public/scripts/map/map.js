@@ -22,24 +22,24 @@ CFSession.hasRights('editor').then((response) => {
     if (response === true) worldMap.addEditorControl()
 } )
 
-// Prepare and display mkpoints data
-ajaxGetRequest (worldMap.apiUrl + "?display-mkpoints=details", (mkpoints) => {
-    worldMap.data.mkpoints = mkpoints
-    if (worldMap.displayMkpointsBox.checked) {
-        worldMap.updateMkpoints()
-        worldMap.addFavoriteMkpoints()
+// Prepare and display sceneries data
+ajaxGetRequest (worldMap.apiUrl + "?display-sceneries=details", (sceneries) => {
+    worldMap.mapdata.sceneries = sceneries
+    if (worldMap.displaySceneriesBox.checked) {
+        worldMap.updateSceneries()
+        worldMap.addFavoriteSceneries()
     }
 } )
 
 // Prepare and display segments data
 ajaxGetRequest (worldMap.apiUrl + "?display-segments=true", (segments) => {
-    worldMap.data.segments = segments
+    worldMap.mapdata.segments = segments
     if (worldMap.displaySegmentsBox.checked) worldMap.updateSegments()
 } )
 
 // Prepare and display rides data
 ajaxGetRequest (worldMap.apiUrl + "?display-rides=true", (rides) => {
-    worldMap.data.rides = rides
+    worldMap.mapdata.rides = rides
     if (worldMap.displayRidesBox.checked) worldMap.updateRides()
 } )
 

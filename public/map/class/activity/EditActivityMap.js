@@ -39,7 +39,7 @@ export default class EditActivityMap extends NewActivityMap {
         }
     }
 
-    async saveActivity (mkpointPhotos = null, mkpointsToCreate = null) {
+    async saveActivity (sceneryPhotos = null, sceneriesToCreate = null) {
         return new Promise( async (resolve, reject) => {
             
             // Remove trackpoints and photos data
@@ -52,11 +52,11 @@ export default class EditActivityMap extends NewActivityMap {
                 delete checkpoint.marker
             } )
 
-            // If photos need to be added to a mkpoint, append info data
-            if (mkpointPhotos) cleanData.mkpointPhotos = mkpointPhotos
+            // If photos need to be added to a scenery, append info data
+            if (sceneryPhotos) cleanData.sceneryPhotos = sceneryPhotos
             
-            // If mkpoints need to be created, append data
-            if (mkpointsToCreate) cleanData.mkpointsToCreate = mkpointsToCreate
+            // If sceneries need to be created, append data
+            if (sceneriesToCreate) cleanData.sceneriesToCreate = sceneriesToCreate
 
             // Prepare photo blobs upload
             const photos = this.data.photos

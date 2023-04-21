@@ -12,6 +12,12 @@ include '../includes/head.php'; ?>
 <link rel="stylesheet" href="/assets/css/ride.css" />
 <link rel="stylesheet" href="/assets/css/map.css" />
 
+<style>
+	.with-background-img::before {
+		background: var(--bgImage);
+	}
+</style>
+
 <body> <?php
 
 	// If set as private and connected user does not have admin rights on this ride, redirect to the dashboard
@@ -31,7 +37,8 @@ include '../includes/head.php'; ?>
 		// Space for general error messages
 		include '../includes/result-message.php'; ?>
 
-		<div class="container header" style="background-image: <?= 'url(' .$ride->getFeaturedImage()->url. '); background-size: cover;' ?>">
+		<div class="with-background-img full-header fullwidth js-fade-on-scroll" data-parameter="ride-imgs" data-value="<?= $ride->id ?>" data-overlay-color="#000"></div>
+		<div class="full-header with-background-flash" style="position: relative">
 			<div class="header-block">
 				<div class="header-row mb-2">
 					<div class="rd-status"> <?php
@@ -138,5 +145,7 @@ include '../includes/head.php'; ?>
 </body>
 </html>
 
+<script src="/assets/js/animated-img-background.js"></script>
+<script src="/assets/js/fade-on-scroll.js"></script>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/rides/checkpoints-gallery.js"></script>

@@ -6,8 +6,8 @@ require '../../includes/api-head.php';
 if (isAjax()) {
 
     if (isset($_GET['toggle-scenery'])) {
-        $mkpoint = new Mkpoint($_GET['toggle-scenery']);
-        $response = $mkpoint->toggleFavorites();
+        $scenery = new Scenery($_GET['toggle-scenery']);
+        $response = $scenery->toggleFavorites();
         echo json_encode($response);
     }
 

@@ -145,10 +145,14 @@ if (isset($_POST['validate'])) {
 					$blobClient->createBlockBlob($container_name, $filename, $stream);
 					$blobClient->setBlobMetadata($container_name, $filename, $metadata);
 				}
+
+				// Convert lng and lat to WKT format
+				$lngLat = new LngLat($lng, $lat);
+				$point_wkt = $lngLat->toWKT();
 				
 				// Insert checkpoints in 'ride_checkpoints' table
-				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, filename, img_size, img_name, img_type, lng, lat, elevation, distance, special, city, prefecture, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-				$insert_checkpoints->execute(array($ride_id, $checkpoint_id, $name, $description, $filename, $img_size, $img_name, $img_type, $lng, $lat, $elevation, $distance, $special, $city, $prefecture, $featured));
+				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, filename, img_size, img_name, img_type, elevation, distance, special, city, prefecture, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))');
+				$insert_checkpoints->execute(array($ride_id, $checkpoint_id, $name, $description, $filename, $img_size, $img_name, $img_type, $elevation, $distance, $special, $city, $prefecture, $featured, $point_wkt));
 			}
 
 			// Unset edit forms data

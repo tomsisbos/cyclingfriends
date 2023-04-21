@@ -29,15 +29,15 @@ if (isAjax()) {
                 $activity->user_login = $activity->getAuthor()->login;
                 $activity->propic = $activity->getAuthor()->getPropicHTML();
                 array_push($entries, $activity);
-            // Mkpoint data preparation
-            } else if ($result['type'] === 'mkpoint') {
-                $mkpoint = new Mkpoint($result['id']);
-                $mkpoint->type = 'mkpoint';
-                $mkpoint->cleared = $mkpoint->isCleared();
-                $mkpoint->user_login = $mkpoint->getAuthor()->login;
-                $mkpoint->propic = $mkpoint->getAuthor()->getPropicHTML();
-                $mkpoint->featuredimageUrl = $mkpoint->getImages()[0]->url;
-                array_push($entries, $mkpoint);
+            // Scenery data preparation
+            } else if ($result['type'] === 'scenery') {
+                $scenery = new Scenery($result['id']);
+                $scenery->type = 'scenery';
+                $scenery->cleared = $scenery->isCleared();
+                $scenery->user_login = $scenery->getAuthor()->login;
+                $scenery->propic = $scenery->getAuthor()->getPropicHTML();
+                $scenery->featuredimageUrl = $scenery->getImages()[0]->url;
+                array_push($entries, $scenery);
             }
         }
 

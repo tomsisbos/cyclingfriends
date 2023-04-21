@@ -52,6 +52,9 @@ class Model {
 
     /**
      * Generate a new notification for this instance
+     * @param int $user_id user to notify
+     * @param string $type name of type : type defines notification text content (see Notification::getText() for details)
+     * @param int $actor_id id of related actor, if necessary in notification text content
      */
     public function notify ($user_id, $type, $actor_id = NULL) {
         $notification = new Notification();

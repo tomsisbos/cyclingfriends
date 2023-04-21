@@ -62,13 +62,13 @@ export default class RideDrawMap extends RideMap {
                 document.querySelector('#js-draw .rd-course-fields').style.paddingTop = 'calc(420px + 15vh)'
                 this.profile.generate()
                 this.addStartGoalMarkers()
-                await this.displayCloseMkpoints(0.5)
+                await this.displayCloseSceneries(0.5)
                     .then(async () => {
                         this.profile.clearData()
                         this.profile.generate({
                             poiData: {
                                 rideCheckpoints: this.data.checkpoints,
-                                mkpoints: this.mkpoints
+                                sceneries: this.mapdata.sceneries
                             }
                         })
                     })
@@ -77,73 +77,73 @@ export default class RideDrawMap extends RideMap {
         } )
     }
 
-    async displayCloseMkpoints (range) {
+    async displayCloseSceneries (range) {
         
         return new Promise ( async (resolve, reject) => {
 
-            // Display close mkpoints inside the map
-            ajaxGetRequest ('/api/map.php' + "?display-mkpoints=" + this.route_id + '&details=true', async (response) => {
+            // Display close sceneries inside the map
+            ajaxGetRequest ('/api/map.php' + "?display-sceneries=" + this.route_id + '&details=true', async (response) => {
 
-                this.mkpoints = await this.getClosestMkpoints(response, range)
+                this.mapdata.sceneries = await this.getClosestSceneries(response, range)
 
                 // Display on map
-                this.addMkpoints(this.mkpoints)
+                this.addSceneries(this.mapdata.sceneries)
                 
                 // Display thumbnails
-                // Get mkpoints on route number
-                this.mkpoints.forEach( (mkpoint) => {
-                    if (mkpoint.on_route) this.mkpointsOnRouteNumber++
+                // Get sceneries on route number
+                this.mapdata.sceneries.forEach( (scenery) => {
+                    if (scenery.on_route) this.sceneriesOnRouteNumber++
                 } )
 
-                // Get most relevant image url for each mkpoint and add it to map instance data
-                var closestPhotos = await this.getClosestPhotos(this.mkpoints)
+                // Get most relevant image url for each scenery and add it to map instance data
+                var closestPhotos = await this.getClosestPhotos(this.mapdata.sceneries)
                 closestPhotos.forEach(photo => {
-                    this.mkpoints.forEach(mkpoint => {
-                        if (mkpoint.id == photo.id) mkpoint.url = photo.data.url
+                    this.mapdata.sceneries.forEach(scenery => {
+                        if (scenery.id == photo.id) scenery.url = photo.data.url
                     } )
                 } )
 
-                resolve(this.mkpoints)
+                resolve(this.mapdata.sceneries)
             } )
         } )
     }
 
-    addMkpoints (mkpoints) {
-        mkpoints.forEach( (mkpoint) => {
-            if (mkpoint.on_route) {
-                var content = this.setCheckpointPopupContent(mkpoint.name, mkpoint.description, {button: true})
-                var marker = this.addMkpointMarker(mkpoint, content)
+    addSceneries (sceneries) {
+        sceneries.forEach( (scenery) => {
+            if (scenery.on_route) {
+                var content = this.setCheckpointPopupContent(scenery.name, scenery.description, {button: true})
+                var marker = this.addSceneryMarker(scenery, content)
                 // Save element and its properties for switching to checkpoint
                 var marker_id = marker.getElement().id
                 var formerElement = marker.getElement().cloneNode(true)
                 var formerElementHTML = formerElement.innerHTML
                 var popup = marker.getPopup()
-                // Update profile when a mkpoint is selected
+                // Update profile when a scenery is selected
                 popup.on('open', () => {
-                    // If mkpoint photo is not displayed yet
+                    // If scenery photo is not displayed yet
                     if (!popup.getElement().querySelector('img')) {
-                        // Display mkpoint photo
+                        // Display scenery photo
                         var photoInput = document.createElement('div')
                         photoInput.className = 'checkpoint-popup-img-container'
                         photoInput.innerHTML = '<img class="checkpoint-popup-img" />'
                         popup.getElement().querySelector('.checkpointMarkerForm').before(photoInput)
-                        popup.getElement().querySelector('.checkpoint-popup-img').src = mkpoint.url
+                        popup.getElement().querySelector('.checkpoint-popup-img').src = scenery.url
                         this.profile.generate({
                             poiData: {
                                 rideCheckpoints: this.data.checkpoints,
-                                mkpoints: this.mkpoints
+                                sceneries: this.mapdata.sceneries
                             }
                         })
                         // Add "addToCheckpoints" button click event handler
                         var $button = popup._content.querySelector('#addToCheckpoints')
                         $button.addEventListener('click', async (e) => {
                             var $button = e.target
-                            // If this mkpoint have not been added to checkpoints yet, add it
+                            // If this scenery have not been added to checkpoints yet, add it
                             if ($button.innerText == 'チェックポイントに追加') {
                                 // Change button text
                                 $button.innerText = 'チェックポイントから除外'
                                 // Allow checkpoint content edition
-                                var formContent = this.setCheckpointFormContent(mkpoint.name, mkpoint.description, {editable: true, button: true})
+                                var formContent = this.setCheckpointFormContent(scenery.name, scenery.description, {editable: true, button: true})
                                 popup.getElement().querySelector('.checkpointMarkerForm').innerHTML = formContent
                                 // Update and upload checkpoints basic data
                                 // Insert new checkpoint
@@ -156,7 +156,7 @@ export default class RideDrawMap extends RideMap {
                                     marker
                                 } )
                                 // Sort checkpoints
-                                var current = {lng: mkpoint.lng, lat: mkpoint.lat}
+                                var current = {lng: scenery.lng, lat: scenery.lat}
                                 await this.sortCheckpoints()
                                 var number = this.getCheckpointNumber(this.data.checkpoints, current)
                                 this.updateMarkers()
@@ -172,18 +172,18 @@ export default class RideDrawMap extends RideMap {
                                 // Set data
                                 this.setData(number)
                                 this.cursor++
-                            // If this mkpoint have been added to checkpoints, remove it
+                            // If this scenery have been added to checkpoints, remove it
                             } else {
                                 var number = parseInt(marker.getElement().innerText)
                                 // Change button text
                                 $button.innerText = 'チェックポイントに追加'
                                 // Disable checkpoint content edition
-                                var formContent = this.setCheckpointFormContent(mkpoint.name, mkpoint.description, {editable: false, button: true})
+                                var formContent = this.setCheckpointFormContent(scenery.name, scenery.description, {editable: false, button: true})
                                 popup.getElement().querySelector('.checkpointMarkerForm').innerHTML = formContent
                                 // Update markers
                                 this.updateMarkers()
                                 // Remove checkpoint element and display former one back
-                                marker.getElement().className = 'mkpoint-marker'
+                                marker.getElement().className = 'scenery-marker'
                                 marker.getElement().id = marker_id
                                 marker.getElement().innerHTML = formerElementHTML
                                 // Remove this checkpoint data
@@ -200,7 +200,7 @@ export default class RideDrawMap extends RideMap {
                             this.profile.generate({
                                 poiData: {
                                     rideCheckpoints: this.data.checkpoints,
-                                    mkpoints: this.mkpoints
+                                    sceneries: this.mapdata.sceneries
                                 }
                             })
                         } )
@@ -211,12 +211,12 @@ export default class RideDrawMap extends RideMap {
         } )
     }
 
-    addMkpointMarker (mkpoint, content) {
+    addSceneryMarker (scenery, content) {
         let element = document.createElement('div')
         let icon = document.createElement('img')
-        icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
-        icon.classList.add('mkpoint-icon')
-        if (mkpoint.on_route === true) icon.classList.add('oncourse-marker')
+        icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+        icon.classList.add('scenery-icon')
+        if (scenery.on_route === true) icon.classList.add('oncourse-marker')
         element.appendChild(icon)
         this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
@@ -226,26 +226,26 @@ export default class RideDrawMap extends RideMap {
             element: element
         } )
 
-        var content = this.setCheckpointPopupContent(mkpoint.name, mkpoint.description, {editable: false, button: true})
+        var content = this.setCheckpointPopupContent(scenery.name, scenery.description, {editable: false, button: true})
         let popupInstance = new Popup({closeButton: false, maxWidth: '180px'}, {markerHeight: 24})
         let popup = popupInstance.popup
         popup.setHTML(content)
         marker.setPopup(popup)
-        marker.setLngLat([mkpoint.lng, mkpoint.lat])
+        marker.setLngLat([scenery.lng, scenery.lat])
         marker.addTo(this.map)
-        marker.getElement().id = 'mkpoint' + mkpoint.id
-        marker.getElement().className = 'mkpoint-marker'
-        marker.getElement().dataset.id = mkpoint.id
-        marker.getElement().dataset.user_id = mkpoint.user_id
+        marker.getElement().id = 'scenery' + scenery.id
+        marker.getElement().className = 'scenery-marker'
+        marker.getElement().dataset.id = scenery.id
+        marker.getElement().dataset.user_id = scenery.user_id
         popup.on('open', (e) => {
             // Add 'selected-marker' class to selected marker
-            document.getElementById('mkpoint' + mkpoint.id).firstChild.classList.add('selected-marker')
+            document.getElementById('scenery' + scenery.id).firstChild.classList.add('selected-marker')
         } )
         popup.on('close', (e) => {
             // Remove 'selected-marker' class from selected marker if there is one
-            if (document.getElementById('mkpoint' + mkpoint.id)) {
-                if (document.getElementById('mkpoint' + mkpoint.id).firstChild.classList) { // Ensure first child is an element
-                    document.getElementById('mkpoint' + mkpoint.id).firstChild.classList.remove('selected-marker')
+            if (document.getElementById('scenery' + scenery.id)) {
+                if (document.getElementById('scenery' + scenery.id).firstChild.classList) { // Ensure first child is an element
+                    document.getElementById('scenery' + scenery.id).firstChild.classList.remove('selected-marker')
                 }
             }
         } )
@@ -390,7 +390,7 @@ export default class RideDrawMap extends RideMap {
         this.profile.generate({
             poiData: {
                 rideCheckpoints: this.data.checkpoints,
-                mkpoints: this.mkpoints
+                sceneries: this.mapdata.sceneries
             }
         })
     }
@@ -420,7 +420,7 @@ export default class RideDrawMap extends RideMap {
         this.profile.generate({
             poiData: {
                 rideCheckpoints: this.data.checkpoints,
-                mkpoints: this.mkpoints
+                sceneries: this.mapdata.sceneries
             }
         })
     }

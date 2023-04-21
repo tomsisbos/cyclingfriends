@@ -35,8 +35,6 @@ switch(CFG_STAGE_ID)
 		}
         $ride_infos = $_SESSION['forms'][1];
 		$course_infos = $_SESSION['forms'][2];
-        ///var_dump($ride_infos);
-        ///var_dump($course_infos);
  
         // Displays summary page
         require('../includes/rides/new/summary.php');

@@ -1,24 +1,89 @@
 <?php
 
-class Coordinates extends Model {
+class CFLinestring extends Model {
     
+    protected $table = 'linestrings';
     public $coordinates = [];
     public $time = [];
+    public $length = 0;
     
-    function __construct ($coordinates, $time = NULL) {
+    function __construct ($coordinates = NULL, $time = NULL) {
         parent::__construct();
-        forEach($coordinates as $lngLat) {
-            $lngLat = new LngLat($lngLat[0], $lngLat[1]);
-            array_push($this->coordinates, $lngLat);
-        }
-        if ($time) {
-            forEach($time as $datetimestamp) {
-                $datetime = new DateTime();
-                $datetime->setTimestamp($datetimestamp / 1000);
-                $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-                array_push($this->time, $datetime->format('Y-m-d H:i:s'));
+        if ($coordinates) {
+            forEach($coordinates as $lngLat) {
+                $lngLat = new LngLat($lngLat[0], $lngLat[1]);
+                array_push($this->coordinates, $lngLat);
             }
+            $this->length = count($coordinates);
         }
+        if ($time) forEach($time as $datetimestamp) {
+            $datetime = new DateTime();
+            $datetime->setTimestamp($datetimestamp / 1000);
+            $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+            array_push($this->time, $datetime);
+        }
+    }
+
+    /**
+     * Returns a json array of timestamps
+     */
+    private function timeToJson () {
+        $timestamps = array_map(function ($datetime) {
+            return $datetime->getTimestamp();
+        }, $this->time);
+        return json_encode($timestamps);
+    }
+
+    /**
+     * Save linestring in database
+     * @param int $segment_id id of segment to refer to
+     */
+    private function saveLinestring ($segment_id) {
+        if ($this->time == null) {
+            $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring) VALUES (?, ST_LineStringFromText(?))");
+            $save->execute([$segment_id, $this->toWKT()]);
+        } else {
+            $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring, timearray) VALUES (?, ST_LineStringFromText(?), ?)");
+            $save->execute([$segment_id, $this->toWKT(), $this->timeToJson()]);
+        }
+    }
+    
+    /**
+     * Returns a linestring at WKT format
+     */
+    protected function toWKT () {
+        $linestring_wkt = 'LINESTRING(';
+        for ($i = 0; $i < count($this->coordinates); $i++) {
+            if ($i > 0) $linestring_wkt .= ', ';
+            $linestring_wkt .= $this->coordinates[$i]->lng. ' ' .$this->coordinates[$i]->lat;
+        }
+        $linestring_wkt .= ')';
+        return $linestring_wkt;
+    }
+
+    /**
+     * Loads coordinates from a WKT formatted point
+     * @param string $linestring_wkt the string to convert
+     */
+    public function fromWKT ($linestring_wkt) {
+        $linestring = geoPHP::load($linestring_wkt, 'wkt');
+        $i = 1;
+        $coordinates = [];
+        while ($point = $linestring->pointN($i)) {
+            array_push($coordinates, new LngLat($point->getX(), $point->gety()));
+            $i++;
+        }
+        $this->coordinates = $coordinates;
+    }
+
+    /**
+     * Get coordinates as a numeric array 
+     */
+    public function getArray () {
+        $array = array_map(function ($lngLat) {
+            return $lngLat->getArray();
+        }, $this->coordinates);
+        return $array;
     }
 
     // Create a route from these coordinates
@@ -38,41 +103,22 @@ class Coordinates extends Model {
             'route_id' => $route_id,
         ];
 
-        require Coordinates::$root_folder . '/actions/blobStorageAction.php';
+        require CFLinestring::$root_folder . '/actions/blobStorageAction.php';
         $blobClient->createBlockBlob($container_name, $thumbnail_filename, $stream);
         $blobClient->setBlobMetadata($container_name, $thumbnail_filename, $metadata);
 
         // If creation
         if ($route_id == 'new') {
+
             // Save route summary
             $posting_date = date('Y-m-d H:i:s');
             $insertRoute = $this->getPdo()->prepare('INSERT INTO routes(author_id, category, posting_date, name, description, distance, elevation, startplace, goalplace, thumbnail_filename) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insertRoute->execute(array($author_id, $category, $posting_date, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename));
-            // Save route coords
+            
+            // Get route id
             $getRouteId = $this->getPdo()->prepare('SELECT id FROM routes WHERE author_id = ? AND posting_date = ? AND name = ?');
             $getRouteId->execute(array($author_id, $posting_date, $name));
             $route_id = $getRouteId->fetch(PDO::FETCH_COLUMN);
-            
-            if ($this->time != NULL) $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat, datetime) VALUES (?, ?, ?, ?, ?)');
-            else $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
-            for ($i = 0; $i < count($this->coordinates); $i++) {
-                if (is_int($i / 250) && $loading_record !== NULL) $loading_record->setStatus('pending', 'ルートデータ保存中...' . ' (' . intval($i * 100 / count($this->coordinates)) . '%)'); // If loading record has been passed as an argument, set a new status every 250 coords
-                if (count($this->coordinates) < 1000 || count($this->coordinates) > 1000 && is_int($i / 2)) { // Skip 1/2 coordinates if more than 1000 for performance reasons
-                    if ($this->time != NULL) $insertCoords->execute(array($route_id, $i, $this->coordinates[$i]->lng, $this->coordinates[$i]->lat, $this->time[$i]));
-                    else $insertCoords->execute(array($route_id, $i, $this->coordinates[$i]->lng, $this->coordinates[$i]->lat));
-                }
-            }
-
-            // Save tunnels coords
-            if (!empty($tunnels)) for ($tunnels_cursor = 0; $tunnels_cursor < count($tunnels); $tunnels_cursor++) {
-                for ($coords_cursor = 0; $coords_cursor < count($tunnels[$tunnels_cursor]); $coords_cursor++) {
-                    $lng = $tunnels[$tunnels_cursor][$coords_cursor][0];
-                    $lat = $tunnels[$tunnels_cursor][$coords_cursor][1];
-                    $insertCoords = $this->getPdo()->prepare('INSERT INTO tunnels(tunnel_id, number, segment_id, lng, lat) VALUES (?, ?, ?, ?, ?)');
-                    $insertCoords->execute(array($tunnels_cursor, $coords_cursor, $route_id, $lng, $lat));
-                }
-            }
-            return $route_id;
         
         // If update
         } else {
@@ -84,28 +130,23 @@ class Coordinates extends Model {
                 $updateRoute = $this->getPdo()->prepare('UPDATE routes SET category = ?, name = ?, description = ?, distance = ?, elevation = ?, startplace = ?, goalplace = ? WHERE id = ?');
                 $updateRoute->execute(array($category, $name, $description, $distance, $elevation, $startplace, $goalplace, $route_id));
             }
-            // Update route coords
-            $deletePreviousCoords = $this->getPdo()->prepare('DELETE FROM coords WHERE segment_id = ?');
-            $deletePreviousCoords->execute(array($route_id));
-            $insertCoords = $this->getPdo()->prepare('INSERT INTO coords(segment_id, number, lng, lat) VALUES (?, ?, ?, ?)');
-            for ($i = 0; $i < count($this->coordinates); $i++) {
-                $number = $i;
-                $lng    = $this->coordinates[$i]->lng;
-                $lat    = $this->coordinates[$i]->lat;
-                $insertCoords->execute(array($route_id, $number, $lng, $lat));
-            }
-            // Save tunnels coords
+            // Delete previous linestring
+            $deletePreviousLinestring = $this->getPdo()->prepare('DELETE FROM linestrings WHERE segment_id = ?');
+            $deletePreviousLinestring->execute(array($route_id));
+            // Delete previous tunnels
             $deletePreviousTunnels = $this->getPdo()->prepare('DELETE FROM tunnels WHERE segment_id = ?');
             $deletePreviousTunnels->execute(array($route_id));
-            $insertCoords = $this->getPdo()->prepare('INSERT INTO tunnels(tunnel_id, number, segment_id, lng, lat) VALUES (?, ?, ?, ?, ?)');
-            for ($tunnels_cursor = 0; $tunnels_cursor < count($tunnels); $tunnels_cursor++) {
-                for ($coords_cursor = 0; $coords_cursor < count($tunnels[$tunnels_cursor]); $coords_cursor++) {
-                    $lng = $tunnels[$tunnels_cursor][$coords_cursor][0];
-                    $lat = $tunnels[$tunnels_cursor][$coords_cursor][1];
-                    $insertCoords->execute(array($tunnels_cursor, $coords_cursor, $route_id, $lng, $lat));
-                }
-            }
         }
+        
+        // Save tunnels
+        for ($i = 0; $i < count($tunnels); $i++) {
+            $tunnel = new Tunnel($tunnels[$i]);
+            $tunnel->saveTunnel($route_id, $i);
+        }
+        
+        // Save linestring
+        $this->saveLinestring($route_id);
+        
         return $route_id;
     }
 

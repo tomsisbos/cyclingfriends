@@ -5,33 +5,35 @@ use Location\Line;
 use Location\Distance\Vincenty;
 use Location\Utility\PointToLineDistance;
 
-class Mkpoint extends Model {
+class Scenery extends Model {
     
-    protected $table = 'map_mkpoint';
+    protected $table = 'sceneries';
     
     function __construct($id = NULL) {
         parent::__construct();
         $this->id               = $id;
         $this->type             = 'scenery';
         $this->container_name   = 'scenery-photos';
-        $data = $this->getData($this->table);
-        $this->user_id          = $data['user_id'];
-        $this->category         = $data['category'];
-        $this->name             = $data['name'];
-        $this->city             = $data['city'];
-        $this->prefecture       = $data['prefecture'];
-        $this->elevation        = $data['elevation'];
-        $this->date             = $data['date'];
-        $this->period           = $this->getPeriod();
-        $this->month            = $data['month'];
-        $this->description      = $data['description'];
-        $this->thumbnail        = $data['thumbnail'];
-        $this->lngLat           = new LngLat($data['lng'], $data['lat']);
-        $this->publication_date = new Datetime($data['publication_date']);
-        $this->rating           = $data['rating'];
-        $this->grades_number    = $data['grades_number'];
-        $this->popularity       = $data['popularity'];
-        $this->likes            = $data['likes'];
+        if ($id != NULL) {
+            $data = $this->getData($this->table);
+            $this->user_id          = $data['user_id'];
+            $this->category         = $data['category'];
+            $this->name             = $data['name'];
+            $this->city             = $data['city'];
+            $this->prefecture       = $data['prefecture'];
+            $this->elevation        = $data['elevation'];
+            $this->date             = $data['date'];
+            $this->period           = $this->getPeriod();
+            $this->month            = $data['month'];
+            $this->description      = $data['description'];
+            $this->thumbnail        = $data['thumbnail'];
+            $this->lngLat           = $this->getLngLat();
+            $this->publication_date = new Datetime($data['publication_date']);
+            $this->rating           = $data['rating'];
+            $this->grades_number    = $data['grades_number'];
+            $this->popularity       = $data['popularity'];
+            $this->likes            = $data['likes'];
+        }
     }
 
     private function getPeriod() {
@@ -61,43 +63,99 @@ class Mkpoint extends Model {
         return $month . $third;
     }
 
+    private function getLngLat () {
+        $getPointToText = $this->getPdo()->prepare("SELECT ST_AsText(point) FROM {$this->table} WHERE id = ?");
+        $getPointToText->execute([$this->id]);
+        $point_text = $getPointToText->fetch(PDO::FETCH_COLUMN);
+        $lngLat = new LngLat();
+        $lngLat->fromWKT($point_text);
+        return $lngLat;
+    }
+
     public function getAuthor () {
         return new User($this->user_id);
     }
 
+    /**
+     * Register a new scenery entry in the database based on $scenery_data
+     * @param array $scenery_data array containing necessary data (scenery data, scenery photos data, scenery tags data)
+     */
+    public function create ($scenery_data) {
+
+        // Convert lng and lat to WKT format
+        $lngLat = new LngLat($scenery_data['lng'], $scenery_data['lat']);
+        $point_wkt = $lngLat->toWKT();
+
+        // Insert scenery data
+        $insertSceneryData = $this->getPdo()->prepare("INSERT INTO sceneries (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, thumbnail, publication_date, popularity, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
+        $insertSceneryData->execute(array($scenery_data['user_id'], $scenery_data['user_login'], $scenery_data['category'], $scenery_data['name'], $scenery_data['city'], $scenery_data['prefecture'], $scenery_data['elevation'], $scenery_data['date']->format('Y-m-d H:i:s'), $scenery_data['month'], $scenery_data['description'], $scenery_data['thumbnail'], $scenery_data['lng'], $scenery_data['lat'], $scenery_data['publication_date'], $scenery_data['popularity'], $point_wkt));
+
+        // Connect to blob storage
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorageAction.php';
+
+        // Insert photos data
+        $scenery_data['id'] = getNextAutoIncrement($this->table);
+        foreach ($scenery_data['photos'] as $photo) {
+            $insertPhotos = $this->getPdo()->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+            $insertPhotos->execute(array($scenery_data['id'], $scenery_data['user_id'], $scenery_data['date']->format('Y-m-d H:i:s'), 0, $photo['filename']));
+            
+            // Send file to blob storage
+            $containername = 'scenery-photos';
+            $blobClient->createBlockBlob($containername, $photo['filename'], $photo['blob']);
+            // Set file metadata
+            $metadata = [
+                'file_name' => $photo['name'],
+                'file_type' => $photo['type'],
+                'file_size' => $photo['size'],
+                'scenery_id' => $scenery_data['id'],
+                'author_id' => $scenery_data['user_id'],
+                'date' => $scenery_data['publication_date'],
+                'lat' => $scenery_data['lat'],
+                'lng' => $scenery_data['lng']
+            ];
+            $blobClient->setBlobMetadata($containername, $photo['filename'], $metadata);
+        }
+
+        // Insert tags data
+        if (!empty($scenery_data['tags'][0])) {
+            foreach ($scenery_data['tags'] as $tag) {
+                $insertTag = $this->getPdo()->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
+                $insertTag->execute(array('scenery', $scenery_data['id'], $tag));
+            }
+        }
+    }
+
     public function delete () {
         // Connect to blob storage and delete relevant blobs
-        require Mkpoint::$root_folder . '/actions/blobStorageAction.php';
+        require Scenery::$root_folder . '/actions/blobStorageAction.php';
         foreach ($this->getImages() as $photo) $blobClient->deleteBlob($this->container_name, $photo->filename);
 
         // Remove database entry
-        $removeMkpointPhoto = $this->getPdo()->prepare('DELETE FROM img_mkpoint WHERE id = ?');
-        foreach ($this->getImages() as $photo) $removeMkpointPhoto->execute(array($photo->id));
+        $removeSceneryPhoto = $this->getPdo()->prepare('DELETE FROM scenery_photos WHERE id = ?');
+        foreach ($this->getImages() as $photo) $removeSceneryPhoto->execute(array($photo->id));
 
-        // Remove mkpoint data
-        $removeMkpoint = $this->getPdo()->prepare('DELETE FROM map_mkpoint WHERE id = ?');
-        $removeMkpoint->execute(array($this->id));
+        // Remove scenery data
+        $removeScenery = $this->getPdo()->prepare('DELETE FROM sceneries WHERE id = ?');
+        $removeScenery->execute(array($this->id));
         // Remove favorite data
-        $removeMkpointFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE object_type = ? AND object_id = ?');
-        $removeMkpointFavorites->execute(array('scenery', $this->id));
-        // Remove user scenery data
-        $removeUserMkpoint = $this->getPdo()->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
-        $removeUserMkpoint->execute(array($this->id));
+        $removeSceneryFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE object_type = ? AND object_id = ?');
+        $removeSceneryFavorites->execute(array('scenery', $this->id));
         // Remove photo data
-        $removeMkpointPhotos = $this->getPdo()->prepare('DELETE FROM img_mkpoint WHERE mkpoint_id = ?');
-        $removeMkpointPhotos->execute(array($this->id));
+        $removeSceneryPhotos = $this->getPdo()->prepare('DELETE FROM scenery_photos WHERE scenery_id = ?');
+        $removeSceneryPhotos->execute(array($this->id));
         // Remove tags data
-        $removeMkpointTags = $this->getPdo()->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
-        $removeMkpointTags->execute(array('scenery', $this->id));
+        $removeSceneryTags = $this->getPdo()->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
+        $removeSceneryTags->execute(array('scenery', $this->id));
     }
 
     public function getReviews () {
-        $getReviews = $this->getPdo()->prepare('SELECT id FROM mkpoint_reviews WHERE mkpoint_id = ? ORDER BY time DESC');
+        $getReviews = $this->getPdo()->prepare('SELECT id FROM scenery_reviews WHERE scenery_id = ? ORDER BY time DESC');
         $getReviews->execute(array($this->id));
         $reviews_data = $getReviews->fetchAll(PDO::FETCH_ASSOC);
         $reviews = [];
         foreach ($reviews_data as $review_data) {
-            array_push($reviews, new MkpointReview($review_data['id']));
+            array_push($reviews, new SceneryReview($review_data['id']));
         }
         return $reviews;
     }
@@ -113,17 +171,17 @@ class Mkpoint extends Model {
         if (!empty($reviews)) {
             // ..and if content is not empty, update it
             if (!empty($content)) {
-                $updateReview = $this->getPdo()->prepare('UPDATE mkpoint_reviews SET content = ?, time = ? WHERE mkpoint_id = ? AND user_id = ?');
+                $updateReview = $this->getPdo()->prepare('UPDATE scenery_reviews SET content = ?, time = ? WHERE scenery_id = ? AND user_id = ?');
                 $updateReview->execute(array($content, $time, $this->id, $connected_user->id));
             // ..and if content is empty, delete it
             } else {
-                $deleteReview = $this->getPdo()->prepare('DELETE FROM mkpoint_reviews WHERE mkpoint_id = ? AND user_id = ?');
+                $deleteReview = $this->getPdo()->prepare('DELETE FROM scenery_reviews WHERE scenery_id = ? AND user_id = ?');
                 $deleteReview->execute(array($this->id, $connected_user->id));
             }
 
-        // Else, insert into mkpoint_reviews table
+        // Else, insert into scenery_reviews table
         } else {
-            $insertReview = $this->getPdo()->prepare('INSERT INTO mkpoint_reviews(mkpoint_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
+            $insertReview = $this->getPdo()->prepare('INSERT INTO scenery_reviews(scenery_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
             $insertReview->execute(array($this->id, $connected_user->id, $connected_user->login, $content, $time));
             $this->notify($this->user_id, 'scenery_review_posting');
         }
@@ -145,7 +203,7 @@ class Mkpoint extends Model {
 
     // Get connected user's vote information
     public function getUserVote ($user) {
-        $checkUserVote = $this->getPdo()->prepare('SELECT grade FROM grade_mkpoint WHERE mkpoint_id = ? AND user_id = ?');
+        $checkUserVote = $this->getPdo()->prepare('SELECT grade FROM scenery_grades WHERE scenery_id = ? AND user_id = ?');
         $checkUserVote->execute(array($this->id, $user->id));
         if ($checkUserVote->rowCount() > 0) {
             $vote_infos = $checkUserVote->fetch(PDO::FETCH_ASSOC);
@@ -156,20 +214,20 @@ class Mkpoint extends Model {
     }
 
     public function getUserReview ($user) {
-        $getUserReview = $this->getPdo()->prepare('SELECT id FROM mkpoint_reviews WHERE mkpoint_id = ? AND user_id = ?');
+        $getUserReview = $this->getPdo()->prepare('SELECT id FROM scenery_reviews WHERE scenery_id = ? AND user_id = ?');
         $getUserReview->execute(array($this->id, $user->id));
         $review_id = $getUserReview->fetch(PDO::FETCH_COLUMN);
-        if ($review_id) return new MkpointReview($review_id);
+        if ($review_id) return new SceneryReview($review_id);
         else return false;
     }
 
-    // Get mkpoint images
+    // Get scenery images
     public function getImages ($number = 99) {
-        $getImages = $this->getPdo()->prepare("SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY likes LIMIT {$number}");
+        $getImages = $this->getPdo()->prepare("SELECT id FROM scenery_photos WHERE scenery_id = ? ORDER BY likes LIMIT {$number}");
         $getImages->execute(array($this->id));
         $images_data = $getImages->fetchAll(PDO::FETCH_ASSOC);
         $images = [];
-        for ($i = 0; $i < count($images_data); $i++) array_push($images, new MkpointImage($images_data[$i]['id']));
+        for ($i = 0; $i < count($images_data); $i++) array_push($images, new SceneryImage($images_data[$i]['id']));
         // Sort images by likes number
         usort($images, function ($a, $b) {
             return ($b->likes <=> $a->likes);
@@ -233,10 +291,16 @@ class Mkpoint extends Model {
     }
 
     public function isCleared () {
-        $isCleared = $this->getPdo()->prepare('SELECT DISTINCT activity_id FROM user_mkpoints WHERE user_id = ? AND mkpoint_id = ?');
-        $isCleared->execute(array($_SESSION['id'], $this->id));
-        if ($isCleared->rowCount() > 0) return $isCleared->fetch(PDO::FETCH_NUM)[0];
-        else return false;
+        return false;/// To implement
+    }
+
+    /**
+     * Change scenery location
+     * @param LngLat new location coordinates
+     */
+    public function move ($lngLat) {
+        $move = $this->getPdo()->prepare("UPDATE {$this->table} SET point = ST_GeomFromText(?) WHERE id = ?");
+        $move->execute([$lngLat->toWKT(), $this->id]);
     }
 
 }

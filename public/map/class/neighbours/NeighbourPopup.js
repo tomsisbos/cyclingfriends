@@ -49,8 +49,6 @@ export default class AmenityPopup extends Popup {
                 </div>
                 <div class="popup-description">
                     <div class="nbr-popup-line">アクティビティ数 : ` + data.activitiesNumber + `</div>
-                    <div class="nbr-popup-line">訪問済み絶景スポット : ` + data.clearedMkpointsNumber + `</div>
-                    <div class="nbr-popup-line">走行済みセグメント : ` + data.clearedSegmentsNumber + `</div>
                 </div>
             </div>`)
 

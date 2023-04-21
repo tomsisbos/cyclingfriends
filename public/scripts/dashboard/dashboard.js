@@ -45,7 +45,7 @@ function buildLink (entry) {
     if (entry.type === 'activity') {
         var title = 'アクティビティ'
         var url = 'activities'
-    } else if (entry.type === 'mkpoint') {
+    } else if (entry.type === 'scenery') {
         var title = '絶景スポット'
         var url = 'world'
     }
@@ -141,9 +141,9 @@ function buildCard (entry) {
         $card.appendChild($mainContainer)
         $card.appendChild($photosContainer)
 
-    } else if (entry.type === 'mkpoint') {
+    } else if (entry.type === 'scenery') {
 
-        var mkpoint = entry
+        var scenery = entry
 
         // Build cleared icon
         if (entry.cleared) {
@@ -159,20 +159,20 @@ function buildCard (entry) {
         var $card = document.createElement('div')
         $card.className = 'mk-card'
         $card.innerHTML = `
-        <div class="mk-photo"><img src="` + mkpoint.featuredimageUrl + `"></div>
+        <div class="mk-photo"><img src="` + scenery.featuredimageUrl + `"></div>
         <div class="mk-data">
             <div class="mk-top">
-                <a href="/rider/` + mkpoint.user_id + `">` +
-                    mkpoint.propic + `
+                <a href="/rider/` + scenery.user_id + `">` +
+                    scenery.propic + `
                 </a>
                 <div class="mk-top-text">
-                    <a href="/scenery/` + mkpoint.id + `">
-                        <div class="mk-title">` + mkpoint.name + `</div>
+                    <a href="/scenery/` + scenery.id + `">
+                        <div class="mk-title">` + scenery.name + `</div>
                     </a>` + clearedIcon + `
-                    <div class="mk-place-elevation">` + mkpoint.city + `(` + mkpoint.prefecture + `) - ` + mkpoint.elevation + `m</div>
+                    <div class="mk-place-elevation">` + scenery.city + `(` + scenery.prefecture + `) - ` + scenery.elevation + `m</div>
                 </div>
             </div>
-            <div class="mk-description">` + mkpoint.description + `</div>
+            <div class="mk-description">` + scenery.description + `</div>
         </div>`
     }
 

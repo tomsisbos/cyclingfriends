@@ -108,10 +108,10 @@ async function displayForm () {
             
             // Add checkpoint on click
             map.on('click', (e) => {
-                // Prevent from adding a marker if a mkpoint or another marker is on the path
+                // Prevent from adding a marker if a scenery or another marker is on the path
                 var markerIncludedOnPath = false
                 e.originalEvent.composedPath().forEach( (element) => {
-                    if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('mkpoint-marker'))) markerIncludedOnPath = true
+                    if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('scenery-marker'))) markerIncludedOnPath = true
                 } )
                 // Add checkpoint
                 if (!markerIncludedOnPath) ridePickMap.addMarker(e.lngLat)
@@ -165,7 +165,7 @@ async function displayForm () {
             } )
             selectRoute.onchange = async () => {
                 rideDrawMap.clearMarkers()
-                rideDrawMap.hideMkpoints()
+                rideDrawMap.hideSceneries()
                 await rideDrawMap.loadRoute(selectRoute.value)
                 await rideDrawMap.sortCheckpoints()
                 rideDrawMap.treatRouteChange()
@@ -187,7 +187,7 @@ async function displayForm () {
 
             // Add checkpoint on click
             map.on('click', 'route', (e) => {
-                // Prevent from adding a marker if a mkpoint or another marker is on the path
+                // Prevent from adding a marker if a scenery or another marker is on the path
                 var markerIncludedOnPath = false
                 e.originalEvent.composedPath().forEach( (element) => {
                     if (element.classList && element.classList.contains('mapboxgl-marker')) markerIncludedOnPath = true

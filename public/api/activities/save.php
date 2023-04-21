@@ -35,7 +35,7 @@ if (is_array($data)) {
         $tunnels     = [];
 
         // Insert data in 'routes' table
-        $routeCoordinates = new Coordinates($data['routeData']['geometry']['coordinates'], $data['routeData']['properties']['time']);
+        $routeCoordinates = new CFLinestring($data['routeData']['geometry']['coordinates'], $data['routeData']['properties']['time']);
         $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels, $loading_record);
 
         // Build activity data
@@ -67,32 +67,32 @@ if (is_array($data)) {
         // Build checkpoints data
         $loading_record->setStatus('pending', 'チェックポイントデータ保存中...');
         foreach ($data['checkpoints'] as $checkpoint) {
-            $number = $checkpoint['number'];
-            $name = $checkpoint['name'];
-            $type = $checkpoint['type'];
-            $story = $checkpoint['story'];
-            $datetime = new DateTime();
-            $datetime->setTimestamp($checkpoint['datetime'] / 1000);
-            $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+            $checkpoint_data['activity_id'] = $activity_id;
+            $checkpoint_data['number'] = $checkpoint['number'];
+            $checkpoint_data['name'] = $checkpoint['name'];
+            $checkpoint_data['type'] = $checkpoint['type'];
+            $checkpoint_data['story'] = $checkpoint['story'];
+            $checkpoint_data['datetime'] = new DateTime();
+            $checkpoint_data['datetime']->setTimestamp($checkpoint['datetime'] / 1000);
+            $checkpoint_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             if (isset($checkpoint['geolocation'])) {
-                $city = $checkpoint['geolocation']['city'];
-                $prefecture = $checkpoint['geolocation']['prefecture'];
+                $checkpoint_data['city'] = $checkpoint['geolocation']['city'];
+                $checkpoint_data['prefecture'] = $checkpoint['geolocation']['prefecture'];
             } else {
-                $city = NULL;
-                $prefecture = NULL;
+                $checkpoint_data['city'] = NULL;
+                $checkpoint_data['prefecture'] = NULL;
             }
-            $elevation = $checkpoint['elevation'];
-            $distance = ceil($checkpoint['distance'] * 10) / 10;
-            $temperature = $checkpoint['temperature'];
-            $lng = $checkpoint['lngLat']['lng'];
-            $lat = $checkpoint['lngLat']['lat'];
-            if ($number == 0) $special = 'start';
-            else if ($number == count($data['checkpoints']) - 1) $special = 'goal';
-            else $special = NULL;
-            
-            // Insert checkpoints in 'activity_checkpoints' table
-            $insert_checkpoints = $db->prepare('INSERT INTO activity_checkpoints(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, lng, lat, special) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insert_checkpoints -> execute(array($activity_id, $number, $name, $type, $story, $datetime->format('Y-m-d H:i:s'), $city, $prefecture, $elevation, $distance, $temperature, $lng, $lat, $special));
+            $checkpoint_data['elevation'] = $checkpoint['elevation'];
+            $checkpoint_data['distance'] = ceil($checkpoint['distance'] * 10) / 10;
+            $checkpoint_data['temperature'] = $checkpoint['temperature'];
+            $checkpoint_data['lng'] = $checkpoint['lngLat']['lng'];
+            $checkpoint_data['lat'] = $checkpoint['lngLat']['lat'];
+            if ($checkpoint['number'] == 0) $checkpoint_data['special'] = 'start';
+            else if ($checkpoint['number'] == count($data['checkpoints']) - 1) $checkpoint_data['special'] = 'goal';
+            else $checkpoint_data['special'] = NULL;
+
+            $checkpoint = new ActivityCheckpoint();
+            $checkpoint->create($checkpoint_data);
         }
 
         $photo_number = 1;
@@ -103,180 +103,112 @@ if (is_array($data)) {
 
             // Get blob ready to upload
             $temp_image = new TempImage($photo['name']);
-            $img_blob = $temp_image->treatBase64($photo['blob']);
+            $activity_photo_data['blob'] = $temp_image->treatBase64($photo['blob']);
 
             // Build photo data
-            $filename = setFilename('img');
-            $img_size = $photo['size'];
-            $img_name = $photo['name'];
-            $img_type = $photo['type'];
-            $datetime = new DateTime();
-            $datetime->setTimestamp($photo['datetime'] / 1000);
-            $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-            if ($photo['featured'] == true) $featured = 1;
-            else $featured = 0;
-            $privacy = $photo['privacy'];
-            $lng = $photo['lng'];
-            $lat = $photo['lat'];
+            $activity_photo_data['user_id'] = $connected_user->id;
+            $activity_photo_data['activity_id'] = $activity_id;
+            $activity_photo_data['size'] = $photo['size'];
+            $activity_photo_data['name'] = $photo['name'];
+            $activity_photo_data['type'] = $photo['type'];
+            $activity_photo_data['lng'] = $photo['lng'];
+            $activity_photo_data['lat'] = $photo['lat'];
+            $activity_photo_data['datetime'] = new DateTime();
+            $activity_photo_data['datetime']->setTimestamp($photo['datetime'] / 1000);
+            $activity_photo_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+            if ($photo['featured'] == true) $activity_photo_data['featured'] = 1;
+            else $activity_photo_data['featured'] = 0;
+            $activity_photo_data['privacy'] = $photo['privacy'];
+
+            $activity_photo = new ActivityPhoto();
+            $activity_photo->create($activity_photo_data);
             
-            // Prepare photos data to add to an existing mkpoint if necessary
-            if (isset($data['mkpointPhotos'])) {
-                for ($i = 0; $i < count($data['mkpointPhotos']); $i++) {
-                    if ($data['mkpointPhotos'][$i]['photo_name'] == $img_name) {
-                        $data['mkpointPhotos'][$i]['blob'] = $img_blob;
-                        $data['mkpointPhotos'][$i]['size'] = $img_size;
-                        $data['mkpointPhotos'][$i]['type'] = $img_type;
+            // Prepare photos data to add to an existing scenery if necessary
+            if (isset($data['sceneryPhotos'])) {
+                for ($i = 0; $i < count($data['sceneryPhotos']); $i++) {
+                    if ($data['sceneryPhotos'][$i]['photo_name'] == $img_name) {
+                        $data['sceneryPhotos'][$i]['blob'] = $img_blob;
+                        $data['sceneryPhotos'][$i]['size'] = $img_size;
+                        $data['sceneryPhotos'][$i]['type'] = $img_type;
                     }
                 }
             }
-
-            // Insert data in 'activity_photos' table
-            $insert_photos = $db->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, lng, lat, filename, privacy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-            $insert_photos->execute(array($activity_id, $user_id, $datetime->format('Y-m-d H:i:s'), $featured, $lng, $lat, $filename, $privacy));
-
-            // Connect to blob storage
-            $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-            require $folder . '/actions/blobStorageAction.php';
-            // Send file to blob storage
-            $containername = 'activity-photos';
-            $blobClient->createBlockBlob($containername, $filename, $img_blob);
-            // Set file metadata
-            $metadata = [
-                'file_name' => $img_name,
-                'file_type' => $img_type,
-                'file_size' => $img_size,
-                'activity_id' => $activity_id,
-                'author_id' => $user_id,
-                'date' => $datetime->format('Y-m-d H:i:s'),
-                'lng' => $lng,
-                'lat' => $lat,
-                'privacy' => $privacy,
-            ];
-            $blobClient->setBlobMetadata($containername, $filename, $metadata);
 
             $photo_number++;
         }
 
-        // Create new mkpoints if necessary
+        // Create new sceneries if necessary
         $loading_record->setStatus('pending', '新規絶景スポット作成中...');
-        if (isset($data['mkpointsToCreate'])) {
+        if (isset($data['sceneriesToCreate'])) {
 
-            forEach($data['mkpointsToCreate'] as $entry) {
-
-                // Prepare variables
-                $mkpoint['user_id']          = $_SESSION['id'];
-                $mkpoint['user_login']       = $_SESSION['login'];
-                $mkpoint['category']         = 'marker';
-                $mkpoint['name']             = htmlspecialchars($entry['name']);
-                $mkpoint['city']             = $entry['city'];
-                $mkpoint['prefecture']       = $entry['prefecture'];
-                $mkpoint['elevation']        = $entry['elevation'];
-                $mkpoint['date']             = new DateTime();
-                $mkpoint['date']->setTimestamp($entry['date'] / 1000);
-                $mkpoint['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-                $mkpoint['month']            = date("n");
-                $mkpoint['description']      = htmlspecialchars($entry['description']);
-                $mkpoint['lng']              = $entry['lngLat']['lng'];
-                $mkpoint['lat']              = $entry['lngLat']['lat'];
-                $mkpoint['publication_date'] = date('Y-m-d H:i:s');
-                $mkpoint['popularity']       = 30;
-
-                // Insert mkpoint data
-                $insertMkpointData = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, lng, lat, publication_date, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                $insertMkpointData->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date']->format('Y-m-d H:i:s'), $mkpoint['month'], $mkpoint['description'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date'], $mkpoint['popularity']));
-                // Get mkpoint id
-                $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
-                $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
-                $mkpoint['id'] = $getMkpointId->fetch()['id'];
-
-                // Get first photo blob
+            forEach($data['sceneriesToCreate'] as $entry) {
+                
+                // Get photo blobs and thumbnail ready
                 $thumbnail_set = false;
+                $thumbnail = null;
+                $scenery_data['photos'] = [];
                 foreach ($data['photos'] as $activity_photo) {
-                    foreach ($entry['photos'] as $mkpoint_photo) {
-                        if ($mkpoint_photo['name'] == $activity_photo['name']) {
+                    foreach ($entry['photos'] as $entry_photo) {
+                        if ($entry_photo['name'] == $activity_photo['name']) {
 
                             // Get blob ready to upload
                             $temp_image = new TempImage($entry['name']);
-                            $mkpoint_photo['filename'] = setFilename('img');
-                            $mkpoint_photo['blob'] = $temp_image->treatBase64($activity_photo['blob']);
+                            $scenery_photo = $entry_photo;
+                            $scenery_photo['filename'] = setFilename('img');
+                            $scenery_photo['blob'] = $temp_image->treatBase64($activity_photo['blob']);
 
-                            // Build and append mkpoint thumbnail
+                            // Add photo data to scenery photos
+                            array_push($scenery_data['photos'], $scenery_photo);
+                            
+                            // Build and append scenery thumbnail (from first photo blob)
                             if (!$thumbnail_set) {
-                                
-                                // Build thumbnail
-                                $mkpoint['thumbnail'] = $temp_image->getThumbnail();
-            
-                                // Insert mkpoint data
-                                $insertMkpointThumbnail = $db->prepare('UPDATE map_mkpoint SET thumbnail = ? WHERE id = ?');
-                                $insertMkpointThumbnail->execute(array($mkpoint['thumbnail'], $mkpoint['id']));
+                                $thumbnail = $temp_image->getThumbnail();
                                 $thumbnail_set = true;
                             }
-
-                            // Remove temp files
-                            unlink($temp); unlink($path);
-
-                            // Insert photos data
-                            $insertPhotos = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-                            $insertPhotos->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['date']->format('Y-m-d H:i:s'), 0, $mkpoint_photo['filename']));
-
-                            // Send file to blob storage
-                            $containername = 'scenery-photos';
-                            $blobClient->createBlockBlob($containername, $mkpoint_photo['filename'], $mkpoint_photo['blob']);
-                            // Set file metadata
-                            $metadata = [
-                                'file_name' => $mkpoint_photo['name'],
-                                'file_type' => $mkpoint_photo['type'],
-                                'file_size' => $mkpoint_photo['size'],
-                                'scenery_id' => $mkpoint['id'],
-                                'author_id' => $mkpoint['user_id'],
-                                'date' => $mkpoint['publication_date'],
-                                'lat' => $mkpoint['lat'],
-                                'lng' => $mkpoint['lng']
-                            ];
-                            $blobClient->setBlobMetadata($containername, $mkpoint_photo['filename'], $metadata);
                         }
                     }
-
                 }
 
-                // Insert tags data
-                if (!empty($entry['tags'][0])) {
-                    foreach ($entry['tags'] as $tag) {
-                        $insertTag = $db->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
-                        $insertTag->execute(array('scenery', $mkpoint['id'], $tag));
-                    }
-                }
+                // Prepare variables
+                $scenery_data['user_id']          = $_SESSION['id'];
+                $scenery_data['user_login']       = $_SESSION['login'];
+                $scenery_data['category']         = 'marker';
+                $scenery_data['name']             = htmlspecialchars($entry['name']);
+                $scenery_data['city']             = $entry['city'];
+                $scenery_data['prefecture']       = $entry['prefecture'];
+                $scenery_data['elevation']        = $entry['elevation'];
+                $scenery_data['date']             = new DateTime();
+                $scenery_data['date']->setTimestamp($entry['date'] / 1000);
+                $scenery_data['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+                $scenery_data['month']            = date("n");
+                $scenery_data['description']      = htmlspecialchars($entry['description']);
+                $scenery_data['thumbnail']        = $thumbnail;
+                $scenery_data['lng']              = $entry['lngLat']['lng'];
+                $scenery_data['lat']              = $entry['lngLat']['lat'];
+                $scenery_data['publication_date'] = date('Y-m-d H:i:s');
+                $scenery_data['popularity']       = 30;
+                $scenery_data['tags']             = $entry['tags'];
+
+                // Create scenery
+                $scenery = new Scenery();
+                $scenery->create($scenery_data);
             }
         }
 
-        // Update user's cleared mkpoints
-        $loading_record->setStatus('pending', '絶景スポット訪問歴更新中...');
-        foreach ($data['mkpoints'] as $mkpoint) {
-            $addMkpoint = $db->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
-            $addMkpoint->execute(array($connected_user->id, $mkpoint['id'], $activity_id));
-        }
-
-        // Update user's cleared segments
-        $loading_record->setStatus('pending', 'セグメント走行歴更新中...');
-        foreach ($data['segments'] as $segment) {
-            $addSegment = $db->prepare('INSERT INTO user_segments(user_id, segment_id, activity_id) VALUES (?, ?, ?)');
-            $addSegment->execute(array($connected_user->id, $segment['id'], $activity_id));
-        }
-
-        // If necessary, add selected photos to corresponding mkpoint
+        // If necessary, add selected photos to corresponding scenery
         $loading_record->setStatus('pending', '絶景スポットへ写真追加中...');
-        if (isset($data['mkpointPhotos'])) {
-            foreach ($data['mkpointPhotos'] as $entry) {
+        if (isset($data['sceneryPhotos'])) {
+            foreach ($data['sceneryPhotos'] as $entry) {
                 
                 // Insert table data
                 $entry['filename'] = setFilename('img');
-                $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-                $insertImgMkpoint->execute(array($entry['mkpoint_id'], $_SESSION['id'], $datetime->format('Y-m-d H:i:s'), 0, $entry['filename']));
+                $insertImgScenery = $db->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+                $insertImgScenery->execute(array($entry['scenery_id'], $_SESSION['id'], $datetime->format('Y-m-d H:i:s'), 0, $entry['filename']));
 
                 // Get scenery lngLat data
-                $current_mkpoint = new Mkpoint($entry['mkpoint_id']);
-                $entry['lng'] = $current_mkpoint->lngLat->lng;
-                $entry['lat'] = $current_mkpoint->lngLat->lat;
+                $current_scenery = new Scenery($entry['scenery_id']);
+                $entry['lng'] = $current_scenery->lngLat->lng;
+                $entry['lat'] = $current_scenery->lngLat->lat;
 
                 // Get corresponding blob
                 foreach ($data['photos'] as $photo) {
@@ -299,7 +231,7 @@ if (is_array($data)) {
                     'file_name' => $entry['photo_name'],
                     'file_type' => $entry['type'],
                     'file_size' => $entry['size'],
-                    'scenery_id' => $entry['mkpoint_id'],
+                    'scenery_id' => $entry['scenery_id'],
                     'author_id' => $_SESSION['id'],
                     'date' => $datetime->format('Y-m-d H:i:s'),
                     'lat' => $entry['lat'],

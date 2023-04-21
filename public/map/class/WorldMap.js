@@ -17,15 +17,11 @@ export default class WorldMap extends GlobalMap {
     data = {}
     cursor = 1
     tempMarkerCollection = []
-    mkpointsMarkerCollection = []
     ridesCollection = []
     segmentsCollection = []
-    displayMkpointsBox
+    displaySceneriesBox
     displayRidesBox
     displaySegmentsBox
-    mkpointsZoomRoof = 7 // Mkpoint display minimum zoom level
-    mkpointsMinNumber = 10 // Number of mkpoints displayed to try to reach at minimum
-    mkpointsMaxNumber = 20 // Maximum number of mkpoints displayed at the same time
     ridesZoomRoof = 6 // rides display minimum zoom level
     segmentsZoomRoof = 5 // segments display minimum zoom level
     segmentsZoomRange = {
@@ -48,18 +44,11 @@ export default class WorldMap extends GlobalMap {
     mode = 'default'
     highlight = false
 
-    loadMkpoints () {
-        ajaxGetRequest (this.apiUrl + "?display-mkpoints=details", (mkpoints) => {
-            this.data.mkpoints = mkpoints
+    loadSceneries () {
+        ajaxGetRequest (this.apiUrl + "?display-sceneries=details", (sceneries) => {
+            this.mapdata.sceneries = sceneries
         } )
     }
-
-    updateMapData () {
-        if (!this.displayMkpointsBox || this.displayMkpointsBox.checked) this.updateMkpoints()
-        if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
-        if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
-    }
-    updateMapDataListener = () => this.updateMapData()
 
     addStyleControl () {
         // Get (or add) controller container
@@ -113,18 +102,18 @@ export default class WorldMap extends GlobalMap {
         let line1 = document.createElement('div')
         line1.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line1)
-        this.displayMkpointsBox = document.createElement('input')
-        this.displayMkpointsBox.id = 'displayMkpointsBox'
-        this.displayMkpointsBox.setAttribute('type', 'checkbox')
-        this.displayMkpointsBox.setAttribute('checked', 'checked')
-        line1.appendChild(this.displayMkpointsBox)
-        var displayMkpointsBoxLabel = document.createElement('label')
-        displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBox')
-        displayMkpointsBoxLabel.innerText = '絶景スポットを表示'
-        line1.appendChild(displayMkpointsBoxLabel)
-        this.displayMkpointsBox.addEventListener('change', () => {
-            if (this.displayMkpointsBox.checked) this.updateMkpoints()
-            else this.hideMkpoints()
+        this.displaySceneriesBox = document.createElement('input')
+        this.displaySceneriesBox.id = 'displaySceneriesBox'
+        this.displaySceneriesBox.setAttribute('type', 'checkbox')
+        this.displaySceneriesBox.setAttribute('checked', 'checked')
+        line1.appendChild(this.displaySceneriesBox)
+        var displaySceneriesBoxLabel = document.createElement('label')
+        displaySceneriesBoxLabel.setAttribute('for', 'displaySceneriesBox')
+        displaySceneriesBoxLabel.innerText = '絶景スポットを表示'
+        line1.appendChild(displaySceneriesBoxLabel)
+        this.displaySceneriesBox.addEventListener('change', () => {
+            if (this.displaySceneriesBox.checked) this.updateSceneries()
+            else this.hideSceneries()
         } )
         // Line 2
         let line2 = document.createElement('div')
@@ -284,7 +273,7 @@ export default class WorldMap extends GlobalMap {
         editModeBox.setAttribute('type', 'checkbox')
         line1.appendChild(editModeBox)
         editModeBox.addEventListener('click', async () => {
-            if (editModeBox.checked) await WorldHelper.onEditMkpointsStart()
+            if (editModeBox.checked) await WorldHelper.onEditSceneriesStart()
             this.editMode()
         } ) // Data treatment
         var editModeBoxLabel = document.createElement('label')
@@ -295,17 +284,17 @@ export default class WorldMap extends GlobalMap {
         let line2 = document.createElement('div')
         line2.className = 'map-controller-line hide-on-mobiles'
         editorContainer.appendChild(line2)
-        var highlightMyMkpointsBox = document.createElement('input')
-        highlightMyMkpointsBox.id = 'highlightMyMkpointsBox'
-        highlightMyMkpointsBox.setAttribute('type', 'checkbox')
-        line2.appendChild(highlightMyMkpointsBox)
-        highlightMyMkpointsBox.addEventListener('click', () => {
-            this.highlightMyMkpointsMode()
+        var highlightMySceneriesBox = document.createElement('input')
+        highlightMySceneriesBox.id = 'highlightMySceneriesBox'
+        highlightMySceneriesBox.setAttribute('type', 'checkbox')
+        line2.appendChild(highlightMySceneriesBox)
+        highlightMySceneriesBox.addEventListener('click', () => {
+            this.highlightMySceneriesMode()
         } ) // Data treatment
-        var highlightMyMkpointsBoxLabel = document.createElement('label')
-        highlightMyMkpointsBoxLabel.setAttribute('for', 'highlightMyMkpointsBox')
-        highlightMyMkpointsBoxLabel.innerText = '自分の絶景スポットを表示'
-        line2.appendChild(highlightMyMkpointsBoxLabel)
+        var highlightMySceneriesBoxLabel = document.createElement('label')
+        highlightMySceneriesBoxLabel.setAttribute('for', 'highlightMySceneriesBox')
+        highlightMySceneriesBoxLabel.innerText = '自分の絶景スポットを表示'
+        line2.appendChild(highlightMySceneriesBoxLabel)
         
         // Hide and open on click on mobile display
         editorLabel.addEventListener('click', () => {
@@ -318,204 +307,18 @@ export default class WorldMap extends GlobalMap {
         } )
     }
 
-    async setMkpoint (mkpoint) {
-        
-        // Build element
-        let element = document.createElement('div')
-        let icon = document.createElement('img')
-        icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
-        icon.classList.add('mkpoint-icon')
-        if (mkpoint.isCleared) element.classList.add('visited-marker') // Highlight if visited
-        if (mkpoint.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured
-        element.appendChild(icon)
-        this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
-        var marker = new mapboxgl.Marker ( {
-            anchor: 'center',
-            color: '#5e203c',
-            draggable: false,
-            element: element
-        } )
-        marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
-        marker.isFavorite = mkpoint.isFavorite // Append favorites list data
-        marker.setLngLat([mkpoint.lng, mkpoint.lat])
-        marker.addTo(this.map)
-        marker.getElement().id = 'mkpoint' + mkpoint.id
-        marker.getElement().classList.add('mkpoint-marker')
-        marker.getElement().dataset.id = mkpoint.id
-        marker.getElement().dataset.user_id = mkpoint.user_id
-        this.mkpointsMarkerCollection.push(marker)
-
-        // Build and attach popup
-        var popupOptions = {
-            closeOnMove: false
-        }
-        var instanceOptions = {}
-        var instanceData = {
-            mapInstance: this,
-            mkpoint
-        }
-        let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
-        marker.setPopup(sceneryPopup.popup)
-
-        // Display mkpoint name on hover
-        element.setAttribute('data-before', mkpoint.name)
-        element.style.setProperty('--scenery-hover-display', 'none')
-        element.addEventListener('mouseenter', () => element.style.setProperty('--scenery-hover-display', 'block'))
-        element.addEventListener('mouseleave', () => element.style.setProperty('--scenery-hover-display', 'none'))
-    }
-
-    updateMkpoints () {
-
-        if (this.data.mkpoints && this.map.getZoom() > this.mkpointsZoomRoof) {
-
-            const bounds = this.map.getBounds()
-            const mkpoints = this.data.mkpoints
-
-            // Sort mkpoints in popularity order
-            mkpoints.sort((a, b) => a.popularity - b.popularity)
-
-            // First, remove all mkpoints that have left bounds
-            var collection = this.mkpointsMarkerCollection
-            let i = 0
-            while (i < collection.length) {
-                // If existing marker is not inside new bounds OR should not be displayed at this zoom level
-                if ((!(collection[i]._lngLat.lat < bounds._ne.lat && collection[i]._lngLat.lat > bounds._sw.lat) || !(collection[i]._lngLat.lng < bounds._ne.lng && collection[i]._lngLat.lng > bounds._sw.lng)) || !this.zoomPopularityFilter(collection[i].popularity)) {
-                    // If existing mkpoint is not favoured
-                    if (!collection[i].isFavorite) {
-                        collection[i].remove() // Remove it from the DOM
-                        collection.splice(i, 1) // Remove it from instance Nodelist
-                        i--
-                    }
-                }
-                i++
-            }
-
-            // Second, add all mkpoints that have entered bounds
-            let mkpointsSet = collection.length
-            let keepMkpoints = []
-            let j = 0
-            while (j < mkpoints.length && mkpointsSet <= this.mkpointsMaxNumber) {
-                // If mkpoint is inside bounds
-                if ((mkpoints[j].lat < bounds._ne.lat && mkpoints[j].lat > bounds._sw.lat) && (mkpoints[j].lng < bounds._ne.lng && mkpoints[j].lng > bounds._sw.lng)) {
-                    
-                    // Verify it has not already been loaded
-                    if (!document.querySelector('#mkpoint' + mkpoints[j].id)) {
-                        // Filter through zoom popularity algorithm
-                        if (this.zoomPopularityFilter(mkpoints[j].popularity) == true) {
-                            this.setMkpoint(mkpoints[j])
-                            mkpointsSet++
-                        } else keepMkpoints.push(mkpoints[j])
-                    }
-                }
-                j++
-            }
-
-            // Third, if overall number of mkpoints is still less than mkpointsMinNumber, add other mkpoints inside bounds up to a total number of mkpointsMinNumber
-            if (mkpointsSet < this.mkpointsMinNumber) {
-                for (let mkpointsToSet = 0; mkpointsToSet < this.mkpointsMinNumber - mkpointsSet && mkpointsToSet < keepMkpoints.length; mkpointsToSet++) {
-                    this.setMkpoint(keepMkpoints[mkpointsToSet])
-                }
-            }
-
-            // Update mkpoints scale
-            document.querySelectorAll('.mkpoint-icon').forEach((mkpointIcon) => this.scaleMarkerAccordingToZoom(mkpointIcon))
-
-        } else {
-            for (let i = 0; i < this.mkpointsMarkerCollection.length; i++) {
-                if (!this.mkpointsMarkerCollection[i].isFavorite) {
-                    this.mkpointsMarkerCollection[i].remove()
-                    this.mkpointsMarkerCollection.splice(i, 1)
-                    i--
-                }
-            }
-        }
-    }
-
-    async getMkpointMarker (mkpoint) {
+    async getSceneryMarker (scenery) {
         return new Promise((resolve, reject) => {
-            this.mkpointsMarkerCollection.forEach((marker) => {
-                if (getIdFromString(marker.getElement().id) == parseInt(mkpoint.id)) resolve(marker)
+            this.sceneriesMarkerCollection.forEach((marker) => {
+                if (getIdFromString(marker.getElement().id) == parseInt(scenery.id)) resolve(marker)
             } )
         } )
     }
-
-    addFavoriteMkpoints () {
-        this.data.mkpoints.forEach( (mkpoint) => {
-            // Verify it has not already been loaded
-            if (!document.querySelector('#mkpoint' + mkpoint.id)) {
-                if (mkpoint.isFavorite) this.setMkpoint(mkpoint)
-            }
-        } )
-    }
-
-    zoomPopularityFilter (popularity) {
-
-        const zoom = this.map.getZoom()
-
-        // Define zoom levels
-        const fullDisplayZone  = 6 // Range of zoom levels starting maxZoomLevel which all mkpoints will be displayed
-        const maxZoomLevel     = 22 // Maximum zoom level of map provider (22 for Mapbox)
-        const zoomLevel0       = maxZoomLevel - fullDisplayZone // Zoom level from which all mkpoints will be displayed
-        const zoomRange        = zoomLevel0 - this.mkpointsZoomRoof
-        if (zoomRange <= 0) return true // zoomRange can't be negative (don't filter anything in this case)
-        const zoomStep = zoomRange / 4
-        var zoomLevel1 = zoomLevel0 - zoomStep
-        var zoomLevel2 = zoomLevel1 - zoomStep
-        var zoomLevel3 = zoomLevel2 - zoomStep
-        var zoomLevel4 = this.mkpointsZoomRoof
-
-        // Define popularity levels
-        var popularityLevel4 = 110
-        var popularityLevel3 = 60
-        var popularityLevel2 = 30
-        var popularityLevel1 = 0
-
-        // Over upper limit
-        if (zoom < this.mkpointsZoomRoof) {
-            return false
-        }
-
-        // Level 4
-        else if (zoom > zoomLevel4 && zoom < zoomLevel3) {
-            if (popularity > popularityLevel4) {
-                return true
-            } else {
-                return false
-            }
-        }
-
-        // Level 3
-        else if (zoom > zoomLevel3 && zoom < zoomLevel2) {
-            if (popularity > popularityLevel3) {
-                return true
-            } else {
-                return false
-            }
-        }
-        
-        // Level 2
-        else if (zoom > zoomLevel2 && zoom < zoomLevel1) {
-            if (popularity > popularityLevel2) {
-                return true
-            } else {
-                return false
-            }
-        }
-
-        // Level 1
-        else if (zoom > zoomLevel1 && zoom < zoomLevel0) {
-            if (popularity > popularityLevel1) {
-                return true
-            } else {
-                return false
-            }
-        }
-
-        // Down lower limit
-        else {
-            return true
-        }
-
+    
+    updateMapData () {
+        if (!this.displaySceneriesBox || this.displaySceneriesBox.checked) this.updateSceneries()
+        if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
+        if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
     }
 
     updateRides () {
@@ -523,7 +326,7 @@ export default class WorldMap extends GlobalMap {
         // If current zoom is precise enough
         if (this.map.getZoom() > this.ridesZoomRoof) {
             
-            const rides = this.data.rides
+            const rides = this.mapdata.rides
 
             // First, remove all rides that have left bounds
             let i = 0
@@ -717,7 +520,7 @@ export default class WorldMap extends GlobalMap {
             // If current zoom is precise enough
             if (this.map.getZoom() > this.segmentsZoomRoof) {
 
-                const segments = this.data.segments
+                const segments = this.mapdata.segments
 
                 // First, remove all segments that have left bounds
                 let i = 0
@@ -836,7 +639,7 @@ export default class WorldMap extends GlobalMap {
 
         // If current month corresponds to advised season, add segment season cap layer
         var isAdvisedSeason = false
-        segment.seasons.forEach(season => {
+        if (segment.seasons) segment.seasons.forEach(season => {
             if (CFUtils.monthInsidePeriod(this.month, [season['period_start_month'], season['period_end_month']])) isAdvisedSeason = true
         })
         if (isAdvisedSeason)this.map.addLayer( {
@@ -1003,8 +806,8 @@ export default class WorldMap extends GlobalMap {
                 previewImage.src = URL.createObjectURL(e.target.files[0])
             } )
             // Save data on submit and display new data
-            var mkpoint = await tempPopup.save()
-            this.addMkpoint(mkpoint)
+            var scenery = await tempPopup.save()
+            this.addScenery(scenery)
         } )
         
         popup.options.className = 'hidden' // Hide popup as creating in edit mode
@@ -1057,11 +860,11 @@ export default class WorldMap extends GlobalMap {
                 popup.options.className = 'hidden' // Hide popup in edit mode
                 $existingMarker.addEventListener('contextmenu', this.removeOnClick)
             } )
-            // Disable opening popup on click on mkpoint markers
-            this.mkpointsMarkerCollection.forEach((mkpoint) => mkpoint.getPopup().options.className = 'marker-popup, hidden')
-            // Highlight mkpoints
-            this.mkpointsMarkerCollection.forEach((mkpoint) => {
-                if (mkpoint._popup.user_id == sessionId) mkpoint._element.firstChild.classList.add('admin-marker')
+            // Disable opening popup on click on scenery markers
+            this.sceneriesMarkerCollection.forEach((scenery) => scenery.getPopup().options.className = 'marker-popup, hidden')
+            // Highlight sceneries
+            this.sceneriesMarkerCollection.forEach((scenery) => {
+                if (scenery._popup.user_id == sessionId) scenery._element.firstChild.classList.add('admin-marker')
             } )
             // Change cursor style
             this.map.getCanvas().classList.add('edit-mode')
@@ -1081,11 +884,11 @@ export default class WorldMap extends GlobalMap {
                 popup.elevation = existingMarker.elevation // Pass elevation data to the popup
                 $existingMarker.removeEventListener('contextmenu', this.removeOnClick)
             } )
-            // Enable opening popup on click on mkpoint markers
-            this.mkpointsMarkerCollection.forEach((mkpoint) => mkpoint.getPopup().options.className = 'marker-popup')
+            // Enable opening popup on click on scenery markers
+            this.sceneriesMarkerCollection.forEach((scenery) => scenery.getPopup().options.className = 'marker-popup')
             // Remove highlighting from markers
-            this.mkpointsMarkerCollection.forEach((mkpoint) =>  {
-                if (mkpoint._popup.user_id == sessionId) mkpoint._element.firstChild.classList.remove('admin-marker')
+            this.sceneriesMarkerCollection.forEach((scenery) =>  {
+                if (scenery._popup.user_id == sessionId) scenery._element.firstChild.classList.remove('admin-marker')
             } )
             // Change cursor style
             this.map.getCanvas().classList.remove('edit-mode')
@@ -1094,27 +897,27 @@ export default class WorldMap extends GlobalMap {
         }
     }
 
-    addMkpoint (mkpoint) {
-        this.data.mkpoints.push(mkpoint)
-        this.updateMkpoints()
+    addScenery (scenery) {
+        this.mapdata.sceneries.push(scenery)
+        this.updateSceneries()
     }
 
     // Highlighting connected user markers 
-    async highlightMyMkpointsMode () {
+    async highlightMySceneriesMode () {
 
-        var highlightMyMkpointsBox = document.querySelector('#highlightMyMkpointsBox')
+        var highlightMySceneriesBox = document.querySelector('#highlightMySceneriesBox')
         var sessionId = await CFSession.get('id')
 
-        if (highlightMyMkpointsBox.checked) {
+        if (highlightMySceneriesBox.checked) {
             this.highlight = true
-            document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
+            document.querySelectorAll('.scenery-icon').forEach( ($icon) => {
                 if ($icon.parentElement.dataset.user_id === sessionId) {
                     $icon.classList.add('admin-marker')
                 }
             } )
         } else {
             this.highlight = false
-            document.querySelectorAll('.mkpoint-icon').forEach( ($icon) => {
+            document.querySelectorAll('.scenery-icon').forEach( ($icon) => {
                 if ($icon.parentElement.dataset.user_id === sessionId) {
                     $icon.classList.remove('admin-marker')
                 }

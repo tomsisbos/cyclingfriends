@@ -42,7 +42,7 @@ await loadMap().then( (homeMap) => {
 
     // Prepare and display segments data
     ajaxGetRequest (homeMap.apiUrl + "?display-segments=true", async (segments) => {
-        homeMap.data.segments = segments
+        homeMap.mapdata.segments = segments
 
         // Choose a segment at random
         var randomKey = Math.floor(Math.random() * segments.length)

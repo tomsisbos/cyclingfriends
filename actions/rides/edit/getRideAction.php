@@ -35,7 +35,6 @@ if (isset($ride_slug) AND !empty($ride_slug)) {
 			if (round($ride->checkpoints[0]->lngLat->lng, 2) == round($ride->checkpoints[count($ride->checkpoints) - 1]->lngLat->lng, 2) && round($ride->checkpoints[0]->lngLat->lat, 2) == round($ride->checkpoints[count($ride->checkpoints) - 1]->lngLat->lat, 2)) {
 				$_SESSION['edit-forms'][2]['options'] = ['sf' => true]; } // If coordinates rounded to 0,02 of the first and of the last road waypoint are equal, then set options SF to true
 			else $_SESSION['edit-forms'][2]['options'] = ['sf' => false]; // If route start coordinates equals route end coordinates, set SF options to true, else set to false
-			///var_dump($ride->checkpoints);die();
 			$_SESSION['edit-forms'][2]['checkpoints'] = $ride->checkpoints;
 			if ($ride->getRoute() != null) $_SESSION['edit-forms'][2]['route-id'] = $ride->route_id;
 			// If not, redirect to my rides pages

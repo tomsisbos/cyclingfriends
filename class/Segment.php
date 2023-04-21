@@ -99,10 +99,7 @@ class Segment extends Model {
     }
 
     public function isCleared () {
-        $isCleared = $this->getPdo()->prepare('SELECT DISTINCT activity_id FROM user_segments WHERE user_id = ? AND segment_id = ?');
-        $isCleared->execute(array($_SESSION['id'], $this->id));
-        if ($isCleared->rowCount() > 0) return $isCleared->fetch(PDO::FETCH_NUM)[0];
-        else return false;
+        return false; /// to implement
     }
 
     public function delete () {
@@ -114,9 +111,6 @@ class Segment extends Model {
         // Remove favorite data
         $removeSegmentFavorites = $this->getPdo()->prepare('DELETE FROM favorites WHERE object_type = ? AND object_id = ?');
         $removeSegmentFavorites->execute(array('segment', $this->id));
-        // Remove user segment data
-        $removeUserSegment = $this->getPdo()->prepare('DELETE FROM user_segments WHERE segment_id = ?');
-        $removeUserSegment->execute(array($this->id));
         // Remove segment grades data
         $removeSegmentGrades = $this->getPdo()->prepare('DELETE FROM segment_grade WHERE segment_id = ?');
         $removeSegmentGrades->execute(array($this->id));

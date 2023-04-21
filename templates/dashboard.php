@@ -31,23 +31,6 @@ if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/hel
 
 		</div>
 
-		<?php /*
-		<div class="sidebar-left sticky-sidebar">
-			<!-- Next rides panel -->
-			<div class="dashboard-container"> <?php 
-				include '../includes/dashboard/next-rides.php';  ?>
-			</div>
-
-			<!-- Cleared mkpoints panel -->
-			<div class="dashboard-container"> <?php 
-				define('CLEARED_MKPOINTS_LIMIT', 8); 
-				include '../includes/dashboard/cleared-mkpoints-counter.php';
-				include '../includes/dashboard/cleared-mkpoints-list.php';
-				include '../includes/dashboard/cleared-mkpoints-stats.php'; ?>
-			</div>
-		</div>
-		*/ ?>
-
 	</div>
 
 </div>

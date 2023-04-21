@@ -17,7 +17,7 @@ if (!empty($user->getBikes())) { ?>
 						<?php $bike->displayImage(); ?>
 					</div>
 					<div class="col-8 pf-bike-infos-container">
-						<div><strong>車種 : </strong><?= $bike->type ?></div><?php
+						<div><strong>車種 : </strong><?= $bike->getType() ?></div><?php
 						if (!empty($bike->model)) { ?>
 							<div><strong>モデル : </strong><?= $bike->model ?></div><?php } 
 						if (!empty($bike->components)) { ?>

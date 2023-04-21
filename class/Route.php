@@ -18,8 +18,11 @@ class Route extends Model {
     public $description;
     public $distance;
     public $elevation;
-    public $thumbnail_filename;
+    public $startplace;
+    public $goalplace;
     public $coordinates;
+    public $thumbnail_filename;
+    public $time;
     public $tunnels;
     
     function __construct($id = NULL, $lngLatFormat = true) {
@@ -36,40 +39,32 @@ class Route extends Model {
         $this->elevation          = floatval($data['elevation']);
         $this->startplace         = $data['startplace'];
         $this->goalplace          = $data['goalplace'];
-        $this->coordinates        = $this->getCoordinates($lngLatFormat);
+        if ($lngLatFormat) $this->coordinates = $this->getLinestring($lngLatFormat)->coordinates;
+        else $this->coordinates = $this->getLinestring($lngLatFormat)->getArray();
         $this->thumbnail_filename = $data['thumbnail_filename'];
         $this->time               = $this->getTime();
         $this->tunnels            = $this->getTunnels();
     }
 
-    private function getCoordinates ($lngLatFormat) {
-        $getCoords = $this->getPdo()->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
-        $getCoords->execute(array($this->id));
-        $coords = $getCoords->fetchAll();
-        $coordinates = [];
-        forEach($coords as $lngLat) {
-            if ($lngLatFormat) $lngLat = new LngLat($lngLat[0], $lngLat[1]);
-            else $lngLat = [floatval($lngLat[0]), floatval($lngLat[1])];
-            array_push($coordinates, $lngLat);
-        }
-        return $coordinates;
-    }
-
+    /**
+     * Retrieve time data from database
+     */
     private function getTime () {
-        $getTime = $this->getPdo()->prepare('SELECT datetime FROM coords WHERE segment_id = ? ORDER BY number ASC');
+        $getTime = $this->getPdo()->prepare('SELECT timearray FROM linestrings WHERE segment_id = ?');
         $getTime->execute(array($this->id));
-        $timedata = $getTime->fetchAll();
-        $time = [];
-        forEach($timedata as $data) {
-            if (isset($data['datetime'])) {
-                $datetime = new DateTime($data['datetime']);
+        $result = $getTime->fetch(PDO::FETCH_COLUMN);
+        if ($result) {
+            $timearray = json_decode($result);
+            $time = [];
+            foreach ($timearray as $timestamp) {
+                $datetime = new DateTime();
+                $datetime->setTimestamp($timestamp);
+                $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
                 array_push($time, $datetime);
             }
-        }
-        return $time;
+            return $time;
+        } else return NULL;
     }
-
-    
 
     /**
      * Check if a point is inside a certain range from route
@@ -90,9 +85,7 @@ class Route extends Model {
         if ($this->isPointInRoughArea($point, $range)) {
 
             $remoteness_min = 500000000;
-            $simplifiedRouteCoords = [];
             for ($j = 0; $j < count($this->coordinates) - $step - 1; $j += $step) {
-                array_push($simplifiedRouteCoords, $this->coordinates[$j]);
                 $line = new Line(
                     new Coordinate($this->coordinates[$j]->lat, $this->coordinates[$j]->lng),
                     new Coordinate($this->coordinates[$j + $step]->lat, $this->coordinates[$j + $step]->lng)
@@ -108,6 +101,19 @@ class Route extends Model {
         } else return false;
     }
 
+    /**
+     * Retrieve coordinates data from database
+     * @param boolean $lngLatFormat whether retrieve coordinates as a Linestring instance or as a simple array of coordinates
+     */
+    public function getLinestring () {
+        $getCoords = $this->getPdo()->prepare('SELECT ST_AsWKT(linestring) FROM linestrings WHERE segment_id = ?');
+        $getCoords->execute(array($this->id));
+        $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
+        $coordinates = new CFLinestring();
+        $coordinates->fromWKT($linestring_wkt);
+        return $coordinates;
+    }
+
     public function getThumbnail () {
         // Connect to blob storage
         require Route::$root_folder . '/actions/blobStorageAction.php';
@@ -117,20 +123,20 @@ class Route extends Model {
     }
 
     public function getFeaturedImage () {
-        // Get close mkpoints
-        $mkpoints_on_route = $this->getCloseMkpoints(300);
+        // Get close sceneries
+        $sceneries_on_route = $this->getCloseSceneries(300);
 
-        // If more than one mkpoint is on the course, use the most liked photo among them
-        if (count($mkpoints_on_route) > 0) {
+        // If more than one scenery is on the course, use the most liked photo among them
+        if (count($sceneries_on_route) > 0) {
             $images = [];
-            foreach ($mkpoints_on_route as $mkpoint) array_push($images, $mkpoint->getImages(1)[0]);
+            foreach ($sceneries_on_route as $scenery) array_push($images, $scenery->getImages(1)[0]);
             usort($images, function ($a, $b) {
                 return $a->likes <=> $b->likes;
             } );
             return $images[0];
         }
 
-        // If no mkpoint is on the course, return closest activity photo from the route
+        // If no scenery is on the course, return closest activity photo from the route if exists
         else {
 
             $activity_photos = $this->getPublicPhotos();
@@ -143,19 +149,23 @@ class Route extends Model {
             }
             $remoteness_column = array_column($photos, 'remoteness');
             array_multisort($remoteness_column , SORT_ASC, $photos);
-            return $photos[0];
+            if (count($photos)) return $photos[0];
+            else return false;
         }
     }
 
+    /**
+     * Get tunnels related to this route
+     * @return Tunnel[]
+     */
     public function getTunnels () {
+        $getLinestring = $this->getPdo()->prepare('SELECT ST_AsWKT(linestring) FROM tunnels WHERE segment_id = ?');
+        $getLinestring->execute(array($this->id));
         $tunnels = [];
-        $getTunnelsNumber = $this->getPdo()->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
-        $getTunnelsNumber->execute(array($this->id));
-        $tunnels_number = $getTunnelsNumber->rowCount();
-        for ($i = 0 ; $i < $tunnels_number; $i++) {
-            $getTunnelCoords = $this->getPdo()->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
-            $getTunnelCoords->execute(array($i, $this->id));
-            $tunnels[$i] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
+        while ($linestring_wkt = $getLinestring->fetch(PDO::FETCH_COLUMN)) {
+            $tunnel = new Tunnel();
+            $tunnel->fromWKT($linestring_wkt);
+            array_push($tunnels, $tunnel->getArray());
         }
         return $tunnels;
     }
@@ -272,7 +282,7 @@ class Route extends Model {
     public function getPublicPhotos ($tolerance = 3000, $append_distance = true) {
 
         // Get all public activity photos registered in the database
-        $getPublicPhotos = $this->getPdo()->prepare("SELECT id, lng, lat FROM activity_photos WHERE lng IS NOT NULL AND privacy = 'public'");
+        $getPublicPhotos = $this->getPdo()->prepare("SELECT id, ST_X(point) as lng, ST_Y(point) as lat FROM activity_photos WHERE ST_IsEmpty(point) = 0 AND privacy = 'public'");
         $getPublicPhotos->execute();
         $public_photos = $getPublicPhotos->fetchAll(PDO::FETCH_ASSOC);
         $photos_in_range = [];
@@ -298,87 +308,84 @@ class Route extends Model {
         return $photos_in_range;
     }
 
-    /** Get Mkpoints that are less than [basis] km from the route (with remoteness and distance to start appended if $append_distance param is true)
+    /** Get Sceneries that are less than [basis] km from the route (with remoteness and distance to start appended if $append_distance param is true)
      * @param int $tolerance tolerance remoteness from route in meters
-     * @return Mkpoint[]
+     * @return Scenery[]
      */
-    public function getCloseMkpoints ($tolerance = 3000, $classFormat = true, $append_distance = false) { // m
+    public function getCloseSceneries ($tolerance = 3000, $classFormat = true, $append_distance = false) { // m
 
-        // Get all Mkpoints registered in the database
-        $getMkpoints = $this->getPdo()->prepare('SELECT id, name, lng, lat FROM map_mkpoint');
-        $getMkpoints->execute();
-        $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        $mkpoints_in_range = [];
+        // Get all Sceneries registered in the database
+        $getSceneries = $this->getPdo()->prepare('SELECT id, name, ST_X(point) as lng, ST_Y(point) as lat FROM sceneries');
+        $getSceneries->execute();
+        $sceneries = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
+        $sceneries_in_range = [];
 
-        // Filter mkpoints inside a certain range from route
-        for ($i = 0; $i < count($mkpoints); $i++) {
-            $range_data = $this->inRange(new Coordinate($mkpoints[$i]['lat'], $mkpoints[$i]['lng']), $tolerance * 10);
+        // Filter sceneries inside a certain range from route
+        for ($i = 0; $i < count($sceneries); $i++) {
+            $range_data = $this->inRange(new Coordinate($sceneries[$i]['lat'], $sceneries[$i]['lng']), $tolerance * 10);
             if ($range_data) {
-                $mkpoints[$i]['remoteness'] = $range_data['remoteness'];
-                $mkpoints[$i]['closest_point'] = $range_data['closest_point'];
-                array_push($mkpoints_in_range, $mkpoints[$i]);
+                $sceneries[$i]['remoteness'] = $range_data['remoteness'];
+                $sceneries[$i]['closest_point'] = $range_data['closest_point'];
+                array_push($sceneries_in_range, $sceneries[$i]);
             }
         }
 
-        // Return an array of Mkpoints less than [tolerance] from route
-        $close_mkpoints = array();
-        if (isset($mkpoints_in_range[0]['distance'])) {
-            $distance_column = array_column($mkpoints_in_range, 'distance');
-            array_multisort($distance_column, SORT_ASC, $mkpoints_in_range);
+        // Return an array of Sceneries less than [tolerance] from route
+        $close_sceneries = array();
+        if (isset($sceneries_in_range[0]['distance'])) {
+            $distance_column = array_column($sceneries_in_range, 'distance');
+            array_multisort($distance_column, SORT_ASC, $sceneries_in_range);
         }
-        foreach ($mkpoints_in_range as $mkpoint_data) {
-            // If mkpoint is located inside tolerance zone
-            if (isset($mkpoint_data['remoteness'])) {
-                if ($mkpoint_data['remoteness'] < $tolerance) {
+        foreach ($sceneries_in_range as $scenery_data) {
+            // If scenery is located inside tolerance zone
+            if (isset($scenery_data['remoteness'])) {
+                if ($scenery_data['remoteness'] < $tolerance) {
                     // Calculate distance from start
                     if ($append_distance) {
-                        $sublineCoords = array_slice($simplifiedRouteCoords, 0, array_search($mkpoint_data['closest_point'], $simplifiedRouteCoords));
+                        $sublineCoords = array_slice($this->coordinates, 0, array_search($scenery_data['closest_point'], $this->coordinates));
                         $subline = new Polyline();
                         forEach ($sublineCoords as $lngLat) {
                             $coordinates = new Coordinate($lngLat->lat, $lngLat->lng);
                             $subline->addPoint($coordinates);
                         }
-                        $mkpoint_data['distance'] = $subline->getLength(new Vincenty());
+                        $scenery_data['distance'] = $subline->getLength(new Vincenty());
                     }
-                    // If classFormat is set to true, build mkpoint object and append relevant data to it
+                    // If classFormat is set to true, build scenery object and append relevant data to it
                     if ($classFormat) {
-                        $mkpoint = new Mkpoint($mkpoint_data['id']);
-                        if ($mkpoint_data['remoteness'] < 200) $mkpoint->on_route = true;
+                        $scenery = new Scenery($scenery_data['id']);
+                        if ($scenery_data['remoteness'] < 200) $scenery->on_route = true;
                         else {
-                            $mkpoint->on_route = false;
-                            $mkpoint->remoteness = $mkpoint_data['remoteness']; // Append remoteness from the route
+                            $scenery->on_route = false;
+                            $scenery->remoteness = $scenery_data['remoteness']; // Append remoteness from the route
                         }
-                        if ($append_distance) $mkpoint->distance = $mkpoint_data['distance']; // Append distance from the start of the route
+                        if ($append_distance) $scenery->distance = $scenery_data['distance']; // Append distance from the start of the route
                     // Else, only return id and relevant data 
                     } else {
-                        if ($mkpoint_data['remoteness'] < 200) $mkpoint = ['id' => $mkpoint_data['id'], 'on_route' => true];
-                        else $mkpoint = ['id' => $mkpoint_data['id'], 'on_route' => false, 'remoteness' => $mkpoint_data['remoteness']];
-                        if ($append_distance) $mkpoint['distance'] = $mkpoint_data['distance'];
+                        if ($scenery_data['remoteness'] < 200) $scenery = ['id' => $scenery_data['id'], 'on_route' => true];
+                        else $scenery = ['id' => $scenery_data['id'], 'on_route' => false, 'remoteness' => $scenery_data['remoteness']];
+                        if ($append_distance) $scenery['distance'] = $scenery_data['distance'];
                     }
-                    // Add it to close_mkpoints array
-                    array_push($close_mkpoints, $mkpoint);
+                    // Add it to close_sceneries array
+                    array_push($close_sceneries, $scenery);
                 }
             }
         }
 
-        return $close_mkpoints;
+        return $close_sceneries;
     }
 
     public function delete () {
-        // Get route name
-        $getRouteName = $this->getPdo()->prepare('SELECT name FROM routes WHERE id = ?');
-        $getRouteName->execute(array($this->id));
-        $route_name = $getRouteName->fetch(PDO::FETCH_NUM)[0];
+        $message = $this->name. 'が削除されました。';
         // Delete route summary
         $deleteRoute = $this->getPdo()->prepare('DELETE FROM routes WHERE id = ?');
         $deleteRoute->execute(array($this->id));
-        // Delete route coords
-        $deleteCoords = $this->getPdo()->prepare('DELETE FROM coords WHERE segment_id = ?');
+        // Delete route linestring
+        $deleteCoords = $this->getPdo()->prepare('DELETE FROM linestrings WHERE segment_id = ?');
         $deleteCoords->execute(array($this->id));
         // Delete route tunnels
         $deleteTunnels = $this->getPdo()->prepare('DELETE FROM tunnels WHERE segment_id = ?');
         $deleteTunnels->execute(array($this->id));
-        return $route_name. 'が削除されました。';
+        return $message;
     }
 
     public function getTerrainValue () {
@@ -406,46 +413,25 @@ class Route extends Model {
         return $terrain_value;
     }
 
-    public function getMkpointsWithPhotos ($tolerance = 300) {
-        // Get mkpoints on route
-        $mkpoints = $this->getCloseMkpoints($tolerance);
+    public function getSceneriesWithPhotos ($tolerance = 300) {
+        // Get sceneries on route
+        $sceneries = $this->getCloseSceneries($tolerance);
         // Get corresponding photos
-        foreach ($mkpoints as $mkpoint) {
-            $mkpoint->photos = $mkpoint->getImages();
+        foreach ($sceneries as $scenery) {
+            $scenery->photos = $scenery->getImages();
         }
-        return $mkpoints;
+        return $sceneries;
     }
 
     // Return all scenery point photos found on the route
     public function getPhotos ($tolerance = 300) {
         $photos = [];
-        foreach ($this->getMkpointsWithPhotos($tolerance) as $mkpoint) {
-            foreach ($mkpoint->photos as $photo) {
+        foreach ($this->getSceneriesWithPhotos($tolerance) as $scenery) {
+            foreach ($scenery->photos as $photo) {
                 array_push($photos, $photo);
             }
         }
         return $photos;
-    }
-
-    public function getItinerary ($tolerance = 300) {
-
-        $spots = [];
-        $connected_user = new User($_SESSION['id']);
-        $cleared_mkpoints = $connected_user->getClearedMkpoints();
-
-        foreach ($this->getCloseMkpoints($tolerance, true, true) as $mkpoint) {
-            $spot = ['type' => 'mkpoint', 'icon' => $mkpoint->thumbnail, 'id' => $mkpoint->id, 'on_route' => $mkpoint->on_route, 'distance' => $mkpoint->distance, 'name' => $mkpoint->name, 'city' => $mkpoint->city, 'prefecture' => $mkpoint->prefecture, 'elevation' => $mkpoint->elevation, 'viewed' => false];
-            if (isset($mkpoint->remoteness)) $spot['remoteness'] = $mkpoint->remoteness;
-            if (in_array_r($mkpoint->id, $cleared_mkpoints)) $spot['viewed'] = true;
-            array_push($spots, $spot);
-        }
-
-        function compareDistance ($a, $b) {
-            return $a['distance'] <=> $b['distance'];
-        }
-        usort($spots, "compareDistance");
-
-        return $spots;
     }
 
 }

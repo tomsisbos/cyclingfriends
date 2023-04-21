@@ -21,7 +21,8 @@ export default class SegmentPopup extends Popup {
     type = 'segment'
     profile
     data
-    mkpoints
+    mapdata = {}
+    sceneries
     photos
     loaderContainer = document.body
     loader = {
@@ -91,9 +92,9 @@ export default class SegmentPopup extends Popup {
             this.profile = new Profile(this.data.mapInstance.map)
             this.profile.generate({sourceName: 'segment' + this.data.id})
 
-            // Query relevant mkpoints and photos
-            this.getMkpoints().then((mkpoints) => {
-                this.mkpoints = mkpoints
+            // Query relevant sceneries and photos
+            this.getSceneries().then((sceneries) => {
+                this.mapdata.sceneries = sceneries
                 this.photos = this.getPhotos()
                 this.displayPhotos()
                 this.loadLightbox()
@@ -163,26 +164,26 @@ export default class SegmentPopup extends Popup {
     }
 
     // Get relevant photos from the API and display it with a modal behavior
-    getMkpoints () {
+    getSceneries () {
         return new Promise( (resolve, reject) => {
             
             // Asks server for current photo data
             this.loaderContainer = this.popup._content.querySelector('.popup-img-container')
-            ajaxGetRequest (this.apiUrl + "?segment-mkpoints=" + this.data.id, (mkpoints) => {
+            ajaxGetRequest (this.apiUrl + "?segment-sceneries=" + this.data.id, (sceneries) => {
 
-                // Sort mkpoints by distance order
-                mkpoints.forEach( (mkpoint) => mkpoint.distanceFromStart = this.getDistanceFromStart(mkpoint))
-                mkpoints.sort((a, b) => (a.distanceFromStart > b.distanceFromStart) ? 1 : -1)
+                // Sort sceneries by distance order
+                sceneries.forEach( (scenery) => scenery.distanceFromStart = this.getDistanceFromStart(scenery))
+                sceneries.sort((a, b) => (a.distanceFromStart > b.distanceFromStart) ? 1 : -1)
 
-                resolve(mkpoints)
+                resolve(sceneries)
             }, this.loader)
         } )
     }
 
     getPhotos () {
         var photos = []
-        this.mkpoints.forEach( (mkpoint) => {
-            mkpoint.photos.forEach( (photo) => {
+        this.mapdata.sceneries.forEach( (scenery) => {
+            scenery.photos.forEach( (photo) => {
                 photos.push(photo)
             } )
         } )
@@ -193,7 +194,7 @@ export default class SegmentPopup extends Popup {
     loadLightbox () {
         var lightboxData = {
             photos: this.photos,
-            mkpoints: this.mkpoints,
+            sceneries: this.mapdata.sceneries,
             route: this.data.route
         }
         this.lightbox = new SegmentLightbox(this.data.mapInstance.map.getContainer(), this.popup, lightboxData, {noSession: true})
@@ -326,7 +327,7 @@ export default class SegmentPopup extends Popup {
             newPhoto.src = photo.url
             photoContainer.appendChild(newPhoto)
             var newPhotoPeriod = document.createElement('div')
-            newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo.month))
+            newPhotoPeriod.classList.add('scenery-period', setPeriodClass(photo.month))
             newPhotoPeriod.innerText = photo.period
             newPhotoPeriod.style.display = 'none'
             newPhoto.after(newPhotoPeriod)
@@ -343,7 +344,7 @@ export default class SegmentPopup extends Popup {
         // Set slider system
 
         var photos = this.data.mapInstance.map.getContainer().getElementsByClassName("popup-img")
-        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("mkpoint-period")
+        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("scenery-period")
 
         // If there is more than one photo in the database
         if (photos.length > 1) {
@@ -402,7 +403,7 @@ export default class SegmentPopup extends Popup {
         popupIcons.appendChild(flyButton)
 
         // Like button
-        if (this.mkpoints.length > 0) {
+        if (this.mapdata.sceneries.length > 0) {
             var likeButton = document.createElement('div')
             likeButton.id = 'like-button'
             likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
@@ -412,10 +413,10 @@ export default class SegmentPopup extends Popup {
         }
     }
 
-    getDistanceFromStart (mkpoint) {
+    getDistanceFromStart (scenery) {
         if (this.data.coordinates) var routeCoords = this.data.coordinates
         else if (this.data.route) var routeCoords = this.data.route.coordinates
-        var section = turf.lineSlice(turf.point(routeCoords[0]), turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat]), turf.lineString(routeCoords))
+        var section = turf.lineSlice(turf.point(routeCoords[0]), turf.point([scenery.lngLat.lng, scenery.lngLat.lat]), turf.lineString(routeCoords))
         return turf.length(section)
     }
 }

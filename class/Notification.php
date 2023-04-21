@@ -75,7 +75,7 @@ class Notification extends Model {
             case 'routes': return new Route($this->entry_id); break;
             case 'rides': return new Ride($this->entry_id); break;
             case 'users': return new User($this->entry_id); break;
-            case 'map_mkpoint': return new Mkpoint($this->entry_id); break;
+            case 'sceneries': return new Scenery($this->entry_id); break;
             case 'dev_notes': return new DevNote($this->entry_id); break;
             /// [...]
         }
@@ -140,6 +140,10 @@ class Notification extends Model {
                 $this->ref = 'ride/' .$entry->id;
                 break;
             // Dev notes
+            case 'new_devnote':
+                $this->text = '新しい開発ノートが「' .$entry->title. '」というタイトルで投稿されました。';
+                $this->ref = 'dev/note/' .$entry->id;
+                break;
             case 'dev_message_post':
                 $this->text = '開発ノート「' .$entry->title. '」に新しいメッセージが投稿されました。';
                 $this->ref = 'dev/note/' .$entry->id;

@@ -6,12 +6,12 @@
 	$slug = basename($_SERVER['REQUEST_URI']);
 	if (is_numeric($slug)) {
 
-        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
-        $getMkpoint->execute(array($slug));
+        $getScenery = $db->prepare('SELECT id FROM sceneries WHERE id = ?');
+        $getScenery->execute(array($slug));
 		
-		if ($getMkpoint->rowCount() > 0) {
+		if ($getScenery->rowCount() > 0) {
 			
-			$mkpoint = new Mkpoint($slug);
+			$scenery = new Scenery($slug);
 
         } else {
 			

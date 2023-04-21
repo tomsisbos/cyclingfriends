@@ -22,21 +22,12 @@ class Bike extends Model {
         if ($id != NULL) $this->load($id);
     }
 
-    private function getType ($type) {
-        switch ($type) {
-            case 'Road bike': return 'ロードバイク';
-            case 'City bike': return 'ママチャリ';
-            case 'Mountain bike': return 'マウンテンバイク';
-            case 'Gravel&Cyclocross bike': return 'グラベル／シクロクロスバイク';
-        }
-    }
-
     public function load ($id) {
         $this->id          = $id;
         $data = $this->getData($this->table);
         $this->user        = new User($data['user_id']);
         $this->number      = $data['number'];
-        $this->type        = $this->getType($data['type']);
+        $this->type        = $data['type'];
         $this->model       = $data['model'];
         $this->components  = $data['components'];
         $this->wheels      = $data['wheels'];
@@ -45,6 +36,16 @@ class Bike extends Model {
         $this->img_size    = $data['img_size'];
         $this->img_name    = $data['img_name'];
         $this->img_type    = $data['img_type'];
+    }
+
+    public function getType () {
+        switch ($this->type) {
+            case 'other': return 'その他';
+            case 'roadbike': return 'ロードバイク';
+            case 'citybike': return 'ママチャリ';
+            case 'mountainbike': return 'マウンテンバイク';
+            case 'gravelcxbike': return 'グラベル／シクロクロスバイク';
+        }
     }
 
     public function create ($user_id) {

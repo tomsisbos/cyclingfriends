@@ -173,6 +173,7 @@ input[type="checkbox"] {
     width: 500px;
     height: fit-content;
     margin-top: auto;
+    z-index: 4;
 }
 .header-row {
     display: flex;
@@ -182,6 +183,12 @@ input[type="checkbox"] {
 }
 .header-row h1, .header-row h2, .header-row p {
     margin: 0;
+}
+.header-row a {
+    height: 100%;
+}
+.header-row .mp-button {
+    height: 100%;
 }
 .header-buttons {
     display: flex;
@@ -200,6 +207,13 @@ input[type="checkbox"] {
         flex-grow: unset;
         min-height: unset;
     }
+}
+
+.full-header {
+    height: calc(100vh - 80px);
+    background-position: center;
+    display: flex;
+    padding: 50px;
 }
 
 .specs {
@@ -1119,6 +1133,7 @@ a .strava:hover {
     align-self: center;
     border-radius: 10px;
     margin: auto;
+    z-index: 11;
 }
 .popup.medium-popup {
     max-width: 450px;
@@ -1429,7 +1444,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .loading-modal {
     background-color: #00000055;
-    z-index: 20;
+    z-index: 10;
     top: 0;
     position: fixed;
     height: 100vh;
@@ -1443,7 +1458,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .loading-modal-relative {
     background-color: #00000055;
-    z-index: 20;
+    z-index: 10;
     top: 0;
     position: relative;
     height: 100%;
@@ -1670,7 +1685,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .black-overlay {
     position: absolute;
-    height: 100vh;
+    height: 100%;
     width: 100%;
     background-color: #000;
     z-index: 4;
@@ -1716,7 +1731,8 @@ input[type="range"]::-webkit-slider-thumb {
 	}
 }
 .with-background-img {
-    position: fixed;
+    /*position: fixed;*/
+    position: absolute;
     color: black;
     background: #fff;
 }
@@ -1725,7 +1741,7 @@ input[type="range"]::-webkit-slider-thumb {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	position: fixed;
+	position: absolute;
 	content: '';
     color: #5c9999;
 	background-repeat: repeat-x;

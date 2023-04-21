@@ -1,8 +1,9 @@
 <?php
 
 $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-require_once $base_directory . '/class/Autoloader.php'; 
-Autoloader::register(); 
+require_once $base_directory . '/class/CFAutoloader.php'; 
+CFAutoloader::register(); 
+include_once $base_directory . "/vendor/phayes/geophp/geoPHP.inc";
 require_once $base_directory . '/includes/functions.php';
 $connected_user = new User(11);
 require $base_directory . '/actions/databaseAction.php';
@@ -14,20 +15,20 @@ if (isAjax()) {
         if (isset($_SESSION['auth'])) echo json_encode($_SESSION);
     }*/
 
-    if (isset($_GET['mkpoint-photos'])) {
-        $mkpoint = new Mkpoint($_GET['mkpoint-photos']);
-        echo json_encode($mkpoint->getImages());
+    if (isset($_GET['scenery-photos'])) {
+        $scenery = new Scenery($_GET['scenery-photos']);
+        echo json_encode($scenery->getImages());
     }
 
-    if (isset($_GET['mkpoint-closest-photo'])) { // Get photo whose period is the soonest
-        $getMkpointPhoto = $db->prepare('SELECT * FROM img_mkpoint WHERE mkpoint_id = ? AND month > ? ORDER BY month ASC');
-        $getMkpointPhoto->execute([$_GET['mkpoint-closest-photo'], date('m')]);
-        if ($getMkpointPhoto->rowCount() == 0) {
-            $getMkpointPhoto = $db->prepare('SELECT * FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY month DESC');
-            $getMkpointPhoto->execute([$_GET['mkpoint-closest-photo']]);
+    if (isset($_GET['scenery-closest-photo'])) { // Get photo whose period is the soonest
+        $getSceneryPhoto = $db->prepare('SELECT * FROM scenery_photos WHERE scenery_id = ? AND month > ? ORDER BY month ASC');
+        $getSceneryPhoto->execute([$_GET['scenery-closest-photo'], date('m')]);
+        if ($getSceneryPhoto->rowCount() == 0) {
+            $getSceneryPhoto = $db->prepare('SELECT * FROM scenery_photos WHERE scenery_id = ? ORDER BY month DESC');
+            $getSceneryPhoto->execute([$_GET['scenery-closest-photo']]);
         }
-        $mkpointphoto = $getMkpointPhoto->fetch(PDO::FETCH_ASSOC);
-        echo json_encode($mkpointphoto);
+        $sceneryphoto = $getSceneryPhoto->fetch(PDO::FETCH_ASSOC);
+        echo json_encode($sceneryphoto);
     }
 
     if (isset($_GET['getpropic'])) {
@@ -37,66 +38,66 @@ if (isAjax()) {
         echo json_encode([$profile_picture_src]);
     }
 
-    if (isset($_GET['display-mkpoints'])) {
-        $mkpoints_number = 30;
-        $getMkpoints = $db->prepare("SELECT id, user_id, name, thumbnail, lng, lat, rating, grades_number, popularity FROM map_mkpoint ORDER BY popularity DESC LIMIT 0, {$mkpoints_number}");
-        $getMkpoints->execute();
-        $mkpoints = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($mkpoints);
+    if (isset($_GET['display-sceneries'])) {
+        $sceneries_number = 30;
+        $getSceneries = $db->prepare("SELECT id, user_id, name, thumbnail, ST_X(point) as lng, ST_Y(point) as lat, rating, grades_number, popularity FROM sceneries ORDER BY popularity DESC LIMIT 0, {$sceneries_number}");
+        $getSceneries->execute();
+        $sceneries = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($sceneries);
     }
 
-    if (isset($_GET['mkpoint'])) {
-        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
-        $getMkpoint->execute(array($_GET['mkpoint']));
-        if ($getMkpoint->rowCount() > 0) {
-            $mkpoint = new Mkpoint($_GET['mkpoint']);
-            echo json_encode(['data' => $mkpoint, 'photos' => $mkpoint->getImages()]);
+    if (isset($_GET['scenery'])) {
+        $getScenery = $db->prepare('SELECT id FROM sceneries WHERE id = ?');
+        $getScenery->execute(array($_GET['scenery']));
+        if ($getScenery->rowCount() > 0) {
+            $scenery = new Scenery($_GET['scenery']);
+            echo json_encode(['data' => $scenery, 'photos' => $scenery->getImages()]);
         } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
     }
 
-    if (isset($_GET['display-mkpoints-list'])) {
-        $querystring = "SELECT * FROM map_mkpoint WHERE id IN (" .$_GET['display-mkpoints-list']. ")";
-        $getMkpoints = $db->prepare($querystring);
-        $getMkpoints->execute();
-        $mkpointsList = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($mkpointsList);
+    if (isset($_GET['display-sceneries-list'])) {
+        $querystring = "SELECT * FROM sceneries WHERE id IN (" .$_GET['display-sceneries-list']. ")";
+        $getSceneries = $db->prepare($querystring);
+        $getSceneries->execute();
+        $sceneriesList = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($sceneriesList);
     }
 
-    if (isset($_GET['get-close-mkpoints'])) {
-        $route = new Route($_GET['get-close-mkpoints']);
-        $close_mkpoints = $route->getCloseMkpoints();
-        echo json_encode($close_mkpoints);
+    if (isset($_GET['get-close-sceneries'])) {
+        $route = new Route($_GET['get-close-sceneries']);
+        $close_sceneries = $route->getCloseSceneries();
+        echo json_encode($close_sceneries);
     }
 
-    if (isset($_GET['mkpoint-dragged'])) {
+    if (isset($_GET['scenery-dragged'])) {
         if (isset($_GET['lng']) && isset($_GET['lat'])) {
-            $mkpoint_id  = $_GET['mkpoint-dragged'];
-            $mkpoint_lng = $_GET['lng'];
-            $mkpoint_lat = $_GET['lat'];
-            $updateMkpointLngLat = $db->prepare('UPDATE map_mkpoint SET lng = ?, lat = ? WHERE id = ?');
-            $updateMkpointLngLat->execute(array($mkpoint_lng, $mkpoint_lat, $mkpoint_id));
+            $scenery_id  = $_GET['scenery-dragged'];
+            $scenery_lng = $_GET['lng'];
+            $scenery_lat = $_GET['lat'];
+            $updateSceneryLngLat = $db->prepare('UPDATE sceneries SET lng = ?, lat = ? WHERE id = ?');
+            $updateSceneryLngLat->execute(array($scenery_lng, $scenery_lat, $scenery_id));
             echo json_encode([$_GET['lng'], $_GET['lat']]);
         }
     }
 
-    if (isset($_GET['mkpoint-details'])) {
-        $mkpoint_id = $_GET['mkpoint-details'];
-        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
-        $getMkpoint->execute(array($mkpoint_id));
-        if ($getMkpoint->rowCount() > 0) {
-            $mkpoint = new Mkpoint($mkpoint_id);
-            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
-            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
-            $mkpoint->tags = $mkpoint->getTags();
-            $mkpoint->photos = $mkpoint->getImages();
-            echo json_encode($mkpoint);
+    if (isset($_GET['scenery-details'])) {
+        $scenery_id = $_GET['scenery-details'];
+        $getScenery = $db->prepare('SELECT id FROM sceneries WHERE id = ?');
+        $getScenery->execute(array($scenery_id));
+        if ($getScenery->rowCount() > 0) {
+            $scenery = new Scenery($scenery_id);
+            if (isset($_SESSION['id'])) $scenery->isFavorite = $scenery->isFavorite();
+            if (isset($_SESSION['id'])) $scenery->isCleared = $scenery->isCleared();
+            $scenery->tags = $scenery->getTags();
+            $scenery->photos = $scenery->getImages();
+            echo json_encode($scenery);
         } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
     }
 
     if (isset($_GET['get-rating'])) {
-        if ($_GET['type'] == 'mkpoint') {
-            $object = new Mkpoint($_GET['id']);
-            $table = "map_mkpoint";
+        if ($_GET['type'] == 'scenery') {
+            $object = new Scenery($_GET['id']);
+            $table = "sceneries";
         } else if ($_GET['type'] == 'segment') {
             $object = new Segment($_GET['id']);
             $table = "segments";
@@ -119,18 +120,20 @@ if (isAjax()) {
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {
             // Add coordinates
-            $getCoords = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
-            $getCoords->execute([$segments[$i]['route_id']]);
-            $segments[$i]['coordinates'] = $getCoords->fetchAll(PDO::FETCH_NUM);
+            $getCoords = $db->prepare('SELECT ST_AsWKT(linestring) FROM linestrings WHERE segment_id = ?');
+            $getCoords->execute(array($segments[$i]['route_id']));
+            $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
+            $coordinates = new CFLinestring();
+            $coordinates->fromWKT($linestring_wkt);
+            $segments[$i]['coordinates'] = $coordinates->getArray();
             // Add tunnels
+            $getLinestring = $db->prepare('SELECT ST_AsWKT(linestring) FROM tunnels WHERE segment_id = ?');
+            $getLinestring->execute(array($segments[$i]['route_id']));
             $tunnels = [];
-            $getTunnelsNumber = $db->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
-            $getTunnelsNumber->execute([$segments[$i]['route_id']]);
-            $tunnels_number = $getTunnelsNumber->rowCount();
-            for ($j = 0 ; $j < $tunnels_number; $j++) {
-                $getTunnelCoords = $db->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
-                $getTunnelCoords->execute([$j, $segments[$i]['route_id']]);
-                $tunnels[$j] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
+            while ($linestring_wkt = $getLinestring->fetch(PDO::FETCH_COLUMN)) {
+                $tunnel = new Tunnel();
+                $tunnel->fromWKT($linestring_wkt);
+                array_push($tunnels, $tunnel->getArray());
             }
             $segments[$i]['tunnels'] = $tunnels;
             // Add tags
@@ -147,11 +150,11 @@ if (isAjax()) {
         echo json_encode(new Segment($segment_id, false));
     }
 
-    if (isset($_GET['segment-mkpoints'])) {
-        $segment = new Segment($_GET['segment-mkpoints']);
-        $close_mkpoints = $segment->route->getCloseMkpoints(500);
-        foreach ($close_mkpoints as $mkpoint) $mkpoint->photos = $mkpoint->getImages();
-        echo json_encode($close_mkpoints);
+    if (isset($_GET['segment-sceneries'])) {
+        $segment = new Segment($_GET['segment-sceneries']);
+        $close_sceneries = $segment->route->getCloseSceneries(500);
+        foreach ($close_sceneries as $scenery) $scenery->photos = $scenery->getImages();
+        echo json_encode($close_sceneries);
     }
 
     if (isset($_GET['get-icon'])) {

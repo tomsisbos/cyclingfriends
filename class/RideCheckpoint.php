@@ -16,12 +16,21 @@ class RideCheckpoint extends Model {
         $this->name          = $data['name'];
         $this->description   = $data['description'];
         $this->img           = new CheckpointImage($data['id']);
-        $this->lngLat        = new LngLat($data['lng'], $data['lat']);
+        $this->lngLat        = $this->getLngLat();
         $this->elevation     = $data['elevation'];
         $this->distance      = floatval($data['distance']);
         $this->special       = $data['special'];
         $this->city          = $data['city'];
         $this->prefecture    = $data['prefecture'];
+    }
+
+    private function getLngLat () {
+        $getPointToText = $this->getPdo()->prepare("SELECT ST_AsText(point) FROM {$this->table} WHERE id = ?");
+        $getPointToText->execute([$this->id]);
+        $point_text = $getPointToText->fetch(PDO::FETCH_COLUMN);
+        $lngLat = new LngLat();
+        $lngLat->fromWKT($point_text);
+        return $lngLat;
     }
 
 }

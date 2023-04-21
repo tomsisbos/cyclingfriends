@@ -55,8 +55,8 @@ export default class SegmentLightbox extends Popup {
         this.modalBlock.appendChild(slidesBox)
         var cursor = 0
         // Build slides
-        this.data.mkpoints.forEach( (mkpoint) => {
-            mkpoint.photos.forEach( (photo) => {
+        this.data.sceneries.forEach( (scenery) => {
+            scenery.photos.forEach( (photo) => {
                 slides[cursor] = document.createElement('div')
                 slides[cursor].className = 'mySlides wider-slide'
                 // Create number
@@ -67,12 +67,12 @@ export default class SegmentLightbox extends Popup {
                 // Create image
                 imgs[cursor] = document.createElement('img')
                 imgs[cursor].src = photo.url
-                imgs[cursor].id = 'mkpoint-img-' + photo.id
+                imgs[cursor].id = 'scenery-img-' + photo.id
                 imgs[cursor].classList.add('fullwidth')
                 slides[cursor].appendChild(imgs[cursor])
                 // Create image meta
                 var imgMeta = document.createElement('div')
-                imgMeta.className = 'mkpoint-img-meta'
+                imgMeta.className = 'scenery-img-meta'
                 slides[cursor].appendChild(imgMeta)
                 var likeButton = document.createElement('div')
                 likeButton.className = 'like-button-modal'
@@ -86,11 +86,11 @@ export default class SegmentLightbox extends Popup {
                 likeButton.appendChild(likeIcon)
                 imgMeta.appendChild(likeButton)
                 var likes = document.createElement('div')
-                likes.className = 'mkpoint-img-likes'
+                likes.className = 'scenery-img-likes'
                 likes.innerText = photo.likes
                 imgMeta.appendChild(likes)
                 var period = document.createElement('div')
-                period.className = 'mkpoint-period lightbox-period'
+                period.className = 'scenery-period lightbox-period'
                 period.classList.add('period-' + photo.month)
                 period.innerText = photo.period
                 imgMeta.appendChild(period)
@@ -99,16 +99,16 @@ export default class SegmentLightbox extends Popup {
                 var caption = document.createElement('div')
                 caption.className = 'lightbox-caption'
                 var name = document.createElement('div')
-                name.innerText = 'km ' + (Math.ceil(mkpoint.distanceFromStart * 10) / 10) + ' - ' + mkpoint.name
+                name.innerText = 'km ' + (Math.ceil(scenery.distanceFromStart * 10) / 10) + ' - ' + scenery.name
                 name.className = 'lightbox-name'
                 caption.appendChild(name)
                 var location = document.createElement('div')
-                location.innerText = mkpoint.city + ' (' + mkpoint.prefecture + ') - ' + mkpoint.elevation + 'm'
+                location.innerText = scenery.city + ' (' + scenery.prefecture + ') - ' + scenery.elevation + 'm'
                 location.className = 'lightbox-location'
                 caption.appendChild(location)
                 var description = document.createElement('div')
                 description.className = 'lightbox-description'
-                description.innerText = mkpoint.description
+                description.innerText = scenery.description
                 caption.appendChild(description)
                 slidesBox.appendChild(caption)
                 // Display caption on slide hover
@@ -229,9 +229,9 @@ export default class SegmentLightbox extends Popup {
         this.colorLike()
     }    
 
-    getDistanceFromStart (mkpoint) {
+    getDistanceFromStart (scenery) {
         const routeCoords = this.data.route.coordinates
-        var section = turf.lineSlice(turf.point(routeCoords[0]), turf.point([mkpoint.lngLat.lng, mkpoint.lngLat.lat]), turf.lineString(routeCoords))
+        var section = turf.lineSlice(turf.point(routeCoords[0]), turf.point([scenery.lngLat.lng, scenery.lngLat.lat]), turf.lineString(routeCoords))
         return turf.length(section)
     }
 

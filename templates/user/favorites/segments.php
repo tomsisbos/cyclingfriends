@@ -6,7 +6,7 @@ include '../includes/head.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
-<link rel="stylesheet" href="/assets/css/mkpoint.css" />
+<link rel="stylesheet" href="/assets/css/scenery.css" />
 <link rel="stylesheet" href="/assets/css/segment.css" />
 <link rel="stylesheet" href="/assets/css/favorites.css" />
 

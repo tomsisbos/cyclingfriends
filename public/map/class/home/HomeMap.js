@@ -39,13 +39,13 @@ export default class HomeMap extends WorldMap {
         stop: () => this.loaderElement.remove()
     }
 
-    setMkpoint (mkpoint) {  
+    setScenery (scenery) {  
         
         // Build element
         let element = document.createElement('div')
         let icon = document.createElement('img')
-        icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
-        icon.classList.add('mkpoint-icon')
+        icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+        icon.classList.add('scenery-icon')
         element.appendChild(icon)
         this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
@@ -54,13 +54,13 @@ export default class HomeMap extends WorldMap {
             draggable: false,
             element: element
         } )
-        marker.setLngLat([mkpoint.lng, mkpoint.lat])
+        marker.setLngLat([scenery.lng, scenery.lat])
         marker.addTo(this.map)
-        marker.getElement().id = 'mkpoint' + mkpoint.id
-        marker.getElement().classList.add('mkpoint-marker')
-        marker.getElement().dataset.id = mkpoint.id
-        marker.getElement().dataset.user_id = mkpoint.user_id
-        this.mkpointsMarkerCollection.push(marker)
+        marker.getElement().id = 'scenery' + scenery.id
+        marker.getElement().classList.add('scenery-marker')
+        marker.getElement().dataset.id = scenery.id
+        marker.getElement().dataset.user_id = scenery.user_id
+        this.sceneriesMarkerCollection.push(marker)
 
         // Build and attach popup
         var popupOptions = {
@@ -68,7 +68,7 @@ export default class HomeMap extends WorldMap {
         }
         var instanceData = {
             mapInstance: this,
-            mkpoint
+            scenery
         }
         var instanceOptions = {
             noSession: true
@@ -83,7 +83,7 @@ export default class HomeMap extends WorldMap {
     }
 
     updateSegments () {
-        this.data.segments.forEach(segment => {
+        this.mapdata.segments.forEach(segment => {
             this.segmentsCollection.push(segment)
             if (!this.map.getSource('segment' + segment.id)) this.displaySegment(segment)
         } )

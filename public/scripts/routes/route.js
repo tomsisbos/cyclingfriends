@@ -82,15 +82,15 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         routePageMap.updateDistanceMarkers()
         if (!routePageMap.rideId) routePageMap.displayStartGoalMarkers(geojson)
 
-        // Request and display mkpoints close to the route
-        routePageMap.loadCloseMkpoints(2).then( async (mkpoints) => {
+        // Request and display sceneries close to the route
+        routePageMap.loadCloseSceneries(2).then( async (sceneries) => {
 
-            // Load mkpoints into map instance
-            routePageMap.mkpoints = mkpoints
+            // Load sceneries into map instance
+            routePageMap.mapdata.sceneries = sceneries
             
-            // Generate profile with mkpoints data
+            // Generate profile with sceneries data
             routePageMap.profile.generate({
-                poiData: {mkpoints}
+                poiData: {sceneries}
             })
             
             // If ride ID is found inside query string parameters, get ride data from server
@@ -98,7 +98,8 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
                 
             // Build route specs table
             routePageMap.buildSlider()
-            routePageMap.buildTable()
+            routePageMap.buildTable(['sceneries', 'checkpoints'])
+            routePageMap.enableTableButtons()
         } )
 
         var fittingSegments = await routePageMap.getFittingSegments()
@@ -155,10 +156,11 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
             } )
         }
 
-        // Request and display mkpoints close to the route
-        routePageMap.loadCloseMkpoints(2, {displayOnMap: false, generateProfile: false, getFileBlob: false}).then( async (mkpoints) => {
-            routePageMap.mkpoints = mkpoints
-            routePageMap.buildTable()
+        // Request and display sceneries close to the route
+        routePageMap.loadCloseSceneries(2, {displayOnMap: false, generateProfile: false, getFileBlob: false}).then( async (sceneries) => {
+            routePageMap.mapdata.sceneries = sceneries
+            routePageMap.buildTable(['sceneries', 'checkpoints'])
+            routePageMap.enableTableButtons()
         } )
 
 

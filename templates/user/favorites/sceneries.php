@@ -6,7 +6,7 @@ include '../includes/head.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
-<link rel="stylesheet" href="/assets/css/mkpoint.css" />
+<link rel="stylesheet" href="/assets/css/scenery.css" />
 <link rel="stylesheet" href="/assets/css/segment.css" />
 <link rel="stylesheet" href="/assets/css/favorites.css" />
 
@@ -28,10 +28,10 @@ include '../includes/head.php'; ?>
             $limit = 20;
             if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
             else $offset = 0;
-            $mkpoints = $connected_user->getFavorites('scenery', $offset, $limit);
-            foreach ($mkpoints as $mkpoint) { ?>
+            $sceneries = $connected_user->getFavorites('scenery', $offset, $limit);
+            foreach ($sceneries as $scenery) { ?>
                 <div class="fav-card"> <?php
-                    include '../includes/mkpoints/card.php'; ?>
+                    include '../includes/sceneries/card.php'; ?>
                     <div class="fav-card-appendice">
                         <div class="mp-button btn bg-darkred text-white js-favorite-button">除外</div>
                     </div>

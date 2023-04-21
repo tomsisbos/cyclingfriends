@@ -64,9 +64,9 @@ export default class Popup extends Model {
         var slidesBox = document.createElement('div')
         slidesBox.className = 'slides-box'
         document.querySelector('.modal-block').appendChild(slidesBox)
-        this.mkpoints.forEach( (mkpoint) => {
-            mkpoint.photos.forEach( (photo) => {
-                const distanceFromStart = this.getDistanceFromStart(mkpoint)
+        this.mapdata.sceneries.forEach( (scenery) => {
+            scenery.photos.forEach( (photo) => {
+                const distanceFromStart = this.getDistanceFromStart(scenery)
                 slides[cursor] = document.createElement('div')
                 slides[cursor].className = 'mySlides wider-slide'
                 // Create number
@@ -77,12 +77,12 @@ export default class Popup extends Model {
                 // Create image
                 imgs[cursor] = document.createElement('img')
                 imgs[cursor].src = photo.url
-                imgs[cursor].id = 'mkpoint-img-' + photo.id
+                imgs[cursor].id = 'scenery-img-' + photo.id
                 imgs[cursor].classList.add('fullwidth')
                 slides[cursor].appendChild(imgs[cursor])
                 // Create image meta
                 var imgMeta = document.createElement('div')
-                imgMeta.className = 'mkpoint-img-meta'
+                imgMeta.className = 'scenery-img-meta'
                 slides[cursor].appendChild(imgMeta)
                 var likeButton = document.createElement('div')
                 likeButton.className = 'like-button-modal'
@@ -96,11 +96,11 @@ export default class Popup extends Model {
                 likeButton.appendChild(likeIcon)
                 imgMeta.appendChild(likeButton)
                 var likes = document.createElement('div')
-                likes.className = 'mkpoint-img-likes'
+                likes.className = 'scenery-img-likes'
                 likes.innerText = photo.likes
                 imgMeta.appendChild(likes)
                 var period = document.createElement('div')
-                period.className = 'mkpoint-period lightbox-period'
+                period.className = 'scenery-period lightbox-period'
                 period.classList.add('period-' + photo.month)
                 period.innerText = photo.period
                 imgMeta.appendChild(period)
@@ -109,16 +109,16 @@ export default class Popup extends Model {
                 var caption = document.createElement('div')
                 caption.className = 'lightbox-caption'
                 var name = document.createElement('div')
-                name.innerText = 'km ' + (Math.ceil(distanceFromStart * 10) / 10) + ' - ' + mkpoint.name
+                name.innerText = 'km ' + (Math.ceil(distanceFromStart * 10) / 10) + ' - ' + scenery.name
                 name.className = 'lightbox-name'
                 caption.appendChild(name)
                 var location = document.createElement('div')
-                location.innerText = mkpoint.city + ' (' + mkpoint.prefecture + ') - ' + mkpoint.elevation + 'm'
+                location.innerText = scenery.city + ' (' + scenery.prefecture + ') - ' + scenery.elevation + 'm'
                 location.className = 'lightbox-location'
                 caption.appendChild(location)
                 var description = document.createElement('div')
                 description.className = 'lightbox-description'
-                description.innerText = mkpoint.description
+                description.innerText = scenery.description
                 caption.appendChild(description)
                 slidesBox.appendChild(caption)
                 // Display caption on slide hover
@@ -139,8 +139,8 @@ export default class Popup extends Model {
         var demosBox = document.createElement('div')
         demosBox.className = 'thumbnails-box'
         document.querySelector('.modal-block').appendChild(demosBox)
-        this.mkpoints.forEach( (mkpoint) => {
-            mkpoint.photos.forEach( (photo) => {
+        this.mapdata.sceneries.forEach( (scenery) => {
+            scenery.photos.forEach( (photo) => {
                 let column = document.createElement('div')
                 column.className = 'column'
                 demos[cursor] = document.createElement('img')
@@ -191,7 +191,7 @@ export default class Popup extends Model {
                 document.querySelectorAll('.popup-img').forEach(($img) => {
                     if ($img.style.display != 'none') img_id = parseInt($img.dataset.id)
                 } )
-                var correspondingModalButton = document.querySelector('#mkpoint-img-' + img_id).closest('.mySlides').querySelector('.like-button-modal')
+                var correspondingModalButton = document.querySelector('#scenery-img-' + img_id).closest('.mySlides').querySelector('.like-button-modal')
             }
             else if (buttonType == 'modal') {
                 var img_id
@@ -208,20 +208,19 @@ export default class Popup extends Model {
             if (buttonType == 'thumbnail' || (buttonType == 'modal' && thumbnail_img_id == img_id)) thumbnailButton.classList.toggle('liked')
             if (buttonType == 'thumbnail') {
                 correspondingModalButton.classList.toggle('liked')
-                var correspondingModalLikeCounter = correspondingModalButton.parentElement.querySelector('.mkpoint-img-likes')
+                var correspondingModalLikeCounter = correspondingModalButton.parentElement.querySelector('.scenery-img-likes')
                 var previousLikesNumber = parseInt(correspondingModalLikeCounter.innerText)
                 if (correspondingModalButton.classList.contains('liked')) correspondingModalLikeCounter.innerText = (previousLikesNumber + 1)
                 else correspondingModalLikeCounter.innerText = (previousLikesNumber - 1)
             } else if (buttonType == 'modal') {
                 clickedLikeButton.classList.toggle('liked')
-                var modalLikeCounter = clickedLikeButton.parentElement.querySelector('.mkpoint-img-likes')
+                var modalLikeCounter = clickedLikeButton.parentElement.querySelector('.scenery-img-likes')
                 var previousLikesNumber = parseInt(modalLikeCounter.innerText)
                 if (clickedLikeButton.classList.contains('liked')) modalLikeCounter.innerText = (previousLikesNumber + 1)
                 else modalLikeCounter.innerText = (previousLikesNumber - 1)
             }
             ajaxGetRequest (this.apiUrl + "?togglelike-img=" + img_id, (response) => { // Response contains like data
-                /*console.log(response)
-                modalLikeCounter.innerText = response.imgLikes*/
+                
             } )
         }
 
@@ -364,7 +363,7 @@ export default class Popup extends Model {
         } )
     }
 
-    // Adds user profile picture to the mkpoint popup
+    // Adds user profile picture to the scenery popup
     async loadPropic (userId) {
         return new Promise((resolve, reject) => {
             // Asks server for profil picture src and display it

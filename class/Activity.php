@@ -37,7 +37,6 @@ class Activity extends Model {
         $this->altitude_max     = intval($data['altitude_max']);
         $this->slope_max        = floatval($data['slope_max']);
         $this->bike             = $data['bike_id'];
-        //$this->bike = new Bike($data['bike_id']);
         $this->privacy          = $data['privacy'];
         $this->notes            = $data['notes'];
         $this->notes_privacy    = $data['notes_privacy'];
@@ -249,6 +248,7 @@ class Activity extends Model {
     }
 
     public function delete () {
+        $this->route->delete();
         $deleteCheckpoints = $this->getPdo()->prepare('DELETE FROM activity_checkpoints WHERE activity_id = ?');
         $deleteCheckpoints->execute(array($this->id));
         $deletePhotos = $this->getPdo()->prepare('DELETE FROM activity_photos WHERE activity_id = ?');
@@ -257,8 +257,6 @@ class Activity extends Model {
         $deleteLikeData->execute(array($this->id));
         $deleteActivity = $this->getPdo()->prepare('DELETE FROM activities WHERE id = ?');
         $deleteActivity->execute(array($this->id));
-        $deleteClearedSegments = $this->getPdo()->prepare('DELETE FROM user_segments WHERE activity_id = ?');
-        $deleteClearedSegments->execute(array($this->id));
         return true;
     }
 }

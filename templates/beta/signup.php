@@ -20,7 +20,7 @@ $member->updateUserId() ?>
 
 	include '../includes/navbar.php'; ?>
 		
-	<div class="main with-background-img"> <?php
+	<div class="main with-background-img" data-parameter="public-scenery-imgs"> <?php
                 
 		if (isset($errormessage)) echo '<div class="error-block absolute"><p class="error-message">' .$errormessage. '</p></div>';
 		if (isset($successmessage)) echo '<div class="success-block absolute"><p class="success-message">' .$successmessage. '</p></div>'; ?>

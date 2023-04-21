@@ -19,20 +19,41 @@ class ActivityCheckpoint extends Model {
     
     function __construct ($id = NULL) {
         parent::__construct();
-        $this->id          = $id;
+        $this->id = $id;
         $data = $this->getData($this->table);
-        $this->activity_id = intval($data['activity_id']);
-        $this->number      = intval($data['number']);
-        $this->name        = $data['name'];
-        $this->type        = $data['type'];
-        $this->story       = $data['story'];
-        $this->datetime    = new DateTime($data['datetime']);
-        $this->geolocation = new Geolocation($data['city'], $data['prefecture']);
-        $this->elevation   = intval($data['elevation']);
-        $this->distance    = floatval($data['distance']);
-        $this->temperature = floatval($data['temperature']);
-        $this->lngLat      = new LngLat($data['lng'], $data['lat']);
-        $this->special     = $data['special'];
+        if ($id != NULL) {
+            $this->activity_id = intval($data['activity_id']);
+            $this->number      = intval($data['number']);
+            $this->name        = $data['name'];
+            $this->type        = $data['type'];
+            $this->story       = $data['story'];
+            $this->datetime    = new DateTime($data['datetime']);
+            $this->geolocation = new Geolocation($data['city'], $data['prefecture']);
+            $this->elevation   = intval($data['elevation']);
+            $this->distance    = floatval($data['distance']);
+            $this->temperature = floatval($data['temperature']);
+            $this->lngLat      = $this->getLngLat();
+            $this->special     = $data['special'];
+        }
+    }
+
+    private function getLngLat () {
+        $getPointToText = $this->getPdo()->prepare("SELECT ST_AsText(point) FROM {$this->table} WHERE id = ?");
+        $getPointToText->execute([$this->id]);
+        $point_text = $getPointToText->fetch(PDO::FETCH_COLUMN);
+        $lngLat = new LngLat();
+        $lngLat->fromWKT($point_text);
+        return $lngLat;
+    }
+
+    public function create ($data) {
+
+        $lngLat = new LngLat($data['lng'], $data['lat']);
+        $point_wkt = $lngLat->toWKT();
+
+        // Insert checkpoints in 'activity_checkpoints' table
+        $insert_checkpoints = $this->getPdo()->prepare("INSERT INTO {$this->table}(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, special, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
+        $insert_checkpoints->execute(array($data['activity_id'], $data['number'], $data['name'], $data['type'], $data['story'], $data['datetime']->format('Y-m-d H:i:s'), $data['city'], $data['prefecture'], $data['elevation'], $data['distance'], $data['temperature'], $data['special'], $point_wkt));
     }
 
     public function getIcon ($width = 24) {

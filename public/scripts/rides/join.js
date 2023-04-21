@@ -27,7 +27,6 @@ if (joinButton) {
         }).then(() => {
             return new Promise((resolve, reject) => {
                 ajaxGetRequest (apiUrl + "?get-missing-information=" + rideId, async (response) => {
-                    console.log(response)
                     if (response.length > 0)  {
                         var string = response.join('、')
                         var answer = await openAlertPopup('ライドに申し込むためには、次の情報の記入が必要です：' + string + '。<a href="/profile/edit" target="_blank">プロフィールページ</a>にてご記入頂けます。')

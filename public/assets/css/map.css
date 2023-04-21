@@ -46,7 +46,7 @@
 
 /* -- Markers -- */
 
-.mkpoint-marker {
+.scenery-marker {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -58,11 +58,11 @@
     transition: opacity .2s;
     border-radius: 99px;
 }
-.mkpoint-marker img:hover {
+.scenery-marker img:hover {
     height: 30px !important;
     width: 30px !important;
 }
-.mkpoint-marker::after {
+.scenery-marker::after {
     content: '\25BC';
     height: 0px;
     bottom: 12px;
@@ -74,7 +74,7 @@
     text-shadow: 0px 10px 4px #00000033;
     color: #ffffff;
 }
-.mkpoint-marker::before {
+.scenery-marker::before {
     content: attr(data-before);
     display: none;
     display: var(--scenery-hover-display);
@@ -93,7 +93,7 @@
     pointer-events: none;
 }
 
-.mkpoint-icon {
+.scenery-icon {
     border-radius: 1000px;
     border: 2px solid #ffffff;
     transition: height 1s, width 1s;
@@ -155,13 +155,13 @@
     box-shadow: 2px 4px 2px rgb(0 0 0 / 20%) !important;
 }
 
-form#mkpointForm {
+form#sceneryForm {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-form#mkpointForm input[type="file" i] {
+form#sceneryForm input[type="file" i] {
 	border: none;
     margin: 5px 0px;
 }
@@ -232,7 +232,7 @@ form#mkpointForm input[type="file" i] {
     color: lightgreen !important;
 }
 
-.mkpoint-img-meta {
+.scenery-img-meta {
     min-width: 50%;
     position: absolute;
     right: 0px;
@@ -243,7 +243,7 @@ form#mkpointForm input[type="file" i] {
     flex-direction: row-reverse;
 }
 
-.mkpoint-img-likes {
+.scenery-img-likes {
     background-color: black;
     color: white;
     font-weight: bold;
@@ -257,7 +257,7 @@ form#mkpointForm input[type="file" i] {
     cursor: pointer;
     filter: drop-shadow(1px 1px 1px black);
 }
-.mkpoint-period {
+.scenery-period {
     z-index: 2;
     display: inline-block;
     position: absolute;
@@ -379,7 +379,7 @@ form#mkpointForm input[type="file" i] {
     }
 }
 
-#mkpointAdminPanel {
+#sceneryAdminPanel {
     gap: 0px;
     padding: 0px;
     align-items: center;
@@ -479,6 +479,10 @@ form#mkpointForm input[type="file" i] {
     align-self: start;
     outline: 2px solid transparent;
     transition: 0.3s outline;
+}
+.mp-button:disabled {
+    background-color: lightgrey !important;
+    cursor: default;
 }
 .mp-button.success, .mp-button-small.success {
     background-color: #00e06e;

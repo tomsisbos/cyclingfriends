@@ -24,7 +24,7 @@ export default class TempPopup extends Popup {
 
         this.popup.setHTML(`
             <div class="popup-head popup-content container-admin">絶景スポットの新規作成</div>
-            <form class="popup-content" name="mkpointForm" id="mkpointForm">
+            <form class="popup-content" name="sceneryForm" id="sceneryForm">
                 <strong>タイトル :</strong>
                 <input type="text" name="name" class="admin-field"/>
                 <strong>紹介文 :</strong>
@@ -38,7 +38,7 @@ export default class TempPopup extends Popup {
         ` )
     }
 
-    // Treat Mkpoint input data through API requests
+    // Treat Scenery input data through API requests
     async save () {
         return new Promise((resolve, reject) => {
             var popup = this.popup
@@ -65,17 +65,17 @@ export default class TempPopup extends Popup {
                 } )
 
                 // Get form data into queryData and adds tab id
-                var mkpointData = new FormData(form)
-                mkpointData.append('saveMkpoint', true)
-                mkpointData.append('tags', tags)
-                mkpointData.append('city', city)
-                mkpointData.append('prefecture', prefecture)
-                mkpointData.append('lng', lng)
-                mkpointData.append('lat', lat)
-                mkpointData.append('elevation', elevation)
+                var sceneryData = new FormData(form)
+                sceneryData.append('saveScenery', true)
+                sceneryData.append('tags', tags)
+                sceneryData.append('city', city)
+                sceneryData.append('prefecture', prefecture)
+                sceneryData.append('lng', lng)
+                sceneryData.append('lat', lat)
+                sceneryData.append('elevation', elevation)
                 
                 // Proceed AJAX request and treat data in the callback function
-                ajaxPostFormDataRequest(this.apiUrl, mkpointData, (response) => {
+                ajaxPostFormDataRequest(this.apiUrl, sceneryData, (response) => {
                     if (response.error) {
                         if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
                         var errorDiv = document.createElement('div')

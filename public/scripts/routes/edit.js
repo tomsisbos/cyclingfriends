@@ -1,6 +1,7 @@
 import EditRouteHelper from "/scripts/helpers/routes/edit.js"
 import CFUtils from "/map/class/CFUtils.js"
 import EditRouteMap from "/map/class/route/EditRouteMap.js"
+import Loader from "/map/class/Loader.js"
 
 var editRouteMap = new EditRouteMap()
 
@@ -93,7 +94,7 @@ ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, asy
         'circle-stroke-color': 'blue',
         'circle-stroke-width': 2
         }
-    } )
+    })
     editRouteMap.configureEndPoint()
 
     editRouteMap.paintTunnels(editRouteMap.routeData.tunnels)
@@ -102,7 +103,7 @@ ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, asy
     map.fitBounds(routeBounds)
     editRouteMap.waypointNumber = 1
     editRouteMap.addState()
-} )
+}, new Loader('準備中...'))
 
 // Set edition mode by default
 editRouteMap.modeSelect.value = 'addWaypoints'

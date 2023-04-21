@@ -16,10 +16,8 @@ document.querySelector('.js-description').addEventListener('change', updateInfo)
 function updateInfo (e) {
 	var label = e.target.parentElement.querySelector('label')
 	var editedPropertyString = label.innerText.substring(0, label.innerText.indexOf(" :"))
-	console.log(editedPropertyString)
     var timerPopup = new TimerPopup({type: 'success', text: editedPropertyString + 'の変更を保存しました！'}, 2)
 	ajaxGetRequest (apiUrl + '?' + e.target.name + '=' + e.target.value, (response) => {
-		console.log(response)
         timerPopup.show()
 	})
 }

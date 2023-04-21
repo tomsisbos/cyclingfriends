@@ -58,16 +58,16 @@ export default class HomeSceneryLightbox extends SceneryLightbox {
         var captionContent = document.createElement('div')
         captionContent.className = 'caption-content'
         var name = document.createElement('div')
-        name.innerText = this.data.mkpoint.name
+        name.innerText = this.data.scenery.name
         name.className = 'lightbox-name'
         captionContent.appendChild(name)
         var location = document.createElement('div')
-        location.innerText = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
+        location.innerText = this.data.scenery.city + ' (' + this.data.scenery.prefecture + ') - ' + this.data.scenery.elevation + 'm'
         location.className = 'lightbox-location'
         captionContent.appendChild(location)
         var description = document.createElement('div')
         description.className = 'lightbox-description'
-        description.innerText = this.data.mkpoint.description
+        description.innerText = this.data.scenery.description
         captionContent.appendChild(description)
         caption.appendChild(captionContent)
         slidesBox.appendChild(caption)
@@ -95,15 +95,15 @@ export default class HomeSceneryLightbox extends SceneryLightbox {
             // Create image
             imgs[i] = document.createElement('img')
             imgs[i].src = this.data.photos[i].url
-            imgs[i].id = 'mkpoint-img-' + this.data.photos[i].id
+            imgs[i].id = 'scenery-img-' + this.data.photos[i].id
             imgs[i].classList.add('fullwidth')
             slides[i].appendChild(imgs[i])
             // Create image meta
             var imgMeta = document.createElement('div')
-            imgMeta.className = 'mkpoint-img-meta'
+            imgMeta.className = 'scenery-img-meta'
             slides[i].appendChild(imgMeta)
             var period = document.createElement('div')
-            period.className = 'mkpoint-period lightbox-period'
+            period.className = 'scenery-period lightbox-period'
             period.classList.add('period-' + this.data.photos[i].month)
             period.innerText = this.data.photos[i].period
             imgMeta.appendChild(period)

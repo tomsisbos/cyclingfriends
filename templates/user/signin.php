@@ -16,7 +16,7 @@ include '../includes/head.php'; ?>
 
 include '../includes/navbar.php'; ?>
 		
-<div class="main with-background-img"> <?php
+<div class="main with-background-img" data-parameter="public-scenery-imgs"> <?php
                 
 	include '../includes/result-message.php'; ?>
 

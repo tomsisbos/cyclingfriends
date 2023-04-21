@@ -181,23 +181,32 @@ include '../includes/head.php'; ?>
 					} ?>
 					</div>
 					<div class="pg-sg-itinerary">
-						<div class="pg-sg-itinerary-title">行程</div> <?php
-						foreach ($segment->route->getItinerary() as $spot) { ?>
-							<div class="pg-sg-itinerary-spot <?php if (isset($spot['viewed']) AND $spot['viewed'] == true) echo 'text-success' ?>">
-								<div class="pg-sg-spot-icon"><img src="data:image/jpeg;base64,<?= $spot['icon'] ?>"></div>
-								<div class="pg-sg-spot-distance">km <?= round($spot['distance'] / 1000, 1) ?></div>
-								<div class="pg-sg-spot-name"> <?php
-									if ($spot['type'] == 'mkpoint') { echo '<a target="_blank" href="/scenery/' . $spot['id'] . '">'; }
-										echo $spot['name'];
-									if ($spot['type'] == 'mkpoint') { echo '</a>'; } ?>
-								</div>
-
-							</div> <?php
-						} ?>
+						<div class="p-0 spec-table-container">
+							<div class="spec-table-buttons">
+								<button id="addToilets" data-entry="toilets" class="mp-button bg-button text-white">トイレを追加</button>
+								<button id="addWater" data-entry="water" class="mp-button bg-button text-white">給水場を追加</button>
+								<button id="addKonbinis" data-entry="konbinis" class="mp-button bg-button text-white">コンビニを追加</button>
+							</div>
+							<div class="spec-table">
+								<table id="routeTable">
+									<tbody>
+										<tr class="spec-table-th">
+											<th class="table-element e20 text-left">距離</th>
+											<th class="table-element e10 text-center">種類</th>
+											<th class="table-element e40 text-left">名称</th>
+											<th class="table-element e20 text-center">場所</th>
+											<th class="table-element e15 text-center">標高</th>
+											<th class="table-element e25 text-center">コースまで</th>
+										</tr>
+										<tr class="loader-center"></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div id="profileBox" class="container p-0" style="height: 22vh; background-color: white;">
-					<canvas id="elevationProfile"></canvas>
+					<div class="pg-sg-profile container p-0" id="profileBox" style="height: 22vh; background-color: white;">
+						<canvas id="elevationProfile"></canvas>
+					</div>
 				</div>
 						
 			</div>

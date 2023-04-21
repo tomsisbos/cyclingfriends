@@ -6,13 +6,13 @@ $url_fragments = explode('/', $_SERVER['REQUEST_URI']);
 $slug = array_slice($url_fragments, -2)[0];
 if (is_numeric($slug)) {
 	
-	// Check if activity exists and if connected user has administration rights
-	$checkIfExists = $db->prepare('SELECT * FROM activities WHERE id = ?');
+	// Check if activity exists
+	$checkIfExists = $db->prepare('SELECT id FROM activities WHERE id = ?');
 	$checkIfExists->execute(array($slug));
 	if ($checkIfExists->rowcount() > 0) {
 
         $activity = new Activity($slug);
 
-	} else echo 'here1'; //header('location: ' . $connected_user->login . '/activities');
+	} else header('location: ' . $connected_user->login . '/activities');
 
-} else echo 'here2'; //header('location: ' . $connected_user->login . '/activities'); ?>
+} else header('location: ' . $connected_user->login . '/activities'); ?>

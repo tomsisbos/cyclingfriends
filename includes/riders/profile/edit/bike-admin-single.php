@@ -32,20 +32,20 @@
             <div class="pf-bike-column">
                 <label><strong>車種 : </strong></label>
                 <select name="bike-type" class="js-bike-type admin-field">
-                    <option value="Other"<?php
-                        if (isset($bike) AND $bike->type == 'Other') { echo ' selected="selected"'; }
+                    <option value="other"<?php
+                        if (isset($bike) AND $bike->type == 'other') { echo ' selected="selected"'; }
                         ?>>その他</option>
-                    <option value="City bike"<?php
-                        if (isset($bike) AND $bike->type == 'City bike') { echo ' selected="selected"'; }
+                    <option value="citybike"<?php
+                        if (isset($bike) AND $bike->type == 'citybike') { echo ' selected="selected"'; }
                         ?>>ママチャリ</option>
-                    <option value="Road bike"<?php
-                        if (isset($bike) AND $bike->type == 'Road bike') { echo ' selected="selected"'; }
+                    <option value="roadbike"<?php
+                        if (isset($bike) AND $bike->type == 'roadbike') { echo ' selected="selected"'; }
                         ?>>ロードバイク</option>
-                    <option value="Mountain bike" <?php
-                        if (isset($bike) AND $bike->type == 'Mountain bike') { echo ' selected="selected"'; }
+                    <option value="mountainbike" <?php
+                        if (isset($bike) AND $bike->type == 'mountainbike') { echo ' selected="selected"'; }
                         ?>>マウンテンバイク</option>
-                    <option value="Gravel/Cyclocross bike" <?php
-                        if (isset($bike) AND $bike->type == 'Gravel/Cyclocross bike') { echo ' selected="selected"'; }
+                    <option value="gravelcxbike" <?php
+                        if (isset($bike) AND $bike->type == 'gravelcxbike') { echo ' selected="selected"'; }
                         ?>>グラベル／シクロクロスバイク</option>
                 </select>
             </div>

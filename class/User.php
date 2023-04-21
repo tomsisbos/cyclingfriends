@@ -40,7 +40,7 @@ class User extends Model {
             $this->gender                    = $data['gender'];
             $this->birthdate                 = $data['birthdate'];
             $this->location                  = new Geolocation($data['city'], $data['prefecture']);
-            if ($data['lng'] != null) $this->lngLat = new LngLat($data['lng'], $data['lat']);
+            $this->lngLat                    = $this->getLngLat();
             $this->level                     = $data['level'];
             $this->description               = $data['description'];
             $this->twitter                   = $data['twitter'];
@@ -49,6 +49,17 @@ class User extends Model {
             $this->strava                    = $data['strava'];
             $this->rights                    = new Role($data['rights']);
         }
+    }    
+
+    private function getLngLat () {
+        $getPointToText = $this->getPdo()->prepare("SELECT ST_AsText(point) FROM {$this->table} WHERE id = ?");
+        $getPointToText->execute([$this->id]);
+        $point_text = $getPointToText->fetch(PDO::FETCH_COLUMN);
+        if ($point_text !== NULL) {
+            $lngLat = new LngLat();
+            $lngLat->fromWKT($point_text);
+        } else $lngLat = null;
+        return $lngLat;
     }
 
     // Register user into database
@@ -691,7 +702,7 @@ class User extends Model {
         $favorites_data = $getFavorites->fetchAll(PDO::FETCH_ASSOC);
         $favorites = [];
         foreach ($favorites_data as $favorite_data) {
-            if ($type == 'scenery') array_push($favorites, new Mkpoint($favorite_data['object_id']));
+            if ($type == 'scenery') array_push($favorites, new Scenery($favorite_data['object_id']));
             if ($type == 'segment') array_push($favorites, new Segment($favorite_data['object_id']));
         }
         return $favorites;
@@ -703,34 +714,8 @@ class User extends Model {
         return $countFavorites->rowCount();
     }
 
-    // Get currently saved cleared mkpoints list
-    public function getClearedMkpoints ($limit = 99999) {
-        $getClearedMkpoints = $this->getPdo()->prepare("SELECT u.mkpoint_id, u.activity_id FROM user_mkpoints AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
-        $getClearedMkpoints->execute(array($this->id));
-        $cleared_mkpoints = $getClearedMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($cleared_mkpoints as $cleared_mkpoint) {
-            $checkIfActivityExists = $this->getPdo()->prepare('SELECT id FROM activities WHERE id = ?');
-            $checkIfActivityExists->execute(array($cleared_mkpoint['activity_id']));
-            // If activity in which mkpoint has been cleared has been deleted, remove from cleared mkpoints list
-            if ($checkIfActivityExists->rowCount() == 0) {
-                if (($key = array_search($cleared_mkpoint, $cleared_mkpoints)) !== false) {
-                    unset($cleared_mkpoints[$key]);
-                    $removeClearedMkpoint = $this->getPdo()->prepare('DELETE FROM user_mkpoints WHERE mkpoint_id = ?');
-                    $removeClearedMkpoint->execute(array($cleared_mkpoint['mkpoint_id']));
-                }
-            }
-        }
-        return $cleared_mkpoints;
-    }
-
-    public function countClearedMkpoints() {
-        $countClearedMkpoints = $this->getPdo()->prepare("SELECT DISTINCT mkpoint_id FROM user_mkpoints WHERE user_id = ?");
-        $countClearedMkpoints->execute(array($this->id));
-        return $countClearedMkpoints->rowCount();
-    }
-
-    public function getPublicMkpoints ($offset = 0, $limit = 20) {
-        // Get period of mkpoints to display
+    public function getPublicSceneries ($offset = 0, $limit = 20) {
+        // Get period of sceneries to display
         $friends_and_scout_list = $this->getFriendsAndScoutsList();
         $friends_and_scout_number = count($friends_and_scout_list);
         if ($friends_and_scout_number < 3) $period = 999;
@@ -738,55 +723,29 @@ class User extends Model {
         else if ($friends_and_scout_number < 18) $period = 28;
         else if ($friends_and_scout_number < 25) $period = 21;
         else $period = 14;
-        // Request mkpoints
-        if ($friends_and_scout_number == 0) $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)");
-        else $getMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
-        $getMkpoints->execute();
-        if ($getMkpoints->rowCount() > 2) return $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
+        // Request sceneries
+        if ($friends_and_scout_number == 0) $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)");
+        else $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        $getSceneries->execute();
+        if ($getSceneries->rowCount() > 2) return $getSceneries->fetchAll(PDO::FETCH_ASSOC);
         else { // If this request has returned less than 3 results, return scenery spots shared in the last 14 days
-            $getOtherMkpoints = $this->getPdo()->prepare("SELECT id, publication_date FROM map_mkpoint WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)");
-            $getOtherMkpoints->execute();
-            return $getOtherMkpoints->fetchAll(PDO::FETCH_ASSOC);
+            $getOtherSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)");
+            $getOtherSceneries->execute();
+            return $getOtherSceneries->fetchAll(PDO::FETCH_ASSOC);
         }
-    }
-
-    // Get currently saved cleared segments list
-    public function getClearedSegments ($limit = 99999) {
-        $getClearedSegments = $this->getPdo()->prepare("SELECT DISTINCT u.segment_id, u.activity_id, a.datetime FROM user_segments AS u JOIN activities AS a ON u.activity_id = a.id WHERE u.user_id = ? ORDER BY a.datetime DESC LIMIT 0," .$limit. "");
-        $getClearedSegments->execute(array($this->id));
-        $cleared_segments = $getClearedSegments->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($cleared_segments as $cleared_segment) {
-            $checkIfActivityExists = $this->getPdo()->prepare('SELECT id FROM activities WHERE id = ?');
-            $checkIfActivityExists->execute(array($cleared_segment['activity_id']));
-            // If activity in which segment has been cleared has been deleted, remove from cleared segments list
-            if ($checkIfActivityExists->rowCount() == 0) {
-                if (($key = array_search($cleared_segment, $cleared_segments)) !== false) {
-                    unset($cleared_segments[$key]);
-                    $removeClearedSegment = $this->getPdo()->prepare('DELETE FROM user_msegments WHERE segment_id = ?');
-                    $removeClearedSegment->execute(array($cleared_segment['segment_id']));
-                }
-            }
-        }
-        return $cleared_segments;
-    }
-
-    public function countClearedSegments() {
-        $countClearedSegments = $this->getPdo()->prepare("SELECT DISTINCT segment_id FROM user_segments WHERE user_id = ?");
-        $countClearedSegments->execute(array($this->id));
-        return $countClearedSegments->rowCount();
     }
 
     public function getThread ($offset = 0, $limit = null) {
         $activities_data = $this->getPublicActivities();
-        $mkpoint_data = $this->getPublicMkpoints();
+        $scenery_data = $this->getPublicSceneries();
         // Get thread data skeleton
         $thread_data = [];
         foreach ($activities_data as $data) {
             $data['type'] = 'activity';
             array_push($thread_data, $data);
         }
-        foreach ($mkpoint_data as $data) {
-            $data['type'] = 'mkpoint';
+        foreach ($scenery_data as $data) {
+            $data['type'] = 'scenery';
             array_push($thread_data, $data);
         }
         // Sort thread data by date
@@ -800,44 +759,5 @@ class User extends Model {
         usort($thread_data, 'sort_by_date');
         return array_slice($thread_data, $offset, $limit);
     }
-
-    // Update cleared mkpoints list in the database according to newly uploaded activities
-    /*public function updateClearedMkpoints ($activity = false) {
-
-        $activities = $this->getActivities();
-
-        // For each activity route, get close mkpoints and add them to cleared mkpoints
-        if ($activity) {
-            $cleared_mkpoints = $activity->route->getCloseMkpoints(500, false);
-            foreach ($cleared_mkpoints as $cleared_mkpoint) $cleared_mkpoint['activity_id'] = $activity->id;
-        } else {
-            $cleared_mkpoints = [];
-            foreach ($activities as $activity) {
-                $activity = new Activity($activity['id']);
-                $mkpoints = $activity->route->getCloseMkpoints(500, false);
-                foreach ($mkpoints as $mkpoint) {
-                    $mkpoint['activity_id'] = $activity->id;
-                    if (!in_array_r($mkpoint['id'], $cleared_mkpoints, true)) array_push($cleared_mkpoints, $mkpoint);
-                }
-            }
-        }
-
-        // Filter mkpoints to add
-        $saved_mkpoints = $this->getClearedMkpoints();
-        $mkpoints_to_add = [];
-        foreach ($cleared_mkpoints as $cleared_mkpoint) {
-            $already_saved = false;
-            foreach ($saved_mkpoints as $saved_mkpoint) {
-                if ($saved_mkpoint['mkpoint_id'] == $cleared_mkpoint['id'] && $saved_mkpoint['activity_id'] == $cleared_mkpoint['activity_id']) $already_saved = true;
-            }
-            if (!$already_saved) array_push($mkpoints_to_add, $cleared_mkpoint);
-        }
-
-        // Add relevant mkpoints to user mkpoints table
-        foreach ($mkpoints_to_add as $mkpoint) {
-            $addMkpoint = $this->getPdo()->prepare('INSERT INTO user_mkpoints(user_id, mkpoint_id, activity_id) VALUES (?, ?, ?)');
-            $addMkpoint->execute(array($this->id, $mkpoint['id'], $mkpoint['activity_id']));
-        }
-    }*/
 
 }

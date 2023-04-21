@@ -6,7 +6,7 @@ include '../includes/head.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
-<link rel="stylesheet" href="/assets/css/mkpoint.css" />
+<link rel="stylesheet" href="/assets/css/scenery.css" />
 <link rel="stylesheet" href="/assets/css/segment.css" />
 
 <body> <?php 
@@ -34,9 +34,9 @@ include '../includes/head.php'; ?>
                 $entries = $tag->getEntries($offset, $limit);
                 foreach ($entries as $entry) {
                     if ($entry->type == 'scenery') {
-                        $mkpoint = $entry; ?>
-                        <div class="top-link"><a href="/scenery/<?= $mkpoint->id ?>">絶景スポット</a></div> <?php
-                        include '../includes/mkpoints/card.php';
+                        $scenery = $entry; ?>
+                        <div class="top-link"><a href="/scenery/<?= $scenery->id ?>">絶景スポット</a></div> <?php
+                        include '../includes/sceneries/card.php';
                     } else if ($entry->type == 'segment') {
                         $segment = $entry;?>
                         <div class="top-link"><a href="/segment/<?= $segment->id ?>">セグメント</a></div> <?php

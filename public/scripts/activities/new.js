@@ -74,7 +74,7 @@ $upload.addEventListener('change', async (e) => {
                         if (!newActivityMap.loaded) {
                             newActivityMap.map = await newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
                             newActivityMap.addRouteControl( {
-                                displayMkpoints: false,
+                                displaySceneries: false,
                                 flyAlong: false
                             } )
                             newActivityMap.map.once('load', () => newActivityMap.map.resize())
@@ -98,10 +98,10 @@ $upload.addEventListener('change', async (e) => {
 
                         // Save activity treatment
                         document.querySelector('#saveActivity').addEventListener('click', async () => {
-                            var photosToShare = await newActivityMap.checkForCloseMkpoints()
-                            if (newActivityMap.data.mkpointsToCreate) var mkpointsToCreate = await newActivityMap.createMkpoints()
-                            else var mkpointsToCreate = null
-                            newActivityMap.saveActivity(photosToShare, mkpointsToCreate)
+                            var photosToShare = await newActivityMap.checkForCloseSceneries()
+                            if (newActivityMap.data.sceneriesToCreate && newActivityMap.data.sceneriesToCreate.length > 0) var sceneriesToCreate = await newActivityMap.createSceneries()
+                            else var sceneriesToCreate = null
+                            newActivityMap.saveActivity(photosToShare, sceneriesToCreate)
                         } )
 
                         // Create new checkpoint on click on route

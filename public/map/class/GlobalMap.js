@@ -9,6 +9,7 @@ export default class GlobalMap extends Model {
 
     constructor () {
         super()
+        console.log(this)
         this.setSeason()
         this.userLocation = this.defaultCenter
 
@@ -33,16 +34,21 @@ export default class GlobalMap extends Model {
 
     apiUrl = '/api/map.php'
     map
-    profile
     $map
+    mapdata = {}
+    profile
+    sceneriesMarkerCollection = []
+    sceneriesZoomRoof = 7 // Scenery display minimum zoom level
+    sceneriesMinNumber = 10 // Number of sceneries displayed to try to reach at minimum
+    sceneriesMaxNumber = 20 // Maximum number of sceneries displayed at the same time
     selectStyle
     dislayKonbinisBox
     displayAmenitiesBox
-    displayMkpointsBox
+    displaySceneriesBox
     loaded = false
     defaultCenter = [139.7673068, 35.6809591]
     defaultZoom = 10
-    mkpoints
+    sceneries
     tunnelNumber = 0
     month = new Date().getMonth() + 1
     season
@@ -177,7 +183,7 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    addRouteControl (options = {flyAlong: true, displayMkpoints: true}) {
+    addRouteControl (options = {flyAlong: true, displaySceneries: true}) {
         // Get (or add) controller container
         if (this.$map.querySelector('.map-controller')) var controller = this.$map.querySelector('.map-controller')
         else var controller = this.addController()
@@ -227,30 +233,30 @@ export default class GlobalMap extends Model {
             }
         } )
         // Line 5
-        if (options.displayMkpoints) {
+        if (options.displaySceneries) {
             let line5 = document.createElement('div')
             line5.className = 'map-controller-line hide-on-mobiles'
             routeContainer.appendChild(line5)
-            this.displayMkpointsBox = document.createElement('input')
-            this.displayMkpointsBox.id = 'displayMkpointsBox'
-            this.displayMkpointsBox.setAttribute('type', 'checkbox')
-            this.displayMkpointsBox.setAttribute('checked', 'checked')
-            line5.appendChild(this.displayMkpointsBox)
-            var displayMkpointsBoxLabel = document.createElement('label')
-            displayMkpointsBoxLabel.innerText = '絶景スポットを表示'
-            displayMkpointsBoxLabel.setAttribute('for', 'displayMkpointsBoxLabel')
-            line5.appendChild(displayMkpointsBoxLabel)
-            this.displayMkpointsBox.addEventListener('change', () => {
-                if (this.displayMkpointsBox.checked) {
-                    this.addMkpoints(this.mkpoints)
+            this.displaySceneriesBox = document.createElement('input')
+            this.displaySceneriesBox.id = 'displaySceneriesBox'
+            this.displaySceneriesBox.setAttribute('type', 'checkbox')
+            this.displaySceneriesBox.setAttribute('checked', 'checked')
+            line5.appendChild(this.displaySceneriesBox)
+            var displaySceneriesBoxLabel = document.createElement('label')
+            displaySceneriesBoxLabel.innerText = '絶景スポットを表示'
+            displaySceneriesBoxLabel.setAttribute('for', 'displaySceneriesBoxLabel')
+            line5.appendChild(displaySceneriesBoxLabel)
+            this.displaySceneriesBox.addEventListener('change', () => {
+                if (this.displaySceneriesBox.checked) {
+                    this.addSceneries(this.mapdata.sceneries)
                     if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'flex'
                     this.profile.generate({
                         poiData: {
-                            mkpoints: this.mkpoints
+                            sceneries: this.mapdata.sceneries
                         }
                     })
                 } else {
-                    this.hideMkpoints()
+                    this.hideSceneries()
                     if (document.querySelector('.rt-slider')) document.querySelector('.rt-slider').style.display = 'none'
                     this.profile.generate()
                 }
@@ -276,9 +282,10 @@ export default class GlobalMap extends Model {
             buttonFly.id = 'buttonFly'
             buttonFly.innerText = '走行再現'
             line6.appendChild(buttonFly)
-            buttonFly.addEventListener('click', () => {
+            buttonFly.addEventListener('click', async () => {
                 if (this.map.getSource('route')) {
-                    this.flyAlong(this.data.routeData)
+                    console.log(this)
+                    this.flyAlong(await this.getRouteData())
                 }
             } )
         }
@@ -566,6 +573,11 @@ export default class GlobalMap extends Model {
 
     addKonbiniLayers () {
         
+        var getKonbiniExpressionArray = (keyword, name) => {
+            var array = this.konbiniSearchNames[name]
+            return [keyword, ...array]
+        }
+        
         this.map.addLayer( {
             'id': 'seven-eleven',
             'type': 'symbol',
@@ -599,12 +611,7 @@ export default class GlobalMap extends Model {
                     0,
                     3
                 ],
-                [
-                    "any",
-                    "セブン",
-                    "sev",
-                    "7-E"
-                ],
+                getKonbiniExpressionArray('any', 'seven-eleven'),
                 true,
                 false
             ]
@@ -642,14 +649,7 @@ export default class GlobalMap extends Model {
                             0,
                             4
                         ],
-                        ["any",
-                            "ファミリ",
-                            "Fami",
-                            "Fimi",
-                            "サークル",
-                            "Circ",
-                            "7-E"
-                        ],
+                        getKonbiniExpressionArray('any', 'family-mart'),
                         true,
                         false
                     ],
@@ -698,14 +698,7 @@ export default class GlobalMap extends Model {
                             0,
                             4
                         ],
-                        ["any",
-                            "ファミリ",
-                            "Fami",
-                            "Fimi",
-                            "サークル",
-                            "Circ",
-                            "7-E"
-                        ],
+                        getKonbiniExpressionArray('any', 'family-mart'),
                         true,
                         false
                     ],
@@ -753,12 +746,7 @@ export default class GlobalMap extends Model {
                     0,
                     4
                 ],
-                [
-                    "any",
-                    "ローソン",
-                    "Laws",
-                    "LAWS"
-                ],
+                getKonbiniExpressionArray('any', 'lawson'),
                 true,
                 false
             ]
@@ -796,12 +784,7 @@ export default class GlobalMap extends Model {
                     0,
                     4
                 ],
-                [
-                    "any",
-                    "ミニスト",
-                    "Mini",
-                    "MINI"
-                ],
+                getKonbiniExpressionArray('any', 'mini-stop'),
                 true,
                 false
             ]
@@ -839,16 +822,7 @@ export default class GlobalMap extends Model {
                     0,
                     4
                 ],
-                [
-                    "any",
-                    "Dail",
-                    "DAIL",
-                    "デイリー",
-                    "Yama",
-                    "ヤマザキ",
-                    "YAMA",
-                    "ニューヤ"
-                ],
+                getKonbiniExpressionArray('any', 'daily-yamazaki'),
                 true,
                 false
             ]
@@ -1465,7 +1439,7 @@ export default class GlobalMap extends Model {
                         0
                     ]
                 }
-            }, 'landcover-custom')
+            }, 'landuse')
         }
 
     }
@@ -1762,87 +1736,87 @@ export default class GlobalMap extends Model {
         }
     }
 
-    async loadCloseMkpoints (range, options = {displayOnMap: true, generateProfile: true}) {
+    async loadCloseSceneries (range, options = {displayOnMap: true, generateProfile: true}) {
         return new Promise ( async (resolve, reject) => {
 
-            // Display close mkpoints inside the map
-            ajaxGetRequest ('/api/map.php' + "?display-mkpoints=" + this.routeId + '&details=true', async (response) => {
+            // Display close sceneries inside the map
+            ajaxGetRequest ('/api/map.php' + "?display-sceneries=" + this.routeId + '&details=true', async (response) => {
 
-                var mkpoints = await this.getClosestMkpoints(response, range)
+                var sceneries = await this.getClosestSceneries(response, range)
 
                 // Display on map
-                if (options.displayOnMap) this.addMkpoints(mkpoints)
+                if (options.displayOnMap) this.addSceneries(sceneries)
 
-                // Update mkpoints cursors on profile
+                // Update sceneries cursors on profile
                 if (options.generateProfile) this.profile.generate()
                 
                 // Display thumbnails
-                // Get mkpoints on route number
-                mkpoints.forEach( (mkpoint) => {
-                    if (mkpoint.on_route) this.mkpointsOnRouteNumber++
+                // Get sceneries on route number
+                sceneries.forEach( (scenery) => {
+                    if (scenery.on_route) this.sceneriesOnRouteNumber++
                 } )
 
-                // Get most relevant image url for each mkpoint and add it to map instance data
-                var closestPhotos = await this.getClosestPhotos(mkpoints)
+                // Get most relevant image url for each scenery and add it to map instance data
+                var closestPhotos = await this.getClosestPhotos(sceneries)
                 closestPhotos.forEach(photo => {
-                    mkpoints.forEach(mkpoint => {
-                        if (mkpoint.id == photo.id) mkpoint.file_url = photo.data.url
+                    sceneries.forEach(scenery => {
+                        if (scenery.id == photo.id) scenery.file_url = photo.data.url
                     } )
                 } )
-                resolve(mkpoints)
+                resolve(sceneries)
             } )
         } )
     }
 
-    async getClosestPhotos (mkpoints) {
+    async getClosestPhotos (sceneries) {
         return new Promise ( async (resolve, reject) => {
-            var ids = mkpoints.map(mkpoint => mkpoint.id);
+            var ids = sceneries.map(scenery => scenery.id);
             var ids_list = ids.join(',')
-            ajaxGetRequest ('/api/map.php' + "?mkpoints-closest-photo=" + ids_list, async (response) => {
+            ajaxGetRequest ('/api/map.php' + "?sceneries-closest-photo=" + ids_list, async (response) => {
                 resolve(response)
             } )
         } )
     }
     
-    async getClosestMkpoints (mkpoints, range) {
+    async getClosestSceneries (sceneries, range) {
         return new Promise ( async (resolve, reject) => {
 
             const remotenessTolerance = 0.1
-            var mkpointsInRange = []
-            var closeMkpoints = []
+            var sceneriesInRange = []
+            var closeSceneries = []
 
             // Get route
             const routeData = await this.getRouteData()
 
             // Build a simplified line for rough filtering
             var coreLine = turf.simplify(routeData, {tolerance: 0.02, highQuality: false, mutate: false})
-            mkpoints.forEach( (mkpoint) => {
-                var point = turf.point([mkpoint.lng, mkpoint.lat])
+            sceneries.forEach( (scenery) => {
+                var point = turf.point([scenery.lng, scenery.lat])
                 var nearestLinePoint = turf.nearestPointOnLine(coreLine, point)
                 var roughRemoteness = nearestLinePoint.properties.dist
-                if (range < 3) var roughRange = range * 8 // Define range from the coreline where to keep mkpoints according range value to prevent too small range
+                if (range < 3) var roughRange = range * 8 // Define range from the coreline where to keep sceneries according range value to prevent too small range
                 else var roughRange = range * 3
                 if (roughRemoteness < roughRange) {
-                    mkpointsInRange.push(mkpoint)
+                    sceneriesInRange.push(scenery)
                 }
             } )
 
             // Get route remoteness
-            mkpointsInRange.forEach( (mkpoint) => {
-                var point = turf.point([mkpoint.lng, mkpoint.lat])
+            sceneriesInRange.forEach( (scenery) => {
+                var point = turf.point([scenery.lng, scenery.lat])
                 var nearestLinePoint = turf.nearestPointOnLine(routeData, point)
-                mkpoint.remoteness = nearestLinePoint.properties.dist
-                mkpoint.distance = nearestLinePoint.properties.location
-                if (mkpoint.remoteness < range) {
-                    if (mkpoint.remoteness < remotenessTolerance) mkpoint.on_route = true
-                    else mkpoint.on_route = false
-                    closeMkpoints.push(mkpoint)
+                scenery.remoteness = nearestLinePoint.properties.dist
+                scenery.distance = nearestLinePoint.properties.location
+                if (scenery.remoteness < range) {
+                    if (scenery.remoteness < remotenessTolerance) scenery.on_route = true
+                    else scenery.on_route = false
+                    closeSceneries.push(scenery)
                 }
             } )
-            // Sort mkpoints by distance
-            closeMkpoints.sort( (mkpointA, mkpointB) => mkpointA.distance - mkpointB.distance)
+            // Sort sceneries by distance
+            closeSceneries.sort( (sceneryA, sceneryB) => sceneryA.distance - sceneryB.distance)
 
-            resolve(closeMkpoints)
+            resolve(closeSceneries)
         } )
     }
 
@@ -1971,17 +1945,17 @@ export default class GlobalMap extends Model {
         } )
     }
 
-    addMkpoints (mkpoints) {
-        mkpoints.forEach( async (mkpoint) => {
+    addSceneries (sceneries) {
+        sceneries.forEach( async (scenery) => {
 
             // Build element
             let element = document.createElement('div')
             let icon = document.createElement('img')
-            icon.src = 'data:image/jpeg;base64,' + mkpoint.thumbnail
-            icon.classList.add('mkpoint-icon')
-            if (mkpoint.on_route === true) icon.style.boxShadow = '0 0 1px 3px ' + this.routeColor
-            if (mkpoint.isCleared) element.classList.add('visited-marker') // Highlight if visited
-            if (mkpoint.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured
+            icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+            icon.classList.add('scenery-icon')
+            if (scenery.on_route === true) icon.style.boxShadow = '0 0 1px 3px ' + this.routeColor
+            if (scenery.isCleared) element.classList.add('visited-marker') // Highlight if visited
+            if (scenery.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured
             element.appendChild(icon)
             this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
             var marker = new mapboxgl.Marker ( {
@@ -1990,14 +1964,14 @@ export default class GlobalMap extends Model {
                 draggable: false,
                 element: element
             } )
-            marker.popularity = mkpoint.popularity // Append popularity data to the marker allowing popularity zoom filtering
-            marker.isFavorite = mkpoint.isFavorite // Append favorites list data
-            marker.setLngLat([mkpoint.lng, mkpoint.lat])
+            marker.popularity = scenery.popularity // Append popularity data to the marker allowing popularity zoom filtering
+            marker.isFavorite = scenery.isFavorite // Append favorites list data
+            marker.setLngLat([scenery.lng, scenery.lat])
             marker.addTo(this.map)
-            marker.getElement().id = 'mkpoint' + mkpoint.id
-            marker.getElement().classList.add('mkpoint-marker')
-            marker.getElement().dataset.id = mkpoint.id
-            marker.getElement().dataset.user_id = mkpoint.user_id
+            marker.getElement().id = 'scenery' + scenery.id
+            marker.getElement().classList.add('scenery-marker')
+            marker.getElement().dataset.id = scenery.id
+            marker.getElement().dataset.user_id = scenery.user_id
             
             // Build and attach popup
             var popupOptions = {
@@ -2006,20 +1980,20 @@ export default class GlobalMap extends Model {
             var instanceOptions = {}
             var instanceData = {
                 mapInstance: this,
-                mkpoint
+                scenery
             }
             let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
             marker.setPopup(sceneryPopup.popup)
         } )
     }
 
-    hideMkpoints () {
+    hideSceneries () {
         let i = 0
         while (i < this.map._markers.length) {
-            if (this.map._markers[i]._element.classList.contains('mkpoint-marker')) this.map._markers[i].remove()
+            if (this.map._markers[i]._element.classList.contains('scenery-marker')) this.map._markers[i].remove()
             else i++
         }
-        if (this.mkpointsMarkerCollection) this.mkpointsMarkerCollection = []
+        if (this.sceneriesMarkerCollection) this.sceneriesMarkerCollection = []
     }
 
     // Get tunnels info from a mapbox Directions API request result
@@ -2115,8 +2089,8 @@ export default class GlobalMap extends Model {
                         this.clearProfileCursor()
                         this.clearTooltip()
                         await this.focus(routeData)
-                        if (this.updateMapDataListener) this.updateMapData()
-                        if (this.updateMapDataListener) this.hideStartGoalMarkers()
+                        this.updateMapData()
+                        this.hideStartGoalMarkers()
                         if (distanceMarkersOn) this.updateDistanceMarkers()
                         if (this.$map.querySelector('.story-caption')) this.$map.querySelector('.story-caption').remove()
                         document.querySelectorAll('.half-grown').forEach(grownPhoto => grownPhoto.classList.remove('half-grown'))
@@ -2411,6 +2385,7 @@ export default class GlobalMap extends Model {
     setMapStyle (layerId) {
 
         // Save layers
+        var mapStyle = this.saveMapStyle()
         var routeStyle = this.saveRouteStyle()
 
         // Clear route
@@ -2421,11 +2396,26 @@ export default class GlobalMap extends Model {
             this.loadImages()
             this.addSources()
             this.addLayers()
+            this.loadMapStyle(mapStyle)
             this.loadRouteStyle(routeStyle)
         } )
     }
 
-    // Return currently displayed route related layers
+    /**
+     * Return currently displayed style specific layers
+     * @returns {Object} layer properties
+     */
+    saveMapStyle () {
+        if (this.map.getLayer('landcover-season')) var seasons = true
+
+        // Return it inside an object
+        return {seasons}
+    }
+
+    /**
+     * Return currently displayed route related layers
+     * @returns {Object} layer properties
+     */
     saveRouteStyle () {
         // Route
         if (this.map.getSource('route')) var route = this.map.getSource('route')._data
@@ -2443,17 +2433,21 @@ export default class GlobalMap extends Model {
         }
 
         // Return it inside an object
-        return {
-            route: route,
-            routeCap: routeCap,
-            startPoint: startPoint,
-            endPoint: endPoint,
-            wayPoints: wayPoints
-        }
+        return {route, routeCap, startPoint, endPoint, wayPoints}
     }
 
+    /** 
+     * Load and display previously saved route related layers
+     * @param {Object} routeStyle Object containing layers
+     */
+    loadMapStyle (routeStyle) {
+        if (routeStyle.seasons) this.styleSeason()
+    }
 
-    // Load and display previously saved route related layers
+    /** 
+     * Load and display previously saved route related layers
+     * @param {Object} routeStyle Object containing layers
+     */
     async loadRouteStyle (routeStyle) {
         if (routeStyle.route) {
             this.map.addSource('route', {
@@ -2566,7 +2560,7 @@ export default class GlobalMap extends Model {
             this.map.removeLayer('startGoal')
             this.map.removeSource('startGoal')
         }
-        for (let i = 2; i <= this.waypointNumber; i++) {
+        for (let i = 2; i < this.waypointNumber; i++) {
             this.map.removeLayer('wayPoint' + i)
             this.map.removeSource('wayPoint' + i)
         }
@@ -2753,5 +2747,233 @@ export default class GlobalMap extends Model {
         }
 
         grabber.addEventListener('mousedown', mouseDownHandler)
+    }
+
+    /**
+     * Display a highlighting layer at [lngLat] and before [previousLayerName]
+     * @param {mapboxgl.LngLat} lngLat 
+     * @param {string} previousLayerName 
+     */
+    setHighlightingLayer (lngLat, previousLayerName) {
+        this.removeHighlightingLayer()
+        this.map.addSource('highlight', {
+            "type": "geojson",
+            "data": {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [lngLat.lng, lngLat.lat]
+                }
+            }
+        })
+        this.map.addLayer({
+            id: 'highlight',
+            type: 'circle',
+            source: 'highlight',
+            paint: {
+                'circle-color': '#ff5555',
+                'circle-radius': 15,
+                'circle-blur': 0.3
+            }
+        }, previousLayerName)
+    }
+
+    removeHighlightingLayer () {
+        if (this.map.getLayer('highlight')) this.map.removeLayer('highlight')
+        if (this.map.getSource('highlight')) this.map.removeSource('highlight')
+    }
+    
+    updateMapDataListener = () => this.updateMapData()
+
+    updateSceneries () {
+
+        if (this.mapdata.sceneries && this.map.getZoom() > this.sceneriesZoomRoof) {
+
+            const bounds = this.map.getBounds()
+            const sceneries = this.mapdata.sceneries
+
+            // Sort sceneries in popularity order
+            sceneries.sort((a, b) => a.popularity - b.popularity)
+
+            // First, remove all sceneries that have left bounds
+            var collection = this.sceneriesMarkerCollection
+            let i = 0
+            while (i < collection.length) {
+                // If existing marker is not inside new bounds OR should not be displayed at this zoom level
+                if ((!(collection[i]._lngLat.lat < bounds._ne.lat && collection[i]._lngLat.lat > bounds._sw.lat) || !(collection[i]._lngLat.lng < bounds._ne.lng && collection[i]._lngLat.lng > bounds._sw.lng)) || !this.zoomPopularityFilter(collection[i].popularity)) {
+                    // If existing scenery is not favoured
+                    if (!collection[i].isFavorite) {
+                        collection[i].remove() // Remove it from the DOM
+                        collection.splice(i, 1) // Remove it from instance Nodelist
+                        i--
+                    }
+                }
+                i++
+            }
+
+            // Second, add all sceneries that have entered bounds
+            let sceneriesSet = collection.length
+            let keepSceneries = []
+            let j = 0
+            while (j < sceneries.length && sceneriesSet <= this.sceneriesMaxNumber) {
+                // If scenery is inside bounds
+                if ((sceneries[j].lat < bounds._ne.lat && sceneries[j].lat > bounds._sw.lat) && (sceneries[j].lng < bounds._ne.lng && sceneries[j].lng > bounds._sw.lng)) {
+                    
+                    // Verify it has not already been loaded
+                    if (!document.querySelector('#scenery' + sceneries[j].id)) {
+                        // Filter through zoom popularity algorithm
+                        if (this.zoomPopularityFilter(sceneries[j].popularity) == true) {
+                            this.setScenery(sceneries[j])
+                            sceneriesSet++
+                        } else keepSceneries.push(sceneries[j])
+                    }
+                }
+                j++
+            }
+
+            // Third, if overall number of sceneries is still less than sceneriesMinNumber, add other sceneries inside bounds up to a total number of sceneriesMinNumber
+            if (sceneriesSet < this.sceneriesMinNumber) {
+                for (let sceneriesToSet = 0; sceneriesToSet < this.sceneriesMinNumber - sceneriesSet && sceneriesToSet < keepSceneries.length; sceneriesToSet++) {
+                    this.setScenery(keepSceneries[sceneriesToSet])
+                }
+            }
+
+            // Update sceneries scale
+            document.querySelectorAll('.scenery-icon').forEach((sceneryIcon) => this.scaleMarkerAccordingToZoom(sceneryIcon))
+
+        } else {
+            for (let i = 0; i < this.sceneriesMarkerCollection.length; i++) {
+                if (!this.sceneriesMarkerCollection[i].isFavorite) {
+                    this.sceneriesMarkerCollection[i].remove()
+                    this.sceneriesMarkerCollection.splice(i, 1)
+                    i--
+                }
+            }
+        }
+    }
+
+    async setScenery (scenery) {
+        
+        // Build element
+        let element = document.createElement('div')
+        let icon = document.createElement('img')
+        icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+        icon.classList.add('scenery-icon')
+        if (scenery.isCleared) element.classList.add('visited-marker') // Highlight if visited
+        if (scenery.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured
+        element.appendChild(icon)
+        this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom
+        var marker = new mapboxgl.Marker ( {
+            anchor: 'center',
+            color: '#5e203c',
+            draggable: false,
+            element: element
+        } )
+        marker.popularity = scenery.popularity // Append popularity data to the marker allowing popularity zoom filtering
+        marker.isFavorite = scenery.isFavorite // Append favorites list data
+        marker.setLngLat([scenery.lng, scenery.lat])
+        marker.addTo(this.map)
+        marker.getElement().id = 'scenery' + scenery.id
+        marker.getElement().classList.add('scenery-marker')
+        marker.getElement().dataset.id = scenery.id
+        marker.getElement().dataset.user_id = scenery.user_id
+        this.sceneriesMarkerCollection.push(marker)
+
+        // Build and attach popup
+        var popupOptions = {
+            closeOnMove: false
+        }
+        var instanceOptions = {}
+        var instanceData = {
+            mapInstance: this,
+            scenery
+        }
+        let sceneryPopup = new SceneryPopup(popupOptions, instanceData, instanceOptions)
+        marker.setPopup(sceneryPopup.popup)
+
+        // Display scenery name on hover
+        element.setAttribute('data-before', scenery.name)
+        element.style.setProperty('--scenery-hover-display', 'none')
+        element.addEventListener('mouseenter', () => element.style.setProperty('--scenery-hover-display', 'block'))
+        element.addEventListener('mouseleave', () => element.style.setProperty('--scenery-hover-display', 'none'))
+    }
+
+    addFavoriteSceneries () {
+        this.mapdata.sceneries.forEach( (scenery) => {
+            // Verify it has not already been loaded
+            if (!document.querySelector('#scenery' + scenery.id)) {
+                if (scenery.isFavorite) this.setScenery(scenery)
+            }
+        } )
+    }
+
+    zoomPopularityFilter (popularity) {
+
+        const zoom = this.map.getZoom()
+
+        // Define zoom levels
+        const fullDisplayZone  = 6 // Range of zoom levels starting maxZoomLevel which all sceneries will be displayed
+        const maxZoomLevel     = 22 // Maximum zoom level of map provider (22 for Mapbox)
+        const zoomLevel0       = maxZoomLevel - fullDisplayZone // Zoom level from which all sceneries will be displayed
+        const zoomRange        = zoomLevel0 - this.sceneriesZoomRoof
+        if (zoomRange <= 0) return true // zoomRange can't be negative (don't filter anything in this case)
+        const zoomStep = zoomRange / 4
+        var zoomLevel1 = zoomLevel0 - zoomStep
+        var zoomLevel2 = zoomLevel1 - zoomStep
+        var zoomLevel3 = zoomLevel2 - zoomStep
+        var zoomLevel4 = this.sceneriesZoomRoof
+
+        // Define popularity levels
+        var popularityLevel4 = 110
+        var popularityLevel3 = 60
+        var popularityLevel2 = 30
+        var popularityLevel1 = 0
+
+        // Over upper limit
+        if (zoom < this.sceneriesZoomRoof) {
+            return false
+        }
+
+        // Level 4
+        else if (zoom > zoomLevel4 && zoom < zoomLevel3) {
+            if (popularity > popularityLevel4) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        // Level 3
+        else if (zoom > zoomLevel3 && zoom < zoomLevel2) {
+            if (popularity > popularityLevel3) {
+                return true
+            } else {
+                return false
+            }
+        }
+        
+        // Level 2
+        else if (zoom > zoomLevel2 && zoom < zoomLevel1) {
+            if (popularity > popularityLevel2) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        // Level 1
+        else if (zoom > zoomLevel1 && zoom < zoomLevel0) {
+            if (popularity > popularityLevel1) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        // Down lower limit
+        else {
+            return true
+        }
+
     }
 }

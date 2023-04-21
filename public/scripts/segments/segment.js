@@ -34,7 +34,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
     }
 
     // Populate instance route property
-    segmentMap.segment = segment
+    segmentMap.mapdata.segment = segment
     segmentMap.data = segment.route
     segmentMap.data.routeData = geojson
 
@@ -104,18 +104,22 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         segmentMap.updateDistanceMarkers()
         segmentMap.displayStartGoalMarkers(geojson)
 
-        // Request and display mkpoints close to the route
-        segmentMap.loadCloseMkpoints(5).then( async (mkpoints) => {
+        // Request and display sceneries close to the route
+        segmentMap.loadCloseSceneries(5).then( async (sceneries) => {
 
-            // Load mkpoints into map instance
-            segmentMap.mkpoints = mkpoints
+            // Load sceneries into map instance
+            segmentMap.mapdata.sceneries = sceneries
 
             // Regenerate profile to display them
             segmentMap.profile.generate({
                 poiData: {
-                    mkpoints: segmentMap.mkpoints
+                    sceneries: segmentMap.mapdata.sceneries
                 }
             })
+
+            // Build route table and load route table buttons
+            segmentMap.buildTable(['sceneries', 'checkpoints'])
+            segmentMap.enableTableButtons()
         } )
 
     // If map is static
@@ -153,12 +157,12 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         var boundingBox = [routeBounds[0][0], routeBounds[0][1], routeBounds[1][0], routeBounds[1][1]]
         var boundingBoxUri = JSON.stringify(boundingBox)
 
-        // Build mkpoints
-        segmentMap.mkpoints = await segmentMap.loadCloseMkpoints(2, {displayOnMap: false, generateProfile: false, getFileBlob: false})
+        // Build sceneries
+        segmentMap.mapdata.sceneries = await segmentMap.loadCloseSceneries(2, {displayOnMap: false, generateProfile: false, getFileBlob: false})
         const markerColor = 'fff'
-        var mkpoints = ''
-        segmentMap.mkpoints.forEach(mkpoint => {
-            if (mkpoint.on_route) mkpoints += ',pin-s-' + Math.round(mkpoint.distance) + '+' + markerColor + '('  + mkpoint.lng + ',' + mkpoint.lat + ')'
+        var sceneries = ''
+        segmentMap.mapdata.sceneries.forEach(scenery => {
+            if (scenery.on_route) sceneries += ',pin-s-' + Math.round(scenery.distance) + '+' + markerColor + '('  + scenery.lng + ',' + scenery.lat + ')'
         } )
 
         // Set size
@@ -177,7 +181,7 @@ path-` + (segmentMap.routeWidth + 4) + `+` + segmentMap.segmentCapColor.slice(1)
 path-` + segmentMap.routeWidth + `+` + segmentMap.routeColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/stop.png') + `(` + routeCoordinates[routeCoordinates.length - 1][0] + `,` + routeCoordinates[routeCoordinates.length - 1][1] + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(` + routeCoordinates[0][0] + `,` + routeCoordinates[0][1] + `)
-` + mkpoints + `/
+` + sceneries + `/
 ` + boundingBoxUri + `/
 ` + width + `x450@2x
 ?padding=99

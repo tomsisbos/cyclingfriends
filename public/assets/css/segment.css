@@ -162,11 +162,26 @@
     width: 100%;
     display: grid;
     grid-template-columns: 60% 40%;
+    grid-template-rows: 400px;
+    grid-template-areas:
+        "map itinerary"
+        "profile profile";
+}
+.pg-sg-map-box .cf-map {
+    grid-area: map;
 }
 .pg-sg-itinerary {
+    grid-area: itinerary;
     padding: 10px;
     display: flex;
     flex-direction: column;
+    overflow: auto;
+}
+.pg-sg-itinerary .table-element, .pg-sg-itinerary .spec-table td {
+    padding: 0
+}
+.pg-sg-profile {
+    grid-area: profile;
 }
 .pg-sg-itinerary-title {
     font-weight: bold;

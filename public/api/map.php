@@ -9,8 +9,8 @@ if (isAjax()) {
         if (isset($_SESSION['auth'])) echo json_encode($_SESSION);
     }
 
-    // In case a 'saveMkpoint' index have been detected
-    if (isset($_POST['saveMkpoint']) AND !empty($_POST['saveMkpoint'])) {
+    // In case a 'saveScenery' index have been detected
+    if (isset($_POST['saveScenery']) AND !empty($_POST['saveScenery'])) {
 
         try {
 
@@ -31,105 +31,60 @@ if (isAjax()) {
                 }
                 
                 // Preparing variables
-                $mkpoint['user_id']          = $_SESSION['id'];
-                $mkpoint['user_login']       = $_SESSION['login'];
-                $mkpoint['category']         = 'marker';
-                $mkpoint['name']             = htmlspecialchars($_POST['name']);
-                $mkpoint['city']             = $_POST['city'];
-                $mkpoint['prefecture']       = $_POST['prefecture'];
-                $mkpoint['elevation']        = $_POST['elevation'];
-                $mkpoint['date']             = exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal'];
-                $mkpoint['month']            = date("n", strtotime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']));
-                $mkpoint['description']      = htmlspecialchars($_POST['description']);
-                $mkpoint['tags']             = explode(",", $_POST['tags']);
-                $mkpoint['file_size']        = $_FILES['file']['size'];
-                $mkpoint['file_name']        = $_FILES['file']['name'];
-                $mkpoint['file_type']        = $_FILES['file']['type'];
-                $mkpoint['lng']              = $_POST['lng'];
-                $mkpoint['lat']              = $_POST['lat'];
-                $mkpoint['publication_date'] = date('Y-m-d H:i:s');
-                $mkpoint['error']            = $_FILES['file']['error'];
-                $mkpoint['popularity']       = 30;
+                $scenery_data['id']               = getNextAutoIncrement('sceneries');
+                $scenery_data['user_id']          = $_SESSION['id'];
+                $scenery_data['user_login']       = $_SESSION['login'];
+                $scenery_data['category']         = 'marker';
+                $scenery_data['name']             = htmlspecialchars($_POST['name']);
+                $scenery_data['city']             = $_POST['city'];
+                $scenery_data['prefecture']       = $_POST['prefecture'];
+                $scenery_data['elevation']        = $_POST['elevation'];
+                $scenery_data['date']             = new Datetime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']);
+                $scenery_data['month']            = date("n", strtotime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']));
+                $scenery_data['description']      = htmlspecialchars($_POST['description']);
+                $scenery_data['tags']             = explode(",", $_POST['tags']);
+                $scenery_data['file_size']        = $_FILES['file']['size'];
+                $scenery_data['file_name']        = $_FILES['file']['name'];
+                $scenery_data['file_type']        = $_FILES['file']['type'];
+                $scenery_data['lng']              = $_POST['lng'];
+                $scenery_data['lat']              = $_POST['lat'];
+                $scenery_data['publication_date'] = date('Y-m-d H:i:s');
+                $scenery_data['error']            = $_FILES['file']['error'];
+                $scenery_data['popularity']       = 30;
 
-                // Get blob ready to upload
-                $blob = $temp_image->treatFile($temp_image->temp_path);
-                $filename = setFilename('img');
+                // Preparing photo variables
+                $scenery_data['photos'][0]['blob']     = $temp_image->treatFile($temp_image->temp_path);
+                $scenery_data['photos'][0]['filename'] = setFilename('img');
+                $scenery_data['photos'][0]['size']     = $scenery_data['file_size'];
+                $scenery_data['photos'][0]['name']     = $scenery_data['file_name'];
+                $scenery_data['photos'][0]['type']     = $scenery_data['file_type'];
                     
                 // Build thumbnail
-                $mkpoint['thumbnail'] = $temp_image->getThumbnail();
+                $scenery_data['thumbnail'] = $temp_image->getThumbnail();
             }
+
+            // Create scenery
+            $scenery = new Scenery();
+            $scenery->create($scenery_data);
+            
+            // If everything went fine, response the scenery data
+            $scenery_response = [
+                'grades_number' => 0,
+                'id' => $scenery_data['id'],
+                'lat' => $scenery_data['lat'],
+                'lng' => $scenery_data['lng'],
+                'name' => $scenery_data['name'],
+                'popularity' => $scenery_data['popularity'],
+                'rating' => null,
+                'thumbnail' => $scenery_data['thumbnail'],
+                'user_id' => $scenery_data['user_id']
+            ];
+            echo json_encode($scenery_response);
         
         // If any exception have been catched, response the error message set in the exception
         } catch (Exception $e) {
             echo json_encode(['error' => $e->getMessage()]);
             die();
-        }
-        
-        // Check if there is an existing index with the same lng and lat (or less than a 0,001 difference) in the database
-        $checkLngLat = $db->prepare('SELECT id, lng, lat FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
-        $checkLngLat->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
-        // If there is one, update it
-        if ($checkLngLat->rowCount() > 0) {
-            $isMkpoint = $checkLngLat->fetch();
-            $updateMapMkpoint = $db->prepare('UPDATE map_mkpoint SET user_id = ?, user_login = ?, category = ?, name = ?, city = ?, prefecture = ?, elevation = ?, date = ?, month = ?, description = ?, thumbnail = ?, popularity = ? WHERE ROUND(lng, 3) = ROUND(?, 3) AND ROUND(lat, 3) = ROUND(?, 3)');
-            $updateMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat']));
-            $updateImgMkpoint = $db->prepare('UPDATE img_mkpoint SET user_id = ?, date = ?, filename = ? WHERE mkpoint_id = ?');
-            $updateImgMkpoint->execute(array($mkpoint['user_id'], $mkpoint['date'], $filename, $isMkpoint['id']));
-            $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
-            $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
-            $mkpoint['id'] = $getMkpointId->fetch(PDO::FETCH_COLUMN);
-        // Else, create it
-        } else {
-		    $insertMapMkpoint = $db->prepare('INSERT INTO map_mkpoint (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, thumbnail, popularity, lng, lat, publication_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-		    $insertMapMkpoint->execute(array($mkpoint['user_id'], $mkpoint['user_login'], $mkpoint['category'], $mkpoint['name'], $mkpoint['city'], $mkpoint['prefecture'], $mkpoint['elevation'], $mkpoint['date'], $mkpoint['month'], $mkpoint['description'], $mkpoint['thumbnail'], $mkpoint['popularity'], $mkpoint['lng'], $mkpoint['lat'], $mkpoint['publication_date']));
-            $getMkpointId = $db->prepare('SELECT id FROM map_mkpoint WHERE ROUND(lng, 3) = ? AND ROUND(lat, 3) = ?');
-            $getMkpointId->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
-            $mkpoint['id'] = $getMkpointId->fetch(PDO::FETCH_COLUMN);
-            $insertImgMkpoint = $db->prepare('INSERT INTO img_mkpoint (mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-            $insertImgMkpoint->execute(array($mkpoint['id'], $mkpoint['user_id'], $mkpoint['date'], 0, $filename));
-        }
-
-        // If everything went fine, response the mkpoint data
-        $mkpoint_response = [
-            'grades_number' => 0,
-            'id' => $mkpoint['id'],
-            'lat' => $mkpoint['lat'],
-            'lng' => $mkpoint['lng'],
-            'name' => $mkpoint['name'],
-            'popularity' => $mkpoint['popularity'],
-            'rating' => null,
-            'thumbnail' => $mkpoint['thumbnail'],
-            'user_id' => $mkpoint['user_id']
-        ];
-        echo json_encode($mkpoint_response);
-        
-        // Connect to blob storage
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
-        // Send file to blob storage
-        $containername = 'scenery-photos';
-        $blobClient->createBlockBlob($containername, $filename, $blob);
-        // Set file metadata
-        $metadata = [
-            'file_name' => $mkpoint['file_name'],
-            'file_type' => $mkpoint['file_type'],
-            'file_size' => $mkpoint['file_size'],
-            'scenery_id' => $mkpoint['id'],
-            'author_id' => $mkpoint['user_id'],
-            'date' => $mkpoint['publication_date'],
-            'lat' => $mkpoint['lat'],
-            'lng' => $mkpoint['lng']
-        ];
-        $blobClient->setBlobMetadata($containername, $filename, $metadata);
-
-        // Insert tags data
-        $checkLngLat->execute(array(round($mkpoint['lng'], 3), round($mkpoint['lat'], 3)));
-        $mkpoint_data = $checkLngLat->fetch(PDO::FETCH_ASSOC);
-        if (!empty($mkpoint['tags'][0])) {
-            foreach ($mkpoint['tags'] as $tag) {
-                $insertTag = $db->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
-                $insertTag->execute(array('scenery', $mkpoint_data['id'], $tag));
-            }
         }
     }
 
@@ -155,14 +110,14 @@ if (isAjax()) {
                 
                 // Preparing variables
                 $user = new User($_SESSION['id']);
-                $mkpointimg['mkpoint_id']  = $_POST['mkpoint_id'];
-                $mkpointimg['user_id']     = $user->id;
-                $mkpointimg['user_login']  = $user->login;
-                $mkpointimg['date']        = date('Y-m-d H:i:s', strtotime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']));
-                $mkpointimg['file_size']   = $_FILES['file']['size'];
-                $mkpointimg['file_name']   = $_FILES['file']['name'];
-                $mkpointimg['file_type']   = $_FILES['file']['type'];
-                $mkpointimg['error']       = $_FILES['file']['error'];
+                $sceneryimg['scenery_id']  = $_POST['scenery_id'];
+                $sceneryimg['user_id']     = $user->id;
+                $sceneryimg['user_login']  = $user->login;
+                $sceneryimg['date']        = date('Y-m-d H:i:s', strtotime(exif_read_data($temp_image->temp_path, 0, true)['EXIF']['DateTimeOriginal']));
+                $sceneryimg['file_size']   = $_FILES['file']['size'];
+                $sceneryimg['file_name']   = $_FILES['file']['name'];
+                $sceneryimg['file_type']   = $_FILES['file']['type'];
+                $sceneryimg['error']       = $_FILES['file']['error'];
 
                 // Get blob ready to upload
                 $blob = $temp_image->treatFile($temp_image->temp_path);
@@ -175,15 +130,15 @@ if (isAjax()) {
                 $filename = setFilename('img');
                 $blobClient->createBlockBlob($containername, $filename, $blob);
                 // Set file metadata
-                $mkpoint_instance = new Mkpoint($mkpointimg['mkpoint_id']);
-                $lngLat = $mkpoint_instance->lngLat;
+                $scenery_instance = new Scenery($sceneryimg['scenery_id']);
+                $lngLat = $scenery_instance->lngLat;
                 $metadata = [
-                    'file_name' => $mkpointimg['file_name'],
-                    'file_type' => $mkpointimg['file_type'],
-                    'file_size' => $mkpointimg['file_size'],
-                    'scenery_id' => $mkpointimg['mkpoint_id'],
-                    'author_id' => $mkpointimg['user_id'],
-                    'date' => $mkpointimg['date'],
+                    'file_name' => $sceneryimg['file_name'],
+                    'file_type' => $sceneryimg['file_type'],
+                    'file_size' => $sceneryimg['file_size'],
+                    'scenery_id' => $sceneryimg['scenery_id'],
+                    'author_id' => $sceneryimg['user_id'],
+                    'date' => $sceneryimg['date'],
                     'lng' => $lngLat->lng,
                     'lat' => $lngLat->lat
                 ];
@@ -197,38 +152,38 @@ if (isAjax()) {
         }
 
         // Check if the same image have already been uploaded
-        $checkIfSimilarImageExists = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? AND user_id = ? AND date = ?');
-        $checkIfSimilarImageExists->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['date']));        
-        // If not, insert image in the database img_mkpoint table and send response
+        $checkIfSimilarImageExists = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? AND user_id = ? AND date = ?');
+        $checkIfSimilarImageExists->execute(array($sceneryimg['scenery_id'], $sceneryimg['user_id'], $sceneryimg['date']));        
+        // If not, insert image in the database scenery_photos table and send response
         if ($checkIfSimilarImageExists->rowCount() == 0) {
-            $insertMkpoint = $db->prepare('INSERT INTO img_mkpoint(mkpoint_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-            $insertMkpoint->execute(array($mkpointimg['mkpoint_id'], $mkpointimg['user_id'], $mkpointimg['date'], 0, $filename));    
-            echo json_encode(['success' => $mkpointimg['file_name']. 'は無事に追加されました！']);
-        } else echo json_encode(['error' => $mkpointimg['file_name']. 'は既にアップロードされています。']);
+            $insertScenery = $db->prepare('INSERT INTO scenery_photos(scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+            $insertScenery->execute(array($sceneryimg['scenery_id'], $sceneryimg['user_id'], $sceneryimg['date'], 0, $filename));    
+            echo json_encode(['success' => $sceneryimg['file_name']. 'は無事に追加されました！']);
+        } else echo json_encode(['error' => $sceneryimg['file_name']. 'は既にアップロードされています。']);
     }
 
-    if (isset($_GET['mkpoint-photos'])) {
-        $mkpoint = new Mkpoint($_GET['mkpoint-photos']);
-        echo json_encode($mkpoint->getImages());
+    if (isset($_GET['scenery-photos'])) {
+        $scenery = new Scenery($_GET['scenery-photos']);
+        echo json_encode($scenery->getImages());
     }
 
-    if (isset($_GET['mkpoints-closest-photo'])) { // Get photo whose period is the soonest for each mkpoint
-        if (strlen($_GET['mkpoints-closest-photo']) == 0) $mkpoints = [];
+    if (isset($_GET['sceneries-closest-photo'])) { // Get photo whose period is the soonest for each scenery
+        if (strlen($_GET['sceneries-closest-photo']) == 0) $sceneries = [];
         else {
-            $mkpoints_ids = explode(',', $_GET['mkpoints-closest-photo']);
-            $mkpoints = [];
-            foreach ($mkpoints_ids as $mkpoint_id) {
-                $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? AND MONTH(date) > ? ORDER BY date ASC');
-                $getMkpointPhoto->execute([$mkpoint_id, date('m')]);
-                if ($getMkpointPhoto->rowCount() == 0) {
-                    $getMkpointPhoto = $db->prepare('SELECT id FROM img_mkpoint WHERE mkpoint_id = ? ORDER BY date DESC');
-                    $getMkpointPhoto->execute([$mkpoint_id]);
+            $sceneries_ids = explode(',', $_GET['sceneries-closest-photo']);
+            $sceneries = [];
+            foreach ($sceneries_ids as $scenery_id) {
+                $getSceneryPhoto = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? AND MONTH(date) > ? ORDER BY date ASC');
+                $getSceneryPhoto->execute([$scenery_id, date('m')]);
+                if ($getSceneryPhoto->rowCount() == 0) {
+                    $getSceneryPhoto = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? ORDER BY date DESC');
+                    $getSceneryPhoto->execute([$scenery_id]);
                 }
-                $mkpointphoto = new MkpointImage($getMkpointPhoto->fetch(PDO::FETCH_COLUMN));
-                array_push($mkpoints,['id' => $mkpoint_id, 'data' => $mkpointphoto]);
+                $sceneryphoto = new SceneryImage($getSceneryPhoto->fetch(PDO::FETCH_COLUMN));
+                array_push($sceneries,['id' => $scenery_id, 'data' => $sceneryphoto]);
             }
         }
-        echo json_encode($mkpoints);
+        echo json_encode($sceneries);
     }
 
     if (isset($_GET['getpropic'])) {
@@ -238,83 +193,83 @@ if (isAjax()) {
         echo json_encode([$profile_picture_src]);
     }
 
-    if (isset($_GET['display-mkpoints'])) {
-        if (isset($_GET['details']) && $_GET['details'] == true) $getMkpoints = $db->prepare('SELECT id, user_id, name, description, city, prefecture, thumbnail, elevation, lng, lat, rating, grades_number, popularity FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
-        else $getMkpoints = $db->prepare('SELECT id, user_id, name, thumbnail, lng, lat, rating, grades_number, popularity FROM map_mkpoint ORDER BY popularity, rating, grades_number DESC, elevation ASC');
-        $getMkpoints->execute();
-        $result = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        $mkpoints = $result;
-        echo json_encode($mkpoints);
+    if (isset($_GET['display-sceneries'])) {
+        if (isset($_GET['details']) && $_GET['details'] == true) $getSceneries = $db->prepare('SELECT id, user_id, name, description, city, prefecture, thumbnail, elevation, rating, grades_number, popularity, ST_X(point) as lng, ST_Y(point) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        else $getSceneries = $db->prepare('SELECT id, user_id, name, thumbnail, rating, grades_number, popularity, ST_X(point) as lng, ST_Y(point) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        $getSceneries->execute();
+        $result = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
+        $sceneries = $result;
+        echo json_encode($sceneries);
     }
 
-    if (isset($_GET['get-mkpoints'])) {
-        $mkpoints_ids = explode(',', $_GET['get-mkpoints']);
-        $mkpoints = [];
-        foreach ($mkpoints_ids as $mkpoint_id) {
-            $mkpoint = new Mkpoint($mkpoint_id);
-            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
-            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
-            $mkpoint->tags = $mkpoint->getTags();
-            array_push($mkpoints, $mkpoint);
+    if (isset($_GET['get-sceneries'])) {
+        $sceneries_ids = explode(',', $_GET['get-sceneries']);
+        $sceneries = [];
+        foreach ($sceneries_ids as $scenery_id) {
+            $scenery = new Scenery($scenery_id);
+            if (isset($_SESSION['id'])) $scenery->isFavorite = $scenery->isFavorite();
+            if (isset($_SESSION['id'])) $scenery->isCleared = $scenery->isCleared();
+            $scenery->tags = $scenery->getTags();
+            array_push($sceneries, $scenery);
         }
-        echo json_encode($mkpoints);
+        echo json_encode($sceneries);
     }
 
-    if (isset($_GET['mkpoint'])) {
-        $mkpoint_id = $_GET['mkpoint'];
-        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
-        $getMkpoint->execute(array($mkpoint_id));
-        if ($getMkpoint->rowCount() > 0) {
-            $mkpoint = new Mkpoint($mkpoint_id);
-            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
-            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
-            $mkpoint->tags = $mkpoint->getTags();
-            echo json_encode(['data' => $mkpoint, 'photos' => $mkpoint->getImages()]);
+    if (isset($_GET['scenery'])) {
+        $scenery_id = $_GET['scenery'];
+        $getScenery = $db->prepare('SELECT id FROM sceneries WHERE id = ?');
+        $getScenery->execute(array($scenery_id));
+        if ($getScenery->rowCount() > 0) {
+            $scenery = new Scenery($scenery_id);
+            if (isset($_SESSION['id'])) $scenery->isFavorite = $scenery->isFavorite();
+            if (isset($_SESSION['id'])) $scenery->isCleared = $scenery->isCleared();
+            $scenery->tags = $scenery->getTags();
+            echo json_encode(['data' => $scenery, 'photos' => $scenery->getImages()]);
         } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
     }
 
-    if (isset($_GET['mkpoint-details'])) {
-        $mkpoint_id = $_GET['mkpoint-details'];
-        $getMkpoint = $db->prepare('SELECT id FROM map_mkpoint WHERE id = ?');
-        $getMkpoint->execute(array($mkpoint_id));
-        if ($getMkpoint->rowCount() > 0) {
-            $mkpoint = new Mkpoint($mkpoint_id);
-            if (isset($_SESSION['id'])) $mkpoint->isFavorite = $mkpoint->isFavorite();
-            if (isset($_SESSION['id'])) $mkpoint->isCleared = $mkpoint->isCleared();
-            $mkpoint->tags = $mkpoint->getTags();
-            $mkpoint->photos = $mkpoint->getImages();
-            echo json_encode($mkpoint);
+    if (isset($_GET['scenery-details'])) {
+        $scenery_id = $_GET['scenery-details'];
+        $getScenery = $db->prepare('SELECT id FROM sceneries WHERE id = ?');
+        $getScenery->execute(array($scenery_id));
+        if ($getScenery->rowCount() > 0) {
+            $scenery = new Scenery($scenery_id);
+            if (isset($_SESSION['id'])) $scenery->isFavorite = $scenery->isFavorite();
+            if (isset($_SESSION['id'])) $scenery->isCleared = $scenery->isCleared();
+            $scenery->tags = $scenery->getTags();
+            $scenery->photos = $scenery->getImages();
+            echo json_encode($scenery);
         } else echo json_encode(['error' => '該当する絶景スポットは存在していません。']);
     }
 
-    if (isset($_GET['display-mkpoints-list'])) {
-        $querystring = "SELECT * FROM map_mkpoint WHERE id IN (" .$_GET['display-mkpoints-list']. ")";
-        $getMkpoints = $db->prepare($querystring);
-        $getMkpoints->execute();
-        $mkpointsList = $getMkpoints->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($mkpointsList);
+    if (isset($_GET['display-sceneries-list'])) {
+        $querystring = "SELECT * FROM sceneries WHERE id IN (" .$_GET['display-sceneries-list']. ")";
+        $getSceneries = $db->prepare($querystring);
+        $getSceneries->execute();
+        $sceneriesList = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($sceneriesList);
     }
 
-    if (isset($_GET['get-close-mkpoints'])) {
-        $route = new Route($_GET['get-close-mkpoints']);
-        $close_mkpoints = $route->getCloseMkpoints();
-        echo json_encode($close_mkpoints);
+    if (isset($_GET['get-close-sceneries'])) {
+        $route = new Route($_GET['get-close-sceneries']);
+        $close_sceneries = $route->getCloseSceneries();
+        echo json_encode($close_sceneries);
     }
 
-    if (isset($_GET['mkpoint-dragged'])) {
+    if (isset($_GET['scenery-dragged'])) {
         if (isset($_GET['lng']) && isset($_GET['lat'])) {
-            $mkpoint_id  = $_GET['mkpoint-dragged'];
-            $mkpoint_lng = $_GET['lng'];
-            $mkpoint_lat = $_GET['lat'];
-            $updateMkpointLngLat = $db->prepare('UPDATE map_mkpoint SET lng = ?, lat = ? WHERE id = ?');
-            $updateMkpointLngLat->execute(array($mkpoint_lng, $mkpoint_lat, $mkpoint_id));
-            echo json_encode([$_GET['lng'], $_GET['lat']]);
+            $id  = $_GET['scenery-dragged'];
+            $lng = $_GET['lng'];
+            $lat = $_GET['lat'];
+            $scenery = new Scenery($id);
+            $scenery->move(new LngLat($lng, $lat));
+            echo json_encode([$lng, $lat]);
         }
     }
 
     if (isset($_GET['islike-img'])) {
         $img_id = $_GET['islike-img'];
-        $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM islike_mkpoint WHERE user_id = ? AND img_id = ?');
+        $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
         $checkIfUserHasAlreadyGivenALike->execute(array($_SESSION['id'], $img_id));
         if ($checkIfUserHasAlreadyGivenALike->rowcount() > 0) $islike = true;
         else $islike = false;
@@ -322,88 +277,88 @@ if (isAjax()) {
     }
 
     if (isset($_GET['togglelike-img'])) {
-        // Get all mkpoint infos
-        $img = new MkpointImage($_GET['togglelike-img']);
+        // Get all scenery infos
+        $img = new SceneryImage($_GET['togglelike-img']);
 
-        // Get mkpoint id
-        $getMkpointId = $db->prepare('SELECT mkpoint_id FROM img_mkpoint WHERE id = ?');
-        $getMkpointId->execute([$_GET['togglelike-img']]);
-        $mkpoint_id = $getMkpointId->fetch(PDO::FETCH_NUM)[0];
-        $mkpoint = new Mkpoint($mkpoint_id);
+        // Get scenery id
+        $getSceneryId = $db->prepare('SELECT scenery_id FROM scenery_photos WHERE id = ?');
+        $getSceneryId->execute([$_GET['togglelike-img']]);
+        $scenery_id = $getSceneryId->fetch(PDO::FETCH_NUM)[0];
+        $scenery = new Scenery($scenery_id);
 
         // Check if user has already given a like
-        $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM islike_mkpoint WHERE user_id = ? AND img_id = ?');
+        $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
         $checkIfUserHasAlreadyGivenALike->execute(array($connected_user->id, $img->id));
 
         // If user has already liked
         if ($checkIfUserHasAlreadyGivenALike->rowcount() > 0) {
-            // Decrease likes in img_mkpoint table
-            $removeLikeFromImg = $db->prepare('UPDATE img_mkpoint SET likes = likes - 1 WHERE id = ?');
+            // Decrease likes in scenery_photos table
+            $removeLikeFromImg = $db->prepare('UPDATE scenery_photos SET likes = likes - 1 WHERE id = ?');
             $removeLikeFromImg->execute(array($img->id));
-            // Decrease likes and popularity in map_mkpoint table
-            $removeLikeFromMkpoint = $db->prepare('UPDATE map_mkpoint SET likes = likes - 1, popularity = popularity - 5 WHERE id = ?');
-            $removeLikeFromMkpoint->execute(array($mkpoint->id));
-            // Remove corresponding entry in islike_mkpoint table
-            $removeEntryFromIslikeMkpointTable = $db->prepare('DELETE FROM islike_mkpoint WHERE user_id = ? AND img_id = ?');
-            $removeEntryFromIslikeMkpointTable->execute(array($connected_user->id, $img->id));
+            // Decrease likes and popularity in sceneries table
+            $removeLikeFromScenery = $db->prepare('UPDATE sceneries SET likes = likes - 1, popularity = popularity - 5 WHERE id = ?');
+            $removeLikeFromScenery->execute(array($scenery->id));
+            // Remove corresponding entry in scenery_photos_likes table
+            $removeEntryFromIslikeSceneryTable = $db->prepare('DELETE FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
+            $removeEntryFromIslikeSceneryTable->execute(array($connected_user->id, $img->id));
             $is_given_point = false;
 
         // If user has not liked yet
         } else {
-            // Increase likes in img_mkpoint table
-            $addLikeFromImg = $db->prepare('UPDATE img_mkpoint SET likes = likes + 1 WHERE id = ?');
+            // Increase likes in scenery_photos table
+            $addLikeFromImg = $db->prepare('UPDATE scenery_photos SET likes = likes + 1 WHERE id = ?');
             $addLikeFromImg->execute(array($img->id));
-            // Increase likes and popularity in map_mkpoint table
-            $addLikeFromMkpoint = $db->prepare('UPDATE map_mkpoint SET likes = likes + 1, popularity = popularity + 5 WHERE id = ?');
-            $addLikeFromMkpoint->execute(array($mkpoint->id));
-            // Add corresponding entry in islike_mkpoint table
-            $setEntryInIslikeMkpointTable = $db->prepare('INSERT INTO islike_mkpoint(user_id, img_id) VALUES (?, ?)');
-            $setEntryInIslikeMkpointTable->execute(array($connected_user->id, $img->id));
+            // Increase likes and popularity in sceneries table
+            $addLikeFromScenery = $db->prepare('UPDATE sceneries SET likes = likes + 1, popularity = popularity + 5 WHERE id = ?');
+            $addLikeFromScenery->execute(array($scenery->id));
+            // Add corresponding entry in scenery_photos_likes table
+            $setEntryInIslikeSceneryTable = $db->prepare('INSERT INTO scenery_photos_likes(user_id, img_id) VALUES (?, ?)');
+            $setEntryInIslikeSceneryTable->execute(array($connected_user->id, $img->id));
             $is_given_point = true;
         }
-        // Update mkpoint infos
-        $updated_img     = new MkpointImage($_GET['togglelike-img']);
-        $updated_mkpoint = new Mkpoint($mkpoint_id);
+        // Update scenery infos
+        $updated_img     = new SceneryImage($_GET['togglelike-img']);
+        $updated_scenery = new Scenery($scenery_id);
 
-        echo json_encode(['islike' => $is_given_point, 'imgLikes' => $updated_img->likes, 'mkpointLikes' => $updated_mkpoint->likes]);
+        echo json_encode(['islike' => $is_given_point, 'imgLikes' => $updated_img->likes, 'sceneryLikes' => $updated_scenery->likes]);
     }
 
-    if (isset($_GET['edit-mkpoint'])) {
-        $mkpoint_id          = $_GET['edit-mkpoint'];
-        $mkpoint_name        = $_GET['name'];
-        $mkpoint_description = $_GET['description'];
-        $mkpoint_tags        = explode(",", $_GET['tags']);
-        // Update mkpoint data
-        $removeMkpoint = $db->prepare('UPDATE map_mkpoint SET name = ?, description = ? WHERE id = ?');
-        $removeMkpoint->execute(array($mkpoint_name, $mkpoint_description, $mkpoint_id));
+    if (isset($_GET['edit-scenery'])) {
+        $scenery_id          = $_GET['edit-scenery'];
+        $scenery_name        = $_GET['name'];
+        $scenery_description = $_GET['description'];
+        $scenery_tags        = explode(",", $_GET['tags']);
+        // Update scenery data
+        $removeScenery = $db->prepare('UPDATE sceneries SET name = ?, description = ? WHERE id = ?');
+        $removeScenery->execute(array($scenery_name, $scenery_description, $scenery_id));
         // Update tags data
         $deleteCurrentTags = $db->prepare('DELETE FROM tags WHERE object_type = ? AND object_id = ?');
-        $deleteCurrentTags->execute(array('scenery', $mkpoint_id));
-        foreach ($mkpoint_tags as $tag) {
+        $deleteCurrentTags->execute(array('scenery', $scenery_id));
+        foreach ($scenery_tags as $tag) {
             $insertNewTags = $db->prepare('INSERT INTO tags (object_type, object_id, tag) VALUES (?, ?, ?)');
-            $insertNewTags->execute(array('scenery', $mkpoint_id, $tag));
+            $insertNewTags->execute(array('scenery', $scenery_id, $tag));
         }
-        echo json_encode(['id' => $mkpoint_id, 'name' =>  $mkpoint_name, 'description' => $mkpoint_description, 'tags' => $mkpoint_tags]);
+        echo json_encode(['id' => $scenery_id, 'name' =>  $scenery_name, 'description' => $scenery_description, 'tags' => $scenery_tags]);
     }
 
-    if (isset($_GET['delete-mkpoint'])) {
-        $mkpoint = new Mkpoint($_GET['delete-mkpoint']);
-        $mkpoint->delete();
-        echo json_encode([$mkpoint->id]);
+    if (isset($_GET['delete-scenery'])) {
+        $scenery = new Scenery($_GET['delete-scenery']);
+        $scenery->delete();
+        echo json_encode([$scenery->id]);
     }
 
-    // Delete one photo from a mkpoint
-    if (isset($_GET['delete-mkpoint-photo'])) {
-        $photo_id = $_GET['delete-mkpoint-photo'];
-        $photo = new MkpointImage($photo_id);
+    // Delete one photo from a scenery
+    if (isset($_GET['delete-scenery-photo'])) {
+        $photo_id = $_GET['delete-scenery-photo'];
+        $photo = new SceneryImage($photo_id);
         $photo->delete();
         echo json_encode(['success' => '写真' .$photo->id. 'が削除されました。']);
     }
 
     if (isset($_GET['get-rating'])) {
-        if ($_GET['type'] == 'mkpoint') {
-            $object = new Mkpoint($_GET['id']);
-            $table = "map_mkpoint";
+        if ($_GET['type'] == 'scenery') {
+            $object = new Scenery($_GET['id']);
+            $table = "sceneries";
         } else if ($_GET['type'] == 'segment') {
             $object = new Segment($_GET['id']);
             $table = "segments";
@@ -421,17 +376,17 @@ if (isAjax()) {
     }
 
     if (isset($_GET['check-user-vote'])) {
-        $mkpoint = new Mkpoint($_GET['check-user-vote']);
+        $scenery = new Scenery($_GET['check-user-vote']);
         $user    = new User($_GET['user_id']);
-        $vote    = $mkpoint->getUserVote($user);
+        $vote    = $scenery->getUserVote($user);
         echo json_encode($vote);
     }
 
     if (isset($_GET['set-rating'])) {
-        if ($_GET['type'] == 'mkpoint') {
-            $object       = new Mkpoint($_GET['id']);
-            $table        = "map_mkpoint";
-            $grades_table = "grade_mkpoint";
+        if ($_GET['type'] == 'scenery') {
+            $object       = new Scenery($_GET['id']);
+            $table        = "sceneries";
+            $grades_table = "scenery_grades";
         } else if ($_GET['type'] == 'segment') {
             $object       = new Segment($_GET['id']);
             $table        = "segments";
@@ -494,10 +449,10 @@ if (isAjax()) {
     }
 
     if (isset($_GET['cancel-rating'])) {
-        if ($_GET['type'] == 'mkpoint') {
-            $object       = new Mkpoint($_GET['id']);
-            $table        = "map_mkpoint";
-            $grades_table = "grade_mkpoint";
+        if ($_GET['type'] == 'scenery') {
+            $object       = new Scenery($_GET['id']);
+            $table        = "sceneries";
+            $grades_table = "scenery_grades";
         } else if ($_GET['type'] == 'segment') {
             $object       = new Segment($_GET['id']);
             $table        = "segments";
@@ -540,9 +495,9 @@ if (isAjax()) {
         echo json_encode(['rating' => $new_rating, 'grades_number' => $rating_infos['grades_number'] - 1, 'vote' => false, 'popularity' => $popularity]);
     }
 
-    if (isset($_GET['get-reviews-mkpoint'])) {
-        $mkpoint = new Mkpoint($_GET['get-reviews-mkpoint']);
-        $reviews = $mkpoint->getReviews();
+    if (isset($_GET['get-reviews-scenery'])) {
+        $scenery = new Scenery($_GET['get-reviews-scenery']);
+        $reviews = $scenery->getReviews();
         // Add profile picture src to the response
         for ($i = 0; $i < count($reviews); $i++) {
             $propic = $reviews[$i]->user->getPropicUrl();
@@ -551,16 +506,16 @@ if (isAjax()) {
         echo json_encode($reviews);
     }
 
-    if (isset($_GET['add-review-mkpoint'])) {
+    if (isset($_GET['add-review-scenery'])) {
         // Prepare data
         $content = nl2br(htmlspecialchars($_GET['content']));
         $propic  = $connected_user->getPropicUrl();
         $time    = date('Y-m-d H:i:s');
         // Post review
-        $mkpoint = new Mkpoint($_GET['add-review-mkpoint']);
-        $mkpoint->postReview($content);
+        $scenery = new Scenery($_GET['add-review-scenery']);
+        $scenery->postReview($content);
         // Return necessary data
-        echo json_encode(['mkpoint_id' => $mkpoint->id, "user" => ["id" => $connected_user->id, "login" => $connected_user->login], "content" => $content, "time" => $time, "propic" => $propic]);
+        echo json_encode(['scenery_id' => $scenery->id, "user" => ["id" => $connected_user->id, "login" => $connected_user->login], "content" => $content, "time" => $time, "propic" => $propic]);
     }
 
     if (isset($_GET['display-rides'])) {
@@ -598,19 +553,21 @@ if (isAjax()) {
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {
             // Add coordinates
-            $getCoords = $db->prepare('SELECT lng, lat FROM coords WHERE segment_id = ? ORDER BY number ASC');
-            $getCoords->execute([$segments[$i]['route_id']]);
-            $segments[$i]['coordinates'] = $getCoords->fetchAll(PDO::FETCH_NUM);
+            $getCoords = $db->prepare('SELECT ST_AsWKT(linestring) FROM linestrings WHERE segment_id = ?');
+            $getCoords->execute(array($segments[$i]['route_id']));
+            $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
+            $coordinates = new CFLinestring();
+            $coordinates->fromWKT($linestring_wkt);
+            $segments[$i]['coordinates'] = $coordinates->getArray();
             // Add tunnels
+            $getLinestring = $db->prepare('SELECT ST_AsWKT(linestring) FROM tunnels WHERE segment_id = ?');
+            $getLinestring->execute(array($segments[$i]['route_id']));
             $tunnels = [];
-            $getTunnelsNumber = $db->prepare('SELECT DISTINCT tunnel_id FROM tunnels WHERE segment_id = ?');
-            $getTunnelsNumber->execute([$segments[$i]['route_id']]);
-            $tunnels_number = $getTunnelsNumber->rowCount();
-            for ($j = 0 ; $j < $tunnels_number; $j++) {
-                $getTunnelCoords = $db->prepare('SELECT lng, lat FROM tunnels WHERE tunnel_id = ? AND segment_id = ?');
-                $getTunnelCoords->execute([$j, $segments[$i]['route_id']]);
-                $tunnels[$j] = $getTunnelCoords->fetchAll(PDO::FETCH_NUM);
-            }
+            while ($linestring_wkt = $getLinestring->fetch(PDO::FETCH_COLUMN)) {
+                $tunnel = new Tunnel();
+                $tunnel->fromWKT($linestring_wkt);
+                array_push($tunnels, $tunnel->getArray());
+            }            
             $segments[$i]['tunnels'] = $tunnels;
             // Add tags
             $getTags = $db->prepare('SELECT tag FROM tags WHERE object_type = ? AND object_id = ?');
@@ -631,25 +588,14 @@ if (isAjax()) {
         echo json_encode(new Segment($segment_id, false));
     }
 
-    if (isset($_GET['segment-mkpoints'])) {
-        $segment = new Segment($_GET['segment-mkpoints']);
-        $close_mkpoints = $segment->route->getCloseMkpoints(500);
-        foreach ($close_mkpoints as $mkpoint) $mkpoint->photos = $mkpoint->getImages();
-        echo json_encode($close_mkpoints);
-    }
-
-    if (isset($_GET['get-user-cleared-mkpoints'])) {
-        $entries = $connected_user->getClearedMkpoints();
-        $cleared_mkpoints = [];
-        foreach ($entries as $entry) {
-            $mkpoint = new Mkpoint($entry['mkpoint_id']);
-            $mkpoint->activity_id = intval($entry['activity_id']);
-            array_push($cleared_mkpoints, $mkpoint);
-        }
-        echo json_encode($cleared_mkpoints);
+    if (isset($_GET['segment-sceneries'])) {
+        $segment = new Segment($_GET['segment-sceneries']);
+        $close_sceneries = $segment->route->getCloseSceneries(500);
+        foreach ($close_sceneries as $scenery) $scenery->photos = $scenery->getImages();
+        echo json_encode($close_sceneries);
     }
     
-    if (isset($_GET['get-user-favorite-mkpoints'])) {
+    if (isset($_GET['get-user-favorite-sceneries'])) {
         echo json_encode($connected_user->getFavorites('scenery'));
     }
 

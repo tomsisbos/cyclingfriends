@@ -1,7 +1,7 @@
 import SceneryPopup from '/map/class/scenery/SceneryPopup.js'
 
-const mkpoint_id = getIdFromString(location.pathname)
-ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (response) => {
+const scenery_id = getIdFromString(location.pathname)
+ajaxGetRequest ('/api/map.php' + "?scenery=" + scenery_id, async (response) => {
 
 	// Prepare scenery instance
 	var instanceOptions = {
@@ -9,17 +9,17 @@ ajaxGetRequest ('/api/map.php' + "?mkpoint=" + mkpoint_id, async (response) => {
 	}
 	var instanceData = {
 		mapInstance: null,
-		mkpoint: response.data
+		scenery: response.data
 	}
 	let sceneryPopup = new SceneryPopup({}, instanceData, instanceOptions)
 	
 	// Initiate relevant functions
-    sceneryPopup.loadRating(sceneryPopup.data.mkpoint)
+    sceneryPopup.loadRating(sceneryPopup.data.scenery)
     sceneryPopup.loadReviews()
 
 	// Load photos
-	ajaxGetRequest (sceneryPopup.apiUrl + "?mkpoint-photos=" + sceneryPopup.data.mkpoint.id, (photos) => {
-		sceneryPopup.data.mkpoint.photos = photos
+	ajaxGetRequest (sceneryPopup.apiUrl + "?scenery-photos=" + sceneryPopup.data.scenery.id, (photos) => {
+		sceneryPopup.data.scenery.photos = photos
 		sceneryPopup.loadLightbox(document.body)
 		sceneryPopup.colorLike()
 		sceneryPopup.prepareToggleLike()

@@ -11,6 +11,7 @@ export default class Profile extends Model {
 
     map
     data
+    mapdata = {}
     canvas
 
     // Build profile data
@@ -367,7 +368,7 @@ export default class Profile extends Model {
     /**
      * Generate profile inside profileElement
      * @param {String} sourceName name of the source to generate profile for
-     * @param {Array} poiData.mkpoints mkpoints to display as profile POI
+     * @param {Array} poiData.sceneries sceneries to display as profile POI
      * @param {Array} poiData.rideCheckpoints ride checkpoints to display as profile POI
      * @param {Object} poiData.activityCheckpoints activity checkpoints to display as profile POI
      * @param {Boolean} precise define whether profile data is gotten from currently loaded map or beeply analyzed from map provider tileset
@@ -443,7 +444,7 @@ export default class Profile extends Model {
                         ctx.closePath()
 
                         // Format icon
-                        if (type == 'mkpoint') {
+                        if (type == 'scenery') {
                             poi.number = poi.id
                             if (document.querySelector('#' + type + poi.number)) var img = document.querySelector('#' + type + poi.number).querySelector('img')
                             else return
@@ -513,22 +514,24 @@ export default class Profile extends Model {
                             ctx.stroke()
                         }
                     }
-                    // For mkpoints
-                    if (poiData.mkpoints) poiData.mkpoints.forEach( (mkpoint) => {
-                        if (mkpoint.on_route && (!document.querySelector('#displayMkpointsBox') || (document.querySelector('#displayMkpointsBox') && document.querySelector('#displayMkpointsBox').checked))) {
-                            drawPoi(mkpoint, 'mkpoint')
+                    // For sceneries
+                    if (poiData.sceneries) poiData.sceneries.forEach( (scenery) => {
+                        if (scenery.on_route && (!document.querySelector('#displaySceneriesBox') || (document.querySelector('#displaySceneriesBox') && document.querySelector('#displaySceneriesBox').checked))) {
+                            drawPoi(scenery, 'scenery')
                         }
                     } )
                     // For ride checkpoints
                     if (poiData.rideCheckpoints && poiData.rideCheckpoints.length > 0) {
                         poiData.rideCheckpoints.forEach( (rideCheckpoint) => {
-                            drawPoi(rideCheckpoint, 'rideCheckpoint')
-                            // If only one start/finish marker, generate finish marker
-                            if (rideCheckpoint.marker._element.innerText == 'SF') {
-                                var finishPoi = { ...rideCheckpoint }
-                                finishPoi.number = 'F'
-                                finishPoi.distance = this.data.pointData[this.data.pointData.length - 1].x
-                                drawPoi(finishPoi, 'rideCheckpoint')
+                            if (rideCheckpoint.marker) {
+                                drawPoi(rideCheckpoint, 'rideCheckpoint')
+                                // If only one start/finish marker, generate finish marker
+                                if (rideCheckpoint.marker._element.innerText == 'SF') {
+                                    var finishPoi = { ...rideCheckpoint }
+                                    finishPoi.number = 'F'
+                                    finishPoi.distance = this.data.pointData[this.data.pointData.length - 1].x
+                                    drawPoi(finishPoi, 'rideCheckpoint')
+                                }
                             }
                         } )
                     }
@@ -590,17 +593,17 @@ export default class Profile extends Model {
                             // Display tooltip
                             this.clearTooltip()
                             this.drawTooltip(routeData, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
-                            // Highlight corresponding mkpoint data
-                            if (this.mkpoints && (!this.displayMkpointsBox || this.displayMkpointsBox.checked)) {
-                                this.mkpoints.forEach( (mkpoint) => {
-                                    if (document.getElementById(mkpoint.id) && mkpoint.distance < (distance + 1) && mkpoint.distance > (distance - 1)) {
+                            // Highlight corresponding scenery data
+                            if (this.mapdata.sceneries && (!this.displaySceneriesBox || this.displaySceneriesBox.checked)) {
+                                this.mapdata.sceneries.forEach( (scenery) => {
+                                    if (document.getElementById(scenery.id) && scenery.distance < (distance + 1) && scenery.distance > (distance - 1)) {
                                         // Highlight preview image
-                                        document.getElementById(mkpoint.id).querySelector('img').classList.add('admin-marker')
+                                        document.getElementById(scenery.id).querySelector('img').classList.add('admin-marker')
                                         // Highlight marker
-                                        document.querySelector('#mkpoint' + mkpoint.id).querySelector('img').classList.add('admin-marker')
-                                    } else if (document.getElementById(mkpoint.id) && mkpoint.on_route == true) {
-                                        document.getElementById(mkpoint.id).querySelector('img').classList.remove('admin-marker')
-                                        document.querySelector('#mkpoint' + mkpoint.id).querySelector('img').classList.remove('admin-marker')
+                                        document.querySelector('#scenery' + scenery.id).querySelector('img').classList.add('admin-marker')
+                                    } else if (document.getElementById(scenery.id) && scenery.on_route == true) {
+                                        document.getElementById(scenery.id).querySelector('img').classList.remove('admin-marker')
+                                        document.querySelector('#scenery' + scenery.id).querySelector('img').classList.remove('admin-marker')
                                     }
                                 } )
                             }
@@ -714,7 +717,6 @@ export default class Profile extends Model {
             canvas.width = 50
             var ctx = canvas.getContext("2d")
             ctx.font = "bold 35px Noto Sans"
-            console.log(element.innerText + ' and km' + poi.distance)
             if ((element.innerText == 'S' || element.innerText == 'SF') && poi.distance == 0) {
                 ctx.fillStyle = 'green'
                 var text = 'S'
@@ -725,7 +727,6 @@ export default class Profile extends Model {
                 ctx.fillStyle = 'blue'
                 var text = poi.number
             }
-            console.log(text + ' and fill ' + ctx.fillStyle)
             ctx.rect(0, 0, 50, 50)
             ctx.fill()
             ctx.fillStyle = 'white'

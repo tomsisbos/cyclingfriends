@@ -6,7 +6,7 @@ export default class WorldHelper extends Helper {
         super()
     }
 
-    static async onEditMkpointsStart () {
+    static async onEditSceneriesStart () {
         return new Promise (async (resolve, reject) => { 
             await this.openWindow(`
                 絶景スポット編集モードに切り替えると、ドラッグ＆ドロップ動作で絶景スポットの位置を変更することができます。<br><br>

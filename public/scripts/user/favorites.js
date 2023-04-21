@@ -1,7 +1,7 @@
 document.querySelectorAll('.js-favorite-button').forEach( ($button) => {
 
     $button.addEventListener('click', () => {
-        // Get mkpoint
+        // Get scenery
         if (document.querySelector('.mk-card')) {
             var id = getIdFromString($button.closest('.fav-card').querySelector('.mk-card').dataset.id)
             var type = 'scenery'

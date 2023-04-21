@@ -38,11 +38,11 @@ export default class HomeSceneryPopup extends SceneryPopup {
         } )
     }
 
-    setContent (mkpoint) {
+    setContent (scenery) {
 
         // Build tagslist
         var tags = ''
-        if (mkpoint.tags) mkpoint.tags.map( (tag) => {
+        if (scenery.tags) scenery.tags.map( (tag) => {
             tags += `
             <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
         } )
@@ -61,7 +61,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
                 <div class="popup-properties">
                     <div class="popup-properties-reference">
                         <div class="popup-properties-name">`
-                            + mkpoint.name + `
+                            + scenery.name + `
                         </div>
                         <div class="popup-properties-location"></div>
                         <div class="popup-rating"></div>
@@ -76,23 +76,23 @@ export default class HomeSceneryPopup extends SceneryPopup {
     async populate () {
         return new Promise(async (resolve, reject) => {
 
-            // Get details of a specific mkpoint
-            if (!this.data.mkpoint.description) {
-                var mkpoint = await this.getDetails(this.data.mkpoint.id)
-                this.data.mkpoint = { ...mkpoint }
+            // Get details of a specific scenery
+            if (!this.data.scenery.description) {
+                var scenery = await this.getDetails(this.data.scenery.id)
+                this.data.scenery = { ...scenery }
             }
 
             // Build tagslist
             var tags = ''
-            if (this.data.mkpoint.tags) this.data.mkpoint.tags.map( (tag) => {
+            if (this.data.scenery.tags) this.data.scenery.tags.map( (tag) => {
                 tags += `
                 <a target="_blank" href="/tag/` + tag + `">
                     <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
                 </a>`
             } )
 
-            this.popup._container.querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
-            this.popup._container.querySelector('.popup-description').innerHTML = this.data.mkpoint.description
+            this.popup._container.querySelector('.popup-properties-location').innerHTML = this.data.scenery.city + ' (' + this.data.scenery.prefecture + ') - ' + this.data.scenery.elevation + 'm'
+            this.popup._container.querySelector('.popup-description').innerHTML = this.data.scenery.description
             this.popup._container.querySelector('.js-tags').innerHTML = tags
 
             resolve(true)
@@ -106,7 +106,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
 
             // Asks server for current photo data
             this.loaderContainer = photosContainer
-            ajaxGetRequest (this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, (photos) => {
+            ajaxGetRequest (this.apiUrl + "?scenery-photos=" + this.data.scenery.id, (photos) => {
 
                 this.photos = photos
                 resolve(photos)
@@ -140,7 +140,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
                     photo.$element.src = photo.url
                     photosContainer.prepend(photo.$element)
                     photo.$period = document.createElement('div')
-                    photo.$period.classList.add('mkpoint-period', setPeriodClass(photo.month))
+                    photo.$period.classList.add('scenery-period', setPeriodClass(photo.month))
                     photo.$period.innerText = photo.period
                     // Display first photo and period by default
                     if (number == 1) {
@@ -202,8 +202,8 @@ export default class HomeSceneryPopup extends SceneryPopup {
             container,
             popup: this.popup,
             mapInstance: this.data.mapInstance,
-            mkpoint: this.data.mkpoint,
-            photos: this.data.mkpoint.photos
+            scenery: this.data.scenery,
+            photos: this.data.scenery.photos
         }
         this.lightbox = new HomeSceneryLightbox(lightboxData, {noSession: true})
     }

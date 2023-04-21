@@ -501,4 +501,18 @@ class Ride extends Model {
         return $additional_fields;
     }
 
+    /**
+     * Retrieve most related images
+     * @param int $imgs_number number of images to retrieve
+     * @return CheckpointImage[]
+     */
+    public function getImages ($imgs_number) {
+        $images = [];
+        $checkpoints = $this->checkpoints;
+        for ($i = 0; $i < count($checkpoints) && $i < $imgs_number; $i++) {
+            if ($checkpoints[$i]->img->url) array_push($images, $checkpoints[$i]->img);
+        }
+        return $images;
+    }
+
 }

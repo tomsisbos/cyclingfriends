@@ -5,7 +5,6 @@ var modalBlock = document.querySelector(".modal-block")
 var thumbnails = document.querySelectorAll('.js-clickable-thumbnail')
 thumbnails.forEach(thumbnail => thumbnail.addEventListener('click', () => {
   let id = parseInt(thumbnail.dataset.number)
-  console.log(thumbnails)
   openModal()
   currentSlide(id)
 } ) )

@@ -31,6 +31,16 @@ map.addControl(
     } )
 )
 
+// Prepare and display sceneries data
+ajaxGetRequest ('/api/map.php' + "?display-sceneries=details", (sceneries) => {
+    buildRouteMap.mapdata.sceneries = sceneries
+    if (buildRouteMap.displaySceneriesBox.checked) {
+        buildRouteMap.updateSceneries()
+        buildRouteMap.addFavoriteSceneries()
+        map.on('moveend', buildRouteMap.updateMapDataListener)
+    }
+} )
+
 
 /* -- Route building -- */
 

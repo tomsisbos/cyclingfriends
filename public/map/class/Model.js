@@ -11,7 +11,33 @@ export default class Model {
     mainApiUrl = '/api/map.php'
 
     defaultStyle = 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z'
-    tags = ['hanami', 'kouyou', 'ajisai', 'culture', 'machinami', 'shrines', 'teafields', 'ricefields', 'sea', 'mountains', 'forest', 'rivers', 'lakes']
+    tags = [
+        'hanami-sakura',
+        'hanami-ume',
+        'hanami-nanohana',
+        'hanami-ajisai',
+        'hanami-himawari',
+
+        'nature-forest',
+        'nature-kouyou',
+        'nature-ricefield',
+        'nature-riceterraces',
+        'nature-teafield',
+        
+        'water-sea',
+        'water-river',
+        'water-lake',
+        'water-waterfall',
+
+        'culture',
+        'culture-machinami',
+        'culture-shrines',
+        'culture-hamlet',
+
+        'terrain-pass',
+        'terrain-mountain',
+        'terrain-viewpoint'
+    ]
     loaderContainer = document.body
     loader = {
         prepare: () => {
@@ -28,6 +54,13 @@ export default class Model {
     inlineLoader = '<div class="loader-inline"></div>'
     centerLoader = '<div class="loader-center"></div>'
     centerOnUserLocation = () => {return}
+    konbiniSearchNames = {
+        'seven-eleven':  ["セブン", "sev", "7-E"],
+        'family-mart': ["ファミリ",  "Fami", "Fimi", "サークル", "Circ"],
+        'lawson': ["ローソン", "Laws", "LAWS"],
+        'mini-stop': ["ミニスト", "Mini", "MINI"],
+        'daily-yamazaki': ["Dail", "DAIL", "デイリー", "Yama", "ヤマザキ", "YAMA", "ニューヤ"]
+    }
 
     // Get location of a LngLat point
     async getLocation (lngLat) {

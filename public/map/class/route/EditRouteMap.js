@@ -68,21 +68,20 @@ export default class EditRouteMap extends BuildRouteMap {
     // Save current route
     async saveRoute (details) {
         var routeData = this.map.getSource('route')._data
-        if (details.category == 'route') {
-            var route = {
-                id: parseInt(this.routeId),
-                type: this.map.getSource('route')._data.geometry.type,
-                coordinates: routeData.geometry.coordinates,
-                tunnels: routeData.properties.tunnels,
-                category: 'route',
-                name: details.name,
-                description: details.description,
-                distance: turf.length(routeData),
-                elevation: await this.profile.calculateElevation(routeData),
-                startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
-                goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
-                thumbnail: details.thumbnail
-            }
+        console.log(details)
+        var route = {
+            id: parseInt(this.routeId),
+            type: 'route-edit',
+            coordinates: routeData.geometry.coordinates,
+            tunnels: routeData.properties.tunnels,
+            category: details.category,
+            name: details.name,
+            description: details.description,
+            distance: turf.length(routeData),
+            elevation: await this.profile.calculateElevation(routeData),
+            startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
+            goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
+            thumbnail: details.thumbnail
         }
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
             window.location.replace('/route/' + this.routeData.id)

@@ -74,7 +74,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 						<img src="<?= $checkpoints[$i]['img']['url'] ?>"> <?php
 					} else if (isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) { ?>
 						<img src="<?= $checkpoints[$i]['img'] ?>"> <?php
-					// Images that have been imported through mkpoint
+					// Images that have been imported through scenery
 					} else if (isset($checkpoints[$i]['url'])) { ?>		
 						<img src="<?= $checkpoints[$i]['url']; ?>"> <?php
 					} else { ?> <img src="\media\default-photo-<?= rand(1,9); ?>.svg"> <?php }

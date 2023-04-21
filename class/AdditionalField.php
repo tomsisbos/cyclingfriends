@@ -71,7 +71,6 @@ class AdditionalField extends Model {
     }
 
     public function updateOptions ($options) {
-        var_dump($options);
         $removeOptions = $this->getPdo()->prepare('DELETE FROM ride_additional_field_options WHERE field_id = ?');
         $removeOptions->execute(array($this->id));
         $this->setOptions($options);

@@ -50,13 +50,13 @@ $var = json_decode($json, true);
 
 if (is_array($var)) {
     
-    if ($var['type'] == 'LineString') {
-        $coordinates = new Coordinates($var['coordinates']);
+    if ($var['type'] == 'route-save' OR $var['type'] == 'route-edit') {
+        $linestring = new CFLinestring($var['coordinates']);
         if (empty($var['name'])) $var['name'] = 'My route';
         if (empty($var['description'])) $var['description'] = '';
         if (!isset($var['tunnels'])) $var['tunnels'] = [];
-        if ($var['category'] == 'route') $coordinates->createRoute($connected_user->id, $var['id'], 'route', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels']);
-        else if ($var['category'] == 'segment') $coordinates->createSegment($connected_user->id, $var['id'], 'segment', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels'], $var['rank'], $var['advised'], $var['seasons'], $var['advice'], $var['specs'], $var['tags']);
+        if ($var['category'] == 'route' OR $var['type'] == 'route-edit') $linestring->createRoute($connected_user->id, $var['id'], 'route', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels']);
+        else if ($var['category'] == 'segment') $linestring->createSegment($connected_user->id, $var['id'], 'segment', $var['name'], $var['description'], $var['distance'], $var['elevation'], $var['startplace'], $var['goalplace'], $var['thumbnail'], $var['tunnels'], $var['rank'], $var['advised'], $var['seasons'], $var['advice'], $var['specs'], $var['tags']);
         echo json_encode($var);
     }
 

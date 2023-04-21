@@ -1,5 +1,6 @@
 import CFUtils from "/map/class/CFUtils.js"
 import HomeSegmentLightbox from "/map/class/home/HomeSegmentLightbox.js"
+import Profile from "/map/class/Profile.js"
 import SegmentPopup from "/map/class/segment/SegmentPopup.js"
 
 export default class HomeSegmentPopup extends SegmentPopup {
@@ -57,11 +58,12 @@ export default class HomeSegmentPopup extends SegmentPopup {
         this.popup.once('open', async () => {
 
             // Setup general interactions
+            this.profile = new Profile(this.data.mapInstance.map)
             this.profile.generate({sourceName: 'segment' + this.data.id})
 
-            // Query relevant mkpoints and photos
-            this.getMkpoints().then((mkpoints) => {
-                this.mkpoints = mkpoints
+            // Query relevant sceneries and photos
+            this.getSceneries().then((sceneries) => {
+                this.mapdata.sceneries = sceneries
                 this.photos = this.getPhotos()
                 this.displayPhotos()
                 this.loadLightbox()
@@ -74,18 +76,18 @@ export default class HomeSegmentPopup extends SegmentPopup {
     }
 
     // Get relevant photos from the API and display it with a modal behavior
-    getMkpoints () {
+    getSceneries () {
         return new Promise( (resolve, reject) => {
             
             // Asks server for current photo data
             this.loaderContainer = this.popup._content.querySelector('.popup-img-container')
-            ajaxGetRequest (this.apiUrl + "?segment-mkpoints=" + this.data.id, (mkpoints) => {
+            ajaxGetRequest (this.apiUrl + "?segment-sceneries=" + this.data.id, (sceneries) => {
                 
-                // Sort mkpoints by distance order
-                mkpoints.forEach( (mkpoint) => mkpoint.distanceFromStart = this.getDistanceFromStart(mkpoint))
-                mkpoints.sort((a, b) => (a.distanceFromStart > b.distanceFromStart) ? 1 : -1)
+                // Sort sceneries by distance order
+                sceneries.forEach( (scenery) => scenery.distanceFromStart = this.getDistanceFromStart(scenery))
+                sceneries.sort((a, b) => (a.distanceFromStart > b.distanceFromStart) ? 1 : -1)
 
-                resolve(mkpoints)
+                resolve(sceneries)
             }, this.loader)
         } )
     }
@@ -127,7 +129,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
             newPhoto.src = photo.url
             photoContainer.appendChild(newPhoto)
             var newPhotoPeriod = document.createElement('div')
-            newPhotoPeriod.classList.add('mkpoint-period', setPeriodClass(photo.month))
+            newPhotoPeriod.classList.add('scenery-period', setPeriodClass(photo.month))
             newPhotoPeriod.innerText = photo.period
             newPhotoPeriod.style.display = 'none'
             newPhoto.after(newPhotoPeriod)
@@ -144,7 +146,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
         // Set slider system
 
         var photos = this.data.mapInstance.map.getContainer().getElementsByClassName("popup-img")
-        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("mkpoint-period")
+        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("scenery-period")
 
         // If there is more than one photo in the database
         if (this.photos.length > 1) {
@@ -195,7 +197,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
     loadLightbox () {
         var lightboxData = {
             photos: this.photos,
-            mkpoints: this.mkpoints,
+            sceneries: this.mapdata.sceneries,
             route: this.data.route
         }
         this.lightbox = new HomeSegmentLightbox(this.data.mapInstance.map.getContainer(), this.popup, lightboxData, {noSession: true})

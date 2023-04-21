@@ -16,8 +16,6 @@ if (isAjax()) {
     if (isset($_GET['get-rider-data'])) {
         $rider = new User ($_GET['get-rider-data']);
         $rider->activitiesNumber = $rider->getActivitiesNumber();
-        $rider->clearedSegmentsNumber = $rider->countClearedSegments();
-        $rider->clearedMkpointsNumber = $rider->countClearedMkpoints();
         $rider->lastActivityPhotos = $rider->getLastActivityPhotos(3);
         $rider->propic = $rider->getPropicUrl();
         echo json_encode($rider);

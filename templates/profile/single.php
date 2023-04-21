@@ -158,34 +158,6 @@ include '../includes/head.php'; ?>
 				} ?>
 			</div>
 		</div>
-
-		<?php /*
-		
-		<div class="container bg-transparent margin-bottom p-0 pf-columns-container">
-			
-			<div class="pf-column">
-				<div class="d-flex flex-column gap"> <?php
-					// Cleared mkpoints panel ?>
-					<div class="profile-container"> <?php 
-						define('CLEARED_MKPOINTS_LIMIT', 8); 
-						include '../includes/riders/profile/cleared-mkpoints.php'; ?>
-					</div>
-				</div>
-			</div>
-
-			<div class="pf-column">
-				<div class="d-flex flex-column gap"> <?php
-					// Cleared cegments panel ?>
-					<div class="profile-container"> <?php 
-						define('CLEARED_SEGMENTS_LIMIT', 8); 
-						include '../includes/riders/profile/cleared-segments.php'; ?>
-					</div>
-				</div>
-			</div>
-
-		</div> */ ?>
-
-	
 	</div>
 	
 </body>

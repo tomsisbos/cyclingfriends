@@ -176,12 +176,32 @@
     width: 100%;
     object-fit: cover;
     max-height: 500px;
-    opacity: 100%;
-    transition: opacity 0.2s;  
+    opacity: 1;
+    transition: 0.5s opacity;
+    z-index: 2;
+}
+.rd-course-thumbnail a {
+    display: flex;
+    font-weight: bold;
+    color: white;
+    position: relative;
+    width: 100%;
+    height: inherit;
+    transition: 2s opacity;
+}
+.rd-course-thumbnail a::after {
+    content: "詳細はこちら";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #5c9999;
+    opacity: 1;
 }
 .rd-course-thumbnail img:hover {
-    opacity: 80%;
-    transition: opacity 0.2s;  
+    opacity: 0;
 }
 @media only screen and (max-width: 992px) {
     .rd-course-thumbnail {

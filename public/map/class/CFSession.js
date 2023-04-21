@@ -32,7 +32,7 @@ export default class CFSession {
     static getPropic () {
         return new Promise((resolve, reject) => {
             ajaxGetRequest(this.apiUrl + '?get-propic=true', (src) => resolve(src))
-        } )
+        } ).catch(() => reject(false))
     }
 
     static getSession () {

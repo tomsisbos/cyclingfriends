@@ -243,7 +243,7 @@ class Manual extends Model {
                 // Else return a random public route
                 } else $query_string = "SELECT id FROM routes WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
                 break;
-            case '[scenery_id]': $query_string = "SELECT id FROM map_mkpoint ORDER BY RAND() LIMIT 1"; break;
+            case '[scenery_id]': $query_string = "SELECT id FROM sceneries ORDER BY RAND() LIMIT 1"; break;
             case '[segment_id]': $query_string = "SELECT id FROM segments ORDER BY RAND() LIMIT 1"; break;
         }
         // Get number of entries and return a random number among it

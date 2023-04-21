@@ -18,7 +18,7 @@ export default class SceneryPopup extends Popup {
 
         if (!instanceOptions.noPopup) {
             // Set popup element
-            var content = this.setContent(data.mkpoint)
+            var content = this.setContent(data.scenery)
             this.popup.setHTML(content)
         }
 
@@ -27,12 +27,12 @@ export default class SceneryPopup extends Popup {
     }
     
     apiUrl = '/api/map.php'
-    type = 'mkpoint'
+    type = 'scenery'
     data
     photos
     lightbox
 
-    setContent (mkpoint) {
+    setContent (scenery) {
 
         return `
         <div class="popup-img-container">` +
@@ -59,14 +59,14 @@ export default class SceneryPopup extends Popup {
         <div id="popup-content" class="popup-content">
             <div class="d-flex gap">
                 <div class="round-propic-container">
-                    <a href="/rider/` + mkpoint.user_id + `">
+                    <a href="/rider/` + scenery.user_id + `">
                         <img class="round-propic-img" />
                     </a>
                 </div>
                 <div class="popup-properties">
                     <div class="popup-properties-reference">
                         <div class="popup-properties-name">
-                            <a href="/scenery/` + mkpoint.id + `" target="_blank">` + mkpoint.name + `</a>
+                            <a href="/scenery/` + scenery.id + `" target="_blank">` + scenery.name + `</a>
                         </div>
                         <div class="popup-properties-location"></div>
                         <div class="popup-rating"></div>
@@ -83,32 +83,32 @@ export default class SceneryPopup extends Popup {
             <div class="msgbox-label">レビュー</div>
             <div class="chat-reviews"></div>
             <div class="chat-msgbox">
-                <textarea id="mkpointReview" class="fullwidth"></textarea>
-                <button id="mkpointReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
+                <textarea id="sceneryReview" class="fullwidth"></textarea>
+                <button id="sceneryReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
             </div>
         </div>`
     }
 
     async getDetails (id) {
-        return new Promise(async (resolve, reject) => ajaxGetRequest(this.apiUrl + "?mkpoint-details=" + id, (mkpoint) => resolve(mkpoint)))
+        return new Promise(async (resolve, reject) => ajaxGetRequest(this.apiUrl + "?scenery-details=" + id, (scenery) => resolve(scenery)))
     }
 
     async populate () {
         return new Promise(async (resolve, reject) => {
 
             // Get scenery details
-            if (!this.data.mkpoint.photos) {
-                var mkpoint = await this.getDetails(this.data.mkpoint.id)
-                this.data.mkpoint = { ...mkpoint }
+            if (!this.data.scenery.photos) {
+                var scenery = await this.getDetails(this.data.scenery.id)
+                this.data.scenery = { ...scenery }
             }
 
             // Build visited icon if necessary
-            if (this.data.mkpoint.isCleared) {
+            if (this.data.scenery.isCleared) {
                 var visitedIcon = document.createElement('div')
                 visitedIcon.id = 'visited-icon'
                 visitedIcon.title = 'この絶景スポットを訪れたことがあります。'
                 visitedIcon.innerHTML = `
-                    <a href="/activity/` + mkpoint.isCleared + `" target="_blank">
+                    <a href="/activity/` + scenery.isCleared + `" target="_blank">
                         <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
                     </a>
                 `
@@ -116,7 +116,7 @@ export default class SceneryPopup extends Popup {
 
             // Build tagslist
             var tags = ''
-            if (this.data.mkpoint.tags) this.data.mkpoint.tags.map((tag) => {
+            if (this.data.scenery.tags) this.data.scenery.tags.map((tag) => {
                 tags += `
                 <a target="_blank" href="/tag/` + tag + `">
                     <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
@@ -125,29 +125,29 @@ export default class SceneryPopup extends Popup {
 
             // Add administration panel if connected user has admin rights
             var sessionId = await CFSession.get('id')
-            if (mkpoint.user_id == sessionId) {
+            if (scenery.user_id == sessionId) {
                 var adminPanel = document.createElement('div')
-                adminPanel.id = 'mkpointAdminPanel'
+                adminPanel.id = 'sceneryAdminPanel'
                 adminPanel.className = 'popup-content container-admin'
                 adminPanel.innerHTML = `
                     <div class="popup-head">管理者ツール</div>
                     <div class="popup-buttons">
-                        <button class="mp-button bg-button text-white" id="mkpointEdit">情報編集</button>
-                        <button class="mp-button bg-button text-white" id="mkpointMove">位置変更</button>
-                        <button class="mp-button bg-danger text-white" id="mkpointDelete">削除</button>
+                        <button class="mp-button bg-button text-white" id="sceneryEdit">情報編集</button>
+                        <button class="mp-button bg-button text-white" id="sceneryMove">位置変更</button>
+                        <button class="mp-button bg-danger text-white" id="sceneryDelete">削除</button>
                     </div>
                 `
                 // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-                if (this.popup) var marker = this.getMarker()
+                if (this.popup && this.popup._map) var marker = this.getMarker()
                 else resolve(false)
                 if (this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
                 else if (this.data.mapInstance.mode == 'default') marker.setDraggable(false)
             }
 
-            if (this.data.mkpoint.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
-            if (this.data.mkpoint.isCleared) this.popup._content.querySelector('.popup-icons').appendChild(visitedIcon)
-            this.popup._content.querySelector('.popup-properties-location').innerHTML = this.data.mkpoint.city + ' (' + this.data.mkpoint.prefecture + ') - ' + this.data.mkpoint.elevation + 'm'
-            this.popup._content.querySelector('.popup-description').innerHTML = this.data.mkpoint.description
+            if (this.data.scenery.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
+            if (this.data.scenery.isCleared) this.popup._content.querySelector('.popup-icons').appendChild(visitedIcon)
+            this.popup._content.querySelector('.popup-properties-location').innerHTML = this.data.scenery.city + ' (' + this.data.scenery.prefecture + ') - ' + this.data.scenery.elevation + 'm'
+            this.popup._content.querySelector('.popup-description').innerHTML = this.data.scenery.description
             this.popup._content.querySelector('.js-tags').innerHTML = tags
             this.popup._content.querySelector('#popup-content').before(adminPanel)
 
@@ -161,7 +161,7 @@ export default class SceneryPopup extends Popup {
             // Setup general interactions
             this.select()
             this.loadReviews()
-            this.loadRating(this.data.mkpoint)
+            this.loadRating(this.data.scenery)
             
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
@@ -186,7 +186,7 @@ export default class SceneryPopup extends Popup {
 
             // Setup interactions depending on content
             var content = this.popup._content.innerHTML
-            if (content.includes('mkpointAdminPanel')) this.mkpointAdmin()
+            if (content.includes('sceneryAdminPanel')) this.sceneryAdmin()
             if (content.includes('target-button')) this.setTarget()
             if (content.includes('js-favorite-button')) this.setFavorite()
             if (content.includes('round-propic-img')) this.addPropic()
@@ -196,7 +196,7 @@ export default class SceneryPopup extends Popup {
     displayPhotos () {
 
         var photosContainer = this.popup._content.querySelector('.popup-img-container')
-        var photos = this.data.mkpoint.photos
+        var photos = this.data.scenery.photos
         var popupLoader = new Loader()
 
         const addArrows = async () => {
@@ -218,7 +218,7 @@ export default class SceneryPopup extends Popup {
             var plusPhoto = () => showPhotos(photoIndex += 1)
             var minusPhoto = () => showPhotos(photoIndex -= 1)
             var showPhotos = (n) => {
-                photos = this.data.mkpoint.photos // Use latest photo data
+                photos = this.data.scenery.photos // Use latest photo data
                 if (n > photos.length) {photoIndex = 1}
                 if (n < 1) {photoIndex = photos.length}
                 for (let i = 0; i < photos.length; i++) {
@@ -282,7 +282,7 @@ export default class SceneryPopup extends Popup {
                         } )
                         // Delete photo
                         popupLoader.prepare('写真を削除中...')
-                        ajaxGetRequest(this.apiUrl + "?delete-mkpoint-photo=" + photo_id, (response) => {
+                        ajaxGetRequest(this.apiUrl + "?delete-scenery-photo=" + photo_id, (response) => {
                             // Remove photo and period
                             currentPhoto.nextSibling.remove() // Period
                             currentPhoto.remove()
@@ -311,7 +311,7 @@ export default class SceneryPopup extends Popup {
             photo.$element.src = photo.url
             photosContainer.prepend(photo.$element)
             photo.$period = document.createElement('div')
-            photo.$period.classList.add('mkpoint-period', setPeriodClass(photo.month))
+            photo.$period.classList.add('scenery-period', setPeriodClass(photo.month))
             photo.$period.innerText = photo.period
             // Display first photo and period by default
             if (number == 1) {
@@ -332,12 +332,12 @@ export default class SceneryPopup extends Popup {
 
         // Reload photo and period elements with newest server data
         const reloadPhotos = async () => {
-            ajaxGetRequest(this.apiUrl + "?mkpoint-photos=" + this.data.mkpoint.id, (newPhotos) => {
+            ajaxGetRequest(this.apiUrl + "?scenery-photos=" + this.data.scenery.id, (newPhotos) => {
                 // Update popup instance
-                this.data.mkpoint.photos = newPhotos
+                this.data.scenery.photos = newPhotos
                 // Clear current photo and period elements
                 photosContainer.querySelectorAll('.popup-img').forEach(element => element.remove())
-                photosContainer.querySelectorAll('.mkpoint-period').forEach(element => element.remove())
+                photosContainer.querySelectorAll('.scenery-period').forEach(element => element.remove())
                 // Add newest photos
                 for (let i = 0; i < newPhotos.length; i++) addPhoto(newPhotos[i], i + 1)
             } )
@@ -361,7 +361,7 @@ export default class SceneryPopup extends Popup {
             // Get form data into queryData and adds tab id
             var newPhotoData = new FormData(form)
             newPhotoData.append('addphoto-button-form', true)
-            newPhotoData.append('mkpoint_id', this.data.mkpoint.id)
+            newPhotoData.append('scenery_id', this.data.scenery.id)
 
             // Proceed AJAX request and treat data in the callback function
             popupLoader.prepare('写真をアップロード中...')
@@ -388,20 +388,20 @@ export default class SceneryPopup extends Popup {
             container,
             popup: this.popup,
             mapInstance: this.data.mapInstance,
-            mkpoint: this.data.mkpoint,
-            photos: this.data.mkpoint.photos
+            scenery: this.data.scenery,
+            photos: this.data.scenery.photos
         }
         this.lightbox = new SceneryLightbox(lightboxData)
     }
 
     async loadReviews () {
 
-        // Get reviews on this mkpoint
-        ajaxGetRequest (this.apiUrl + "?get-reviews-mkpoint=" + this.data.mkpoint.id,async  (reviews) => {
+        // Get reviews on this scenery
+        ajaxGetRequest (this.apiUrl + "?get-reviews-scenery=" + this.data.scenery.id,async  (reviews) => {
                 
             const $popup = this.popup._content
 
-            if ($popup && $popup.querySelector('#mkpointReview')) {
+            if ($popup && $popup.querySelector('#sceneryReview')) {
                 // Clear reviews if necessary
                 if ($popup.querySelector('.chat-line')) {
                     $popup.querySelectorAll('.chat-line').forEach( (chatline) => {
@@ -418,26 +418,26 @@ export default class SceneryPopup extends Popup {
                 }
                 // If connected user has already posted a review, change 'Post review' button to 'Edit review' and prepopulate text area
                 if ($popup.querySelector('#review-author-' + await CFSession.get('id'))) {
-                    $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
+                    $popup.querySelector('#sceneryReviewSend').innerText = 'レビューを更新'
                     reviews.forEach(async (review) => {
-                        if (review.user.id == await CFSession.get('id')) $popup.querySelector('#mkpointReview').innerText = review.content
+                        if (review.user.id == await CFSession.get('id')) $popup.querySelector('#sceneryReview').innerText = review.content
                     } )
                 }
 
                 // Treat posting of a new review
-                var textareaReview   = $popup.querySelector('#mkpointReview')
-                var buttonReview     = $popup.querySelector('#mkpointReviewSend')
+                var textareaReview   = $popup.querySelector('#sceneryReview')
+                var buttonReview     = $popup.querySelector('#sceneryReviewSend')
                 if (buttonReview) buttonReview.addEventListener('click', () => {
                     let content = textareaReview.value
-                    ajaxGetRequest (this.apiUrl + "?add-review-mkpoint=" + this.data.mkpoint.id + '&content=' + content, (review) => {
+                    ajaxGetRequest (this.apiUrl + "?add-review-scenery=" + this.data.scenery.id + '&content=' + content, (review) => {
                         // If content is empty, remove review element and but button text back
                         if (review.content == '') {
                             $popup.querySelector('#review-author-' + review.user.id).remove()
-                            $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを投稿'
+                            $popup.querySelector('#sceneryReviewSend').innerText = 'レビューを投稿'
                         // Else, display new review on top and change button text
                         } else {
                             this.displayReview(review, {new: true})
-                            $popup.querySelector('#mkpointReviewSend').innerText = 'レビューを更新'
+                            $popup.querySelector('#sceneryReviewSend').innerText = 'レビューを更新'
                         }
                     } )
                 } )
@@ -461,7 +461,7 @@ export default class SceneryPopup extends Popup {
     }
 
     displayReview = async (review, options = {new: false}) => {
-        if (document.querySelector('#mkpointReview')) {
+        if (document.querySelector('#sceneryReview')) {
             // If review is already displayed, update it and move it to the top
             if (document.getElementById('review-author-' + review.user.id)) {
                 let $review = document.getElementById('review-author-' + review.user.id)
@@ -518,11 +518,10 @@ export default class SceneryPopup extends Popup {
                 messageBlock.appendChild(content)
             }
             // Add (or replace) stars if voted
-            ajaxGetRequest (this.apiUrl + "?check-user-vote=" + review.mkpoint_id + "&user_id=" + review.user.id, (response) => {
+            ajaxGetRequest (this.apiUrl + "?check-user-vote=" + review.scenery_id + "&user_id=" + review.user.id, (response) => {
                 if (response != false) {
                     var number = parseInt(response)
                     // Remove stars previously displayed
-                    console.log(review)
                     document.querySelector('#review-author-' + review.user.id).querySelectorAll('.selected-star').forEach($star => $star.remove())
                     // Display new stars
                     for (let i = 1; i < number + 1; i++) {
@@ -555,13 +554,13 @@ export default class SceneryPopup extends Popup {
     }
 
     /**
-     * Get the marker element corresponding to popup instance data mkpoint id
+     * Get the marker element corresponding to popup instance data scenery id
      * @returns {mapboxgl.Marker}
      */
     getMarker () {
         var marker
         this.popup._map._markers.forEach( (_marker) => { // Get current marker instance
-            if (_marker.getElement().id == 'mkpoint' + this.data.mkpoint.id) marker = _marker
+            if (_marker.getElement().id == 'scenery' + this.data.scenery.id) marker = _marker
         } )
         return marker
     }
@@ -571,7 +570,7 @@ export default class SceneryPopup extends Popup {
         else var $button = document.querySelector('.js-favorite-button')
         $button.addEventListener('click', () => {
             var type = 'scenery'
-            ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + this.data.mkpoint.id, (response) => {
+            ajaxGetRequest ('/api/favorites.php' + '?toggle-' + type + '=' + this.data.scenery.id, (response) => {
                 showResponseMessage(response, {
                     element: document.querySelector('.main'),
                     absolute: true
@@ -583,13 +582,13 @@ export default class SceneryPopup extends Popup {
                 
                 // Update map instance properties
                 const mapInstance = this.data.mapInstance
-                var mkpoint = mapInstance.data.mkpoints.find(mkpoint => mkpoint.id == this.data.mkpoint.id)
-                mkpoint.isFavorite = !mkpoint.isFavorite
+                var scenery = mapInstance.mapdata.sceneries.find(scenery => scenery.id == this.data.scenery.id)
+                scenery.isFavorite = !scenery.isFavorite
                 var key
-                for (let i = 0; i < mapInstance.mkpointsMarkerCollection.length; i++) {
-                    if (mapInstance.mkpointsMarkerCollection[i]._element.dataset.id == mkpoint.id) key = i
+                for (let i = 0; i < mapInstance.sceneriesMarkerCollection.length; i++) {
+                    if (mapInstance.sceneriesMarkerCollection[i]._element.dataset.id == scenery.id) key = i
                 }
-                mapInstance.mkpointsMarkerCollection[key].isFavorite = !mapInstance.mkpointsMarkerCollection[key].isFavorite
+                mapInstance.sceneriesMarkerCollection[key].isFavorite = !mapInstance.sceneriesMarkerCollection[key].isFavorite
 
                 // Toggle button and marker element class
                 $button.classList.toggle('favoured')
@@ -598,12 +597,12 @@ export default class SceneryPopup extends Popup {
         } )
     }
 
-    addPropic = async () => this.popup._content.querySelector('.round-propic-img').src = await this.loadPropic(this.data.mkpoint.user_id)
+    addPropic = async () => this.popup._content.querySelector('.round-propic-img').src = await this.loadPropic(this.data.scenery.user_id)
     
-    mkpointAdmin () {
+    sceneryAdmin () {
         const mapInstance = this.data.mapInstance
     // Edit
-        var editButton = this.popup._content.querySelector('#mkpointEdit')
+        var editButton = this.popup._content.querySelector('#sceneryEdit')
         // On click on edit button, change text into input fields and change Edit button into Save button
         editButton.addEventListener('click', () => {
             // Change name and description into input fields
@@ -611,11 +610,11 @@ export default class SceneryPopup extends Popup {
             var $description = this.popup._content.querySelector('.popup-description')
             var inputName = document.createElement('input')
             inputName.setAttribute('type', 'text')
-            inputName.id = 'mkpoint-edit-name'
+            inputName.id = 'scenery-edit-name'
             inputName.classList.add('popup-properties-name', 'admin-field')
             inputName.value = $name.innerText
             var textareaDescription = document.createElement('textarea')
-            textareaDescription.id = 'mkpoint-edit-description'
+            textareaDescription.id = 'scenery-edit-description'
             textareaDescription.classList.add('admin-field')
             textareaDescription.value = $description.innerText
             $name.before(inputName)
@@ -629,7 +628,7 @@ export default class SceneryPopup extends Popup {
             checkboxesContainer.className = 'js-tags'
             var $tags = ''
             this.tags.forEach(tag => {
-                if (this.data.mkpoint.tags.includes(tag)) var checked = 'checked'
+                if (this.data.scenery.tags.includes(tag)) var checked = 'checked'
                 else var checked = ''
                 $tags += `
                     <div class="mp-checkbox">
@@ -654,12 +653,12 @@ export default class SceneryPopup extends Popup {
                     if (checkbox.checked) tags.push(checkbox.dataset.name)
                 } )
                 let tagsString = tags.join()
-                ajaxGetRequest (this.apiUrl + "?edit-mkpoint=" + this.data.mkpoint.id + "&name=" + name + "&description=" + description + '&tags=' + tagsString, (response) => {
+                ajaxGetRequest (this.apiUrl + "?edit-scenery=" + this.data.scenery.id + "&name=" + name + "&description=" + description + '&tags=' + tagsString, (response) => {
                     saveButton.remove()
                     editButton.style.display = 'block'
                     inputName.remove()
                     $name.style.display = 'block'
-                    $name.innerHTML = '<a target="_blank" href="/scenery/' + this.data.mkpoint.id + '">' + response.name + '</a>'
+                    $name.innerHTML = '<a target="_blank" href="/scenery/' + this.data.scenery.id + '">' + response.name + '</a>'
                     textareaDescription.remove()
                     $description.style.display = 'block'
                     $description.innerText = response.description
@@ -669,52 +668,54 @@ export default class SceneryPopup extends Popup {
                     if (response.tags) response.tags.map(tag => {
                         tagsContainer.innerHTML += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
                     } )
-                    // Reload map instance mkpoints data
-                    mapInstance.loadMkpoints()
+                    // Reload map instance sceneries data
+                    mapInstance.loadSceneries()
                 } )
             } )
         } )
     // Move
-        var moveMkpoint = () => {
+        var moveScenery = () => {
             moveButton.style.opacity = '70%'
             moveButton.innerText = '確定'
-            moveButton.onclick = quitMoveMkpoint
+            moveButton.onclick = quitMoveScenery
             $marker.classList.add('moving-marker')
             marker.setDraggable(true)
-            this.popup.on('close', quitMoveMkpoint)
+            this.popup.on('close', quitMoveScenery)
             marker.on('dragend', () => {
-                ajaxGetRequest (this.apiUrl + "?mkpoint-dragged=" + $marker.dataset.id + "&lng=" + marker._lngLat.lng + "&lat=" + marker._lngLat.lat, afterMkpointUpdate)
-                function afterMkpointUpdate (response) {
+                ajaxGetRequest (this.apiUrl + "?scenery-dragged=" + $marker.dataset.id + "&lng=" + marker._lngLat.lng + "&lat=" + marker._lngLat.lat, afterSceneryUpdate)
+                function afterSceneryUpdate (response) {
                     /*
-                    // update mkpointsMarkerCollection
-                    globalmap.mkpointsMarkerCollection
+                    // update sceneriesMarkerCollection
+                    globalmap.sceneriesMarkerCollection
                     */
                 }
             } )
         }
-        var quitMoveMkpoint = () => {
+        var quitMoveScenery = () => {
             marker.setDraggable(false)
             marker.getElement().classList.remove('moving-marker')
             moveButton.style.opacity = '100%'
             moveButton.innerText = '編集'
-            moveButton.onclick = moveMkpoint
+            moveButton.onclick = moveScenery
         }
-        var marker = this.getMarker()
-        var $marker = marker.getElement()
-        var moveButton = this.popup._content.querySelector('#mkpointMove')
-        moveButton.onclick = moveMkpoint
+        if (this.popup._map) {
+            var marker = this.getMarker()
+            var $marker = marker.getElement()
+            var moveButton = this.popup._content.querySelector('#sceneryMove')
+            moveButton.onclick = moveScenery
+        }
         
     // Delete
-        var deleteButton = this.popup._content.querySelector('#mkpointDelete')
+        var deleteButton = this.popup._content.querySelector('#sceneryDelete')
         deleteButton.addEventListener('click', async () => {
             var answer = await openConfirmationPopup('この絶景スポットが削除されます。宜しいですか？')
-            if (answer) { // If yes, remove the mkpoint and close the popup
-                ajaxGetRequest (this.apiUrl + "?delete-mkpoint=" + this.data.mkpoint.id, (response) => {} )
+            if (answer) { // If yes, remove the scenery and close the popup
+                ajaxGetRequest (this.apiUrl + "?delete-scenery=" + this.data.scenery.id, (response) => {} )
                 // Remove current marker
-                document.querySelector('#mkpoint' + this.data.mkpoint.id).remove()
+                document.querySelector('#scenery' + this.data.scenery.id).remove()
                 // Also remove from map instance
-                mapInstance.data.mkpoints.forEach(mkpoint => {
-                    if (mkpoint.id == this.data.mkpoint.id) mapInstance.data.mkpoints.splice(mapInstance.data.mkpoints.indexOf(mkpoint), 1)
+                mapInstance.mapdata.sceneries.forEach(scenery => {
+                    if (scenery.id == this.data.scenery.id) mapInstance.mapdata.sceneries.splice(mapInstance.mapdata.sceneries.indexOf(scenery), 1)
                 } )
                 this.popup._content.remove()
             }
@@ -723,10 +724,10 @@ export default class SceneryPopup extends Popup {
 
     select () {
         var $map = this.data.mapInstance.$map
-        $map.querySelector('#mkpoint' + this.data.mkpoint.id).querySelector('.mkpoint-icon').classList.add('selected-marker')
+        $map.querySelector('#scenery' + this.data.scenery.id).querySelector('.scenery-icon').classList.add('selected-marker')
         // If a table or slider is displayed, also select corresponding entries
-        if (document && document.querySelector('.spec-table #mkpoint' + this.data.mkpoint.id)) document.querySelector('.spec-table #mkpoint' + this.data.mkpoint.id).classList.add('selected-entry')
-        if (document && document.querySelector('.rt-slider #mkpoint' + this.data.mkpoint.id)) document.querySelector('.rt-slider #mkpoint' + this.data.mkpoint.id + ' img').classList.add('selected-marker')
+        if (document && document.querySelector('.spec-table #scenery' + this.data.scenery.id)) document.querySelector('.spec-table #scenery' + this.data.scenery.id).classList.add('selected-entry')
+        if (document && document.querySelector('.rt-slider #scenery' + this.data.scenery.id)) document.querySelector('.rt-slider #scenery' + this.data.scenery.id + ' img').classList.add('selected-marker')
     }
             
 }

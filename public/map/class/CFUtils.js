@@ -279,12 +279,12 @@ export default class CFUtils {
 
     static getPeriodString (period) {
         var first, second
+        first = this.getMonth(period['month'])
         switch (period['detail']) {
-            case 1: first = '上旬'; break;
-            case 2: first = '中旬'; break;
-            case 3: first = '下旬'; break;
+            case 1: second = '上旬'; break;
+            case 2: second = '中旬'; break;
+            case 3: second = '下旬'; break;
         }
-        var second = this.getMonth(period['month'])
         return first + second
     }
 
@@ -307,20 +307,33 @@ export default class CFUtils {
 
     static getTagString (tag) {
         switch (tag) {
-            case 'hanami': return '花見'
-            case 'kouyou': return '紅葉'
-            case 'ajisai': return 'アジサイ'
-            case 'culture': return '文化'
-            case 'machinami': return '街並み'
-            case 'shrines': return '宗教'
-            case 'teafields': return '茶畑'
-            case 'ricefields': return '田んぼ'
-            case 'sea': return '海'
-            case 'mountains': return '山'
-            case 'forest': return '森'
-            case 'rivers': return '川'
-            case 'lakes': return '湖'
-            default: return capitalizeFirstLetter(tag)
+            case 'hanami-sakura': return '桜';
+            case 'hanami-ume': return '梅';
+            case 'hanami-nanohana': return '菜の花';
+            case 'hanami-ajisai': return '紫陽花';
+            case 'hanami-himawari': return 'ひまわり';
+
+            case 'nature-forest': return '森';
+            case 'nature-kouyou': return '紅葉';
+            case 'nature-ricefield': return '田んぼ';
+            case 'nature-riceterraces': return '棚田';
+            case 'nature-teafield': return '茶畑';
+            
+            case 'water-sea': return '海';
+            case 'water-river': return '川';
+            case 'water-lake': return '湖';
+            case 'water-waterfall': return '湖';
+
+            case 'culture': return '文化';
+            case 'culture-machinami': return '街並み';
+            case 'culture-shrines': return '寺・神社';
+            case 'culture-hamlet': return '集落';
+
+            case 'terrain-pass': return '峠';
+            case 'terrain-mountain': return '山';
+            case 'terrain-viewpoint': return '見晴らし';
+
+            default: 'その他'
         }
     }
 

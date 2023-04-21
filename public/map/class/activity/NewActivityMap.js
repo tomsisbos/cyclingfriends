@@ -162,8 +162,7 @@ export default class NewActivityMap extends ActivityMap {
                     },
                     routeData,
                     checkpoints,
-                    mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
-                    segments: await this.getFittingSegments(),
+                    sceneries: await this.loadCloseSceneries(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
                     photos: [],
                     trackpoints
                 }
@@ -300,8 +299,7 @@ export default class NewActivityMap extends ActivityMap {
                     },
                     routeData,
                     checkpoints,
-                    mkpoints: await this.loadCloseMkpoints(1, {displayOnMap: false}),
-                    segments: await this.getFittingSegments(),
+                    sceneries: await this.loadCloseSceneries(1, {displayOnMap: false}),
                     photos: [],
                     trackpoints
                 }
@@ -722,12 +720,12 @@ export default class NewActivityMap extends ActivityMap {
             $featureButton.innerHTML = '<span class="iconify" data-icon="mdi:feature-highlight"></span>'
             $featureButton.title = 'ハイライト写真に選定する'
             photo.$thumbnail.appendChild($featureButton)
-            // Create mkpoint button
-            var $createMkpointButton = document.createElement('div')
-            $createMkpointButton.className = 'pg-ac-photo-button pg-ac-createmkpoint-button'
-            $createMkpointButton.innerHTML = '<span class="iconify" data-icon="material-symbols:add-location-alt"></span>'
-            $createMkpointButton.title = 'この写真を元に絶景スポットを新規作成する'
-            photo.$thumbnail.appendChild($createMkpointButton)
+            // Create scenery button
+            var $createSceneryButton = document.createElement('div')
+            $createSceneryButton.className = 'pg-ac-photo-button pg-ac-createscenery-button'
+            $createSceneryButton.innerHTML = '<span class="iconify" data-icon="material-symbols:add-location-alt"></span>'
+            $createSceneryButton.title = 'この写真を元に絶景スポットを新規作成する'
+            photo.$thumbnail.appendChild($createSceneryButton)
             // Set privacy button
             var $setPrivacyButton = document.createElement('div')
             $setPrivacyButton.className = 'pg-ac-photo-button pg-ac-privacy-button'
@@ -756,21 +754,21 @@ export default class NewActivityMap extends ActivityMap {
                 this.setFeatured(photo)
             } )
 
-            // Create mkpoint listener
-            $createMkpointButton.addEventListener('click', () => {
+            // Create scenery listener
+            $createSceneryButton.addEventListener('click', () => {
                 // Initialize list if necessary
-                if (!this.data.mkpointsToCreate) this.data.mkpointsToCreate = []
+                if (!this.data.sceneriesToCreate) this.data.sceneriesToCreate = []
                 // If no similar entry exists yet, create it and highlight thumbnail
-                if (!this.data.mkpointsToCreate.includes(photo)) {
-                    this.data.mkpointsToCreate.push(photo)
+                if (!this.data.sceneriesToCreate.includes(photo)) {
+                    this.data.sceneriesToCreate.push(photo)
                     photo.$thumbnail.firstChild.classList.add('admin-marker')
-                    photo.$thumbnail.querySelector('.pg-ac-createmkpoint-button').style.color = 'yellow'
+                    photo.$thumbnail.querySelector('.pg-ac-createscenery-button').style.color = 'yellow'
                 // Else, remove entry in map instance data and set thumbnail back to default 
                 } else {
-                    var key = this.data.mkpointsToCreate.find(key => key == photo)
-                    this.data.mkpointsToCreate.splice(key, 1)
+                    var key = this.data.sceneriesToCreate.find(key => key == photo)
+                    this.data.sceneriesToCreate.splice(key, 1)
                     photo.$thumbnail.firstChild.classList.remove('admin-marker')
-                    photo.$thumbnail.querySelector('.pg-ac-createmkpoint-button').style.color = 'white'
+                    photo.$thumbnail.querySelector('.pg-ac-createscenery-button').style.color = 'white'
                 }
             } )
 
@@ -827,22 +825,22 @@ export default class NewActivityMap extends ActivityMap {
         document.querySelectorAll('.pg-ac-photo-container').forEach($photoContainer => $photoContainer.remove())
     }
 
-    async checkForCloseMkpoints () {
+    async checkForCloseSceneries () {
         return new Promise(async (resolve, reject) => {
-            // Compare all close mkpoints to all uploaded photos location and store similar data
+            // Compare all close sceneries to all uploaded photos location and store similar data
             var photosToAsk = []
-            this.data.mkpoints.forEach(mkpoint => {
+            this.data.sceneries.forEach(scenery => {
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
-                    // If photo and mkpoint have same coords
-                    if (CFUtils.compareCoords({lng: mkpoint.lng, lat: mkpoint.lat}, photoLocation, 3)) {
-                        photosToAsk.push({photo, mkpoint})
-                        // If any photo close to an existing mkpoint have been added to the create mkpoints list, discard it
-                        if (this.data.mkpointsToCreate) for (let i = 0; i < this.data.mkpointsToCreate.length; i++) {
-                            if (this.data.mkpointsToCreate[i].size && this.data.mkpointsToCreate[i].size == photo.size) {
-                                this.data.mkpointsToCreate.splice(i, 1)
+                    // If photo and scenery have same coords
+                    if (CFUtils.compareCoords({lng: scenery.lng, lat: scenery.lat}, photoLocation, 3)) {
+                        photosToAsk.push({photo, scenery})
+                        // If any photo close to an existing scenery have been added to the create sceneries list, discard it
+                        if (this.data.sceneriesToCreate) for (let i = 0; i < this.data.sceneriesToCreate.length; i++) {
+                            if (this.data.sceneriesToCreate[i].size && this.data.sceneriesToCreate[i].size == photo.size) {
+                                this.data.sceneriesToCreate.splice(i, 1)
                                 i--
-                                showResponseMessage({'error': photo.name + 'の位置が既存の絶景スポット「' + mkpoint.name + '」と一致しているため、新規の絶景スポットを作成できません。その代わり、写真として「' + mkpoint.name + '」に追加してください。'})
+                                showResponseMessage({'error': photo.name + 'の位置が既存の絶景スポット「' + scenery.name + '」と一致しているため、新規の絶景スポットを作成できません。その代わり、写真として「' + scenery.name + '」に追加してください。'})
                             }
                         }
                     }
@@ -888,16 +886,16 @@ export default class NewActivityMap extends ActivityMap {
                     var dataUrl = entry.photo.url
                     $entry.dataset.photoname = entry.photo.filename
                 }
-                $entry.dataset.mkpointid = entry.mkpoint.id
+                $entry.dataset.sceneryid = entry.scenery.id
                 $entry.innerHTML = `
                     <div class="new-ac-window-photo">
                         <img src="` + dataUrl + `" />
                         <div class="new-ac-window-distance">`
-                            + (Math.ceil(entry.mkpoint.distance * 10) / 10) + `km
+                            + (Math.ceil(entry.scenery.distance * 10) / 10) + `km
                         </div>
                     </div>
-                    <div class="new-ac-window-mkpoint-infos">`
-                        + entry.mkpoint.name + `
+                    <div class="new-ac-window-scenery-infos">`
+                        + entry.scenery.name + `
                     </div>
                     <div class="d-flex justify-content-between"><div class="mp-button bg-darkgreen text-white js-yes">はい</div><div class="mp-button bg-darkred text-white js-no">いいえ</div></div>
                 `
@@ -936,7 +934,7 @@ export default class NewActivityMap extends ActivityMap {
                 modal.remove()
                 var photosToShare = []
                 photosToAsk.forEach(finalEntry => {
-                    if (finalEntry.answer == 'keep') photosToShare.push({photo_name: finalEntry.photo.name, mkpoint_id: finalEntry.mkpoint.id})
+                    if (finalEntry.answer == 'keep') photosToShare.push({photo_name: finalEntry.photo.name, scenery_id: finalEntry.scenery.id})
                 } )
                 resolve(photosToShare)
             }
@@ -986,24 +984,24 @@ export default class NewActivityMap extends ActivityMap {
         }
     }
 
-    async createMkpoints () {
+    async createSceneries () {
         return new Promise(async (resolve, reject) => {
             // Store close photos that could also be added
-            for (let i = 0; i < this.data.mkpointsToCreate.length; i++) {
-                this.data.mkpointsToCreate[i].closePhotos = []
-                var currentPhotoLocation = {lng: this.getPhotoLocation(this.data.mkpointsToCreate[i])[0], lat: this.getPhotoLocation(this.data.mkpointsToCreate[i])[1]}
+            for (let i = 0; i < this.data.sceneriesToCreate.length; i++) {
+                this.data.sceneriesToCreate[i].closePhotos = []
+                var currentPhotoLocation = {lng: this.getPhotoLocation(this.data.sceneriesToCreate[i])[0], lat: this.getPhotoLocation(this.data.sceneriesToCreate[i])[1]}
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
-                    if (CFUtils.compareCoords(currentPhotoLocation, photoLocation, 2) && this.data.mkpointsToCreate[i].name != photo.name) this.data.mkpointsToCreate[i].closePhotos.push(photo)
+                    if (CFUtils.compareCoords(currentPhotoLocation, photoLocation, 2) && this.data.sceneriesToCreate[i].name != photo.name) this.data.sceneriesToCreate[i].closePhotos.push(photo)
                 } )
             }
             // Open modal and get user input data
-            var mkpointsToCreate = await this.openCreateMkpointsModal()
-            resolve(mkpointsToCreate)
+            var sceneriesToCreate = await this.openCreateSceneriesModal()
+            resolve(sceneriesToCreate)
         } )
     }
 
-    async openCreateMkpointsModal () {
+    async openCreateSceneriesModal () {
         return new Promise ((resolve, reject) => {
             
             // Build window structure
@@ -1019,12 +1017,12 @@ export default class NewActivityMap extends ActivityMap {
             $entriesContainer.className = 'new-ac-entries-container'
             confirmationPopup.appendChild($entriesContainer)
 
-            // Build each mkpoint element
-            this.data.mkpointsToCreate.forEach(async (entry) => {
+            // Build each scenery element
+            this.data.sceneriesToCreate.forEach(async (entry) => {
                 var distance = turf.length(turf.lineSlice(this.data.routeData.geometry.coordinates[0], this.getPhotoLocation(entry), this.data.routeData))
                 var content = ''
-                var mkpointElement = document.createElement('div')
-                mkpointElement.id = 'form' + entry.number
+                var sceneryElement = document.createElement('div')
+                sceneryElement.id = 'form' + entry.number
                 // Build tag checkboxes
                 var $tags = '<div class="js-tags">'
                 this.tags.forEach(tag => {
@@ -1053,18 +1051,18 @@ export default class NewActivityMap extends ActivityMap {
                     content += await buildOtherPhotosElements(entry.closePhotos)
                     content += '</div>'
                 }
-                // Build mkpoint form element
+                // Build scenery form element
                 content += `
                     <div class="popup-content">
                         <strong>タイトル :</strong>
-                        <input type="text" class="admin-field js-mkpoint-name"/>
+                        <input type="text" class="admin-field js-scenery-name"/>
                         <strong>紹介文 :</strong>
-                        <textarea class="admin-field js-mkpoint-description"></textarea>
+                        <textarea class="admin-field js-scenery-description"></textarea>
                     </div>`
                     + $tags + `
                 `
-                mkpointElement.innerHTML = content
-                $entriesContainer.appendChild(mkpointElement)
+                sceneryElement.innerHTML = content
+                $entriesContainer.appendChild(sceneryElement)
 
                 // Append listeners to other photos buttons
                 if (entry.closePhotos.length > 0) {
@@ -1101,16 +1099,16 @@ export default class NewActivityMap extends ActivityMap {
             $validateButton.innerText = '確定'
             confirmationPopup.appendChild($validateButton)
             $validateButton.addEventListener('click', () => {
-                var mkpointsToCreate = []
+                var sceneriesToCreate = []
                 var filled = true
-                var treatedMkpointsNumber = 0
-                this.data.mkpointsToCreate.forEach(async (entry) => {
-                    var $mkpointForm = document.querySelector('#form' + entry.number)
-                    var name = $mkpointForm.querySelector('.js-mkpoint-name').value
-                    var description = $mkpointForm.querySelector('.js-mkpoint-description').value
+                var treatedSceneriesNumber = 0
+                this.data.sceneriesToCreate.forEach(async (entry) => {
+                    var $sceneryForm = document.querySelector('#form' + entry.number)
+                    var name = $sceneryForm.querySelector('.js-scenery-name').value
+                    var description = $sceneryForm.querySelector('.js-scenery-description').value
                     var date = entry.datetime
                     var tags = []
-                    $mkpointForm.querySelectorAll('.js-segment-tag').forEach($tagInput => {
+                    $sceneryForm.querySelectorAll('.js-segment-tag').forEach($tagInput => {
                         if ($tagInput.checked) tags.push($tagInput.dataset.name)
                     } )
                     // Only attach photo filename if this photo is already registered in blob storage as an activity photo
@@ -1142,7 +1140,7 @@ export default class NewActivityMap extends ActivityMap {
 
                     var lngLat = {lng: this.getPhotoLocation(entry)[0], lat: this.getPhotoLocation(entry)[1]}
                     var location = await this.getLocation(lngLat)
-                    mkpointsToCreate.push( {
+                    sceneriesToCreate.push( {
                         name,
                         description,
                         tags,
@@ -1154,9 +1152,9 @@ export default class NewActivityMap extends ActivityMap {
                         photos
                     } )
                     if (name == '' || description == '') filled = false
-                    treatedMkpointsNumber++
-                    if (treatedMkpointsNumber == this.data.mkpointsToCreate.length && filled) resolve(mkpointsToCreate)
-                    else if (treatedMkpointsNumber == this.data.mkpointsToCreate.length && !filled) showResponseMessage({'error': '絶景スポットにはタイトルと紹介文が必要です。必要に応じて、<a>絶景スポットの共有ルール</a>をご確認ください。'}, {element: document.querySelector('.popup')})
+                    treatedSceneriesNumber++
+                    if (treatedSceneriesNumber == this.data.sceneriesToCreate.length && filled) resolve(sceneriesToCreate)
+                    else if (treatedSceneriesNumber == this.data.sceneriesToCreate.length && !filled) showResponseMessage({'error': '絶景スポットにはタイトルと紹介文が必要です。必要に応じて、<a>絶景スポットの共有ルール</a>をご確認ください。'}, {element: document.querySelector('.popup')})
                 } )
             } )
 
@@ -1189,7 +1187,7 @@ export default class NewActivityMap extends ActivityMap {
         } )
     }
 
-    async saveActivity (mkpointPhotos = null, mkpointsToCreate = null) {
+    async saveActivity (sceneryPhotos = null, sceneriesToCreate = null) {
         return new Promise(async (resolve, reject) => {
 
             // Start loader
@@ -1224,11 +1222,11 @@ export default class NewActivityMap extends ActivityMap {
                 } )
             })
 
-            // If photos need to be added to a mkpoint, append info data
-            if (mkpointPhotos) cleanData.mkpointPhotos = mkpointPhotos
+            // If photos need to be added to a scenery, append info data
+            if (sceneryPhotos) cleanData.sceneryPhotos = sceneryPhotos
             
-            // If mkpoints need to be created, append data
-            if (mkpointsToCreate) cleanData.mkpointsToCreate = mkpointsToCreate
+            // If sceneries need to be created, append data
+            if (sceneriesToCreate) cleanData.sceneriesToCreate = sceneriesToCreate
 
             // Resize to a 9:16 format
             this.$map.style.width = '1600px'

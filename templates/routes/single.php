@@ -15,10 +15,12 @@ include '../actions/routes/routeAction.php'; ?>
 
 	<?php include '../includes/navbar.php'; ?>
 
-    <div class="main container-shrink"> <?php
-            
-        if ($route->getFeaturedImage() !== null) { ?>
-            <div class="container header" style="background-image: <?= 'url(' .$route->getFeaturedImage()->url. '); background-size: cover;' ?>"> <?php
+    <div class="container-shrink"> <?php
+        
+        if (isset($ride)) $header_background_img = $ride->getFeaturedImage();
+        else if ($route->getFeaturedImage()) $header_background_img = $route->getFeaturedImage();
+        if (isset($header_background_img)) { ?>
+            <div class="container header" style="background-image: <?= 'url(' .$header_background_img->url. '); background-size: cover;' ?>"> <?php
         } else { ?>
             <div class="container" style="background-color: #bbb;"> <?php
         } ?>
@@ -78,16 +80,23 @@ include '../actions/routes/routeAction.php'; ?>
             <canvas id="elevationProfile"></canvas>
         </div>
         <div class="container p-0 spec-table-container">
+            <div class="spec-table-buttons">
+                <button id="addToilets" data-entry="toilets" class="mp-button bg-button text-white">トイレを追加</button>
+                <button id="addWater" data-entry="water" class="mp-button bg-button text-white">給水場を追加</button>
+                <button id="addKonbinis" data-entry="konbinis" class="mp-button bg-button text-white">コンビニを追加</button>
+            </div>
             <div class="spec-table">
                 <table id="routeTable">
                     <tbody>
                         <tr class="spec-table-th">
-                            <th class="table-element e10 text-left">距離</th>
+                            <th class="table-element e20 text-left">距離</th>
+                            <th class="table-element e10 text-center">種類</th>
                             <th class="table-element e40 text-left">名称</th>
                             <th class="table-element e20 text-center">場所</th>
                             <th class="table-element e15 text-center">標高</th>
                             <th class="table-element e25 text-center">コースまで</th>
                         </tr>
+                        <tr class="loader-center"></tr>
                     </tbody>
                 </table>
             </div>

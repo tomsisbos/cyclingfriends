@@ -10,6 +10,7 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     apiUrl = '/api/route.php'
+    data = {}
     state = []
     currentState = 0
     buttonUndo
@@ -20,6 +21,7 @@ export default class BuildRouteMap extends GlobalMap {
     endpointSet
     elevationProfile
     directionsMode = 'driving'
+    requestCurrentlyRunning = false
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
     loader = {
         prepare: () => {
@@ -33,97 +35,6 @@ export default class BuildRouteMap extends GlobalMap {
         },
         start: () => this.loaderContainer.appendChild(this.loaderElement),
         stop: () => this.loaderElement.remove()
-    }
-
-    addRouteControl () {
-        // Get (or add) controller container
-        if (document.querySelector('.map-controller')) var controller = document.querySelector('.map-controller')
-        else var controller = this.addController()
-        // Container
-        var routeContainer = document.createElement('div')
-        routeContainer.className = 'map-controller-block flex-column'
-        controller.appendChild(routeContainer)
-        // Label
-        var routeOptionsLabel = document.createElement('div')
-        routeOptionsLabel.innerText = 'ルート設定'
-        routeOptionsLabel.className = 'map-controller-label'
-        routeContainer.appendChild(routeOptionsLabel)
-        // Line 3
-        let line3 = document.createElement('div')
-        line3.className = 'map-controller-line hide-on-mobiles'
-        routeContainer.appendChild(line3)
-        var boxShowDistanceMarkers = document.createElement('input')
-        boxShowDistanceMarkers.id = 'boxShowDistanceMarkers'
-        boxShowDistanceMarkers.setAttribute('type', 'checkbox')
-        boxShowDistanceMarkers.setAttribute('checked', 'checked')
-        line3.appendChild(boxShowDistanceMarkers)
-        var boxShowDistanceMarkersLabel = document.createElement('label')
-        boxShowDistanceMarkersLabel.innerText = '距離を表示'
-        boxShowDistanceMarkersLabel.setAttribute('title', 'コース上に距離を表示する。ズームインすればするほど、細かく表示される。')
-        boxShowDistanceMarkersLabel.setAttribute('for', 'boxShowDistanceMarkers')
-        line3.appendChild(boxShowDistanceMarkersLabel)
-        boxShowDistanceMarkers.addEventListener('change', () => {
-            this.updateDistanceMarkers()
-        } )
-        // Line 4
-        let line4 = document.createElement('div')
-        line4.className = 'map-controller-line hide-on-mobiles'
-        routeContainer.appendChild(line4)
-        var boxSet3D = document.createElement('input')
-        boxSet3D.id = 'boxSet3D'
-        boxSet3D.setAttribute('type', 'checkbox')
-        boxSet3D.setAttribute('checked', 'checked')
-        line4.appendChild(boxSet3D)
-        var boxSet3DLabel = document.createElement('label')
-        boxSet3DLabel.innerText = '3次元'
-        boxSet3DLabel.setAttribute('title', 'チェックすると、地形が3次元表示になる。Ctrlキーを押して、カメラを動かしてみよう。')
-        boxSet3DLabel.setAttribute('for', 'boxSet3D')
-        line4.appendChild(boxSet3DLabel)
-        boxSet3D.addEventListener('change', () => {
-            if (boxSet3D.checked) {
-                this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 1})
-            } else {
-                this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 0})
-            }
-        } )
-        // Camera buttons
-        let line6 = document.createElement('div')
-        line6.className = 'map-controller-line hide-on-mobiles'
-        routeContainer.appendChild(line6)
-        // Focus button
-        var buttonFocus = document.createElement('button')
-        buttonFocus.className = 'map-controller-block mp-button mp-button-small'
-        buttonFocus.id = 'buttonFocus'
-        buttonFocus.innerText = '全体表示'
-        buttonFocus.setAttribute('title', 'ルート全体が地図の中央に表示されるようにカメラを調整する。')
-        line6.appendChild(buttonFocus)
-        buttonFocus.addEventListener('click', () => {
-            this.focus(this.map.getSource('route')._data)
-        } )
-        // Fly button
-        var buttonFly = document.createElement('button')
-        buttonFly.className = 'map-controller-block mp-button mp-button-small'
-        buttonFly.id = 'buttonFly'
-        buttonFly.innerText = '走行再現'
-        buttonFly.setAttribute('title', 'スタートからゴールまで、実際に走行しているかのようにコースを辿っていく。走行再現モードでコース全体のイメージを掴んでみよう。')
-        line6.appendChild(buttonFly)
-        buttonFly.addEventListener('click', async () => {
-            if (this.map.getSource('route')) this.flyAlong(await this.getRouteData())
-        } )
-        // Edition buttons
-        let line7 = document.createElement('div')
-        line7.className = 'map-controller-line hide-on-mobiles'
-        routeContainer.appendChild(line7)
-
-        // Hide and open on click on mobile display
-        routeOptionsLabel.addEventListener('click', () => {
-            routeContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
-                if (getComputedStyle(controller).flexDirection == 'row') {
-                    routeOptionsLabel.classList.toggle('up')
-                    line.classList.toggle('hide-on-mobiles')
-                }
-            } )
-        } )
     }
 
     addRouteEditionControl () {
@@ -166,7 +77,6 @@ export default class BuildRouteMap extends GlobalMap {
         modeSelectOption2.title = 'ルート上にクリックしウェイポイントを追加することができる。'
         this.modeSelect.appendChild(modeSelectOption2)
         this.modeSelect.addEventListener('change', () => {
-            console.log('boxAddWaypoints changed')
             this.setMode()
         } )
         // Line 3
@@ -274,6 +184,7 @@ export default class BuildRouteMap extends GlobalMap {
                     canvas.toBlob( async (blob) => {
                         answer.thumbnail = await blobToBase64(blob)
                         // When treatment is done, redirect to my routes page
+                        console.log(answer)
                         this.saveRoute(answer)
                     }, 'image/jpeg', 0.7)
                 } )            
@@ -360,6 +271,7 @@ export default class BuildRouteMap extends GlobalMap {
 
     // Make a directions request
     async directionsRequest (route, end) {
+        this.requestCurrentlyRunning = true
         // If the route already exists on the map, set previous end as start
         if (route) {
             var routeCoordinates = route._data.geometry.coordinates
@@ -374,6 +286,7 @@ export default class BuildRouteMap extends GlobalMap {
         console.log('MAPBOX DIRECTIONS API USE +1')
         // Prepare route features
         const json     = await query.json()
+        this.requestCurrentlyRunning = false
         const data     = json.routes[0]
         const section  = data.geometry.coordinates
         const geojson  = {
@@ -1492,84 +1405,94 @@ export default class BuildRouteMap extends GlobalMap {
     }
 
     routeBuilding = async (e) => {
-        // If starting point is already defined, request a route to clicked point
-        if (this.start) {
-            this.waypointNumber = this.prepareNextWaypoint(this.waypointNumber)
-            const coords = Object.keys(e.lngLat).map((key) => e.lngLat[key])
-            const end = {
-                type: 'FeatureCollection',
-                features: [ {
-                    type: 'Feature',
-                    properties: {},
-                    geometry: {
-                        type: 'Point',
-                        coordinates: coords
-                    }
-                } ]
-            }
-            if (this.map.getLayer('endPoint')) this.map.getSource('endPoint').setData(end);
-            else {
-                this.map.addLayer({
-                    id: 'endPoint',
-                    type: 'circle',
-                    source: {
-                        type: 'geojson',
-                        data: {
-                            type: 'FeatureCollection',
-                            features: [ {
-                                type: 'Feature',
-                                properties: {},
-                                geometry: {
-                                    type: 'Point',
-                                    coordinates: coords
-                                }
-                            } ]
-                        }
-                    },
-                    paint: {
-                    'circle-radius': 8,
-                    'circle-color': '#ff5555',
-                    'circle-stroke-color': this.routeColor,
-                    'circle-stroke-width': 2
-                    }
-                } )
-                if (!this.endpointSet) {
-                    this.configureEndPoint()
-                }
-                this.endpointSet = true
-            }
-            await this.draw(coords)
-        // If first click on the map, define starting point
-        } else if (!this.map.getSource('startPoint')) {
-            this.start = Object.keys(e.lngLat).map((key) => e.lngLat[key])
-            // Add starting point to the map
-            this.map.addLayer( {
-                id: 'startPoint',
-                type: 'circle',
-                source: {
-                    type: 'geojson',
-                    data: {
+        // Only do something if no request is currently running
+        if (!this.requestCurrentlyRunning) {
+            // Ensure that no marker is on the path
+            var isMarkerInPath = false
+            e.originalEvent.composedPath().forEach(element => {
+                if (element.classList && element.classList.contains('mapboxgl-marker')) isMarkerInPath = true
+            })
+            if (!isMarkerInPath) {
+                // If starting point is already defined, request a route to clicked point
+                if (this.start) {
+                    this.waypointNumber = this.prepareNextWaypoint(this.waypointNumber)
+                    const coords = Object.keys(e.lngLat).map((key) => e.lngLat[key])
+                    const end = {
                         type: 'FeatureCollection',
                         features: [ {
                             type: 'Feature',
                             properties: {},
                             geometry: {
                                 type: 'Point',
-                                coordinates: this.start
+                                coordinates: coords
                             }
                         } ]
                     }
-                },
-                paint: {
-                    'circle-radius': 8,
-                    'circle-color': '#afffaa',
-                    'circle-stroke-color': this.routeColor,
-                    'circle-stroke-width': 2
+                    if (this.map.getLayer('endPoint')) this.map.getSource('endPoint').setData(end);
+                    else {
+                        this.map.addLayer({
+                            id: 'endPoint',
+                            type: 'circle',
+                            source: {
+                                type: 'geojson',
+                                data: {
+                                    type: 'FeatureCollection',
+                                    features: [ {
+                                        type: 'Feature',
+                                        properties: {},
+                                        geometry: {
+                                            type: 'Point',
+                                            coordinates: coords
+                                        }
+                                    } ]
+                                }
+                            },
+                            paint: {
+                            'circle-radius': 8,
+                            'circle-color': '#ff5555',
+                            'circle-stroke-color': this.routeColor,
+                            'circle-stroke-width': 2
+                            }
+                        } )
+                        if (!this.endpointSet) {
+                            this.configureEndPoint()
+                        }
+                        this.endpointSet = true
+                    }
+                    await this.draw(coords)
+                // If first click on the map, define starting point
+                } else if (!this.map.getSource('startPoint')) {
+                    this.start = Object.keys(e.lngLat).map((key) => e.lngLat[key])
+                    // Add starting point to the map
+                    this.map.addLayer( {
+                        id: 'startPoint',
+                        type: 'circle',
+                        source: {
+                            type: 'geojson',
+                            data: {
+                                type: 'FeatureCollection',
+                                features: [ {
+                                    type: 'Feature',
+                                    properties: {},
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: this.start
+                                    }
+                                } ]
+                            }
+                        },
+                        paint: {
+                            'circle-radius': 8,
+                            'circle-color': '#afffaa',
+                            'circle-stroke-color': this.routeColor,
+                            'circle-stroke-width': 2
+                        }
+                    } )
+                    this.configureStartPoint()
                 }
-            } )
-            this.configureStartPoint()
+                this.addState()
+            }
         }
-        this.addState()
     }
 
     routeEditing = (e) => {
@@ -1643,7 +1566,8 @@ export default class BuildRouteMap extends GlobalMap {
                 }
             } )
         }
-        this.waypointNumber = this.state[key].waypoints.length + 1
+        if (this.waypointNumber > 1) this.waypointNumber = this.state[key].waypoints.length + 1
+        else this.waypointNumber = 0
         // Restore endpoint previous state
         const endpoint = this.state[key].endpoint
         if (this.map.getSource('endPoint')) {
@@ -1651,7 +1575,7 @@ export default class BuildRouteMap extends GlobalMap {
             else {
                 this.map.removeLayer('endPoint')
                 this.map.removeSource('endPoint')
-                ///this.start = this.map.getSource('startPoint')._data.features[0].geometry.coordinates
+                this.start = this.map.getSource('startPoint')._data.features[0].geometry.coordinates
             }
         } else {
             this.map.addSource('endPoint', {
@@ -1706,35 +1630,23 @@ export default class BuildRouteMap extends GlobalMap {
         // Reduce coordinates number for performance purpose
         if (this.map.getSource('route')._data.geometry.coordinates.length > 600) var routeData = turf.simplify(this.map.getSource('route')._data, {tolerance: 0.0001, highQuality: true, mutate: false})
         else var routeData = this.map.getSource('route')._data
-        if (details.category == 'route') {
-            var route = {
-                id: 'new',
-                type: routeData.geometry.type,
-                coordinates: routeData.geometry.coordinates,
-                tunnels: routeData.properties.tunnels,
-                category: 'route',
-                name: details.name,
-                description: details.description,
-                distance: turf.length(routeData),
-                elevation: await this.profile.calculateElevation(routeData),
-                startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
-                goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
-                thumbnail: details.thumbnail
-            }
-        } else if (details.category == 'segment') {
-            var route = {
-                id: 'new',
-                type: routeData.geometry.type,
-                coordinates: routeData.geometry.coordinates,
-                tunnels: routeData.properties.tunnels,
-                category: 'segment',
-                name: details.name,
-                description: details.description,
-                distance: turf.length(routeData),
-                elevation: await this.profile.calculateElevation(routeData),
-                startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
-                goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
-                thumbnail: details.thumbnail,
+        var route = {
+            id: 'new',
+            type: 'route-save',
+            coordinates: routeData.geometry.coordinates,
+            tunnels: routeData.properties.tunnels,
+            category: details.category,
+            name: details.name,
+            description: details.description,
+            distance: turf.length(routeData),
+            elevation: await this.profile.calculateElevation(routeData),
+            startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
+            goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
+            thumbnail: details.thumbnail
+        }
+        if (details.category == 'segment') {
+            route = {
+                ...route,
                 rank: details.rank,
                 advised: details.advised,
                 seasons: details.seasons,
@@ -1743,10 +1655,15 @@ export default class BuildRouteMap extends GlobalMap {
                 tags: details.tags
             }
         }
+        console.log(details)
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
             if (route.category == 'segment') window.location.replace('/world')
             else window.location.replace('/routes')
         } )
+    }
+    
+    updateMapData () {
+        if (!this.displaySceneriesBox || this.displaySceneriesBox.checked) this.updateSceneries()
     }
 
 }
