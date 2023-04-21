@@ -15,8 +15,7 @@ $upload.addEventListener('change', async (e) => {
     xhr.open("POST", "/api/activities/upload.php")
     var formData = new FormData()
     formData.append('activity', file)
-    var loader = new Loader()
-    loader.prepare('データを準備中...')
+    var loader = new Loader('データを準備中...')
     loader.start()
     window.setTimeout(() => {
         if (loader.isSet()) loader.appendText('ファイルデーターが大きいと、解析に時間がかかる場合があります。お手数をおかけしますが、もうしばらくお待ちください。')

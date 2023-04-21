@@ -176,8 +176,7 @@ export default class BuildRouteMap extends GlobalMap {
             var answer = await this.openSavePopup()
             if (answer) {
                 // Start loader
-                var loader = new Loader()
-                loader.prepare('ルートを保存中...')
+                var loader = new Loader('ルートを保存中...')
                 loader.start()
                 // Save canvas as a picture
                 html2canvas(document.querySelector('.mapboxgl-canvas')).then( (canvas) => {

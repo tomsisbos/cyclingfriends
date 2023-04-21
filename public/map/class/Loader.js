@@ -3,9 +3,19 @@ import Model from "/map/class/Model.js"
 export default class Loader extends Model {
 
     constructor (text = 'Loading...', container = document.body) {
-        super({noSession: true})
+        super()
+        // Set instance properties
         this.container = container
         this.text = text
+        // Prepare
+        this.modal = document.createElement('div')
+        if (this.container == document.body) this.modal.className = 'loading-modal'
+        else this.modal.className = 'loading-modal-absolute'
+        this.modal.style.cursor = 'loading'
+        this.element = document.createElement('div')
+        this.element.innerText = text
+        this.element.className = 'loading-text'
+        this.modal.appendChild(this.element)
     }
     
     container
@@ -13,16 +23,6 @@ export default class Loader extends Model {
     element
     text
     appendice
-
-    prepare = (text = this.text) => {
-        this.modal = document.createElement('div')
-        this.modal.className = 'loading-modal'
-        this.modal.style.cursor = 'loading'
-        this.element = document.createElement('div')
-        this.element.innerText = text
-        this.element.className = 'loading-text'
-        this.modal.appendChild(this.element)
-    }
 
     start = () => this.container.appendChild(this.modal)
 

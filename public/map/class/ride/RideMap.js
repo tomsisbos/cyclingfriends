@@ -171,43 +171,43 @@ export default class RideMap extends GlobalMap {
             // Extract blob from the file
             let img = e.target.files[0]
             const maxSize = 10000000
-            // If image size is less than maxSize Mb
-            if (img.size < maxSize) {
-                // Read the file into a base64 string
-                const reader = new FileReader()
-                if (img) {
+            if (img) {
+                // If image size is less than maxSize Mb
+                if (img.size < maxSize) {
+                    // Read the file into a base64 string
+                    const reader = new FileReader()
                     reader.readAsDataURL(img)
+                    // To be executed after the end of conversion
+                    reader.addEventListener("load", async () => {
+                        this.data.checkpoints[number].img = reader.result
+                        this.data.checkpoints[number].img_size = e.target.files[0].size
+                        this.data.checkpoints[number].img_name = e.target.files[0].name
+                        this.data.checkpoints[number].img_type = e.target.files[0].type
+                        // Send checkpoints data to API
+                        var response = await this.updateSession( {
+                            method: this.method,
+                            data: {
+                                checkpoints: this.data.checkpoints
+                            }
+                        })
+                        // In case of error
+                        var $popup = popup.getElement()
+                        if ('error' in response) {
+                            displayError($popup, response.error)
+                        // If no error, display thumbnail
+                        } else {
+                            // Remove previous error block if there is one
+                            if ($popup.querySelector('.error-block')) {
+                                $popup.querySelector('.error-block').remove()
+                            }
+                            this.updateThumbnails()
+                        }
+                    }, false)
+                // If size image exceeds max size
+                } else {
+                    var errorMessage = 'このファイルはサイズ制限を超えています (' + Math.round(maxSize / 1000000) + 'Mb)。'
+                    displayError(popup, errorMessage)
                 }
-                // To be executed after the end of conversion
-                reader.addEventListener("load", async () => {
-                    this.data.checkpoints[number].img = reader.result
-                    this.data.checkpoints[number].img_size = e.target.files[0].size
-                    this.data.checkpoints[number].img_name = e.target.files[0].name
-                    this.data.checkpoints[number].img_type = e.target.files[0].type
-                    // Send checkpoints data to API
-                    var response = await this.updateSession( {
-                        method: this.method,
-                        data: {
-                            checkpoints: this.data.checkpoints
-                        }
-                    })
-                    // In case of error
-                    var $popup = popup.getElement()
-                    if ('error' in response) {
-                        displayError($popup, response.error)
-                    // If no error, display thumbnail
-                    } else {
-                        // Remove previous error block if there is one
-                        if ($popup.querySelector('.error-block')) {
-                            $popup.querySelector('.error-block').remove()
-                        }
-                        this.displayThumbnail(marker)
-                    }
-                }, false)
-            // If size image exceeds max size
-            } else {
-                var errorMessage = 'このファイルはサイズ制限を超えています (' + Math.round(maxSize / 1000000) + 'Mb)。'
-                displayError(popup, errorMessage)
             }
 
             function displayError (popup, error) {
@@ -237,37 +237,36 @@ export default class RideMap extends GlobalMap {
         form.querySelector('#file').addEventListener('change', onUpload)
     }
 
-    displayThumbnail (marker) {
-        // Get checkpoint number
-        if (marker.getElement().innerText == 'F') var number = this.data.checkpoints.length - 1
-        else if (marker.getElement().innerText == 'S' || marker.getElement().innerText == 'SF' ) var number = 0
-        else var number = parseInt(marker.getElement().innerText)
-        // Get file data into file variable
-        if (this.data.checkpoints[number].img) {
-            // If image data is stored as a blob (object coming from database)
-            if (typeof this.data.checkpoints[number].img === 'object' && this.data.checkpoints[number].img !== null) {
-                if (this.data.checkpoints[number].img.filename) var img = this.data.checkpoints[number].img.url
-            // Else
-            } else {
-                if (!this.data.checkpoints[number].img_type || this.data.checkpoints[number].img.includes('data:' + this.data.checkpoints[number].img_type + ';base64,')) { // Add URL data type prefix if necessary
-                    var img = this.data.checkpoints[number].img
-                } else {
-                    var img = 'data:' + this.data.checkpoints[number].img_type + ';base64,' + this.data.checkpoints[number].img
-                }
-            }
-        }
+    updateThumbnails () {
 
-        // Set or update thumbnail
-        var $popup = marker.getPopup()._content
-        if (img && !$popup.querySelector('.checkpoint-popup-img-container')) { // If there is a file registered in checkpoints data but it doesn't exist in this popup element yet
-            var photoInput = document.createElement('div')
-            photoInput.className = 'checkpoint-popup-img-container'
-            photoInput.innerHTML = '<img class="checkpoint-popup-img" />'
-            $popup.querySelector('.checkpointMarkerForm').before(photoInput)
-            $popup.querySelector('.checkpoint-popup-img').src = img
-        } else if (img && $popup.querySelector('.checkpoint-popup-img-container')) { // If there is a file registered in checkpoints data and a thumbnail is already displayed in this popup element
-            $popup.querySelector('.checkpoint-popup-img').src = img
-        }
+        this.data.checkpoints.forEach(checkpoint => {
+
+            const marker = checkpoint.marker
+        
+            // If checkpoint contains an image
+            if (checkpoint.img) {
+                // If image data is stored as a blob (object coming from database)
+                if (typeof checkpoint.img === 'object' && checkpoint.img !== null) {
+                    if (checkpoint.img.filename) var img = checkpoint.img.url
+                // Else
+                } else {
+                    if (!checkpoint.img_type || checkpoint.img.includes('data:' + checkpoint.img_type + ';base64,')) { // Add URL data type prefix if necessary
+                        var img = checkpoint.img
+                    } else var img = 'data:' + checkpoint.img_type + ';base64,' + checkpoint.img
+                }
+
+                var $popup = marker.getPopup()._content
+                // Create and append a new thumbnail element if necessary
+                if (!$popup.querySelector('.checkpoint-popup-img-container')) {
+                    var photoInput = document.createElement('div')
+                    photoInput.className = 'checkpoint-popup-img-container'
+                    photoInput.innerHTML = '<img class="checkpoint-popup-img" />'
+                    $popup.querySelector('.checkpointMarkerForm').before(photoInput)
+                }
+                // Set image
+                $popup.querySelector('.checkpoint-popup-img').src = img
+            }
+        })
     }
 
     clearMarkers () {
@@ -379,7 +378,7 @@ export default class RideMap extends GlobalMap {
         let popup = new Popup({closeButton: false, maxWidth: '180px'}, {markerHeight: 24}).popup
         popup.setHTML(content)
         marker.setPopup(popup)
-        this.displayThumbnail(marker)
+        this.updateThumbnails()
         // Set data
         popup.on('open', () => {
             let innerText = marker.getElement().innerText

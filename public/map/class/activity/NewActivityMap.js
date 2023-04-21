@@ -481,7 +481,6 @@ export default class NewActivityMap extends ActivityMap {
             
             // Start loader
             var loader = new Loader('写真を処理中...')
-            loader.prepare()
             loader.start()
 
             // Get files into an array
@@ -1192,7 +1191,6 @@ export default class NewActivityMap extends ActivityMap {
 
             // Start loader
             var loader = new Loader('準備中...')
-            loader.prepare()
             loader.start()
             
             // Remove trackpoints and photos data

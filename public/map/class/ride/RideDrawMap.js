@@ -1,6 +1,8 @@
 import CFUtils from "/map/class/CFUtils.js"
 import RideMap from "/map/class/ride/RideMap.js"
 import Popup from "/map/class/Popup.js"
+import Loader from "/map/class/Loader.js"
+import LoaderCircle from "/map/class/loaders/loaderCircle.js"
 
 export default class RideDrawMap extends RideMap {
 
@@ -12,10 +14,21 @@ export default class RideDrawMap extends RideMap {
     routeSource
     method = 'draw'
 
-    async loadRoute (routeId) {
+    /**
+     * Load a route inside the map
+     * @param {Integer} routeId Id of route to load
+     * @param {String} options.loader if displaying a loader on the map during loading, text to display inside
+     * @returns {Promise}
+     */
+    async loadRoute (routeId, options = {}) {
         
         return new Promise ( async (resolve, reject) => {
+            if (options.loader) {
+                var loader = new Loader(options.loader, this.$map)
+                loader.start()
+            }
             ajaxGetRequest ('/api/route.php' + "?route-load=" + routeId, async (route) => {
+                if (options.loader) loader.stop()
                 this.route = route
                 // Update labels and values
                 var distanceDiv = document.querySelector('#distanceDiv')
@@ -26,9 +39,9 @@ export default class RideDrawMap extends RideMap {
                 } )
                 // If no course description data stored in database, load route description as course description by default
                 if (this.edit) {
-                    if (!this.session['edit-forms'] || (this.session['edit-forms'] && !this.session['edit-forms'][2]['course-description'])) document.querySelector('#courseDescriptionTextarea').value = route.description
+                    if (this.session && !this.session['edit-forms'] || (this.session['edit-forms'] && !this.session['edit-forms'][2]['course-description'])) document.querySelector('#courseDescriptionTextarea').value = route.description
                 } else {
-                    if (!this.session['forms'] || (this.session['forms'] && !this.session['forms'][2]['course-description'])) document.querySelector('#courseDescriptionTextarea').value = route.description
+                    if (this.session && !this.session['forms'] || (this.session['forms'] && !this.session['forms'][2]['course-description'] && route.description != '')) document.querySelector('#courseDescriptionTextarea').value = route.description
                 }
                 // Select current route by default
                 var $selectRoute = document.querySelector('#selectRoute')
@@ -57,13 +70,15 @@ export default class RideDrawMap extends RideMap {
                 this.paintTunnels(route.tunnels)
                 this.updateDistanceMarkers()
                 this.focus(this.map.getSource('route')._data)
-                await this.map.once('idle')
                 document.querySelector('#profileBox').style.display = 'block'
                 document.querySelector('#js-draw .rd-course-fields').style.paddingTop = 'calc(420px + 15vh)'
                 this.profile.generate()
                 this.addStartGoalMarkers()
+                let profileLoader = new LoaderCircle(document.getElementById('profileBox'), {absolute: true})
+                profileLoader.start()
                 await this.displayCloseSceneries(0.5)
                     .then(async () => {
+                        profileLoader.stop()
                         this.profile.clearData()
                         this.profile.generate({
                             poiData: {
@@ -303,14 +318,13 @@ export default class RideDrawMap extends RideMap {
 
     async addStartGoalMarkers () {
         // If no start has been detected, add it
-        if (!this.data.checkpoints[0]) {
+        if (!this.data.checkpoints || !this.data.checkpoints[0]) {
             // Add checkpoints
             var routeCoords = this.route.coordinates
             var lineString = turf.lineString([[routeCoords[0].lng, routeCoords[0].lat], [routeCoords[routeCoords.length - 1].lng, routeCoords[routeCoords.length - 1].lat]])
             // If distance from start to goal is less than 200m, set them to the same point
             if (turf.length(lineString) < 0.2) {
                 var startMarker = this.addMarker(this.route.coordinates[0])
-                this.displayThumbnail(startMarker)
                 var goalMarker = startMarker
                 this.options.sf = true
                 this.setToSF()
@@ -319,9 +333,7 @@ export default class RideDrawMap extends RideMap {
                 }
             } else {
                 var startMarker = this.addMarker(routeCoords[0])
-                this.displayThumbnail(startMarker)
                 var goalMarker = this.addMarker(routeCoords[routeCoords.length - 1])
-                this.displayThumbnail(goalMarker)
                 this.options.sf = false
                 this.setToSF()
                 var options = {
@@ -330,6 +342,7 @@ export default class RideDrawMap extends RideMap {
             }
             // Update course infos
             await this.sortCheckpoints()
+            this.updateThumbnails()
         // Else, simply set course data
         } else {
             var options = this.options

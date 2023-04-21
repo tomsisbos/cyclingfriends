@@ -197,7 +197,7 @@ export default class SceneryPopup extends Popup {
 
         var photosContainer = this.popup._content.querySelector('.popup-img-container')
         var photos = this.data.scenery.photos
-        var popupLoader = new Loader()
+        var popupLoader = new Loader('写真を削除中...')
 
         const addArrows = async () => {
 
@@ -281,7 +281,6 @@ export default class SceneryPopup extends Popup {
                             }
                         } )
                         // Delete photo
-                        popupLoader.prepare('写真を削除中...')
                         ajaxGetRequest(this.apiUrl + "?delete-scenery-photo=" + photo_id, (response) => {
                             // Remove photo and period
                             currentPhoto.nextSibling.remove() // Period
@@ -364,7 +363,7 @@ export default class SceneryPopup extends Popup {
             newPhotoData.append('scenery_id', this.data.scenery.id)
 
             // Proceed AJAX request and treat data in the callback function
-            popupLoader.prepare('写真をアップロード中...')
+            popupLoader.setText('写真をアップロード中...')
             ajaxPostFormDataRequest(this.apiUrl, newPhotoData, (response) => {
                 showResponseMessage(response, {element: this.popup._content})
                 if (response.success) reloadPhotos() // Reload photos if succeeded
