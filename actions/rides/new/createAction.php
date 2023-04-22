@@ -111,46 +111,48 @@ if (isset($_POST['validate'])) {
 
 				// If an image have been attached to the checkpoint
 				if (isset($checkpoints[$i]['img']) || isset($checkpoints[$i]['url'])) {
-					// Treatment of images coming from blob server
-					if (isset($checkpoints[$i]['url'])) {
-						$img_name = $name;
-						$img_size = 0;
-						$img_type = 'image/jpeg';
-						$url_array = explode('/', $checkpoints[$i]['url']);
-						$filename = array_pop($url_array);
-					// Treatment of uploaded images
-					} else if (isset($checkpoints[$i]['img'])) {
+
+					// In case image has been newly uploaded
+					if (isset($checkpoints[$i]['img'])) {
 						$img = base64_to_jpeg($checkpoints[$i]['img'], $_SERVER["DOCUMENT_ROOT"]. '/media/temp/tmp.jpg');
 						$img_size = $checkpoints[$i]['img_size'];
 						$img_name = $checkpoints[$i]['img_name'];
 						$img_type = $checkpoints[$i]['img_type'];
-
-						// Preparing variables
-						$stream = fopen($img, "r");
-						$filename = setFilename('img');
-						$metadata = [
-							'ride_id' => $ride_id,
-							'img_name' => $img_name,
-							'img_size' => $img_size,
-							'img_type' => $img_type,
-							'checkpoint_number' => $checkpoint_id,
-							'lng' => $lng,
-							'lat' => $lat
-						];
-						$container_name = 'checkpoint-images';
-						
-						// Connect to blob storage
-						$folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-						require $folder . '/actions/blobStorageAction.php';
-						// Upload file and set metadata
-						$blobClient->createBlockBlob($container_name, $filename, $stream);
-						$blobClient->setBlobMetadata($container_name, $filename, $metadata);
 					}
+					// In case image is coming from a scenery spot
+					else if (isset($checkpoints[$i]['url'])) {
+						$img = $checkpoints[$i]['url'];
+						$img_name = $name;
+						$img_size = 0;
+						$img_type = 'image/jpeg';
+					}
+
+					// Upload to blob storage
+					$stream = fopen($img, "r");
+					$filename = setFilename('img');
+					$metadata = [
+						'ride_id' => $ride_id,
+						'img_name' => $img_name,
+						'img_size' => $img_size,
+						'img_type' => $img_type,
+						'checkpoint_number' => $checkpoint_id,
+						'lng' => $lng,
+						'lat' => $lat
+					];
+					$container_name = 'checkpoint-images';
+					
+					// Connect to blob storage
+					$folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+					require $folder . '/actions/blobStorageAction.php';
+					// Upload file and set metadata
+					$blobClient->createBlockBlob($container_name, $filename, $stream);
+					///$blobClient->setBlobMetadata($container_name, $filename, $metadata);
 				}
 
 				// Convert lng and lat to WKT format
 				$lngLat = new LngLat($lng, $lat);
 				$point_wkt = $lngLat->toWKT();
+
 				
 				// Insert checkpoints in 'ride_checkpoints' table
 				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, filename, img_size, img_name, img_type, elevation, distance, special, city, prefecture, featured, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))');

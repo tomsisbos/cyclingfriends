@@ -112,18 +112,19 @@ if (isset($_POST['validate'])) {
 					$img_name = $checkpoints[$i]['img']['name'];
 					$img_type = $checkpoints[$i]['img']['type'];
 				} else if ((isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) || isset($checkpoints[$i]['url'])) {
-					// Treatment of images coming from sceneries
-					if (isset($checkpoints[$i]['url'])) {
-						$img = file_get_contents($checkpoints[$i]['url']);
-						$img_size = 0;
-						$img_name = $name;
-						$img_type = 'image/jpeg';
 					// Treatment of uploaded images
-					} else if (isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) {
+					if (isset($checkpoints[$i]['img']) AND is_string($checkpoints[$i]['img'])) {
 						$img = base64_to_jpeg($checkpoints[$i]['img'], $_SERVER["DOCUMENT_ROOT"]. '/media/temp/tmp.jpg');
 						$img_size = $checkpoints[$i]['img_size'];
 						$img_name = $checkpoints[$i]['img_name'];
 						$img_type = $checkpoints[$i]['img_type'];
+					}
+					// Treatment of images coming from sceneries
+					else if (isset($checkpoints[$i]['url'])) {
+						$img = $checkpoints[$i]['url'];
+						$img_size = 0;
+						$img_name = $name;
+						$img_type = 'image/jpeg';
 					}
 					$filename = setFilename('img');
         			$stream = fopen($img, "r");
@@ -143,7 +144,7 @@ if (isset($_POST['validate'])) {
 					require $folder . '/actions/blobStorageAction.php';
 					// Upload file and set metadata
 					$blobClient->createBlockBlob($container_name, $filename, $stream);
-					$blobClient->setBlobMetadata($container_name, $filename, $metadata);
+					///$blobClient->setBlobMetadata($container_name, $filename, $metadata);
 				}
 
 				// Convert lng and lat to WKT format
@@ -151,7 +152,7 @@ if (isset($_POST['validate'])) {
 				$point_wkt = $lngLat->toWKT();
 				
 				// Insert checkpoints in 'ride_checkpoints' table
-				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, filename, img_size, img_name, img_type, elevation, distance, special, city, prefecture, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))');
+				$insert_checkpoints = $db->prepare('INSERT INTO ride_checkpoints(ride_id, checkpoint_id, name, description, filename, img_size, img_name, img_type, elevation, distance, special, city, prefecture, featured, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))');
 				$insert_checkpoints->execute(array($ride_id, $checkpoint_id, $name, $description, $filename, $img_size, $img_name, $img_type, $elevation, $distance, $special, $city, $prefecture, $featured, $point_wkt));
 			}
 
@@ -161,7 +162,7 @@ if (isset($_POST['validate'])) {
 
 			$ride = new Ride($ride_id);
 			// Notify participants of ride details edition by organizer
-			foreach ($ride->getParticipants() as $participant_id) $ride->notify($participant_id, 'ride_edited');
+			if ($ride->getParticipants() != null) foreach ($ride->getParticipants() as $participant_id) $ride->notify($participant_id, 'ride_edited');
 
 			// Redirect to ride page
 			header('location: /ride/' . $ride_id);

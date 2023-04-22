@@ -1414,6 +1414,7 @@ input[type="range"]::-webkit-slider-thumb {
 .absolute {
     position: absolute;
     top: 0px;
+    left: 0px;
 }
 
 .hidden {

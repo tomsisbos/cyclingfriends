@@ -21,7 +21,6 @@ $previous_page = intval($stage_slug) - 1; ?>
 	<div class="container">
 		
 		<!-- Displays the summary -->
-		<h2>About the ride</h2>
 		<div class="row">
 			<div id="date" class="col">
 				<p><strong>開催日 :</strong> <?= $_SESSION['edit-forms']['1']['date'];?></p>
@@ -155,23 +154,20 @@ $previous_page = intval($stage_slug) - 1; ?>
 
 	<div class="container">
 
-		<h2>About the course</h2>
-		<div id="distance" class="row"> <?php
-			if (!empty($_SESSION['edit-forms']['2']['distance'])) { ?>
-				<p><strong>距離 :</strong> 
-				<?php 
-				if ($_SESSION['edit-forms']['2']['distance-about'] == 'about') echo '約';
-				echo $_SESSION['edit-forms']['2']['distance']. "km - " .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' まで'; ?>
-				</p> <?php
-			} ?>
-		</div>
-		<div id="terrain" class="row">
-			<p><strong>起伏 :</strong> <?php
-				if (isset($_SESSION['edit-course']) AND $_SESSION['edit-course']['method'] == 'draw') echo $_SESSION['edit-course']['terrain'];
-				else echo getTerrainFromValue($_SESSION['edit-forms']['2']['terrain']); ?>
-			</p>
-		</div>
-
+		<h2>コースについて</h2>
+		<p class="row">
+			<div id="distance" class="col"> <?php
+				if (!empty($_SESSION['edit-forms']['2']['distance'])) { ?>
+					<strong>距離 :</strong> <?php 
+					if ($_SESSION['edit-forms']['2']['distance-about'] == 'about') echo '約';
+					echo $_SESSION['edit-forms']['2']['distance']. "km - " .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' まで';
+				} ?>
+			</div>
+			<div id="terrain" class="col">
+				<strong>起伏 :</strong>
+				<?= getTerrainFromValue($_SESSION['edit-forms']['2']['terrain']); ?>
+			</div>
+		</p>
 
 		<div class="row">
 			<div id="course-description" class="col text-justify">

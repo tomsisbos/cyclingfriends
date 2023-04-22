@@ -996,10 +996,14 @@ function bikesFromArray ($array) {
 function getTerrainFromValue ($value) {
 	switch ($value) {
 		case 1: return '<img class="terrain-icon" src="\media\flat.svg" />';
+		case 'Flat': return '<img class="terrain-icon" src="\media\flat.svg" />';
 		case 2: return '<img class="terrain-icon" src="\media\smallhills.svg" />';
+		case 'Small hills': return '<img class="terrain-icon" src="\media\smallhills.svg" />';
 		case 3: return '<img class="terrain-icon" src="\media\hills.svg" />';
+		case 'Hills': return '<img class="terrain-icon" src="\media\hills.svg" />';
 		case 4: return '<img class="terrain-icon" src="\media\mountain.svg" />';
-		default : return 'unknown'; 
+		case 'Mountain': return '<img class="terrain-icon" src="\media\mountain.svg" />';
+		default : return ''; 
 	}
 } 
 

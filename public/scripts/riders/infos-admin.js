@@ -1,4 +1,4 @@
-import TimerPopup from '/map/class/TimerPopup.js'
+import TimerPopup from '/class/TimerPopup.js'
 
 apiUrl = '/api/riders/profile.php'
 

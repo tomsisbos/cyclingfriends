@@ -1,5 +1,5 @@
-import Modal from '/map/class/Modal.js'
-import TimerPopup from '/map/class/TimerPopup.js'
+import Modal from '/class/Modal.js'
+import TimerPopup from '/class/TimerPopup.js'
 
 var apiUrl = '/api/riders/profile.php'
 

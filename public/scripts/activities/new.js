@@ -1,5 +1,5 @@
-import Loader from "/map/class/Loader.js"
-import NewActivityMap from "/map/class/activity/NewActivityMap.js"
+import FadeLoader from "/class/loaders/FadeLoader.js"
+import NewActivityMap from "/class/maps/activity/NewActivityMap.js"
 
 var $upload = document.querySelector('#uploadActivity')
 var $map = document.querySelector('#activityMap')
@@ -15,7 +15,7 @@ $upload.addEventListener('change', async (e) => {
     xhr.open("POST", "/api/activities/upload.php")
     var formData = new FormData()
     formData.append('activity', file)
-    var loader = new Loader('データを準備中...')
+    var loader = new FadeLoader('データを準備中...')
     loader.start()
     window.setTimeout(() => {
         if (loader.isSet()) loader.appendText('ファイルデーターが大きいと、解析に時間がかかる場合があります。お手数をおかけしますが、もうしばらくお待ちください。')

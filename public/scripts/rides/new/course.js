@@ -1,10 +1,10 @@
-import CFUtils from "/map/class/CFUtils.js"
-import CFSession from "/map/class/CFSession.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import CFSession from "/class/utils/CFSession.js"
 import RideCourseHelper from "/scripts/helpers/rides/course.js"
-import RideMap from "/map/class/ride/RideMap.js"
-import RidePickMap from "/map/class/ride/RidePickMap.js"
-import RideDrawMap from "/map/class/ride/RideDrawMap.js"
-import Loader from "/map/class/Loader.js"
+import RideMap from "/class/maps/ride/RideMap.js"
+import RidePickMap from "/class/maps/ride/RidePickMap.js"
+import RideDrawMap from "/class/maps/ride/RideDrawMap.js"
+import FadeLoader from "/class/loaders/FadeLoader.js"
 
 var ridePickMapIsLoaded = false
 var rideDrawMapIsLoaded = false
@@ -59,7 +59,7 @@ async function displayForm () {
 
         // Set controller menu
         ridePickMap.setController()
-
+        
         // Get session information from the server
         CFSession.getSession().then(async session => {
             
@@ -116,7 +116,7 @@ async function displayForm () {
         selectRoute.onchange = async () => {
             rideDrawMap.clearMarkers()
             rideDrawMap.hideSceneries()
-            await rideDrawMap.loadRoute(selectRoute.value, {loader: '準備中...'})
+            await rideDrawMap.loadRoute(selectRoute.value, {loader: 'ルート読込中...'})
             rideDrawMap.updateSession( {
                 method: rideDrawMap.method,
                 data: {

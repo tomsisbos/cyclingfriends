@@ -1,4 +1,4 @@
-import Modal from "/map/class/Modal.js"
+import Modal from "/class/Modal.js"
 
 var propic = document.querySelector('#propic').querySelector('img')
 var modal = new Modal(propic.src)

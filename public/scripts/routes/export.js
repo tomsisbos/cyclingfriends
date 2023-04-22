@@ -1,4 +1,4 @@
-import CFUtils from "/map/class/CFUtils.js"
+import CFUtils from "/class/utils/CFUtils.js"
 
 const exportButtons = document.querySelectorAll('#export')
 

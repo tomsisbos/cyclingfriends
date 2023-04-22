@@ -1,4 +1,4 @@
-import LoaderCircle from "/map/class/loaders/LoaderCircle.js"
+import CircleLoader from "/class/loaders/CircleLoader.js"
 
 var apiUrl = "/api/ride.php"
 
@@ -9,7 +9,7 @@ var rideId = getIdFromString(location.pathname)
 if (joinButton) {
     joinButton.addEventListener('click', async () => {
 
-        var loader = new LoaderCircle(joinButton)
+        var loader = new CircleLoader(joinButton)
         loader.start()
 
         // Check if proper bike has been registered
@@ -46,7 +46,7 @@ if (quitButton) {
 
     quitButton.addEventListener('click', () => {
 
-        var loader = new LoaderCircle(quitButton)
+        var loader = new CircleLoader(quitButton)
         loader.start()
         
         ajaxGetRequest(apiUrl + "?quit=" + rideId, async (response) => {
