@@ -1,4 +1,4 @@
-import SceneryLightbox from '/class/scenery/SceneryLightbox.js'
+import SceneryLightbox from '/class/maps/scenery/SceneryLightbox.js'
 
 export default class HomeSceneryLightbox extends SceneryLightbox {
 
