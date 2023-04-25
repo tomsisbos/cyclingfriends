@@ -1,5 +1,5 @@
-import CFUtils from "/map/class/CFUtils.js"
-import HomeMap from "/map/class/home/HomeMap.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import HomeMap from "/class/maps/home/HomeMap.js"
 
 var $map = document.querySelector('#homeSegmentMap')
 var loaded = false

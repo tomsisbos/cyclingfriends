@@ -1,7 +1,7 @@
-import CFUtils from "/map/class/CFUtils.js"
-import CFSession from "/map/class/CFSession.js"
-import NeighboursMap from "/map/class/neighbours/NeighboursMap.js"
-import NeighbourPopup from "/map/class/neighbours/NeighbourPopup.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import CFSession from "/class/utils/CFSession.js"
+import NeighboursMap from "/class/maps/neighbours/NeighboursMap.js"
+import NeighbourPopup from "/class/maps/neighbours/NeighbourPopup.js"
 
 var neighboursMap = new NeighboursMap()
 
@@ -33,7 +33,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
         const marker = new mapboxgl.Marker($marker)
         marker.setLngLat(neighbour.lngLat)
         marker.addTo(map)
-        var neighbourPopup = new NeighbourPopup(neighbour,)
+        var neighbourPopup = new NeighbourPopup(neighbour)
         marker.setPopup(neighbourPopup.popup)
 
         // Add hovering event listeners

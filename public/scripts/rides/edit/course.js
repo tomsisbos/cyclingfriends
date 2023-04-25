@@ -1,8 +1,9 @@
-import CFUtils from "/map/class/CFUtils.js"
-import CFSession from "/map/class/CFSession.js"
-import RideMap from "/map/class/ride/RideMap.js"
-import RidePickMap from "/map/class/ride/RidePickMap.js"
-import RideDrawMap from "/map/class/ride/RideDrawMap.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import CFSession from "/class/utils/CFSession.js"
+import RideMap from "/class/maps/ride/RideMap.js"
+import RidePickMap from "/class/maps/ride/RidePickMap.js"
+import RideDrawMap from "/class/maps/ride/RideDrawMap.js"
+import FadeLoader from "/class/loaders/FadeLoader.js"
 
 var ridePickMapIsLoaded = false
 var rideDrawMapIsLoaded = false
@@ -10,6 +11,10 @@ var formMethodSelect = document.getElementById('formMethodSelect')
 var jsPick = document.getElementById('js-pick')
 var jsDraw = document.getElementById('js-draw')
 // var jsImport = document.getElementById('js-import')
+
+// Prevent any change before data has loaded        
+var loader = new FadeLoader('データを取得中...')
+loader.start()
 
 // On method change
 formMethodSelect.addEventListener('change', () => {
@@ -45,6 +50,10 @@ async function displayForm () {
 
     if (method === 'pick' && !ridePickMapIsLoaded) { // Only load if pick mode selected and if map have not been already loaded once
 
+        // Disable save&next button before complete loading of data
+        var nextButtonPick = document.querySelector('#js-pick button#next')
+        nextButtonPick.disabled = true
+
         var ridePickMap = new RidePickMap ()
         ridePickMap.edit = true
         var $map = document.getElementById('newPickMap')
@@ -58,9 +67,22 @@ async function displayForm () {
 
         // Set controller menu
         ridePickMap.setController()
+            
+        // Add checkpoint on click
+        map.on('click', (e) => {
+            // Prevent from adding a marker if a scenery or another marker is on the path
+            var markerIncludedOnPath = false
+            e.originalEvent.composedPath().forEach( (element) => {
+                if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('scenery-marker'))) markerIncludedOnPath = true
+            } )
+            // Add checkpoint
+            if (!markerIncludedOnPath) ridePickMap.addMarker(e.lngLat)
+        } )
 
         // Get session information from the server
         CFSession.getSession().then(session => {
+
+            if (loader) loader.stop()
             
             // Update map instance properties
             ridePickMap.session = session
@@ -105,29 +127,20 @@ async function displayForm () {
                 document.querySelector('.newpickmap-controller-checkbox').querySelector('input').checked = true
             }
             ridePickMap.setToSF()
-            
-            // Add checkpoint on click
-            map.on('click', (e) => {
-                // Prevent from adding a marker if a scenery or another marker is on the path
-                var markerIncludedOnPath = false
-                e.originalEvent.composedPath().forEach( (element) => {
-                    if (element.classList && (element.classList.contains('mapboxgl-marker') || element.classList.contains('scenery-marker'))) markerIncludedOnPath = true
-                } )
-                // Add checkpoint
-                if (!markerIncludedOnPath) ridePickMap.addMarker(e.lngLat)
-            } )
+
+            // Validating course before going to next step
+            nextButtonPick.disabled = false
+            nextButtonPick.addEventListener('click', (e) => ridePickMap.validateCourse(e), 'capture')
         } )
 
         ridePickMapIsLoaded = true // Prevents from multiple loading
-
-        // Validating course before going to next step
-        document.querySelector('#js-pick button#next').addEventListener('click', (e) => ridePickMap.validateCourse(e), 'capture')
 
 
     } else if (method === 'draw' && !rideDrawMapIsLoaded) { // Only load if draw mode selected and if map have not been already loaded once
     
         // Disable save&next button before complete loading of data
-        document.querySelector('#js-draw button#next').disabled = true
+        var nextButtonDraw = document.querySelector('#js-draw button#next')
+        nextButtonDraw.disabled = true
 
         var rideDrawMap = new RideDrawMap()
         rideDrawMap.edit = true
@@ -140,6 +153,8 @@ async function displayForm () {
 
         // Get session information from the server
         CFSession.getSession().then(async session => {
+            
+            if (loader) loader.stop()
 
             // Update map instance properties
             rideDrawMap.session = session
@@ -152,10 +167,8 @@ async function displayForm () {
             // Update checkpoints to the map instance
             rideDrawMap.data.checkpoints = course.checkpoints
 
-            // On change of the select input, display the route
-            var selectRoute = document.querySelector('#selectRoute')
-
             // Set select input to currently used route
+            var selectRoute = document.querySelector('#selectRoute')
             selectRoute.value = course['route-id']
             rideDrawMap.updateSession( {
                 method: rideDrawMap.method,
@@ -163,10 +176,11 @@ async function displayForm () {
                     'route-id': course['route-id']
                 }
             } )
+            // On change of the select input, display the route
             selectRoute.onchange = async () => {
                 rideDrawMap.clearMarkers()
                 rideDrawMap.hideSceneries()
-                await rideDrawMap.loadRoute(selectRoute.value)
+                await rideDrawMap.loadRoute(selectRoute.value, {loader: 'ルート読込中...'})
                 await rideDrawMap.sortCheckpoints()
                 rideDrawMap.treatRouteChange()
                 rideDrawMap.updateSession( {
@@ -178,7 +192,7 @@ async function displayForm () {
             }
 
             // Display route
-            await rideDrawMap.loadRoute(selectRoute.value)
+            await rideDrawMap.loadRoute(selectRoute.value, {loader: 'ルート読込中...'})
 
             // Display checkpoints
             if (rideDrawMap.data.checkpoints) rideDrawMap.displayCheckpoints()
@@ -201,10 +215,8 @@ async function displayForm () {
             } )
 
             // Validating course before going to next step
-            document.querySelector('#js-draw button#next').addEventListener('click', (e) => rideDrawMap.validateCourse(e), 'capture')
-
-            // After everything has been loaded, enable save&next button
-            document.querySelector('#js-draw button#next').disabled = false
+            nextButtonDraw.addEventListener('click', (e) => rideDrawMap.validateCourse(e), 'capture')
+            nextButtonDraw.disabled = false
         } )
 
     }

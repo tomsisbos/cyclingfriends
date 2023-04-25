@@ -1,7 +1,7 @@
 import EditRouteHelper from "/scripts/helpers/routes/edit.js"
-import CFUtils from "/map/class/CFUtils.js"
-import EditRouteMap from "/map/class/route/EditRouteMap.js"
-import Loader from "/map/class/Loader.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import EditRouteMap from "/class/maps/route/EditRouteMap.js"
+import FadeLoader from "/class/loaders/FadeLoader.js"
 
 var editRouteMap = new EditRouteMap()
 
@@ -103,7 +103,7 @@ ajaxGetRequest (editRouteMap.apiUrl + '?route-load=' + editRouteMap.routeId, asy
     map.fitBounds(routeBounds)
     editRouteMap.waypointNumber = 1
     editRouteMap.addState()
-}, new Loader('準備中...'))
+}, new FadeLoader('準備中...'))
 
 // Set edition mode by default
 editRouteMap.modeSelect.value = 'addWaypoints'

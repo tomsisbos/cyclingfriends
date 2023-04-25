@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types = 1);/*
 require_once '../vendor/autoload.php';
-Autoloader::register();
+Autoloader::register();*/
 use \SendGrid\Mail\Mail;
 
 class MailingListEntry extends Model {

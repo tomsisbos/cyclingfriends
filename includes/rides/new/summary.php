@@ -21,7 +21,6 @@ $previous_page = intval($slug) - 1; ?>
 	<div class="container">
 		
 		<!-- Displays the summary -->
-		<h2>About the ride</h2>
 		<div class="row">
 			<div id="date" class="col">
 				<p><strong>開催日 :</strong> <?= $_SESSION['forms']['1']['date'];?></p>
@@ -47,7 +46,7 @@ $previous_page = intval($slug) - 1; ?>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p><strong>募集人数 :</strong> <?= $_SESSION['forms']['1']['nb-riders-min']. "人 から " .$_SESSION['forms']['1']['nb-riders-max']. "人 まで";?></p>
+				<p><strong>募集人数 :</strong> <?= $_SESSION['forms']['1']['nb-riders-min']. "人から " .$_SESSION['forms']['1']['nb-riders-max']. "人まで";?></p>
 			</div>
 		</div>
 		<div class="row">
@@ -149,22 +148,20 @@ $previous_page = intval($slug) - 1; ?>
 
 	<div class="container">
 
-		<h2>About the course</h2>
-		<div id="distance" class="row"> <?php
-			if (!empty($_SESSION['forms']['2']['distance'])) { ?>
-				<p><strong>距離 :</strong> 
-				<?php 
-				if ($_SESSION['forms']['2']['distance-about'] == 'about') echo '約';
-				echo $_SESSION['forms']['2']['distance']. "km - " .$_SESSION['forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['forms']['2']['finishplace']['geolocation']['city']. " まで"; ?>
-				</p> <?php
-			} ?>
-		</div>
-		<div id="terrain" class="row">
-			<p><strong>起伏 :</strong> <?php 
-				if (isset($_SESSION['course']) AND $_SESSION['course']['method'] == 'draw') echo $_SESSION['course']['terrain'];
-				else echo getTerrainFromValue($terrain_value); ?>
-			</p>
-		</div>
+		<h2>コースについて</h2>
+		<p class="row">
+			<div id="distance" class="col">
+				<strong>距離 :</strong> <?php
+				if (!empty($_SESSION['forms']['2']['distance'])) {
+					if ($_SESSION['forms']['2']['distance-about'] == 'about') echo '約';
+					echo $_SESSION['forms']['2']['distance']. "km - " .$_SESSION['forms']['2']['meetingplace']['geolocation']['city']. "から" .$_SESSION['forms']['2']['finishplace']['geolocation']['city']. " まで";
+				} ?>
+			</div>
+			<div id="terrain" class="col">
+				<strong>起伏 :</strong>
+				<?= getTerrainFromValue($_SESSION['forms']['2']['terrain']); ?>
+			</div>
+		</p>
 
 		<div class="row">
 			<div id="course-description" class="col text-justify">

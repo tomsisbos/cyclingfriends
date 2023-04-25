@@ -1,4 +1,4 @@
-import BuildRouteMap from "/map/class/route/BuildRouteMap.js"
+import BuildRouteMap from "/class/maps/route/BuildRouteMap.js"
 
 var buildRouteMap = new BuildRouteMap ()
 

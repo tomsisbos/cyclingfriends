@@ -1,7 +1,7 @@
-import CFUtils from "/map/class/CFUtils.js"
-import CFSession from "/map/class/CFSession.js"
-import WorldMap from "/map/class/WorldMap.js"
-import AmenityPopup from "/map/class/AmenityPopup.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import CFSession from "/class/utils/CFSession.js"
+import WorldMap from "/class/maps/world/WorldMap.js"
+import AmenityPopup from "/class/maps/world/AmenityPopup.js"
 
 var worldMap = new WorldMap()
 

@@ -1414,6 +1414,7 @@ input[type="range"]::-webkit-slider-thumb {
 .absolute {
     position: absolute;
     top: 0px;
+    left: 0px;
 }
 
 .hidden {
@@ -1456,11 +1457,10 @@ input[type="range"]::-webkit-slider-thumb {
     flex-direction: column;
     gap: 30px;
 }
-.loading-modal-relative {
+.loading-modal-absolute {
     background-color: #00000055;
-    z-index: 10;
     top: 0;
-    position: relative;
+    position: absolute;
     height: 100%;
     width: 100%;
     min-width: 100%;
@@ -1582,6 +1582,7 @@ input[type="range"]::-webkit-slider-thumb {
 .loader-center {
     display: flex;
     height: 100%;
+    width: 100%;
     align-items: center;
     justify-content: center;
 }

@@ -2,7 +2,9 @@
 .htaccess
 vendor
 node_modules
+_preprod
 public/node_modules
 public/map/sources
 public/map/Env.js
+public/media/temp
 public/media/overall.mp4

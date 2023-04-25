@@ -1,8 +1,8 @@
-import CFUtils from "/map/class/CFUtils.js"
-import RoutePageMap from "/map/class/route/RoutePageMap.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import RouteMap from "/class/maps/route/RouteMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
-var routePageMap = new RoutePageMap()
+var routePageMap = new RouteMap()
 
 var $map = document.getElementById('routePageMap')
 
