@@ -77,7 +77,7 @@ export default class SceneryPopup extends Popup {
             <div class="popup-description">` + this.centerLoader + `</div>
         </div>
         <div class="popup-buttons">
-            <button id="showReviews" class="mp-button bg-button text-white">レビューを表示</button>
+            <a id="showReviews" class="cursor-pointer">レビューを表示する...</a>
         </div>
         <div class="chat-box">
             <div class="msgbox-label">レビュー</div>
@@ -140,8 +140,8 @@ export default class SceneryPopup extends Popup {
                 // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
                 if (this.popup && this.popup._map) var marker = this.getMarker()
                 else resolve(false)
-                if (this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
-                else if (this.data.mapInstance.mode == 'default') marker.setDraggable(false)
+                if (marker && this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
+                else if (marker && this.data.mapInstance.mode == 'default') marker.setDraggable(false)
             }
 
             if (this.data.scenery.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
@@ -442,19 +442,15 @@ export default class SceneryPopup extends Popup {
                 } )
 
                 // Show review on button click
-                if ($popup.querySelector('#showReviews')) $popup.querySelector('#showReviews').onclick = function () {
-                    let chatbox = $popup.querySelector('.chat-box')
-                    let button = $popup.querySelector('#showReviews')
-                    if (button.innerText == '表示') {
+                    const reviewsButton = $popup.querySelector('#showReviews')
+                if (reviewsButton) reviewsButton.addEventListener('click', () => {
+                    const chatbox = $popup.querySelector('.chat-box')
+                    if (chatbox.style.visibility != 'visible') {
                         chatbox.style.visibility = 'visible'
                         chatbox.style.height = 'auto'
-                        button.innerText = '非表示'
-                    } else if (button.innerText == '非表示') {
-                        chatbox.style.visibility = 'hidden'
-                        chatbox.style.height = '0px'
-                        button.innerText = '表示'
+                        reviewsButton.remove()
                     }
-                }
+                } )
             }
         } )
     }
