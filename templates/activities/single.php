@@ -130,7 +130,7 @@ include '../includes/head.php'; ?>
 
 				<div id="activityMapContainer">
 					<div class="cf-map" id="activityMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
-						<?php if (!$connected_user->isPremium()) { ?><img class="staticmap"></img><?php } ?>
+						<?php if (!$connected_user->isPremium()) { ?><div class="staticmap"><img /></div><?php } ?>
 					</div>
 					<div class="grabber"></div>
 				</div>

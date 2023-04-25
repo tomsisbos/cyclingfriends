@@ -4,9 +4,9 @@ import Model from '/class/Model.js'
 
 export default class Profile extends Model {
 
-    constructor (map) {
+    constructor (map = null) {
         super()
-        this.map = map
+        if (map) this.map = map
     }
 
     map
@@ -31,15 +31,19 @@ export default class Profile extends Model {
             // If profile is displayed, set map bounds to route bounds and wait for map elevation data to load
             if (document.querySelector('.show-profile')) {
                 var routeBounds = CFUtils.defineRouteBounds(routeData.geometry.coordinates)
-                this.map.fitBounds(routeBounds)
-                await this.map.once('idle')
+                if (this.map) {
+                    this.map.fitBounds(routeBounds)
+                    await this.map.once('idle')
+                }
             }
         }
         // Get an array of elevation data for each profile point
         profileData.pointsElevation = []
-        for (let i = 0; i < profileData.profilePoints.length; i++) {
-            var thisPointElevation = Math.floor(this.map.queryTerrainElevation(profileData.profilePoints[i].geometry.coordinates, {exaggerated: false}))
-            profileData.pointsElevation.push(thisPointElevation)
+        if (this.map) {
+            for (let i = 0; i < profileData.profilePoints.length; i++) {
+                var thisPointElevation = Math.floor(this.map.queryTerrainElevation(profileData.profilePoints[i].geometry.coordinates, {exaggerated: false}))
+                profileData.pointsElevation.push(thisPointElevation)
+            }
         }
         // Cut tunnels
         profileData.profilePointsCoordinates = []
@@ -278,12 +282,12 @@ export default class Profile extends Model {
                         if (tilesAnalyzed == tiles.length) {
 
                             // Cut tunnels if data exists
-                            var routeData = await this.getRouteData(sourceName)
-                            const tunnels = routeData.properties.tunnels
+                            if (!this.routeData) this.routeData = await this.getRouteData(sourceName)
+                            const tunnels = this.routeData.properties.tunnels
                             if (tunnels) profileData = this.cutTunnels(profileData, tunnels)
 
                             // Average elevation
-                            profileData.averagedPointsElevation = this.averageElevation(profileData.pointsElevation, turf.length(routeData))
+                            profileData.averagedPointsElevation = this.averageElevation(profileData.pointsElevation, turf.length(this.routeData))
 
                             // Update pointData (data to be drawn on profile)
                             for (let i = 0; i < (profileData.profilePoints.length); i++) {
@@ -375,14 +379,14 @@ export default class Profile extends Model {
      */
     async generate ({sourceName = 'route', poiData = {}, precise = true} = {}) {
         
-        const routeData = await this.getRouteData(sourceName)
+        if (!this.routeData) this.routeData = await this.getRouteData(sourceName)
         const profileElement = document.getElementById('elevationProfile')
 
         // If a route and a profile container is displayed
-        if (routeData && profileElement) {
+        if (this.routeData && profileElement) {
 
             // Prepare profile data
-            if (!this.data || this.data == undefined) this.data = await this.getData(routeData, {remote: true})
+            if (this.map && !this.data || this.data == undefined) this.data = await this.getData(this.routeData, {remote: true})
             if (precise) this.data = await this.queryPreciseData(this.data, sourceName)
             if (!profileElement) return // If profile element as been removed during process, stop here
 
@@ -423,7 +427,7 @@ export default class Profile extends Model {
                 id: 'displayPois',
                 afterRender: (chart) => {
                     const ctx = chart.canvas.getContext('2d')
-                    const routeDistance = turf.length(routeData)
+                    const routeDistance = turf.length(this.routeData)
                     var drawPoi = async (poi, type) => {
                         // Get X position
                         const pointDistance = poi.distance
@@ -544,83 +548,85 @@ export default class Profile extends Model {
             const cursorOnHover = {
                 id: 'cursorOnHover',
                 afterEvent: (chart, args) => {
-                    var e = args.event
-                    if (e.type == 'mousemove' && args.inChartArea == true) {
-                        // Get relevant data
-                        const dataX        = chart.scales.x.getValueForPixel(e.x)
-                        const distance     = Math.floor(dataX * 10) / 10
-                        const maxDistance  = chart.scales.x._endValue
-                        const altitude     = this.data.pointsElevation[distance * 10]
-                        // Slope
-                        if (this.data.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
-                            var slope = this.data.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.data.averagedPointsElevation[Math.floor(distance * 10)]
-                        } else { // Only calculate on previous 100m for the last index (because no next index)
-                            var slope = this.data.averagedPointsElevation[Math.floor(distance * 10)] - this.data.averagedPointsElevation[Math.floor(distance * 10) - 1]
-                        }
-                        // As mouse is inside route profile area
-                        if (distance >= 0 && distance <= maxDistance) {
+                    if (this.map) {
+                        var e = args.event
+                        if (e.type == 'mousemove' && args.inChartArea == true) {
+                            // Get relevant data
+                            const dataX        = chart.scales.x.getValueForPixel(e.x)
+                            const distance     = Math.floor(dataX * 10) / 10
+                            const maxDistance  = chart.scales.x._endValue
+                            const altitude     = this.data.pointsElevation[distance * 10]
+                            // Slope
+                            if (this.data.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
+                                var slope = this.data.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.data.averagedPointsElevation[Math.floor(distance * 10)]
+                            } else { // Only calculate on previous 100m for the last index (because no next index)
+                                var slope = this.data.averagedPointsElevation[Math.floor(distance * 10)] - this.data.averagedPointsElevation[Math.floor(distance * 10) - 1]
+                            }
+                            // As mouse is inside route profile area
+                            if (distance >= 0 && distance <= maxDistance) {
+                                // Reload canvas
+                                this.canvas.destroy()
+                                this.canvas = new Chart(ctx, chartSettings)
+                                // Draw a line
+                                ctx.strokeStyle = 'black'
+                                ctx.lineWidth = 1
+                                ctx.beginPath()
+                                ctx.moveTo(e.x, 0)
+                                ctx.lineTo(e.x, 9999)
+                                ctx.stroke()
+                                // Display corresponding point on route
+                                var routePoint = turf.along(this.routeData, distance, {units: 'kilometers'})
+                                if (slope <= 2 && slope >= -2) var circleColor = 'white'
+                                else var circleColor = this.setSlopeStyle(slope).color
+                                if (!this.map.getLayer('profilePoint')) {
+                                    this.map.addLayer( {
+                                        id: 'profilePoint',
+                                        type: 'circle',
+                                        source: {
+                                            type: 'geojson',
+                                            data: routePoint
+                                        },
+                                        paint: {
+                                            'circle-radius': 5,
+                                            'circle-color': circleColor
+                                        }
+                                    } )
+                                } else {
+                                    this.map.getSource('profilePoint').setData(routePoint)
+                                    this.map.setPaintProperty('profilePoint', 'circle-color', circleColor)
+                                }
+                                // Display tooltip
+                                this.clearTooltip()
+                                this.drawTooltip(this.routeData, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
+                                // Highlight corresponding scenery data
+                                if (this.mapdata.sceneries && (!this.displaySceneriesBox || this.displaySceneriesBox.checked)) {
+                                    this.mapdata.sceneries.forEach( (scenery) => {
+                                        if (document.getElementById(scenery.id) && scenery.distance < (distance + 1) && scenery.distance > (distance - 1)) {
+                                            // Highlight preview image
+                                            document.getElementById(scenery.id).querySelector('img').classList.add('admin-marker')
+                                            // Highlight marker
+                                            document.querySelector('#scenery' + scenery.id).querySelector('img').classList.add('admin-marker')
+                                        } else if (document.getElementById(scenery.id) && scenery.on_route == true) {
+                                            document.getElementById(scenery.id).querySelector('img').classList.remove('admin-marker')
+                                            document.querySelector('#scenery' + scenery.id).querySelector('img').classList.remove('admin-marker')
+                                        }
+                                    } )
+                                }
+                            }    
+                        } else if (e.type == 'mouseout' || args.inChartArea == false) {
+                            // Clear tooltip if one
+                            this.clearTooltip()
                             // Reload canvas
                             this.canvas.destroy()
                             this.canvas = new Chart(ctx, chartSettings)
-                            // Draw a line
-                            ctx.strokeStyle = 'black'
-                            ctx.lineWidth = 1
-                            ctx.beginPath()
-                            ctx.moveTo(e.x, 0)
-                            ctx.lineTo(e.x, 9999)
-                            ctx.stroke()
-                            // Display corresponding point on route
-                            var routePoint = turf.along(routeData, distance, {units: 'kilometers'})
-                            if (slope <= 2 && slope >= -2) var circleColor = 'white'
-                            else var circleColor = this.setSlopeStyle(slope).color
-                            if (!this.map.getLayer('profilePoint')) {
-                                this.map.addLayer( {
-                                    id: 'profilePoint',
-                                    type: 'circle',
-                                    source: {
-                                        type: 'geojson',
-                                        data: routePoint
-                                    },
-                                    paint: {
-                                        'circle-radius': 5,
-                                        'circle-color': circleColor
-                                    }
-                                } )
-                            } else {
-                                this.map.getSource('profilePoint').setData(routePoint)
-                                this.map.setPaintProperty('profilePoint', 'circle-color', circleColor)
+                            // Remove corresponding point on route
+                            if (this.map.getLayer('profilePoint')) {
+                                this.map.removeLayer('profilePoint')
+                                this.map.removeSource('profilePoint')
                             }
-                            // Display tooltip
-                            this.clearTooltip()
-                            this.drawTooltip(routeData, routePoint.geometry.coordinates[0], routePoint.geometry.coordinates[1], e.x, false, {backgroundColor: '#ffffff'})
-                            // Highlight corresponding scenery data
-                            if (this.mapdata.sceneries && (!this.displaySceneriesBox || this.displaySceneriesBox.checked)) {
-                                this.mapdata.sceneries.forEach( (scenery) => {
-                                    if (document.getElementById(scenery.id) && scenery.distance < (distance + 1) && scenery.distance > (distance - 1)) {
-                                        // Highlight preview image
-                                        document.getElementById(scenery.id).querySelector('img').classList.add('admin-marker')
-                                        // Highlight marker
-                                        document.querySelector('#scenery' + scenery.id).querySelector('img').classList.add('admin-marker')
-                                    } else if (document.getElementById(scenery.id) && scenery.on_route == true) {
-                                        document.getElementById(scenery.id).querySelector('img').classList.remove('admin-marker')
-                                        document.querySelector('#scenery' + scenery.id).querySelector('img').classList.remove('admin-marker')
-                                    }
-                                } )
-                            }
-                        }    
-                    } else if (e.type == 'mouseout' || args.inChartArea == false) {
-                        // Clear tooltip if one
-                        this.clearTooltip()
-                        // Reload canvas
-                        this.canvas.destroy()
-                        this.canvas = new Chart(ctx, chartSettings)
-                        // Remove corresponding point on route
-                        if (this.map.getLayer('profilePoint')) {
-                            this.map.removeLayer('profilePoint')
-                            this.map.removeSource('profilePoint')
                         }
-                    }  
-                }              
+                    }
+                }
             }
             const chartOptions = {
                 parsing: false,

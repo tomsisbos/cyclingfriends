@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initPublicSessionAction.php';
 include '../actions/rides/rideAction.php';
 include '../actions/rides/edit/adminPanelAction.php';
 include '../actions/rides/edit/galleryAction.php';
@@ -26,7 +26,7 @@ include '../includes/head.php'; ?>
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the ride author, redirect to the dashboard
-	if ($ride->author_id != $connected_user->id AND $ride->privacy == 'friends_only' AND $ride->getAuthor()->isFriend($connected_user) == false) {
+	if (isset($_SESSION['auth']) && $ride->author_id != $connected_user->id AND $ride->privacy == 'friends_only' AND $ride->getAuthor()->isFriend($connected_user) == false) {
 		header('Location: /');
 	}
 
@@ -61,7 +61,7 @@ include '../includes/head.php'; ?>
 				</div>
 				<div class="header-row mt-2"> <?php
 					// Include admin buttons if the user has admin rights on this ride
-					if ($ride->author_id == $connected_user->id) include '../includes/rides/admin-buttons.php'; 
+					if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-buttons.php'; 
 					// Else, include participation buttons
 					else include '../includes/rides/participation-buttons.php'; ?>
 				</div>
@@ -72,7 +72,7 @@ include '../includes/head.php'; ?>
 		include '../includes/rides/participants.php';
 			
 			// Include admin panel if the user has admin rights on this ride
-			if ($ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; ?>
+			if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; ?>
 			
 			<!-- Infos section -->
 			<div class="container margin-bottom">

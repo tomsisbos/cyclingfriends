@@ -364,9 +364,31 @@ img.site-logo {
 }
 
 .staticmap {
+    position: relative;
+}
+.staticmap::after {
+    content: "詳細を確認するにはログインしてください。";
+    position: absolute;
+    color: #fff;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #5c9999;
+    opacity: 1;
+}
+.staticmap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    z-index: 2;
+    position: relative;
+    transition: 1s opacity;
+}
+.staticmap img:hover {
+    opacity: 0;
 }
 
 /*

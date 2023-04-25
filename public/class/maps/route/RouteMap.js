@@ -354,7 +354,7 @@ export default class RouteMap extends Map {
                                 $marker.classList.remove('selected-marker')
                             }
                         } )
-                        else this.setHighlightingLayer(entry.lngLat, 'toilets')
+                        else if (this.map) this.setHighlightingLayer(entry.lngLat, 'toilets')
                         // Remove selected class from other thumbnails and table entries
                         document.querySelectorAll('.rt-preview-photo').forEach( (thumbnail) => {
                             if (thumbnail.id != entry.type + entry.id && (!this.ride || !(this.ride.options.sf == true && entry.id == this.ride.checkpoints.length - 1))) thumbnail.querySelector('img').classList.remove('selected-marker')

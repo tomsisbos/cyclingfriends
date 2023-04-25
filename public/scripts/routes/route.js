@@ -1,6 +1,7 @@
 import CFUtils from "/class/utils/CFUtils.js"
 import RouteMap from "/class/maps/route/RouteMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
+import Profile from '/class/Profile.js'
 
 var routePageMap = new RouteMap()
 
@@ -71,7 +72,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         routePageMap.addRouteLayer(geojson)
         
         // Generate profile on idle
-        map.once('idle', () => routePageMap.profile.generate())
+        routePageMap.profile.generate()
         
         // Focus
         var routeBounds = CFUtils.defineRouteBounds(coordinates)
@@ -111,8 +112,11 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
     } else {
 
         // Hide profile and grabber element
-        document.querySelector('#profileBox').style.display = 'none'
-        document.querySelector('.grabber').style.display = 'none'
+        ///document.querySelector('#profileBox').style.display = 'none'
+        ///document.querySelector('.grabber').style.display = 'none'
+        routePageMap.profile = new Profile()
+        routePageMap.profile.routeData = geojson
+        routePageMap.profile.generate({precise: true})
 
         // Build seasons layer
         var colors = routePageMap.getSeasonalColors(routePageMap.season)

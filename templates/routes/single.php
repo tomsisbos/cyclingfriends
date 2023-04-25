@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initPublicSessionAction.php';
 include '../includes/head.php';
 include '../actions/routes/routeAction.php'; ?>
 
@@ -41,7 +41,7 @@ include '../actions/routes/routeAction.php'; ?>
                     <a id="export" download>
                         <button class="mp-button success" type="button">エクスポート</button>
                     </a> <?php
-                    if ($route->author->id == $connected_user->id) { ?>
+                    if (isset($_SESSION['auth']) && $route->author->id == $connected_user->id) { ?>
                         <a href="/route/<?= $route->id ?>/edit">
                             <button class="mp-button success" type="button" name="edit">編集</button>
                         </a>
@@ -62,16 +62,20 @@ include '../actions/routes/routeAction.php'; ?>
                     <div><strong>獲得標高 : </strong><?= $route->elevation ?>m</div>
                 </div>
                 <div class="spec-column">
-                    <div><strong>予測時間 : </strong><?= $route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
+                    <div><strong>予測時間 : </strong><?php
+                        if (isset($_SESSION['auth'])) echo $route->calculateEstimatedTime($connected_user->level)->format('H:i');
+                        else echo $route->calculateEstimatedTime(1)->format('H:i') ?>
+                    </div>
                     <div><strong>難易度 : </strong><?= $route->getStars($route->calculateDifficulty()) ?></div>
                 </div>
             </div>
             <div class="rt-slider"></div>
         </div>
         <div id="routePageMapContainer">
-            <div class="cf-map" id="routePageMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
-                if (!$connected_user->isPremium()) { ?>
-                    <img class="staticmap"></img> <?php
+            <div class="cf-map" id="routePageMap" <?php
+                if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
+                if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
+                    <div class="staticmap"><img /></div> <?php
                 } ?>
             </div>
             <div class="grabber"></div>
