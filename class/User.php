@@ -40,9 +40,6 @@ class User extends Model {
             $this->gender                    = $data['gender'];
             $this->birthdate                 = $data['birthdate'];
             $this->location                  = new Geolocation($data['city'], $data['prefecture']);
-            echo $undefined;
-            echo 'here';
-            die();
             $this->lngLat                    = $this->getLngLat();
             $this->level                     = $data['level'];
             $this->description               = $data['description'];

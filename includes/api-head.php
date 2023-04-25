@@ -14,7 +14,8 @@ $is_allowed = false;
 $allowed_hosts = [
     'cyclingfriends.co',
     'www.cyclingfriends.co',
-    'cyclingfriends.azurewebsites.net'
+    'cyclingfriends.azurewebsites.net',
+    'cyclingfriends-preprod.azurewebsites.net'
 ];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
