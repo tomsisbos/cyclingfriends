@@ -3,8 +3,10 @@
 vendor
 node_modules
 _preprod
+bin/
 public/node_modules
 public/map/sources
 public/map/Env.js
 public/media/temp
+public/media/course/temp
 public/media/overall.mp4
