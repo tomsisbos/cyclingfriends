@@ -2779,6 +2779,12 @@ export default class Map extends Model {
         if (this.map.getSource('highlight')) this.map.removeSource('highlight')
     }
     
+    updateMapData () {
+        if (!this.displaySceneriesBox || this.displaySceneriesBox.checked) this.updateSceneries()
+        if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
+        if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
+    }
+    
     updateMapDataListener = () => this.updateMapData()
 
     updateSceneries () {
