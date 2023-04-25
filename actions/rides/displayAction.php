@@ -14,9 +14,7 @@
 	
 	if (empty($_POST['filter_status'])) $_POST['filter_status'] = 'No filter';
 	
-	if (empty($_POST['filter_name'])) {
-		$_POST['filter_name'] = '%';
-	}
+	if (empty($_POST['filter_name'])) $_POST['filter_name'] = '%';
 		
 	// Get data from database.
 		// Use "status = status" to display all results in case of no filter
@@ -39,7 +37,7 @@
 			(CASE 
 				WHEN :status = 'Open' THEN entry_start < NOW() AND entry_end > NOW()
 				WHEN :status = 'Closed' THEN entry_start > NOW() OR entry_end < NOW()
-				WHEN :status = 'No filter' THEN status = status 
+				WHEN :status = 'No filter' THEN true
 			END)
 			AND
 			(CASE
