@@ -1,8 +1,8 @@
 # Ignore map source files (such as Geojson) : heavy data
-.htaccess
 vendor
 node_modules
 public/node_modules
 public/map/sources
 public/map/Env.js
+public/media/temp
 public/media/overall.mp4
