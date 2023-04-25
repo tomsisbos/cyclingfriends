@@ -1,4 +1,5 @@
 # Ignore map source files (such as Geojson) : heavy data
+.htaccess
 vendor
 webpack.config.js
 node_modules
