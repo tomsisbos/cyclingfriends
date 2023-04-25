@@ -1,6 +1,8 @@
 # Ignore map source files (such as Geojson) : heavy data
 vendor
+webpack.config.js
 node_modules
+bin
 public/node_modules
 public/map/sources
 public/map/Env.js
