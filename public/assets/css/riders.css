@@ -125,7 +125,8 @@
 }
 
 #neighboursMap {
-    height: 500px;
+    position: sticky;
+    top: 0;
 }
 .nbr-marker {
     height: 15px;

@@ -9,6 +9,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
 
     neighboursMap.data.neighbours = neighbours
 
+    neighboursMap.setGrabber()
 
     // Setup map
     var map = await neighboursMap.load(neighboursMap.$map, neighboursMap.defaultStyle)

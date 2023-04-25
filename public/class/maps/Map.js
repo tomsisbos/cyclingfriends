@@ -2739,7 +2739,7 @@ export default class Map extends Model {
             document.removeEventListener('mouseup', mouseUpHandler)
             // Resize map and focus if map instance argument has been provided
             this.map.resize()
-            this.focus(this.data.routeData)
+            if (this.data.routeData) this.focus(this.data.routeData)
         }
 
         grabber.addEventListener('mousedown', mouseDownHandler)

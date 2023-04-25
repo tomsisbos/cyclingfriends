@@ -10,22 +10,21 @@ include '../includes/head.php'; ?>
 
 	<?php include '../includes/navbar.php'; ?>
 
-	<div class="main">
+	<div class="main overflow-auto">
 		
 		<h2 class="top-title">Neighbours</h2>
-		
-		<div class="container p-0">
 
+		<div id="neighboursMapContainer" style="height: 40vh">
 			<div class="cf-map" id="neighboursMap"></div>
-			
+			<div class="grabber"></div>
 		</div> <?php 
 		
-			// Select riders from database according to filter queries
-			include '../actions/riders/displayNeighboursAction.php';
-			
-			// Define offset (limit is defined in the action script)
-			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
-			else $offset = 0; ?>
+		// Select riders from database according to filter queries
+		include '../actions/riders/displayNeighboursAction.php';
+		
+		// Define offset (limit is defined in the action script)
+		if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+		else $offset = 0; ?>
 			
 		<div class="nbr-container container bg-white"> <?php
 

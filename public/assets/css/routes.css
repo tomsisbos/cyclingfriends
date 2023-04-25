@@ -157,13 +157,19 @@
 /* Others */
 
 .grabber {
+    position: relative;
     margin: 0;
     border-top: 1px solid #FFF;
     border-bottom: 1px solid #dfdfe8;
     height: 8px;
-    background: #f7f7fa url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGAgMAAACHnudVAAAACVBMVEWmpqb%2F%2F%2F%2F%2B%2Fv7DQT26AAAAFUlEQVQI12MAgdDIAAgdCqHDIicAAB4GAziOJ42xAAAAAElFTkSuQmCC) no-repeat center;
+    background: center / contain no-repeat #f7f7fa url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGAgMAAACHnudVAAAACVBMVEWmpqb%2F%2F%2F%2F%2B%2Fv7DQT26AAAAFUlEQVQI12MAgdDIAAgdCqHDIicAAB4GAziOJ42xAAAAAElFTkSuQmCC);
     cursor: row-resize;
     align-self: stretch;
+}
+@media only screen and (max-width: 768px) {
+    .grabber {
+        display: none;
+    }
 }
 
 .spec-table {
