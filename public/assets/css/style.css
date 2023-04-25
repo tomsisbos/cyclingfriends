@@ -365,6 +365,7 @@ img.site-logo {
 
 .staticmap {
     position: relative;
+    display: block;
 }
 .staticmap::after {
     content: "詳細を確認するにはログインしてください。";
