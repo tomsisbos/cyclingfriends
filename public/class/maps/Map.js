@@ -9,7 +9,6 @@ export default class Map extends Model {
 
     constructor () {
         super()
-        console.log(this)
         this.setSeason()
         this.userLocation = this.defaultCenter
 
@@ -283,10 +282,7 @@ export default class Map extends Model {
             buttonFly.innerText = '走行再現'
             line6.appendChild(buttonFly)
             buttonFly.addEventListener('click', async () => {
-                if (this.map.getSource('route')) {
-                    console.log(this)
-                    this.flyAlong(await this.getRouteData())
-                }
+                if (this.map.getSource('route')) this.flyAlong(await this.getRouteData())
             } )
         }
         // Edition buttons

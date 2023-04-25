@@ -68,7 +68,6 @@ export default class EditRouteMap extends BuildRouteMap {
     // Save current route
     async saveRoute (details) {
         var routeData = this.map.getSource('route')._data
-        console.log(details)
         var route = {
             id: parseInt(this.routeId),
             type: 'route-edit',

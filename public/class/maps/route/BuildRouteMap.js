@@ -183,7 +183,6 @@ export default class BuildRouteMap extends Map {
                     canvas.toBlob( async (blob) => {
                         answer.thumbnail = await blobToBase64(blob)
                         // When treatment is done, redirect to my routes page
-                        console.log(answer)
                         this.saveRoute(answer)
                     }, 'image/jpeg', 0.7)
                 } )            
@@ -1654,7 +1653,6 @@ export default class BuildRouteMap extends Map {
                 tags: details.tags
             }
         }
-        console.log(details)
         ajaxJsonPostRequest(this.apiUrl, route, (response) => {
             if (route.category == 'segment') window.location.replace('/world')
             else window.location.replace('/routes')
