@@ -2085,7 +2085,7 @@ export default class Map extends Model {
                         this.clearProfileCursor()
                         this.clearTooltip()
                         await this.focus(routeData)
-                        this.updateMapData()
+                        if (this.updateMapData) this.updateMapData()
                         this.hideStartGoalMarkers()
                         if (distanceMarkersOn) this.updateDistanceMarkers()
                         if (this.$map.querySelector('.story-caption')) this.$map.querySelector('.story-caption').remove()
@@ -2777,12 +2777,6 @@ export default class Map extends Model {
     removeHighlightingLayer () {
         if (this.map.getLayer('highlight')) this.map.removeLayer('highlight')
         if (this.map.getSource('highlight')) this.map.removeSource('highlight')
-    }
-    
-    updateMapData () {
-        if (!this.displaySceneriesBox || this.displaySceneriesBox.checked) this.updateSceneries()
-        if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
-        if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
     }
     
     updateMapDataListener = () => this.updateMapData()

@@ -313,6 +313,12 @@ export default class WorldMap extends Map {
             } )
         } )
     }
+    
+    updateMapData () {
+        if (!this.displaySceneriesBox || this.displaySceneriesBox.checked) this.updateSceneries()
+        if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
+        if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
+    }
 
     updateRides () {
 
