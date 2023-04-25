@@ -5,7 +5,6 @@ webpack.config.js
 node_modules
 bin
 _preprod
-bin/
 public/node_modules
 public/map/sources
 public/map/Env.js
