@@ -1,5 +1,6 @@
-import CFSession from "/map/class/CFSession.js"
-import RideMap from "/map/class/ride/RideMap.js"
+import CFSession from "/class/utils/CFSession.js"
+import RideMap from "/class/maps/ride/RideMap.js"
+import CircleLoader from "/class/loaders/CircleLoader.js"
 
 var rideMap = new RideMap()
 
@@ -8,7 +9,10 @@ var photos = document.querySelectorAll('.summary-checkpoint-image img')
 var header = document.querySelector('.ride-header')
 
 // Get session infos
+var loader = new CircleLoader(header, {absolute: true})
+loader.start()
 CFSession.getSession().then(session => {
+    loader.stop()
     rideMap.session = session
     rideMap.method = session.course.method
 

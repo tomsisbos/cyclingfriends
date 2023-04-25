@@ -27,7 +27,7 @@ include '../includes/head.php'; ?>
 </body>
 
 <script src="/scripts/map/vendor.js"></script>
-<script type="module" src="/map/class/CFUtils.js"></script>
+<script type="module" src="/class/utils/CFUtils.js"></script>
 <script type="module" src="/scripts/routes/new.js"></script>
 
 </html>

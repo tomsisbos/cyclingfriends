@@ -215,6 +215,7 @@
 /* Summary */
 
 .ride-header {
+    position: relative;
     background-color: #555555 !important;
     min-height: 350px;
     height: fit-content;

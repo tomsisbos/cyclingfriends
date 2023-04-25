@@ -1,4 +1,4 @@
-import HomeMap from "/map/class/home/HomeMap.js"
+import HomeMap from "/class/maps/home/HomeMap.js"
 
 var $map = document.querySelector('#homeSceneryMap')
 var loaded = false

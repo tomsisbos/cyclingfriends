@@ -1,6 +1,6 @@
-import CFUtils from "/map/class/CFUtils.js"
-import Modal from "/map/class/Modal.js"
-import SegmentMap from "/map/class/segment/SegmentMap.js"
+import CFUtils from "/class/utils/CFUtils.js"
+import Modal from "/class/Modal.js"
+import SegmentMap from "/class/maps/segment/SegmentMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
 var segmentMap = new SegmentMap()

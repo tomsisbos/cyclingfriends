@@ -1,4 +1,4 @@
-import LoaderCircle from '/map/class/loaders/LoaderCircle.js'
+import CircleLoader from '/class/loaders/CircleLoader.js'
 
 // Infinite scroll
 
@@ -11,7 +11,7 @@ var isCurrentlyLoading = false
 var offset = 0
 if (document.querySelector('#infiniteScrollElement')) var infiniteScrollElement = document.querySelector('#infiniteScrollElement')
 else var infiniteScrollElement = document
-var loader = new LoaderCircle(document.querySelector('.js-loader-container'))
+var loader = new CircleLoader(document.querySelector('.js-loader-container'))
 
 infiniteScrollElement.addEventListener('scroll', function (e) {
 

@@ -1,4 +1,4 @@
-import Modal from '/map/class/Modal.js'
+import Modal from '/class/Modal.js'
 
 // If show bikes button displayed (= if more than one bike registered)
 if (document.getElementById('showBike')) {
