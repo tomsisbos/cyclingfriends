@@ -142,6 +142,7 @@ export default class SceneryPopup extends Popup {
                 else resolve(false)
                 if (marker && this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
                 else if (marker && this.data.mapInstance.mode == 'default') marker.setDraggable(false)
+                this.popup._content.querySelector('#popup-content').before(adminPanel)
             }
 
             if (this.data.scenery.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
@@ -149,7 +150,6 @@ export default class SceneryPopup extends Popup {
             this.popup._content.querySelector('.popup-properties-location').innerHTML = this.data.scenery.city + ' (' + this.data.scenery.prefecture + ') - ' + this.data.scenery.elevation + 'm'
             this.popup._content.querySelector('.popup-description').innerHTML = this.data.scenery.description
             this.popup._content.querySelector('.js-tags').innerHTML = tags
-            this.popup._content.querySelector('#popup-content').before(adminPanel)
 
             resolve(true)
         } )

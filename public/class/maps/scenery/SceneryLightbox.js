@@ -11,7 +11,10 @@ export default class SceneryLightbox extends Popup {
         this.prepare()
 
         CFSession.get('id').then(session_id => {
-            if (session_id) this.data.photos.forEach(photo => this.appendLikeButton(photo))
+            if (session_id) {
+                this.data.photos.forEach(photo => this.appendLikeButton(photo))
+                this.prepareToggleLike()
+            }
         })
     }
 
@@ -205,9 +208,6 @@ export default class SceneryLightbox extends Popup {
         likes.className = 'scenery-img-likes'
         likes.innerText = photo.likes
         imgMeta.appendChild(likes)
-        
-        // Activate like button
-        this.prepareToggleLike()
     }
 
     open (id) {
