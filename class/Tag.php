@@ -39,7 +39,7 @@ class Tag extends Model {
             case 'culture-hamlet': return '集落';
 
             case 'terrain-pass': return '峠';
-            case 'terrain-mountain': return '山';
+            case 'terrain-mountains': return '山';
             case 'terrain-viewpoint': return '見晴らし';
             
             default: return ucfirst($this->name);

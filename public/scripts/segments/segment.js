@@ -1,5 +1,6 @@
 import CFUtils from "/class/utils/CFUtils.js"
 import Modal from "/class/Modal.js"
+import Profile from "/class/Profile.js"
 import SegmentMap from "/class/maps/segment/SegmentMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
@@ -125,8 +126,17 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
     // If map is static
     } else {
 
-        // Hide profile element
-        document.querySelector('#profileBox').style.display = 'none'
+        // Request and display sceneries close to the route
+        segmentMap.loadCloseSceneries(2, {displayOnMap: false, generateProfile: false, getFileBlob: false}).then( async (sceneries) => {
+            segmentMap.mapdata.sceneries = sceneries
+            segmentMap.buildTable(['sceneries'])
+            segmentMap.enableTableButtons()
+
+            // Build profile
+            segmentMap.profile = new Profile()
+            segmentMap.profile.routeData = geojson
+            segmentMap.profile.generate({precise: true})
+        } )
 
         // Build seasons layer
         var colors = segmentMap.getSeasonalColors(segmentMap.season)

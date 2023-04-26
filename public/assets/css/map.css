@@ -49,7 +49,7 @@
     display: block;
 }
 .staticmap::after {
-    content: "詳細を確認するにはログインしてください。";
+    content: "\8a73\7d30\3092\78ba\8a8d\3059\308b\306b\306f\30ed\30b0\30a4\30f3\3057\3066\304f\3060\3055\3044\3002";
     position: absolute;
     color: #fff;
     top: 0;

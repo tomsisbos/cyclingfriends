@@ -179,9 +179,10 @@ export default class RouteMap extends Map {
                                         geolocation: '-',
                                         distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
                                         distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
-                                        elevation: Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm',
                                         remoteness
                                     }
+                                    if (this.map) entry.elevation = Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm'
+                                    else entry.elevation = '-'
                                     this.tableData.push(entry)
                                 }
                             })
@@ -213,9 +214,10 @@ export default class RouteMap extends Map {
                                         geolocation: '-',
                                         distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
                                         distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
-                                        elevation: Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm',
                                         remoteness
                                     }
+                                    if (this.map) entry.elevation = Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm'
+                                    else entry.elevation = '-'
                                     this.tableData.push(entry)
                                 }
                             })
@@ -269,9 +271,10 @@ export default class RouteMap extends Map {
                                         geolocation: '-',
                                         distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
                                         distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
-                                        elevation: Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm',
                                         remoteness
                                     }
+                                    if (this.map) entry.elevation = Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm'
+                                    else entry.elevation = '-'
                                     this.tableData.push(entry)
                                 }
                             })

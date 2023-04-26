@@ -1,4 +1,4 @@
-import SceneryPopup from '/class/scenery/SceneryPopup.js'
+import SceneryPopup from '/class/maps/scenery/SceneryPopup.js'
 
 const scenery_id = getIdFromString(location.pathname)
 ajaxGetRequest ('/api/map.php' + "?scenery=" + scenery_id, async (response) => {

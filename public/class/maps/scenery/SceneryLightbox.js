@@ -1,13 +1,18 @@
 import Popup from '/class/maps/Popup.js'
+import CFSession from '/class/utils/CFSession.js'
 
 export default class SceneryLightbox extends Popup {
 
     constructor(data) {
-        super({}, {}, {noSession: true})
+        super()
         this.data = data
 
         this.build()
         this.prepare()
+
+        CFSession.get('id').then(session_id => {
+            if (session_id) this.data.photos.forEach(photo => this.appendLikeButton(photo))
+        })
     }
 
     data
@@ -116,22 +121,6 @@ export default class SceneryLightbox extends Popup {
             var imgMeta = document.createElement('div')
             imgMeta.className = 'scenery-img-meta'
             slides[i].appendChild(imgMeta)
-            // Append like button
-            var likeButton = document.createElement('div')
-            likeButton.className = 'like-button-modal'
-            likeButton.style.color = 'white'
-            likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
-            var likeIcon = document.createElement('span')
-            likeIcon.className = 'iconify'
-            likeIcon.dataset.icon = 'mdi:heart-plus'
-            likeIcon.dataset.width = '40'
-            likeIcon.dataset.height = '40'
-            likeButton.appendChild(likeIcon)
-            imgMeta.appendChild(likeButton)
-            var likes = document.createElement('div')
-            likes.className = 'scenery-img-likes'
-            likes.innerText = photos[i].likes
-            imgMeta.appendChild(likes)
             var period = document.createElement('div')
             period.className = 'scenery-period lightbox-period'
             period.classList.add('period-' + photos[i].month)
@@ -154,9 +143,6 @@ export default class SceneryLightbox extends Popup {
             column.appendChild(demos[i])
             demosBox.appendChild(column)
         }
-        
-        // Prepare toggle like function
-        if (this.data.popup._content && this.data.popup._content.querySelector('#like-button')) this.prepareToggleLike()
 
         // Remove on popup closing
         this.data.popup.on('close', () => this.modal.remove())
@@ -199,6 +185,29 @@ export default class SceneryLightbox extends Popup {
                 }
             }
         }
+    }
+
+    appendLikeButton (photo) {
+        // Append like button
+        const imgMeta = document.querySelector('#scenery-img-' + photo.id).parentElement.querySelector('.scenery-img-meta')
+        var likeButton = document.createElement('div')
+        likeButton.className = 'like-button-modal'
+        likeButton.style.color = 'white'
+        likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
+        var likeIcon = document.createElement('span')
+        likeIcon.className = 'iconify'
+        likeIcon.dataset.icon = 'mdi:heart-plus'
+        likeIcon.dataset.width = '40'
+        likeIcon.dataset.height = '40'
+        likeButton.appendChild(likeIcon)
+        imgMeta.appendChild(likeButton)
+        var likes = document.createElement('div')
+        likes.className = 'scenery-img-likes'
+        likes.innerText = photo.likes
+        imgMeta.appendChild(likes)
+        
+        // Activate like button
+        this.prepareToggleLike()
     }
 
     open (id) {

@@ -268,99 +268,102 @@ export default class Popup extends Model {
 
     loadRating = (object) => {
         var ratingDiv = document.querySelector('.popup-rating')
+
+        if (ratingDiv) {
         
-        // Display 5 stars with an unique id
-        if (ratingDiv.innerText == '') {
-            for (let i = 1; i < 6; i++) {
-                ratingDiv.innerHTML = ratingDiv.innerHTML + '<div number="' + i + '" class="star">☆</div>'
-            }
-        }
-        
-        var stars = document.querySelectorAll('.star')
-
-        // Get current rating infos
-        ajaxGetRequest (this.apiUrl + "?get-rating=true&type=" + this.type + "&id=" + object.id, (ratingInfos) => {
-
-            var setRating = (ratingInfos) => {
-                if (ratingInfos.vote != false) {
-                    var number    = parseInt(ratingInfos.vote)
-                    var className = 'voted-star'
-                } else if (ratingInfos.grades_number > 0) {
-                    var number    = parseInt(ratingInfos.rating)
-                    var className = 'selected-star'
-                } else {
-                    var number    = 0
-                    var className = ''
-                }
-                // Fill stars according to number
-                for (let i = 1; i < number + 1; i++) {
-                    stars[round(i-1)].innerText = '★'
-                }
-                for (let i = number + 1; i < 6; i++) {
-                    stars[round(Math.floor(i)-1)].innerText = '☆'
-                }
-                // Set classes according to last declared response vote
-                stars.forEach( (star) => { star.className = 'star ' + className } )
-
-                // If rating details are already displayed, update them
-                if (document.querySelector('.popup-rating-details')) {
-                    if (number == 0) { // If number is 0, remove rating details
-                        document.querySelector('.popup-rating-details').remove()
-                    } else { // Else, update it
-                        document.querySelector('.popup-rating-details').innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
-                    }
-                // Else, display them
-                } else if (ratingInfos.grades_number > 0) {
-                    var ratingDetails = document.createElement('div')
-                    ratingDetails.innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
-                    ratingDetails.className = 'popup-rating-details'
-                    ratingDiv.after(ratingDetails)
+            // Display 5 stars with an unique id
+            if (ratingDiv.innerText == '') {
+                for (let i = 1; i < 6; i++) {
+                    ratingDiv.innerHTML = ratingDiv.innerHTML + '<div number="' + i + '" class="star">☆</div>'
                 }
             }
             
-            setRating(ratingInfos)
+            var stars = document.querySelectorAll('.star')
 
-            if (ratingInfos.vote == false) var click = 0
-            else var click = 1
+            // Get current rating infos
+            ajaxGetRequest (this.apiUrl + "?get-rating=true&type=" + this.type + "&id=" + object.id, (ratingInfos) => {
 
-            stars.forEach( (star) => {
-
-                // On mouse hovering, fill the number of stars hovered and unfill others...
-                star.addEventListener('mouseover', (e) => {
-                    let number = parseInt(e.target.getAttribute('number'))
+                var setRating = (ratingInfos) => {
+                    if (ratingInfos.vote != false) {
+                        var number    = parseInt(ratingInfos.vote)
+                        var className = 'voted-star'
+                    } else if (ratingInfos.grades_number > 0) {
+                        var number    = parseInt(ratingInfos.rating)
+                        var className = 'selected-star'
+                    } else {
+                        var number    = 0
+                        var className = ''
+                    }
+                    // Fill stars according to number
                     for (let i = 1; i < number + 1; i++) {
                         stars[round(i-1)].innerText = '★'
-                        stars[round(i-1)].classList.add('hovered-star')
                     }
                     for (let i = number + 1; i < 6; i++) {
-                        stars[round(i-1)].innerText = '☆'
+                        stars[round(Math.floor(i)-1)].innerText = '☆'
                     }
-                } )
+                    // Set classes according to last declared response vote
+                    stars.forEach( (star) => { star.className = 'star ' + className } )
 
-                // ...and set it back to default when mouse leaves
-                star.addEventListener('mouseout', () => {
-                    setRating(ratingInfos)
-                } )
-
-                star.addEventListener('click', (e) => {
-                    if (numIsPair(click)) {
-                        // On click, send clicked number to API and update rating display
-                        var vote = e.target.getAttribute('number')
-                        ajaxGetRequest (this.apiUrl + "?set-rating=true&type=" + this.type + "&id=" + object.id + "&grade=" + vote, (response) => {
-                            ratingInfos = response
-                            setRating(ratingInfos)
-                        } )
-                    } else {
-                        // On click, ask API to cancel current vote and update rating display
-                        ajaxGetRequest (this.apiUrl + "?cancel-rating=true&type=" + this.type + "&id=" + object.id, (response) => {
-                            ratingInfos = response
-                            setRating(ratingInfos)
-                        } )
+                    // If rating details are already displayed, update them
+                    if (document.querySelector('.popup-rating-details')) {
+                        if (number == 0) { // If number is 0, remove rating details
+                            document.querySelector('.popup-rating-details').remove()
+                        } else { // Else, update it
+                            document.querySelector('.popup-rating-details').innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
+                        }
+                    // Else, display them
+                    } else if (ratingInfos.grades_number > 0) {
+                        var ratingDetails = document.createElement('div')
+                        ratingDetails.innerText = round(ratingInfos.rating, 2).toFixed(2) + ' (' + ratingInfos.grades_number + ')'
+                        ratingDetails.className = 'popup-rating-details'
+                        ratingDiv.after(ratingDetails)
                     }
-                    click++
+                }
+                
+                setRating(ratingInfos)
+
+                if (ratingInfos.vote == false) var click = 0
+                else var click = 1
+
+                stars.forEach( (star) => {
+
+                    // On mouse hovering, fill the number of stars hovered and unfill others...
+                    star.addEventListener('mouseover', (e) => {
+                        let number = parseInt(e.target.getAttribute('number'))
+                        for (let i = 1; i < number + 1; i++) {
+                            stars[round(i-1)].innerText = '★'
+                            stars[round(i-1)].classList.add('hovered-star')
+                        }
+                        for (let i = number + 1; i < 6; i++) {
+                            stars[round(i-1)].innerText = '☆'
+                        }
+                    } )
+
+                    // ...and set it back to default when mouse leaves
+                    star.addEventListener('mouseout', () => {
+                        setRating(ratingInfos)
+                    } )
+
+                    star.addEventListener('click', (e) => {
+                        if (numIsPair(click)) {
+                            // On click, send clicked number to API and update rating display
+                            var vote = e.target.getAttribute('number')
+                            ajaxGetRequest (this.apiUrl + "?set-rating=true&type=" + this.type + "&id=" + object.id + "&grade=" + vote, (response) => {
+                                ratingInfos = response
+                                setRating(ratingInfos)
+                            } )
+                        } else {
+                            // On click, ask API to cancel current vote and update rating display
+                            ajaxGetRequest (this.apiUrl + "?cancel-rating=true&type=" + this.type + "&id=" + object.id, (response) => {
+                                ratingInfos = response
+                                setRating(ratingInfos)
+                            } )
+                        }
+                        click++
+                    } )
                 } )
             } )
-        } )
+        }
     }
 
     // Adds user profile picture to the scenery popup

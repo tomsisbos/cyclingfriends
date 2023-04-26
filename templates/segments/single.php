@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initPublicSessionAction.php';
 include '../actions/segments/segmentAction.php';
 include '../includes/head.php'; ?>
 
@@ -28,15 +28,17 @@ include '../includes/head.php'; ?>
 						if ($segment->advised) echo '<span style="color: pink"> ★</span>'; ?></h2>
 						<div class="tag-light tag-blue"><?= ucfirst($segment->rank) ?></div>
 					</div>
-					<div class="header-row">
-						<button class="mp-button normal js-favorite-button" type="button"> <?php
-							if (!$segment->isFavorite()) echo 'お気に入りに追加';
-							else echo 'お気に入りから削除'; ?>
-						</button>
+					<div class="header-row"> <?php
+						if (isset($_SESSION['auth'])) { ?>
+							<button class="mp-button normal js-favorite-button" type="button"> <?php
+								if (!$segment->isFavorite()) echo 'お気に入りに追加';
+								else echo 'お気に入りから削除'; ?>
+							</button> <?php
+						} ?>
 						<a id="export" download>
 							<button class="mp-button normal" type="button">エクスポート</button>
 						</a> <?php
-						if ($connected_user->hasEditorRights()) { ?>
+						if (isset($_SESSION['auth']) && $connected_user->hasEditorRights()) { ?>
 							<a id="delete">
 								<button class="mp-button danger">削除</button>
 							</a> <?php
@@ -52,13 +54,15 @@ include '../includes/head.php'; ?>
 				<div class="pg-sg-location">
 					<?= $segment->route->startplace ?>
 				</div> <?php
-				$cleared_activity_id = $segment->isCleared();
-				if ($cleared_activity_id) { ?>
-					<div id="visited-icon" style="display: inline;" title="このセグメントを訪れました。">
-						<a href="/activity/<?= $cleared_activity_id ?>" target="_blank">
-							<span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
-						</a>
-					</div> <?php
+				if (isset($_SESSION['auth'])) {
+					$cleared_activity_id = $segment->isCleared();
+					if ($cleared_activity_id) { ?>
+						<div id="visited-icon" style="display: inline;" title="このセグメントを訪れました。">
+							<a href="/activity/<?= $cleared_activity_id ?>" target="_blank">
+								<span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
+							</a>
+						</div> <?php
+					}
 				} ?>
 				<div class="pg-sg-tags"> <?php 
 					foreach ($segment->tags as $tag_name) {
@@ -79,7 +83,10 @@ include '../includes/head.php'; ?>
 								<div><strong>獲得標高 : </strong><?= $segment->route->elevation ?>m</div>
 							</div>
 							<div class="pg-sg-specs">
-								<div><strong>予測時間 : </strong><?= $segment->route->calculateEstimatedTime($connected_user->level)->format('H:i') ?></div>
+								<div><strong>予測時間 : </strong> <?php
+									if (isset($_SESSION['auth'])) echo $segment->route->calculateEstimatedTime($connected_user->level)->format('H:i');
+									else echo $segment->route->calculateEstimatedTime(1)->format('H:i') ?>
+								</div>
 								<div><strong>難易度 : </strong><?= $segment->route->getStars($segment->route->calculateDifficulty()) ?></div>
 							</div>
 						</div>
@@ -175,8 +182,8 @@ include '../includes/head.php'; ?>
 			<div class="container p-0">
 
 				<div class="pg-sg-map-box">
-					<div class="cf-map" id="segmentMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
-					if (!$connected_user->isPremium()) { ?>
+					<div class="cf-map" id="segmentMap" <?php if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
+					if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
 						<a class="staticmap" href="/signin"><img /></a> <?php
 					} ?>
 					</div>

@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initPublicSessionAction.php';
 include '../actions/sceneries/sceneryAction.php';
 include '../includes/head.php'; ?>
 
@@ -33,11 +33,13 @@ include '../includes/head.php'; ?>
 					<div class="header-row"> <?php
 						$scenery->getAuthor()->getPropicElement(30, 30, 30) ?><p>by <a href="/rider/<?= $scenery->user_id ?>"><?= $scenery->getAuthor()->login ?></a></p>
 					</div>
-					<div class="header-row">
-						<button class="mp-button normal js-favorite-button" type="button"> <?php
-							if ($scenery->isFavorite()) echo 'お気に入りから削除';
-							else echo 'お気に入りに追加' ?>
-						</button>
+					<div class="header-row"> <?php
+						if (isset($_SESSION['auth'])) { ?>
+							<button class="mp-button normal js-favorite-button" type="button"> <?php
+								if ($scenery->isFavorite()) echo 'お気に入りから削除';
+								else echo 'お気に入りに追加' ?>
+							</button> <?php
+						} ?>
 					</div>
 				</div>
 			</div>
@@ -62,8 +64,10 @@ include '../includes/head.php'; ?>
 								<div class="popup-tag tag-dark" style="color: #fff; background-color: <?= $main_color?>"> <?= '#' . $tag->getString() ?> </div>
 							</a> <?php
 						} ?>
-					</div>
-					<div class="popup-rating" style="color: darkgrey"></div>
+					</div> <?php
+					if (isset($_SESSION['auth'])) { ?>
+						<div class="popup-rating" style="color: darkgrey"></div> <?php
+					} ?>
 				</div>
 			</div>
 
@@ -100,11 +104,13 @@ include '../includes/head.php'; ?>
 				<iframe style="width: 100%; height: 100%" src="https://maps.google.com/maps?q=<?= $scenery->lngLat->lat ?>,<?= $scenery->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">レビュー</div>
-					<div class="chat-reviews pt-2"></div>
-					<div class="chat-msgbox">
-						<textarea id="sceneryReview" class="fullwidth"></textarea>
-						<button id="sceneryReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
-					</div>
+					<div class="chat-reviews pt-2"></div> <?php
+					if (isset($_SESSION['auth'])) { ?>
+						<div class="chat-msgbox">
+							<textarea id="sceneryReview" class="fullwidth"></textarea>
+							<button id="sceneryReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
+						</div> <?php
+					} ?>
 				</div>
 			</div>
 
