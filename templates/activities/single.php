@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initPublicSessionAction.php';
 include '../actions/activities/activityAction.php';
 include '../includes/head.php'; ?>
 
@@ -13,13 +13,14 @@ include '../includes/head.php'; ?>
 <body class="relative-navbar">
 
 <?php
+
 	// If set as private and connected user does not have admin rights on this activity, redirect to the dashboard
-	if ($activity->privacy == 'Private' AND $activity->user_id != $connected_user->id) {
+	if ($activity->privacy == 'Private' AND (!isset($_SESSION['auth']) || $activity->user_id != $connected_user->id)) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the activity author, redirect to the dashboard
-	if ($activity->privacy == 'Friends only' AND $activity->user_id != $connected_user->id AND $activity->getAuthor()->isFriend($connected_user) == false) {
+	else if ($activity->privacy == 'Friends only' AND (!isset($_SESSION['auth']) || ($activity->user_id != $connected_user->id AND !$activity->getAuthor()->isFriend($connected_user)))) {
 		header('Location: /');
 	}
 
@@ -58,7 +59,7 @@ include '../includes/head.php'; ?>
 					</div>
 					<div class="header-row mt-2"> <?php
 						// Include admin buttons if the user has admin rights on this activity
-						if ($activity->user_id == $connected_user->id) include '../includes/activities/admin-buttons.php';
+						if (isset($_SESSION['auth']) && $activity->user_id == $connected_user->id) include '../includes/activities/admin-buttons.php';
 						// Else, include user buttons
 						///else include '../includes/activities/user-buttons.php';?>
 					</div>
@@ -129,8 +130,10 @@ include '../includes/head.php'; ?>
 			<div class="container p-0">
 
 				<div id="activityMapContainer">
-					<div class="cf-map" id="activityMap" <?php if ($connected_user->isPremium()) echo 'interactive="true"' ?>>
-						<?php if (!$connected_user->isPremium()) { ?><a class="staticmap" href="/signin"><img /></a><?php } ?>
+					<div class="cf-map" id="activityMap" <?php if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php 
+						if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
+							<a class="staticmap" href="/signin"><img /></a> <?php
+						} ?>
 					</div>
 					<div class="grabber"></div>
 				</div>
@@ -144,15 +147,21 @@ include '../includes/head.php'; ?>
 					<div class="pg-ac-timeline">
 					</div>
 					<div class="pg-ac-checkpoints-container"> <?php
+						$photo_number = 1;
 						foreach ($activity->getCheckpoints() as $checkpoint) { ?>
 							<div class="pg-ac-checkpoint-container" id="checkpoint<?= $checkpoint->number ?>" data-number="<?= $checkpoint->number ?>">
 								<div class="pg-ac-photos-container"> <?php
 									foreach ($checkpoint->getPhotos() as $photo) {
 										// Only add photos which privacy is not set to true, except for the author
-										if ($photo->privacy != 'private' || $activity->user_id == $connected_user->id) { ?>
+										if ($photo->privacy != 'private' || (isset($_SESSION['auth']) && $activity->user_id == $connected_user->id)) { ?>
 											<div class="pg-ac-photo-container">
+												<div class="pg-ac-photo-specs">
+													<div class="pg-ac-photo-number"><?= $photo_number ?></div>
+													<div class="pg-ac-photo-distance"></div>
+												</div>
 												<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="<?= $photo->url ?>" />
 											</div> <?php
+											$photo_number++;
 										}
 									} ?>
 								</div>

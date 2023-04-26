@@ -236,13 +236,13 @@ class Activity extends Model {
         else return false;
     }
 
-    public function hasAccess ($user) {
+    public function hasAccess ($user = false) {
         $author = $this->getAuthor();
         if ($this->privacy == 'friends_only') {
-            if ($user->isFriend($author) || $user == $author) return true;
+            if ($user && $user->isFriend($author) || $user->id == $author->id) return true;
             else return false;
         } else if ($this->privacy == 'private') {
-            if ($author == $user) return true;
+            if ($user && $author->id == $user->id) return true;
             else return false;
         } else return true;
     }

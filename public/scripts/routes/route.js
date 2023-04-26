@@ -111,7 +111,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
     // If map is static
     } else {
 
-        // Hide grabber element
+        // Hide grabber element and build profile
         document.querySelector('.grabber').style.display = 'none'
         routePageMap.profile = new Profile()
         routePageMap.profile.routeData = geojson

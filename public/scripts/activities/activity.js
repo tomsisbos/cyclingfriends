@@ -45,6 +45,9 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     activityData.photos.forEach( (photo) => {
         photo.datetime = new Date(photo.datetime.date).getTime()
         photo.distance = activityMap.getPhotoDistance(photo, activityData.routeData)
+        document.querySelectorAll('.pg-ac-photo').forEach($photo => { // Add distance to timeline photo elements
+            if (parseInt($photo.dataset.id) == photo.id) $photo.parentElement.querySelector('.pg-ac-photo-distance').innerText = 'km ' + (Math.round(photo.distance * 10) / 10)
+        })
     } )
 
     // Load activity data into map instance
@@ -178,45 +181,29 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         var routeBounds = CFUtils.defineRouteBounds(staticRouteData.geometry.coordinates)
         var boundingBox = [routeBounds[0][0], routeBounds[0][1], routeBounds[1][0], routeBounds[1][1]]
         var boundingBoxUri = JSON.stringify(boundingBox)
+        const checkpointMarkerColor = 'ffffff'
 
         // Build checkpoints
         var checkpoints = ''
+        const iconsFolder = 'https://www.cyclingfriends.co/media/activity-icons/'
+        console.log(activityMap)
         if (activityMap.data.checkpoints) {
-            const markerColor = activityMap.routeColor.slice(1)
             activityMap.data.checkpoints.forEach(checkpoint => {
-                if (!checkpoint.special) { // remove start and goal markers
-                    switch (checkpoint.type) {
-                        case 'Attraction': checkpoints += ',pin-l-information+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break
-                        case 'Break': checkpoints += ',pin-l-watch+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break
-                        case 'Cafe': checkpoints += ',pin-l-cafe+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break
-                        case 'Event': checkpoints += ',pin-l-caution+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break
-                        case 'Landscape': checkpoints += ',pin-l-viewpoint+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break
-                        case 'Restaurant': checkpoints += ',pin-l-restaurant+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break
-                        default: checkpoints += ',pin-l-marker+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'; break 
-                    }
-                }
+                // remove start and goal markers
+                if (!checkpoint.special) checkpoints += ',url-' + encodeURIComponent(iconsFolder + 'w_' + checkpoint.type + '.png') + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')'
             } )
         }
 
         // Build photos
+        const photosMarkerColor = activityMap.routeColor.slice(1)
         var photos = ''
         if (activityMap.data.photos.length > 0) {
-            var photosCoordinates = []
+            var number = 1
             activityMap.data.photos.forEach(photo => {
                 let coord = activityMap.getPhotoLocation(photo)
-                photosCoordinates.push(coord)
+                photos += ',pin-l-' + number + '+' + photosMarkerColor + '('  + coord[0] + ',' + coord[1] + ')'
+                number++
             } )
-            var photosData = {
-                "type": "Feature",
-                "properties": {
-                    "marker-url": "https://img.icons8.com/badges/30/experimental-image-badges.png",
-                },
-                "geometry": {
-                    "type": "MultiPoint",
-                    "coordinates": photosCoordinates
-                }
-            }
-            photos = ',geojson(' + encodeURIComponent(JSON.stringify(photosData)) + ')'
         }
 
         // Set size
@@ -235,8 +222,9 @@ path-` + (activityMap.routeWidth + 4) + `+` + activityMap.routeCapColor.slice(1)
 path-` + activityMap.routeWidth + `+` + activityMap.routeColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/stop.png') + `(` + routeCoordinates[routeCoordinates.length - 1][0] + `,` + routeCoordinates[routeCoordinates.length - 1][1] + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(` + routeCoordinates[0][0] + `,` + routeCoordinates[0][1] + `)
-` + photos
- + checkpoints + `/
+`
+ + checkpoints
+ + photos + `/
 ` + boundingBoxUri + `/
 ` + width + `x450@2x
 ?padding=10
@@ -249,10 +237,18 @@ url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(
         $map.querySelector('img').src = url
         
         // On click on a photo in the checkpoints container, open modal window
-        document.querySelectorAll('.pg-ac-photo').forEach( (img) => {
-            var modal = new Modal(img.src)
-            img.after(modal.element)
-            img.addEventListener('click', () => {
+        document.querySelectorAll('.pg-ac-photo').forEach( ($img) => {
+            var modal = new Modal($img.src)
+            $img.after(modal.element)
+            activityMap.data.photos.forEach(photo => { // Add distance to timeline photo elements
+                if (parseInt($img.dataset.id) == photo.id) {
+                    let moment = new Date(photo.datetime - activityMap.data.route.time[0])
+                    moment.setHours(moment.getHours() - 9)
+                    let distance = 'km ' + (Math.round(photo.distance * 10) / 10)
+                    modal.setCaption(distance, moment.getHours() + 'h' + moment.getMinutes())
+                }
+            })
+            $img.addEventListener('click', () => {
                 modal.open()
             } )
         } )

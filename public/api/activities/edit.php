@@ -58,8 +58,8 @@ if (is_array($data)) {
         $checkpoint_data['temperature'] = $checkpoint['temperature'];
         $checkpoint_data['lng'] = $checkpoint['lngLat']['lng'];
         $checkpoint_data['lat'] = $checkpoint['lngLat']['lat'];
-        if ($number == 0) $checkpoint_data['special'] = 'start';
-        else if ($number == count($data['checkpoints']) - 1) $checkpoint_data['special'] = 'goal';
+        if ($checkpoint['number'] == 0) $checkpoint_data['special'] = 'start';
+        else if ($checkpoint['number'] == count($data['checkpoints']) - 1) $checkpoint_data['special'] = 'goal';
         else $checkpoint_data['special'] = NULL;
 
         $checkpoint = new ActivityCheckpoint();

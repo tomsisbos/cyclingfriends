@@ -16,14 +16,14 @@ export default class ActivityMap extends Map {
     cursor = 0
     activityId
     icons = {
-        Start: 'material-symbols/not-started-rounded',
+        Start: 'material-symbols/play-circle',
         Landscape: 'bxs/landscape',
         Break: 'ic/round-pause-circle',
         Restaurant: 'ion/restaurant',
         Cafe: 'medical-icon/i-coffee-shop',
         Attraction: 'gis/layer-poi',
         Event: 'entypo/info-with-circle',
-        Goal: 'gis/finish'
+        Goal: 'material-symbols/stop-circle'
     }
 
     calculateElevation (trackpoints) {
@@ -152,6 +152,7 @@ export default class ActivityMap extends Map {
             element.className = 'checkpoint-marker logo-checkpoint-marker'
             element.id = i
             var img = document.createElement('img')
+            console.log(type)
             img.src = 'https://api.iconify.design/' + this.icons[type] + '.svg'
             element.appendChild(img)
         }
