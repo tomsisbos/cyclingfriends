@@ -48,8 +48,7 @@ include '../includes/head.php'; ?>
 			
 			// Buttons ?>
 			<div class="td-row push gap-30"> <?php
-				if ($_SESSION['id'] != $user->id) { ?>
-					<!--<button title="チャット機能は開発中" id="sendMessageButton" class="btn button" name="send_message" disabled>Send message</button>--> <?php
+				if ($_SESSION['id'] != $user->id) {
 					$rider = $user;
 					include '../includes/riders/friends/buttons.php';
 					include '../includes/riders/profile/send-message.php'; 

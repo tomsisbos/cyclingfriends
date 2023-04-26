@@ -23,7 +23,7 @@
 		<div class="container bg-friend">
 			<h3 class=""><?= $user->login. "'s friends"; ?></h3>
 		</div>
-		<div class="container overflow-400"> <?php
+		<div class="small-rdr-cards-container container"> <?php
 			if (!empty($friends)) {
 				foreach ($friends as $friend) {
 					$rider = new User ($friend);

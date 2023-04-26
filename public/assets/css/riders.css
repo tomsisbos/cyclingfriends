@@ -31,21 +31,21 @@
 }
 
 .rdr-login-section {
-    display: flex;
-    flex-wrap: wrap;
-    height: fit-content;
-    padding: 0px 20px;
-    align-items: center;
-    column-gap: 8px;
-    border-radius: 99px;
-    background-color: white;
-    min-height: 2em;
+    padding: 0px 10px;
+    border-radius: 4px;
     width: fit-content;
+    display: inline-block;
+    font-weight: bold;
+    background-color: white;
 }
 
 .rdr-gender {
 	font-weight: bold;
-	font-size: 26px;
+    display: inline;
+    padding-right: 6px;
+}
+.rdr-name {
+    display: inline-block;
 }
 
 .rdr-login {
@@ -61,6 +61,32 @@
     display: flex;
     align-items: center;
     gap: 30px;
+}
+
+
+.small-rdr-cards-container {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    max-height: 400px;
+    gap: 10px;
+}
+.small-rdr-card {
+    padding: 10px;
+    display: flex;
+}
+.small-rdr-sub {
+    display: flex;
+    gap: 10px;
+}
+
+
+@media only screen and (min-width: 1200px) {
+    .small-rdr-cards-container {
+        display: grid !important;
+        grid-template-columns: 48% 48%;
+        column-gap: 10px;
+    }
 }
 
 /* Buttons */
@@ -104,7 +130,6 @@
         flex-direction: row;
     }
     .rdr-container-buttons {
-        flex-wrap: wrap;
         gap: 5px;
         text-align: unset;
         min-width: unset;
@@ -119,7 +144,7 @@
 }
 
 @media only screen and (max-width: 576px) {
-    .rdr-card-main {
+    .rdr-card-main, .small-rdr-card {
         flex-direction: column;
     }
 }
