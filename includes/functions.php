@@ -221,14 +221,6 @@ function nbDaysLeftToDate($date) {
 	return ceil($daysleft);
 }
 
-// Get a list of users having the 'hide_on_chat' settings option activated
-function getUsersDisablingPublicChat() {
-	require '../actions/databaseAction.php';
-	$getUsersDisablingPublicChat = $db->prepare('SELECT user_id FROM settings WHERE hide_on_chat = 1');
-	$getUsersDisablingPublicChat->execute();
-	return array_column($getUsersDisablingPublicChat->fetchAll(PDO::FETCH_NUM), 0);
-}
-
 // Get the period (early/mid/late + month) from a date
 function getPeriod($date) {
 	// Get part of the month from the day

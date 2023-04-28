@@ -2,7 +2,7 @@
  
 	require '../actions/databaseAction.php';
 
-	$query = "SELECT * FROM users WHERE id NOT IN (SELECT id FROM settings WHERE hide_on_riders = true) ORDER BY id ASC";
+	$query = "SELECT * FROM users ORDER BY id ASC";
 	
 	// Get results total number (without limit)
 	$getResultsNumber = $db->prepare($query);

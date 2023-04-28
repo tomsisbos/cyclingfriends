@@ -161,13 +161,15 @@ class Manual extends Model {
     }
 
     public static function summary () {
-        echo '<ol class="m-summary">';
+        echo '<ul class="m-summary">';
         foreach (self::$chapters as $path => $chapter) {
             echo '
-            <li>
-                <a href="' .self::baseUri(). '/' .$path. '">' .$chapter['title']. '</a>
-                <div class="m-summary-subtitle"> (' .$chapter['subtitle']. ')</div>
-            </li>';
+            <a href="' .self::baseUri(). '/' .$path. '">
+                <li>'
+                    .$chapter['title'].
+                    '<div class="m-summary-subtitle"> (' .$chapter['subtitle']. ')</div>
+                </li>
+            </a>';
             if ($path == self::currentChapter()) echo'<div class="m-summary-details"></div>';
         }
         echo '</ol>';
@@ -200,7 +202,7 @@ class Manual extends Model {
                 $path_url = str_replace($slug_string, $random_slug, $path_string);
             } else $path_url = $path_string;
 
-            echo '<div><a href="../' .$path_url. '" target="_blank">' .$path_string. '</a></div>';
+            echo '<div><a href="../' .$path_url. '" target="_blank">/' .$path_string. '</a></div>';
         }
         echo '</div>';
     }

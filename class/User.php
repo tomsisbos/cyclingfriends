@@ -29,7 +29,7 @@ class User extends Model {
     function __construct($id = NULL) {
         parent::__construct();
         if ($id != NULL) {
-            $this->id                        = $id;
+            $this->id                        = intval($id);
             $data = $this->getData($this->table);
             $this->login                     = $data['login'];
             $this->email                     = $data['email'];
@@ -94,24 +94,29 @@ class User extends Model {
         return new Settings($this->id);
     }
 
-    public function updateSettings($settings) {
+    public function updateSettings ($settings) {
+        $checkIfSettingsExist = $this->getPdo()->prepare("SELECT id FROM settings WHERE id = ?");
+        $checkIfSettingsExist->execute([$this->id]);
+        // If settings data don't exist yet for this user, create it
+        if ($checkIfSettingsExist->rowCount() == 0) {
+            $insertSetting = $this->getPdo()->prepare("INSERT settings (id) VALUES (?)");
+            $insertSetting->execute([$this->id]);
+        }
+        // Set values according to $settings content
         foreach ($settings as $key => $setting) {
             if ($setting == true) $value = 1;
             else $value = 0;
             $updateSetting = $this->getPdo()->prepare("UPDATE settings SET {$key} = :value WHERE id = :id");
             $updateSetting->execute([':value' => $value, ':id' => $this->id]);
-            return true;
         }
+        return true;
     }
 
     public function checkIfLoginAlreadyExists ($login) {
         $checkIfUserAlreadyExists = $this->getPdo()->prepare('SELECT login FROM users WHERE login = ?');
         $checkIfUserAlreadyExists->execute(array($login));
-        if($checkIfUserAlreadyExists->rowCount() > 0){
-            return true;
-        }else{
-            return false;
-        }
+        if ($checkIfUserAlreadyExists->rowCount() > 0) return true;
+        else return false;
     }
 
     public function checkIfEmailAlreadyExists ($email) {
@@ -758,6 +763,14 @@ class User extends Model {
         }
         usort($thread_data, 'sort_by_date');
         return array_slice($thread_data, $offset, $limit);
+    }
+
+    /**
+     * Check if user has allowed real name publication
+     */
+    public function isRealNamePublic () {
+        if ($this->getSettings()->hide_realname) return false;
+        else return true;
     }
 
 }

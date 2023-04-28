@@ -1,4 +1,4 @@
-import Model from "/class/Model.js"
+import Model from "../Model.js"
 
 export default class CircleLoader extends Model {
 

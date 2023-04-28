@@ -33,12 +33,8 @@
 										} ?>
 									<div class="rdr-login"><?= $rider->login; ?></div>
 									<div class="rdr-name"><?php
-										if(!empty($rider->last_name) AND !empty($rider->first_name)){
-											echo '- (' .strtoupper($rider->last_name);
-										}
-										if(!empty($rider->first_name)){
-											echo ' ' .ucfirst($rider->first_name. ')');
-										} ?>
+										if (!empty($rider->last_name) AND !empty($rider->first_name) AND $rider->isRealNamePublic()) echo '- (' .strtoupper($rider->last_name);
+										if (!empty($rider->first_name AND $rider->isRealNamePublic())) echo ' ' .ucfirst($rider->first_name. ')'); ?>
 									</div>
 								</div>
 							</a>

@@ -17,7 +17,7 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		displayMessage(); ?>
 		
-		<div class="container p-0 manual end">
+		<div class="container-fluid p-0 manual end">
 
             <div class="m-sidebar"> <?php
 

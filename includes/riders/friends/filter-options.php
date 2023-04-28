@@ -9,26 +9,26 @@
 		<div class="tr-row">
 			<label class="form-label td-row element-20">並び順</label>
 			<select class="form-select td-row element-50" name="friend_orderby" onfocusout="this.form.submit();">
-				<option value="approval_date"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'approval_date'){echo ' selected';}} ?>>
+				<option value="approval_date" <?php
+					if (!empty($_POST)) if ($_POST['friend_orderby'] == 'approval_date') echo ' selected'; ?>>
 					追加日時</option>
-				<option value="login"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'login'){echo ' selected';}} ?>>
+				<option value="login" <?php
+					if (!empty($_POST)) if ($_POST['friend_orderby'] == 'login') echo ' selected'; ?>>
 					ユーザーネーム</option>
-				<option value="last_name"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'last_name'){echo ' selected';}} ?>>
+				<option value="last_name" <?php
+					if (!empty($_POST)) if ($_POST['friend_orderby'] == 'last_name') echo ' selected'; ?>>
 					姓</option>
-				<option value="first_name"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'first_name'){echo ' selected';}} ?>>
+				<option value="first_name" <?php
+					if (!empty($_POST)) if ($_POST['friend_orderby'] == 'first_name') echo ' selected'; ?>>
 					名</option>
-				<option value="place"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'place'){echo ' selected';}} ?> disabled>
+				<option value="place" <?php
+					if(!empty($_POST)) if ($_POST['friend_orderby'] == 'place') echo ' selected'; ?> disabled>
 					距離</option>
-				<option value="level"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'level'){echo ' selected';}} ?>>
+				<option value="level" <?php
+					if (!empty($_POST)) if ($_POST['friend_orderby'] == 'level') echo ' selected'; ?>>
 					レベル</option>
-				<option value="birthdate"
-				<?php if(!empty($_POST)){if($_POST['friend_orderby'] == 'birthdate'){echo ' selected';}} ?>>
+				<option value="birthdate" <?php
+					if (!empty($_POST)) if ($_POST['friend_orderby'] == 'birthdate') echo ' selected'; ?>>
 					年齢</option>
 			</select>
 		</div>

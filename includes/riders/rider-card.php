@@ -22,10 +22,10 @@
                                     } ?>
                                 <div class="rdr-login js-login"><?= $rider->login; ?></div>
                                 <div class="rdr-name"><?php
-                                    if (!empty($rider->last_name) AND !empty($rider->first_name)) {
+                                    if (!empty($rider->last_name && $rider->isRealNamePublic()) AND !empty($rider->first_name)) {
                                         echo '- (' .strtoupper($rider->last_name);
                                     }
-                                    if (!empty($rider->first_name)) {
+                                    if (!empty($rider->first_name && $rider->isRealNamePublic())) {
                                         echo ' ' .ucfirst($rider->first_name. ')');
                                     } ?>
                                 </div>

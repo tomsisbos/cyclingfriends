@@ -169,7 +169,7 @@ $content = [
     [
         'title' => 'マイライドの管理',
         'path' => [
-            header('location: ' .$router->generate('ride-organizations'))
+            substr($router->generate('ride-organizations'), 1)
         ],
         'text' => [
             'マイライドページでは、管理者権限のあるライド概要情報一覧が作成日の近い順で表示されます。ハイライト画像又は「詳細」ボタンをクリックすると、ライド紹介ページにアクセスします。「管理」、「編集」や「削除」ボタンでワンクリックの管理操作も可能です。'

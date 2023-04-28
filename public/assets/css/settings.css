@@ -1,19 +1,40 @@
 .settings {
     display: flex;
+    background-color: #fff;
+}
+
+.settings h2 {
+    margin-top: 30px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 10px;
 }
 
 .stg-sidebar {
+    position: relative;
     width: 350px;
+    padding: 20px;
+}
+.stg-sidebar::after {
+    content: '';
+    height: 80%;
+    width: 0.5px;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    display: flex;
+    top: 10%;
+    background-color: #ccc;
 }
 
 .stg-title-card {
     cursor: pointer;
-    background-color: #fff;
     padding: 10px;
     color: #111;
 }
 .stg-title-card:hover {
     background-color: #5c9999;
+    border-radius: 99px;
     transition: 0.3s background-color, color;
     color: #fff;
 }
@@ -44,6 +65,7 @@
 }
 
 .stg-board {
+    margin: 0;
     background-color: #fff;
 }
 

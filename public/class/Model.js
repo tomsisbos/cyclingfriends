@@ -1,5 +1,5 @@
-import Env from "/map/Env.js"
-import CFUtils from "/class/utils/CFUtils.js"
+import Env from "../map/Env.js"
+import CFUtils from "../class/utils/CFUtils.js"
 
 export default class Model {
 

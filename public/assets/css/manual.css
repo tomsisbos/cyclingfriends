@@ -11,7 +11,7 @@
 .manual a {
     color: #00e06e;
 }
-.manual a:hover {
+.manual .m-single a:hover {
     text-decoration: underline;
 }
 .m-single a:visited {
@@ -24,19 +24,41 @@
 }
 
 .m-sidebar {
+    position: relative;
     min-width: 350px;
+    background-color: #fff;
     width: 350px;
     padding: 20px
 }
-.m-sidebar ol {
+.m-sidebar::after {
+    content: '';
+    height: 80%;
+    width: 0.5px;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    display: flex;
+    top: 10%;
+    background-color: #ccc;
+}
+.m-sidebar ul {
     padding-left: 20px;
+    list-style-type:none;
 }
 .m-summary ul {
     padding-left: 6px !important;
 }
 
-.m-summary > li {
+.m-summary > a > li {
     font-weight: bold;
+    padding: 4px 14px;
+}
+.m-summary > a > li:hover {
+    font-weight: bold;
+    background-color: #5c9999;
+    border-radius: 99px;
+    color: #fff !important;
+
 }
 .m-summary a {
     color: #649eae;
@@ -80,6 +102,9 @@
     font-family: 'Noto Sans';
     color: #444;
 }
+.manual h3, h4, h5 {
+    font-weight: normal;
+}
 .manual h1 {
     color: #649eae;
     text-align: center;
@@ -90,13 +115,13 @@
     margin-bottom: 40px;
     padding-bottom: 6px;
     text-align: center;
-    border-bottom: 1px solid #000;
     color: #555;
 }
 .manual h2 {
     margin-top: 100px;
-    padding: 20px;
-    background-color: #f9f9f9;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 10px;
 }
 .manual h3 {
     padding-top: 20px;
@@ -128,6 +153,7 @@
 
 .m-path {
     padding: 12px 20px;
+    padding-top: 0;
 }
 
 .m-intro, .m-part {

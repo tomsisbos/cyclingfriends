@@ -82,9 +82,13 @@ include '../includes/head.php'; ?>
 
 				<div class="pf-infos">
 					<div class="mb-3 row g-2"> <?php
-						if (!empty($user->last_name OR $user->first_name)) { ?>
+						if ((!empty($user->last_name) OR !empty($user->first_name)) AND $user->isRealNamePublic()) { ?>
 							<div class="col-md">
 								<strong>姓名 : </strong><?= $user->last_name. ' ' .$user->first_name; ?>
+							</div> <?php
+						} else if ((!empty($user->last_name) OR !empty($user->first_name)) AND $user->id == $connected_user->id) { ?>
+							<div class="col-md text-secondary">
+								<strong>姓名 : </strong><?= $user->last_name. ' ' .$user->first_name. ' ※実名は非公開に設定されているので、他のユーザーには表示されません。'; ?>
 							</div> <?php
 						}
 						if (!empty($user->gender)) { ?>
