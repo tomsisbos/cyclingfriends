@@ -1,0 +1,10 @@
+.black-theme .main-navbar, .black-theme .footer {
+    background: rgb(0 20 20 / 80%) !important;
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border-image: linear-gradient(180deg, #eeeeee00, #00121222) 100;
+}
+
+.black-theme button {
+    background-color: #005f5f;
+}

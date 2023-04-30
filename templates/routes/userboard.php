@@ -12,7 +12,7 @@ include '../includes/head.php'; ?>
 
 	<div class="main">
 		
-		<h2 class="top-title">My Routes</h2>
+		<h2 class="top-title">ルート一覧</h2>
 		
 		<div class="container">
 
@@ -65,7 +65,8 @@ include '../includes/head.php'; ?>
 			
 			// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
 			if (empty($connected_user->getRoutes())) { ?>
-				<div class="error-block"><div class="error-message">表示するデータがありません。</div></div> <?php		
+				<div class="error-block"><div class="error-message">表示するデータがありません。</div></div>
+				<a class="d-block p-4 text-center" href="/route/new">新規ルートを作成する</a> <?php		
 			}
 			
 			// Set pagination system

@@ -70,7 +70,7 @@ $content = [
                                 'title' => '設定方法',
                                 'text' => [
                                     'プロフィールページで「地図で選択」ボタンをクリックすると、活動拠点を設定できる地図が表示されます。表示されるマーカーポイントを動かしたり、地図上にクリックしたりすることで設定することができます。',
-                                    'point' => Manual::ref('community-neighbours', 'お隣機能'). 'を利用するには設定が必要です。利用するには、合わせて設定ページの' .Manual::ref('user-settings-neighbours', '「プライバシー」セクションで公開を認める'). '必要もあります。'
+                                    'point' => Manual::ref('community-neighbours', 'お隣さん機能'). 'を利用するには設定が必要です。利用するには、合わせて設定ページの' .Manual::ref('user-settings-neighbours', '「プライバシー」セクションで公開を認める'). '必要もあります。'
                                 ]
                             ]
                         ]

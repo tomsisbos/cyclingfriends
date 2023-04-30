@@ -1,9 +1,5 @@
 <?php
 
-// Temporarly forbid access to the signup page during private beta
-session_start();
-include '../actions/users/initSessionAction.php';
-if ($connected_user->rights != 'administrator' AND $connected_user->rights != 'moderator') header('location: /signin');
 require '../actions/users/signupAction.php';
 include '../includes/head.php'; ?>
 
@@ -16,7 +12,7 @@ include '../includes/head.php'; ?>
 	}
 </style>
 
-<body style="position: relative"> <?php
+<body class="black-theme relative"> <?php
 
 	include '../includes/navbar.php'; ?>
 		
@@ -33,18 +29,18 @@ include '../includes/head.php'; ?>
 			
 				<div class="form-floating mb-3">
 					<input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
-					<label class="form-label" for="floatingInput">Email address</label>
+					<label class="form-label" for="floatingInput">メールアドレス</label>
 				</div>
 				<div class="form-floating mb-3">
 					<input type="login" class="form-control" id="floatingInput" placeholder="Login" name="login">
-					<label class="form-label" for="floatingInput">Username</label>
+					<label class="form-label" for="floatingInput">ユーザーネーム</label>
 				</div>
 				<div class="form-floating mb-3">
 					<input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
-					<label class="form-label" for="floatingPassword">Password</label>
+					<label class="form-label" for="floatingPassword">パスワード</label>
 				</div>
 				
-				<button type="submit" class="btn button button-primary fullwidth" name="validate">Sign up</button>
+				<button type="submit" class="btn button button-primary fullwidth" name="validate">アカウント作成</button>
 				
 			</form>
 		</div>

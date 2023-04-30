@@ -26,7 +26,7 @@ if (isset($_SESSION['forms']['created'])) {
 		// Space for general error messages
 		include '../includes/result-message.php'; ?>
 		
-		<h2 class="top-title">My rides</h2>
+		<h2 class="top-title">主催ライド一覧</h2>
 
 		<div class="container end"> <?php
 		

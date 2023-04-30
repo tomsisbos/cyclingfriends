@@ -7,9 +7,8 @@ export default function Privacy () {
 
     // Settings default state
     const [settings, setSettings] = useState( {
-        hide_on_riders: false,
         hide_on_neighbours: false,
-        hide_on_chat: false,
+        hide_realname: false
     } )
 
     // On change, set changed value (=id) to opposite one
@@ -30,18 +29,10 @@ export default function Privacy () {
         <form className="stg-board container d-flex flex-column" method="post">
 		
 		<h2 className="mb-4">プライバシー設定</h2>
-	
+
 			<div className="tr-row gap-20 mb-3">
                 <Checkbox
-                    label="Communityページでアカウント情報を表示しない"
-                    value={settings.hide_on_riders}
-                    id={'hide_on_riders'}
-                    onChange={handleChange}
-                />
-			</div>
-			<div className="tr-row gap-20 mb-3">
-                <Checkbox
-                    label="Neighboursページでアカウント情報を表示しない"
+                    label="お隣さんページでアカウント情報を表示しない"
                     value={settings.hide_on_neighbours}
                     id={'hide_on_neighbours'}
                     onChange={handleChange}
@@ -49,9 +40,9 @@ export default function Privacy () {
 			</div>
 			<div className="tr-row gap-20 mb-3">
                 <Checkbox
-                    label="友達以外のダイレクトメッセージを受け付けない"
-                    value={settings.hide_on_chat}
-                    id={'hide_on_chat'}
+                    label="実名を公開しない"
+                    value={settings.hide_realname}
+                    id={'hide_realname'}
                     onChange={handleChange}
                 />
 			</div>

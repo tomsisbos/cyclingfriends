@@ -12,8 +12,8 @@ $router = new AltoRouter();
 $router->map('GET', '/dashboard', 'dashboard');
 
 // Beta
-$router->map('GET', '/', 'beta/home');
-$router->map('POST', '/', 'beta/home');
+$router->map('GET', '/', 'home/home');
+$router->map('POST', '/', 'home/home');
 $router->map('GET', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('POST', '/privatebeta/registration/[i:token]', 'beta/registration');
 $router->map('GET', '/privatebeta/signup/[i:token]', 'beta/signup');

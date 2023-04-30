@@ -11,12 +11,12 @@
 .home-main-text {
     color: white;
     text-align: center;
-    text-shadow: 0 0 30px #000;
+    text-shadow: 0 0 30px #001414;
 }
 .home-main-text p {
     font-weight: bold;
     font-family: Yu Mincho;
-    text-shadow: 0 0 5px #000;
+    text-shadow: 0 0 5px #001414;
 }
 .home-site-logo {
     position: relative;
@@ -37,17 +37,20 @@
     transition: 1s opacity;
 }
 .home-brand {
-    position: absolute;
-    pointer-events: none;
-    font-size: 40px;
+    font-size: 100px;
+    color: #fff;
+    font-weight: normal;
     font-family: Dr sugiyama;
-    color: #000;
-    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
 .home-main-caption {
     color: white;
-    text-shadow: 0px 0px 50px black;
     text-align: center;
+    min-height: 1em;
+    font-size: 24px;
+    font-family: Yu Mincho;
+    font-weight: bold;
+    margin: 10px;
+    pointer-events: none;
 }
 .home-main-caption p {
     margin-bottom: 3px;
@@ -64,11 +67,35 @@
 .home-main-container {
     background-color: transparent;
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: flex-end;
     top: calc(80px + 0px);
     min-width: 100%;
     min-height: calc(100% - 80px);
     padding: 100px 10%;
     z-index: 6;
+}
+.home-main-container * {
+    pointer-events: none;
+    text-shadow: 0 0 8px #001414;
+}
+.home-main-title {
+    text-shadow: 0px 0px 8px #001414;
+    color: #fff;
+}
+.home-version {
+    color: #fff;
+}
+.home-top-container, .home-top-container > * {
+    background: linear-gradient(0deg, rgba(0,40,40,1) 0%, rgba(0,20,20,1) 100%);
+}
+.home-container, .home-container > * {
+    background-color: #002828;
+}
+.home-container {
+    padding: 40px 25px;
 }
 .home-text {
     font-size: 14px;
@@ -94,6 +121,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    color: #f9f9f9;
 }
 .home-release-date {
     background-color: #5c9999;
@@ -165,7 +193,38 @@
     color: #999;
 }
 
+.home-carousel {
+    aspect-ratio: 16/9;
+    text-shadow: 0 0 8px #000;
+}
+.home-carousel .carousel-inner {
+    clip-path: url(#cpath1);
+}
+.home-carousel .carousel-control-next, .home-carousel .carousel-control-prev {
+    opacity: 1;
+}
+.home-carousel .carousel-caption {
+    position: absolute;
+    bottom: 1.25rem;
+    background-color: #00282899;
+    padding: 1.25rem;
+    color: #fff;
+    text-align: center;
+}
+.home-carousel .carousel-caption h5 {
+    margin: 0;
+}
+.home-carousel-img {
+    object-fit: cover;
+    height: 100%;
+}
+
 @media only screen and (max-width: 992px) {
+    .home-main-title {
+        text-shadow: 0px 0px 8px #001414;
+        color: #fff;
+        font-size: 32;
+    }
     .home-slide p {
         font-size: smaller;
     }
@@ -225,7 +284,7 @@
         height: 100px !important;
     }
     .home-brand {
-        font-size: 24px;
+        font-size: 65px;
         font-weight: normal;
     }
 }

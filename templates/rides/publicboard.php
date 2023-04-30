@@ -14,7 +14,7 @@ include '../includes/head.php'; ?>
 	
 	<div class="main">
 	
-		<h2 class="top-title">Public Rides</h2>
+		<h2 class="top-title">ライド掲示板</h2>
 		
 		<div class="container end">
 		

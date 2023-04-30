@@ -7,11 +7,15 @@ class Model {
     protected static $root_folder;
 
     function __construct () {
-        Model::$root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        Model::$root_folder = $this->getRootFolder();
+    }
+
+    private static function getRootFolder () {
+        return substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
     }
 
     protected static function getPdo () {
-        require Model::$root_folder . '/actions/databaseAction.php';
+        require Manual::getRootFolder() . '/actions/databaseAction.php';
         return $db;
     }
 

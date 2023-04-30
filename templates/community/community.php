@@ -15,7 +15,7 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		include '../includes/result-message.php'; ?>
 		
-		<h2 class="top-title">Community</h2>
+		<h2 class="top-title">ユーザー一覧</h2>
 		
 		<?php /*<div class="container"> <?php
 		

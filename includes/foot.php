@@ -1,5 +1,5 @@
 <div class="footer">
-    <div class="container">
+    <div class="container bg-transparent">
         <div>© 2023 Terra Incognita</div>
         <div class="footer-logo">
             <img src="/media/cf.png" />

@@ -17,7 +17,7 @@ class Sidebar extends React.Component {
     render () {
 
         return (
-            <div className="stg-sidebar container flex-shrink-0">
+            <div className="stg-sidebar flex-shrink-0">
 
                 <div id="accordion">
                     <div className="stg-title-card" id="headingOne">

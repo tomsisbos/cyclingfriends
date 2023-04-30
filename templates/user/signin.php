@@ -12,7 +12,7 @@ include '../includes/head.php'; ?>
 	}
 </style>
 
-<body> <?php
+<body class="black-theme"> <?php
 
 include '../includes/navbar.php'; ?>
 		
@@ -35,7 +35,7 @@ include '../includes/navbar.php'; ?>
 				<label class="form-label" for="floatingPassword">Password</label>
 			</div>
 			
-			<button type="submit" class="btn button fullwidth button-primary" name="validate">Sign in</button>
+			<button type="submit" class="btn button fullwidth button-primary" name="validate">ログイン</button>
 			
 		</form>
 	</div>

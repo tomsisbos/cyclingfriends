@@ -103,8 +103,8 @@ input[type="checkbox"] {
 .footer {
     background-color: #fff;
     text-align: right;
-    border-top: 4px solid;
-    border-image: linear-gradient(0deg, #eeeeeeff, #f9f9f9) 100;
+    border-top: 4px solid transparent;
+    border-image: linear-gradient(180deg, #eeeeee00, #f9f9f9) 100;
 }
 .footer .container {
     background-color: #fff;
@@ -500,6 +500,8 @@ img.site-logo {
 
 .main-navbar  {
     position: sticky;
+    background: rgb(255 255 255 / 20%) !important;
+    backdrop-filter: blur(10px);
     box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
     z-index: 7;
 }
@@ -628,12 +630,6 @@ li.nav-item {
     --bs-btn-active-color: #fff;
     --bs-btn-hover-color: #fff;
     border: none;
-}
-@media only screen and (max-width: 768px) {
-    .btn {
-        font-weight: unset !important;
-        height: fit-content !important;
-    }
 }
 
 .btn-container {
@@ -1159,6 +1155,9 @@ a .strava:hover {
     font-size: 24px;
     margin: 40px;
     font-family: Yu Mincho;
+}
+.js-scenery-info.classy-title {
+    text-shadow: 0 0 6px #000;
 }
 
 .temp-popup {

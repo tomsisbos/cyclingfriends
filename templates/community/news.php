@@ -15,7 +15,7 @@ include '../includes/navbar.php';?>
 		// Space for general error messages
 		include '../includes/result-message.php'; ?>
 
-        <h2 class="top-title">News</h2>
+        <h2 class="top-title">ニュース</h2>
 
         <div class="container posts-container"> <?php
     

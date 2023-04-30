@@ -15,7 +15,7 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		displayMessage(); ?>
 		
-		<h2 class="top-title">Friends</h2>
+		<h2 class="top-title">友達リスト</h2>
 		
 		<!-- Upper section -->
 		<div class="container"> <?php

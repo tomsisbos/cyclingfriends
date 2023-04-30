@@ -12,7 +12,7 @@ include '../includes/head.php'; ?>
 
 	<div class="main overflow-auto">
 		
-		<h2 class="top-title">Neighbours</h2>
+		<h2 class="top-title">お隣さん</h2>
 
 		<div id="neighboursMapContainer" style="height: 40vh">
 			<div class="cf-map" id="neighboursMap"></div>
@@ -55,7 +55,7 @@ include '../includes/head.php'; ?>
 
 			} else {
 				
-				$errormessage = '「お隣機能」を利用するには、活動拠点を設定する必要があります。<a href="/profile/edit">こちら</a>にアクセスし、「場所」を「地図で選択」ボタンをクリックして設定してください。';
+				$errormessage = '「お隣さん機能」を利用するには、活動拠点を設定する必要があります。<a href="/profile/edit">こちら</a>にアクセスし、「場所」を「地図で選択」ボタンをクリックして設定してください。';
 			
 			}
 			

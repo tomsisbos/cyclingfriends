@@ -40,14 +40,14 @@ $member->updateUserId() ?>
 
 				<div class="form-floating mb-3">
 					<input type="login" class="form-control" id="floatingInput" placeholder="Login" name="login">
-					<label class="form-label" for="floatingInput">Username</label>
+					<label class="form-label" for="floatingInput">ユーザーネーム</label>
 				</div>
 				<div class="form-floating mb-3">
 					<input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
-					<label class="form-label" for="floatingPassword">Password</label>
+					<label class="form-label" for="floatingPassword">パスワード</label>
 				</div>
 				
-				<button type="submit" class="btn button button-primary fullwidth" name="validate">Sign up</button>
+				<button type="submit" class="btn button button-primary fullwidth" name="validate">新規登録</button>
 				
 			</form>
 		</div>

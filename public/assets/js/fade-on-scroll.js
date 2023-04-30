@@ -50,12 +50,20 @@ elements.forEach((element) => {
 
         // Calculate opacity
         document.addEventListener('scroll', () => {
-            var topPosition = element.getBoundingClientRect().top
-            var bottomPosition = elementHeight + topPosition
-            if (bottomPosition > 0 && topPosition < 0) {
-                var pourcentageDisplayed = bottomPosition * 100 / elementHeight
-                element.style.opacity = pourcentageDisplayed / 100
-            } else element.style.opacity = 1
+            if (element.dataset.reverse) {
+                var topPosition = window.innerHeight - element.getBoundingClientRect().top
+                var pourcentageDisplayed = topPosition * 100 / elementHeight
+                if (pourcentageDisplayed > 0 && pourcentageDisplayed < 100) {
+                    element.style.opacity = pourcentageDisplayed / 100
+                } else element.style.opacity = 1
+            } else {
+                var topPosition = element.getBoundingClientRect().top - 80
+                var bottomPosition = elementHeight + topPosition
+                if (bottomPosition > 0 && topPosition < 0) {
+                    var pourcentageDisplayed = bottomPosition * 100 / elementHeight
+                    element.style.opacity = pourcentageDisplayed / 100
+                } else element.style.opacity = 1
+            }
         } )
     }
 

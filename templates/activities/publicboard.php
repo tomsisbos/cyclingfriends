@@ -14,7 +14,7 @@ include '../includes/head.php'; ?>
 
 	<div class="main">
 	
-		<h2 class="top-title">Activities</h2>
+		<h2 class="top-title">アクティビティ一覧</h2>
 		
 		<div class="container container-transparent end"> 
 			

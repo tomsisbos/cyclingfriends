@@ -17,48 +17,48 @@
 		<div class="collapse navbar-collapse" id="collapsedMenu">
 			<ul class="navbar-nav cf-navbar">
 				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/world"><div class="mainitem">サイクリングマップ</div><div class="subitem">World</div></a>
+					<a class="nav-link interactive" href="/world"><div class="mainitem">サイクリングマップ</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/favorites/sceneries"><div class="mainitem">お気に入り絶景スポット</div><div class="subitem">My favorite sceneries</div></a>
-						<a class="dropdown-item interactive" href="/favorites/segments"><div class="mainitem">お気に入りセグメント</div><div class="subitem">My favorite segments</div></a>
+						<a class="dropdown-item interactive" href="/favorites/sceneries"><div class="mainitem">お気に入り絶景スポット</div></a>
+						<a class="dropdown-item interactive" href="/favorites/segments"><div class="mainitem">お気に入りセグメント</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/activities"><div class="mainitem">アクティビティ</div><div class="subitem">Activities</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/activities"><div class="mainitem">アクティビティ</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div><div class="subitem">New</div></a>
-						<a class="dropdown-item interactive" href="/<?= $connected_user->login ?>/activities"><div class="mainitem">マイアクティビティ</div><div class="subitem">My activities</div></a>
+						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div></a>
+						<a class="dropdown-item interactive" href="/<?= $connected_user->login ?>/activities"><div class="mainitem">マイアクティビティ</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/<?= $connected_user->login ?>/routes"><div class="mainitem">ルート</div><div class="subitem">Routes</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/<?= $connected_user->login ?>/routes"><div class="mainitem">ルート</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/route/new"><div class="mainitem">新規作成</div><div class="subitem">New</div></a>
+						<a class="dropdown-item interactive" href="/route/new"><div class="mainitem">新規作成</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/rides"><div class="mainitem">ライド</div><div class="subitem">Rides</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/rides"><div class="mainitem">ライド</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/ride/new"><div class="mainitem">新規開催</div><div class="subitem">New</div></a>
-						<a class="dropdown-item interactive" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div><div class="subitem">My organizations</div></a>
-						<a class="dropdown-item interactive" href="<?= $router->generate('ride-participations') ?>"><div class="mainitem">参加一覧</div><div class="subitem">My participations</div></a>
+						<a class="dropdown-item interactive" href="/ride/new"><div class="mainitem">新規開催</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('ride-participations') ?>"><div class="mainitem">参加一覧</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/neighbours"><div class="mainitem">コミュニティ</div><div class="subitem">Community</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/neighbours"><div class="mainitem">コミュニティ</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu"> <?php
 						if ($connected_user->hasAdministratorRights()) { ?>
-							<a class="dropdown-item bg-admin interactive" href="/community"><div class="mainitem">ユーザー一覧</div><div class="subitem">Users list</div></a> <?php
+							<a class="dropdown-item bg-admin interactive" href="/community"><div class="mainitem">ユーザー一覧</div></a> <?php
 						} ?>
-						<a class="dropdown-item bg-admin interactive" href="/dev/board"><div class="mainitem">開発ボード</div><div class="subitem">Test reports</div></a>
-						<a class="dropdown-item interactive" href="/news"><div class="mainitem">ニュース</div><div class="subitem">News</div></a>
-						<a class="dropdown-item interactive" href="/friends"><div class="mainitem">お友達</div><div class="subitem">Friends</div></a>
-						<a class="dropdown-item interactive" href="/scouts"><div class="mainitem">スカウト</div><div class="subitem">Scouts</div></a>
+						<a class="dropdown-item bg-admin interactive" href="/dev/board"><div class="mainitem">開発ボード</div></a>
+						<a class="dropdown-item interactive" href="/news"><div class="mainitem">ニュース</div></a>
+						<a class="dropdown-item interactive" href="/friends"><div class="mainitem">お友達</div></a>
+						<a class="dropdown-item interactive" href="/scouts"><div class="mainitem">スカウト</div></a>
 					</div>
 				</li>
 			</ul>
@@ -78,13 +78,13 @@
 					<span class="iconify" style="color: black;" data-icon="charm:chevron-down" data-width="30" data-height="30"></span>
 				</a>
 				<div class="dropdown-menu dropdown-menu-end" id="profileDropdownMenuLink">
-					<a class="dropdown-item interactive" href="/rider/<?= $_SESSION['id'] ?>"><div class="mainitem">プロファイル</div><div class="subitem">My profile</div></a>
-					<a class="dropdown-item interactive" href="/settings"><div class="mainitem">設定</div><div class="subitem">Settings</div></a>
-					<a class="dropdown-item interactive" href="/manual"><div class="mainitem">マニュアル</div><div class="subitem">Manual</div></a> <?php
+					<a class="dropdown-item interactive" href="/rider/<?= $_SESSION['id'] ?>"><div class="mainitem">プロファイル</div></a>
+					<a class="dropdown-item interactive" href="/settings"><div class="mainitem">設定</div></a>
+					<a class="dropdown-item interactive" href="/manual"><div class="mainitem">マニュアル</div></a> <?php
 					// If the user is connected, displays the sign out button 
 					if (isset($_SESSION['auth'])) { ?>
 					<hr class="dropdown-divider">
-						<a class="dropdown-item interactive" href="/signout"><div class="mainitem">サインアウト</div><div class="subitem">Sign out</div></a> <?php
+						<a class="dropdown-item interactive" href="/signout"><div class="mainitem">サインアウト</div></a> <?php
 					} ?>
 				</div>
 			</div>
@@ -97,13 +97,13 @@
 		// If the user is not connected and is on the signin page, displays the sign up button 
 		if (!isset($_SESSION['auth']) AND (strpos($url,'signin') == true)) { ?>
 			<a href="/signup">
-				<button class="btn button" name="validate" disabled>Sign up</button>
+				<button class="btn button" name="validate">新規登録</button>
 			</a> <?php
 
 		// Else, displays the sign in button		
 		} else if (!isset($_SESSION['auth'])) { ?>
 			<a href="/signin">
-				<button class="btn button" name="validate">Sign in</button>
+				<button class="btn button" name="validate">ログイン</button>
 			</a> <?php
 		} ?>
 	</div> 
