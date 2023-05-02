@@ -4,10 +4,12 @@
 	if (isset($_SESSION['auth'])) $default_url = '/dashboard';
 	else $default_url = '/' ?>
 	
-	<a href="<?= $default_url ?>">
-		<p class="navbar-brand" >cycling<span class="f">f</span>riends</p>
-		<img class="site-logo" src="/media/cf.png">
-	</a> <?php
+		<div class="navbar-brand" >
+			<a href="<?= $default_url ?>">
+				<img class="site-logo" src="/media/cf.png">
+			</a>
+			<div class="position-absolute">cycling<span class="f">f</span>riends</div>
+		</div> <?php
 
 	// If the user is connected, displays the links 
 	if (isset($_SESSION['auth'])) { ?>
@@ -89,7 +91,30 @@
 				</div>
 			</div>
 		</div> <?php
-	} 
+
+	// If the user is not connected, display default navbar
+	} else { ?>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedMenu">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="collapsedMenu">
+			<ul class="navbar-nav cf-navbar">
+				<li class="nav-item dropdown">
+					<a class="nav-link interactive" href="/company"><div class="mainitem">会社について</div></a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link interactive" href="/company/business"><div class="mainitem">事業構想</div></a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link interactive" href="/company/contact"><div class="mainitem">お問い合わせ</div></a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link interactive" href="/manual"><div class="mainitem">マニュアル</div></a>
+				</li>
+			</ul>
+		</div> <?php
+	}
 	
 	$url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; ?>
 

@@ -1,3 +1,11 @@
+body.black-theme { 
+    background: linear-gradient(0deg, rgba(0,60,60,1) 0%, rgba(0,60,60,1) 100%) !important;
+}
+
+.black-theme h1, .black-theme h2, .black-theme h3, .black-theme h4, .black-theme h5, .black-theme h6 {
+    color: #fff;
+}
+
 .black-theme .main-navbar, .black-theme .footer {
     background: rgb(0 20 20 / 80%) !important;
     backdrop-filter: blur(10px);
@@ -7,4 +15,55 @@
 
 .black-theme button {
     background-color: #005f5f;
+}
+
+.black-theme .main-navbar a {
+    color: #fff;
+}
+.black-theme .main-navbar .dropdown-menu {
+    background: rgb(0 20 20 / 80%) !important;
+    backdrop-filter: blur(10px);
+    color: #fff;
+    top: 55;
+    border-image: linear-gradient(180deg, #eeeeee00, #00121222) 100;
+}
+
+.black-theme .main-navbar .navbar-collapse.show > .navbar-nav, .black-theme .main-navbar .navbar-collapse.collapsing > .navbar-nav {
+    background: rgb(0 20 20 / 80%) !important;
+    backdrop-filter: blur(10px);
+}
+@media (max-width: 992px) {
+    .black-theme .main-navbar .dropdown-menu.show {
+        background: rgb(0 0 0 / 1%) !important;
+        backdrop-filter: none;
+    }
+}
+
+.black-theme .dropdown-toggle:focus {
+    background-color: #b2e0e5 !important;
+}
+
+.black-theme p, .black-theme table th, .black-theme table td, .black-theme li {
+    color: #f9f9f9;
+}
+
+.black-theme .schema-part {
+    background-color: #ffffffcc;
+    border: 1px solid #ffffff;
+}
+
+.black-theme .schema-table {
+    font-weight: bold;
+}
+.black-theme .schema-cross {
+    color: #fff;
+}
+@media only screen and (max-width: 992px) {
+    .black-theme .schema-part {
+        background-color: unset !important;
+        color: #fff;
+        border: unset !important;
+        background: radial-gradient(circle at center, #165454 9vh, transparent 0%);
+        margin: -80px 0px;
+    }
 }
