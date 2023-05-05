@@ -135,6 +135,9 @@ input[type="checkbox"] {
     gap: 20px;
     justify-content: right;
 }
+.footer-text {
+    font-family: monospace;
+}
 
 /* Font */
 
@@ -492,7 +495,7 @@ input[type="checkbox"] {
 
 .main-navbar  {
     position: sticky;
-    background: rgb(255 255 255 / 20%) !important;
+    background: rgb(255 255 255 / 60%) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 0 0 rgb(0 0 0 / 10%);
     z-index: 7;

@@ -98,7 +98,6 @@ $router->map('POST', '/news', 'community/news');
 // Company
 $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
-$router->map('GET', '/company/mission', 'company/mission', 'company-mission');
 $router->map('GET', '/company/contact', 'company/contact', 'company-contact');
 $router->map('POST', '/company/contact', 'company/contact');
 

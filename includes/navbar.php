@@ -8,7 +8,7 @@
 			<a href="<?= $default_url ?>">
 				<img class="site-logo" src="/media/cf.png">
 			</a>
-			<div class="position-absolute">cycling<span class="f">f</span>riends</div>
+			<div class="navbar-brand position-absolute pe-none">cyclingfriends</div>
 		</div> <?php
 
 	// If the user is connected, displays the links 
