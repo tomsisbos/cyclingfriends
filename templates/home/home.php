@@ -94,7 +94,7 @@ include '../includes/head.php'; ?>
                     <label class="form-label" for="floatingPassword">パスワード</label>
                 </div>
                 <button type="submit" class="btn button button-primary fullwidth" name="validate">アカウント作成</button>
-                <div class="mt-4 text-center">
+                <div class="mt-4 sign-link">
                     <a href="<?= $router->generate('user-signin') ?>">既にアカウントをお持ちの方はこちら</a>
                 </div>
             </form>

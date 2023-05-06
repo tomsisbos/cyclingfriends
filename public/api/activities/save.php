@@ -9,6 +9,10 @@ ini_set('max_execution_time', '700');
 $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
 
+// Connect to blob storage
+$folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require $folder . '/actions/blobStorageAction.php';
+
 if (is_array($data)) {
 
     // Get activity id
@@ -126,10 +130,10 @@ if (is_array($data)) {
             // Prepare photos data to add to an existing scenery if necessary
             if (isset($data['sceneryPhotos'])) {
                 for ($i = 0; $i < count($data['sceneryPhotos']); $i++) {
-                    if ($data['sceneryPhotos'][$i]['photo_name'] == $img_name) {
-                        $data['sceneryPhotos'][$i]['blob'] = $img_blob;
-                        $data['sceneryPhotos'][$i]['size'] = $img_size;
-                        $data['sceneryPhotos'][$i]['type'] = $img_type;
+                    if ($data['sceneryPhotos'][$i]['photo_name'] == $photo['name']) {
+                        $data['sceneryPhotos'][$i]['blob'] = $photo['blob'];
+                        $data['sceneryPhotos'][$i]['size'] = $photo['size'];
+                        $data['sceneryPhotos'][$i]['type'] = $photo['type'];
                     }
                 }
             }
@@ -243,6 +247,7 @@ if (is_array($data)) {
         
         $loading_record->setStatus('success', '「' .$title. '」が無事に保存されました。詳細を<a href="/activity/' .$activity_id. '">こちら</a>でご確認ただけます。');
         echo json_encode(true);
+        die();
 
     // If any error have been catched, response error info
     } catch (Error $e) {

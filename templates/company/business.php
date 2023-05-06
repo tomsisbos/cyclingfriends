@@ -24,7 +24,7 @@ include '../includes/head.php'; ?>
             <p>従って、社会全体でハンドルを切らないことには、違う方向を向くこともないでしょう。</p>
             <p>テラインコグニタの使命は、<strong>持続的な社会づくりに必要な価値観の改革を起こすこと</strong>、少なくともそのきっかけを作ることです。</p>
             
-            <div class="company-quote">Vision : <div class="company-quotemarks">"</div>自転車がもつ可能性を引き出して、社会に波及する<div class="company-quotemarks">"</div></div>
+            <div class="company-quote">Vision : <div class="company-quotemarks">"</div>自転車がもつ可能性を引き出して、社会に波及させる<div class="company-quotemarks">"</div></div>
             <p>持続可能性の秘訣は「多様性」にあるわけですから、明日の社会に必要な価値観は「これだ！」といった決まったものはありません。</p>
             <p>しかし、経済成長を最終目的と控える価値観から離脱するということは、<strong>消費社会の成果物よりも、自然、伝統や分化の成果物に価値を与える</strong>世界観が必要であることは間違いないでしょう。</p>
             <p>この世界観を広げるために主な手段として選んだのが「自転車」。なぜなら、上記の課題全てに寄与できる優れものだからです。</p>

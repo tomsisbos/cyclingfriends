@@ -358,6 +358,11 @@ input[type="checkbox"] {
     background-color: #ffffff80;
 }
 
+.sign-link {
+    text-align: center;
+    text-shadow: 0 0 4px black;
+}
+
 /*
 --- General bootstrap styles ---
 */

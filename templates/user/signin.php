@@ -36,6 +36,10 @@ include '../includes/navbar.php'; ?>
 			</div>
 			
 			<button type="submit" class="btn button fullwidth button-primary" name="validate">ログイン</button>
+
+			<div class="mt-4 sign-link">
+				<a href="<?= $router->generate('user-signup') ?>">アカウントの新規作成はこちら</a>
+			</div>
 			
 		</form>
 	</div>
