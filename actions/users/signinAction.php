@@ -28,14 +28,18 @@ if (isset($_POST['validate'])) {
 
 				$user = new User($userData['id']);
 
-				session_start();
+				// Check if account has been verified
+				if ($user->isVerified()) {
 
-				$user->setSession();
+					session_start();
 
-				// Redirect authentified user to the Dashboard
-				header('location: /dashboard');
-				exit();
-			
+					$user->setSession();
+
+					// Redirect authentified user to the Dashboard
+					header('location: /dashboard');
+					exit();
+
+				} else $errormessage = 'こちらのアカウントに登録されているメールアドレスがまだ確認されていないため、アカウント作成が完了していません。登録時（' .$user->inscription_date. '）にお送りした確認用の自動メール内に掲載しているURLをクリックして、アカウント作成を完了させてください。<br>自動メールが確認できていない場合は、<a href="' .$router->generate('user-verification-guidance'). '">こちら</a>をご確認ください。';
 			} else $errormessage = "ご記入頂いたパスワードは一致していません。";
 		} else $errormessage = "ご記入頂いたメールアドレスは登録されていません。";
 	} else $errormessage = "全ての情報をご記入の上、再度お試しください。";

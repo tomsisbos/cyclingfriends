@@ -11,9 +11,9 @@ include '../includes/head.php'; ?>
 	<?php include '../includes/navbar.php'; ?>
 
 	<div class="main"> <?php
-	
-		// Space for error messages
-		displayMessage(); ?>
+			
+		// Space for general error messages
+		include '../includes/result-message.php'; ?>
 		
 		<h2 class="top-title">スカウトリスト</h2>
 		

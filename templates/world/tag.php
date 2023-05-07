@@ -20,8 +20,8 @@ include '../includes/head.php'; ?>
         $tag = new Tag(basename($_SERVER['REQUEST_URI']));
         if ($tag->exists()) {
 
-            // Space for error messages
-            displayMessage(); ?>
+            // Space for general error messages
+            include '../includes/result-message.php'; ?>
 
             <h2 class="top-title">Tag : <?= $tag->getString() ?></h2>
 

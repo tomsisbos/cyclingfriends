@@ -12,8 +12,8 @@ include '../includes/head.php'; ?>
 
 	<div class="main"> <?php
 	
-		// Space for error messages
-		displayMessage(); ?>
+		// Space for general error messages
+		include '../includes/result-message.php'; ?>
 		
 		<h2 class="top-title">友達リスト</h2>
 		

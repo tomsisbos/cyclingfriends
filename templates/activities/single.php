@@ -28,8 +28,8 @@ include '../includes/head.php'; ?>
 	
 	<div class="main container-shrink"> <?php
 	
-		// Space for error messages
-		displayMessage(); ?>
+		// Space for general error messages
+		include '../includes/result-message.php'; ?>
 		
 		<div class="container-fluid"> <?php 
 

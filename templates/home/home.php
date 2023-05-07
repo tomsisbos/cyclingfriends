@@ -23,7 +23,10 @@ include '../includes/head.php'; ?>
 <body>
     <div class="black-theme"> <?php
 
-    include '../includes/navbar.php'; ?>
+    include '../includes/navbar.php';
+
+    // Space for general error messages
+    include '../includes/result-message.php'; ?>
 
     <!-- Animated background -->
     <div class="main js-fade-on-scroll js-overlay-top" data-overlay-color="#000000">
@@ -80,7 +83,7 @@ include '../includes/head.php'; ?>
                 <p>CyclingFriendsとは、この道をともに選んだ仲間たち。</p>
                 <p>君も、この旅を共にしませんか？</p>
             </div>
-            <form class="container smaller connection-container" method="post">                
+            <form class="container smaller connection-container" method="post" action="<?= $router->generate('user-signup') ?>">                
                 <div class="form-floating mb-3">
                     <input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
                     <label class="form-label" for="floatingInput">メールアドレス</label>

@@ -14,8 +14,8 @@ include '../includes/head.php'; ?>
 
 	<div class="main"> <?php
 	
-		// Space for error messages
-		displayMessage(); ?>
+		// Space for general error messages
+		include '../includes/result-message.php'; ?>
 		
 		<div class="container-fluid p-0 manual end">
 		

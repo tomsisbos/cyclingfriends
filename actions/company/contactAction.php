@@ -32,7 +32,6 @@ if (isset($_POST) && !empty($_POST)) {
                 <p><strong>件名：</strong>" .$title. "</p>
                 <br>" .$content
             );
-            var_dump(getenv('SENDGRID_API_KEY'));
             $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
             $response = $sendgrid->send($email);
 

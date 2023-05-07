@@ -9,9 +9,9 @@ include '../includes/head.php'; ?>
 	
 <link rel="stylesheet" href="/assets/css/dashboard.css" />
 
-<body>
+<body> <?php
 
-<?php include '../includes/navbar.php';
+include '../includes/navbar.php';
 
 // Start guidance if poor user info is set
 if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>'
@@ -19,7 +19,10 @@ if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/hel
 // Display general guidance during beta testing period ?>
 <script src="/scripts/helpers/beta/default-guidance.js"></script>
 
-<div class="main dashboard" id="infiniteScrollElement">
+<div class="main dashboard" id="infiniteScrollElement"> <?php
+
+    // Space for general error messages
+    include '../includes/result-message.php'; ?>
 
 	<div>
 

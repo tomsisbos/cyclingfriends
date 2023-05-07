@@ -33,12 +33,9 @@ if (isset($_POST['validate'])) {
 				
 						$user->register($email, $login, $password);
 
-						$user->setSession();
+						$user->sendVerificationMail();
 
-						$_SESSION['success'] = 'アカウントが無事に登録されました。';
-
-						// Redirect authentified user to the Dashboard	
-						header('location: /');	
+						$successmessage = '登録のメールアドレスに確認用のメールを送信しました。アカウント作成を完了するためには、そのメール内にある確認用URLをクリックしてください。';	
 
 					} else $errormessage = 'パスワードは8文字以上利用してください。';
 				}

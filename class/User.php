@@ -2,10 +2,13 @@
 
 use Location\Coordinate;
 use Location\Distance\Vincenty;
+use \SendGrid\Mail\Mail;
 
 class User extends Model {
 
     private $container_name = 'user-profile-pictures';
+    private $slug;
+    private $verified;
     protected $table = 'users';
     public $id;
     public $login;
@@ -31,6 +34,8 @@ class User extends Model {
         if ($id != NULL) {
             $this->id                        = intval($id);
             $data = $this->getData($this->table);
+            $this->slug                      = intval($data['slug']);
+            $this->verified                  = (intval($data['verified']) === 1);
             $this->login                     = $data['login'];
             $this->email                     = $data['email'];
             $this->default_profilepicture_id = $data['default_profilepicture_id'];
@@ -49,7 +54,7 @@ class User extends Model {
             $this->strava                    = $data['strava'];
             $this->rights                    = new Role($data['rights']);
         }
-    }    
+    }
 
     private function getLngLat () {
         $getPointToText = $this->getPdo()->prepare("SELECT ST_AsText(point) FROM {$this->table} WHERE id = ?");
@@ -68,12 +73,42 @@ class User extends Model {
         $this->email = $email;
         $this->login = $login;
         // Insert data into database
-        $register = $this->getPdo()->prepare('INSERT INTO users(email, login, password, default_profilepicture_id, inscription_date, level) VALUES (?, ?, ?, ?, ?, ?)');
+        $register = $this->getPdo()->prepare('INSERT INTO users(slug, email, login, password, default_profilepicture_id, inscription_date, level) VALUES (FLOOR(RAND() * 1000000000), ?, ?, ?, ?, ?, ?)');
         $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 1));
         // Get id
         $getId = $this->getPdo()->prepare("SELECT id FROM users WHERE email = ? AND login = ?");
         $getId->execute([$email, $login]);
         $this->id = $getId->fetch(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Send email verification mail
+     */
+    public function sendVerificationMail () {
+        $email = new Mail();
+        $email->setFrom(
+            'contact@cyclingfriends.co',
+            'CyclingFriends'
+        );
+        $email->setSubject('アカウントのメールアドレス確認');
+        $email->addTo($this->email);
+        $email->addContent(
+            'text/html',
+            '<p>' .$this->login. 'さん、CyclingFriendsへようこそ！</p>
+            <p>アカウントの作成は終わりましたが、ログインするにはまだメールアドレスの確認を行う必要があります。</p>
+            <p>下記のURLにアクセスして、ログインしてください！</p>
+            <a>' .$_SERVER['HTTP_ORIGIN']. '/account/verification/' .$this->slug. '-' .$this->email. '</a>'
+        );
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $response = $sendgrid->send($email);
+    }
+
+    /**
+     * Check whether user has verified his email or not
+     */
+    public function isVerified () {
+        if ($this->verified) return true;
+        else return false;
     }
 
     // Set session according to user data
@@ -88,6 +123,18 @@ class User extends Model {
         $_SESSION['lngLat']                    = $this->lngLat;
         $_SESSION['settings']                  = $this->getSettings();
 		$_SESSION['rights']                    = $this->rights;
+    }
+
+    /**
+     * Get corresponding id from email address
+     * @param String $email
+     * @return Int Corresponding user id
+     */
+    public function getId ($email) {
+        $getId = $this->getPdo()->prepare("SELECT id FROM {$this->table} WHERE email = ?");
+        $getId->execute([$email]);
+        if ($getId->rowCount() > 0) return intval($getId->fetch(PDO::FETCH_COLUMN));
+        else return false;
     }
 
     public function getSettings() {
@@ -729,7 +776,7 @@ class User extends Model {
         else if ($friends_and_scout_number < 25) $period = 21;
         else $period = 14;
         // Request sceneries
-        if ($friends_and_scout_number == 0) $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)");
+        if ($friends_and_scout_number == 0) $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY)");
         else $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
         $getSceneries->execute();
         if ($getSceneries->rowCount() > 2) return $getSceneries->fetchAll(PDO::FETCH_ASSOC);

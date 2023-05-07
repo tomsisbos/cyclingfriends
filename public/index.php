@@ -38,6 +38,11 @@ $router->map('POST', '/profile/edit', 'profile/edit');
 $router->map('GET', '/settings', 'user/settings', 'user-settings');
 $router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-favorites-sceneries');
 $router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
+$router->map('GET', '/account/verification/guidance', 'user/verification-guidance', 'user-verification-guidance');
+$router->map('POST', '/account/verification/guidance', 'user/verification-guidance');
+$router->map('GET', '/account/verification/[i:user_slug]-[*:email]', function ($user_slug, $email) {
+    require_once '../actions/users/verificationAction.php';
+});
 
 // Manual
 $router->map('GET', '/manual', 'manual/home', 'manual');
@@ -64,7 +69,7 @@ $router->map('GET', '/[*:user_login]/routes', 'routes/userboard', 'route-userboa
 $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" when typing "/routes"
     require_once '../actions/users/initSessionAction.php';
     header('location: /' .$connected_user->login. '/routes');
-} );
+});
 
 // Rides
 $router->map('GET', '/ride/[i:ride_id]', 'rides/single', 'ride-single');

@@ -337,22 +337,6 @@ function imagecreateexif ($filename) {
 	return $img;
 }
 
-// Display success or error message if one is set
-function displayMessage ($errormessage = null, $successmessage = null) {
-	// If is set inside session variable
-	if (isset($_SESSION['errormessage'])) {
-		$errormessage = $_SESSION['errormessage'];
-		unset($_SESSION['errormessage']);
-	} else if (isset($_SESSION['successmessage'])) {
-		$successmessage = $_SESSION['successmessage'];
-		unset($_SESSION['successmessage']);
-	}
-	// if is set inside direct variable
-	if (isset($errormessage)) echo '<div class="error-block" style="margin: 0px;"><p class="error-message">' .$errormessage. '</p></div>';
-	if (isset($successmessage)) echo '<div class="success-block" style="margin: 0px;"><p class="success-message">' .$successmessage. '</p></div>';
-
-}
-
 function setPopularity ($rating, $grades_number) {
     // Set ratingScore
     if ($rating == null) { // If no rating data, set default to 3
