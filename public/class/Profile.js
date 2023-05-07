@@ -91,24 +91,29 @@ export default class Profile extends Model {
      * @returns updated profileData object
      */
     cutTunnels (profileData, tunnels) {
-        var coordinatesLeft = JSON.parse(JSON.stringify(profileData.profilePointsCoordinates)) // Slice coordinates after each tunnel for preventing wrong keys in case of passing through same coordinates multiple times 
-        var numberToAdd = 0 // Add sliced coordinates number to key number when necessary
+        var previousStart = 0
         tunnels.forEach( (tunnel) => {
-            var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], coordinatesLeft)
-            var startKey = parseInt(getKeyByValue(coordinatesLeft, startClosestSectionCoordinates)) - 1
-            var rest = coordinatesLeft.splice(0, startKey)
-            numberToAdd += rest.length
-            var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], coordinatesLeft)
-            var endKey = parseInt(getKeyByValue(coordinatesLeft, endClosestSectionCoordinates)) + 1
+            var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profileData.profilePointsCoordinates)
+            var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates)) - 1
+            var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profileData.profilePointsCoordinates)
+            var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates)) + 1
             ///if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
             var toSlice = endKey - startKey + 1
-            var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey + numberToAdd], profileData.pointsElevation[endKey + numberToAdd], toSlice)
-            // Replace in array
-            toInsert.reverse()
-            profileData.pointsElevation.splice(startKey + numberToAdd, toSlice)
-            for (let i = 0; i < toInsert.length; i++) {
-                console.log('pos' + (startKey + numberToAdd) + 'spliced')
-                profileData.pointsElevation.splice(startKey + numberToAdd, 0, toInsert[i])
+            var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
+
+            var lengthToReplace = turf.length(turf.lineSlice(profileData.profilePointsCoordinates[startKey], profileData.profilePointsCoordinates[endKey], turf.lineString(profileData.profilePointsCoordinates)))
+            var lengthOfTunnel = turf.length(turf.lineString(tunnel))
+
+            // For preventing false positives, ignore if length to replace is too different from length of tunnel
+            if ((lengthOfTunnel > 1 && lengthToReplace < (lengthOfTunnel * 2)) || lengthOfTunnel <= 1 && lengthToReplace < (lengthOfTunnel * 5)) {
+
+                // Replace in array
+                toInsert.reverse()
+                profileData.pointsElevation.splice(startKey, toSlice)
+                for (let i = 0; i < toInsert.length; i++) {
+                    profileData.pointsElevation.splice(startKey, 0, toInsert[i])
+                }
+                if (startKey > previousStart) previousStart = startKey
             }
         } )
         return profileData
