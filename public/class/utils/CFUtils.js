@@ -1,6 +1,9 @@
 export default class CFUtils {
 
-    // Find the closest coordinate of another coordinate among a coordinates array
+    /**
+     * Find the closest coordinate of another coordinate among a coordinates array
+     *
+     */
     static closestLocation (targetLocation, locationData) {
 
         function vectorDistance(dx, dy) {

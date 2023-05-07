@@ -91,19 +91,24 @@ export default class Profile extends Model {
      * @returns updated profileData object
      */
     cutTunnels (profileData, tunnels) {
+        var coordinatesLeft = JSON.parse(JSON.stringify(profileData.profilePointsCoordinates)) // Slice coordinates after each tunnel for preventing wrong keys in case of passing through same coordinates multiple times 
+        var numberToAdd = 0 // Add sliced coordinates number to key number when necessary
         tunnels.forEach( (tunnel) => {
-            var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profileData.profilePointsCoordinates)
-            var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates)) - 1
-            var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profileData.profilePointsCoordinates)
-            var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates)) + 1
-            if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
+            var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], coordinatesLeft)
+            var startKey = parseInt(getKeyByValue(coordinatesLeft, startClosestSectionCoordinates)) - 1
+            var rest = coordinatesLeft.splice(0, startKey)
+            numberToAdd += rest.length
+            var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], coordinatesLeft)
+            var endKey = parseInt(getKeyByValue(coordinatesLeft, endClosestSectionCoordinates)) + 1
+            ///if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
             var toSlice = endKey - startKey + 1
-            var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
+            var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey + numberToAdd], profileData.pointsElevation[endKey + numberToAdd], toSlice)
             // Replace in array
             toInsert.reverse()
-            profileData.pointsElevation.splice(startKey, toSlice)
+            profileData.pointsElevation.splice(startKey + numberToAdd, toSlice)
             for (let i = 0; i < toInsert.length; i++) {
-                profileData.pointsElevation.splice(startKey, 0, toInsert[i])
+                console.log('pos' + (startKey + numberToAdd) + 'spliced')
+                profileData.pointsElevation.splice(startKey + numberToAdd, 0, toInsert[i])
             }
         } )
         return profileData
@@ -208,9 +213,7 @@ export default class Profile extends Model {
             for (let i = 0; i < tiles.length; i++) {
 
                 // Query raster image
-                const zoom = limits.max_zoom
-                const x = tiles[i][0]
-                const y = tiles[i][1]
+                const [x, y, zoom] = tiles[i]
                 const url = 'https://api.mapbox.com/v4/mapbox.terrain-rgb/' + zoom + '/' + x + '/' + y + '@2x.pngraw?access_token=' + this.apiKey
                 const bbox = getTileBbox(geom.features[i].geometry.coordinates[0])
                 
@@ -250,7 +253,7 @@ export default class Profile extends Model {
                     canvas.width = 512
                     canvas.style.height = canvas.height + 'px'
                     canvas.style.width = canvas.width + 'px'
-                    ///document.body.prepend(canvas)
+                    /// [DEBUG USE]document.body.prepend(canvas)
                     const ctx = canvas.getContext('2d', {willReadFrequently: true})
                     const img = new Image()
                     img.onload = async (event) => {
@@ -258,21 +261,21 @@ export default class Profile extends Model {
                         ctx.drawImage(event.target, 0, 0)
 
                         // Find route coordinates inside this tile
-                        for (let i = 0; i < profileData.pointData.length; i++) {
-                            if (CFUtils.coordInsideBounds(profileData.profilePointsCoordinates[i], bbox)) {
+                        for (let j = 0; j < profileData.pointData.length; j++) {
+                            if (CFUtils.coordInsideBounds(profileData.profilePointsCoordinates[j], bbox)) {
 
                                 // Get corresponding pixel
-                                var pixel = getPixelPair(profileData.profilePointsCoordinates[i], bbox)                                
+                                var pixel = getPixelPair(profileData.profilePointsCoordinates[j], bbox)                                
                                 
-                                /*// Color pixel on the canvas
-                                ctx.fillStyle = '#ff0000'
+                                /// [DEBUG USE] Color pixel on the canvas (Remember that red color will interfere with color-based elevation analysis)
+                                /*ctx.fillStyle = '#ff0000'
                                 ctx.fillRect(pixel[0], pixel[1], 3, 3)*/
 
                                 // Get elevation for this pixel
                                 const elevation = getPixelElevation(ctx, pixel)
 
-                                profileData.pointData[i].y = elevation
-                                profileData.pointsElevation[i] = elevation
+                                profileData.pointData[j].y = elevation
+                                profileData.pointsElevation[j] = elevation
                             }
                         }
 

@@ -250,6 +250,17 @@ if (isAjax()) {
         echo json_encode($sceneriesList);
     }
 
+    if (isset($_GET['sceneries-photos'])) {
+        $sceneries_ids = explode(',', $_GET['get-sceneries']);
+        $photos = [];
+        foreach ($sceneries_ids as $scenery_id) {
+            $scenery = new Scenery($scenery_id);
+            $images = $scenery->getImages(3);
+            foreach ($images as $image) array_push($photos, $image);
+        }
+        echo json_encode($photos);
+    }
+
     if (isset($_GET['get-close-sceneries'])) {
         $route = new Route($_GET['get-close-sceneries']);
         $close_sceneries = $route->getCloseSceneries();

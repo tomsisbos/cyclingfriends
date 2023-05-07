@@ -103,10 +103,11 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
             routePageMap.enableTableButtons()
         } )
 
+        /*
         var fittingSegments = await routePageMap.getFittingSegments()
         fittingSegments.forEach( (segment) => {
             routePageMap.displaySegment(segment)
-        } )
+        } )*/
 
     // If map is static
     } else {

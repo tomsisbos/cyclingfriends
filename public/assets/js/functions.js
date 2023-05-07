@@ -42,7 +42,12 @@ function getHttpRequest () {
 	return httpRequest
 }
 
-// Ajax GET request generic function
+/**
+ * Ajax GET request generic function
+ * @param {String} url
+ * @param {Function} callback
+ * @param {Object} loader
+ */
 function ajaxGetRequest (url, callback, loader = null) {
 	var xhr = ajax(callback, loader)
 	// Send request through POST method
@@ -51,7 +56,13 @@ function ajaxGetRequest (url, callback, loader = null) {
 	xhr.send()
 }
 
-// Ajax POST formData request generic function
+/**
+ * Ajax POST formData request generic function
+ * @param {String} url
+ * @param {FormData} formData
+ * @param {Function} callback
+ * @param {Object} loader
+ */
 function ajaxPostFormDataRequest (url, formData, callback, loader = null) {
 	var xhr = ajax(callback, loader)
 	// Send request through POST method
@@ -60,7 +71,13 @@ function ajaxPostFormDataRequest (url, formData, callback, loader = null) {
 	xhr.send(formData)
 }
 
-// Ajax POST json request generic function
+/**
+ * Ajax POST json request generic function
+ * @param {String} url
+ * @param {Object} jsonData Data to stringify and send
+ * @param {Function} callback
+ * @param {Object} loader
+ */
 function ajaxJsonPostRequest (url, jsonData, callback, loader = null) {
 	var xhr = ajax(callback, loader)
 	// Send request through POST method
