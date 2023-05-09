@@ -730,7 +730,7 @@ export default class Profile extends Model {
             canvas.height = 50
             canvas.width = 50
             var ctx = canvas.getContext("2d")
-            ctx.font = "bold 35px Noto Sans"
+            ctx.font = "bold 35px monospace"
             if ((element.innerText == 'S' || element.innerText == 'SF') && poi.distance == 0) {
                 ctx.fillStyle = 'green'
                 var text = 'S'

@@ -98,7 +98,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 				
 				<div class="btn-container">
 					<a href="<?= $previous_page ?>">
-						<button type="button" class="btn button btnleft">Back</button>
+						<button type="button" class="btn button btnleft">戻る</button>
 					</a>	
 					<button type="submit" id="next" class="btn button btnright btn-primary" name="next">保存して進む</button>
 				</div>

@@ -18,7 +18,8 @@ if (isset($_POST['send'])) {
 
 
 $chat = $ride->getChat();
-forEach ($chat as $rideMessage){
+if (empty($chat)) echo '投稿はありません。';
+else forEach ($chat as $rideMessage){
 	$rideMessage = new RideMessage($rideMessage['id']);
 	// First display messages which are not children messages
 	if (!$rideMessage->parent) {
