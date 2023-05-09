@@ -1,7 +1,5 @@
 <h3 id="chat">チャット</h3> <?php
 
-/*include '../actions/databaseAction.php';*/
-
 // Space for error messages
 if (isset($chaterror)) echo '<div class="error-block"><p class="error-message">' .$chaterror. '</p></div>';
 
@@ -18,48 +16,46 @@ if (isset($_POST['send'])) {
 	} else $chaterror = '入力フォームが空欄になっています。';
 }
 
-// Prepare request of chat parent lines of a specific ride_id
-/*$getRideChatParents = $db->prepare('SELECT * FROM ride_chat WHERE ride_id = ? AND parent_id IS NULL ORDER BY time ASC');
-$getRideChatParents->execute(array($ride->id));*/
 
-
-	$chat = $ride->getChat();
-	forEach ($chat as $rideMessage){
-		$rideMessage = new RideMessage($rideMessage['id']);
-		// First display messages which are not children messages
-		if (!$rideMessage->parent) {
-			// Displays chat-line in admin color if ride author has admin rights
-			if ($rideMessage->author == $ride->getAuthor()) {
-				echo '<div class="chat-line chat-line-admin">';
-			} else {
-				echo '<div class="chat-line">';
-			}
-				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->getPropicElement(); ?></a><?php
-				echo '<div class="chat-message-block">';
-					echo '<div class="chat-login">' . $rideMessage->author->login . '</div>';
-					echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
-					echo '<div class="chat-message">' . $rideMessage->message . '</div>';
-				echo '</div>';
-			echo '</div>';
+$chat = $ride->getChat();
+forEach ($chat as $rideMessage){
+	$rideMessage = new RideMessage($rideMessage['id']);
+	// First display messages which are not children messages
+	if (!$rideMessage->parent) {
+		// Displays chat-line in admin color if ride author has admin rights
+		if ($rideMessage->author == $ride->getAuthor()) {
+			echo '<div class="chat-line chat-line-admin">';
 		} else {
-			if ($rideMessage->author == $ride->getAuthor()) {
-				echo '<div class="chat-line chat-line-admin child">';
-			} else {
-				echo '<div class="chat-line child">';
-			}
-				?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->getPropicElement(); ?></a><?php
-				echo '<div class="chat-message-block">';
-					echo '<div class="chat-login">' . $rideMessage->login . '</div>';
-					echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
-					echo '<div class="chat-message">' . $rideMessage->message . '</div>';
-				echo '</div>';
-			echo '</div>';
+			echo '<div class="chat-line">';
 		}
-	} ?>
-	
-<!-- Displays the input box -->
-<form method="post" class="chat-msgbox form-floating">
-	<textarea class="form-control" name="message"></textarea>
-	<label class="form-label" for="floatingInput">コメントを書く...</label>
-	<button type="submit" class="btn button btn button-primary" name="send">送信</button>
-</form>
+			?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->getPropicElement(); ?></a><?php
+			echo '<div class="chat-message-block">';
+				echo '<div class="chat-login">' . $rideMessage->author->login . '</div>';
+				echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
+				echo '<div class="chat-message">' . $rideMessage->message . '</div>';
+			echo '</div>';
+		echo '</div>';
+	} else {
+		if ($rideMessage->author == $ride->getAuthor()) {
+			echo '<div class="chat-line chat-line-admin child">';
+		} else {
+			echo '<div class="chat-line child">';
+		}
+			?><a href="/rider/<?= $rideMessage->id ?>"><?php $rideMessage->author->getPropicElement(); ?></a><?php
+			echo '<div class="chat-message-block">';
+				echo '<div class="chat-login">' . $rideMessage->login . '</div>';
+				echo ' - <div class="chat-time">' . $rideMessage->time . '</div>';
+				echo '<div class="chat-message">' . $rideMessage->message . '</div>';
+			echo '</div>';
+		echo '</div>';
+	}
+}
+
+// If user is connected, display input box
+if (isset($_SESSION['auth'])) { ?>
+	<form method="post" class="chat-msgbox form-floating">
+		<textarea class="form-control" name="message"></textarea>
+		<label class="form-label" for="floatingInput">コメントを書く...</label>
+		<button type="submit" class="btn button btn button-primary" name="send">送信</button>
+	</form> <?php
+} ?>

@@ -20,7 +20,7 @@ if (!empty($participation)) { ?>
 		</div>
 		<?php // If ride is full, display a text message
 		if ($ride->isFull()) {
-			echo '<p class="text-danger mt-1 mb-0">This ride is full ! Wait for someone to quit or try to participate next time.</p>';
+			echo '<p class="text-danger mt-1 mb-0">定員に達しました！次回のご参加をお待ちしております。</p>';
 		} ?>
 	</div> <?php
 } ?>
@@ -28,40 +28,17 @@ if (!empty($participation)) { ?>
 <!-- Participants lightbox window -->
 <div id="participantsWindow" class="modal modal-small" style="display: none;">
 	<span class="close cursor" onclick="closeParticipantsWindow()">&times;</span>
-	<div class="modal-block modal-block-thin">
+	<div class="modal-block p-2">
 		<div class="container bg-participant">
 			<h3 class=""><?= $ride->name. "の参加者"; ?></h3>
 		</div>
-		<div class="container overflow-400">
-			<div class="tr-row justify th-row bg-grey mb-2">
-				<div class="td-row element-30">
-				</div>
-				<div class="td-row element-30">
-					ユーザーネーム
-				</div>
-				<div class="td-row element-40">
-					場所
-				</div>
-			</div>
-			<?php
-			if (!empty($participation)) {		
+		<div class="small-rdr-cards-container container"> <?php
+			if (!empty($participation)) {
 				foreach ($participation as $key => $participant_id) {
-					$participant = new User ($participant_id); ?>
-					<div class="tr-row justify">
-						<div class="td-row element-30">
-							<a style="text-decoration: none;" href="/rider/<?= $participant->id; ?>"><?php $participant->getPropicElement(60, 60, 60); ?></a>
-						</div>
-						<div class="td-row element-30">
-							<?= $participant->login; ?>
-						</div>
-						<div class="td-row element-40">
-							<?= $participant->place; ?>
-						</div>
-					</div> <?php
+					$rider = new User ($participant_id);
+					include '../includes/riders/small-card.php';
 				}
-			}else{
-				echo '参加者はまだいません。';
-			} ?>
+			} else echo '表示するデータはありません。'; ?>
 		</div>
 	</div>
 </div>

@@ -10,7 +10,7 @@
                 <div class="item__3d-frame">
                     <div class="item__3d-frame__box item__3d-frame__box--front">
 						<video autoplay muted loop class="home-carousel-img d-block w-100">
-							<source src="/media/world.mp4" type="video/mp4">
+							<source src="/media/videos/world.mp4" type="video/mp4">
 						</video>
 						<div class="carousel-caption d-md-block">
 							<h5>サイクリングマップ</h5>
@@ -26,7 +26,7 @@
                 <div class="item__3d-frame">
                     <div class="item__3d-frame__box item__3d-frame__box--front">
 						<video autoplay muted loop class="home-carousel-img d-block w-100">
-							<source src="/media/activity.mp4" type="video/mp4">
+							<source src="/media/videos/activities.mp4" type="video/mp4">
 						</video>
 						<div class="carousel-caption d-md-block">
 							<h5>走行ストーリーを発信</h5>
@@ -42,7 +42,7 @@
                 <div class="item__3d-frame">
                     <div class="item__3d-frame__box item__3d-frame__box--front">
 						<video autoplay muted loop class="home-carousel-img d-block w-100">
-							<source src="/media/build.mp4" type="video/mp4">
+							<source src="/media/videos/build.mp4" type="video/mp4">
 						</video>
 						<div class="carousel-caption d-md-block">
 							<h5>ルートビルダー</h5>
@@ -58,7 +58,7 @@
                 <div class="item__3d-frame">
                     <div class="item__3d-frame__box item__3d-frame__box--front">
 						<video autoplay muted loop class="home-carousel-img d-block w-100">
-							<source src="/media/route.mp4" type="video/mp4">
+							<source src="/media/videos/routes.mp4" type="video/mp4">
 						</video>
 						<div class="carousel-caption d-md-block">
 							<h5>ルート共有</h5>
@@ -74,7 +74,7 @@
                 <div class="item__3d-frame">
                     <div class="item__3d-frame__box item__3d-frame__box--front">
 						<video autoplay muted loop class="home-carousel-img d-block w-100">
-							<source src="/media/ride.mp4" type="video/mp4">
+							<source src="/media/videos/rides.mp4" type="video/mp4">
 						</video>
 						<div class="carousel-caption d-md-block">
 							<h5>ライド開催機能</h5>

@@ -266,6 +266,16 @@ class Manual extends Model {
         echo '</div>';
     }
 
+    public static function video () {
+        if (file_exists('../public/media/videos/' .self::currentChapter(). '.mp4')) {
+            echo '<div class="m-video">';
+                echo '<video autoplay muted loop>';
+                    echo '<source src="/media/videos/' .self::currentChapter(). '.mp4" type="video/mp4">';
+                echo '</video>';
+            echo '</div>';
+        }
+    }
+
     public static function text ($paragraphs) { // paragraphs = array
         foreach ($paragraphs as $class => $text) {
             if (is_numeric($class)) echo '<p>' .$text. '</p>';

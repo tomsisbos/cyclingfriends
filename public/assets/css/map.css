@@ -14,6 +14,10 @@
 
 /* -- Map --- */
 
+.mapboxgl-map {
+    font-family: monospace !important;
+}
+
 .mapboxgl-canvas-container {
     height: 100%;
     width: 100%;
@@ -37,7 +41,6 @@
 }
 .click-map .click-map-text {
     position: absolute;
-    font-family: 'Noto Sans', sans-serif;
     font-size: 16px;
 }
 .click-map:hover {

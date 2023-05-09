@@ -35,6 +35,8 @@ include '../includes/head.php'; ?>
 
                 if (file_exists($chapter_file)) {
 
+                    Manual::video();
+
                     include $chapter_file;
 
                     Manual::intro($intro);
