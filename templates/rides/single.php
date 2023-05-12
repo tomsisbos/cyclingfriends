@@ -86,7 +86,8 @@ include '../includes/head.php'; ?>
 					<div class="col-sm"> <?php
 						$first_checkpoint = $ride->getCheckpoints()[0]; ?>
 						<p><strong>集合場所 :</strong> <?php
-							if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/' .$first_checkpoint->name. '/@' .$first_checkpoint->lngLat->lat. ',' .$first_checkpoint->lngLat->lng. ',14z" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place; ?>
+							if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/?api=1&query=' .$first_checkpoint->lngLat->lat. '%2C' .$first_checkpoint->lngLat->lng. '&query_place_id=' .$first_checkpoint->name. '" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place;
+							///if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/' .$first_checkpoint->name. '/@' .$first_checkpoint->lngLat->lat. ',' .$first_checkpoint->lngLat->lng. ',14z" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place; ?>
 						</p>
 					</div>
 				</div>

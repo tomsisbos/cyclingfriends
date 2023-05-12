@@ -45,10 +45,10 @@ if (isset($_POST['validate'])) {
 			include '../actions/rides/new/defineLevelFromFormValuesAction.php'; // $beginner, $intermediate, $athlete
 			include '../actions/rides/new/defineAcceptedBikesFromFormValuesAction.php'; // $city_bike, $road_bike, $mountain_bike, $gravel_cx_bike
 			$ride_description = nl2br(htmlspecialchars($ride_infos['ride-description']));
-			$meeting_place = $course_infos['meetingplace']['geolocation']['city']. ' (' .$course_infos['meetingplace']['geolocation']['prefecture']. ')';
+			$meeting_place = $course_infos['meetingplace']['geolocation']['city']. '（' .$course_infos['meetingplace']['geolocation']['prefecture']. '）';
 			$distance_about = $course_infos['distance-about'];
 			$distance = htmlspecialchars($course_infos['distance']);
-			$finish_place = $course_infos['finishplace']['geolocation']['city']. ' (' .$course_infos['finishplace']['geolocation']['prefecture']. ')';
+			$finish_place = $course_infos['finishplace']['geolocation']['city']. '（' .$course_infos['finishplace']['geolocation']['prefecture']. '）';
 			include '../actions/rides/new/defineTerrainFromStringAction.php'; // 'Flat', 'Small hills', 'Hills', 'Mountains'
 			$course_description = nl2br(htmlspecialchars($course_infos['course-description']));
 			if (isset($course_infos['route-id'])) $route_id = $course_infos['route-id'];
