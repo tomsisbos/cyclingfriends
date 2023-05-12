@@ -22,7 +22,8 @@
 	
 	<!-- php -->
 		<?php
-			require_once 'functions.php'; ?>
+			require_once 'functions.php';
+			require_once '../actions/treatCookieMessagesAction.php' ?>
 	
 	<!-- js -->
 		<!-- Jquery -->

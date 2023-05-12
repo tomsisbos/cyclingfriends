@@ -3,6 +3,7 @@ import CircleLoader from "/class/loaders/CircleLoader.js"
 var apiUrl = "/api/ride.php"
 
 var joinButton = document.getElementById('join')
+var signupJoinButton = document.getElementById('signup_join')
 var quitButton = document.getElementById('rd-quit')
 var rideId = getIdFromString(location.pathname)
 
@@ -54,6 +55,16 @@ if (quitButton) {
             showResponseMessage(response)
             window.location.href = "/ride/participations"
         })
+    })
+}
+
+
+
+if (signupJoinButton) {
+    signupJoinButton.addEventListener('click', async () => {
+
+        var answer = await openAlertPopup ('ライドに参加するには、ログインする必要があります。<br><br>アカウントをお持ちの方は<a style="font-weight: bold" href="' + window.location.href + '/signin">こちら</a><br>アカウントをお持ちでない方は<a style="font-weight: bold" href="' + window.location.href + '/signup">こちら</a>')
+        
     })
 }
 

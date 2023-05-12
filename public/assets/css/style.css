@@ -1131,7 +1131,7 @@ a .strava:hover {
 
 .popup {
     background-color: white;
-    max-width: 250px;
+    max-width: 450px;
     padding: 20px;
     position: relative;
     text-align: center;
@@ -1235,6 +1235,16 @@ a .strava:hover {
 .required::after {
     content: ' *';
     color: red;
+}
+
+.missing-field input, .missing-field select, .missing-field textarea {
+    border-color: #ff5555;
+    background-color: #ff555511;
+}
+.missing-field label::after {
+    padding-left: 20px;
+    content: '記入してください。';
+    color: #ff5555;
 }
 
 /* Number */

@@ -32,28 +32,32 @@ class User extends Model {
     function __construct($id = NULL) {
         parent::__construct();
         if ($id != NULL) {
-            $this->id                        = intval($id);
-            $data = $this->getData($this->table);
-            $this->slug                      = intval($data['slug']);
-            $this->verified                  = (intval($data['verified']) === 1);
-            $this->login                     = $data['login'];
-            $this->email                     = $data['email'];
-            $this->default_profilepicture_id = $data['default_profilepicture_id'];
-            $this->inscription_date          = $data['inscription_date'];
-            $this->first_name                = $data['first_name'];
-            $this->last_name                 = $data['last_name'];
-            $this->gender                    = $data['gender'];
-            $this->birthdate                 = $data['birthdate'];
-            $this->location                  = new Geolocation($data['city'], $data['prefecture']);
-            $this->lngLat                    = $this->getLngLat();
-            $this->level                     = $data['level'];
-            $this->description               = $data['description'];
-            $this->twitter                   = $data['twitter'];
-            $this->facebook                  = $data['facebook'];
-            $this->instagram                 = $data['instagram'];
-            $this->strava                    = $data['strava'];
-            $this->rights                    = new Role($data['rights']);
+            $this->id = $id;
+            $this->populate();
         }
+    }
+
+    private function populate () {
+        $data = $this->getData($this->table);
+        $this->slug                      = intval($data['slug']);
+        $this->verified                  = (intval($data['verified']) === 1);
+        $this->login                     = $data['login'];
+        $this->email                     = $data['email'];
+        $this->default_profilepicture_id = $data['default_profilepicture_id'];
+        $this->inscription_date          = $data['inscription_date'];
+        $this->first_name                = $data['first_name'];
+        $this->last_name                 = $data['last_name'];
+        $this->gender                    = $data['gender'];
+        $this->birthdate                 = $data['birthdate'];
+        $this->location                  = new Geolocation($data['city'], $data['prefecture']);
+        $this->lngLat                    = $this->getLngLat();
+        $this->level                     = $data['level'];
+        $this->description               = $data['description'];
+        $this->twitter                   = $data['twitter'];
+        $this->facebook                  = $data['facebook'];
+        $this->instagram                 = $data['instagram'];
+        $this->strava                    = $data['strava'];
+        $this->rights                    = new Role($data['rights']);
     }
 
     private function getLngLat () {
@@ -79,12 +83,31 @@ class User extends Model {
         $getId = $this->getPdo()->prepare("SELECT id FROM users WHERE email = ? AND login = ?");
         $getId->execute([$email, $login]);
         $this->id = $getId->fetch(PDO::FETCH_COLUMN);
+        $this->populate();
+    }
+
+    /**
+     * Update user data
+     * @param String $index
+     * @param Any $value
+     */
+    public function update ($index, $value) {
+        $updateData = $this->getPdo()->prepare("UPDATE users SET {$index} = ? WHERE id = ?");
+        $updateData->execute(array($value, $this->id));
+        $this->populate();
     }
 
     /**
      * Send email verification mail
      */
     public function sendVerificationMail () {
+        
+        // Get uri to redirect user to
+        $uri_array = explode('/', $_SERVER['REQUEST_URI']);
+        array_pop($uri_array);
+        $redirection_uri = implode('/', $uri_array);
+
+        // Send verification mail
         $email = new Mail();
         $email->setFrom(
             'contact@cyclingfriends.co',
@@ -97,7 +120,7 @@ class User extends Model {
             '<p>' .$this->login. 'さん、CyclingFriendsへようこそ！</p>
             <p>アカウントの作成は終わりましたが、ログインするにはまだメールアドレスの確認を行う必要があります。</p>
             <p>下記のURLにアクセスして、ログインしてください！</p>
-            <a>' .$_SERVER['HTTP_ORIGIN']. '/account/verification/' .$this->slug. '-' .$this->email. '</a>'
+            <a>' .$_SERVER['HTTP_ORIGIN']. $redirection_uri. '/account/verification/' .$this->slug. '-' .$this->email. '</a>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
@@ -577,13 +600,13 @@ class User extends Model {
     }
 
     public function getRideParticipations ($offset = 0, $limit = 20) {
-        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM participation WHERE user_id = ? ORDER BY entry_date DESC LIMIT " .$offset. ", " .$limit);
+        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM ride_participants WHERE user_id = ? ORDER BY entry_date DESC LIMIT " .$offset. ", " .$limit);
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getRideParticipationsNumber () {
-        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM participation WHERE user_id = ?");
+        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM ride_participants WHERE user_id = ?");
 	    $getRides->execute(array($this->id));
         return $getRides->rowCount();
     }

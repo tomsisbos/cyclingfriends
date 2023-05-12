@@ -12,35 +12,29 @@ $router = new AltoRouter();
 $router->map('GET', '/dashboard', 'dashboard');
 
 // Beta
-$router->map('GET', '/', 'home/home');
-$router->map('POST', '/', 'home/home');
-$router->map('GET', '/privatebeta/registration/[i:token]', 'beta/registration');
-$router->map('POST', '/privatebeta/registration/[i:token]', 'beta/registration');
-$router->map('GET', '/privatebeta/signup/[i:token]', 'beta/signup');
-$router->map('POST', '/privatebeta/signup/[i:token]', 'beta/signup');
-$router->map('GET', '/dev/board', 'dev/board');
-$router->map('POST', '/dev/board', 'dev/board');
-$router->map('GET', '/dev/note/[i:note_id]', 'dev/note');
-$router->map('POST', '/dev/note/[i:note_id]', 'dev/note');
+$router->map('GET|POST', '/', 'home/home');
+$router->map('GET|POST', '/privatebeta/registration/[i:token]', 'beta/registration');
+$router->map('GET|POST', '/privatebeta/signup/[i:token]', 'beta/signup');
+$router->map('GET|POST', '/dev/board', 'dev/board');
+$router->map('GET|POST', '/dev/note/[i:note_id]', 'dev/note');
 
 // User
-$router->map('GET', '/signin', 'user/signin', 'user-signin');
-$router->map('POST', '/signin', 'user/signin');
-$router->map('GET', '/signout', 'user/signout', 'user-signout');
-$router->map('POST', '/signout', 'user/signout');
-$router->map('GET', '/signup', 'user/signup', 'user-signup');
-$router->map('POST', '/signup', 'user/signup');
-$router->map('GET', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe');
-$router->map('POST', '/unsubscribe', 'user/unsubscribe');
+$router->map('GET|POST', '/signin', 'user/signin', 'user-signin');
+$router->map('GET|POST', '[*:url]/signin', 'user/signin', 'user-signin-redirect');
+$router->map('GET|POST', '/signout', 'user/signout', 'user-signout');
+$router->map('GET|POST', '[*:url]/signout', 'user/signout', 'user-signout-redirect');
+$router->map('GET|POST', '/signup', 'user/signup', 'user-signup');
+$router->map('GET|POST', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe');
 $router->map('GET', '/rider/[i:user_id]', 'profile/single', 'profile-single');
-$router->map('GET', '/profile/edit', 'profile/edit', 'profile-edit');
-$router->map('POST', '/profile/edit', 'profile/edit');
+$router->map('GET|POST', '/profile/edit', 'profile/edit', 'profile-edit');
 $router->map('GET', '/settings', 'user/settings', 'user-settings');
 $router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-favorites-sceneries');
 $router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
-$router->map('GET', '/account/verification/guidance', 'user/verification-guidance', 'user-verification-guidance');
-$router->map('POST', '/account/verification/guidance', 'user/verification-guidance');
+$router->map('GET|POST', '/account/verification/guidance', 'user/verification-guidance', 'user-verification-guidance');
 $router->map('GET', '/account/verification/[i:user_slug]-[*:email]', function ($user_slug, $email) {
+    require_once '../actions/users/verificationAction.php';
+});
+$router->map('GET', '[*:url]/account/verification/[i:user_slug]-[*:email]', function ($url, $user_slug, $email) {
     require_once '../actions/users/verificationAction.php';
 });
 
@@ -72,39 +66,31 @@ $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" wh
 });
 
 // Rides
-$router->map('GET', '/ride/[i:ride_id]', 'rides/single', 'ride-single');
-$router->map('POST', '/ride/[i:ride_id]', 'rides/single');
+$router->map('GET|POST', '/ride/[i:ride_id]', 'rides/single', 'ride-single');
 $router->map('GET', '/ride/new', 'rides/new', 'ride-new');
-$router->map('GET', '/ride/new/[i:stage]', 'rides/new');
-$router->map('POST', '/ride/new/[i:stage]', 'rides/new');
+$router->map('GET|POST', '/ride/new/[i:stage]', 'rides/new');
 $router->map('GET', '/ride/[i:ride_id]/edit', 'rides/edit', 'ride-edit');
-$router->map('GET', '/ride/[i:ride_id]/edit/[i:stage]', 'rides/edit');
-$router->map('POST', '/ride/[i:ride_id]/edit/[i:stage]', 'rides/edit');
+$router->map('GET|POST', '/ride/[i:ride_id]/edit/[i:stage]', 'rides/edit');
 $router->map('GET', '/ride/[i:ride_id]/admin', 'rides/admin/entries', 'ride-admin');
 $router->map('GET', '/ride/[i:ride_id]/admin/entries', 'rides/admin/entries', 'ride-admin-entries');
-$router->map('GET', '/ride/[i:ride_id]/admin/forms', 'rides/admin/forms', 'ride-admin-forms');
-$router->map('POST', '/ride/[i:ride_id]/admin/forms', 'rides/admin/forms');
-$router->map('GET', '/rides', 'rides/publicboard', 'rides-publicboard');
-$router->map('POST', '/rides', 'rides/publicboard');
+$router->map('GET|POST', '/ride/[i:ride_id]/admin/forms', 'rides/admin/forms', 'ride-admin-forms');
+$router->map('GET|POST', '/rides', 'rides/publicboard', 'rides-publicboard');
 $router->map('GET', '/ride/organizations', 'rides/organizations', 'ride-organizations');
 $router->map('GET', '/ride/participations', 'rides/participations', 'ride-participations');
 $router->map('GET', '/ride/[i:ride_id]/route', 'routes/single', 'ride-route');
+$router->map('GET|POST', '/ride/[i:ride_id]/signup', 'rides/signup', 'rides-signup');
 
 // Community
 $router->map('GET', '/community', 'community/community', 'community');
-$router->map('GET', '/friends', 'community/friends', 'friends');
-$router->map('POST', '/friends', 'community/friends');
-$router->map('GET', '/scouts', 'community/scouts', 'scouts');
-$router->map('POST', '/scouts', 'community/scouts');
+$router->map('GET|POST', '/friends', 'community/friends', 'friends');
+$router->map('GET|POST', '/scouts', 'community/scouts', 'scouts');
 $router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
-$router->map('GET', '/news', 'community/news', 'community/news');
-$router->map('POST', '/news', 'community/news');
+$router->map('GET|POST', '/news', 'community/news', 'community/news');
 
 // Company
 $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
-$router->map('GET', '/company/contact', 'company/contact', 'company-contact');
-$router->map('POST', '/company/contact', 'company/contact');
+$router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
 
 
 // Treatment of results

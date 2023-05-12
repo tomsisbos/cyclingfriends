@@ -11,8 +11,7 @@ if (isAjax()) {
     if (isset($_GET['twitter']) OR isset($_GET['facebook']) OR isset($_GET['instagram']) OR isset($_GET['strava']) OR isset($_GET['last_name']) OR isset($_GET['first_name']) OR isset($_GET['gender']) OR isset($_GET['birthdate']) OR isset($_GET['level']) OR isset($_GET['description'])) {
         $index = key($_GET);
         $value = $_GET[$index];
-        $updateInfo = $db->prepare("UPDATE users SET {$index} = ? WHERE id = ?");
-        $updateInfo->execute(array($value, $connected_user->id));
+        $connected_user->update($index, $value);
         echo json_encode([$index, $value]);
     }
 

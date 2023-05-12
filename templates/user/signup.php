@@ -17,9 +17,9 @@ include '../includes/head.php'; ?>
 	include '../includes/navbar.php'; ?>
 		
 	<div class="main with-background-img" data-parameter="public-scenery-imgs"> <?php
-                
-		if (isset($errormessage)) echo '<div class="error-block absolute"><p class="error-message">' .$errormessage. '</p></div>';
-		if (isset($successmessage)) echo '<div class="success-block absolute"><p class="success-message">' .$successmessage. '</p></div>'; ?>
+	
+		// Space for general error messages
+		include '../includes/result-message.php'; ?>
 		
 		<div class="container-fluid end connection-page with-background-flash">
 

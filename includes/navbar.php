@@ -127,7 +127,7 @@
 
 		// Else, displays the sign in button		
 		} else if (!isset($_SESSION['auth'])) { ?>
-			<a href="/signin">
+			<a href="<?= $_SERVER['REQUEST_URI']. '/signin'?>">
 				<button class="btn button" name="validate">ログイン</button>
 			</a> <?php
 		} ?>

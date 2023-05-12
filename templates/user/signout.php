@@ -2,6 +2,7 @@
 session_start();
 $_SESSION = [];
 session_destroy();
-header('location: /signin');
+if (!empty($params) && isset($params['url'])) header('location: ' .$params['url']);
+else header('location: /signin');
 
 ?>

@@ -132,7 +132,7 @@ include '../includes/head.php'; ?>
 				<div id="activityMapContainer">
 					<div class="cf-map" id="activityMap" <?php if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php 
 						if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
-							<a class="staticmap" href="/signin"><img /></a> <?php
+							<a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
 						} ?>
 					</div>
 					<div class="grabber"></div>

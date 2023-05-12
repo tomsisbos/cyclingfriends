@@ -5,7 +5,7 @@
 	// Get id from URL
 	$slug = basename($_SERVER['REQUEST_URI']);
 
-	if ($slug === 'join' || $slug === 'quit') {
+	if ($slug === 'signup') {
 
 		$url_fragments = explode('/', $_SERVER['REQUEST_URI']);
 		$slug = array_slice($url_fragments, -2)[0];

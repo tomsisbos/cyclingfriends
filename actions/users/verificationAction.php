@@ -21,7 +21,8 @@ if ($checkIfSlugAndEmailCorresponds->rowCount() == 1) {
     $_SESSION['successmessage'] = 'アカウント作成が無事に完了しました！';
 
     // Redirect authentified user to the Dashboard
-    header('location: /dashboard');
+    if (isset($url)) header('location: ' .$url);
+    else header('location: /dashboard');
     exit();
 
 } else header('location: /');

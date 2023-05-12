@@ -36,7 +36,8 @@ if (isset($_POST['validate'])) {
 					$user->setSession();
 
 					// Redirect authentified user to the Dashboard
-					header('location: /dashboard');
+					if (!empty($params) && isset($params['url'])) header('location: ' .$params['url']);
+					else header('location: /dashboard');
 					exit();
 
 				} else $errormessage = 'こちらのアカウントに登録されているメールアドレスがまだ確認されていないため、アカウント作成が完了していません。登録時（' .$user->inscription_date. '）にお送りした確認用の自動メール内に掲載しているURLをクリックして、アカウント作成を完了させてください。<br>自動メールが確認できていない場合は、<a href="' .$router->generate('user-verification-guidance'). '">こちら</a>をご確認ください。';

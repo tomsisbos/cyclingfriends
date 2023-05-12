@@ -75,7 +75,7 @@ include '../actions/routes/routeAction.php'; ?>
             <div class="cf-map" id="routePageMap" <?php
                 if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
                 if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
-                    <a class="staticmap" href="/signin"><img /></a> <?php
+                    <a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
                 } ?>
             </div>
             <div class="grabber"></div>
