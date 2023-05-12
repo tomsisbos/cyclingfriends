@@ -176,7 +176,7 @@ export default class WorldMap extends Map {
         line5.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line5)
         this.displayAmenitiesBox = document.createElement('input')
-        this.displayAmenitiesBox.id = 'dislayKonbinisBox'
+        this.displayAmenitiesBox.id = 'displayAmenitiesBox'
         this.displayAmenitiesBox.setAttribute('type', 'checkbox')
         this.displayAmenitiesBox.setAttribute('checked', 'true')
         line5.appendChild(this.displayAmenitiesBox)

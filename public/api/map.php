@@ -535,9 +535,7 @@ if (isAjax()) {
         WHERE
             (privacy = 'public' OR (privacy = 'friends_only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
         AND
-            date BETWEEN :today AND :datemax
-        AND
-            entry_start < NOW() AND entry_end > NOW()");
+            date BETWEEN :today AND :datemax");
         $today = new DateTime();
         $getRides->execute(array(":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d H:i:s')));
         $rides = [];
