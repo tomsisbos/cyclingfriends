@@ -264,7 +264,7 @@ class Ride extends Model {
         $additional_fields = $this->getAdditionalFields();
         $additional_fields_li = '';
         foreach ($additional_fields as $additional_field) {
-            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= '<p>' .$additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '</p>';
+            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
         }
 
         // Send confirmation email
@@ -280,11 +280,11 @@ class Ride extends Model {
             '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
             <p>エントリー情報及びライド情報は、下記の通りご確認頂けます。</p>
             <p>【ライド情報】</p>
-            <a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/' .$this->id. '">ライド情報はこちら</a><br>
+            <p><a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/' .$this->id. '">ライド情報はこちら</a></p><br>
             <p>【エントリー情報】</p>
-            <p>姓名：' .$participant->last_name. ' ' .$participant->first_name. '</p>
-            <p>性別：' .$participant->getGenderString(). '</p>
-            <p>生年月日：' .$participant->birthdate. '</p>'
+            姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
+            性別：' .$participant->getGenderString(). '<br>
+            生年月日：' .$participant->birthdate. '<br>'
                 .$additional_fields_li.
             '<br><p>現在エントリーしているライドの情報は<a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/participations">こちら</a>からご確認頂けます。</p>'
         );
@@ -326,15 +326,10 @@ class Ride extends Model {
     }
 
     public function isOpen () {
-        if (date('Y-m-d') < $this->entry_start) {
-            return 'not yet';
-        } else if (date('Y-m-d') > $this->entry_end) {
-            return 'closed';
-        } else if (date('Y-m-d') >= $this->entry_start AND date('Y-m-d') <= $this->entry_end) {
-            return 'open';
-        } else {
-            return false;
-        }
+        if (date('Y-m-d') < $this->entry_start) return 'not yet';
+        else if (date('Y-m-d') > $this->entry_end) return 'closed';
+        else if (date('Y-m-d') >= $this->entry_start AND date('Y-m-d') <= $this->entry_end) return 'open';
+        else return false;
     }
 
     public function isParticipating ($user) {

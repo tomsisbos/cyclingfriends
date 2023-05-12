@@ -120,7 +120,7 @@ class User extends Model {
             '<p>' .$this->login. 'さん、CyclingFriendsへようこそ！</p>
             <p>アカウントの作成は終わりましたが、ログインするにはまだメールアドレスの確認を行う必要があります。</p>
             <p>下記のURLにアクセスして、ログインしてください！</p>
-            <a>' .$_SERVER['HTTP_ORIGIN']. $redirection_uri. '/account/verification/' .$this->slug. '-' .$this->email. '</a>'
+            <a href="' .$_SERVER['HTTP_ORIGIN']. $redirection_uri. '/account/verification/' .$this->slug. '-' .$this->email. '">メールアドレスの確認用URLはこちら</a>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
