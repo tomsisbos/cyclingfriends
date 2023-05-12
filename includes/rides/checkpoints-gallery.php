@@ -78,8 +78,8 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             </div> <?php
         } ?>
             
-        <a class="prev nav-link">&#10094;</a>
-        <a class="next nav-link">&#10095;</a>
+        <a class="prev nav-link lightbox-arrow">&#10094;</a>
+        <a class="next nav-link lightbox-arrow">&#10095;</a>
 
         <?php // Display name as an input if current user have ride admin rights
         if (isset($_SESSION['auth']) && $connected_user->id == $ride->author_id) { ?>
@@ -93,7 +93,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
             <div class="name-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>
-                    <p class="js-name" style="display: none" id="name"><?= $checkpoint->name; ?></p> <?php
+                    <p class="js-name" style="display: none" id="name"><?= $checkpoint->name; ?> - km <?= round($checkpoint->distance, 1) ?></p> <?php
                 } ?>
             </div> <?php
         } ?>
