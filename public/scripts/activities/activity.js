@@ -186,7 +186,6 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         // Build checkpoints
         var checkpoints = ''
         const iconsFolder = 'https://www.cyclingfriends.co/media/activity-icons/'
-        console.log(activityMap)
         if (activityMap.data.checkpoints) {
             activityMap.data.checkpoints.forEach(checkpoint => {
                 // remove start and goal markers
