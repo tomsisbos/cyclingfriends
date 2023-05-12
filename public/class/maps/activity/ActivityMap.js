@@ -152,7 +152,6 @@ export default class ActivityMap extends Map {
             element.className = 'checkpoint-marker logo-checkpoint-marker'
             element.id = i
             var img = document.createElement('img')
-            console.log(type)
             img.src = 'https://api.iconify.design/' + this.icons[type] + '.svg'
             element.appendChild(img)
         }
@@ -253,14 +252,17 @@ export default class ActivityMap extends Map {
     }
 
     async displayPhotos () {
-        var sessionId = parseInt(await CFSession.get('id'))
-        this.data.photos.forEach( (photo) => {
-            // Only add photos which privacy is not set to true, except for the author
-            if (photo.privacy != 'private' || sessionId == this.data.user_id) {
-                var lngLat = this.getPhotoLocation(photo)
-                photo.marker = this.addPhoto(photo, lngLat)
-            }
-        } )
+        return new Promise(async (resolve, reject) => {
+            var sessionId = parseInt(await CFSession.get('id'))
+            this.data.photos.forEach( (photo) => {
+                // Only add photos which privacy is not set to true, except for the author
+                if (photo.privacy != 'private' || sessionId == this.data.user_id) {
+                    var lngLat = this.getPhotoLocation(photo)
+                    photo.marker = this.addPhoto(photo, lngLat)
+                }
+            } )
+            resolve(true)
+        })
     }
 
     displayCheckpointMarkers () {

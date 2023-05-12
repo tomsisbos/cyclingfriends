@@ -63,7 +63,7 @@ include '../includes/head.php'; ?>
 									<?= $activity->datetime->format('Y/m/d') . ' - 出発：' . $activity->datetime->format('H\:i') . ' 到着：' . $activity->getEndDateTime()->format('H\:i') ; ?>
 								</div>
 								<div class="ac-place">
-									<?= $activity->getPlace()['start']->toString() . ' から ' . $activity->getPlace()['goal']->toString() . ' まで'; ?>
+									<?= $activity->getPlace()['start']->toString() . 'から' . $activity->getPlace()['goal']->toString() . 'まで'; ?>
 								</div>
 								<div class="ac-specs">
 									<div class="ac-spec <?= $activity->setBackgroundColor('distance')?> ">

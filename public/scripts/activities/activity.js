@@ -84,7 +84,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
             })
         })
         activityMap.displayCheckpointMarkers()
-        activityMap.displayPhotos()
+        await activityMap.displayPhotos()
 
         // Focus on checkpoint on icon or checkpoint topline click
         document.querySelectorAll('.pg-ac-checkpoint-topline').forEach( (icon) => {

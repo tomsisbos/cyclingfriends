@@ -243,7 +243,7 @@ export default class Map extends Model {
             line5.appendChild(this.displaySceneriesBox)
             var displaySceneriesBoxLabel = document.createElement('label')
             displaySceneriesBoxLabel.innerText = '絶景スポットを表示'
-            displaySceneriesBoxLabel.setAttribute('for', 'displaySceneriesBoxLabel')
+            displaySceneriesBoxLabel.setAttribute('for', 'displaySceneriesBox')
             line5.appendChild(displaySceneriesBoxLabel)
             this.displaySceneriesBox.addEventListener('change', () => {
                 if (this.displaySceneriesBox.checked) {
