@@ -630,10 +630,6 @@
     top: -220px;
     transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s, z-index 0.5s;
 }
-.pg-ac-map-img-container.grown:hover {
-    opacity: 0.2 !important;
-    transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s;
-}
 .pg-ac-map-img-container.grown::after {
     font-size: 50px;
     color: #ff5555;
