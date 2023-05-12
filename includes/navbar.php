@@ -126,8 +126,12 @@
 			</a> <?php
 
 		// Else, displays the sign in button		
-		} else if (!isset($_SESSION['auth'])) { ?>
-			<a href="<?php if ($_SERVER['REQUEST_URI'] != '/') echo $_SERVER['REQUEST_URI']?>/signin">
+		} else if (!isset($_SESSION['auth'])) {
+			if (session_status() == PHP_SESSION_ACTIVE && $_SERVER['REQUEST_URI'] != '/') { ?>
+				<a href="<?= $_SERVER['REQUEST_URI']?>/signin"> <?php
+			} else { ?>
+				<a href="/signin"> <?php
+			} ?>
 				<button class="btn button" name="validate">ログイン</button>
 			</a> <?php
 		} ?>
