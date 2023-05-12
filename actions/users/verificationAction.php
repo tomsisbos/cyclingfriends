@@ -11,6 +11,7 @@ if ($checkIfSlugAndEmailCorresponds->rowCount() == 1) {
 
     // Set verified to true
     $setUserToVerified = $db->prepare("UPDATE users SET verified = 1 WHERE id = ?");
+    $setUserToVerified->execute([$user_id]);
     
     $user = new User($user_id);
 

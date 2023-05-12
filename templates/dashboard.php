@@ -19,7 +19,7 @@ if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/hel
 // Display general guidance during beta testing period ?>
 <script src="/scripts/helpers/beta/default-guidance.js"></script>
 
-<div class="main dashboard" id="infiniteScrollElement"> <?php
+<div class="main" id="infiniteScrollElement"> <?php
 
     // Space for general error messages
     include '../includes/result-message.php'; ?>
