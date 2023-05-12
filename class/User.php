@@ -99,13 +99,16 @@ class User extends Model {
 
     /**
      * Send email verification mail
+     * @param Boolean $redirect Whether to redirect user to the page where email has been sent or not
      */
-    public function sendVerificationMail () {
+    public function sendVerificationMail ($redirect = true) {
         
         // Get uri to redirect user to
-        $uri_array = explode('/', $_SERVER['REQUEST_URI']);
-        array_pop($uri_array);
-        $redirection_uri = implode('/', $uri_array);
+        if ($redirect) {
+            $uri_array = explode('/', $_SERVER['REQUEST_URI']);
+            array_pop($uri_array);
+            $redirection_uri = implode('/', $uri_array);
+        } else $redirection_uri = '';
 
         // Send verification mail
         $email = new Mail();

@@ -31,7 +31,7 @@ if (isset($_POST) && !empty($_POST)) {
                         // Check if password corresponds
                         if (password_verify($password, $user->getPassword())) {
 
-                            $user->sendVerificationMail();
+                            $user->sendVerificationMail(false);
 
                             $_SESSION['successmessage'] = '登録のメールアドレスに確認用のメールを再送信しました。';
 

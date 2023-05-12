@@ -16,7 +16,6 @@ if (joinButton) {
         // Check if proper bike has been registered
         return new Promise((resolve, reject) => {
             ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
-                loader.stop()
                 if (response.answer || response.bikes_list == '車種問わず') resolve(true)
                 else {
                     var answer = await openConfirmationPopup ('このライドで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
@@ -28,6 +27,7 @@ if (joinButton) {
         }).then(() => {
             return new Promise((resolve, reject) => {
                 ajaxGetRequest (apiUrl + "?get-missing-information=" + rideId, async (response) => {
+                    loader.stop()
                     if (response.length > 0)  {
                         var string = response.join('、')
                         var answer = await openAlertPopup('ライドに申し込むためには、次の情報の記入が必要です：' + string + '。<a href="/profile/edit" target="_blank">プロフィールページ</a>にてご記入頂けます。')
@@ -45,16 +45,18 @@ if (joinButton) {
 
 if (quitButton) {
 
-    quitButton.addEventListener('click', () => {
-
-        var loader = new CircleLoader(quitButton)
-        loader.start()
+    quitButton.addEventListener('click', async () => {
         
-        ajaxGetRequest(apiUrl + "?quit=" + rideId, async (response) => {
-            loader.stop()
-            showResponseMessage(response)
-            window.location.href = "/ride/participations"
-        })
+        var answer = await openConfirmationPopup ('ライドへのエントリーが取り消されます。宜しいですか？')
+        if (answer) {
+            var loader = new CircleLoader(quitButton)
+            loader.start()
+            ajaxGetRequest(apiUrl + "?quit=" + rideId, async (response) => {
+                loader.stop()
+                showResponseMessage(response)
+                window.location.href = "/ride/participations"
+            })
+        }
     })
 }
 
