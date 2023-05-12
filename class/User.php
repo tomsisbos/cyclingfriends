@@ -534,7 +534,7 @@ class User extends Model {
 
     // Function for getting user's profile picture element with defined height, width and border-radius attributes
     public function getPropicElement ($height = 60, $width = 60, $border_radius = 60) { ?>
-        <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container">
+        <div style="height: <?= $height ?>px; width: <?= $width ?>px;" class="free-propic-container<?php if ($this->hasModeratorRights() || $this->isGuide()) echo ' official-badge'; ?>">
             <img style="border-radius: <?= $border_radius ?>px;" class="free-propic-img" src="<?= $this->getPropicUrl() ?>" />
         </div> <?php
     }

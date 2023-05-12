@@ -236,6 +236,7 @@ input[type="checkbox"] {
 /* Images */
 
 .round-propic-container {
+    position: relative;
     height: 60px;
     width: 60px;
     min-width: 60px;
@@ -257,6 +258,7 @@ input[type="checkbox"] {
 
 .free-propic-container {
     display: inline-grid;
+    position: relative;
 }
 
 .free-propic-img {
@@ -273,6 +275,14 @@ input[type="checkbox"] {
     box-shadow: -1px 1px 1px black;
 }
 
+.official-badge::after {
+    content: url(https://api.iconify.design/material-symbols/verified-rounded.svg?color=%230dcaf0&width=20&height=20);
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+}
 
 .image-modify-container {
     position: relative;
