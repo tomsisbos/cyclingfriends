@@ -118,7 +118,7 @@ function openPopup (question) {
 		confirmationPopup.classList.add('popup')
 
         // In case of text input
-		if (question.type == 'text') confirmationPopup.innerHTML = question.question + '<input type="text" id="answer"></input><div class="btn smallbutton" id="ok">確定</div>'
+		if (question.type == 'text') confirmationPopup.innerHTML = question.question + '<input type="text" id="answer"></input><div class="btn smallbutton bg-darkgreen" id="ok">確定</div>'
 		// In case of select input
         else if (question.type == 'select') {
             var $options = ''
@@ -131,14 +131,14 @@ function openPopup (question) {
 		modal.appendChild(confirmationPopup)
 
 		// On click on ok button, close the popup and return input content
-		document.querySelector('#ok').addEventListener('click', () => {
-            var answer = document.querySelector('#answer').value
+		modal.querySelector('#ok').addEventListener('click', () => {
+            var answer = modal.querySelector('#answer').value
 			modal.remove()
 			resolve(answer)
 		})
         
 		// On click on cancel button, close the popup
-		document.querySelector('#cancel').addEventListener('click', () => {
+		if (modal.querySelector('#cancel')) modal.querySelector('#cancel').addEventListener('click', () => {
 			modal.remove()
 			reject()
 		})

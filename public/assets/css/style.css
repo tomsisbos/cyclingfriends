@@ -1173,6 +1173,10 @@ a .strava:hover {
     padding: 10px 0;
 }
 
+.popup select {
+    max-width: 100%;
+}
+
 .classy-title {
     color: white;
     text-align: center;
