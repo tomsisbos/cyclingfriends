@@ -285,7 +285,8 @@ class Ride extends Model {
             <p>姓名：' .$participant->last_name. ' ' .$participant->first_name. '</p>
             <p>性別：' .$participant->getGenderString(). '</p>
             <p>生年月日：' .$participant->birthdate. '</p>'
-                .$additional_fields_li
+                .$additional_fields_li.
+            '<br><p>現在エントリーしているライドの情報は<a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/participations">こちら</a>からご確認頂けます。</p>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
