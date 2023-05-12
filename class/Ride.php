@@ -1,5 +1,7 @@
 <?php
 
+use \SendGrid\Mail\Mail;
+
 class Ride extends Model {
     
     protected $table = 'rides';
@@ -262,7 +264,7 @@ class Ride extends Model {
         $additional_fields = $this->getAdditionalFields();
         $additional_fields_li = '';
         foreach ($additional_fields as $additional_field) {
-            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= '<li><strong>' .$additional_field->question. '：</strong>' .$additional_field->getAnswer($participant->id)->content. '</li>';
+            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= '<p>' .$additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '</p>';
         }
 
         // Send confirmation email
@@ -277,15 +279,13 @@ class Ride extends Model {
             'text/html',
             '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
             <p>エントリー情報及びライド情報は、下記の通りご確認頂けます。</p>
-            <h2>ライド情報</h2>
-            <a href="' .$router->generate('ride-single', ['ride_id' => $this->id]). '"><strong>ライド情報はこちら</strong></a><br>
-            <h2>エントリー情報</h2>
-            <ul>
-                <li><strong>姓名：</strong>' .$participant->last_name. ' ' .$participant->first_name. '</li>
-                <li><strong>性別：</strong>' .$participant->getGenderString(). '</li>
-                <li><strong>生年月日：</strong>' .$participant->birthdate. ' ' .$participant->birthdate. '</li>'
-                .$additional_fields_li.
-            '</ul>'
+            <p>【ライド情報】</p>
+            <a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/' .$this->id. '"><strong>ライド情報はこちら</strong></a><br>
+            <p>【エントリー情報】</p>
+            <p>姓名：' .$participant->last_name. ' ' .$participant->first_name. '</p>
+            <p>性別：' .$participant->getGenderString(). '</p>
+            <p>生年月日：' .$participant->birthdate. '</p>'
+                .$additional_fields_li
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
