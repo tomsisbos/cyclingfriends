@@ -1,10 +1,8 @@
 <div class="my-rd-card">
     <a href="/ride/<?= $ride->id ?>">
         <div class="my-rd-thumbnail" style="background-image: url(<?= $ride->getFeaturedImage()->url; ?>);">
-            <div class="my-rd-header header-block"> <?php
-                // Set text color depending on the status
-                $status_color = $ride->getStatusColor(); ?>
-                <div class="my-rd-status tag-light" style="background-color: <?= $status_color ?>;">
+            <div class="my-rd-header header-block"> 
+                <div class="my-rd-status tag-light <?= $ride->getStatusClass(); ?>">
                     <?= $ride->status;
                     // Only add substatus if there is one
                     if (!empty($ride->substatus)) { echo ' (' .$ride->substatus. ')'; } ?>

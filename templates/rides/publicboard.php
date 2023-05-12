@@ -6,7 +6,7 @@ include '../includes/head.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
-<link rel="stylesheet" href="/assets/css/rides.css" />
+<link rel="stylesheet" href="/assets/css/ride.css" />
 
 <body>
 

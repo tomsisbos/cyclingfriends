@@ -15,7 +15,7 @@ if (isset($_SESSION['forms']['created'])) {
 	unset($_SESSION['forms']['created']);
 } ?>
 
-<link rel="stylesheet" href="/assets/css/rides.css">
+<link rel="stylesheet" href="/assets/css/ride.css">
 
 <body> <?php
 	

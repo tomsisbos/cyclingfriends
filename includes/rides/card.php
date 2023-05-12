@@ -61,7 +61,7 @@
                     } ?>
                 </div>
             </div>
-            <div class="rd-section-entry" style="background-color: <?= $ride->getStatusColor(); ?>;">
+            <div class="rd-section-entry <?= $ride->getStatusClass(); ?>">
                 <span style="vertical-align: -webkit-baseline-middle;">
                     <?= '<strong>Entry : </strong>' .$ride->status;
                     if ($ride->entry_start > date('Y-m-d')) {

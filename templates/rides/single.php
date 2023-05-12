@@ -41,10 +41,8 @@ include '../includes/head.php'; ?>
 		<div class="full-header with-background-flash" style="position: relative">
 			<div class="header-block">
 				<div class="header-row mb-2">
-					<div class="rd-status"> <?php
-						// Set text color depending on the status
-						$status_color = $ride->getStatusColor('background'); ?>
-						<p style="background-color: <?= $status_color ?>" class="tag-light text-light"><?= $ride->status;
+					<div class="rd-status">
+						<p class="tag-light text-light <?= $ride->getStatusClass(); ?>"><?= $ride->status;
 						// Only add substatus if there is one
 						if (!empty($ride->substatus)) echo ' (' .$ride->substatus. ')'; ?></p> <?php 
 						if ($ride->privacy == 'friends_only') { ?>

@@ -436,32 +436,26 @@ class Ride extends Model {
         return array('status' => $status, 'substatus' => $substatus);
     }
 
-    public function getStatusColor ($type = 'font') {
+    public function getStatusClass () {
         switch ($this->status)
         {
             case '非公開' : // red
-                if ($type == 'background') return '#ff5555'; 
-                else return '#ffbbbb';
+                return 'rd-status-red';
                 break;
             case 'エントリー終了' : // blue
-                if ($type == 'background') return '#5555ff'; 
-                else return '#bbbbff';
+                return 'rd-status-blue';
                 break;
             case '募集中' : // green
-                if ($type == 'background') return '#00e06e';
-                else return '#afffaa';
+                return 'rd-status-green';
                 break;
             case '定員達成' : // blue
-                if ($type == 'background') return '#5555ff'; 
-                else return '#bbbbff';
+                return 'rd-status-blue';
                 break;
             case 'ライド終了' : // red
-                if ($type == 'background') return '#ff5555'; 
-                else return '#ffbbbb';
+                return 'rd-status-red';
                 break;
             default :
-                if ($type == 'background') return 'ffffff00'; 
-                else return 'black';
+                return 'rd-status-black';
         }
     }
 
