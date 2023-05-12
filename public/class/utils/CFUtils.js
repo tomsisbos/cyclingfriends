@@ -327,7 +327,7 @@ export default class CFUtils {
             case 'water-lake': return '湖';
             case 'water-waterfall': return '湖';
 
-            case 'culture': return '文化';
+            case 'culture-culture': return '文化';
             case 'culture-machinami': return '街並み';
             case 'culture-shrines': return '寺・神社';
             case 'culture-hamlet': return '集落';

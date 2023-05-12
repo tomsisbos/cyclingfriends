@@ -17,6 +17,7 @@ export default class RidePopup extends Popup {
         if (this.data.status == 'Open' || this.data.status == '募集中') var tagColor = 'tag-green'
         else if (this.data.status == 'Full' || this.data.status == '定員達成') var tagColor = 'tag-blue'
         else if (this.data.status == 'Closed' || this.data.status == 'エントリー終了') var tagColor = 'tag-red'
+        else var tagColor = 'tag-dark'
 
         // Build checkpoints table
         var trs = ''

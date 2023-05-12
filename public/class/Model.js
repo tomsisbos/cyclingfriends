@@ -28,7 +28,7 @@ export default class Model {
         'water-lake',
         'water-waterfall',
 
-        'culture',
+        'culture-culture',
         'culture-machinami',
         'culture-shrines',
         'culture-hamlet',

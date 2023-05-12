@@ -342,7 +342,7 @@ export default class WorldMap extends Map {
             // Second, add all rides that have entered bounds
             if (rides) rides.forEach( (ride) => {
                 // If ride is public and has a route data
-                if (ride.privacy == 'Public' && ride.route) {
+                if (ride.privacy == 'public' && ride.route) {
                     // If ride is inside bounds
                     if (CFUtils.lineCoordsInsideBounds(ride.route.coordinates, this.map.getBounds().toArray())) {
                         // Verify it has not already been loaded

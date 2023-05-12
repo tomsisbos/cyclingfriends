@@ -537,7 +537,7 @@ if (isAjax()) {
         AND
             date BETWEEN :today AND :datemax");
         $today = new DateTime();
-        $getRides->execute(array(":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d H:i:s')));
+        $getRides->execute(array(":today" => $today->format('Y-m-d'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d')));
         $rides = [];
         while ($ride_data = $getRides->fetch(PDO::FETCH_COLUMN)) {
             $ride = new Ride($ride_data, false);
