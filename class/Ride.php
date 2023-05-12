@@ -499,7 +499,9 @@ class Ride extends Model {
         $deleteChat->execute(array($this->id));
         $deleteParticipation = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE ride_id = ?');
         $deleteParticipation->execute(array($this->id));
-        $deleteRide = $this->getPdo()->prepare('DELETE FROM rides WHERE id = ?');
+        $deleteNotifications = $this->getPdo()->prepare("DELETE FROM notifications WHERE entry_table = {$this->table} AND entry_id = ?");
+        $deleteNotifications->execute(array($this->id));
+        $deleteRide = $this->getPdo()->prepare("DELETE FROM {$this->table} WHERE id = ?");
         $deleteRide->execute(array($this->id));
         return true;
     }

@@ -17,7 +17,7 @@
                         </a>
                     </div>
                     <div class="ac-posting-date">
-                        <?= $activity->datetime->format('Y/m/d') . ' - ' . $activity->getPlace()['start']->toString() . ' から ' . $activity->getPlace()['goal']->toString() . ' まで'; ?>
+                        <?= $activity->datetime->format('Y/m/d') . ' - ' . $activity->getPlace()['start']->toString() . 'から' . $activity->getPlace()['goal']->toString() . 'まで'; ?>
                     </div>
                 </div>
             </div>

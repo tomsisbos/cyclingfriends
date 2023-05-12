@@ -664,7 +664,6 @@
 .my-rd-status {
     width: fit-content;
     margin-bottom: 5px;
-    color: #000;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

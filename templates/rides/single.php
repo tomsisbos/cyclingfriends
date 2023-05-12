@@ -83,8 +83,11 @@ include '../includes/head.php'; ?>
 					<div class="col-sm">
 						<p><strong>集合時間 :</strong> <?= $ride->meeting_time; ?></p>
 					</div>
-					<div class="col-sm">
-						<p><strong>集合場所 :</strong> <?= $ride->meeting_place; ?></p>
+					<div class="col-sm"> <?php
+						$first_checkpoint = $ride->getCheckpoints()[0]; ?>
+						<p><strong>集合場所 :</strong> <?php
+							if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/' .$first_checkpoint->name. '/@' .$first_checkpoint->lngLat->lat. ',' .$first_checkpoint->lngLat->lng. ',14z" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place; ?>
+						</p>
 					</div>
 				</div>
 				<div class="row">
@@ -122,8 +125,8 @@ include '../includes/head.php'; ?>
 				<div class="rd-course-infos">
 					<h3>コースについて</h3>
 					<p><strong>距離 :</strong> <?php 
-						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->finish_place. " まで";
-						else echo $ride->distance. "km - " .$ride->meeting_place. " から " .$ride->meeting_place. " まで"; ?></p>
+						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. "から" .$ride->finish_place. "まで";
+						else echo $ride->distance. "km - " .$ride->meeting_place. "発着"; ?></p>
 					<p><strong>起伏 :</strong> <?= $ride->getTerrainIcon() ?></p>
 					<p><?= $ride->course_description; ?></p>
 				</div>

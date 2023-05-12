@@ -23,17 +23,21 @@
         <div class="my-rd-participation">
             <strong>参加者：</strong><?= '<span style="color:' .$participation['participation_color']. '">' .$participation['participants_number']. '</span>&nbsp;/&nbsp;' .$ride->nb_riders_max. ' (min. ' .$ride->nb_riders_min. ')'; ?>
         </div>
-        <div class="my-rd-entry-period">
-            <strong>募集期間：</strong><?= $ride->entry_start ?> から <?= $ride->entry_end ?> まで
+        <div class="my-rd-entry-period"> <?php
+            if (!empty($ride->entry_end)) echo '<strong>募集期間：</strong>' .$ride->entry_start. ' ∼ ' .$ride->entry_end;
+            else echo '<strong>募集期間：</strong>未定'; ?>
         </div>
         <div class="append-buttons">
             <a href="/ride/<?= $ride->id ?>">
-                <div class="mp-button normal">詳細</div>
+                <button class="mp-button normal">詳細</button>
             </a> <?php if ($connected_user->id == $ride->author_id) { ?>
                 <a href="/ride/<?= $ride->id ?>/edit">
-                    <div class="mp-button success">編集</div>
+                    <button class="mp-button success">編集</button>
                 </a>
-                <div class="mp-button danger js-delete-ride" data-id="<?= $ride->id ?>">削除</div> <?php
+                <a href="/ride/<?= $ride->id ?>/admin">
+                    <button class="mp-button admin">管理</button>
+                </a>
+                <button class="mp-button danger js-delete-ride" data-id="<?= $ride->id ?>">削除</button> <?php
             } ?>
         </div>
     </div>
