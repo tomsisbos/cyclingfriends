@@ -249,16 +249,48 @@ class Ride extends Model {
         return false;
     }
 
+    /**
+     * Add a participant
+     * @param User $participant
+     */
     public function join ($participant) {
         // Add a line into participation database
-        $joinRide = $this->getPdo()->prepare('INSERT INTO participation(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
+        $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
         $joinRide->execute(array($participant->id, $this->id, date('Y-m-d H:i:s')));
+
+        // Send confirmation email
+        $email = new Mail();
+        $email->setFrom(
+            'contact@cyclingfriends.co',
+            'CyclingFriends'
+        );
+        $email->setSubject($this->date. ' ' .$this->name. '【エントリー情報】');
+        $email->addTo($participant->email);
+        $email->addContent(
+            'text/html',
+            '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
+            <p>エントリー情報及びライド情報は、下記の通りご確認頂けます。</p>
+            <h2>ライド情報</h2>
+            <a href="' .$router->generate('ride-single', ['ride_id' => $this->id]). '"><strong>ライド情報はこちら</strong></a><br>
+            <h2>エントリー情報</h2>
+            <ul>
+                <li><strong>姓名：</strong>' .$participant->last_name. ' ' .$participant->first_name. '</li>
+                <li><strong>生年月日：</strong>' .$participant->birthdate. ' ' .$participant->birthdate. '</li>
+            </ul>'
+        );
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $response = $sendgrid->send($email);
+
+        // Set notification
         $this->notify($this->author_id, 'ride_join', $participant->id);
     }
 
+    /**
+     * Remove a participant
+     * @param User $participant
+     */
     public function quit ($participant) {
-        // Remove an user from participation database
-		$quitRide = $this->getPdo()->prepare('DELETE FROM participation WHERE user_id = ? AND ride_id = ?');
+		$quitRide = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE user_id = ? AND ride_id = ?');
 		$quitRide->execute(array($_SESSION['id'], $this->id));
         $this->notify($this->author_id, 'ride_quit', $participant->id);
     }
@@ -278,7 +310,7 @@ class Ride extends Model {
     public function isParticipating ($user) {
         
         // Check if the user has already joined the ride
-        $checkIfParticipate = $this->getPdo()->prepare('SELECT ride_id FROM participation WHERE user_id = ? AND ride_id = ?');
+        $checkIfParticipate = $this->getPdo()->prepare('SELECT ride_id FROM ride_participants WHERE user_id = ? AND ride_id = ?');
         $checkIfParticipate->execute(array($user->id, $this->id));
     
         if ($checkIfParticipate->rowCount() > 0) return true;
@@ -287,7 +319,7 @@ class Ride extends Model {
 
     // Get an array with participants list
     public function getParticipants () {
-        $getParticipants = $this->getPdo()->prepare('SELECT user_id FROM participation WHERE ride_id = ?');
+        $getParticipants = $this->getPdo()->prepare('SELECT user_id FROM ride_participants WHERE ride_id = ?');
         $getParticipants->execute(array($this->id));
         if ($getParticipants->rowCount() > 0) return $getParticipants->fetchAll(PDO::FETCH_COLUMN);
         else return NULL;
@@ -438,7 +470,7 @@ class Ride extends Model {
         $deleteCheckpoints->execute(array($this->id));
         $deleteChat = $this->getPdo()->prepare('DELETE FROM ride_chat WHERE ride_id = ?');
         $deleteChat->execute(array($this->id));
-        $deleteParticipation = $this->getPdo()->prepare('DELETE FROM participation WHERE ride_id = ?');
+        $deleteParticipation = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE ride_id = ?');
         $deleteParticipation->execute(array($this->id));
         $deleteRide = $this->getPdo()->prepare('DELETE FROM rides WHERE id = ?');
         $deleteRide->execute(array($this->id));
