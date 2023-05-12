@@ -24,6 +24,8 @@ if (isset($_SERVER['HTTP_REFERER'])) {
 }
 
 if (!$is_allowed) {
+    var_dump($_SERVER['HTTP_REFERER']);
+    var_dump($host);
     echo "You are not allowed to access this resource.";
     die();
 }
