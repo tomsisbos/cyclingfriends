@@ -85,8 +85,10 @@
 					<a class="dropdown-item interactive" href="/manual"><div class="mainitem">マニュアル</div></a> <?php
 					// If the user is connected, displays the sign out button 
 					if (isset($_SESSION['auth'])) { ?>
-					<hr class="dropdown-divider">
-						<a class="dropdown-item interactive" href="/signout"><div class="mainitem">サインアウト</div></a> <?php
+						<hr class="dropdown-divider">
+						<a class="dropdown-item interactive" href="<?= $_SERVER['REQUEST_URI'] ?>/signout">
+							<div class="mainitem">サインアウト</div>
+						</a> <?php
 					} ?>
 				</div>
 			</div>
