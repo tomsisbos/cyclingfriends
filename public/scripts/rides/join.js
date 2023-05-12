@@ -72,6 +72,8 @@ if (signupJoinButton) {
 
 
 function join () {
+
+    // Get answers to questions
     ajaxGetRequest(apiUrl + "?get-questions=" + rideId, async (questions) => {
         var phase = 0
         var answers = {
@@ -87,7 +89,12 @@ function join () {
             })
             phase++
         }
-        ajaxJsonPostRequest(apiUrl, answers, (response) => {
+
+        var contract = await getContract()
+
+        // Get contract agreement
+        var agreement = await openConfirmationPopup('<p>ライドのご参加頂くには、開催規約をご確認の上、承諾して頂く必要があります。</p><div class="popup-contract">' + contract + '</div><p>承諾しますか？</p>')
+        if (agreement) ajaxJsonPostRequest(apiUrl, answers, (response) => {
             showResponseMessage(response)
             window.location.href = "/ride/participations"
         })
@@ -128,4 +135,12 @@ function openPopup (question) {
 			reject()
 		})
 	})
+}
+
+function getContract () {
+    return new Promise((resolve, reject) => {
+        fetch('/api/rides/contract.html')
+        .then(response => response.text())
+        .then(text => resolve(text))
+    })
 }
