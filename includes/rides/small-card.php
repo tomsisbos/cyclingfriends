@@ -32,7 +32,7 @@
                 <button class="mp-button normal">詳細</button>
             </a> <?php if ($connected_user->id == $ride->author_id) { ?>
                 <a href="/ride/<?= $ride->id ?>/edit">
-                    <button class="mp-button success">編集</button>
+                    <button class="mp-button admin">編集</button>
                 </a>
                 <a href="/ride/<?= $ride->id ?>/admin">
                     <button class="mp-button admin">管理</button>
