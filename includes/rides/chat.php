@@ -18,7 +18,7 @@ if (isset($_POST['send'])) {
 
 
 $chat = $ride->getChat();
-if (empty($chat)) echo '投稿はありません。';
+if (empty($chat)) echo '<div class="mb-2">投稿はありません。</div>';
 else forEach ($chat as $rideMessage){
 	$rideMessage = new RideMessage($rideMessage['id']);
 	// First display messages which are not children messages
@@ -55,8 +55,8 @@ else forEach ($chat as $rideMessage){
 // If user is connected, display input box
 if (isset($_SESSION['auth'])) { ?>
 	<form method="post" class="chat-msgbox form-floating">
-		<textarea class="form-control" name="message"></textarea>
-		<label class="form-label" for="floatingInput">コメントを書く...</label>
+		<textarea class="form-control" name="message" id="floatingMessage"></textarea>
+		<label class="form-label" for="floatingMessage">コメントを書く...</label>
 		<button type="submit" class="btn button btn button-primary" name="send">送信</button>
 	</form> <?php
 } ?>

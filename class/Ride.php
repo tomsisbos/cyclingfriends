@@ -267,6 +267,10 @@ class Ride extends Model {
             if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
         }
 
+        // Get origin
+        if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
+        else $origin = parse_url($_SERVER['HTTP_REFERER'])['scheme'] . '://' . parse_url($_SERVER['HTTP_REFERER'])['host'];
+
         // Send confirmation email
         $email = new Mail();
         $email->setFrom(
@@ -280,13 +284,13 @@ class Ride extends Model {
             '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
             <p>エントリー情報及びライド情報は、下記の通りご確認頂けます。</p>
             <p>【ライド情報】</p>
-            <p><a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/' .$this->id. '">ライド情報はこちら</a></p><br>
+            <p><a href="' .$origin. '/ride/' .$this->id. '">ライド情報はこちら</a></p><br>
             <p>【エントリー情報】</p>
             姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
             性別：' .$participant->getGenderString(). '<br>
             生年月日：' .$participant->birthdate. '<br>'
                 .$additional_fields_li.
-            '<br><p>現在エントリーしているライドの情報は<a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/participations">こちら</a>からご確認頂けます。</p>'
+            '<br><p>現在エントリーしているライドの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
@@ -305,6 +309,10 @@ class Ride extends Model {
 		$quitRide = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE user_id = ? AND ride_id = ?');
 		$quitRide->execute(array($_SESSION['id'], $this->id));
 
+        // Get origin
+        if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
+        else $origin = parse_url($_SERVER['HTTP_REFERER'])['scheme'] . '://' . parse_url($_SERVER['HTTP_REFERER'])['host'];
+
         // Send confirmation email
         $email = new Mail();
         $email->setFrom(
@@ -315,8 +323,8 @@ class Ride extends Model {
         $email->addTo($participant->email);
         $email->addContent(
             'text/html',
-            '<p><a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/' .$this->id. '">' .$this->name. '</a>へのエントリーが取り消されました。</p>
-            <p>現在エントリーしているライドの情報は<a href="' .$_SERVER['HTTP_ORIGIN']. '/ride/participations">こちら</a>からご確認頂けます。</p>'
+            '<p><a href="' .$origin. '/ride/' .$this->id. '">' .$this->name. '</a>へのエントリーが取り消されました。</p>
+            <p>現在エントリーしているライドの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);

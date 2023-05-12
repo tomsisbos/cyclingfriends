@@ -27,7 +27,6 @@ if (joinButton) {
         }).then(() => {
             return new Promise((resolve, reject) => {
                 ajaxGetRequest (apiUrl + "?get-missing-information=" + rideId, async (response) => {
-                    loader.stop()
                     if (response.length > 0)  {
                         var string = response.join('、')
                         var answer = await openAlertPopup('ライドに申し込むためには、次の情報の記入が必要です：' + string + '。<a href="/profile/edit" target="_blank">プロフィールページ</a>にてご記入頂けます。')
@@ -37,6 +36,7 @@ if (joinButton) {
                 })
             })
         }).then((result) => {
+            loader.stop()
             if (result) join()
             else return
         })
@@ -72,9 +72,13 @@ if (signupJoinButton) {
 
 
 function join () {
+    
+    var loader = new CircleLoader(joinButton)
+    loader.start()
 
     // Get answers to questions
     ajaxGetRequest(apiUrl + "?get-questions=" + rideId, async (questions) => {
+        loader.stop()
         var phase = 0
         var answers = {
             id: rideId,
@@ -94,10 +98,14 @@ function join () {
 
         // Get contract agreement
         var agreement = await openConfirmationPopup('<p>ライドのご参加頂くには、開催規約をご確認の上、承諾して頂く必要があります。</p><div class="popup-contract">' + contract + '</div><p>承諾しますか？</p>')
-        if (agreement) ajaxJsonPostRequest(apiUrl, answers, (response) => {
-            showResponseMessage(response)
-            window.location.href = "/ride/participations"
-        })
+        if (agreement) {
+            loader.start()
+            ajaxJsonPostRequest(apiUrl, answers, (response) => {
+                loader.stop()
+                showResponseMessage(response)
+                window.location.href = "/ride/participations"
+            })
+        }
     })
 }
 
