@@ -258,6 +258,13 @@ class Ride extends Model {
         $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
         $joinRide->execute(array($participant->id, $this->id, date('Y-m-d H:i:s')));
 
+        // Prepare additional fields data
+        $additional_fields = $this->getAdditionalFields();
+        $additional_fields_li = '';
+        foreach ($additional_fields as $additional_field) {
+            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= '<li><strong>' .$additional_field->question. '：</strong>' .$additional_field->getAnswer($participant->id)->content. '</li>';
+        }
+
         // Send confirmation email
         $email = new Mail();
         $email->setFrom(
@@ -275,8 +282,10 @@ class Ride extends Model {
             <h2>エントリー情報</h2>
             <ul>
                 <li><strong>姓名：</strong>' .$participant->last_name. ' ' .$participant->first_name. '</li>
-                <li><strong>生年月日：</strong>' .$participant->birthdate. ' ' .$participant->birthdate. '</li>
-            </ul>'
+                <li><strong>性別：</strong>' .$participant->getGenderString(). '</li>
+                <li><strong>生年月日：</strong>' .$participant->birthdate. ' ' .$participant->birthdate. '</li>'
+                .$additional_fields_li.
+            '</ul>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
