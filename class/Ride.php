@@ -77,7 +77,7 @@ class Ride extends Model {
     }
 
     public function getAuthor () {
-        return new User ($this->author_id);
+        return new User($this->author_id);
     }
 
     public function getRoute () {
