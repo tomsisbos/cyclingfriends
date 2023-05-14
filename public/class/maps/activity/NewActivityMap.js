@@ -79,12 +79,12 @@ export default class NewActivityMap extends ActivityMap {
             }
 
             // Dynamically simplify routeCoords and routeTime
-            if (trackpoints.length < 6000) var simplificationMultiplicator = 3
+            /*if (trackpoints.length < 6000) var simplificationMultiplicator = 3
             else simplificationMultiplicator = 4
             for (let i = 0; i < routeCoords.length; i++) {
                 routeCoords.splice(i, simplificationMultiplicator)
                 routeTime.splice(i, simplificationMultiplicator)
-            }
+            }*/
             // Build route geojson
             var routeData = turf.lineString(routeCoords)
             routeData.properties.time = routeTime

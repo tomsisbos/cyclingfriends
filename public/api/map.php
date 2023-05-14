@@ -599,14 +599,14 @@ if (isAjax()) {
 
     if (isset($_GET['segment-sceneries'])) {
         $segment = new Segment($_GET['segment-sceneries']);
-        $close_sceneries = $segment->route->getCloseSceneries(500);
+        $close_sceneries = $segment->route->getCloseSceneries(200);
         foreach ($close_sceneries as $scenery) $scenery->photos = $scenery->getImages();
         echo json_encode($close_sceneries);
     }
     
     if (isset($_GET['segment-public-photos'])) {
         $segment = new Segment($_GET['segment-public-photos']);
-        $public_photos = $segment->route->getPublicPhotos(500);
+        $public_photos = $segment->route->getPublicPhotos(300);
         echo json_encode($public_photos);
     }
     

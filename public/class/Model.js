@@ -34,7 +34,7 @@ export default class Model {
         'culture-hamlet',
 
         'terrain-pass',
-        'terrain-mountain',
+        'terrain-mountains',
         'terrain-viewpoint'
     ]
     loaderContainer = document.body

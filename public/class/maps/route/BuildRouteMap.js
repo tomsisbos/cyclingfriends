@@ -1626,8 +1626,8 @@ export default class BuildRouteMap extends Map {
     // Save current route
     async saveRoute (details) {
         // Reduce coordinates number for performance purpose
-        if (this.map.getSource('route')._data.geometry.coordinates.length > 600) var routeData = turf.simplify(this.map.getSource('route')._data, {tolerance: 0.0001, highQuality: true, mutate: false})
-        else var routeData = this.map.getSource('route')._data
+        /*if (this.map.getSource('route')._data.geometry.coordinates.length > 600) var routeData = turf.simplify(this.map.getSource('route')._data, {tolerance: 0.0001, highQuality: true, mutate: false})
+        else */var routeData = this.map.getSource('route')._data
         var route = {
             id: 'new',
             type: 'route-save',
