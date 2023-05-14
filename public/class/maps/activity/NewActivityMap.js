@@ -1230,6 +1230,8 @@ export default class NewActivityMap extends ActivityMap {
             this.$map.style.width = '1600px'
             this.$map.style.height = this.$map.offsetWidth * 9 / 16
             this.map.resize()
+            console.log(this.$map)
+            debugger
 
             // Focus on route
             var {lng, lat} = this.map.getCenter()

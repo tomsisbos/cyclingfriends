@@ -8,6 +8,7 @@ include '../includes/head.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/activity.css">
 <link rel="stylesheet" href="/assets/css/ride.css" />
+<link rel="stylesheet" href="/assets/css/lightbox-style.css">
 
 <body>
 

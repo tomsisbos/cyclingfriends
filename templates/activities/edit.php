@@ -10,6 +10,7 @@ if ($connected_user->id != $activity->user_id) header('location: /' .$connected_
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/activity.css">
+<link rel="stylesheet" href="/assets/css/lightbox-style.css">
 
 <body>
 
