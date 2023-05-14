@@ -282,30 +282,24 @@ class Route extends Model {
     public function getPublicPhotos ($tolerance = 3000, $append_distance = true) {
 
         // Get all public activity photos registered in the database
-        $getPublicPhotos = $this->getPdo()->prepare("SELECT id, ST_X(point) as lng, ST_Y(point) as lat FROM activity_photos WHERE ST_IsEmpty(point) = 0 AND privacy = 'public'");
+        $d = 0.0015; // About 300m
+        $getPublicPhotos = $this->getPdo()->prepare("
+            SELECT
+                id
+            FROM activity_photos
+            WHERE
+                ST_IsEmpty(point) = 0
+                    AND
+                privacy = 'public'
+                    AND
+                ST_Intersects(point, ST_Buffer((SELECT linestring FROM linestrings WHERE segment_id = {$this->id}), {$d}))
+        ");
         $getPublicPhotos->execute();
-        $public_photos = $getPublicPhotos->fetchAll(PDO::FETCH_ASSOC);
-        $photos_in_range = [];
-
-        // Filter activity photos inside a certain range from route
-        for ($i = 0; $i < count($public_photos); $i++) {
-            if ($public_photos[$i]['lng']) { // Necessary to filter photos uploaded before implementation of lnglat data
-                $range_data = $this->inRange(new Coordinate($public_photos[$i]['lat'], $public_photos[$i]['lng']), $tolerance);
-                if ($range_data) {
-                    $public_photos[$i]['remoteness'] = $range_data['remoteness'];
-                    $public_photos[$i]['closest_point'] = $range_data['closest_point'];
-                    array_push($photos_in_range, $public_photos[$i]);
-                }
-            }
-        }
-
-        // Return an array of photos less than [tolerance] from route
-        if (isset($photos_in_range[0]['distance'])) {
-            $distance_column = array_column($photos_in_range, 'distance');
-            array_multisort($distance_column, SORT_ASC, $photos_in_range);
-        }
-
-        return $photos_in_range;
+        $result = $getPublicPhotos->fetchAll(PDO::FETCH_ASSOC);
+        $public_photos = array_map(function ($photo) {
+            return new ActivityPhoto($photo['id']);
+        }, $result);
+        return $public_photos;
     }
 
     /** Get Sceneries that are less than [basis] km from the route (with remoteness and distance to start appended if $append_distance param is true)

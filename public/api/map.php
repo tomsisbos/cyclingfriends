@@ -604,6 +604,12 @@ if (isAjax()) {
         echo json_encode($close_sceneries);
     }
     
+    if (isset($_GET['segment-public-photos'])) {
+        $segment = new Segment($_GET['segment-public-photos']);
+        $public_photos = $segment->route->getPublicPhotos(500);
+        echo json_encode($public_photos);
+    }
+    
     if (isset($_GET['get-user-favorite-sceneries'])) {
         echo json_encode($connected_user->getFavorites('scenery'));
     }

@@ -21,7 +21,6 @@ export default class SegmentPopup extends Popup {
     type = 'segment'
     profile
     data
-    mapdata = {}
     sceneries
     photos
     loaderContainer = document.body
@@ -93,9 +92,9 @@ export default class SegmentPopup extends Popup {
             this.profile.generate({sourceName: 'segment' + this.data.id})
 
             // Query relevant sceneries and photos
-            this.getSceneries().then((sceneries) => {
-                this.mapdata.sceneries = sceneries
-                this.photos = this.getPhotos()
+            this.getSceneries().then(async (sceneries) => {
+                this.sceneries = sceneries
+                this.photos = await this.getPhotos()
                 this.displayPhotos()
                 this.loadLightbox()
                 this.addIconButtons()
@@ -180,13 +179,32 @@ export default class SegmentPopup extends Popup {
         } )
     }
 
-    getPhotos () {
+    getActivityPhotos () {
+        return new Promise( (resolve, reject) => {
+        
+            // Asks server for current photo data
+            this.loaderContainer = this.popup._content.querySelector('.popup-img-container')
+            ajaxGetRequest (this.apiUrl + "?segment-public-photos=" + this.data.id, (photos) => {
+                console.log(photos)
+
+                // Sort photos by distance order
+                photos.forEach( (photo) => photo.distanceFromStart = this.getDistanceFromStart(photo))
+                photos.sort((a, b) => (a.distanceFromStart > b.distanceFromStart) ? 1 : -1)
+
+                resolve(photos)
+            }, this.loader)
+        })
+    }
+
+    async getPhotos () {
         var photos = []
-        this.mapdata.sceneries.forEach( (scenery) => {
+        this.sceneries.forEach( (scenery) => {
             scenery.photos.forEach( (photo) => {
                 photos.push(photo)
             } )
         } )
+        ///var activityPhotos = await this.getActivityPhotos()
+        ///activityPhotos.forEach(activityPhoto => photos.push(activityPhoto))
         return photos
     }
 
@@ -194,7 +212,7 @@ export default class SegmentPopup extends Popup {
     loadLightbox () {
         var lightboxData = {
             photos: this.photos,
-            sceneries: this.mapdata.sceneries,
+            sceneries: this.sceneries,
             route: this.data.route
         }
         this.lightbox = new SegmentLightbox(this.data.mapInstance.map.getContainer(), this.popup, lightboxData, {noSession: true})
@@ -403,7 +421,7 @@ export default class SegmentPopup extends Popup {
         popupIcons.appendChild(flyButton)
 
         // Like button
-        if (this.mapdata.sceneries.length > 0) {
+        if (this.sceneries.length > 0) {
             var likeButton = document.createElement('div')
             likeButton.id = 'like-button'
             likeButton.setAttribute('title', 'この写真に「いいね」を付ける')
