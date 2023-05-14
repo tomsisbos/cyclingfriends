@@ -87,6 +87,7 @@ class Scenery extends Model {
         $point_wkt = $lngLat->toWKT();
 
         // Insert scenery data
+        $scenery_data['id'] = getNextAutoIncrement($this->table); // Get id for referring photos
         $insertSceneryData = $this->getPdo()->prepare("INSERT INTO sceneries (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, thumbnail, publication_date, popularity, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
         $insertSceneryData->execute(array($scenery_data['user_id'], $scenery_data['user_login'], $scenery_data['category'], $scenery_data['name'], $scenery_data['city'], $scenery_data['prefecture'], $scenery_data['elevation'], $scenery_data['date']->format('Y-m-d H:i:s'), $scenery_data['month'], $scenery_data['description'], $scenery_data['thumbnail'], $scenery_data['publication_date'], $scenery_data['popularity'], $point_wkt));
 
@@ -95,7 +96,6 @@ class Scenery extends Model {
         require $folder . '/actions/blobStorageAction.php';
 
         // Insert photos data
-        $scenery_data['id'] = getNextAutoIncrement($this->table);
         foreach ($scenery_data['photos'] as $photo) {
             $insertPhotos = $this->getPdo()->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
             $insertPhotos->execute(array($scenery_data['id'], $scenery_data['user_id'], $scenery_data['date']->format('Y-m-d H:i:s'), 0, $photo['filename']));
