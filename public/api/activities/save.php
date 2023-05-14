@@ -143,7 +143,7 @@ if (is_array($data)) {
 
         // Create new sceneries if necessary
         $loading_record->setStatus('pending', '新規絶景スポット作成中...');
-        if (isset($data['sceneriesToCreate'])) {
+        if (isset($data['sceneriesToCreate']) && !empty($data['sceneriesToCreate'])) {
 
             forEach($data['sceneriesToCreate'] as $entry) {
                 
@@ -201,7 +201,7 @@ if (is_array($data)) {
 
         // If necessary, add selected photos to corresponding scenery
         $loading_record->setStatus('pending', '絶景スポットへ写真追加中...');
-        if (isset($data['sceneryPhotos'])) {
+        if (isset($data['sceneryPhotos']) && !empty($data['sceneryPhotos'])) {
             foreach ($data['sceneryPhotos'] as $entry) {
                 
                 // Insert table data

@@ -68,7 +68,6 @@ export default class Model {
             var lat = lngLat.lat
             ajaxGetRequest ('https://api.mapbox.com/search/v1/reverse/' + lng + ',' + lat + '?language=ja&access_token=' + this.apiKey, callback)
             function callback (response) {
-                console.log('MAPBOX GEOCODING API USE +1')
                 var geolocation = CFUtils.reverseGeocoding (response)
                 resolve (geolocation)
             }

@@ -185,7 +185,6 @@ export default class SegmentPopup extends Popup {
             // Asks server for current photo data
             this.loaderContainer = this.popup._content.querySelector('.popup-img-container')
             ajaxGetRequest (this.apiUrl + "?segment-public-photos=" + this.data.id, (photos) => {
-                console.log(photos)
 
                 // Sort photos by distance order
                 photos.forEach( (photo) => photo.distanceFromStart = this.getDistanceFromStart(photo))

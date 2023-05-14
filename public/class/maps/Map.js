@@ -2609,7 +2609,6 @@ export default class Map extends Model {
             }
 
             function callback (response) {
-                console.log('MAPBOX GEOCODING API USE +1')
                 var geolocation = CFUtils.reverseGeocoding(response)
                 resolve (geolocation)
             }

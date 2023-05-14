@@ -281,7 +281,6 @@ export default class BuildRouteMap extends Map {
         const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/${this.directionsMode}/${this.start[0]},${this.start[1]};${end[0]},${end[1]}?geometries=geojson&steps=true&overview=full${tollOption}&access_token=${this.apiKey}`, {
             method: 'GET' }
         )
-        console.log('MAPBOX DIRECTIONS API USE +1')
         // Prepare route features
         const json     = await query.json()
         this.requestCurrentlyRunning = false
@@ -353,7 +352,6 @@ export default class BuildRouteMap extends Map {
             var query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/${this.directionsMode}/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&steps=true&overview=full${tollOption}&access_token=${this.apiKey}`, {
             method: 'GET' } )
         }
-        console.log('MAPBOX DIRECTIONS API USE +1')
         // Prepare route features
         const json     = await query.json()
         const data     = json.routes[0]
