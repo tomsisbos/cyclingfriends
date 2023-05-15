@@ -769,14 +769,17 @@ export default class NewActivityMap extends ActivityMap {
                     this.data.sceneriesToCreate.push(photo)
                     photo.$thumbnail.firstChild.classList.add('admin-marker')
                     photo.$thumbnail.querySelector('.pg-ac-createscenery-button').style.color = 'yellow'
-                    
+
                 // Else, remove entry in map instance data and set thumbnail back to default 
                 } else {
-                    var key = this.data.sceneriesToCreate.find(key => key == photo)
-                    this.data.sceneriesToCreate.splice(key, 1)
+                    for (let i = 0; i < this.data.sceneriesToCreate.length; i++) {
+                        if (this.data.sceneriesToCreate[i] == photo) this.data.sceneriesToCreate.splice(i, 1)
+                    }
                     photo.$thumbnail.firstChild.classList.remove('admin-marker')
                     photo.$thumbnail.querySelector('.pg-ac-createscenery-button').style.color = 'white'
                 }
+
+                console.log(this.data.sceneriesToCreate)
             } )
 
             // Delete photo listener
