@@ -29,13 +29,16 @@ export default class Model {
         'water-waterfall',
 
         'culture-culture',
+        'culture-history',
         'culture-machinami',
         'culture-shrines',
         'culture-hamlet',
 
         'terrain-pass',
         'terrain-mountains',
-        'terrain-viewpoint'
+        'terrain-viewpoint',
+        'terrain-tunnel',
+        'terrain-bridge'
     ]
     loaderContainer = document.body
     loader = {

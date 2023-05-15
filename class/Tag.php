@@ -34,6 +34,7 @@ class Tag extends Model {
             case 'water-waterfall': return '湖';
 
             case 'culture-culture': return '文化';
+            case 'culture-history': return '歴史';
             case 'culture-machinami': return '街並み';
             case 'culture-shrines': return '寺・神社';
             case 'culture-hamlet': return '集落';
@@ -41,6 +42,8 @@ class Tag extends Model {
             case 'terrain-pass': return '峠';
             case 'terrain-mountains': return '山';
             case 'terrain-viewpoint': return '見晴らし';
+            case 'terrain-tunnel': return 'トンネル';
+            case 'terrain-bridge': return '橋';
             
             default: return ucfirst($this->name);
         }
@@ -59,6 +62,15 @@ class Tag extends Model {
             return ($b->popularity <=> $a->popularity);
         } );
         return $entries;
+    }
+
+    /**
+     * Get total number of entries for this tag
+     */
+    function getEntriesNumber () {
+        $getEntriesNumber = $this->getPdo()->prepare("SELECT id FROM tags WHERE tag = ?");
+        $getEntriesNumber->execute(array($this->name));
+        return $getEntriesNumber->rowCount();
     }
 
 }

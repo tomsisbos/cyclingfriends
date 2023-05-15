@@ -325,9 +325,10 @@ export default class CFUtils {
             case 'water-sea': return '海';
             case 'water-river': return '川';
             case 'water-lake': return '湖';
-            case 'water-waterfall': return '湖';
+            case 'water-waterfall': return '滝';
 
             case 'culture-culture': return '文化';
+            case 'culture-history': return '歴史';
             case 'culture-machinami': return '街並み';
             case 'culture-shrines': return '寺・神社';
             case 'culture-hamlet': return '集落';
@@ -335,6 +336,8 @@ export default class CFUtils {
             case 'terrain-pass': return '峠';
             case 'terrain-mountains': return '山';
             case 'terrain-viewpoint': return '見晴らし';
+            case 'terrain-tunnel': return 'トンネル';
+            case 'terrain-bridge': return '橋';
 
             default: 'その他'
         }

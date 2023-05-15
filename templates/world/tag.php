@@ -17,7 +17,7 @@ include '../includes/head.php'; ?>
 	<div class="main"> <?php
 
         // Get id from URL
-        $tag = new Tag(basename($_SERVER['REQUEST_URI']));
+        $tag = new Tag(basename($_SERVER['HTTP_REFERER']));
         if ($tag->exists()) {
 
             // Space for general error messages
@@ -50,7 +50,7 @@ include '../includes/head.php'; ?>
                 if (isset($_GET['p'])) $p = $_GET['p'];
                 else $p = 1;
                 $url = strtok($_SERVER["REQUEST_URI"], '?');
-                $total_pages = count($entries) / $limit;
+                $total_pages = $tag->getEntriesNumber() / $limit;
                 
                 // Build pagination menu
                 include '../includes/pagination.php' ?>
