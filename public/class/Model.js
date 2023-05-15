@@ -26,6 +26,7 @@ export default class Model {
         'water-sea',
         'water-river',
         'water-lake',
+        'water-dam',
         'water-waterfall',
 
         'culture-culture',
@@ -43,15 +44,15 @@ export default class Model {
     loaderContainer = document.body
     loader = {
         prepare: () => {
-            this.loaderElement = document.createElement('div')
-            this.loaderElement.className = 'loader-element'
+            this.element = document.createElement('div')
+            this.element.className = 'loader-element'
             let loaderIcon = document.createElement('div')
             loaderIcon.innerHTML = '<div class="loader-center"></div>'
             loaderIcon.className = 'loader-icon'
-            this.loaderElement.appendChild(loaderIcon)
+            this.element.appendChild(loaderIcon)
         },
-        start: () => this.loaderContainer.appendChild(this.loaderElement),
-        stop: () => this.loaderElement.remove()
+        start: () => this.loaderContainer.appendChild(this.element),
+        stop: () => this.element.remove()
     }
     inlineLoader = '<div class="loader-inline"></div>'
     centerLoader = '<div class="loader-center"></div>'

@@ -151,15 +151,10 @@ if (isAjax()) {
             die();
         }
 
-        // Check if the same image have already been uploaded
-        $checkIfSimilarImageExists = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? AND user_id = ? AND date = ?');
-        $checkIfSimilarImageExists->execute(array($sceneryimg['scenery_id'], $sceneryimg['user_id'], $sceneryimg['date']));        
-        // If not, insert image in the database scenery_photos table and send response
-        if ($checkIfSimilarImageExists->rowCount() == 0) {
-            $insertScenery = $db->prepare('INSERT INTO scenery_photos(scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-            $insertScenery->execute(array($sceneryimg['scenery_id'], $sceneryimg['user_id'], $sceneryimg['date'], 0, $filename));    
-            echo json_encode(['success' => $sceneryimg['file_name']. 'は無事に追加されました！']);
-        } else echo json_encode(['error' => $sceneryimg['file_name']. 'は既にアップロードされています。']);
+        // Insert image in the database scenery_photos table and send response
+        $insertScenery = $db->prepare('INSERT INTO scenery_photos(scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+        $insertScenery->execute(array($sceneryimg['scenery_id'], $sceneryimg['user_id'], $sceneryimg['date'], 0, $filename));    
+        echo json_encode(['success' => $sceneryimg['file_name']. 'は無事に追加されました！']);
     }
 
     if (isset($_GET['scenery-photos'])) {

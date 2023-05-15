@@ -13,29 +13,29 @@ export default class HomeMap extends WorldMap {
     defaultCenter = [139.2056, 35.613002]
     sceneryLoader = {
         prepare: () => {
-            this.loaderElement = document.createElement('div')
-            this.loaderElement.className = 'loading-modal-relative'
+            this.element = document.createElement('div')
+            this.element.className = 'loading-modal-relative'
             let loaderIcon = document.createElement('div')
             loaderIcon.innerText = '絶景スポットのデータを準備中...'
-            this.loaderElement.style.cursor = 'loading'
+            this.element.style.cursor = 'loading'
             loaderIcon.className = 'loading-text'
-            this.loaderElement.appendChild(loaderIcon)
+            this.element.appendChild(loaderIcon)
         },
-        start: () => this.$map.appendChild(this.loaderElement),
-        stop: () => this.loaderElement.remove()
+        start: () => this.$map.appendChild(this.element),
+        stop: () => this.element.remove()
     }
     segmentLoader = {
         prepare: () => {
-            this.loaderElement = document.createElement('div')
-            this.loaderElement.className = 'loading-modal-relative'
+            this.element = document.createElement('div')
+            this.element.className = 'loading-modal-relative'
             let loaderIcon = document.createElement('div')
             loaderIcon.innerText = 'セグメントのデータを準備中...'
-            this.loaderElement.style.cursor = 'loading'
+            this.element.style.cursor = 'loading'
             loaderIcon.className = 'loading-text'
-            this.loaderElement.appendChild(loaderIcon)
+            this.element.appendChild(loaderIcon)
         },
-        start: () => this.$map.appendChild(this.loaderElement),
-        stop: () => this.loaderElement.remove()
+        start: () => this.$map.appendChild(this.element),
+        stop: () => this.element.remove()
     }
 
     setScenery (scenery) {  

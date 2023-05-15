@@ -31,7 +31,8 @@ class Tag extends Model {
             case 'water-sea': return '海';
             case 'water-river': return '川';
             case 'water-lake': return '湖';
-            case 'water-waterfall': return '湖';
+            case 'water-dam': return 'ダム';
+            case 'water-waterfall': return '滝';
 
             case 'culture-culture': return '文化';
             case 'culture-history': return '歴史';

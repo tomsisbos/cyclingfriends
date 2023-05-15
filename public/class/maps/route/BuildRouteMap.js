@@ -25,16 +25,16 @@ export default class BuildRouteMap extends Map {
     centerOnUserLocation = () => this.map.setCenter(this.userLocation)
     loader = {
         prepare: () => {
-            this.loaderElement = document.createElement('div')
-            this.loaderElement.className = 'loading-modal'
+            this.element = document.createElement('div')
+            this.element.className = 'loading-modal'
             let loaderIcon = document.createElement('div')
             loaderIcon.innerText = 'ルートデータを保存しています...'
-            this.loaderElement.style.cursor = 'loading'
+            this.element.style.cursor = 'loading'
             loaderIcon.className = 'loading-text'
-            this.loaderElement.appendChild(loaderIcon)
+            this.element.appendChild(loaderIcon)
         },
-        start: () => this.loaderContainer.appendChild(this.loaderElement),
-        stop: () => this.loaderElement.remove()
+        start: () => this.loaderContainer.appendChild(this.element),
+        stop: () => this.element.remove()
     }
 
     addRouteEditionControl () {
