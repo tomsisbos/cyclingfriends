@@ -64,14 +64,15 @@
             <div class="rd-section-entry <?= $ride->getStatusClass(); ?>">
                 <span style="vertical-align: -webkit-baseline-middle;">
                     <?= '<strong>Entry : </strong>' .$ride->status;
-                    if ($ride->entry_start > date('Y-m-d')) {
+			        $current_date = new DateTimeImmutable('now', new DateTimezone('Asia/Tokyo'));                    
+                    if ($ride->entry_start > $current_date->format('Y-m-d')) {
                         if (nbDaysLeftToDate($ride->entry_start) == 1) echo '<br><div class="xsmallfont">明日開始</div>';
                         else echo '<br><div class="xsmallfont">エントリー開始まで残り' .nbDaysLeftToDate($ride->entry_start). '日</div>';
-                    } else if ($ride->entry_start <= date('Y-m-d') AND date('Y-m-d') <= $ride->entry_end) {
+                    } else if ($ride->entry_start <= $current_date->format('Y-m-d') AND $current_date->format('Y-m-d') <= $ride->entry_end) {
                         if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont">本日締切</div>';
                         else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日締切</div>';
                         else echo '<br><div class="xsmallfont">締め切りまで残り' .nbDaysLeftToDate($ride->entry_end). '日</div>';
-                    } else if ($ride->entry_end <= date('Y-m-d') AND date('Y-m-d') <= $ride->date) {
+                    } else if ($ride->entry_end <= $current_date->format('Y-m-d') AND $current_date->format('Y-m-d') <= $ride->date) {
                         if (nbDaysLeftToDate($ride->date) == 0) echo '<br><div class="xsmallfont text-danger">本日出発</div>';
                         else if (nbDaysLeftToDate($ride->date) == 1) echo '<br><div class="xsmallfont">明日出発</div>';
                         else echo '<br><div class="xsmallfont">出発まで残り' .nbDaysLeftToDate($ride->date). '日</div>';
