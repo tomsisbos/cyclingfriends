@@ -334,9 +334,10 @@ class Ride extends Model {
     }
 
     public function isOpen () {
-        if (date('Y-m-d') < $this->entry_start) return 'not yet';
-        else if (date('Y-m-d') > $this->entry_end) return 'closed';
-        else if (date('Y-m-d') >= $this->entry_start AND date('Y-m-d') <= $this->entry_end) return 'open';
+        $current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
+        if ($current_date->format('Y-m-d') < $this->entry_start) return 'not yet';
+        else if ($current_date->format('Y-m-d') > $this->entry_end) return 'closed';
+        else if ($current_date->format('Y-m-d') >= $this->entry_start AND $current_date->format('Y-m-d') <= $this->entry_end) return 'open';
         else return false;
     }
 
@@ -386,9 +387,10 @@ class Ride extends Model {
 
     private function getStatus () {
         $substatus = NULL; // Set substatus to NULL for preventing errors in case of no substatus set
+        $current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
         
         // If ride date is passed
-        if ($this->date < date('Y-m-d')) {
+        if ($this->date < $current_date->format('Y-m-d')) {
             $status = 'ライド終了'; } // status is Finished
         
         // If ride is full
@@ -403,13 +405,13 @@ class Ride extends Model {
         else {
             
             // If not set as private, ride date is yet to come and entry start date is yet to come
-            if (($this->privacy != 'private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start > date('Y-m-d'))) {
+            if (($this->privacy != 'private') AND ($this->date > $current_date->format('Y-m-d')) AND ($this->entry_start > $current_date->format('Y-m-d'))) {
                 $status = '募集期間外'; // status is Closed
                 $substatus = 'まもなく開始'; // substatus is opening soon
             }
     
             // If not set as private, ride date is yet to come and entries are open
-            else if (($this->privacy != 'private') AND ($this->date > date('Y-m-d')) AND ($this->entry_start <= date('Y-m-d') AND $this->entry_end >= date('Y-m-d'))) {
+            else if (($this->privacy != 'private') AND ($this->date > $current_date->format('Y-m-d')) AND ($this->entry_start <= $current_date->format('Y-m-d') AND $this->entry_end >= $current_date->format('Y-m-d'))) {
                 // If number of applicants is lower than minimum number set
                 $participants_number = $this->setParticipationInfos()['participants_number'];
                 if ($participants_number < $this->nb_riders_min) {
@@ -422,7 +424,7 @@ class Ride extends Model {
             }
     
             // If not set as private, ride date is yet to come but entries are closed
-            else if (($this->privacy != 'private') AND ($this->date >= date('Y-m-d')) AND ($this->entry_start < date('Y-m-d') AND $this->entry_end < date('Y-m-d'))) {
+            else if (($this->privacy != 'private') AND ($this->date >= $current_date->format('Y-m-d')) AND ($this->entry_start < $current_date->format('Y-m-d') AND $this->entry_end < $current_date->format('Y-m-d'))) {
                 $status = 'エントリー終了'; // status is Closed
                 $substatus = 'まもなく開催'; //substatus is ready to depart
             }

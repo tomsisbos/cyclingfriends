@@ -300,8 +300,9 @@ class User extends Model {
             
         // If there is no existing entry, insert a new friendship relation (before validation) in friends table, and return true and a success message
         } else {
+			$current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
             $createNewFriendship = $this->getPdo()->prepare('INSERT INTO friends(inviter_id, receiver_id, invitation_date) VALUES (?, ?, ?)');
-            $createNewFriendship->execute(array($this->id, $friend->id, date('Y-m-d')));
+            $createNewFriendship->execute(array($this->id, $friend->id, $current_date->format('Y-m-d')));
             $this->notify($friend->id, 'friends_request');
             return array('success' => $friend->login. "に友達申請を送りました !");
         }
@@ -311,8 +312,9 @@ class User extends Model {
     public function acceptFriendRequest ($friend) {
 
         // Set friendship status to "accepted"
+		$current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
         $registerAsFriend = $this->getPdo()->prepare('UPDATE friends SET accepted = 1, approval_date = :approval_date WHERE (inviter_id = :inviter AND receiver_id = :receiver) OR (inviter_id = :receiver AND receiver_id = :inviter) AND accepted = 0');
-        $registerAsFriend->execute([":approval_date" => date('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
+        $registerAsFriend->execute([":approval_date" => $current_date->format('Y-m-d'), ":inviter" => $this->id, ":receiver" => $friend->id]);
         if ($registerAsFriend->rowCount() > 0) {
 
             // Set follower relation
@@ -373,8 +375,9 @@ class User extends Model {
 
     // Insert a new entry in followers table
     public function follow ($user) {
+		$current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
         $follow = $this->getPdo()->prepare('INSERT INTO followers (following_id, followed_id, following_date) VALUES (?, ?, ?)');
-        $follow->execute(array($this->id, $user->id, date("Y-m-d H:i:s")));
+        $follow->execute(array($this->id, $user->id, $current_date->format("Y-m-d H:i:s")));
         if ($follow->rowCount() > 0) {
             if (!$this->isFriend($user)) $this->notify($user->id, 'follow');
             return array('success' => $user->login . 'をフォローしました !');
@@ -474,9 +477,10 @@ class User extends Model {
             $img_name = $temp_image->name;
             $img_blob = $temp_image->treatFile($temp_image->temp_path);
             $filename = setFilename('img');
+			$current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
             $metadata = [
                 'user_id' => $this->id,
-                'datetime' => date('Y-m-d H:i:s')
+                'datetime' => $current_date->format('Y-m-d H:i:s')
             ];
 
             require User::$root_folder . '/actions/blobStorageAction.php';

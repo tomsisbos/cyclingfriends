@@ -111,13 +111,13 @@ class CFLinestring extends Model {
         if ($route_id == 'new') {
 
             // Save route summary
-            $posting_date = date('Y-m-d H:i:s');
+			$posting_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
             $insertRoute = $this->getPdo()->prepare('INSERT INTO routes(author_id, category, posting_date, name, description, distance, elevation, startplace, goalplace, thumbnail_filename) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $insertRoute->execute(array($author_id, $category, $posting_date, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename));
+            $insertRoute->execute(array($author_id, $category, $posting_date->format('Y-m-d H:i:s'), $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename));
             
             // Get route id
             $getRouteId = $this->getPdo()->prepare('SELECT id FROM routes WHERE author_id = ? AND posting_date = ? AND name = ?');
-            $getRouteId->execute(array($author_id, $posting_date, $name));
+            $getRouteId->execute(array($author_id, $posting_date->format('Y-m-d H:i:s'), $name));
             $route_id = $getRouteId->fetch(PDO::FETCH_COLUMN);
         
         // If update
