@@ -561,13 +561,15 @@ export default class NewActivityMap extends ActivityMap {
                                 else var checkpointDatetime = new Date(this.data.checkpoints[0].datetime)
                                 if (dateOriginal.getMonth() == checkpointDatetime.getMonth() && dateOriginal.getDay() == checkpointDatetime.getDay()) {
 
-                                    // Resize and compress photo
+                                    // Resize, compress photo and generate data url
                                     let blob = await resizeAndCompress(img, 1600, 900, 0.7)
-
+                                    let url = await getDataURLFromBlob(blob)
+                                        
                                     // Add photo to map instance
                                     loader.setText('写真を追加中... ' + this.data.photos.length + ' / ' + filesLength)
                                     this.data.photos.push( {
                                         blob,
+                                        url,
                                         size: files[i].size,
                                         name: files[i].name,
                                         type: files[i].type,
@@ -626,19 +628,22 @@ export default class NewActivityMap extends ActivityMap {
     
     // Reorder photo elements within checkpoints according to date
     async updatePhotos () {
-        (async () => {
-            return new Promise(async (resolve, reject) => {
-                this.sortPhotos()
-                this.removePhotoElements()
-                for (let i = 0; i < this.data.photos.length; i++) {
-                    await this.updatePhotoElement(this.data.photos[i])
-                    if (i == this.data.photos.length - 1) resolve(true)
-                }
-            })}
-        ) ().then( () => {
-            this.highlightFeaturedPhoto()
-            this.updatePhotosButtons()
-        } )
+        return new Promise((resolve, reject) => {
+            (async () => {
+                return new Promise(async (resolve, reject) => {
+                    this.sortPhotos()
+                    this.removePhotoElements()
+                    for (let i = 0; i < this.data.photos.length; i++) {
+                        await this.updatePhotoElement(this.data.photos[i])
+                        if (i == this.data.photos.length - 1) resolve(true)
+                    }
+                })}
+            ) ().then( () => {
+                this.highlightFeaturedPhoto()
+                this.updatePhotosButtons()
+                resolve(true)
+            } )
+        })
     }
 
     setFeatured (thisPhoto) {
@@ -755,13 +760,16 @@ export default class NewActivityMap extends ActivityMap {
 
             // Create scenery listener
             $createSceneryButton.addEventListener('click', () => {
+
                 // Initialize list if necessary
                 if (!this.data.sceneriesToCreate) this.data.sceneriesToCreate = []
+
                 // If no similar entry exists yet, create it and highlight thumbnail
                 if (!this.data.sceneriesToCreate.includes(photo)) {
                     this.data.sceneriesToCreate.push(photo)
                     photo.$thumbnail.firstChild.classList.add('admin-marker')
                     photo.$thumbnail.querySelector('.pg-ac-createscenery-button').style.color = 'yellow'
+                    
                 // Else, remove entry in map instance data and set thumbnail back to default 
                 } else {
                     var key = this.data.sceneriesToCreate.find(key => key == photo)
@@ -782,6 +790,7 @@ export default class NewActivityMap extends ActivityMap {
                     }
                 }
                 this.updatePhotosButtons()
+                this.displayPhotoMarkers()
             } )
 
             // Set photo privacy listener

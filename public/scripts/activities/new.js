@@ -90,7 +90,9 @@ $upload.addEventListener('change', async (e) => {
 
                         // Add photos treatment
                         document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
-                            newActivityMap.loadPhotos(e.target.files).then(() => newActivityMap.updatePhotos())
+                            newActivityMap.loadPhotos(e.target.files)
+                            .then(async () => newActivityMap.updatePhotos())
+                            .then(() => newActivityMap.displayPhotoMarkers())
                         } )
                         document.querySelector('#clearPhotos').addEventListener('click', () => newActivityMap.clearPhotos())
                         document.querySelector('#changePhotosPrivacy').addEventListener('click', () => newActivityMap.changePhotosPrivacy())

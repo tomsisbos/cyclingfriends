@@ -173,6 +173,15 @@ export default class ActivityMap extends Map {
         `
     }
 
+    /**
+     * Clear all photo markers of the map
+     */
+    clearPhotoMarkers () {
+        this.map._markers.forEach(marker => {
+            if (marker._element.classList.contains('pg-ac-map-img-container')) marker.remove()
+        })
+    }
+
     addPhoto (photo, lngLat) {
         var element = document.createElement('div')
         element.classList.add('pg-ac-map-img-container')
@@ -251,9 +260,14 @@ export default class ActivityMap extends Map {
         return turf.length(segment)
     }
 
-    async displayPhotos () {
+    async displayPhotoMarkers () {
         return new Promise(async (resolve, reject) => {
             var sessionId = parseInt(await CFSession.get('id'))
+
+            // Clear all previously displayed photo markers
+            this.clearPhotoMarkers()
+
+            // Add all photos to the map
             this.data.photos.forEach( (photo) => {
                 // Only add photos which privacy is not set to true, except for the author
                 if (photo.privacy != 'private' || sessionId == this.data.user_id) {

@@ -17,7 +17,9 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     
     // Add photos treatment
     document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
-        editActivityMap.loadPhotos(e.target.files).then(() => editActivityMap.updatePhotos())
+        editActivityMap.loadPhotos(e.target.files)
+        .then(async () => editActivityMap.updatePhotos())
+        .then(() => editActivityMap.displayPhotoMarkers())
     } )
     document.querySelector('#clearPhotos').addEventListener('click', () => editActivityMap.clearPhotos())
     document.querySelector('#changePhotosPrivacy').addEventListener('click', () => editActivityMap.changePhotosPrivacy())
@@ -68,7 +70,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.updateDistanceMarkers()
     editActivityMap.focus(editActivityMap.data.routeData)
     editActivityMap.displayCheckpointMarkers()
-    editActivityMap.displayPhotos()
+    editActivityMap.displayPhotoMarkers()
 
     // Create new checkpoint on click on route
     editActivityMap.map.on('mouseenter', 'route', () => editActivityMap.map.getCanvas().style.cursor = 'crosshair')
