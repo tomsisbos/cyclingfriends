@@ -778,8 +778,6 @@ export default class NewActivityMap extends ActivityMap {
                     photo.$thumbnail.firstChild.classList.remove('admin-marker')
                     photo.$thumbnail.querySelector('.pg-ac-createscenery-button').style.color = 'white'
                 }
-
-                console.log(this.data.sceneriesToCreate)
             } )
 
             // Delete photo listener
@@ -844,7 +842,10 @@ export default class NewActivityMap extends ActivityMap {
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
                     // If photo and scenery have same coords
-                    if (CFUtils.compareCoords({lng: scenery.lng, lat: scenery.lat}, photoLocation, 3)) {
+                    console.log([scenery.name, photo.name])
+                    var distance = turf.distance(turf.point([photoLocation.lng, photoLocation.lat]), turf.point([scenery.lng, scenery.lat]))
+                    console.log(distance)
+                    if (distance < 0.2) {
                         photosToAsk.push({photo, scenery})
                         // If any photo close to an existing scenery have been added to the create sceneries list, discard it
                         if (this.data.sceneriesToCreate) for (let i = 0; i < this.data.sceneriesToCreate.length; i++) {

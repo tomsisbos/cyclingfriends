@@ -130,6 +130,9 @@ include '../includes/head.php'; ?>
 						else echo $ride->distance. "km - " .$ride->meeting_place. "発着"; ?></p>
 					<p><strong>起伏 :</strong> <?= $ride->getTerrainIcon() ?></p>
 					<p><?= $ride->course_description; ?></p>
+					<a href="<?= $router->generate('ride-route', ['ride_id' => $ride->id]); ?>">
+						<button class="btn button">詳細はこちら</button>
+					</a>
 				</div>
 				<div style="clear: both"></div>
 			</div>
