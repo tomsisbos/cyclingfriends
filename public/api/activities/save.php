@@ -156,9 +156,9 @@ if (is_array($data)) {
                         if ($entry_photo['name'] == $activity_photo['name']) {
 
                             // Get blob ready to upload
-                            $temp_image = new TempImage($entry['name']);
                             $scenery_photo = $entry_photo;
                             $scenery_photo['filename'] = setFilename('img');
+                            $temp_image = new TempImage($entry['name']. '_' .$scenery_photo['filename']);
                             $scenery_photo['blob'] = $temp_image->treatBase64($activity_photo['blob']);
 
                             // Add photo data to scenery photos

@@ -40,7 +40,7 @@ include '../includes/head.php'; ?>
     <!-- Main container -->
     <div class="container smaller home-main-container js-fade-on-scroll">
         <h1 class="home-brand">cyclingfriends</h1>
-        <div class="home-version">v0.0 (Public beta release)</div>
+        <div class="home-version">v0.1 (Public beta release)</div>
     </div>
             
     <div class="home-top-container home-slide px-0 pt-5">
