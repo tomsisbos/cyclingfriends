@@ -52,7 +52,7 @@
 				// If user hasn't selected anything yet, check for existing data in ride table
 				else if (isset($ride->entry_end)) echo $ride->entry_end;
 				// If there is no data in the table, set default date to ride's previous day
-				else echo $oneDayBeforeRide->format('Y-m-d'); ?>" min="<?php if (isset($ride->entry_start)) { echo $ride->entry_start; } ?>" max="<?= $oneDayBeforeRide ?>">
+				else echo $oneDayBeforeRide->format('Y-m-d'); ?>" min="<?php if (isset($ride->entry_start)) { echo $ride->entry_start; } ?>" max="<?= $oneDayBeforeRide->format('Y-m-d') ?>">
 			</div>
 		</div>
 		

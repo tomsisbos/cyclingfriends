@@ -595,7 +595,7 @@ class User extends Model {
     }
 
     public function getRides ($offset = 0, $limit = 20) {
-        $getRides = $this->getPdo()->prepare("SELECT id FROM rides WHERE author_id = ? ORDER BY posting_date DESC LIMIT " .$offset. ", " .$limit);
+        $getRides = $this->getPdo()->prepare("SELECT id FROM rides WHERE author_id = ? ORDER BY date ASC LIMIT " .$offset. ", " .$limit);
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
     }
