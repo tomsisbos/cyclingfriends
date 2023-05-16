@@ -8,12 +8,14 @@ require '../../../includes/api-head.php';
 if (isAjax()) {
 
     // Social or profile infos update
-    if (isset($_GET['twitter']) OR isset($_GET['facebook']) OR isset($_GET['instagram']) OR isset($_GET['strava']) OR isset($_GET['last_name']) OR isset($_GET['first_name']) OR isset($_GET['gender']) OR isset($_GET['birthdate']) OR isset($_GET['level']) OR isset($_GET['description'])) {
+    if (isset($_GET['twitter']) OR isset($_GET['facebook']) OR isset($_GET['instagram']) OR isset($_GET['strava']) OR isset($_GET['last_name']) OR isset($_GET['first_name']) OR isset($_GET['gender']) OR isset($_GET['birthdate']) OR isset($_GET['level'])) {
         $index = key($_GET);
-        $value = $_GET[$index];
+        if ($index = 'description') $value = nl2br($_GET[$index]);
+        else $value = $_GET[$index];
         $connected_user->update($index, $value);
         echo json_encode([$index, $value]);
     }
+
 
     // Bike infos update
     if (isset($_GET['bike-type']) OR isset($_GET['bike-model']) OR isset($_GET['bike-wheels']) OR isset($_GET['bike-components']) OR isset($_GET['bike-description'])) {
