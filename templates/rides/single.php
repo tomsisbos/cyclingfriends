@@ -78,6 +78,9 @@ include '../includes/head.php'; ?>
 					<div class="col-sm">
 						<p><strong>開催日 :</strong> <?= $ride->date; ?></p>
 					</div>
+					<div class="col-sm">
+						<p><strong>エントリー :</strong> <?= $ride->entry_start. ' ~ ' .$ride->entry_end; ?></p>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm">
