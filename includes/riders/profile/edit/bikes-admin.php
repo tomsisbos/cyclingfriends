@@ -1,6 +1,6 @@
 <div class="d-inline-block">
-	<h2 class="d-inline-block">My bikes</h2>
-	<button id="addBike" class="btn button mx-3">Add a bike</button>
+	<h2 class="d-inline-block">バイク一覧</h2>
+	<button id="addBike" class="btn button mx-3">バイクを追加</button>
 </div>
 
 <div id="bikes"> <?php
