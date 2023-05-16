@@ -578,4 +578,21 @@ class Ride extends Model {
         return $images;
     }
 
+    /**
+     * Outputs description with adding specific style for specific characters
+     * @return String
+     */
+    public function getFormattedDescription () {
+        $output = $this->description;
+
+        // Change japanese brackets to strong text
+        $output = str_replace('【', '<strong>', $output);
+        $output = str_replace('】', '</strong>', $output);
+
+        // Add anchor to urls
+        $output = preg_replace('<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>', '<a href="$0" target="_blank">$0</a>', $output);
+
+        return $output;
+    }
+
 }

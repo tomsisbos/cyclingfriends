@@ -109,7 +109,7 @@ include '../includes/head.php'; ?>
 				</div>
 				<div class="row">
 					<div class="col-sm">
-						<p><?= $ride->description; ?></p>
+						<p><?= $ride->getFormattedDescription(); ?></p>
 					</div>
 				</div>
 			</div> <?php
