@@ -9,11 +9,9 @@ if ($checkIfSlugAndEmailCorresponds->rowCount() == 1) {
 
     $user_id = intval($checkIfSlugAndEmailCorresponds->fetch(PDO::FETCH_COLUMN));
 
-    // Set verified to true
-    $setUserToVerified = $db->prepare("UPDATE users SET verified = 1 WHERE id = ?");
-    $setUserToVerified->execute([$user_id]);
-    
+    // Set verified to true    
     $user = new User($user_id);
+    $user->verify();
 
     session_start();
 

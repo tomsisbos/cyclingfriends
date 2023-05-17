@@ -31,8 +31,10 @@ class MailingListEntry extends Model {
     }
 
     public function register () {
-        $registerEmail = $this->getPdo()->prepare('INSERT INTO mailing_list (email, token) VALUES (?, ?)');
-        $registerEmail->execute(array($this->address, rand(1, 99999999)));
+        if (!$this->isRegistered()) {
+            $registerEmail = $this->getPdo()->prepare('INSERT INTO mailing_list (email, token) VALUES (?, ?)');
+            $registerEmail->execute(array($this->address, rand(1, 99999999)));
+        }
     }
     
     public function sendRegistrationMail () {

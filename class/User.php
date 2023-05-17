@@ -71,19 +71,38 @@ class User extends Model {
         return $lngLat;
     }
 
-    // Register user into database
+    /**
+     * Register user into database
+     * @param String $email
+     * @param String $login
+     * @param String $password Hashed password
+     */ 
     public function register ($email, $login, $password) {
         $this->default_profilepicture_id = rand(1,9);
         $this->email = $email;
         $this->login = $login;
-        // Insert data into database
+
+        // Create user entry
         $register = $this->getPdo()->prepare('INSERT INTO users(slug, email, login, password, default_profilepicture_id, inscription_date, level) VALUES (FLOOR(RAND() * 1000000000), ?, ?, ?, ?, ?, ?)');
         $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 1));
+
         // Get id
         $getId = $this->getPdo()->prepare("SELECT id FROM users WHERE email = ? AND login = ?");
         $getId->execute([$email, $login]);
         $this->id = $getId->fetch(PDO::FETCH_COLUMN);
         $this->populate();
+    }
+
+    /**
+     * Verify user account and add verified email address to mailing list
+     */
+    public function verify () {
+        $setUserToVerified = $this->getPdo()->prepare("UPDATE users SET verified = 1 WHERE id = ?");
+        $setUserToVerified->execute([$this->id]);
+        
+        // Create mailing list entry
+        $mailing_list_entry = new MailingListEntry($this->email);
+        $mailing_list_entry->register();
     }
 
     /**
