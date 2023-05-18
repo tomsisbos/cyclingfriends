@@ -8,7 +8,7 @@ $participation = $ride->getParticipants();
 
 // Participants section
 if (!empty($participation)) { ?>
-	<div class="container container-thin bg-user">
+	<div class="container container-thin bg-user overflow-auto">
 		<div class="d-flex gap-20 nav">
 			<h3 class="title-with-subtitle">参加者 :</h3>
 			<ul class="d-flex gap mb-0 p-0" id="participantsList"> <?php

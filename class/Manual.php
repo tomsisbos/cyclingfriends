@@ -31,9 +31,9 @@ class Manual extends Model {
             'title' => '絶景スポットの作成ガイドライン',
             'subtitle' => 'Scenery spots creation guidelines'
         ],
-        'data' => [
-            'title' => 'データ活用について',
-            'subtitle' => 'Data usage'
+        'privacypolicy' => [
+            'title' => 'プライバシーポリシー',
+            'subtitle' => 'Privacy policy'
         ],
     ];
 
