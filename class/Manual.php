@@ -2,41 +2,6 @@
 
 class Manual extends Model {
 
-    private static $chapters = [
-        'world' => [
-            'title' => 'サイクリングマップ',
-            'subtitle' => 'World'
-        ],
-        'activities' => [
-            'title' => 'アクティビティ',
-            'subtitle' => 'Activities'
-        ],
-        'routes' => [
-            'title' => 'ルート',
-            'subtitle' => 'Routes'
-        ],
-        'rides' => [
-            'title' => 'ライド',
-            'subtitle' => 'Rides'
-        ],
-        'community' => [
-            'title' => 'コミュニティ',
-            'subtitle' => 'Community'
-        ],
-        'user' => [
-            'title' => 'ユーザー情報',
-            'subtitle' => 'User information'
-        ],
-        'sceneryguidelines' => [
-            'title' => '絶景スポットの作成ガイドライン',
-            'subtitle' => 'Scenery spots creation guidelines'
-        ],
-        'privacypolicy' => [
-            'title' => 'プライバシーポリシー',
-            'subtitle' => 'Privacy policy'
-        ],
-    ];
-
     // Ordered by chapter. 'chapter' and 'id' values are used to build URL.
     private static $refs = [
         'world' => [
@@ -147,6 +112,41 @@ class Manual extends Model {
         'data' => [
             'chapter' => 'data'
         ]
+    ];
+
+    public static $chapters = [
+        'world' => [
+            'title' => 'サイクリングマップ',
+            'subtitle' => 'World'
+        ],
+        'activities' => [
+            'title' => 'アクティビティ',
+            'subtitle' => 'Activities'
+        ],
+        'routes' => [
+            'title' => 'ルート',
+            'subtitle' => 'Routes'
+        ],
+        'rides' => [
+            'title' => 'ライド',
+            'subtitle' => 'Rides'
+        ],
+        'community' => [
+            'title' => 'コミュニティ',
+            'subtitle' => 'Community'
+        ],
+        'user' => [
+            'title' => 'ユーザー情報',
+            'subtitle' => 'User information'
+        ],
+        'sceneryguidelines' => [
+            'title' => '絶景スポットの作成ガイドライン',
+            'subtitle' => 'Scenery spots creation guidelines'
+        ],
+        'privacypolicy' => [
+            'title' => 'プライバシーポリシー',
+            'subtitle' => 'Privacy policy'
+        ],
     ];
 
     public static function baseUri () {

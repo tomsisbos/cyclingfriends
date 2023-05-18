@@ -112,7 +112,13 @@
 					<a class="nav-link interactive" href="/company/contact"><div class="mainitem">お問い合わせ</div></a>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/manual"><div class="mainitem">マニュアル</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/manual"><div class="mainitem">マニュアル</div></a>
+					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
+					<div class="dropdown-menu"> <?php
+						foreach (Manual::$chapters as $slug => $chapter) { ?>
+							<a class="dropdown-item interactive" href="/manual/<?= $slug ?>"><div class="mainitem"><?= $chapter['title'] ?></div></a> <?php
+						} ?>
+					</div>
 				</li>
 			</ul>
 		</div> <?php
