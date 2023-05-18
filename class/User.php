@@ -287,8 +287,9 @@ class User extends Model {
 
     // Update user location in database
     public function setLocation ($geolocation, $lngLat) {
-        $setLocation = $this->getPdo()->prepare('UPDATE users SET city = ?, prefecture = ?, lng = ?, lat = ? WHERE id = ?');
-        $setLocation->execute([$geolocation->city, $geolocation->prefecture, $lngLat->lng, $lngLat->lat, $this->id]);
+
+        $setLocation = $this->getPdo()->prepare('UPDATE users SET city = ?, prefecture = ?, point = ST_GeomFromText(?) WHERE id = ?');
+        $setLocation->execute([$geolocation->city, $geolocation->prefecture, $lngLat->toWKT(), $this->id]);
         return true;
     }
 
