@@ -162,6 +162,7 @@ input[type="checkbox"] {
 .header {
     height: 350px;
     background-position: center;
+    background-size: cover;
     display: flex;
 }
 .header-block h1, .header-block h2, .header-block p {
