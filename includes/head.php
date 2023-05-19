@@ -23,7 +23,6 @@
 	<!-- php -->
 		<?php
 			require_once 'functions.php';
-			require_once 'api-keys.php';
 			require_once '../actions/treatCookieMessagesAction.php'; ?>
 	
 	<!-- js -->

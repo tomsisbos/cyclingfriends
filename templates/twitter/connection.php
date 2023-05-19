@@ -14,6 +14,10 @@ include '../includes/head.php'; ?>
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 
+var_dump($oauth_token);
+var_dump($params);
+var_dump($_GET);
+
 // If connection has been authorized
 if (isset($_GET['oauth_token'])) {
     $oauth_token = $_SESSION['twitter']['request_token']['oauth_token'];
