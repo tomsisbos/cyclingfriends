@@ -92,8 +92,6 @@ $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
 $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
 
-$router->map('GET|POST', '/twitter/connection', 'twitter/connection');
-
 
 // Treatment of results
 $match = $router->match();
