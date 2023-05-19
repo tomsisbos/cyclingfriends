@@ -70,7 +70,7 @@ class Twitter extends Model {
      */
     public function verifyCredentials ($oauth_token, $oauth_token_secret) {
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $oauth_token, $oauth_token_secret);
-        return $oauth->oauth('account/verify_credentials');
+        return $oauth->get('account/verify_credentials');
     }
 
 }
