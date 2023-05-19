@@ -92,7 +92,7 @@ $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
 $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
 
-$router->map('GET', '/twitter/connection?oauth_token=[*:oauth_token]&oauth_verifier=[*:oauth_verifier]', 'twitter/connection');
+$router->map('GET|POST', '/twitter/connection', 'twitter/connection');
 
 
 // Treatment of results
