@@ -102,13 +102,6 @@ include '../includes/head.php'; ?>
                 </div>
             </form>
         </div>
-        
-    
-<?php
-
-include '../actions/twitter/authentificationAction.php';
-
-?>
     </div> <?php
 
     include '../includes/foot.php'; ?>

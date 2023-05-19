@@ -13,6 +13,8 @@ include '../includes/head.php'; ?>
 
 include '../includes/navbar.php';
 
+include '../actions/twitter/authentificationAction.php';
+
 // Start guidance if poor user info is set
 if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>'
 
