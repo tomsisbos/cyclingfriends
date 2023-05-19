@@ -23,7 +23,8 @@
 	<!-- php -->
 		<?php
 			require_once 'functions.php';
-			require_once '../actions/treatCookieMessagesAction.php' ?>
+			require_once 'api-keys.php';
+			require_once '../actions/treatCookieMessagesAction.php'; ?>
 	
 	<!-- js -->
 		<!-- Jquery -->
@@ -49,15 +50,8 @@
 			<script defer src="/assets/js/animated-background.js"></script>
 		<!-- togpx -->
 			<script src='/node_modules/togpx/togpx.js'></script>
+		<!-- google analytics -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-LHWZVJYEBR"></script>
+			<script src="/assets/js/google-analytics.js"></script>
 		
 </head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LHWZVJYEBR"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-LHWZVJYEBR');
-</script>

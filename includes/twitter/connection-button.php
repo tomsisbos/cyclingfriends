@@ -1,0 +1,1 @@
+<a href="<?= $twitter_auth_url ?>" class="btn-large waves-effect waves-light light-green">Twitterに接続する</a>

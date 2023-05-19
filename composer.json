@@ -9,6 +9,7 @@
         "composer/ca-bundle": "^1.3",
         "microsoft/azure-storage-blob": "*",
         "maestroerror/php-heic-to-jpg": "^0.3.2",
-        "phayes/geophp": "^1.2"
+        "phayes/geophp": "^1.2",
+        "abraham/twitteroauth": "^5.0"
     }
 }
