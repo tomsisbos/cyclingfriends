@@ -47,18 +47,17 @@ class Twitter extends Model {
     /**
      * Create or update connected user twitter tokens entry in the database
      * @param Int $user_id
-     * @param String $oauth_token
-     * @param String $oauth_token_secret
+     * @param Array $user_data An array containing oauth_token, oauth_token_secret, twitter_id and screen_name
      */
-    public function saveAccessToken ($user_id, $oauth_token, $oauth_token_secret) {
+    public function saveUserData ($user_id, $user_data) {
         $checkIfEntryExists = $this->getPdo()->prepare("SELECT id FROM {$this->table} WHERE user_id = ?");
         $checkIfEntryExists->execute([$user_id]);
-        if ($checkIfEntryExists->rowCount() > 0) {
-            $insertAccessTokens = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, oauth_token, oauth_token_secret) VALUES (?, ?, ?)");
-            $insertAccessTokens->execute([$user_id, $oauth_token, $oauth_token_secret]);
+        if ($checkIfEntryExists->rowCount() == 0) {
+            $insertAccessTokens = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, oauth_token, oauth_token_secret, twitter_id, screen_name) VALUES (?, ?, ?, ?, ?)");
+            $insertAccessTokens->execute([$user_id, $user_data['oauth_token'], $user_data['oauth_token_secret'], $user_data['user_id'], $user_data['screen_name']]);
         } else {
-            $updateAccessTokens = $this->getPdo()->prepare("UPDATE {$this->table} SET oauth_token = ?, oauth_token_secret = ? WHERE user_id = ?");
-            $updateAccessTokens->execute([$oauth_token, $oauth_token_secret, $user_id]);
+            $updateAccessTokens = $this->getPdo()->prepare("UPDATE {$this->table} SET oauth_token = ?, oauth_token_secret = ?, twitter_id = ?, screen_name = ? WHERE user_id = ?");
+            $updateAccessTokens->execute([$user_data['oauth_token'], $user_data['oauth_token_secret'], $user_data['user_id'], $user_data['screen_name'], $user_id]);
         }
     }
 
