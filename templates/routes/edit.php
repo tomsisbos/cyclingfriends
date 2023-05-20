@@ -1,7 +1,13 @@
 <?php
 
 include '../actions/users/initSessionAction.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+
+// Redirect to routes if connected user is not author
+$url_fragments = explode('/', $_SERVER['REQUEST_URI']);
+$slug = array_slice($url_fragments, -2)[0];
+$route = new Route($slug);
+if ($connected_user->id != $route->author->id) header('location: /routes') ?>
 
 <!DOCTYPE html>
 <html lang="en">

@@ -35,7 +35,8 @@
 			
 			<?php // Set ride date -1j into a variable
 			$current_date = new DateTimeImmutable('now', new DateTimezone('Asia/Tokyo'));
-			$oneDayBeforeRide = $current_date->modify('-1 day'); ?>
+			$ride_date = new DateTimeImmutable($ride->date, new DateTimezone('Asia/Tokyo'));
+			$oneDayBeforeRide = $ride_date->modify('-1 day'); ?>
 		
 			<div>
 				<label class="form-label">募集期間</label>
