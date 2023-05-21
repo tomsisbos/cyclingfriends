@@ -57,9 +57,7 @@ class Route extends Model {
             $timearray = json_decode($result);
             $time = [];
             foreach ($timearray as $timestamp) {
-                $datetime = new DateTime();
-                $datetime->setTimestamp($timestamp);
-                $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+                $datetime = new DateTime($timestamp, new DateTimeZone('Asia/Tokyo'));
                 array_push($time, $datetime);
             }
             return $time;

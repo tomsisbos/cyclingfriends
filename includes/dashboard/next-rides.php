@@ -15,7 +15,7 @@ WHERE
 ORDER BY
     date, meeting_time ASC
 LIMIT 3');
-$today = new DateTime();
+$today = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
 $getRides->execute(array(":level" => $connected_user->level, ":today" => $today->format('Y-m-d H:i:s'), ":datemax" => $today->modify('+' . $rides_date_range . ' month')->format('Y-m-d H:i:s')));
 
 // Display ride cards ?>

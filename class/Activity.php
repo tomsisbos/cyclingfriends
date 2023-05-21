@@ -68,8 +68,7 @@ class Activity extends Model {
         // Get closest checkpoint for each activity photo
         for ($i = 0; $i < count($photo_ids); $i++) {
             $closest_checkpoint_number   = 0;
-            $closest_checkpoint_datetime = new DateTime;
-            $closest_checkpoint_datetime->setTimestamp(0);
+            $closest_checkpoint_datetime = new DateTime(0, new DateTimeZone('Asia/Tokyo'));
             $photo_datetime = new DateTime($photo_ids[$i]['datetime']);
             foreach ($this->getCheckpoints() as $checkpoint) {
                 if ($checkpoint->datetime > $closest_checkpoint_datetime AND $checkpoint->datetime < $photo_datetime) {
@@ -216,8 +215,7 @@ class Activity extends Model {
 
     public function getEndDateTime() {
         $end_timestamp = $this->datetime->getTimeStamp() + $this->duration->getTimeStamp();
-        $end_datetime = new DateTime();
-        return $end_datetime->setTimestamp($end_timestamp);
+        return new DateTime($end_timestamp);
     }
 
     public function exists () {

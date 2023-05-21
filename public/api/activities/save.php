@@ -45,12 +45,8 @@ if (is_array($data)) {
         // Build activity data
         $loading_record->setStatus('pending', 'アクティビティデータ保存中...');
         $user_id          = $connected_user->id;
-        $datetime         = new DateTime();
-        $datetime->setTimestamp($data['checkpoints'][0]['datetime'] / 1000);
-        $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-        $posting_date     = new DateTime();
-        $posting_date->getTimestamp();
-        $posting_date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+        $datetime         = new DateTime($data['checkpoints'][0]['datetime'] / 1000, new DateTimeZone('Asia/Tokyo'));
+        $posting_date     = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
         $title            = $data['title'];
         $duration         = $data['duration'];
         $duration_running = $data['duration_running'];
@@ -76,9 +72,7 @@ if (is_array($data)) {
             $checkpoint_data['name'] = $checkpoint['name'];
             $checkpoint_data['type'] = $checkpoint['type'];
             $checkpoint_data['story'] = $checkpoint['story'];
-            $checkpoint_data['datetime'] = new DateTime();
-            $checkpoint_data['datetime']->setTimestamp($checkpoint['datetime'] / 1000);
-            $checkpoint_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+            $checkpoint_data['datetime'] = new DateTime($checkpoint['datetime'] / 1000, new DateTimeZone('Asia/Tokyo'));
             if (isset($checkpoint['geolocation'])) {
                 $checkpoint_data['city'] = $checkpoint['geolocation']['city'];
                 $checkpoint_data['prefecture'] = $checkpoint['geolocation']['prefecture'];
@@ -117,9 +111,7 @@ if (is_array($data)) {
             $activity_photo_data['type'] = $photo['type'];
             $activity_photo_data['lng'] = $photo['lng'];
             $activity_photo_data['lat'] = $photo['lat'];
-            $activity_photo_data['datetime'] = new DateTime();
-            $activity_photo_data['datetime']->setTimestamp($photo['datetime'] / 1000);
-            $activity_photo_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+            $activity_photo_data['datetime'] = new DateTime($photo['datetime'] / 1000, new DateTimezone('Asia/Tokyo'));
             if ($photo['featured'] == true) $activity_photo_data['featured'] = 1;
             else $activity_photo_data['featured'] = 0;
             $activity_photo_data['privacy'] = $photo['privacy'];
@@ -181,9 +173,7 @@ if (is_array($data)) {
                 $scenery_data['city']             = $entry['city'];
                 $scenery_data['prefecture']       = $entry['prefecture'];
                 $scenery_data['elevation']        = $entry['elevation'];
-                $scenery_data['date']             = new DateTime();
-                $scenery_data['date']->setTimestamp($entry['date'] / 1000);
-                $scenery_data['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+                $scenery_data['date']             = new DateTime($entry['date'] / 1000, new DateTimeZone('Asia/Tokyo'));
                 $scenery_data['month']            = date("n");
                 $scenery_data['description']      = htmlspecialchars($entry['description']);
                 $scenery_data['thumbnail']        = $thumbnail;

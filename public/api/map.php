@@ -531,7 +531,7 @@ if (isAjax()) {
             (privacy = 'public' OR (privacy = 'friends_only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
         AND
             date BETWEEN :today AND :datemax");
-        $today = new DateTime();
+        $today = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
         $getRides->execute(array(":today" => $today->format('Y-m-d'), ":datemax" => $today->modify('+' . RIDES_DATE_RANGE . ' month')->format('Y-m-d')));
         $rides = [];
         while ($ride_data = $getRides->fetch(PDO::FETCH_COLUMN)) {

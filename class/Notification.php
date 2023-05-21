@@ -28,7 +28,7 @@ class Notification extends Model {
         $this->entry_table = $data['entry_table'];
         $this->entry_id    = $data['entry_id'];
         $this->checked     = (intval($data['checked']) === 1);
-        $this->datetime    = new Datetime($data['datetime']);
+        $this->datetime    = new Datetime($data['datetime'], new DateTimezone('Asia/Tokyo'));
     }
 
     public function register ($user_id, $type, $entry_table, $entry_id, $actor_id = NULL) {
@@ -55,7 +55,7 @@ class Notification extends Model {
             $this->entry_table = $entry_table;
             $this->entry_id    = $entry_id;
             $this->checked     = false;
-            $this->datetime    = new Datetime();
+            $this->datetime    = new Datetime('now', new DateTimezone('Asia/Tokyo'));
         }
     }
 
