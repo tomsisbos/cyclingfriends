@@ -17,7 +17,9 @@ class CFLinestring extends Model {
             $this->length = count($coordinates);
         }
         if ($time) forEach($time as $datetimestamp) {
-            $datetime = new DateTime($datetimestamp / 1000, new DateTimeZone('Asia/Tokyo'));
+            $datetime = new DateTime();
+            $datetime->setTimestamp($datetimestamp / 1000);
+            $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             array_push($this->time, $datetime);
         }
     }
