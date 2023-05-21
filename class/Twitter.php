@@ -63,13 +63,15 @@ class Twitter extends Model {
 
     /**
      * Check if saved tokens are still up to date
-     * @param String $oauth_token
-     * @param String $oauth_token_secret
-     * @return Boolean
+     * @param string $oauth_token
+     * @param string $oauth_token_secret
+     * @return STDClass|boolean an object containing account data if succeed, false otherwise
      */
     public function verifyCredentials ($oauth_token, $oauth_token_secret) {
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $oauth_token, $oauth_token_secret);
-        return $oauth->get('account/verify_credentials');
+        $result = $oauth->get('account/verify_credentials');
+        if (isset($result->id)) return $result;
+        else return false;
     }
 
 }

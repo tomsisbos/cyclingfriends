@@ -1,1 +1,5 @@
-<a href="<?= $twitter_auth_url ?>" class="btn-large waves-effect waves-light light-green">Twitterに接続する</a>
+<?php
+
+include '../actions/twitter/authentificationAction.php'; ?>
+
+<a href="<?= $twitter_auth_url ?>" class="mx-2 text-white mp-button bg-button">Twitterに接続する</a>

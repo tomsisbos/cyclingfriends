@@ -21,5 +21,9 @@ if (isset($_GET['oauth_token'])) {
     $user_data = $twitter->getAccessToken($_GET['oauth_token'], $_GET['oauth_verifier']);
     $twitter->saveUserData($connected_user->id, $user_data);
     $credentials = $twitter->verifyCredentials($user_data['oauth_token'], $user_data['oauth_token_secret']);
-    
+    if ($credentials) {
+        $_SESSION['successmessage'] = $credentials->name. 'と接続できました！';
+        header('location: /profile/edit');
+    }
+    else throw new Error('Oauth token mismatch');
 } ?>
