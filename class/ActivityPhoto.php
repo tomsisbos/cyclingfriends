@@ -53,6 +53,7 @@ class ActivityPhoto extends Model {
     /**
      * Register a new activity photo entry in the database
      * @param array $array containing necessary data (activity photo data, blob metadata)
+     * @return string filename
      */
     public function create ($data) {
 
@@ -63,7 +64,7 @@ class ActivityPhoto extends Model {
         // Insert photo in 'activity_photos' table
         $filename = setFilename('img');
         $insert_photos = $this->getPdo()->prepare('INSERT INTO activity_photos(activity_id, user_id, datetime, featured, filename, privacy, point) VALUES (?, ?, ?, ?, ?, ?, ST_GeomFromText(?))');
-        $insert_photos -> execute(array($data['activity_id'], $data['user_id'], $data['datetime']->format('Y-m-d H:i:s'), $data['featured'], $filename, $data['privacy'], $point_wkt));
+        $insert_photos->execute(array($data['activity_id'], $data['user_id'], $data['datetime']->format('Y-m-d H:i:s'), $data['featured'], $filename, $data['privacy'], $point_wkt));
 
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
@@ -85,6 +86,8 @@ class ActivityPhoto extends Model {
             'privacy' => $data['privacy']
         ];
         $blobClient->setBlobMetadata($containername, $filename, $metadata);
+
+        return $filename;
     }
 
 }

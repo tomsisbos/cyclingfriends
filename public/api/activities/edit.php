@@ -95,7 +95,8 @@ if (is_array($data)) {
             $activity_photo_data['privacy'] = $photo['privacy'];
 
             $activity_photo = new ActivityPhoto();
-            $activity_photo->create($activity_photo_data);
+            $filename = $activity_photo->create($activity_photo_data);
+            array_push($already_uploaded_filenames, "'" .$filename. "'");
         
         // If photo have already been uploaded formerly
         } else {
@@ -108,8 +109,7 @@ if (is_array($data)) {
             else $featured = 0;
             $privacy = $photo['privacy'];
             $updateFeatured = $db->prepare('UPDATE activity_photos SET featured = ?, privacy = ? WHERE filename = ?');
-            $updateFeatured -> execute(array($featured, $privacy, $photo['filename']));
-        
+            $updateFeatured->execute(array($featured, $privacy, $photo['filename']));
         }
 
     }
