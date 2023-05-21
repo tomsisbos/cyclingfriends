@@ -135,7 +135,9 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         // Build route overlay
         const routeData = routePageMap.data.routeData
         const routeCoordinates = routeData.geometry.coordinates
-        var staticRouteData = turf.simplify(routeData, {tolerance: 0.0005, highQuality: true})
+        if (routeData.geometry.coordinates.length < 10000) var tolerance = 0.0005
+        else var tolerance = 0.002
+        var staticRouteData = turf.simplify(routeData, {tolerance, highQuality: true})
         var revertedCoordinates = staticRouteData.geometry.coordinates.map(coordinate => {
             return [coordinate[1], coordinate[0]]
         })

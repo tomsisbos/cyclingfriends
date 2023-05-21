@@ -170,7 +170,9 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         // Build route overlay
         const routeData = activityMap.data.routeData
         const routeCoordinates = routeData.geometry.coordinates
-        var staticRouteData = turf.simplify(routeData, {tolerance: 0.0005, highQuality: true})
+        if (routeData.geometry.coordinates.length < 10000) var tolerance = 0.0005
+        else var tolerance = 0.002
+        var staticRouteData = turf.simplify(routeData, {tolerance, highQuality: true})
         var revertedCoordinates = staticRouteData.geometry.coordinates.map(coordinate => {
             return [coordinate[1], coordinate[0]]
         })
@@ -181,7 +183,6 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         var routeBounds = CFUtils.defineRouteBounds(staticRouteData.geometry.coordinates)
         var boundingBox = [routeBounds[0][0], routeBounds[0][1], routeBounds[1][0], routeBounds[1][1]]
         var boundingBoxUri = JSON.stringify(boundingBox)
-        const checkpointMarkerColor = 'ffffff'
 
         // Build checkpoints
         var checkpoints = ''
