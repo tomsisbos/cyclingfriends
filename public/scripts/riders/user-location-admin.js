@@ -61,8 +61,6 @@ async function closePopup (modal) {
     if (pickMap.currentPosition != originalPosition) {
 
         // Update local storage values
-        console.log(pickMap.currentPosition)
-        console.log(originalPosition)
         localStorage.setItem('userLocationLng', pickMap.currentPosition[0])
         localStorage.setItem('userLocationLat', pickMap.currentPosition[1])
 

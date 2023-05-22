@@ -51,7 +51,6 @@ export default class Map extends Model {
             // On first load, query user location data and store it in the browser
             if (!localStorage.getItem('userLocationLng') || !localStorage.getItem('userLocationLat')) {
                 CFSession.get('lngLat').then(response => {
-                    console.log(response)
                     if (response) var userLocation = [response.lng, response.lat]
                     else var userLocation = this.defaultCenter
                     localStorage.setItem('userLocationLng', userLocation[0])

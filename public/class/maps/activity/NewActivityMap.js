@@ -557,9 +557,13 @@ export default class NewActivityMap extends ActivityMap {
                                 var dateOriginal = new Date(year, month - 1, day, hours, minutes, seconds)
 
                                 // If the photo has been taken during the activity
-                                if (this.data.checkpoints[0].datetime.date) var checkpointDatetime = new Date(this.data.checkpoints[0].datetime.date)
-                                else var checkpointDatetime = new Date(this.data.checkpoints[0].datetime)
-                                if (dateOriginal.getMonth() == checkpointDatetime.getMonth() && dateOriginal.getDay() == checkpointDatetime.getDay()) {
+                                var startDatetime = new Date(this.data.checkpoints[0].datetime)
+                                var endDatetime = new Date(this.data.checkpoints[this.data.checkpoints.length - 1].datetime)
+                                console.log(startDatetime.getTime())
+                                console.log(endDatetime.getTime())
+                                if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) console.log('true')
+                                else console.log('false')
+                                if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) {
 
                                     // Resize, compress photo and generate data url
                                     let blob = await resizeAndCompress(img, 1600, 900, 0.7)
@@ -842,9 +846,7 @@ export default class NewActivityMap extends ActivityMap {
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
                     // If photo and scenery have same coords
-                    console.log([scenery.name, photo.name])
                     var distance = turf.distance(turf.point([photoLocation.lng, photoLocation.lat]), turf.point([scenery.lng, scenery.lat]))
-                    console.log(distance)
                     if (distance < 0.2) {
                         photosToAsk.push({photo, scenery})
                         // If any photo close to an existing scenery have been added to the create sceneries list, discard it
