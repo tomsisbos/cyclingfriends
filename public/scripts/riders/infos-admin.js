@@ -2,7 +2,6 @@ import TimerPopup from '/class/TimerPopup.js'
 
 apiUrl = '/api/riders/profile.php'
 
-document.querySelector('.js-twitter').addEventListener('change', updateInfo)
 document.querySelector('.js-facebook').addEventListener('change', updateInfo)
 document.querySelector('.js-instagram').addEventListener('change', updateInfo)
 document.querySelector('.js-strava').addEventListener('change', updateInfo)

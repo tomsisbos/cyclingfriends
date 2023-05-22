@@ -287,9 +287,10 @@ class User extends Model {
 
     // Update user location in database
     public function setLocation ($geolocation, $lngLat) {
-
         $setLocation = $this->getPdo()->prepare('UPDATE users SET city = ?, prefecture = ?, point = ST_GeomFromText(?) WHERE id = ?');
         $setLocation->execute([$geolocation->city, $geolocation->prefecture, $lngLat->toWKT(), $this->id]);
+        // Update session variables
+        $this->setSession();
         return true;
     }
 
@@ -878,7 +879,7 @@ class User extends Model {
 
     /**
      * Get an Twitter instance for user's credentials
-     * @return Twitter|boolean
+     * @return Twitter
      */
     public function getTwitter () {
         $getCredentials = $this->getPdo()->prepare("SELECT oauth_token, oauth_token_secret FROM user_twitter WHERE user_id = ?");
@@ -886,7 +887,7 @@ class User extends Model {
         if ($getCredentials->rowCount() > 0) {
             $data = $getCredentials->fetch(PDO::FETCH_ASSOC);
             return new Twitter($data['oauth_token'], $data['oauth_token_secret']);
-        } else return false;
+        } else return new Twitter();
     }
 
 }

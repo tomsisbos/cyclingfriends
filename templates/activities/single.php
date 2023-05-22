@@ -60,8 +60,8 @@ include '../includes/head.php'; ?>
 					<div class="header-row mt-2"> <?php
 						// Include admin buttons if the user has admin rights on this activity
 						if (isset($_SESSION['auth']) && $activity->user_id == $connected_user->id) include '../includes/activities/admin-buttons.php';
-						// Else, include user buttons
-						///else include '../includes/activities/user-buttons.php';?>
+						// Include user buttons
+						include '../includes/activities/user-buttons.php';?>
 					</div>
 				</div>
 			</div>

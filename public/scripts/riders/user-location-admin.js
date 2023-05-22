@@ -1,7 +1,7 @@
 import PickMap from "/class/maps/user/PickMap.js"
 
 var pickMap = new PickMap()
-const originalPosition = pickMap.currentPosition
+const originalPosition = await pickMap.getUserLocation()
 
 const button = document.querySelector('#userLocationButton')
 
@@ -20,16 +20,15 @@ button.addEventListener('click', async () => {
         draggable: true
     } )
     if (pickMap.currentPosition) marker.setLngLat(pickMap.currentPosition)
-    else if (pickMap.userLocation != undefined) marker.setLngLat(pickMap.userLocation)
-    else marker.setLngLat(pickMap.defaultCenter)
+    else marker.setLngLat(await pickMap.getUserLocation())
     marker.addTo(map)
 
     // Update current position property to the marker new position
-    marker.on('dragend', (e) => pickMap.currentPosition = e.target._lngLat)
+    marker.on('dragend', (e) => pickMap.currentPosition = [e.target._lngLat.lng, e.target._lngLat.lat])
 
     map.on('click', (e) => {
         marker.setLngLat(e.lngLat)
-        pickMap.currentPosition = e.lngLat
+        pickMap.currentPosition = [e.lngLat.lng, e.lngLat.lat]
     } )
 
 } )
@@ -60,6 +59,12 @@ async function closePopup (modal) {
 
     // If location has changed, send new location data to the server
     if (pickMap.currentPosition != originalPosition) {
+
+        // Update local storage values
+        console.log(pickMap.currentPosition)
+        console.log(originalPosition)
+        localStorage.setItem('userLocationLng', pickMap.currentPosition[0])
+        localStorage.setItem('userLocationLat', pickMap.currentPosition[1])
 
         // Get geolocation data of this point from map provider
         var geolocation = await pickMap.getCourseGeolocation(pickMap.currentPosition)

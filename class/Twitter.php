@@ -30,7 +30,7 @@ class Twitter extends Model {
             $this->tweets_count = $data->statuses_count;
             $this->created_at = $data->created_at;
             $this->verified = $data->verified;
-            $this->last_tweet = $data->status;
+            if (isset($data->status)) $this->last_tweet = $data->status;
             $this->style = [
                 'profile_background_color' => $data->profile_background_color,
                 'profile_background_tile' => $data->profile_background_tile,
@@ -110,6 +110,49 @@ class Twitter extends Model {
         $result = $oauth->get('account/verify_credentials');
         if (isset($result->id)) return $result;
         else return false;
+    }
+
+    /**
+     * Check whether instance stores property of a twitter user
+     * @return boolean
+     */
+    public function isUserConnected () {
+        if (isset($this->username)) return true;
+        else return false;
+    }
+
+    /**
+     * Remove user twitter tokens from the database and unpopulate instance
+     */
+    public function disconnect () {
+        if ($this->isUserConnected()) {
+
+            // Delete entry
+            $removeUserTokens = $this->getPdo()->prepare("DELETE FROM user_twitter WHERE oauth_token = ? AND oauth_token_secret = ?");
+            $removeUserTokens->execute([$this->oauth_token, $this->oauth_token_secret]);
+
+            $username = $this->username;
+
+            // Unpopulate
+            unset($this->id);
+            unset($this->name);
+            unset($this->username);
+            unset($this->description);
+            unset($this->url);
+            unset($this->profile_image);
+            unset($this->background_image);
+            unset($this->site);
+            unset($this->followers_count);
+            unset($this->following_count);
+            unset($this->tweets_count);
+            unset($this->created_at);
+            unset($this->verified);
+            unset($this->last_tweet);
+            unset($this->style);
+            unset($this->oauth_token);
+            unset($this->oauth_token_secret);
+            $_SESSION['successmessage'] = '@' .$username. 'との接続が会場されました。';
+        }
     }
 
 }

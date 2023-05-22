@@ -25,7 +25,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
     var $markerImg = $marker.querySelector('img')
     $markerImg.classList.add('admin-marker')
     const marker = new mapboxgl.Marker($marker)
-    marker.setLngLat(neighboursMap.userLocation)
+    marker.setLngLat(await neighboursMap.getUserLocation())
     marker.addTo(map)
     
     // Add all neighbours markers
@@ -60,7 +60,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
             neighboursMap.hideHoverLink(neighbour)
         } )
         // Add click event listeners
-        $card.addEventListener('click', () => {
+        $card.addEventListener('click', async () => {
             if (!$card.classList.contains('selected-marker')) {
                 document.querySelectorAll('.selected-marker').forEach(element => element.classList.remove('selected-marker'))
                 $card.classList.add('selected-marker')
@@ -75,7 +75,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 } )
                 marker.togglePopup()
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 2))
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), await neighboursMap.getUserLocation()], 2))
                 document.querySelector('.main').scrollIntoView()///neighboursMap.$map.scrollIntoView()
             } else {
                 $marker.querySelector('img').classList.remove('selected-marker')
@@ -83,7 +83,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 neighboursMap.hideSelectedLink(neighbour)
             }
         } )
-        $marker.addEventListener('click', () => {
+        $marker.addEventListener('click', async () => {
             if (!$marker.querySelector('img').classList.contains('selected-marker')) {
                 document.querySelectorAll('.selected-marker').forEach(element => element.classList.remove('selected-marker'))
                 $card.classList.add('selected-marker')
@@ -94,7 +94,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                     }
                 } )
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), neighboursMap.userLocation], 4))
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), await neighboursMap.getUserLocation()], 4))
             } else {
                 marker.togglePopup()
                 $marker.querySelector('img').classList.remove('selected-marker')

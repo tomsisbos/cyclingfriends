@@ -10,7 +10,7 @@ $data = json_decode($json, true);
 
 if (is_array($data)) {
 
-    $success = $connected_user->setLocation(new Geolocation($data['geolocation']['city'], $data['geolocation']['prefecture']), new lngLat($data['lngLat']['lng'], $data['lngLat']['lat']));
+    $success = $connected_user->setLocation(new Geolocation($data['geolocation']['city'], $data['geolocation']['prefecture']), new lngLat($data['lngLat'][0], $data['lngLat'][1]));
     if ($success) $response = ['success' => '位置情報が更新されました！'];
     else $response = ['error' => '位置情報の変更が出来ませんでした。'];
     echo json_encode($response);

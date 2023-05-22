@@ -805,21 +805,29 @@ li.nav-item {
 	margin: 10px 0px 6px 0px;
 }
 
-/* Profile */
-
+.social-panel {
+    display: flex;
+    align-items: center;
+}
 .social-panel label {
 	min-width: 100px;
 } 
-
-.social-panel input {
+.social-panel input[type=text] {
 	width: 100%;
 }
-
+.social-panel .icon {
+    color: #1D9BF0;
+    background-color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.social-panel .icon:hover {
+    color: pink;
+}
 @media only screen and (max-width: 768px) {
 	.social-panel .col-6 {
 		width: 100%;
-	} 
-	
+	}
 	.social-panel {
 		display: block !important;
 	}

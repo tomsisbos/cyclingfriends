@@ -10,25 +10,7 @@ export default class Map extends Model {
     constructor () {
         super()
         this.setSeason()
-        this.userLocation = this.defaultCenter
-
-        // On first load, query user location data and store it in the browser
-        if (!localStorage.getItem('userLocationLng') || !localStorage.getItem('userLocationLat')) {
-            CFSession.get('lngLat').then(userLocation => {
-                if (userLocation != false) this.userLocation = [userLocation.lng, userLocation.lat]
-                else this.userLocation = this.defaultCenter
-                localStorage.setItem('userLocationLng', this.userLocation[0])
-                localStorage.setItem('userLocationLat', this.userLocation[1])
-                // Center on user location if map have not been moved during query
-                if (this.map && (this.map.getCenter().lng == this.defaultCenter[0] && this.map.getCenter().lat == this.defaultCenter[1])) this.centerOnUserLocation()
-            } )
-        // If entry already exists in local storage, use it
-        } else {
-            this.userLocation = {
-                lng: parseFloat(localStorage.getItem('userLocationLng')),
-                lat: parseFloat(localStorage.getItem('userLocationLat'))
-            }
-        }
+        this.centerOnUserLocation()
     }
 
     apiUrl = '/api/map.php'
@@ -60,8 +42,25 @@ export default class Map extends Model {
     segmentCapColor = '#fff'
     segmentSeasonColor = '#ff5555'
     
-    centerOnUserLocation = () => {
-        this.map.setCenter(this.userLocation)
+    async centerOnUserLocation () {
+        this.map.setCenter(await this.getUserLocation())
+    }
+
+    async getUserLocation () {
+        return new Promise((resolve, reject) => {
+            // On first load, query user location data and store it in the browser
+            if (!localStorage.getItem('userLocationLng') || !localStorage.getItem('userLocationLat')) {
+                CFSession.get('lngLat').then(response => {
+                    console.log(response)
+                    if (response) var userLocation = [response.lng, response.lat]
+                    else var userLocation = this.defaultCenter
+                    localStorage.setItem('userLocationLng', userLocation[0])
+                    localStorage.setItem('userLocationLat', userLocation[1])
+                    resolve(userLocation)
+                } )
+            // If entry already exists in local storage, use it
+            } else resolve([parseFloat(localStorage.getItem('userLocationLng')), parseFloat(localStorage.getItem('userLocationLat'))])
+        })
     }
 
     setSeason () {
@@ -309,8 +308,9 @@ export default class Map extends Model {
         )
     }
 
-    async load (element, style, center = this.userLocation) {
-        return new Promise((resolve, reject) => {
+    async load (element, style, center = null) {
+        return new Promise(async (resolve, reject) => {
+            if (center == null) center = await this.getUserLocation()
             this.$map = element
             this.map = new mapboxgl.Map ( {
                 container: element,

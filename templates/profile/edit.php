@@ -4,6 +4,7 @@ include '../actions/users/initSessionAction.php';
 include '../actions/riders/profile/propicAction.php';
 include '../actions/riders/profile/profileInfosAction.php';
 include "../actions/riders/profile/bikeImageAction.php";
+include '../actions/twitter/disconnectionAction.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -38,8 +39,8 @@ include '../includes/head.php'; ?>
 					<div class="d-flex gap">
 					<?php // Only display social links if filled
 					// Twitter
-					if ($connected_user->getTwitter()) {
-						$twitter = $connected_user->getTwitter(); ?>
+					$twitter = $connected_user->getTwitter(); 
+					if ($twitter->isUserConnected()) {?>
 						<a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
 					} // Facebook
 					if (isset($connected_user->facebook) AND !empty($connected_user->facebook)) { ?>

@@ -1,4 +1,3 @@
-
 <a href="/activity/<?= $activity->id ?>/edit">
 	<button class="mp-button admin" type="button" name="edit">編集</button>
 </a>

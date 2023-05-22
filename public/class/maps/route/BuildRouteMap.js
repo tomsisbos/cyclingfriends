@@ -22,7 +22,6 @@ export default class BuildRouteMap extends Map {
     elevationProfile
     directionsMode = 'driving'
     requestCurrentlyRunning = false
-    centerOnUserLocation = () => this.map.setCenter(this.userLocation)
     loader = {
         prepare: () => {
             this.element = document.createElement('div')

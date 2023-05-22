@@ -12,8 +12,8 @@ export default class NeighboursMap extends Map {
     defaultZoom = 8
     data = {}
     
-    centerOnUserLocation () {
-        if (this.map) this.map.setCenter(this.userLocation)
+    async centerOnUserLocation () {
+        if (this.map) this.map.setCenter(await this.getUserLocation())
     }
 
     buildMarkerElement (neighbour) {
@@ -34,8 +34,8 @@ export default class NeighboursMap extends Map {
         element.style.width = size + 'px'
     }
 
-    displayHoverLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
+    async displayHoverLink (neighbour) {
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], await this.getUserLocation()])
         this.map.addLayer( {
             id: 'hoverLink' + neighbour.id,
             type: 'line',
@@ -53,8 +53,8 @@ export default class NeighboursMap extends Map {
         }, 'no-bicycle-rindos')
     }
 
-    displaySelectedLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], [this.userLocation.lng, this.userLocation.lat]])
+    async displaySelectedLink (neighbour) {
+        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], await this.getUserLocation()])
         this.map.addLayer( {
             id: 'selectedLink' + neighbour.id,
             type: 'line',
