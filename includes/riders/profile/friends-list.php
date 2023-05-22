@@ -2,7 +2,7 @@
 <h3 class="title-with-subtitle">Friends :</h3>
 <div class="d-flex" id="friendsList">
 	<?php $friends = $user->getFriends();
-	$limit = 15;
+	$limit = 10;
 	if (!empty($friends)) {
 		if (count($friends) < $limit) $number_to_display = count($friends);
 		else $number_to_display = $limit;
