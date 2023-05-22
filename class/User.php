@@ -650,8 +650,14 @@ class User extends Model {
         return $getRoutes->rowCount();
     }
 
-    public function getActivities ($offset = 0, $limit = 20) {
-        $getActivities = $this->getPdo()->prepare("SELECT a.id FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? ORDER BY r.posting_date DESC LIMIT " .$offset. ", " .$limit);
+    /**
+     * Get an users' activities
+     * @param int $offset
+     * @param int $limit
+     * @param string $first_column Column based on which to order request results by
+     */
+    public function getActivities ($offset = 0, $limit = 20, $first_column = 'r.posting_date') {
+        $getActivities = $this->getPdo()->prepare("SELECT a.id FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? ORDER BY {$first_column} DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($this->id));
         return $getActivities->fetchAll(PDO::FETCH_ASSOC);
     }
