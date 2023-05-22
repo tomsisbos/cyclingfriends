@@ -876,4 +876,17 @@ class User extends Model {
         else return true;
     }
 
+    /**
+     * Get an Twitter instance for user's credentials
+     * @return Twitter|boolean
+     */
+    public function getTwitter () {
+        $getCredentials = $this->getPdo()->prepare("SELECT oauth_token, oauth_token_secret FROM user_twitter WHERE user_id = ?");
+        $getCredentials->execute([$this->id]);
+        if ($getCredentials->rowCount() > 0) {
+            $data = $getCredentials->fetch(PDO::FETCH_ASSOC);
+            return new Twitter($data['oauth_token'], $data['oauth_token_secret']);
+        } else return false;
+    }
+
 }

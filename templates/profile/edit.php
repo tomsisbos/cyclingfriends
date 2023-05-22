@@ -38,8 +38,9 @@ include '../includes/head.php'; ?>
 					<div class="d-flex gap">
 					<?php // Only display social links if filled
 					// Twitter
-					if (isset($connected_user->twitter) AND !empty($connected_user->twitter)) { ?>
-						<a target="_blank" href="<?= $connected_user->twitter ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
+					if ($connected_user->getTwitter()) {
+						$twitter = $connected_user->getTwitter(); ?>
+						<a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
 					} // Facebook
 					if (isset($connected_user->facebook) AND !empty($connected_user->facebook)) { ?>
 						<a target="_blank" href="<?= $connected_user->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a> <?php

@@ -6,15 +6,53 @@ class Twitter extends Model {
 
     private $consumer_key;
     private $consumer_secret;
+    private $oauth_token;
+    private $oauth_token_secret;
     protected $table = 'user_twitter';
 
     /**
-     * @param String $consumer_key A registered twitter application API consumer key
-     * @param String $consumer_secret A registered twitter application API consumer secret
+     * Populate instance with oauth token corresponding user info
      */
-    public function __construct ($consumer_key, $consumer_secret) {
-        $this->consumer_key = $consumer_key;
-        $this->consumer_secret = $consumer_secret;
+    private function populateUser () {
+        if (isset($this->oauth_token) && isset($this->oauth_token_secret)) {
+            $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->oauth_token, $this->oauth_token_secret);
+            $data = $oauth->get('account/verify_credentials');
+            $this->id = $data->id;
+            $this->name = $data->name;
+            $this->username = $data->screen_name;
+            $this->description = $data->description;
+            $this->url = 'https://twitter.com/' .$data->screen_name;
+            $this->profile_image = $data->profile_image_url_https;
+            $this->background_image = $data->profile_background_image_url_https;
+            $this->site = $data->url;
+            $this->followers_count = $data->followers_count;
+            $this->following_count = $data->friends_count;
+            $this->tweets_count = $data->statuses_count;
+            $this->created_at = $data->created_at;
+            $this->verified = $data->verified;
+            $this->last_tweet = $data->status;
+            $this->style = [
+                'profile_background_color' => $data->profile_background_color,
+                'profile_background_tile' => $data->profile_background_tile,
+                'profile_link_color' => $data->profile_link_color,
+                'profile_sidebar_border_color' => $data->profile_sidebar_border_color,
+                'profile_sidebar_fill_color' => $data->profile_sidebar_fill_color,
+                'profile_text_color' => $data->profile_text_color,
+                'profile_use_background_image' => $data->profile_use_background_image
+            ];
+        }
+    }
+
+    /**
+     * @param String $oauth_token A registered user token
+     * @param String $oauth_token_secret A registered user token secret
+     */
+    public function __construct ($oauth_token = null, $oauth_token_secret = null) {
+        $this->consumer_key = getenv('TWITTER_API_CONSUMER_KEY');
+        $this->consumer_secret = getenv('TWITTER_API_CONSUMER_SECRET');
+        if ($oauth_token) $this->oauth_token = $oauth_token;
+        if ($oauth_token_secret) $this->oauth_token_secret = $oauth_token_secret;
+        if ($this->oauth_token && $this->oauth_token_secret) $this->populateUser();
     }
 
     /**
