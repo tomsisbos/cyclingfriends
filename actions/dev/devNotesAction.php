@@ -12,17 +12,19 @@ if (!isset($_POST['filter_type'])) $_POST['filter_type'] = 'all';
 
 if (!isset($_POST['filter_search'])) $_POST['filter_search'] = '';
 
-$getDevNotes = $db->prepare("SELECT id FROM dev_notes WHERE
-    time BETWEEN :datemin AND :datemax
-        AND
-			(CASE 
-				WHEN :type = 'all' THEN :type = :type
-                ELSE type = :type
-			END)
-        AND title LIKE '%' :search '%'
-        ORDER BY time DESC
-");
-$getDevNotes->execute(array(':datemin' => $_POST['filter_date_min'], 'datemax' => $_POST['filter_date_max'], ':type' => $_POST['filter_type'], ':search' => $_POST['filter_search']));
+$query = "SELECT id FROM dev_notes WHERE
+time BETWEEN :datemin AND :datemax
+    AND
+        (CASE 
+            WHEN :type = 'all' THEN :type = :type
+            ELSE type = :type
+        END)
+    AND title LIKE '%' :search '%'
+    ORDER BY time DESC";
+$params = [':datemin' => $_POST['filter_date_min'], 'datemax' => $_POST['filter_date_max'], ':type' => $_POST['filter_type'], ':search' => $_POST['filter_search']];
+
+$getDevNotes = $db->prepare($query. " LIMIT " .$offset. ", " .$limit);
+$getDevNotes->execute($params);
 $dev_notes = [];
 
 while ($id = $getDevNotes->fetch(PDO::FETCH_COLUMN)) array_push($dev_notes, new DevNote($id));
