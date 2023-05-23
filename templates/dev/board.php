@@ -2,7 +2,7 @@
     
 // Define offset and number of articles to query
 $limit = 20;
-if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
+if (isset($_GET['p'])) $offset = (intval($_GET['p']) - 1) * $limit;
 else $offset = 0;
 
 include '../actions/users/initSessionAction.php';

@@ -159,10 +159,9 @@ class Twitter extends Model {
      * Post a new tweet
      */
     public function post ($text) {
-        header('Content-Type: application/json');
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->oauth_token, $this->oauth_token_secret);
         $oauth->setApiVersion('2');
-        $result = $oauth->post('tweets', ['text' => $text]);
+        $result = $oauth->post('tweets', ['text' => $text], true);
         return $result;
     }
 
