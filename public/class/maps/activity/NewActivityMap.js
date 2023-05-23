@@ -54,37 +54,34 @@ export default class NewActivityMap extends ActivityMap {
             var altitude_max = 0
             var slope_max = 0
             var duration_running = 0
-            const precision = 10 // Calcul interval in seconds
-            for (let i = 0; i < routeCoords.length; i += precision) {
+            const precision = 20 // Speed and slope calculation interval in seconds
+
+            /* For each coordinate */
+            for (let i = 1; i < routeCoords.length; i++) {
                 // Build max altitude
-                if (parseInt(trackpoints[i].elevation) > altitude_max) {
-                    altitude_max = Math.round(trackpoints[i].elevation)
-                }
-                if (routeCoords[i - precision]) {
+                if (parseInt(trackpoints[i].elevation) > altitude_max) altitude_max = Math.round(trackpoints[i].elevation)
+                var distance = turf.distance(routeCoords[i], routeCoords[i - 1])
+                // Build time running
+                var seconds = (trackpoints[i].time - trackpoints[i - 1].time) / 1000
+                if (distance / seconds > 0.001) duration_running += (trackpoints[i].time - trackpoints[i - 1].time)
+
+                /* On rougher intervals */
+                if (routeCoords[i - precision] && Number.isInteger(i / precision)) {
                     // Build max speed
-                    let distance = 0
-                    for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
-                    let seconds = (trackpoints[i].time - trackpoints[i - precision].time) / 1000
-                    let hours = seconds / 60 / 60
-                    var speed = distance / hours
-                    if (speed > speed_max) speed_max = Math.round(speed * 10) / 10
+                    let distanceInterval = 0
+                    for (let j = 0; j < precision; j++) distanceInterval += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
+                    let secondsInterval = (trackpoints[i].time - trackpoints[i - precision].time) / 1000
+                    let hours = secondsInterval / 60 / 60
+                    var speed = distanceInterval / hours
+                    if (distanceInterval < 0.3 && speed > speed_max) speed_max = Math.round(speed * 10) / 10 // Cut longer distance to prevent bugs from tunnels or signal lost
                     // Build max slope
-                    let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
-                    if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
+                    let elevation = 0
+                    for (let j = 0; j < precision; j++) elevation += parseInt(trackpoints[i - j].elevation) - parseInt(trackpoints[i - j - 1].elevation)
+                    var slope = elevation * 100 / (distanceInterval * 1000)
                     if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
-                    // Build time running
-                    if (distance > 0.015) duration_running += (trackpoints[i].time - trackpoints[i - precision].time)
-                    if (seconds > precision) duration_running -= (seconds - precision) * 1000 // Substact auto pause
                 }
             }
 
-            // Dynamically simplify routeCoords and routeTime
-            /*if (trackpoints.length < 6000) var simplificationMultiplicator = 3
-            else simplificationMultiplicator = 4
-            for (let i = 0; i < routeCoords.length; i++) {
-                routeCoords.splice(i, simplificationMultiplicator)
-                routeTime.splice(i, simplificationMultiplicator)
-            }*/
             // Build route geojson
             var routeData = turf.lineString(routeCoords)
             routeData.properties.time = routeTime
@@ -197,35 +194,32 @@ export default class NewActivityMap extends ActivityMap {
                 routeTime.push(record.timestamp[i] * 1000)
             }
 
-            // Build max altitude
             const session = fit.session
+            // Build max altitude
+            console.log(record.altitude)
             var altitude_max = record.altitude.reduce((a, b) => Math.max(a, b), -Infinity)
             // Build max speed
             var speed_max = Math.floor(session.max_speed * 10) / 10
             // Build max slope
             var slope_max = 0
-            const precision = 10 // Calcul interval in seconds
+            const precision = 20 // Calculation interval in seconds
+            /* On rougher intervals */
             for (let i = 0; i < routeCoords.length; i += precision) {
-                if (routeCoords[i - precision]) {
+                if (routeCoords[i - precision] && Number.isInteger(i / precision)) {
                     // Build distance
                     let distance = 0
                     for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
                     // Build max slope
-                    let elevation = parseInt(trackpoints[i].elevation) - parseInt(trackpoints[i - precision].elevation)
-                    if (distance * 1000 > 10) var slope = elevation * 100 / (distance * 1000) // Prevent inaccurate calculation caused by too short section distance
+                    let elevation = 0
+                    for (let j = 0; j < precision; j++) elevation += parseInt(trackpoints[i - j].elevation) - parseInt(trackpoints[i - j - 1].elevation)
+                    var slope = elevation * 100 / (distance * 1000)
+                    console.log(slope)
                     if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
                 }
             }
             // Build time running
             var duration_running = session.total_timer_time * 1000
-
-            // Dynamically simplify routeCoords and routeTime
-            if (trackpoints.length < 6000) var simplificationMultiplicator = 3
-            else simplificationMultiplicator = 4
-            for (let i = 0; i < routeCoords.length; i++) {
-                routeCoords.splice(i, simplificationMultiplicator)
-                routeTime.splice(i, simplificationMultiplicator)
-            }
+            
             // Build route geojson
             var routeData = turf.lineString(routeCoords)
             routeData.properties.time = routeTime
@@ -303,6 +297,7 @@ export default class NewActivityMap extends ActivityMap {
                     photos: [],
                     trackpoints
                 }
+                console.log(this.data)
                 resolve({success: true})
             }
         } )
@@ -559,10 +554,6 @@ export default class NewActivityMap extends ActivityMap {
                                 // If the photo has been taken during the activity
                                 var startDatetime = new Date(this.data.checkpoints[0].datetime)
                                 var endDatetime = new Date(this.data.checkpoints[this.data.checkpoints.length - 1].datetime)
-                                console.log(startDatetime.getTime())
-                                console.log(endDatetime.getTime())
-                                if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) console.log('true')
-                                else console.log('false')
                                 if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) {
 
                                     // Resize, compress photo and generate data url

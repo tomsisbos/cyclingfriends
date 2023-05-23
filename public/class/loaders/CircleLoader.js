@@ -22,6 +22,7 @@ export default class CircleLoader extends Model {
         this.element = document.createElement('div')
         this.element.className = 'loader-center'
         if (this.options.absolute) this.element.classList.add('absolute')
+        if (this.options.compact) this.element.classList.add('loader-compact')
     }
 
     start = () => this.container.appendChild(this.element)

@@ -8,6 +8,7 @@ include '../includes/head.php'; ?>
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/activity.css">
+<link rel="stylesheet" href="/assets/css/twitter.css">
 <link rel="stylesheet" href="/assets/css/lightbox-style.css">
 
 <body class="relative-navbar">
@@ -87,11 +88,11 @@ include '../includes/head.php'; ?>
 				<div class="pg-ac-spec-container back <?= $activity->setBackgroundColor('break_time')?>" style="display: none;">
 					<div class="pg-ac-spec-label">休憩時間</div>
 					<div class="pg-ac-spec-value"> <?php
-						if (intval($activity->getBreakTime()->format('H')) > 1) {
+						if (intval($activity->getBreakTime()->h) > 0) {
 							if (substr($activity->getBreakTime()->h, 0, 1) == '0') echo substr($activity->getBreakTime()->h, 1, strlen($activity->getBreakTime()->h));
 							else echo $activity->getBreakTime()->h ?>
 							<span class="my-pg-ac-spec-unit"> h </span>
-							<?= $activity->getBreakTime()->format('i');
+							<?= $activity->getBreakTime()->i;
 						} else {
 							if (substr($activity->getBreakTime()->i, 0, 1) == '0') echo substr($activity->getBreakTime()->i, 1, strlen($activity->getBreakTime()->i));
 							else echo $activity->getBreakTime()->i ?>

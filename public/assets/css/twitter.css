@@ -1,0 +1,26 @@
+.tw-container {
+    display: flex;
+    text-align: left;
+    gap: 10px;
+}
+
+.tw-profile img {
+    border-radius: 99px;
+}
+
+.tw-top > div {
+    display: inline;
+}
+
+.tw-name {
+    font-weight: bold;
+}
+
+.tw-username, .tw-ac-date {
+    color: #888;
+}
+
+.tw-content {
+    width: 100%;
+    min-height: 200px;
+}

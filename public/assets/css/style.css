@@ -1655,6 +1655,9 @@ input[type="range"]::-webkit-slider-thumb {
     animation: spin 2s linear infinite;
     display: inline-block;
 }
+.loader-compact {
+    height: unset;
+}
   
 @keyframes spin {
     0% { transform: rotate(0deg); }
