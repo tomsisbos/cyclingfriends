@@ -163,20 +163,18 @@ class Twitter extends Model {
      */
     public function post ($text, $photos) {
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->oauth_token, $this->oauth_token_secret);
-        $oauth->setApiVersion('2');
 
         // Upload photos to twitter
         if (count($photos) > 4) throw new Exception(count($photos). '枚の写真が添付されていますが、上限は4枚までです。');
         $photo_ids = [];
         for ($i = 0; $i < count($photos); $i++) {
-            $temp_url = $_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/media/temp/tweet_' .$i. '.jpg';
-            var_dump($temp_url);
+            $temp_url = $_SERVER["DOCUMENT_ROOT"]. '/media/temp/tweet_' .$i. '.jpg';
             $file = file_get_contents($photos[$i]);
             file_put_contents($temp_url, $file);
-            $media = $oauth->upload('media/upload', ['media' => $temp_url]);
+            $media = $oauth->upload('media/upload', ['media' => $temp_url], true);
             array_push($photo_ids, $media->media_id_string);
-            unlink($temp_url);
         }
+        $oauth->setApiVersion('2');
         $result = $oauth->post('statuses/update', ['status' => $text, 'media_ids' => implode(',', $photo_ids)], true);
         return $result;
     }
