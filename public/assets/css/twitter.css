@@ -24,3 +24,28 @@
     width: 100%;
     min-height: 200px;
 }
+
+.tw-link {
+    color: darkturquoise;
+    margin-top: 12px;
+    cursor: pointer;
+    word-break: break-all;
+}
+
+.tw-counter-red, .tw-counter-orange, .tw-counter-green {
+    align-self: center;
+}
+
+.tw-counter-red {
+    background-color: #ff5555;
+    padding: 0 5px;
+    color: #fff;
+}
+
+.tw-counter-orange {
+    color: orange;
+}
+
+.tw-counter-green {
+    color: #00e06e;
+}

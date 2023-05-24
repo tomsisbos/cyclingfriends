@@ -1,5 +1,7 @@
 import CircleLoader from "/class/loaders/CircleLoader.js"
 
+const charsLimit = 280
+const urlLength = 25
 var buttonTwitter = document.querySelector('#buttonTwitter')
 
 // If user is connected to twitter
@@ -16,9 +18,6 @@ function openTwitterModal () {
     var modal = document.createElement('div')
     modal.classList.add('modal', 'd-flex')
     document.querySelector('body').appendChild(modal)
-    modal.addEventListener('click', (e) => {
-        if ((e.target == modal)) modal.remove()
-    } )
 
     // Popup content
     var popup = document.createElement('div')
@@ -30,7 +29,7 @@ function openTwitterModal () {
     dataLoader.start()
     var buttons = document.createElement('div')
     buttons.className = 'd-flex justify-content-evenly'
-    buttons.innerHTML = '<div id="back" class="mp-button bg-darkred text-white">戻る</div><div id="post" class="mp-button bg-darkgreen text-white">投稿</div>'
+    buttons.innerHTML = '<button id="back" class="mp-button bg-darkred text-white">戻る</button><div class="tw-counter"></div><button id="post" class="mp-button bg-darkgreen text-white">投稿</button>'
     popup.appendChild(buttons)
 
     // Load activity data
@@ -44,6 +43,8 @@ function openTwitterModal () {
         var username = buttonTwitter.dataset.username
         var profileImage = buttonTwitter.dataset.profileImage
         var date = new Date()
+        var text = activity.checkpoints.map(checkpoint => checkpoint.story).join('\r\n\r\n')
+        if (lengthInUtf8Bytes(text) > charsLimit - urlLength - 3) text = sliceInUtf8Bytes(text, charsLimit - urlLength - 3) + '...'
 
         var content = `
             <div class="tw-container">
@@ -56,30 +57,82 @@ function openTwitterModal () {
                         <div class="tw-username">@` + username + `</div>
                         <div class="tw-date">・` + date.toLocaleDateString('ja-JP') + `</div>
                     </div>
-                    <textarea class="tw-content">` + activity.checkpoints[0].story + `</textarea>
+                    <textarea class="tw-content">` + text + `</textarea>
+                    <div class="tw-link">` + window.location + `</div>
                 </div>
             </div>
         `
         $content.innerHTML = content
 
         // Listeners
-        modal.querySelector('#back').addEventListener('click', () => modal.remove())
-        modal.querySelector('#post').addEventListener('click', () => {
+        const $text    = modal.querySelector('textarea.tw-content')
+        const $counter = modal.querySelector('.tw-counter')
+        const $back    = modal.querySelector('#back')
+        const $post    = modal.querySelector('#post')
+        displayTweetCharsCount($text.value, $counter)
+        $text.addEventListener('keyup', () => {
+            var number = displayTweetCharsCount($text.value, $counter)
+            if (number < 0) $post.setAttribute('disabled', 'disabled')
+            else $post.removeAttribute('disabled')
+        })
+        $back.addEventListener('click', () => modal.remove())
+        $post.addEventListener('click', () => {
 
-            var tweet = {
-                text: document.querySelector('.tw-content').value,
-            }
+            // Prepare media
+            const mediaMaxLength = 4
+            var photos = []
+            for (let i = 0; i < mediaMaxLength && i < activity.photos.length; i++) photos.push(activity.photos[i].url)
+
+            // Prepare text
+            let text = document.querySelector('.tw-content').value + '\r\n\r\n' + window.location
+
+            // Prepare tweet data
+            var tweet = {text, photos}
             
             var postLoader = new CircleLoader($content, {compact: true})
             postLoader.start()
 
             ajaxJsonPostRequest('/api/twitter/post.php', tweet, (response) => {
                 console.log(response)
-                if (response.errors) showResponseMessage({error: '投稿に失敗しました。（' + response.errors[0].message + '）'})
-                else showResponseMessage({success: '投稿しました！'})
+                if (response.errors) showResponseMessage({error: '投稿に失敗しました。（' + response.errors[0].message + '）'}, {absolute: true})
+                else if (!response.data) showResponseMessage({error: '投稿に失敗しました。（' + response.detail + '）'}, {absolute: true})
+                else showResponseMessage({success: '投稿しました！'}, {absolute: true})
                 postLoader.stop()
                 modal.remove()
             })
         })
     })
+}
+
+/**
+ * Count characters using a simulation of twitter algorithm
+ * @param {String} string
+ * @returns {Number}
+ */
+function lengthInUtf8Bytes (string) {
+    // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+    var m = encodeURIComponent(string).match(/%[89ABab]/g);
+    console.log(m)
+    return string.length + (m ? Math.floor(m.length / 2) : 0);
+}
+
+function sliceInUtf8Bytes (string, end) {
+    while (lengthInUtf8Bytes(string) > end) string = string.slice(0, string.length - 1)
+    return string
+}
+
+/**
+ * Displays [string] characters count using a simulation of twitter algorithm inside [element]
+ * @param {String} string 
+ * @param {HTMLElement} element 
+ * @returns {Number}
+ */
+function displayTweetCharsCount (string, element) {
+    const textLength = lengthInUtf8Bytes(string)
+    var number = charsLimit - urlLength - textLength
+    element.innerText = number
+    if (number < 0) element.className = 'tw-counter-red'
+    else if (number >= 0 && number < 20) element.className = 'tw-counter-orange'
+    else element.className = 'tw-counter-green'
+    return number
 }

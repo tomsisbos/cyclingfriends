@@ -10,7 +10,7 @@ if (is_array($data)) {
 
     $twitter = $connected_user->getTwitter();
     if ($twitter->isUserConnected()) {
-        $result = $twitter->post($data['text']);
+        $result = $twitter->post($data['text'], $data['photos']);
         echo json_encode($result);
     } else throw new Exception('接続が切れました。投稿できませんでした。');
 
