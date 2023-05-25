@@ -2,6 +2,7 @@ import Modal from "/class/Modal.js"
 import CFUtils from "/class/utils/CFUtils.js"
 import ActivityMap from "/class/maps/activity/ActivityMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
+import Twitter from '/class/social/Twitter.js'
 
 // Specs listeners
 document.querySelectorAll('.pg-ac-spec-container.front').forEach( (element) => {
@@ -56,6 +57,13 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     // Set month property to activity month
     activityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
     activityMap.setSeason()
+
+    // If user is connected to twitter
+    var buttonTwitter = document.querySelector('#buttonTwitter')
+    if (buttonTwitter && buttonTwitter.dataset.username) {
+        var twitter = new Twitter(activityData)
+        buttonTwitter.addEventListener('click', () => twitter.openTwitterModal())
+    }
     
     // If map is interactive
     if ($map.getAttribute('interactive') == 'true') {

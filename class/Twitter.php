@@ -162,6 +162,7 @@ class Twitter extends Model {
      * @return any
      */
     public function post ($text, $photos) {
+        
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->oauth_token, $this->oauth_token_secret);
 
         // Upload photos to twitter
@@ -175,7 +176,7 @@ class Twitter extends Model {
             array_push($photo_ids, $media->media_id_string);
         }
         $oauth->setApiVersion('2');
-        $result = $oauth->post('statuses/update', ['status' => $text, 'media_ids' => implode(',', $photo_ids)], true);
+        $result = $oauth->post('tweets', ['text' => $text, 'media' => ['media_ids' => $photo_ids]], true);
         return $result;
     }
 

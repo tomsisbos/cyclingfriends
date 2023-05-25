@@ -23,6 +23,8 @@
 .tw-content {
     width: 100%;
     min-height: 200px;
+    border: 1px solid #eee;
+    padding: 5px;
 }
 
 .tw-link {
@@ -48,4 +50,36 @@
 
 .tw-counter-green {
     color: #00e06e;
+}
+
+.tw-title {
+    padding: 3px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    background-color: #eee;
+}
+
+.tw-options {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 8px;
+}
+.tw-option {
+    text-align: left;
+    padding-left: 20px;
+}
+.tw-option label {
+    padding: 0 6px;
+}
+
+.tw-canvas {
+    width: 50%;
+    padding: 1px;
+    opacity: 0.7;
+}
+
+.tw-selected {
+    opacity: 1;
+    background-color: yellow;
 }

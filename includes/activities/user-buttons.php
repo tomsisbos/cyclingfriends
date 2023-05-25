@@ -18,7 +18,5 @@ if (isset($_SESSION['auth'])) { ?>
         </div> <?php
         if (!$twitter->isUserConnected()) echo '</a>' ?>
 
-    </div>
-
-    <script type="module" src="/scripts/activities/post-twitter.js"></script> <?php
+    </div> <?php
 } ?>
