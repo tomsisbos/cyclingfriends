@@ -237,16 +237,16 @@ export default class Twitter {
                     if ($option.checked) {
                         if ($option.id == 'time') {
                             ctx.textAlign = 'left'
-                            var posX = 64
-                            var fontsize = 32
+                            var posX = 50
+                            var fontsize = Math.round(img.width / 50)
                         } else if ($option.id == 'distance') {
                             ctx.textAlign = 'right'
                             var posX = img.width - 50
-                            var fontsize = 32
+                            var fontsize = Math.round(img.width / 50)
                         } else {
                             ctx.textAlign = 'center'
                             var posX = img.width / 2
-                            var fontsize = 32
+                            var fontsize = Math.round(img.width / 36)
                         }
                         ctx.font = fontsize + 'px monospace'
                         ctx.strokeText(this.getText($option.id, nb), posX, img.height - (80 + (centerLine * fontsize * 1.15)))
