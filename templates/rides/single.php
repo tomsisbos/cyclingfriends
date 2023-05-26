@@ -157,3 +157,4 @@ include '../includes/head.php'; ?>
 <script src="/assets/js/fade-on-scroll.js"></script>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/rides/checkpoints-gallery.js"></script>
+<script src="/scripts/riders/friends.js"></script>
