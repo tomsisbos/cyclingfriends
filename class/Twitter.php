@@ -151,7 +151,7 @@ class Twitter extends Model {
             unset($this->style);
             unset($this->oauth_token);
             unset($this->oauth_token_secret);
-            $_SESSION['successmessage'] = '@' .$username. 'との接続が会場されました。';
+            $_SESSION['successmessage'] = '@' .$username. 'との接続が解除されました。';
         }
     }
 

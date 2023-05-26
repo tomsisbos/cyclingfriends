@@ -4,6 +4,7 @@ export default class Twitter {
 
     constructor (activity) {
         this.activity = activity
+        this.defaultText = '「' + activity.title + '」のライドレポートはこちら：'
     }
 
     charsLimit = 280
@@ -13,6 +14,7 @@ export default class Twitter {
     $previewPhotos
     previewPhotos = []
     $selectedNumber
+    defaultText
 
     openTwitterModal () {
         
@@ -46,6 +48,7 @@ export default class Twitter {
         var date = new Date()
         var text = this.activity.checkpoints.map(checkpoint => checkpoint.story).join('\r\n\r\n')
         if (this.lengthInUtf8Bytes(text) > this.charsLimit - this.urlLength - 3) text = this.sliceInUtf8Bytes(text, this.charsLimit - this.urlLength - 3) + '...'
+        if (text == '\r\n\r\n') text = this.defaultText
 
         var content = `
             <div class="tw-container">
@@ -226,24 +229,27 @@ export default class Twitter {
                 canvas.height = img.height
                 ctx.drawImage(img, 0, 0)
                 ctx.fillStyle = "#fff"
+                ctx.shadowColor = "#000"
+                ctx.shadowBlur = 7
                 const optionsList = this.modal.querySelectorAll('.tw-options input')
                 var centerLine = 0
                 optionsList.forEach($option => {
                     if ($option.checked) {
                         if ($option.id == 'time') {
                             ctx.textAlign = 'left'
-                            var posX = 50
-                            var fontsize = 28
+                            var posX = 64
+                            var fontsize = 32
                         } else if ($option.id == 'distance') {
                             ctx.textAlign = 'right'
                             var posX = img.width - 50
-                            var fontsize = 28
+                            var fontsize = 32
                         } else {
                             ctx.textAlign = 'center'
                             var posX = img.width / 2
-                            var fontsize = 36
+                            var fontsize = 32
                         }
                         ctx.font = fontsize + 'px monospace'
+                        ctx.strokeText(this.getText($option.id, nb), posX, img.height - (80 + (centerLine * fontsize * 1.15)))
                         ctx.fillText(this.getText($option.id, nb), posX, img.height - (80 + (centerLine * fontsize * 1.15)))
                         if ($option.id != 'distance' && $option.id != 'time') centerLine++
                     }
