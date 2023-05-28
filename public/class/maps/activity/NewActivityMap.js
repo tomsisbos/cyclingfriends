@@ -89,7 +89,11 @@ export default class NewActivityMap extends ActivityMap {
 
             // Build temperature
             var hasTemperatureData = false
-            for (let j = 0; !('temperature' in trackpoints[j]) || j < trackpoints.length - 1; j++) {
+            console.log(gpx)
+            console.log(trackpoints)
+            console.log(trackpoints.length)
+            for (let j = 0; ('temperature' in trackpoints[j]) && j < trackpoints.length - 1; j++) {
+                console.log(j)
                 if (trackpoints[j].temperature) hasTemperatureData = true
             }
             if (hasTemperatureData) {

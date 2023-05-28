@@ -52,9 +52,15 @@ if (is_array($data)) {
         $title            = $data['title'];
         $duration         = $data['duration'];
         $duration_running = $data['duration_running'];
-        $temperature_min  = $data['temperature']['min'];
-        $temperature_avg  = $data['temperature']['avg'];
-        $temperature_max  = $data['temperature']['max'];
+        if (count($data['temperature']) == 3) {
+            $temperature_min = $data['temperature']['min'];
+            $temperature_avg = $data['temperature']['avg'];
+            $temperature_max = $data['temperature']['max'];
+        } else {
+            $temperature_min = null;
+            $temperature_avg = null;
+            $temperature_max = null;
+        }
         $speed_max        = $data['speed_max'];
         $altitude_max     = $data['altitude_max'];
         $slope_max        = $data['slope_max'];
