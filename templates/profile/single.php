@@ -32,7 +32,7 @@ include '../includes/head.php'; ?>
 			
 			// Only display social links if filled
 			// Twitter
-			if ($user->getTwitter()) {
+			if ($user->getTwitter()->isUserConnected()) {
 				$twitter = $user->getTwitter(); ?>
 				<a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
 			} // Facebook
