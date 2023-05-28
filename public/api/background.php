@@ -34,8 +34,8 @@ if (isAjax()) {
         $ride = new Ride($_GET['ride-imgs']);
         $imgs_number = intval($_GET['number']);
         $images = $ride->getImages($imgs_number);
-        echo json_encode($images);
-
+        if ($ride->checkpoints[0]->img->url) echo json_encode(array_slice($images, 1, count($images) - 2));
+        else echo json_encode($images);
     }
 }
 

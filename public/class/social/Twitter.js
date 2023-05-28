@@ -39,7 +39,6 @@ export default class Twitter {
         this.$previewPhotos.className = 'tw-preview-photos'
         popup.appendChild(this.$previewPhotos)
         
-        console.log(this.activity)
         dataLoader.stop()
 
         var name = buttonTwitter.dataset.username
@@ -119,14 +118,12 @@ export default class Twitter {
             let text = document.querySelector('.tw-content').value + '\r\n\r\n' + window.location
 
             // Prepare tweet data
-            console.log(photos)
             var tweet = {text, photos}
 
             var postLoader = new CircleLoader($content, {compact: true})
             postLoader.start()
 
             ajaxJsonPostRequest('/api/twitter/post.php', tweet, (response) => {
-                console.log(response)
                 if (response.errors) showResponseMessage({error: '投稿に失敗しました。（' + response.errors[0].message + '）'}, {absolute: true})
                 else if (!response.data) showResponseMessage({error: '投稿に失敗しました。（' + response.detail + '）'}, {absolute: true})
                 else showResponseMessage({success: '投稿しました！'}, {absolute: true, scrollIntoView: true})
@@ -150,7 +147,6 @@ export default class Twitter {
             $previewPhoto.addEventListener('click', (e) => {
                 if (e.target.classList.contains('tw-selected')) this.unselect(e.target)
                 else if (this.previewPhotos.length < 4) this.select(e.target)
-                console.log(this.previewPhotos)
             })
         }
     }

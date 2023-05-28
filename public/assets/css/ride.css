@@ -8,6 +8,10 @@
     background-position: center !important;
 }
 
+.mySlides.rd-slide {
+    height: 70% !important;
+}
+
 /* Course */
 
 .rd-course-map-container {

@@ -89,11 +89,7 @@ export default class NewActivityMap extends ActivityMap {
 
             // Build temperature
             var hasTemperatureData = false
-            console.log(gpx)
-            console.log(trackpoints)
-            console.log(trackpoints.length)
             for (let j = 0; ('temperature' in trackpoints[j]) && j < trackpoints.length - 1; j++) {
-                console.log(j)
                 if (trackpoints[j].temperature) hasTemperatureData = true
             }
             if (hasTemperatureData) {
@@ -200,7 +196,6 @@ export default class NewActivityMap extends ActivityMap {
 
             const session = fit.session
             // Build max altitude
-            console.log(record.altitude)
             var altitude_max = record.altitude.reduce((a, b) => Math.max(a, b), -Infinity)
             // Build max speed
             var speed_max = Math.floor(session.max_speed * 10) / 10
@@ -217,7 +212,6 @@ export default class NewActivityMap extends ActivityMap {
                     let elevation = 0
                     for (let j = 0; j < precision; j++) elevation += parseInt(trackpoints[i - j].elevation) - parseInt(trackpoints[i - j - 1].elevation)
                     var slope = elevation * 100 / (distance * 1000)
-                    console.log(slope)
                     if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
                 }
             }
@@ -301,7 +295,6 @@ export default class NewActivityMap extends ActivityMap {
                     photos: [],
                     trackpoints
                 }
-                console.log(this.data)
                 resolve({success: true})
             }
         } )

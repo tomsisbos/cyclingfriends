@@ -22,7 +22,6 @@ function App () {
             case 'changePassword': var component = <ChangePassword />; break;
             case 'privacy': var component = <Privacy />; break;
         }
-        console.log(component)
         setBoard(component)
     }
 

@@ -68,7 +68,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
         <?php // Get total number of photos in a variable for displaying correct number
         for ($i = 0; $i < count($ride->checkpoints); $i++) {
             $checkpoint = $ride->checkpoints[$i]; ?>
-            <div class="mySlides">
+            <div class="mySlides rd-slide">
                 <div class="numbertext"><?= ($i+1). ' / ' .count($ride->checkpoints);?></div> <?php
                 if ($checkpoint->img->filename !== NULL) { ?>
                     <img src="<?= $checkpoint->img->url; ?>" style="width:100%"> <?php
