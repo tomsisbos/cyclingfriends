@@ -37,7 +37,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 		</div>
 		<div class="row">
 			<div id="departure-time" class="col">
-				<p><strong>出発時間 :</strong> <?= $_SESSION['edit-forms']['1']['departure-time']. " (finish around " .$_SESSION['edit-forms']['1']['finish-time']. ")";?></p>
+				<p><strong>出発時間 :</strong> <?= $_SESSION['edit-forms']['1']['departure-time']. " (" .$_SESSION['edit-forms']['1']['finish-time']. "頃に解散)";?></p>
 			</div>
 		</div>
 		<div class="row">
