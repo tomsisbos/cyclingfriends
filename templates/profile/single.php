@@ -98,9 +98,13 @@ include '../includes/head.php'; ?>
 							</div> <?php
 						} ?>
 						<div class="row g-2"> <?php 
-							if (!empty($user->birthdate)) { ?>
+							if (!empty($user->birthdate) AND $user->isAgePublic()) { ?>
 								<div class="col-md">
 									<strong>年齢 : </strong><?= $user->calculateAge(). '才'; ?>
+								</div> <?php
+							} else if (!empty($user->birthdate) AND $user->id == $connected_user->id) { ?>
+								<div class="col-md text-secondary">
+									<strong>年齢 : </strong><?= $user->calculateAge(). '才 ※年齢は非公開に設定されているので、他のユーザーには表示されません。'; ?>
 								</div> <?php
 							}
 							if (!empty($user->location->city)) { ?>

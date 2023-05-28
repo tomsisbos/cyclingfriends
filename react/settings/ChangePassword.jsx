@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react'
 import SaveButton from '/react/settings/SaveButton.jsx'
 
 export default function ChangePassword () {

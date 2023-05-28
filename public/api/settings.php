@@ -5,6 +5,8 @@ require '../../includes/api-head.php';
 if (isset($_GET)) {
 
     if (isset($_GET['email'])) echo json_encode($connected_user->email);
+    
+    if (isset($_GET['login'])) echo json_encode($connected_user->login);
 
     if (isset($_GET['privacy-settings'])) {
         $settings = $connected_user->getSettings();
@@ -37,6 +39,16 @@ if (is_array($settings)) {
                 $updateEmail->execute(array($posted_email, $connected_user->id));
                 echo json_encode(['success' => 'メールアドレスが更新されました！']);
             } else echo json_encode(['error' => 'この形式のメールアドレスをご利用頂けません。メールアドレスの記載に誤字がないか、再度ご確認ください。']);
+        } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
+        
+    } else if ($settings['type'] === 'login') {
+        $posted_login = htmlspecialchars($settings['login']);
+        $posted_password = htmlspecialchars($settings['password']);
+        // Check if filled password matches connected user registered password
+        if (password_verify($posted_password, $connected_user->getPassword())) {
+            $updateLogin = $db->prepare('UPDATE users SET login = ? WHERE id = ?');
+            $updateLogin->execute(array($posted_login, $connected_user->id));
+            echo json_encode(['success' => 'ユーザーネームが更新されました！']);
         } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
     
     } else if ($settings['type'] === 'password') {

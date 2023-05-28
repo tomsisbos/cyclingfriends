@@ -878,6 +878,14 @@ class User extends Model {
     }
 
     /**
+     * Check if user has allowed age publication
+     */
+    public function isAgePublic () {
+        if ($this->getSettings()->hide_age) return false;
+        else return true;
+    }
+
+    /**
      * Get an Twitter instance for user's credentials
      * @return Twitter
      */

@@ -8,7 +8,8 @@ export default function Privacy () {
     // Settings default state
     const [settings, setSettings] = useState( {
         hide_on_neighbours: false,
-        hide_realname: false
+        hide_realname: false,
+        hide_age: false
     } )
 
     // On change, set changed value (=id) to opposite one
@@ -43,6 +44,14 @@ export default function Privacy () {
                     label="実名を公開しない"
                     value={settings.hide_realname}
                     id={'hide_realname'}
+                    onChange={handleChange}
+                />
+			</div>
+			<div className="tr-row gap-20 mb-3">
+                <Checkbox
+                    label="年齢／生年月日を公開しない"
+                    value={settings.hide_age}
+                    id={'hide_age'}
                     onChange={handleChange}
                 />
 			</div>

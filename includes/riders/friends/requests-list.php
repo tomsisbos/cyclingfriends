@@ -40,17 +40,18 @@
 							</a>
 							<div class="rdr-maininfos-section">
 								<div class="rdr-sub">
-									<div class="d-flex gap">
-									<!-- Only display social links if filled -->
-									<?php if(isset($rider->twitter) AND !empty($rider->twitter)){ ?>
-										<a target="_blank" href="<?= $rider->twitter ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a>
-									<?php }if(isset($rider->facebook) AND !empty($rider->facebook)){ ?>
-										<a target="_blank" href="<?= $rider->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a>
-									<?php }if(isset($rider->instagram) AND !empty($rider->instagram)){ ?>
-										<a target="_blank" href="<?= $rider->instagram ?>"><span class="social iconify instagram" data-icon="ant-design:instagram-filled" data-width="20"></span></a>
-									<?php }if(isset($rider->strava) AND !empty($rider->strava)){ ?>
-										<a target="_blank" href="<?= $rider->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a>
-									<?php } ?>
+									<div class="d-flex gap"> <?php
+									// Only display social links if filled
+									if ($user->getTwitter()->isUserConnected()) {
+										$twitter = $user->getTwitter(); ?>
+										<a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a><?php
+									} if (isset($rider->facebook) AND !empty($rider->facebook)) { ?>
+										<a target="_blank" href="<?= $rider->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a><?php
+									} if (isset($rider->instagram) AND !empty($rider->instagram)) { ?>
+										<a target="_blank" href="<?= $rider->instagram ?>"><span class="social iconify instagram" data-icon="ant-design:instagram-filled" data-width="20"></span></a><?php
+									} if (isset($rider->strava) AND !empty($rider->strava)) { ?>
+										<a target="_blank" href="<?= $rider->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a><?php
+									} ?>
 									</div>
 								</div>
 								<div class="rdr-sub"> <?php
@@ -60,10 +61,10 @@
 											<?= $rider->place; ?>
 										</div> <?php
 									} 
-									if (!empty($rider->birthdate)) { ?>
+									if (!empty($rider->birthdate) && $rider->isAgePublic()) { ?>
 										<div>
 											<strong>年齢 : </strong>
-											<?= $rider->calculateAge(). ' years old'; ?>
+											<?= $rider->calculateAge(). ' 才'; ?>
 										</div> <?php
 									} ?>
 								</div>

@@ -35,8 +35,9 @@
                     <div class="rdr-sub">
                         <div class="d-flex gap"> <?php 
                             // Only display social links if filled
-                            if (isset($rider->twitter) AND !empty($rider->twitter)) { ?>
-                                <a target="_blank" href="<?= $rider->twitter ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
+                            if ($user->getTwitter()->isUserConnected()) {
+                                $twitter = $user->getTwitter(); ?>
+                                <a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
                             } if (isset($rider->facebook) AND !empty($rider->facebook)) { ?>
                                 <a target="_blank" href="<?= $rider->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a> <?php
                             } if (isset($rider->instagram) AND !empty($rider->instagram)){ ?>
@@ -62,7 +63,7 @@
                             <?= $rider->place; ?>
                         </div> <?php
                     } 
-                    if (!empty($rider->birthdate)) { ?>
+                    if (!empty($rider->birthdate) && $rider->isAgePublic()) { ?>
                         <strong>年齢 : </strong>
                         <?= $rider->calculateAge(). '才';
                     } ?>

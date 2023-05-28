@@ -1,5 +1,6 @@
 import React, { useState, createContext } from 'react'
 import ReactDOM from 'react-dom/client'
+import ChangeLogin from "/react/settings/ChangeLogin.jsx"
 import ChangeEmail from "/react/settings/ChangeEmail.jsx"
 import ChangePassword from "/react/settings/ChangePassword.jsx"
 import Privacy from "/react/settings/Privacy.jsx"
@@ -16,10 +17,12 @@ function App () {
 
     const getPage = (page) => {
         switch (page) {
+            case 'changeLogin': var component = <ChangeLogin />; break;
             case 'changeEmail': var component = <ChangeEmail />; break;
             case 'changePassword': var component = <ChangePassword />; break;
             case 'privacy': var component = <Privacy />; break;
         }
+        console.log(component)
         setBoard(component)
     }
 

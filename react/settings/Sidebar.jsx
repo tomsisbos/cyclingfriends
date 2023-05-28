@@ -32,6 +32,7 @@ class Sidebar extends React.Component {
                         <ul className="card-body">
                             <a onClick={() => this.changePage('changePassword')} className={this.state.active == 'changePassword' ? 'active' : ''}><li>パスワードを変更する</li></a>
                             <a onClick={() => this.changePage('changeEmail')} className={this.state.active == 'changeEmail' ? "active" : ''}><li>メールアドレスを変更する</li></a>
+                            <a onClick={() => this.changePage('changeLogin')} className={this.state.active == 'changeLogin' ? "active" : ''}><li>ユーザーネームを変更する</li></a>
                         </ul>
                     </div>
                     <div className="stg-title-card" id="headingTwo">
