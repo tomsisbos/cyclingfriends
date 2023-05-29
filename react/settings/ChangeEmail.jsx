@@ -6,11 +6,17 @@ export default function ChangeEmail () {
 	
     // Email default state
     const [email, setEmail] = useState('')
+    const [emailVerification, setEmailVerification] = useState('')
     const [password, setPassword] = useState('')
 	
     const handleEmailChange = (e) => {
         var newEmail = e.target.value
         setEmail(newEmail)
+    }
+	
+    const handleEmailVerificationChange = (e) => {
+        var newEmailVerification = e.target.value
+        setEmailVerification(newEmailVerification)
     }
 	
     const handlePasswordChange = (e) => {
@@ -30,10 +36,14 @@ export default function ChangeEmail () {
 		
 			<h2>メールアドレス変更</h2>
 	
-			<div className="tr-row gap-20">
-				<div className="col form-floating">
+			<div>
+				<div className="col form-floating mb-2">
 					<input type="email" className="form-control" id="email" placeholder="Email" value={email} onChange={handleEmailChange} />
-					<label className="form-label" htmlFor='floatingInput'>メールアドレス</label>
+					<label className="form-label" htmlFor='email'>新メールアドレス</label>
+				</div>
+				<div className="col form-floating mb-2">
+					<input type="email" className="form-control" id="emailVerification" placeholder="EmailVerification" value={emailVerification} onChange={handleEmailVerificationChange} />
+					<label className="form-label" htmlFor='emailVerification'>新メールアドレス（確認用）</label>
 				</div>
 				<div className="col form-floating mb-3">
 					<input type="password" className="form-control" id="password" placeholder="Password" onChange={handlePasswordChange} />
@@ -42,7 +52,7 @@ export default function ChangeEmail () {
 			</div>
 			<div>
 				<SaveButton
-                    settings={{ email, password }}
+                    settings={{ email, emailVerification, password }}
 					type={'email'}
 					text={'変更'}
                 />

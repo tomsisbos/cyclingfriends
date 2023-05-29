@@ -369,11 +369,12 @@ input[type="checkbox"] {
 }
 
 .sign-link {
+    max-width: 400px;
+    width: 100%;
     text-align: center;
     background-color: #00000077;
-    width: max-content;
     margin: auto;
-    padding: 8px 50px;
+    padding: 8px;
     border-radius: 3px;
     font-weight: bold;
 }

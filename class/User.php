@@ -118,12 +118,13 @@ class User extends Model {
 
     /**
      * Send email verification mail
-     * @param Boolean $redirect Whether to redirect user to the page where email has been sent or not
+     * @param Array $options
+     * @param Boolean $options['redirect'] Whether to redirect user to the page where email has been sent or not
      */
-    public function sendVerificationMail ($redirect = true) {
+    public function sendVerificationMail ($options = ['redirect' => true]) {
         
         // Get uri to redirect user to
-        if ($redirect) {
+        if ($options['redirect']) {
             $uri_array = explode('/', $_SERVER['REQUEST_URI']);
             array_pop($uri_array);
             $redirection_uri = implode('/', $uri_array);
@@ -140,8 +141,8 @@ class User extends Model {
         $email->addContent(
             'text/html',
             '<p>' .$this->login. 'さん、CyclingFriendsへようこそ！</p>
-            <p>アカウントの作成は終わりましたが、ログインするにはまだメールアドレスの確認を行う必要があります。</p>
-            <p>下記のURLにアクセスして、ログインしてください！</p>
+            <p>アカウントの作成は無事に終了しましたが、ログインするにはまだメールアドレスの確認を行う必要があります。</p>
+            <p>下記のURLにアクセスし、ログインしてください！</p>
             <a href="' .$_SERVER['HTTP_ORIGIN']. $redirection_uri. '/account/verification/' .$this->slug. '-' .$this->email. '">メールアドレスの確認用URLはこちら</a>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));

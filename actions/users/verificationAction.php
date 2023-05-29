@@ -17,7 +17,7 @@ if ($checkIfSlugAndEmailCorresponds->rowCount() == 1) {
 
     $user->setSession();
 
-    $_SESSION['successmessage'] = 'アカウント作成が無事に完了しました！';
+    $_SESSION['successmessage'] = 'メールアドレスが無事に確認できました！';
 
     // Redirect authentified user to the Dashboard
     if (isset($url)) header('location: ' .$url);

@@ -33,7 +33,7 @@ if (isset($_POST['validate'])) {
 				
 						$user->register($email, $login, $password);
 
-						$user->sendVerificationMail();
+						$user->sendVerificationMail(['redirect' => false]);
 
 						$successmessage = '登録のメールアドレスに確認用のメールを送信しました。アカウント作成を完了するためには、そのメール内にある確認用URLをクリックしてください。';	
 

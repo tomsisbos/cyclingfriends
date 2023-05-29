@@ -30,16 +30,23 @@ if (is_array($settings)) {
 
     } else if ($settings['type'] === 'email') {
         $posted_email = htmlspecialchars($settings['email']);
+        $posted_verification_email = htmlspecialchars($settings['emailVerification']);
         $posted_password = htmlspecialchars($settings['password']);
-        //Check if filled password matches connected user registered password
-        if (password_verify($posted_password, $connected_user->getPassword())) {    
-            // Check if filled email format is valid
-            if (filter_var($posted_email, FILTER_VALIDATE_EMAIL)) {  
-                $updateEmail = $db->prepare('UPDATE users SET email = ? WHERE id = ?');
-                $updateEmail->execute(array($posted_email, $connected_user->id));
-                echo json_encode(['success' => 'メールアドレスが更新されました！']);
-            } else echo json_encode(['error' => 'この形式のメールアドレスをご利用頂けません。メールアドレスの記載に誤字がないか、再度ご確認ください。']);
-        } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
+        // Check if posted email corresponds to posted verification email
+        if ($posted_email == $posted_verification_email) {
+            // Check if filled password matches connected user registered password
+            if (password_verify($posted_password, $connected_user->getPassword())) {    
+                // Check if filled email format is valid
+                if (filter_var($posted_email, FILTER_VALIDATE_EMAIL)) {
+                    // Update user data
+                    $updateEmail = $db->prepare('UPDATE users SET slug = FLOOR(RAND() * 1000000000), email = ?, verified = 0 WHERE id = ?');
+                    $updateEmail->execute(array($posted_email, $connected_user->id));
+                    $connected_user = new User($connected_user->id);
+                    $connected_user->sendVerificationMail(['redirect' => false]);
+                    echo json_encode(['success' => '登録の新メールアドレス宛に確認用のメールを送信しました。新メールアドレスでご利用頂くために、そのメール内にある確認用URLをクリックしてください。']);
+                } else echo json_encode(['error' => 'この形式のメールアドレスをご利用頂けません。メールアドレスの記載に誤字がないか、再度ご確認ください。']);
+            } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
+        } else echo json_encode(['error' => '確認用のメールアドレスがご記入頂いたメールアドレスと異なります。']);
         
     } else if ($settings['type'] === 'login') {
         $posted_login = htmlspecialchars($settings['login']);
