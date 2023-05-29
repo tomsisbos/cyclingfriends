@@ -21,7 +21,7 @@ export default class Map extends Model {
     sceneriesMarkerCollection = []
     sceneriesZoomRoof = 7 // Scenery display minimum zoom level
     sceneriesMinNumber = 10 // Number of sceneries displayed to try to reach at minimum
-    sceneriesMaxNumber = 20 // Maximum number of sceneries displayed at the same time
+    sceneriesMaxNumber = 40 // Maximum number of sceneries displayed at the same time
     selectStyle
     dislayKonbinisBox
     displayAmenitiesBox
