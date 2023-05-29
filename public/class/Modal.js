@@ -16,8 +16,8 @@ export default class Modal extends Model {
 
         // Prepare content
         modal.innerHTML = `
-            <span class="close cursor">&times;</span>
             <div class="modal-block">
+                <span class="close cursor">&times;</span>
                 <div class="img-slide">
                     <img src="` + this.src + `">
                 </div>

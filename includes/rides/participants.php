@@ -27,8 +27,8 @@ if (!empty($participation)) { ?>
 
 <!-- Participants lightbox window -->
 <div id="participantsWindow" class="modal modal-small" style="display: none;">
-	<span class="close cursor" onclick="closeParticipantsWindow()">&times;</span>
 	<div class="modal-block p-2">
+		<span class="close cursor" onclick="closeParticipantsWindow()">&times;</span>
 		<div class="container bg-participant">
 			<h3 class=""><?= $ride->name. "の参加者"; ?></h3>
 		</div>

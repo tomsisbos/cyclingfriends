@@ -236,9 +236,12 @@ img.hover-shadow {
   color: white;
   position: absolute;
   top: 0px;
-  right: 12px;
-  font-size: 50px;
+  right: 16px;
+  line-height: normal;
+  text-shadow: 4px 4px 12px black;
+  font-size: 70px;
   font-weight: bold;
+  z-index: 1;
 }
 
 .close:hover,

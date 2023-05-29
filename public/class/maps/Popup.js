@@ -44,8 +44,8 @@ export default class Popup extends Model {
             modalBaseContent.id = 'myModal'
             modalBaseContent.className = 'modal'
             modalBaseContent.innerHTML =
-                    `<span class="close cursor" onclick="closeModal()">&times;</span>
-                    <div class="modal-block">
+                    `<div class="modal-block">
+                        <span class="close cursor" onclick="closeModal()">&times;</span>
                         <a class="prev nav-link">&#10094;</a>
                         <a class="next nav-link">&#10095;</a>
                     </div>`

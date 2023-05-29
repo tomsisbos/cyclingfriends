@@ -38,7 +38,7 @@ export default class SegmentLightbox extends Popup {
         closeButton.innerHTML = '&times;'
         this.modalBlock = document.createElement('div')
         this.modalBlock.className = "modal-block"
-        this.modal.appendChild(closeButton)
+        this.modalBlock.appendChild(closeButton)
         this.modal.appendChild(this.modalBlock)
         this.container.appendChild(this.modal)
         // If more than one photo, display arrows

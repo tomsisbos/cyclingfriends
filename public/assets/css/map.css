@@ -729,7 +729,7 @@ form#sceneryForm input[type="file" i] {
 
 .profile-inside-map#profileBox {
     position: fixed;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     height: 0px;
     bottom: 0px;

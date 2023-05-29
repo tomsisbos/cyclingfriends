@@ -18,8 +18,8 @@
 
 <!-- Friends lighbox window -->
 <div id="friendsWindow" class="modal modal-small" style="display: none;">
-	<span class="close cursor" onclick="closeFriendsWindow()">&times;</span>
 	<div class="modal-block p-2">
+		<span class="close cursor" onclick="closeFriendsWindow()">&times;</span>
 		<div class="container bg-friend">
 			<h3 class=""><?= $user->login. "'s friends"; ?></h3>
 		</div>

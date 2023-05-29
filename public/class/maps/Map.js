@@ -2543,6 +2543,8 @@ export default class Map extends Model {
 
     // Remove current route
     clearRoute () {
+        console.log(this)
+        debugger
         if (this.map.getSource('startPoint')) {
             this.map.removeLayer('startPoint')
             this.map.removeSource('startPoint')
@@ -2574,6 +2576,7 @@ export default class Map extends Model {
         if (document.querySelector('#buttonClear')) document.querySelector('#buttonClear').setAttribute('disabled', 'disabled')
         this.start = null
         this.hideDistanceMarkers()
+        console.log(this)
     }
 
     // Get geolocation of a LngLat point

@@ -62,8 +62,8 @@
 Only display currently selected thumbnail picture, if a corresponding blob exists in the database -->
 
 <div id="myModal" class="modal">
-    <span class="close cursor" onclick="closeModal()">&times;</span>
     <div class="modal-block">
+        <span class="close cursor" onclick="closeModal()">&times;</span>
 
         <?php // Get total number of photos in a variable for displaying correct number
         for ($i = 0; $i < count($ride->checkpoints); $i++) {
