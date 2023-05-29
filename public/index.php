@@ -24,6 +24,8 @@ $router->map('GET|POST', '[*:url]/signin', 'user/signin', 'user-signin-redirect'
 $router->map('GET|POST', '/signout', 'user/signout', 'user-signout');
 $router->map('GET|POST', '[*:url]/signout', 'user/signout', 'user-signout-redirect');
 $router->map('GET|POST', '/signup', 'user/signup', 'user-signup');
+$router->map('GET|POST', '/reset-password-application', 'user/reset-password-application', 'user-reset-password-application');
+$router->map('GET|POST', '/account/reset-password/[i:token]', 'user/reset-password', 'user-reset-password');
 $router->map('GET|POST', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe');
 $router->map('GET', '/rider/[i:user_id]', 'profile/single', 'profile-single');
 $router->map('GET|POST', '/profile/edit', 'profile/edit', 'profile-edit');

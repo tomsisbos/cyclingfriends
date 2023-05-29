@@ -370,7 +370,12 @@ input[type="checkbox"] {
 
 .sign-link {
     text-align: center;
-    text-shadow: 0 0 4px black;
+    background-color: #00000077;
+    width: max-content;
+    margin: auto;
+    padding: 8px 50px;
+    border-radius: 3px;
+    font-weight: bold;
 }
 
 /*

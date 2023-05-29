@@ -28,17 +28,18 @@ include '../includes/navbar.php'; ?>
 		
 			<div class="form-floating mb-3">
 				<input type="email" class="form-control" id="floatingInput" placeholder="Email" name="email">
-				<label class="form-label" for="floatingInput">Email address</label>
+				<label class="form-label" for="floatingInput">メールアドレス</label>
 			</div>
 			<div class="form-floating mb-3">
 				<input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
-				<label class="form-label" for="floatingPassword">Password</label>
+				<label class="form-label" for="floatingPassword">パスワード</label>
 			</div>
 			
 			<button type="submit" class="btn button fullwidth button-primary" name="validate">ログイン</button>
 
 			<div class="mt-4 sign-link">
-				<a href="<?= $router->generate('user-signup') ?>">アカウントの新規作成はこちら</a>
+				<div><a href="<?= $router->generate('user-signup') ?>">アカウントの新規作成はこちら</a></div>
+				<div><a href="<?= $router->generate('user-reset-password-application') ?>">パスワードを忘れた方はこちら</a></div>
 			</div>
 			
 		</form>
