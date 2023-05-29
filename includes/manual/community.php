@@ -15,8 +15,10 @@ $content = [
         ],
         'text' => [
             'お隣さん機能は、自分の居住地に近いユーザーを見つけ、繋がれる機能です。連携している「地図表示」と「リスト表示」で確認することができます。',
-            'point' => Manual::temp('お隣さん機能を利用するには、自分自身も居住地を設定する必要があります。'),
-            'point' => Manual::ref('user-location', '活動拠点情報'). 'を記入し、ユーザー設定の中から' .Manual::ref('user-settings-neighbours', 'お隣ページで表示を認めたユーザー'). 'のみ表示されます。'
+            'point' => [
+                Manual::temp('お隣さん機能を利用するには、自分自身も居住地を設定する必要があります。'),
+                Manual::ref('user-location', '活動拠点情報'). 'を記入し、ユーザー設定の中から' .Manual::ref('user-settings-neighbours', 'お隣ページで表示を認めたユーザー'). 'のみ表示されます。'
+            ]
         ],
         'content' => [
             [

@@ -26,6 +26,10 @@ class Manual extends Model {
             'chapter' => 'world',
             'id' => 'segments'
         ],
+        'activity-photos' => [
+            'chapter' => 'activities',
+            'id' => 'activityphotos'
+        ],
         'activity-scenerymaking' => [
             'chapter' => 'activities',
             'id' => 'scenerymaking'
@@ -109,8 +113,8 @@ class Manual extends Model {
             'chapter' => 'sceneryguidelines',
             'id' => 'title'
         ],
-        'data' => [
-            'chapter' => 'data'
+        'privacypolicy' => [
+            'chapter' => 'privacypolicy'
         ]
     ];
 
@@ -281,6 +285,7 @@ class Manual extends Model {
             if (is_numeric($class)) echo '<p>' .$text. '</p>';
             else if ($class == 'list') self::list($text['style'], $text['content']);
             else if ($class == 'table') self::table($text);
+            else if ($class == 'point') self::point($text);
             else echo '<div class="m-' .$class. '">' .$text. '</div>';
         };
     }
@@ -316,7 +321,8 @@ class Manual extends Model {
     }
     
     public static function point ($point) {
-        echo '<div class="m-point">' .$point. '</div>';
+        if (is_array($point)) foreach ($point as $entry) echo '<div class="m-point">' .$entry. '</div>';
+        else echo '<div class="m-point">' .$point. '</div>';
     }
 
 }
