@@ -1142,6 +1142,7 @@ export default class NewActivityMap extends ActivityMap {
 
                     var lngLat = {lng: this.getPhotoLocation(entry)[0], lat: this.getPhotoLocation(entry)[1]}
                     var location = await this.getLocation(lngLat)
+                    ///await map.once('idle')
                     sceneriesToCreate.push( {
                         name,
                         description,
@@ -1153,6 +1154,8 @@ export default class NewActivityMap extends ActivityMap {
                         elevation: Math.floor(this.map.queryTerrainElevation(lngLat)),
                         photos
                     } )
+                    console.log(this.map.queryTerrainElevation(lngLat))
+                    console.log(lngLat)
                     if (name == '' || description == '') filled = false
                     treatedSceneriesNumber++
                     if (treatedSceneriesNumber == this.data.sceneriesToCreate.length && filled) resolve(sceneriesToCreate)

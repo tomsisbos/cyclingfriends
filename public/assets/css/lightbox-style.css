@@ -294,9 +294,10 @@ img.hover-shadow {
 .img-slide img {
   height: 100%;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .img-slide {
   width: 100%;
+  background-color: #000;
   max-height: 95vh;
 }
