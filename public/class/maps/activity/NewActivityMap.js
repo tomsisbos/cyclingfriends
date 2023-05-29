@@ -1005,6 +1005,9 @@ export default class NewActivityMap extends ActivityMap {
 
     async openCreateSceneriesModal () {
         return new Promise ((resolve, reject) => {
+
+            // Focus on route for ensuring that all photos are inside loaded data range
+            this.focus()
             
             // Build window structure
             var modal = document.createElement('div')
@@ -1142,7 +1145,6 @@ export default class NewActivityMap extends ActivityMap {
 
                     var lngLat = {lng: this.getPhotoLocation(entry)[0], lat: this.getPhotoLocation(entry)[1]}
                     var location = await this.getLocation(lngLat)
-                    ///await map.once('idle')
                     sceneriesToCreate.push( {
                         name,
                         description,
