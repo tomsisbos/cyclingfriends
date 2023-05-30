@@ -27,3 +27,5 @@ if (!$is_allowed) {
     echo "You are not allowed to access this resource.";
     die();
 }
+
+if (!$connected_user) throw new Exception("セッションが切れてしまいました。お手数をお掛け致しますが、再度ログインの上、もう一度お試しください。");
