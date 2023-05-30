@@ -10,9 +10,8 @@
 if (isset($propic['img'])) { ?>
 
 	<div id="propicModal" class="modal">
-		<span class="close cursor" onclick="closePropicModal()">&times;</span>
 		<div class="modal-block">
-
+			<span class="close cursor" onclick="closePropicModal()">&times;</span>
 			<div class="img-slide">
 				<img src="<?= $user->getPropicUrl() ?>">
 			</div>

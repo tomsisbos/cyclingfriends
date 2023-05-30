@@ -20,7 +20,7 @@ export default class Map extends Model {
     profile
     sceneriesMarkerCollection = []
     sceneriesZoomRoof = 7 // Scenery display minimum zoom level
-    sceneriesMinNumber = 10 // Number of sceneries displayed to try to reach at minimum
+    sceneriesMinNumber = 20 // Number of sceneries displayed to try to reach at minimum
     sceneriesMaxNumber = 40 // Maximum number of sceneries displayed at the same time
     selectStyle
     dislayKonbinisBox
@@ -2543,8 +2543,6 @@ export default class Map extends Model {
 
     // Remove current route
     clearRoute () {
-        console.log(this)
-        debugger
         if (this.map.getSource('startPoint')) {
             this.map.removeLayer('startPoint')
             this.map.removeSource('startPoint')
@@ -2557,7 +2555,7 @@ export default class Map extends Model {
             this.map.removeLayer('startGoal')
             this.map.removeSource('startGoal')
         }
-        for (let i = 2; i < this.waypointNumber; i++) {
+        for (let i = 2; i <= this.waypointNumber; i++) {
             this.map.removeLayer('wayPoint' + i)
             this.map.removeSource('wayPoint' + i)
         }
@@ -2576,7 +2574,8 @@ export default class Map extends Model {
         if (document.querySelector('#buttonClear')) document.querySelector('#buttonClear').setAttribute('disabled', 'disabled')
         this.start = null
         this.hideDistanceMarkers()
-        console.log(this)
+        if (this.profile) this.profile.clearData()
+        if (document.querySelector('#profileBox')) this.hideProfile()
     }
 
     // Get geolocation of a LngLat point

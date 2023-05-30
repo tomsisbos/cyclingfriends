@@ -1,6 +1,7 @@
 import CFUtils from '/class/utils/CFUtils.js'
 import cover from '/node_modules/@mapbox/tile-cover/index.js'
 import Model from '/class/Model.js'
+import CircleLoader from '/class/loaders/CircleLoader.js'
 
 export default class Profile extends Model {
 
@@ -82,6 +83,7 @@ export default class Profile extends Model {
      */
     clearData () {
         this.data = undefined
+        delete this.routeData
     }
 
     /**
@@ -386,17 +388,23 @@ export default class Profile extends Model {
      * @param {Boolean} precise define whether profile data is gotten from currently loaded map or beeply analyzed from map provider tileset
      */
     async generate ({sourceName = 'route', poiData = {}, precise = true} = {}) {
-        
-        if (!this.routeData) this.routeData = await this.getRouteData(sourceName)
+
         const profileElement = document.getElementById('elevationProfile')
+        const profileBox = document.getElementById('profileBox')
+        if (!this.routeData) this.routeData = await this.getRouteData(sourceName)
 
         // If a route and a profile container is displayed
         if (this.routeData && profileElement) {
+
+            var loader = new CircleLoader(profileBox, {absolute: true})
+            loader.start()
 
             // Prepare profile data
             if (this.map && !this.data || this.data == undefined) this.data = await this.getData(this.routeData, {remote: true})
             if (precise) this.data = await this.queryPreciseData(this.data, sourceName)
             if (!profileElement) return // If profile element as been removed during process, stop here
+            
+            loader.stop()
 
             // Prepare profile settings
             const ctx = profileElement.getContext('2d')
@@ -434,96 +442,98 @@ export default class Profile extends Model {
             const displayPois = {
                 id: 'displayPois',
                 afterRender: (chart) => {
-                    const ctx = chart.canvas.getContext('2d')
-                    const routeDistance = turf.length(this.routeData)
-                    var drawPoi = async (poi, type) => {
-                        // Get X position
-                        const pointDistance = poi.distance
-                        var roughPositionProportion = pointDistance / routeDistance * 100
-                        var roughPositionPixel = roughPositionProportion * (chart.scales.x._maxLength - chart.scales.x.left - chart.scales.x.paddingRight) / 100
-                        poi.position = roughPositionPixel + chart.scales.x.left
-                        // Get Y position
-                        const dataX = chart.scales.x.getPixelForValue(pointDistance)
-                        const dataY = chart.scales.y.getPixelForValue(this.data.averagedPointsElevation[Math.floor(pointDistance * 10)])
-                        // Draw a line
-                        var cursorLength = 10
-                        ctx.strokeStyle = '#d6d6d6'
-                        ctx.lineWidth = 1
-                        ctx.beginPath()
-                        ctx.moveTo(poi.position, dataY)
-                        ctx.lineTo(poi.position, dataY - cursorLength)
-                        ctx.stroke()
-                        ctx.closePath()
+                    if (this.routeData) {
+                        const ctx = chart.canvas.getContext('2d')
+                        const routeDistance = turf.length(this.routeData)
+                        var drawPoi = async (poi, type) => {
+                            // Get X position
+                            const pointDistance = poi.distance
+                            var roughPositionProportion = pointDistance / routeDistance * 100
+                            var roughPositionPixel = roughPositionProportion * (chart.scales.x._maxLength - chart.scales.x.left - chart.scales.x.paddingRight) / 100
+                            poi.position = roughPositionPixel + chart.scales.x.left
+                            // Get Y position
+                            const dataX = chart.scales.x.getPixelForValue(pointDistance)
+                            const dataY = chart.scales.y.getPixelForValue(this.data.averagedPointsElevation[Math.floor(pointDistance * 10)])
+                            // Draw a line
+                            var cursorLength = 10
+                            ctx.strokeStyle = '#d6d6d6'
+                            ctx.lineWidth = 1
+                            ctx.beginPath()
+                            ctx.moveTo(poi.position, dataY)
+                            ctx.lineTo(poi.position, dataY - cursorLength)
+                            ctx.stroke()
+                            ctx.closePath()
 
-                        // Format icon
-                        if (type == 'scenery') {
-                            poi.number = poi.id
-                            if (document.querySelector('#' + type + poi.number)) var img = document.querySelector('#' + type + poi.number).querySelector('img')
-                            else return
-                        } else if (type == 'rideCheckpoint') {
-                            if (document.querySelector('#checkpointPoiIcon' + poi.number)) var img = document.querySelector('#checkpointPoiIcon' + poi.number)
-                            else var img = await this.generateCheckpointPoiElement(poi)
-                        }
-                        else if (type == 'activityCheckpoint') {
-                            var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
-                            var img = new Image()
-                            img.src = 'https://api.iconify.design/' + svgElement.dataset.icon.replace(':', '/') + '.svg'
-                            img.height = 24
-                            img.width = 24
-                        }
-                        // Prepare profile drawing variables
-                        var width  = 15
-                        var height = 15
-                        const positionX = poi.position - width / 2
-                        const positionY = dataY - cursorLength - height
-                        // If first loading, wait for img to load if not loaded yet, else use it directly
-                        if (!document.querySelector('canvas#offscreenCanvas' + poi.number)) {
-                            if (img.complete) drawOnCanvas(img)
-                            else img.addEventListener('load', () => drawOnCanvas(img))
+                            // Format icon
+                            if (type == 'scenery') {
+                                poi.number = poi.id
+                                if (document.querySelector('#' + type + poi.number)) var img = document.querySelector('#' + type + poi.number).querySelector('img')
+                                else return
+                            } else if (type == 'rideCheckpoint') {
+                                if (document.querySelector('#checkpointPoiIcon' + poi.number)) var img = document.querySelector('#checkpointPoiIcon' + poi.number)
+                                else var img = await this.generateCheckpointPoiElement(poi)
+                            }
+                            else if (type == 'activityCheckpoint') {
+                                var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
+                                var img = new Image()
+                                img.src = 'https://api.iconify.design/' + svgElement.dataset.icon.replace(':', '/') + '.svg'
+                                img.height = 24
+                                img.width = 24
+                            }
+                            // Prepare profile drawing variables
+                            var width  = 15
+                            var height = 15
+                            const positionX = poi.position - width / 2
+                            const positionY = dataY - cursorLength - height
+                            // If first loading, wait for img to load if not loaded yet, else use it directly
+                            if (!document.querySelector('canvas#offscreenCanvas' + poi.number)) {
+                                if (img.complete) drawOnCanvas(img)
+                                else img.addEventListener('load', () => drawOnCanvas(img))
 
-                            function drawOnCanvas (img) {
-                                if (img.classList.contains('admin-marker')) {
-                                    ctx.strokeStyle = 'yellow'
-                                    ctx.lineWidth = 3
+                                function drawOnCanvas (img) {
+                                    if (img.classList.contains('admin-marker')) {
+                                        ctx.strokeStyle = 'yellow'
+                                        ctx.lineWidth = 3
+                                    }
+                                    if (img.classList.contains('selected-marker')) {
+                                        ctx.strokeStyle = '#ff5555'
+                                        ctx.lineWidth = 3
+                                    }
+            
+                                    var abstract = {}
+                                    abstract.offscreenCanvas = document.createElement("canvas")
+                                    abstract.offscreenCanvas.width = width
+                                    abstract.offscreenCanvas.height = height
+                                    abstract.offscreenContext = abstract.offscreenCanvas.getContext("2d")
+                                    const ctx2 = abstract.offscreenContext
+                                    ctx2.drawImage(img, 0, 0, width, height)
+                                    ctx2.globalCompositeOperation = 'destination-atop'
+                                    ctx2.arc(0 + width/2, 0 + height/2, width/2, 0, Math.PI * 2)
+                                    ctx2.closePath()
+                                    ctx2.fillStyle = "#fff"
+                                    ctx2.fill()
+                                    // Keep offscreenCanvas 'in cache' for next profile generating 
+                                    abstract.offscreenCanvas.style.display = 'none'
+                                    abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
+                                    document.body.appendChild(abstract.offscreenCanvas)
+            
+                                    // Draw icon
+                                    ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
+                                    ctx.beginPath()
+                                    ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
+                                    ctx.closePath()
+                                    ctx.stroke()
                                 }
-                                if (img.classList.contains('selected-marker')) {
-                                    ctx.strokeStyle = '#ff5555'
-                                    ctx.lineWidth = 3
-                                }
-        
-                                var abstract = {}
-                                abstract.offscreenCanvas = document.createElement("canvas")
-                                abstract.offscreenCanvas.width = width
-                                abstract.offscreenCanvas.height = height
-                                abstract.offscreenContext = abstract.offscreenCanvas.getContext("2d")
-                                const ctx2 = abstract.offscreenContext
-                                ctx2.drawImage(img, 0, 0, width, height)
-                                ctx2.globalCompositeOperation = 'destination-atop'
-                                ctx2.arc(0 + width/2, 0 + height/2, width/2, 0, Math.PI * 2)
-                                ctx2.closePath()
-                                ctx2.fillStyle = "#fff"
-                                ctx2.fill()
-                                // Keep offscreenCanvas 'in cache' for next profile generating 
-                                abstract.offscreenCanvas.style.display = 'none'
-                                abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
-                                document.body.appendChild(abstract.offscreenCanvas)
-        
-                                // Draw icon
-                                ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
+                            // If img has already been loaded, direcly use it for preventing unnecessary loading time
+                            } else {
+                                var offscreenCanvas = document.querySelector('canvas#offscreenCanvas' + poi.number)
+                                // Draw icon on profile
+                                ctx.drawImage(offscreenCanvas, positionX, positionY)
                                 ctx.beginPath()
                                 ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
                                 ctx.closePath()
                                 ctx.stroke()
                             }
-                        // If img has already been loaded, direcly use it for preventing unnecessary loading time
-                        } else {
-                            var offscreenCanvas = document.querySelector('canvas#offscreenCanvas' + poi.number)
-                            // Draw icon on profile
-                            ctx.drawImage(offscreenCanvas, positionX, positionY)
-                            ctx.beginPath()
-                            ctx.arc(positionX + width/2, positionY + height/2, width/2, 0, Math.PI * 2)
-                            ctx.closePath()
-                            ctx.stroke()
                         }
                     }
                     // For sceneries
@@ -556,14 +566,13 @@ export default class Profile extends Model {
             const cursorOnHover = {
                 id: 'cursorOnHover',
                 afterEvent: (chart, args) => {
-                    if (this.map) {
+                    if (this.map && this.data) {
                         var e = args.event
                         if (e.type == 'mousemove' && args.inChartArea == true) {
                             // Get relevant data
                             const dataX        = chart.scales.x.getValueForPixel(e.x)
                             const distance     = Math.floor(dataX * 10) / 10
                             const maxDistance  = chart.scales.x._endValue
-                            const altitude     = this.data.pointsElevation[distance * 10]
                             // Slope
                             if (this.data.averagedPointsElevation[Math.floor(distance * 10) + 1]) {
                                 var slope = this.data.averagedPointsElevation[Math.floor(distance * 10) + 1] - this.data.averagedPointsElevation[Math.floor(distance * 10)]
@@ -714,9 +723,7 @@ export default class Profile extends Model {
             // Bound chart to canvas
             this.canvas = new Chart(ctx, chartSettings)
         }
-    }
-
-    
+    }    
 
     /**
      * Pregenerate checkpoint elements to display on profile

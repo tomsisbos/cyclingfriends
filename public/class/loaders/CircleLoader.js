@@ -6,6 +6,7 @@ export default class CircleLoader extends Model {
      * A round loader to append to loading elements
      * @param {HTMLElement} container Element to append loader to (default to body)
      * @param {Boolean} options.absolute Either to set style position to absolute or not
+     * @param {Boolean} options.compact
      */
     constructor (container = document.body, options = {}) {
         super()
