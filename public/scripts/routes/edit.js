@@ -122,7 +122,7 @@ document.querySelector('body').appendChild(profileCanvasContainer)
 // Profile tag button
 var profileTag = document.createElement('div')
 profileTag.className = 'map-profile-tag cursor-pointer'
-profileTag.innerText = 'Show profile ▲'
+profileTag.innerText = 'プロファイルを表示 ▲'
 profileCanvasContainer.appendChild(profileTag)
 // Profile canvas element
 var profileCanvasElement = document.createElement('canvas')

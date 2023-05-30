@@ -176,7 +176,6 @@ input[type="checkbox"] {
     width: 500px;
     height: fit-content;
     margin-top: auto;
-    z-index: 4;
 }
 .header-row {
     display: flex;

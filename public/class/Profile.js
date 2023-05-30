@@ -17,6 +17,7 @@ export default class Profile extends Model {
 
     // Build profile data
     async getData (routeData, options = {}) { // options : remote = boolean
+        console.log(routeData)
 
         var profileData = {}
         const routeDistance = turf.length(routeData)
@@ -103,6 +104,7 @@ export default class Profile extends Model {
             var toSlice = endKey - startKey + 1
             var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
 
+            console.log(endClosestSectionCoordinates)
             var lengthToReplace = turf.length(turf.lineSlice(profileData.profilePointsCoordinates[startKey], profileData.profilePointsCoordinates[endKey], turf.lineString(profileData.profilePointsCoordinates)))
             var lengthOfTunnel = turf.length(turf.lineString(tunnel))
 
@@ -124,12 +126,8 @@ export default class Profile extends Model {
             var section = []
             for (let i = 0; i < index; i++) {
                 var point = []
-                for (let j = index; j > i; j--) {
-                    point.push(start)
-                }
-                for (let k = 0; k < i; k++) {
-                    point.push(end)
-                }
+                for (let j = index; j > i; j--) point.push(start)
+                for (let k = 0; k < i; k++) point.push(end)
                 section.push(Math.floor(calculateAverage(point)))
             }
             return section
@@ -198,6 +196,7 @@ export default class Profile extends Model {
      * @returns {Promise}
      */
     async queryPreciseData (profileData, sourceName) {
+        console.log(this.routeData)
 
         return new Promise((resolve, reject) => {
 
