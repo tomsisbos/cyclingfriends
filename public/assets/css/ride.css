@@ -704,16 +704,23 @@
 /* Calendar */
 
 .rd-calendar {
+    margin-top: 50px;
     display: grid;
-    grid-template-columns: repeat(10, auto);
+    grid-template-columns: auto 50px 28px 70px repeat(5, auto);
     text-align: center;
     grid-gap: 16px 0px;
 }
 .rd-cd-hr {
     grid-column-start: 1;
-    grid-column-end: 11;
+    grid-column-end: 10;
     display: grid;
     height: 1px;
+}
+.rd-cd-th {
+    font-weight: bold;
+}
+.rd-cd-th-double {
+    grid-area: auto / span 2;
 }
 .rd-cd-td {
     display: grid;
@@ -725,13 +732,28 @@
 .cd-status {
     border-radius: 3px;
 }
+.cd-year {
+    text-align: right;
+}
+.cd-day {
+    text-align: left;
+}
 .cd-title {
     color: #fff !important;
+    font-weight: bold;
     background-color: #001c1c;
     padding: 10px;
 }
 .cd-title:hover {
     background-color: #000;
+}
+.cd-guides {
+    display: inline;
+    font-size: 12px;
+}
+.cd-guides-label {
+    display: none;
+    font-size: 12px;
 }
 
 @media only screen and (max-width: 992px) {
@@ -741,13 +763,15 @@
 }
 
 @media only screen and (max-width: 768px) {
+    .rd-calendar {
+        grid-gap: 8px 0px;
+    }
     .rd-cd-th, .rd-cd-hr {
         display: none;
     }
-    .rd-cd-td:nth-child(10n), .rd-cd-td:nth-child(10n +1) {
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #ffffff88;
+    .rd-cd-td:nth-child(9n +1) {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
     }
     .rd-cd-td {
         font-size: inherit;
@@ -771,25 +795,43 @@
         display: contents;
     }
     .cd-day {
-        grid-column: span 2;
+        grid-column: span 1;
         text-align: left;
     }
     .cd-title {
-        grid-column: span 10;
+        grid-column: span 9;
+        position: relative;
+        font-size: inherit;
+        text-shadow: 0 0 6px black;
+        height: 160px;
     }
     .cd-place {
-        grid-column: span 6;
+        grid-column: span 7;
     }
     .cd-distance {
-        grid-column: span 2;
+        grid-column: span 1;
     }
     .cd-terrain {
-        grid-column: span 2;
+        grid-column: span 1;
     }
-    .cd-chief {
-        grid-column: span 5;
+    .cd-guides {
+        grid-column: span 9;
+    }    
+    .cd-guides-label {
+        display: inline;
     }
-    .cd-assistant {
-        grid-column: span 5;
+    
+    .cd-title.with-img::after {
+        content: '';
+        display: block;
+        width: 100%;
+        position: absolute;
+        height: inherit;
+        background-size: cover;
+        background-image: var(--bg-image);
+    }
+    .cd-title-text {
+        z-index: 1;
+        align-self: start;
     }
 }

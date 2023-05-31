@@ -110,9 +110,6 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/rides/calendar"><div class="mainitem">ツアー</div></a>
-				</li>
-				<li class="nav-item dropdown">
 					<a class="nav-link nav-dropdown-link interactive" href="/manual"><div class="mainitem">マニュアル</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu"> <?php
@@ -120,6 +117,9 @@
 							<a class="dropdown-item interactive" href="/manual/<?= $slug ?>"><div class="mainitem"><?= $chapter['title'] ?></div></a> <?php
 						} ?>
 					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link interactive" href="/rides/calendar"><div class="mainitem">ツアーカレンダー</div></a>
 				</li>
 			</ul>
 		</div> <?php

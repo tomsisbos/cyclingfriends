@@ -85,6 +85,13 @@ class Ride extends Model {
         else return false;
     }
 
+    public function hasFeaturedImage () {
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true AND filename IS NOT NULL');
+        $getFeaturedImage->execute(array($this->id));
+        if ($getFeaturedImage->rowCount() > 0) return true;
+        else return false;
+    }
+
     public function getFeaturedImage () {
         // Select image if exists for checkpoint set as featured
         $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true AND filename IS NOT NULL');
@@ -595,11 +602,38 @@ class Ride extends Model {
         return $output;
     }
 
-    public function getDifficulty() {
-        $difficulty = $this->getRoute()->calculateDifficulty();
-        if ($difficulty > 45) return 3;
-        else if ($difficulty > 35) return 2;
-        else return 1;
+    /**
+     * Returns an array of guides for this ride
+     * @return User[] An array of guides with rank property attached to them
+     */
+    public function getGuides () {
+
+        // Get results
+        $getGuides = $this->getPdo()->prepare("SELECT rank, user_id FROM ride_guides WHERE ride_id = ? ORDER BY rank ASC");
+        $getGuides->execute([$this->id]);
+        $result = $getGuides->fetchAll(PDO::FETCH_ASSOC);
+
+        // Return an array of users with rank property added
+        $guides = [];
+        foreach ($result as $entry) {
+            $guide = new User($entry['user_id']);
+            $guide->rank = $entry['rank'];
+            array_push($guides, $guide);
+        }
+        return $guides;
+    }
+
+    /**
+     * Returns chief guide user for this ride
+     * @return User
+     */
+    public function getChiefGuide () {
+        $getChiefGuide = $this->getPdo()->prepare("SELECT user_id FROM ride_guides WHERE ride_id = ? AND rank = 1");
+        $getChiefGuide->execute([$this->id]);
+        if ($getChiefGuide->rowCount() > 0) {
+            $result = $getChiefGuide->fetch(PDO::FETCH_COLUMN);
+            return new User($result);
+        } else return false;
     }
 
 }

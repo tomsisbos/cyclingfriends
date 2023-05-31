@@ -7,7 +7,7 @@ body.black-theme {
 }
 
 .black-theme .main-navbar, .black-theme .footer {
-    background: rgb(0 20 20 / 80%) !important;
+    background: rgb(0 20 20 / 90%) !important;
     backdrop-filter: blur(10px);
     color: #fff;
     border-image: linear-gradient(180deg, #eeeeee00, #00121222) 100;
@@ -21,7 +21,7 @@ body.black-theme {
     color: #fff;
 }
 .black-theme .main-navbar .dropdown-menu {
-    background: rgb(0 20 20 / 80%) !important;
+    background: rgb(0 20 20 / 90%) !important;
     backdrop-filter: blur(10px);
     color: #fff;
     top: 55;
@@ -29,7 +29,7 @@ body.black-theme {
 }
 
 .black-theme .main-navbar .navbar-collapse.show > .navbar-nav, .black-theme .main-navbar .navbar-collapse.collapsing > .navbar-nav {
-    background: rgb(0 20 20 / 80%) !important;
+    background: rgb(0 20 20 / 90%) !important;
     backdrop-filter: blur(10px);
 }
 @media (max-width: 992px) {
