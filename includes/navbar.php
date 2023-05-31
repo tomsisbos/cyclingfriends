@@ -103,13 +103,14 @@
 		<div class="collapse navbar-collapse" id="collapsedMenu">
 			<ul class="navbar-nav cf-navbar">
 				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/company"><div class="mainitem">会社について</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/company"><div class="mainitem">会社について</div></a><a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item interactive" href="/company/business"><div class="mainitem">事業構想</div></a>
+						<a class="dropdown-item interactive" href="/company/contact"><div class="mainitem">お問い合わせ</div></a>
+					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/company/business"><div class="mainitem">事業構想</div></a>
-				</li>
-				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/company/contact"><div class="mainitem">お問い合わせ</div></a>
+					<a class="nav-link interactive" href="/rides/calendar"><div class="mainitem">ツアー</div></a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link nav-dropdown-link interactive" href="/manual"><div class="mainitem">マニュアル</div></a>

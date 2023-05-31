@@ -700,3 +700,96 @@
         padding: 10px;
     }
 }
+
+/* Calendar */
+
+.rd-calendar {
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+    text-align: center;
+    grid-gap: 16px 0px;
+}
+.rd-cd-hr {
+    grid-column-start: 1;
+    grid-column-end: 11;
+    display: grid;
+    height: 1px;
+}
+.rd-cd-td {
+    display: grid;
+    align-items: center;
+}
+.rd-cd-td img {
+    place-self: center;
+}
+.cd-status {
+    border-radius: 3px;
+}
+.cd-title {
+    color: #fff !important;
+    background-color: #001c1c;
+    padding: 10px;
+}
+.cd-title:hover {
+    background-color: #000;
+}
+
+@media only screen and (max-width: 992px) {
+    .rd-cd-td {
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .rd-cd-th, .rd-cd-hr {
+        display: none;
+    }
+    .rd-cd-td:nth-child(10n), .rd-cd-td:nth-child(10n +1) {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ffffff88;
+    }
+    .rd-cd-td {
+        font-size: inherit;
+    }
+    .cd-status {
+        grid-column: span 6;
+        max-width: 120px;
+    }
+    .cd-title {
+        font-size: inherit;
+    }
+    .cd-year {
+        grid-column: span 1;
+        text-align: right;
+    }
+    .cd-month {
+        grid-column: span 1;
+    }
+    .cd-year::after, .cd-month::after {
+        content: ".";
+        display: contents;
+    }
+    .cd-day {
+        grid-column: span 2;
+        text-align: left;
+    }
+    .cd-title {
+        grid-column: span 10;
+    }
+    .cd-place {
+        grid-column: span 6;
+    }
+    .cd-distance {
+        grid-column: span 2;
+    }
+    .cd-terrain {
+        grid-column: span 2;
+    }
+    .cd-chief {
+        grid-column: span 5;
+    }
+    .cd-assistant {
+        grid-column: span 5;
+    }
+}

@@ -33,13 +33,13 @@ include '../includes/head.php'; ?>
             <p>自転車を通じて、<strong>自然、伝統や文化の美しさに触れ、一人でも多くの日本人に感動を与える</strong>と共に、<strong>コミュニティの皆さんが見つけ出した全国の絶景を事典化し</strong>、データの有効的な発信や活用を通じて、<strong>地方活性化に寄与していきます。</strong></p>
 
             <div class="treats-table">
-                <div class="treats-table-left th">社会的課題</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right th">自転車を通じて...</div>
-                <div class="treats-table-left">環境崩壊の危機</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right">自然が遊び場になり、世間の価値観の変革促進に繋がる</div>
-                <div class="treats-table-left">エネルギー不足</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right">「自給自足」なモビリティーにシフトし、カーボンフリーな観光方式が実現できる</div>
-                <div class="treats-table-left">経済縮小</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right">「マイクロツーリズム」を通じて、近隣地域でも非日常体験が提供できる</div>
-                <div class="treats-table-left">地方衰退</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right">地方の魅力に焦点を当て直し、都市部から地方へと過疎化の流れが裏返せる</div>
-                <div class="treats-table-left">少子高齢化</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right">運動中心のライフスタイルの普及により、健康増進による社会の負担が軽減できる</div>
-                <div class="treats-table-left">グローバル化への適応</div><svg height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><div class="treats-table-right">共通の価値観のもとに、年齢、性別や国籍を超えた多様多種の仲間が作れる</div>
+                <div class="treats-table-left th">社会的課題</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right th">自転車を通じて...</div>
+                <div class="treats-table-left">環境崩壊の危機</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right">自然が遊び場になり、世間の価値観の変革促進に繋がる</div>
+                <div class="treats-table-left">エネルギー不足</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right">「自給自足」なモビリティーにシフトし、カーボンフリーな観光方式が実現できる</div>
+                <div class="treats-table-left">経済縮小</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right">「マイクロツーリズム」を通じて、近隣地域でも非日常体験が提供できる</div>
+                <div class="treats-table-left">地方衰退</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right">地方の魅力に焦点を当て直し、都市部から地方へと過疎化の流れが裏返せる</div>
+                <div class="treats-table-left">少子高齢化</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right">運動中心のライフスタイルの普及により、健康増進による社会の負担が軽減できる</div>
+                <div class="treats-table-left">グローバル化への適応</div><svg class="polygon-right" height="30" width="10"><polygon points="0,00 10,15 0,30"></polygon></svg><svg class="polygon-bottom" height="10" width="30"><polygon points="0,0 15,10 30,0"></polygon></svg><div class="treats-table-right">共通の価値観のもとに、年齢、性別や国籍を超えた多様多種の仲間が作れる</div>
             </div>
 
             <h2 class="text-center">事業構想</h2>

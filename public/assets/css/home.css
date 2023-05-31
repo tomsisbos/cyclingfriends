@@ -295,6 +295,17 @@
         font-size: 65px;
         font-weight: normal;
     }
+
+    .treats-table {
+        grid-template-columns: auto !important;
+    }
+    .treats-table .polygon-right {
+        display: none !important;
+    }
+    .treats-table .polygon-bottom {
+        display: block !important;
+        place-self: center;
+    }
 }
 
 
@@ -340,6 +351,12 @@
 }
 .treats-table polygon {
     fill: #fff !important;
+}
+.treats-table .polygon-right {
+    display: block;
+}
+.treats-table .polygon-bottom {
+    display: none;
 }
 
 @media only screen and (max-width: 992px) {

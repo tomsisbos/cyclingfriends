@@ -580,7 +580,7 @@ class Ride extends Model {
 
     /**
      * Outputs description with adding specific style for specific characters
-     * @return String
+     * @return string
      */
     public function getFormattedDescription () {
         $output = $this->description;
@@ -593,6 +593,13 @@ class Ride extends Model {
         $output = preg_replace('<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>', '<a href="$0" target="_blank">$0</a>', $output);
 
         return $output;
+    }
+
+    public function getDifficulty() {
+        $difficulty = $this->getRoute()->calculateDifficulty();
+        if ($difficulty > 45) return 3;
+        else if ($difficulty > 35) return 2;
+        else return 1;
     }
 
 }

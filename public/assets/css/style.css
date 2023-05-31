@@ -547,6 +547,7 @@ nav .navbar-brand {
     align-items: center;
     position: relative;
     height: 100%;
+    color: #000 !important;
     font-family: 'Dr sugiyama', cursive;
     font-weight: bold;
     font-size: x-large;

@@ -81,6 +81,7 @@ $router->map('GET', '/ride/organizations', 'rides/organizations', 'ride-organiza
 $router->map('GET', '/ride/participations', 'rides/participations', 'ride-participations');
 $router->map('GET', '/ride/[i:ride_id]/route', 'routes/single', 'ride-route');
 $router->map('GET|POST', '/ride/[i:ride_id]/signup', 'rides/signup', 'rides-signup');
+$router->map('GET', '/rides/calendar', 'rides/calendar', 'rides-calendar');
 
 // Community
 $router->map('GET', '/community', 'community/community', 'community');

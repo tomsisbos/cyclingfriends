@@ -43,13 +43,12 @@ body.black-theme {
     background-color: #b2e0e5 !important;
 }
 
-.black-theme p, .black-theme table th, .black-theme table td, .black-theme li {
+.black-theme * {
     color: #f9f9f9;
 }
 
 .black-theme .schema-part {
-    background-color: #ffffffcc;
-    border: 1px solid #ffffff;
+    background-color: #165454;
 }
 
 .black-theme .schema-table {
@@ -66,4 +65,17 @@ body.black-theme {
         background: radial-gradient(circle at center, #165454 9vh, transparent 0%);
         margin: -80px 0px;
     }
+}
+
+.black-theme .terrain-icon {
+    border: none;
+    mix-blend-mode: plus-lighter;
+}
+
+.black-theme .rd-cd-hr {
+    background-color: #fff;
+}
+
+.black-theme input, .black-theme label {
+    color: #000 !important;
 }
