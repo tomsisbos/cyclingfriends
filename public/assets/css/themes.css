@@ -13,6 +13,10 @@ body.black-theme {
     border-image: linear-gradient(180deg, #eeeeee00, #00121222) 100;
 }
 
+.black-theme .container {
+    background-color: #002828;
+}
+
 .black-theme button {
     background-color: #005f5f;
 }

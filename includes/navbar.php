@@ -106,6 +106,7 @@
 					<a class="nav-link nav-dropdown-link interactive" href="/company"><div class="mainitem">会社について</div></a><a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/company/business"><div class="mainitem">事業構想</div></a>
+						<a class="dropdown-item interactive" href="/news"><div class="mainitem">ニュース</div></a>
 						<a class="dropdown-item interactive" href="/company/contact"><div class="mainitem">お問い合わせ</div></a>
 					</div>
 				</li>

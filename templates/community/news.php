@@ -1,12 +1,14 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initPublicSessionAction.php';
 include '../includes/head.php';
 include '../actions/posts/postAction.php';
 include '../includes/navbar.php';?>
 
 <!DOCTYPE html>
 <html lang="en">
+
+<body <?php if (!isset($_SESSION['auth'])) echo ' class="black-theme"' ?>>
 
     <link rel="stylesheet" href="/assets/css/posts.css" />
 
@@ -41,7 +43,7 @@ include '../includes/navbar.php';?>
             } ?>
         </div> <?php
         
-        if ($connected_user->hasModeratorRights()) { ?>
+        if (isset($_SESSION['auth']) AND $connected_user->hasModeratorRights()) { ?>
 
             <div class="container bg-admin mb-3">
 
@@ -81,5 +83,7 @@ include '../includes/navbar.php';?>
             </div> <?php
         } ?>
     </div>
+
+</body>
 
 </html>
