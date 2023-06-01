@@ -10,7 +10,12 @@
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="/ride/<?= $ride->id ?>/admin/forms">質問項目</a>
-			</li>
+			</li> <?php
+			if ($connected_user->isGuide()) { ?>
+				<li class="nav-item">
+					<a class="nav-link" href="/ride/<?= $ride->id ?>/admin/guides">ガイド</a>
+				</li> <?php
+			} ?>
 		</ul>
 	</div>
 		

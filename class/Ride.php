@@ -604,20 +604,19 @@ class Ride extends Model {
 
     /**
      * Returns an array of guides for this ride
-     * @return User[] An array of guides with rank property attached to them
+     * @return User[] An array of guides with position property attached to them
      */
     public function getGuides () {
 
         // Get results
-        $getGuides = $this->getPdo()->prepare("SELECT rank, user_id FROM ride_guides WHERE ride_id = ? ORDER BY rank ASC");
+        $getGuides = $this->getPdo()->prepare("SELECT position, user_id FROM ride_guides WHERE ride_id = ? ORDER BY position ASC");
         $getGuides->execute([$this->id]);
         $result = $getGuides->fetchAll(PDO::FETCH_ASSOC);
 
-        // Return an array of users with rank property added
+        // Return an array of users with position property added
         $guides = [];
         foreach ($result as $entry) {
-            $guide = new User($entry['user_id']);
-            $guide->rank = $entry['rank'];
+            $guide = new Guide($entry['user_id'], $this->id, $entry['position']);
             array_push($guides, $guide);
         }
         return $guides;
@@ -628,12 +627,40 @@ class Ride extends Model {
      * @return User
      */
     public function getChiefGuide () {
-        $getChiefGuide = $this->getPdo()->prepare("SELECT user_id FROM ride_guides WHERE ride_id = ? AND rank = 1");
+        $getChiefGuide = $this->getPdo()->prepare("SELECT user_id FROM ride_guides WHERE ride_id = ? AND position = 1");
         $getChiefGuide->execute([$this->id]);
         if ($getChiefGuide->rowCount() > 0) {
             $result = $getChiefGuide->fetch(PDO::FETCH_COLUMN);
-            return new User($result);
+            return new Guide($result, $this->id, 1);
         } else return false;
+    }
+
+    /**
+     * Add a guide to this ride
+     * @param int $user_id
+     * @param int $position Position to add guide as. 1: chief, 2: assistant, 3: trainee
+     */
+    public function addGuide ($user_id, $position) {
+        $checkGuide = $this->getPdo()->prepare("SELECT id FROM ride_guides WHERE ride_id = ? AND user_id = ?");
+        $checkGuide->execute([$this->id, $user_id]);
+        // If guide has already been added, update it
+        if ($checkGuide->rowCount() > 0) {
+            $updateGuide = $this->getPdo()->prepare("UPDATE ride_guides SET position = ? WHERE ride_id = ? AND user_id = ?");
+            $updateGuide->execute([$position, $this->id, $user_id]);
+        // Else, add it
+        } else {
+            $addGuide = $this->getPdo()->prepare("INSERT INTO ride_guides (ride_id, user_id, position) VALUES (?, ?, ?)");
+            $addGuide->execute([$this->id, $user_id, $position]);
+        }
+    }
+
+    /**
+     * Remove a guide from this ride
+     * @param int $user_id
+     */
+    public function removeGuide ($user_id) {
+        $checkGuide = $this->getPdo()->prepare("DELETE FROM ride_guides WHERE ride_id = ? AND user_id = ?");
+        $checkGuide->execute([$this->id, $user_id]);
     }
 
 }

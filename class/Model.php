@@ -29,6 +29,19 @@ class Model {
             return $getData->fetch();
         }
     }
+
+    /** 
+     * Get guide rank string from guide int value
+     * @param int $guide_value
+     * @return string
+     */
+    protected function getGuideRankString ($guide_value) {
+        switch (intval($guide_value)) {
+            case 1: return 'チーフ';
+            case 2: return 'アシスタント';
+            case 3: return '研修生';
+        }
+    }
     
     /**
      * Attribute a color depending on the level
