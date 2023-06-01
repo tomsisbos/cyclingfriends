@@ -10,9 +10,12 @@ while ($user_id = $getRegisteredGuides->fetch(PDO::FETCH_COLUMN)) {
 
 // Add guide if necessary
 if (isset($_POST['add'])) {
-    $ride->addGuide($_POST['guide'], $_POST['position']);
-    $added_guide = new Guide($_POST['guide'], $ride->id, $_POST['position']);
-    $successmessage = '@' .$added_guide->login. 'が' .$added_guide->getPositionString(). 'として' .$ride->name. 'のガイドに追加されました！';
+    if ($_POST['position'] == 'default') $errormessage = 'ポジションを選択してください。';
+    else {
+        $ride->addGuide($_POST['guide'], $_POST['position']);
+        $added_guide = new Guide($_POST['guide'], $ride->id, $_POST['position']);
+        $successmessage = '@' .$added_guide->login. 'が' .$added_guide->getPositionString(). 'として' .$ride->name. 'のガイドに追加されました！';
+    }
 }
 
 // Add guide if necessary
