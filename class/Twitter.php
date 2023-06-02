@@ -8,7 +8,22 @@ class Twitter extends Model {
     private $consumer_secret;
     private $oauth_token;
     private $oauth_token_secret;
+    private $callback_uri;
     protected $table = 'user_twitter';
+
+    /**
+     * @param String $oauth_token A registered user token
+     * @param String $oauth_token_secret A registered user token secret
+     */
+    function __construct ($oauth_token = null, $oauth_token_secret = null) {
+        $this->callback_uri = $_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST'] . '/api/twitter/connection.php';
+        $this->consumer_key = getenv('TWITTER_API_CONSUMER_KEY');
+        $this->consumer_secret = getenv('TWITTER_API_CONSUMER_SECRET');
+        if ($oauth_token) $this->oauth_token = $oauth_token;
+        if ($oauth_token_secret) $this->oauth_token_secret = $oauth_token_secret;
+        if ($this->oauth_token && $this->oauth_token_secret) $this->populateUser();
+    }
+    
 
     /**
      * Populate instance with oauth token corresponding user info
@@ -44,25 +59,14 @@ class Twitter extends Model {
     }
 
     /**
-     * @param String $oauth_token A registered user token
-     * @param String $oauth_token_secret A registered user token secret
-     */
-    public function __construct ($oauth_token = null, $oauth_token_secret = null) {
-        $this->consumer_key = getenv('TWITTER_API_CONSUMER_KEY');
-        $this->consumer_secret = getenv('TWITTER_API_CONSUMER_SECRET');
-        if ($oauth_token) $this->oauth_token = $oauth_token;
-        if ($oauth_token_secret) $this->oauth_token_secret = $oauth_token_secret;
-        if ($this->oauth_token && $this->oauth_token_secret) $this->populateUser();
-    }
-
-    /**
      * Get URL to use for user authorization
      * @param String $callback redirection URL after authorization process has terminated
      * @return String user authorization URL
      */
-    public function getAuthenticateUrl ($callback) {
+    public function getAuthenticateUrl ($redirect_url = NULL) {
+        if (isset($redirect_url)) $_SESSION['redirect_uri'] = $redirect_url;
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret);
-        $request_token = $oauth->oauth('oauth/request_token', ['oauth_callback' => $callback]);
+        $request_token = $oauth->oauth('oauth/request_token', ['oauth_callback' => $this->callback_uri]);
         $_SESSION['twitter']['request_token'] = $request_token;
         return $oauth->url('oauth/authorize', ['oauth_token' => $request_token['oauth_token']]);
     }

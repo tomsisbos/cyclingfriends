@@ -4,9 +4,9 @@ class Settings extends Model {
     
     protected $table = 'settings';
     public $id;
-    public $hide_on_neighbours;
-    public $hide_realname;
-    public $hide_age;
+    public $hide_on_neighbours = false;
+    public $hide_realname = false;
+    public $hide_age = false;
     
     function __construct($user_id) {
         parent::__construct();

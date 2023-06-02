@@ -27,7 +27,6 @@ class Sidebar extends React.Component {
                             </div>
                         </h5>
                     </div>
-
                     <div id="collapseOne" className="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                         <ul className="card-body">
                             <a onClick={() => this.changePage('changePassword')} className={this.state.active == 'changePassword' ? 'active' : ''}><li>パスワードを変更する</li></a>
@@ -35,6 +34,7 @@ class Sidebar extends React.Component {
                             <a onClick={() => this.changePage('changeLogin')} className={this.state.active == 'changeLogin' ? "active" : ''}><li>ユーザーネームを変更する</li></a>
                         </ul>
                     </div>
+                    
                     <div className="stg-title-card" id="headingTwo">
                         <h5 className="mb-0">
                             <div className="stg-title collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -45,6 +45,7 @@ class Sidebar extends React.Component {
                     <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <ul className="card-body">
                             <a onClick={() => this.changePage('privacy')} className={this.state.active == 'privacy' ? "active" : ''}><li>プライバシー</li></a>
+                            <a onClick={() => this.changePage('connections')} className={this.state.active == 'connections' ? "active" : ''}><li>接続</li></a>
                         </ul>
                     </div>
                 </div>

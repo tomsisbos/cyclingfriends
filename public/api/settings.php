@@ -14,6 +14,40 @@ if (isset($_GET)) {
         echo json_encode($settings);
     }
 
+    if (isset($_GET['connection-settings'])) {
+        // Twitter
+        $twitter = $connected_user->getTwitter();
+        if ($twitter->isUserConnected()) {
+            $twitter_data = [
+                'authenticateUrl' => '/api/settings.php',
+                'connected' => $twitter->username
+            ];
+        } else {
+            $twitter_data = [
+                'authenticateUrl' => $twitter->getAuthenticateUrl($_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST'] . '/settings'),
+                'connected' => false
+            ];
+        }
+        // Garmin
+        $garmin = $connected_user->getGarmin();
+        if ($garmin->isUserConnected()) {
+            $garmin_data = [
+                'authenticateUrl' => '/api/settings.php',
+                'connected' => true
+            ];
+        } else {
+            $garmin_data = [
+                'authenticateUrl' => $garmin->getAuthenticateUrl(),
+                'connected' => false
+            ];
+        }
+
+        echo json_encode([
+            'twitter' => $twitter_data,
+            'garmin' => $garmin_data
+        ]);
+    }
+
 }
 
 // In case a Json request have been detected
@@ -27,6 +61,17 @@ if (is_array($settings)) {
         $response = $connected_user->updateSettings($settings);
         if ($response === true) echo json_encode(['success' => '変更が保存されました。']);
         else echo json_encode(['error' => '保存中にエラーが発生しました。']);
+
+    } else if ($settings['type'] === 'disconnections') {
+        if ($settings['api'] === 'Twitter') {
+            $twitter = $connected_user->getTwitter();
+            $twitter->disconnect();
+            echo json_encode(['success' => 'Twitterとの接続が解除されました。']);
+        } else if ($settings['api'] == 'Garmin Connect') {
+            $garmin = $connected_user->getGarmin();
+            $garmin->disconnect();
+            echo json_encode(['success' => 'Garmin Connectとの接続が解除されました。']);
+        }
 
     } else if ($settings['type'] === 'email') {
         $posted_email = htmlspecialchars($settings['email']);

@@ -46,7 +46,7 @@ include '../includes/head.php'; ?>
 
 								$is_ride = true; // Set "is_ride" variable to true as long as one ride to display has been found 
 
-								include 'card.php';
+								include '../includes/rides/card.php';
 						
 							}
 						}

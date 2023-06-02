@@ -7,9 +7,9 @@ export default function Privacy () {
 
     // Settings default state
     const [settings, setSettings] = useState( {
-        hide_on_neighbours: false,
-        hide_realname: false,
-        hide_age: false
+        hide_on_neighbours: null,
+        hide_realname: null,
+        hide_age: null
     } )
 
     // On change, set changed value (=id) to opposite one

@@ -899,4 +899,17 @@ class User extends Model {
         } else return new Twitter();
     }
 
+    /**
+     * Get a Garmin instance for user's credentials
+     * @return Garmin
+     */
+    public function getGarmin () {
+        $getCredentials = $this->getPdo()->prepare("SELECT garmin_user_id, oauth_token, oauth_token_secret FROM user_garmin WHERE user_id = ?");
+        $getCredentials->execute([$this->id]);
+        if ($getCredentials->rowCount() > 0) {
+            $data = $getCredentials->fetch(PDO::FETCH_ASSOC);
+            return new Garmin($data['garmin_user_id'], $data['oauth_token'], $data['oauth_token_secret']);
+        } else return new Garmin();
+    }
+
 }

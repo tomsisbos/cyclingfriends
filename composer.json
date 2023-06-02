@@ -11,6 +11,7 @@
         "maestroerror/php-heic-to-jpg": "^0.3.2",
         "phayes/geophp": "^1.2",
         "abraham/twitteroauth": "^5.0",
-        "stoufa06/php-garmin-connect-api": "^1.8"
+        "stoufa06/php-garmin-connect-api": "^1.8",
+        "vlucas/phpdotenv": "^5.4"
     }
 }

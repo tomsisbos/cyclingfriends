@@ -23,7 +23,15 @@ include '../includes/head.php'; ?>
 <body>
     <div class="black-theme"> <?php
 
+    /* TEST SPACE */
+
+    echo '<div style="color: white; background-color: black">';
+
     $garmin = new Garmin();
+
+    echo '</div>';
+
+    /* TEST SPACE */
 
     include '../includes/navbar.php';
 
