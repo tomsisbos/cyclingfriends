@@ -1,7 +1,7 @@
 <?php 
 
 include '../actions/users/initSessionAction.php';
-include '../actions/garmin/backfillAction.php';
+include '../actions/garmin/backfill.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
