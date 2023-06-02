@@ -29,9 +29,9 @@ include '../includes/head.php'; ?>
                     <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
                 </div>
 
-                <div class="new-ac-upload-container">
-                    <input type="submit" name="backfillActivities">バックフィール</input>
-                </div>
+                <form method="post" class="new-ac-upload-container">
+                    <input type="submit" class="btn smallbutton" name="backfill" value="バックフィール"/>
+                </form>
             
             </div>
 
