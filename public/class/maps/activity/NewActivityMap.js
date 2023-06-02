@@ -1156,8 +1156,6 @@ export default class NewActivityMap extends ActivityMap {
                         elevation: Math.floor(this.map.queryTerrainElevation(lngLat)),
                         photos
                     } )
-                    console.log(this.map.queryTerrainElevation(lngLat))
-                    console.log(lngLat)
                     if (name == '' || description == '') filled = false
                     treatedSceneriesNumber++
                     if (treatedSceneriesNumber == this.data.sceneriesToCreate.length && filled) resolve(sceneriesToCreate)

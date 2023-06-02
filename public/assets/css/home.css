@@ -68,7 +68,7 @@
     text-align: right;
 }
 .home-main-container {
-    background-color: transparent;
+    background-color: transparent !important;
     position: absolute;
     top: 80;
     display: flex;

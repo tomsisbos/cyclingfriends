@@ -310,7 +310,6 @@ export default class BuildRouteMap extends Map {
                 tunnels = []
             }
             this.getTunnels(data).forEach( (tunnel) => {
-                console.log(tunnel)
                 if (!tunnels.includes(tunnel)) {
                     tunnels.push(tunnel)
                 } else {

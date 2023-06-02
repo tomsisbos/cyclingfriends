@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f224b6f60d6c953f57432430f78ec89",
+    "content-hash": "bda333204eae897b50ba7fd1a8d66ac4",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -628,6 +628,81 @@
                 "source": "https://github.com/thephpleague/color-extractor/tree/0.4.0"
             },
             "time": "2022-09-24T15:57:16+00:00"
+        },
+        {
+            "name": "league/oauth1-client",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/oauth1-client.git",
+                "reference": "f6a37f18c03f81f2bf7c465c3f4299410d8463da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/oauth1-client/zipball/f6a37f18c03f81f2bf7c465c3f4299410d8463da",
+                "reference": "f6a37f18c03f81f2bf7c465c3f4299410d8463da",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "mockery/mockery": "^1.3",
+                "phpstan/phpstan": "^0.12.42",
+                "phpunit/phpunit": "^7.5"
+            },
+            "suggest": {
+                "ext-simplexml": "For decoding XML-based responses."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev",
+                    "dev-develop": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\OAuth1\\Client\\": "src/",
+                    "League\\OAuth1\\Client\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Corlett",
+                    "email": "bencorlett@me.com",
+                    "homepage": "http://www.webcomm.com.au",
+                    "role": "Developer"
+                }
+            ],
+            "description": "OAuth 1.0 Client Library",
+            "keywords": [
+                "Authentication",
+                "SSO",
+                "authorization",
+                "bitbucket",
+                "identity",
+                "idp",
+                "oauth",
+                "oauth1",
+                "single sign on",
+                "trello",
+                "tumblr",
+                "twitter"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/oauth1-client/issues",
+                "source": "https://github.com/thephpleague/oauth1-client/tree/master"
+            },
+            "time": "2020-09-02T23:17:13+00:00"
         },
         {
             "name": "maestroerror/php-heic-to-jpg",
@@ -1303,6 +1378,54 @@
                 "source": "https://github.com/starkbank/ecdsa-php/tree/v0.0.5"
             },
             "time": "2021-06-06T22:24:49+00:00"
+        },
+        {
+            "name": "stoufa06/php-garmin-connect-api",
+            "version": "1.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stoufa06/php-garmin-connect-api.git",
+                "reference": "c2a70b394a24a104955cc97be6c926bc338d24ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stoufa06/php-garmin-connect-api/zipball/c2a70b394a24a104955cc97be6c926bc338d24ef",
+                "reference": "c2a70b394a24a104955cc97be6c926bc338d24ef",
+                "shasum": ""
+            },
+            "require": {
+                "league/oauth1-client": "1.8"
+            },
+            "require-dev": {
+                "vlucas/phpdotenv": "^4.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stoufa\\GarminApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mustapha.A"
+                }
+            ],
+            "description": "PHP library to connect and use garmin wellness api",
+            "keywords": [
+                "api",
+                "garmin",
+                "garmin-connect",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/stoufa06/php-garmin-connect-api/issues",
+                "source": "https://github.com/stoufa06/php-garmin-connect-api/tree/1.8.1"
+            },
+            "time": "2021-03-12T22:17:31+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",

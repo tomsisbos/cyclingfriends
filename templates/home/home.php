@@ -23,6 +23,8 @@ include '../includes/head.php'; ?>
 <body>
     <div class="black-theme"> <?php
 
+    $garmin = new Garmin();
+
     include '../includes/navbar.php';
 
     // Space for general error messages
