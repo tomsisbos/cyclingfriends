@@ -1,4 +1,10 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/tomsisbos/php-garmin-connect-api"
+        }
+    ],
     "require": {
         "adriangibbons/php-fit-file-analysis": "^3.2.0",
         "mjaschen/phpgeo": "4.0",
@@ -11,7 +17,7 @@
         "maestroerror/php-heic-to-jpg": "^0.3.2",
         "phayes/geophp": "^1.2",
         "abraham/twitteroauth": "^5.0",
-        "stoufa06/php-garmin-connect-api": "^1.8",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "tomsisbos/php-garmin-connect-api": "dev-master"
     }
 }

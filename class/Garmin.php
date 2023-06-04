@@ -21,7 +21,7 @@ class Garmin extends Model {
         if ($garmin_user_id) $this->garmin_user_id = $garmin_user_id;
         if ($oauth_token) $this->oauth_token = $oauth_token;
         if ($oauth_token_secret) $this->oauth_token_secret = $oauth_token_secret;
-        $this->setPermissions();
+        $this->setDefaultPermissions();
     }
 
     /**
