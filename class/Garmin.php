@@ -5,11 +5,13 @@ use League\OAuth1\Client\Credentials\TokenCredentials;
 
 class Garmin extends Model {
 
+    private $api_types = ['activity', 'course'];
     private $callback_uri;
     private $consumer_key;
     private $garmin_user_id;
     private $oauth_token;
     private $oauth_token_secret;
+    private $permissions = [];
     protected $table = 'user_garmin';
 
     function __construct ($garmin_user_id = null, $oauth_token = null, $oauth_token_secret = null) {
@@ -19,6 +21,16 @@ class Garmin extends Model {
         if ($garmin_user_id) $this->garmin_user_id = $garmin_user_id;
         if ($oauth_token) $this->oauth_token = $oauth_token;
         if ($oauth_token_secret) $this->oauth_token_secret = $oauth_token_secret;
+        $this->setPermissions();
+    }
+
+    /**
+     * Set instance default permissions to true
+     */
+    private function setDefaultPermissions () {
+        foreach ($this->api_types as $api_type) {
+            array_push($this->permissions, true);
+        }
     }
 
     /**
@@ -85,13 +97,102 @@ class Garmin extends Model {
         $checkIfEntryExists = $this->getPdo()->prepare("SELECT id FROM {$this->table} WHERE user_id = ?");
         $checkIfEntryExists->execute([$user_id]);
         if ($checkIfEntryExists->rowCount() == 0) {
-            $insertAccessTokens = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, garmin_user_id, oauth_token, oauth_token_secret) VALUES (?, ?, ?, ?)");
+            $insertAccessTokens = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, garmin_user_id, oauth_token, oauth_token_secret, permission_activity, permission_course) VALUES (?, ?, ?, ?, 1, 1)");
             $insertAccessTokens->execute([$user_id, $user_data['garmin_user_id'], $user_data['oauth_token'], $user_data['oauth_token_secret']]);
         } else {
             $updateAccessTokens = $this->getPdo()->prepare("UPDATE {$this->table} SET oauth_token = ?, oauth_token_secret = ?, garmin_user_id = ? WHERE user_id = ?");
             $updateAccessTokens->execute([$user_data['garmin_user_id'], $user_data['oauth_token'], $user_data['oauth_token_secret'], $user_id]);
         }
-    }    
+    }
+
+    /**
+     * Populate instance with garmin user id corresponding oauth token and oauth token secret from database
+     * @return boolean false if garmin user id is not set
+     */
+    public function populateUserTokens () {
+        if (isset($this->garmin_user_id)) {
+            $getUserTokens = $this->getPdo()->prepare("SELECT oauth_token, oauth_token_secret, permission_activity, permission_course FROM {$this->table} WHERE garmin_user_id = ?");
+            $getUserTokens->execute([$this->garmin_user_id]);
+            $user_tokens = $getUserTokens->fetch(PDO::FETCH_ASSOC);
+            $this->oauth_token = $user_tokens['oauth_token'];
+            $this->oauth_token_secret = $user_tokens['oauth_token_secret'];
+            foreach ($this->api_types as $api_type) {
+                if ($user_tokens['permission_' .$api_type] == 1) $this->setPermission($api_type, true);
+                else $this->setPermission($api_type, false);
+            }
+            return true;
+        } else return false;
+    }
+
+    /**
+     * Update permission
+     * @param string $permission
+     * @param boolean $boolean
+     */
+    public function setPermission ($permission, $boolean) {
+        $setPermission = $this->getPdo()->prepare("UPDATE {$this->table} SET permission_{$permission} = ?");
+        $setPermission->execute([$boolean]);
+    }
+
+    /**
+     * Retrieve an activity details from a previously obtained uploadStartTimeInSeconds and uploadEndTimeInSeconds
+     * @param string $uploadStartTimeInSeconds A timestamp sent from garmin through a ping notification
+     * @param string $uploadEndTimeInSeconds A timestamp sent from garmin through a ping notification
+     * @return $activity_details_summary Details summary in a variable
+     */
+    public function retrieveActivityDetails ($uploadStartTimeInSeconds, $uploadEndTimeInSeconds) {
+        $server = new GarminApi($this->getConfig());
+        $token_credentials = $this->getTokenCredentials();
+
+        $params = [
+            'uploadStartTimeInSeconds' => $uploadStartTimeInSeconds, // time in seconds utc
+            'uploadEndTimeInSeconds' => $uploadEndTimeInSeconds // time in seconds utc
+        ];
+        
+        // Activity details summaries
+        $activity_details_summary = $server->getActivityDetailsSummary($token_credentials, $params);
+
+        // Save result in a file
+        $user_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/files/' .$this->garmin_user_id;
+        if (!file_exists($user_directory)) mkdir($user_directory, 0777, true); // Create user directory if necessary
+        $temp_url = $user_directory. '/file.json';
+        file_put_contents($temp_url, $activity_details_summary);
+
+        // Return content to a variable
+        return json_decode($activity_details_summary);
+    }
+
+    /**
+     * Retrieve an activity file from a previously obtained uploadStartTimeInSeconds and uploadEndTimeInSeconds
+     * @param int $file_id File id of the activity to request for (! Different from activity id)
+     * @param string $activity_token Corresponding activity token
+     * @param string $ext expected file extension (fit, gpx or tcx)
+     * @param array $metadata Necessary data to save file (Contains ext, garmin_activity_id, garmin_user_id)
+     */
+    public function retrieveActivityFile ($file_id, $activity_token, $metadata) {
+        $server = new GarminApi($this->getConfig());
+        $token_credentials = $this->getTokenCredentials();
+
+        $params = [
+            'id' => $file_id,
+            'token' => $activity_token
+        ];
+        
+        // Activity file
+        $file_content = $server->getActivityFile($token_credentials, $params);
+
+        // Save result in a file
+        $user_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/files/' .$this->garmin_user_id;
+        if (!file_exists($user_directory)) mkdir($user_directory, 0777, true); // Create user directory if necessary
+        $file_url = $user_directory. '/' .$file_id. '.' .$metadata['ext'];
+
+        // Upload file to blob server and save data to database
+        $activity_file = new ActivityFile();
+        $activity_file->create($file_content, $metadata);
+
+
+        file_put_contents($file_url, $file_content);
+    }
 
     /**
      * Check whether instance stores property of a garmin user
@@ -116,6 +217,7 @@ class Garmin extends Model {
             unset($this->garmin_user_id);
             unset($this->oauth_token);
             unset($this->oauth_token_secret);
+            unset($this->permissions);
         }
     }
 
@@ -136,8 +238,8 @@ class Garmin extends Model {
 
         // Activity summaries
         $params = [
-            'uploadStartTimeInSeconds' => $uploadStartTimeInSeconds, // time in seconds utc
-            'uploadEndTimeInSeconds' => $uploadEndTimeInSeconds // time in seconds utc
+            'uploadStartTimeInSeconds' => $upload_start, // time in seconds utc
+            'uploadEndTimeInSeconds' => $upload_end // time in seconds utc
         ];
         $summary = $server->getActivitySummary($token_credentials, $params);
 

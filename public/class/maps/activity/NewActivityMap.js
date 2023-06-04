@@ -76,8 +76,9 @@ export default class NewActivityMap extends ActivityMap {
                     if (distanceInterval < 0.3 && speed > speed_max) speed_max = Math.round(speed * 10) / 10 // Cut longer distance to prevent bugs from tunnels or signal lost
                     // Build max slope
                     let elevation = 0
+                    let slope = 0
                     for (let j = 0; j < precision; j++) elevation += parseInt(trackpoints[i - j].elevation) - parseInt(trackpoints[i - j - 1].elevation)
-                    var slope = elevation * 100 / (distanceInterval * 1000)
+                    if (distanceInterval > 0) slope = elevation * 100 / (distanceInterval * 1000)
                     if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
                 }
             }
@@ -163,6 +164,7 @@ export default class NewActivityMap extends ActivityMap {
                     photos: [],
                     trackpoints
                 }
+                console.log(this.data)
                 resolve({success: true})
             }
         } )

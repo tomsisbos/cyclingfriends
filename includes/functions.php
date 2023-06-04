@@ -440,8 +440,8 @@ function luminanceLight($hexcolor, $percent) {
 	return '#' . implode($hexcolor);
 }
 
-function setFilename ($prefix) {
-	return $prefix . '_' . rand(0, 999999999999) . '.jpg';
+function setFilename ($prefix, $ext = 'jpg') {
+	return $prefix . '_' . rand(0, 999999999999) . '.' .$ext;
 }
 
 function getNextAutoIncrement ($table_name) {
