@@ -1832,12 +1832,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomsisbos/php-garmin-connect-api.git",
-                "reference": "9c7809436bc8a0248389b7b0017335edf5a93f03"
+                "reference": "984826a5b5d2a45154667b44e256f1aed4419ab8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomsisbos/php-garmin-connect-api/zipball/9c7809436bc8a0248389b7b0017335edf5a93f03",
-                "reference": "9c7809436bc8a0248389b7b0017335edf5a93f03",
+                "url": "https://api.github.com/repos/tomsisbos/php-garmin-connect-api/zipball/984826a5b5d2a45154667b44e256f1aed4419ab8",
+                "reference": "984826a5b5d2a45154667b44e256f1aed4419ab8",
                 "shasum": ""
             },
             "require": {
@@ -1871,7 +1871,7 @@
             "support": {
                 "source": "https://github.com/tomsisbos/php-garmin-connect-api/tree/master"
             },
-            "time": "2023-06-04T12:32:53+00:00"
+            "time": "2023-06-04T12:50:52+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
