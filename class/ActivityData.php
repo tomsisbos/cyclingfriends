@@ -138,7 +138,7 @@ class ActivityData {
             'start_time' => new DateTime(date('Y-m-d H:i:s', $session['start_time'])), new DateTimeZone('Asia/Tokyo'),
             'finish_time' => new DateTime(date('Y-m-d H:i:s', $record['timestamp'][count($record['timestamp']) - 1]), new DateTimeZone('Asia/Tokyo'))
         ];
-        if (isset($record['temperature'][$i])) {
+        if (isset($record['temperature'][0])) {
             $this->summary['temperature_min'] = min($record['temperature']);
             $this->summary['temperature_avg'] = avg($record['temperature']);
             $this->summary['temperature_max'] = max($record['temperature']);

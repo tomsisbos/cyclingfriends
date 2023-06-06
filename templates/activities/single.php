@@ -77,12 +77,12 @@ include '../includes/head.php'; ?>
 					<div class="pg-ac-spec-value"><?= $activity->route->elevation ?><span class="pg-ac-spec-unit"> m</span></div>
 				</div>
 				<div class="pg-ac-spec-container front <?= $activity->setBackgroundColor('duration')?>">
-					<div class="pg-ac-spec-label">時間</div>
+					<div class="pg-ac-spec-label">活動時間</div>
 					<div class="pg-ac-spec-value"> <?php
-						if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
-						else echo $activity->duration->format('H') ?>
+						if (substr($activity->duration_running->format('H'), 0, 1) == '0') echo substr($activity->duration_running->format('H'), 1, strlen($activity->duration_running->format('H')));
+						else echo $activity->duration_running->format('H') ?>
 						<span class="my-pg-ac-spec-unit"> h </span>
-						<?= $activity->duration->format('i') ?>
+						<?= $activity->duration_running->format('i') ?>
 					</div>
 				</div>
 				<div class="pg-ac-spec-container back <?= $activity->setBackgroundColor('break_time')?>" style="display: none;">

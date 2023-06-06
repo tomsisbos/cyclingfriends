@@ -184,7 +184,7 @@ class Garmin extends Model {
 
         // Upload file to blob server and save data to database
         $activity_file = new ActivityFile();
-        $metadata['user_id'] = $activity_file->getUserIdFromGarminId($medatada['garmin_user_id']); // Get user id from garmin user id
+        $metadata['user_id'] = $activity_file->getUserIdFromGarminId($metadata['garmin_user_id']); // Get user id from garmin user id
         $activity_file->create($file_content, $metadata);
 
         return $activity_file;

@@ -71,10 +71,10 @@ include '../includes/head.php'; ?>
 										<div class="ac-spec-value"><?= round($activity->route->distance, 1) ?><span class="ac-spec-unit"> km</span></div>
 									</div>
 									<div class="ac-spec <?= $activity->setBackgroundColor('duration')?> ">
-										<div class="ac-spec-label"><strong>時間 : </strong></div>
+										<div class="ac-spec-label"><strong>活動時間 : </strong></div>
 										<div class="ac-spec-value"> <?php
-											if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
-											else echo $activity->duration->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration->format('i') ?></div>
+											if (substr($activity->duration_running->format('H'), 0, 1) == '0') echo substr($activity->duration_running->format('H'), 1, strlen($activity->duration_running->format('H')));
+											else echo $activity->duration_running->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration_running->format('i') ?></div>
 									</div>
 									<div class="ac-spec <?= $activity->setBackgroundColor('elevation')?> ">
 										<div class="ac-spec-label"><strong>獲得標高 : </strong></div>
