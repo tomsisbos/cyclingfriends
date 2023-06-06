@@ -1,51 +1,46 @@
 <?php
 
+use Geo\Geojson;
+use Location\Coordinate;
+use Location\Formatter\Coordinate\DecimalDegrees;
+use Location\Polyline;
+use Location\Processor\Polyline\SimplifyDouglasPeucker;
+use Location\Distance\Vincenty;
+
 class CFLinestring extends Model {
     
     protected $table = 'linestrings';
+
+    protected $container_name = 'route-thumbnails';
+    
+    /**
+     * @var LngLat[]|array[] An array of lngLat or float coordinates
+     */
     public $coordinates = [];
-    public $time = [];
+
     public $length = 0;
     
-    function __construct ($coordinates = NULL, $time = NULL) {
+    /**
+     * @param LngLat[]|array[] $coordinates An array of lngLat or float coordinates
+     */
+    function __construct ($coordinates = null) {
         parent::__construct();
         if ($coordinates) {
             forEach($coordinates as $lngLat) {
-                $lngLat = new LngLat($lngLat[0], $lngLat[1]);
+                if (!($lngLat instanceof LngLat)) $lngLat = new LngLat($lngLat[0], $lngLat[1]);
                 array_push($this->coordinates, $lngLat);
             }
             $this->length = count($coordinates);
         }
-        if ($time) forEach($time as $datetimestamp) {
-            $datetime = new DateTime();
-            $datetime->setTimestamp($datetimestamp / 1000);
-            $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-            array_push($this->time, $datetime);
-        }
-    }
-
-    /**
-     * Returns a json array of timestamps
-     */
-    private function timeToJson () {
-        $timestamps = array_map(function ($datetime) {
-            return $datetime->getTimestamp();
-        }, $this->time);
-        return json_encode($timestamps);
     }
 
     /**
      * Save linestring in database
      * @param int $segment_id id of segment to refer to
      */
-    private function saveLinestring ($segment_id) {
-        if ($this->time == null) {
-            $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring) VALUES (?, ST_LineStringFromText(?))");
-            $save->execute([$segment_id, $this->toWKT()]);
-        } else {
-            $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring, timearray) VALUES (?, ST_LineStringFromText(?), ?)");
-            $save->execute([$segment_id, $this->toWKT(), $this->timeToJson()]);
-        }
+    protected function saveLinestring ($segment_id) {
+        $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring) VALUES (?, ST_LineStringFromText(?))");
+        $save->execute([$segment_id, $this->toWKT()]);
     }
     
     /**
@@ -74,6 +69,7 @@ class CFLinestring extends Model {
             $i++;
         }
         $this->coordinates = $coordinates;
+        $this->length = count($coordinates);
     }
 
     /**
@@ -87,25 +83,23 @@ class CFLinestring extends Model {
     }
 
     // Create a route from these coordinates
-    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail = false, $tunnels = [], $loading_record = NULL) {
+    public function createRoute ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $tunnels = [], $loading_record = NULL) {
 
         // Prepare start and goal place strings
-        $startplace = $startplace['city'] . ' (' . $startplace['prefecture'] . ')';
-        $goalplace = $goalplace['city'] . ' (' . $goalplace['prefecture'] . ')';
+        $startplace = $startplace->city . ' (' . $startplace->prefecture . ')';
+        $goalplace = $goalplace->city . ' (' . $goalplace->prefecture . ')';
 
         // Generate filename and save thumbnail blob to blob server
-        $file = base64_to_jpeg($thumbnail, $_SERVER["DOCUMENT_ROOT"]. '/media/temp/thumb_temp.jpg');
-        $stream = fopen($file, "r");
+        $thumbnail = $this->queryStaticMap();
 
-        $container_name = 'route-thumbnails';
         $thumbnail_filename = setFilename('thumb');
         $metadata = [
             'route_id' => $route_id,
         ];
 
         require CFLinestring::$root_folder . '/actions/blobStorageAction.php';
-        $blobClient->createBlockBlob($container_name, $thumbnail_filename, $stream);
-        $blobClient->setBlobMetadata($container_name, $thumbnail_filename, $metadata);
+        $blobClient->createBlockBlob($this->container_name, $thumbnail_filename, $thumbnail);
+        $blobClient->setBlobMetadata($this->container_name, $thumbnail_filename, $metadata);
 
         // If creation
         if ($route_id == 'new') {
@@ -193,6 +187,123 @@ class CFLinestring extends Model {
         }
 
         return $segment_id;
+    }
+
+    /**
+     * Retrieve a Geojson instance using linestring coordinates set with $properties
+     * @param array $properties Properties to append to geojson
+     * @return Geojson
+     */
+    public function toGeojson ($properties = [], $precision = null) {
+        if ($precision) $coordinates = $this->simplify($precision);
+        else $coordinates = $this->coordinates;
+        return new Geojson('LineString', $coordinates, $properties);
+    }
+
+    /**
+     * @param float $margin Margin in coordinate units
+     */
+    public function getBBox ($margin = .02) {
+        $array_lng = [];
+        $array_lat = [];
+        foreach ($this->coordinates as $lngLat) {
+            array_push($array_lng, $lngLat->lng);
+            array_push($array_lat, $lngLat->lat);
+        }
+        return [new LngLat(min($array_lng) - $margin, min($array_lat) - $margin), new LngLat(max($array_lng) + $margin, max($array_lat) + $margin)];
+    }
+
+    /**
+     * Return a simplified version of the linestring
+     * @param int $precision Remove all points which perpendicular distance is less than $precision meters from the surrounding points
+     */
+    public function simplify ($precision = 100) {
+
+        $polyline = new Polyline();
+        foreach ($this->coordinates as $coord) $polyline->addPoint(new Coordinate($coord->lat, $coord->lng));
+
+        $processor = new SimplifyDouglasPeucker($precision);
+
+        $simplified_polyline = $processor->simplify($polyline);
+        $simplified_coords = [];
+        foreach ($simplified_polyline->getPoints() as $point) array_push($simplified_coords, [$point->getLng(), $point->getLat()]);
+
+        return $simplified_coords;
+    }
+
+    /**
+     * Return line distance in kilometers
+     * @return int Distance in kilometers
+     */
+    public function computeDistance () {
+
+        $polyline = new Polyline();
+        foreach ($this->coordinates as $coord) $polyline->addPoint(new Coordinate($coord->lat, $coord->lng));
+        
+        return $polyline->getLength(new Vincenty()) / 1000;
+    }
+
+    /**
+     * Query a static map from mapbox server and store it to the static_map property
+     * @return File
+     */
+    public function queryStaticMap () {
+        
+        // Api key
+        $api_key = getenv('MAPBOX_API_KEY');
+
+        // Claclucate line precision depending on distance
+        $line_distance = $this->computeDistance();
+        if ($line_distance < 30) $linestring_precision = 25;
+        else if ($line_distance < 80) $linestring_precision = 60;
+        else if ($line_distance < 120) $linestring_precision = 140;
+        else if ($line_distance < 200) $linestring_precision = 250;
+        else $linestring_precision = 320;
+
+        // Build line geojson
+        $stroke_color = '6f6fff';
+        $stroke_width = 10;
+        $geojson = $this->toGeojson([
+            "stroke" => "#" .$stroke_color,
+            "stroke-width" => $stroke_width
+        ], $linestring_precision);
+        $geojson_string = json_encode($geojson);
+        $geojson_string_encoded = urlencode($geojson_string);
+
+        // Build start and goal markers
+        $start_icon = urlencode('https://img.icons8.com/flat-round/64/play.png');
+        $start_lng = $this->coordinates[0]->lng;
+        $start_lat = $this->coordinates[0]->lat;
+        $goal_icon = urlencode('https://img.icons8.com/flat-round/64/stop.png');
+        $goal_lng = $this->coordinates[$this->length - 1]->lng;
+        $goal_lat = $this->coordinates[$this->length - 1]->lat;
+
+        // Set map properties
+        $width = 1280;
+        $height = 1280;
+        $bbox = $this->getBBox();
+        $bbox_string = '[' .$bbox[0]->lng. ',' .$bbox[0]->lat. ',' .$bbox[1]->lng. ',' .$bbox[1]->lat. ']';
+        $padding = 350;
+        $pitch = 30;
+
+        // Make request
+        $uri = "https://api.mapbox.com/styles/v1/sisbos/cl07xga7c002616qcbxymnn5z/static/geojson({$geojson_string_encoded}),url-{$start_icon}({$start_lng},{$start_lat}),url-{$goal_icon}({$goal_lng},{$goal_lat})/{$bbox_string}/{$width}x{$height}?padding={$padding}&before_layer=road-label&access_token={$api_key}";
+        $curl = curl_init($uri);
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CAINFO => CFLinestring::$root_folder. "bin/cacert.pem"
+        ]);
+        $thumbnail = curl_exec($curl);
+        if (!$thumbnail) {
+            $error = curl_error($curl);
+            curl_close($curl);
+            throw new Exception($error);
+        } else if (curl_getinfo($curl, CURLINFO_HTTP_CODE) !== 200) {
+            curl_close($curl);
+            throw new Exception($thumbnail);
+        }
+
+        return $thumbnail;
     }
 
 }

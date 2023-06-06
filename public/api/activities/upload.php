@@ -2,75 +2,37 @@
 
 require '../../../includes/api-head.php';
 
-use phpGPX\phpGPX;
-
 // On activity upload
 if (isset($_FILES['activity'])) {
+    
+    $activity_file = new ActivityFile();
 
     // Filter file extensions
-    define('ALLOWED_EXTENSIONS', ['gpx', 'tcx', 'fit']);
-    $ext = checkFileExtension(ALLOWED_EXTENSIONS, $_FILES['activity']['name']);
+    $ext = checkFileExtension($activity_file->allowed_extensions, $_FILES['activity']['name']);
     if ($ext) {
 
-        // Create temp folder if necessary
-        if (!is_dir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data')) mkdir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data');
-        if (!is_dir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp')) mkdir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp');
+        // Upload activity file on server
+        $metadata = [
+            'user_id' => $connected_user->id,
+            'ext' => $ext
+        ];
+        $activity_file->create(file_get_contents($_FILES['activity']['tmp_name']), $metadata);
         
-        // Move uploaded file to activity temp folder
-        $url = $_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp/temp.' . $ext;
-        move_uploaded_file($_FILES['activity']['tmp_name'], $url);
-        
-        // Load parser dependancies
-        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/vendor/autoload.php';  // this file is in the project's root folder
-
-        // Treatment of gpx files
-        if ($ext == 'gpx') {
-
-            // On success, send analyzed data back to client
-            try {
-                $gpx = new phpGPX();
-                $file = $gpx->load($url);
-                echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'gpx', 'file' => $file], JSON_INVALID_UTF8_SUBSTITUTE);
-            
-            // On failure, return error message
-            } catch (Error $e) {
-                echo json_encode(['error' => $e->getMessage()]);
-                die();
-            }
-            
-            unset($file);
-        
-        // Treatment of fit files
-        } else if ($ext == 'fit') {
-
-            // On success, send analyzed data back to client
-            try {
-                $pFFA = new adriangibbons\phpFITFileAnalysis($url);
-                $data = new FitData($pFFA->data_mesgs);
-                echo json_encode(['success' => 'アップロードが完了しました。', 'filetype' => 'fit', 'file' => $data], JSON_INVALID_UTF8_SUBSTITUTE);
-
-            // On failure, return error message
-            } catch (Error $e) {
-                echo json_encode(['error' => $e->getMessage()]);
-                die();
-            }
-
-            unset($data);
-
-        // Treatment of tcx files (unavailable at this time)
-        } else if ($ext == 'tcx') {
-
-            echo json_encode(['error' => '*.tcx形式ファイルはまだ対応しておりません。ご迷惑をお掛け致します。']);
-
+        // Parse data and send it back to client with a message to display
+        try {
+            $activity_data = $activity_file->parse();
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
         }
+        $activity_data->createActivity($connected_user->id);
+        echo json_encode(['success' => 'アップロードが完了しました。', 'file' => $activity_data], JSON_INVALID_UTF8_SUBSTITUTE);
 
     // If file extension is not supported
     } else {
 
         // Build extensions list
         $extensions_list = '';
-        foreach (ALLOWED_EXTENSIONS as $allowed_extension) $extensions_list .= $allowed_extension . ', ';
+        foreach ($activity_file->allowed_extensions as $allowed_extension) $extensions_list .= $allowed_extension . ', ';
         $extensions_list = substr($extensions_list, 0, strlen($extensions_list) - 2);
         echo json_encode(['error' => 'この形式のファイルはアップロードできません。アップロードできるファイル形式は次の通り：' . $extensions_list]);
     }

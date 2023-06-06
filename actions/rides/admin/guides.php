@@ -18,9 +18,8 @@ if (isset($_POST['add'])) {
     }
 }
 
-// Add guide if necessary
+// Remove guide if necessary
 if (isset($_POST['remove'])) {
-    var_dump($_POST);
     $ride->removeGuide($_POST['guide']);
     $removed_guide = new Guide($_POST['guide']);
     $successmessage = '@' .$added_guide->login. 'が' .$ride->name. 'のガイドから取り消されました。';

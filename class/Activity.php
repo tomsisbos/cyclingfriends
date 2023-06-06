@@ -14,6 +14,7 @@ class Activity extends Model {
     public $temperature_max;
     public $speed_max;
     public $altitude_max;
+    public $altitude_min;
     public $slope_max;
     public $bike;
     public $privacy;
@@ -21,26 +22,29 @@ class Activity extends Model {
     public $notes_privacy;
     public $route;
     
-    function __construct($id = NULL, $lngLatFormat = true) {
+    function __construct($id = null, $lngLatFormat = true) {
         parent::__construct();
-        $this->id = intval($id);
-        $data = $this->getData($this->table);
-        $this->user_id          = $data['user_id'];
-        $this->datetime         = new Datetime($data['datetime']);
-        $this->title            = $data['title'];
-        $this->duration         = new Datetime($data['duration']);
-        $this->duration_running = new Datetime($data['duration_running']);
-        $this->temperature_min  = floatval($data['temperature_min']);
-        $this->temperature_avg  = floatval($data['temperature_avg']);
-        $this->temperature_max  = floatval($data['temperature_max']);
-        $this->speed_max        = floatval($data['speed_max']);
-        $this->altitude_max     = intval($data['altitude_max']);
-        $this->slope_max        = floatval($data['slope_max']);
-        $this->bike             = $data['bike_id'];
-        $this->privacy          = $data['privacy'];
-        $this->notes            = $data['notes'];
-        $this->notes_privacy    = $data['notes_privacy'];
-        $this->route            = new Route($data['route_id'], $lngLatFormat);
+        if ($id !== null) {
+            $this->id = intval($id);
+            $data = $this->getData($this->table);
+            $this->user_id          = $data['user_id'];
+            $this->datetime         = new Datetime($data['datetime']);
+            $this->title            = $data['title'];
+            $this->duration         = new Datetime($data['duration']);
+            $this->duration_running = new Datetime($data['duration_running']);
+            $this->temperature_min  = floatval($data['temperature_min']);
+            $this->temperature_avg  = floatval($data['temperature_avg']);
+            $this->temperature_max  = floatval($data['temperature_max']);
+            $this->speed_max        = floatval($data['speed_max']);
+            $this->altitude_max     = intval($data['altitude_max']);
+            $this->altitude_min     = intval($data['altitude_min']);
+            $this->slope_max        = floatval($data['slope_max']);
+            $this->bike             = $data['bike_id'];
+            $this->privacy          = $data['privacy'];
+            $this->notes            = $data['notes'];
+            $this->notes_privacy    = $data['notes_privacy'];
+            $this->route            = new Route($data['route_id'], $lngLatFormat);
+        }
     }
 
     public function getAuthor () {
@@ -198,11 +202,11 @@ class Activity extends Model {
                 if ($this->altitude_max < 400) $string .= '-3';
                 else if (!$this->altitude_max > 1200) $string .= '-2';
                 break;
-            case 'slope_max':
+            case 'altitude_min':
                 if ($isColor) $string .= 'blue';
                 else $string .= 'grey';
-                if ($this->slope_max < 9) $string .= '-3';
-                else if (!$this->slope_max > 16) $string .= '-2';
+                if ($this->altitude_min < 20) $string .= '-3';
+                else if (!$this->altitude_min > 400) $string .= '-2';
                 break;
             case 'speed_max':
                 if ($isColor) $string .= 'pink';
@@ -245,6 +249,30 @@ class Activity extends Model {
             if ($user && $author->id == $user->id) return true;
             else return false;
         } else return true;
+    }
+
+    /**
+     * Create a new activity
+     */
+    public function create ($activity_data) {
+        
+        // Get activity id
+        $activity_id = getNextAutoIncrement('activities');
+
+        // Insert data in 'routes' table
+        $route_data = $activity_data['route_data'];
+        $route_id = $route_data['linestring']->createRoute($route_data['author_id'], $route_data['route_id'], $route_data['category'], $route_data['name'], $route_data['description'], $route_data['distance'], $route_data['elevation'], $route_data['startplace'], $route_data['goalplace'], $route_data['tunnels']);
+        
+        // Insert data in 'activities' table
+        $insert_activity = $this->getPdo()->prepare('INSERT INTO activities(user_id, datetime, posting_date, title, duration, duration_running, temperature_min, temperature_avg, temperature_max, speed_max, altitude_max, altitude_min, slope_max, bike_id, privacy, route_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $insert_activity->execute(array($activity_data['user_id'], $activity_data['datetime']->format('Y-m-d H:i:s'), (new Datetime('now', new DateTimeZone('Asia/Tokyo')))->format('Y-m-d H:i:s'), $activity_data['title'], $activity_data['duration']->format('%H:%i:%s'), $activity_data['duration_running']->format('%H:%i:%s'), $activity_data['temperature']['min'],  $activity_data['temperature']['avg'], $activity_data['temperature']['max'], $activity_data['speed_max'], $activity_data['altitude_max'], $activity_data['altitude_min'], $activity_data['slope_max'], $activity_data['bike_id'], $activity_data['privacy'], $route_id));
+
+        // Insert data in 'checkpoints' table
+        foreach ($activity_data['checkpoints_data'] as $checkpoint_data) {
+            $checkpoint = new ActivityCheckpoint();
+            $checkpoint_data['activity_id'] = $activity_id;
+            $checkpoint->create($checkpoint_data);
+        }
     }
 
     public function delete () {

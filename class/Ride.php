@@ -246,7 +246,7 @@ class Ride extends Model {
             if ($boolean) {
                 // Check if there is a bike type matching in user's bike list
                 for ($i = 0; $i < count($bikes); $i++) {
-                    $bike = new Bike ($bikes[$i]['id']);
+                    $bike = new Bike($bikes[$i]['id']);
                     if (getBikesFromColumnName($biketype) == $bike->type) {
                         // If there is one, return true
                         return true;
@@ -553,7 +553,7 @@ class Ride extends Model {
         // Get thumbnail filename
         $getMapThumbnail = $this->getPdo()->prepare('SELECT thumbnail_filename FROM routes WHERE id = ?');
         $getMapThumbnail->execute(array($this->route_id));
-        $thumbnail_filename = $getMapThumbnail->fetch(PDO::FETCH_NUM)[0];
+        $thumbnail_filename = $getMapThumbnail->fetch(PDO::FETCH_COLUMN);
         
         // Connect to blob storage
         require Ride::$root_folder . '/actions/blobStorageAction.php';

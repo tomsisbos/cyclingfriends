@@ -60,7 +60,7 @@ include '../includes/head.php'; ?>
 									</a>
 								</div>
 								<div class="ac-posting-date">
-									<?= $activity->datetime->format('Y/m/d') . ' - 出発：' . $activity->datetime->format('H\:i') . ' 到着：' . $activity->getEndDateTime()->format('H\:i') ; ?>
+									<?= $activity->datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'))->format('Y/m/d') . ' - 出発：' . $activity->datetime->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('H\:i') . ' 到着：' . $activity->getEndDateTime()->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('H\:i') ; ?>
 								</div>
 								<div class="ac-place">
 									<?= $activity->getPlace()['start']->toString() . 'から' . $activity->getPlace()['goal']->toString() . 'まで'; ?>

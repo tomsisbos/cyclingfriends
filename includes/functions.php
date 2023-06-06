@@ -441,7 +441,8 @@ function luminanceLight($hexcolor, $percent) {
 }
 
 function setFilename ($prefix, $ext = 'jpg') {
-	return $prefix . '_' . rand(0, 999999999999) . '.' .$ext;
+	$filename = $prefix . '_' . rand(0, 999999999999) . '.' .$ext;
+	return $filename;
 }
 
 function getNextAutoIncrement ($table_name) {
@@ -469,4 +470,26 @@ function getWeekDay ($date) {
 		case 5: return '金';
 		case 6: return '土';
 	}
+}
+
+/**
+ * Get a correctly populated DateInterval from a timestamp
+ * @param int $timespan Timestamp (timespan)
+ * @return DateInterval
+ */
+function timestampToDateInterval ($timespan) {
+	$d1 = new DateTime();
+	$d2 = new DateTime();
+	$d2->add(new DateInterval('PT' .$timespan. 'S'));
+	return $d2->diff($d1);
+}
+
+/**
+ * Calculate average of all non empty values of an array
+ * @param array $array
+ * @return float
+ */
+function avg ($array) {
+	$array = array_filter($array);
+	if (count($array)) return array_sum($array) / count($array);
 } ?>

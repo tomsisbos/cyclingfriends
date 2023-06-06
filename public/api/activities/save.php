@@ -35,12 +35,11 @@ if (is_array($data)) {
         $elevation   = $data['elevation'];
         $startplace  = $data['checkpoints'][0]['geolocation'];
         $goalplace   = $data['checkpoints'][count($data['checkpoints']) - 1]['geolocation'];
-        $thumbnail   = $data['thumbnail'];
         $tunnels     = [];
 
         // Insert data in 'routes' table
-        $routeCoordinates = new CFLinestring($data['routeData']['geometry']['coordinates'], $data['routeData']['properties']['time']);
-        $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail, $tunnels, $loading_record);
+        $routeCoordinates = new CFLinestring($data['routeData']['geometry']['coordinates'], $data['routeData']['properties']['time'] / 1000);
+        $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $tunnels, $loading_record);
 
         // Build activity data
         $loading_record->setStatus('pending', 'アクティビティデータ保存中...');

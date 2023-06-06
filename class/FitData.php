@@ -13,6 +13,4 @@ class FitData {
         $this->record = $data_record;
         $this->session = $data['session'];
     }
-
-
 }

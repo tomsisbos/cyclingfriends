@@ -37,10 +37,13 @@ foreach ($data['activityFiles'] as $activity_files) {
     $ext = strtolower($activity_files['fileType']);
 
     // Retrieve corresponding activity details
-    $garmin->retrieveActivityFile($id, $token, [
+    $activity_file = $garmin->retrieveActivityFile($id, $token, [
         'ext' => $ext,
         'garmin_activity_id' => intval($activity_files['activityId']), 
-        'garmin_user_id' => $activity_files['userId'],
-        'timestamp' => intval($activity_files['startTimeInSeconds'])
+        'garmin_user_id' => $activity_files['userId']
     ]);
+
+    // Parse file and create an activity
+    $activity_data = $activity_file->parse();
+    $activity_data->createActivity();
 }

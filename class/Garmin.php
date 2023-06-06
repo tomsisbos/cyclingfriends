@@ -168,6 +168,7 @@ class Garmin extends Model {
      * @param string $activity_token Corresponding activity token
      * @param string $ext expected file extension (fit, gpx or tcx)
      * @param array $metadata Necessary data to save file (Contains ext, garmin_activity_id, garmin_user_id)
+     * @return ActivityFile $activity_file
      */
     public function retrieveActivityFile ($file_id, $activity_token, $metadata) {
         $server = new GarminApi($this->getConfig());
@@ -181,17 +182,12 @@ class Garmin extends Model {
         // Activity file
         $file_content = $server->getActivityFile($token_credentials, $params);
 
-        // Save result in a file
-        $user_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/files/' .$this->garmin_user_id;
-        if (!file_exists($user_directory)) mkdir($user_directory, 0777, true); // Create user directory if necessary
-        $file_url = $user_directory. '/' .$file_id. '.' .$metadata['ext'];
-
         // Upload file to blob server and save data to database
         $activity_file = new ActivityFile();
+        $metadata['user_id'] = $activity_file->getUserIdFromGarminId($medatada['garmin_user_id']); // Get user id from garmin user id
         $activity_file->create($file_content, $metadata);
 
-
-        file_put_contents($file_url, $file_content);
+        return $activity_file;
     }
 
     /**

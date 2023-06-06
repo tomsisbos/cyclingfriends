@@ -32,7 +32,6 @@ class Route extends Model {
         $this->author             = new User($data['author_id']);
         $this->category           = $data['category'];
         $this->posting_date       = new Datetime($data['posting_date']);
-        $this->posting_date->setTimezone(new DateTimeZone('Asia/Tokyo'));
         $this->name               = $data['name'];
         $this->description        = $data['description'];
         $this->distance           = floatval($data['distance']);
@@ -50,7 +49,7 @@ class Route extends Model {
      * Retrieve time data from database
      */
     private function getTime () {
-        $getTime = $this->getPdo()->prepare('SELECT timearray FROM linestrings WHERE segment_id = ?');
+        $getTime = $this->getPdo()->prepare('SELECT time_array FROM linestrings WHERE segment_id = ?');
         $getTime->execute(array($this->id));
         $result = $getTime->fetch(PDO::FETCH_COLUMN);
         if ($result) {

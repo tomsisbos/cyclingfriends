@@ -1,7 +1,6 @@
 <?php 
 
 include '../actions/users/initSessionAction.php';
-include '../actions/garmin/backfill.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -28,10 +27,6 @@ include '../includes/head.php'; ?>
                     <input type="file" id="uploadActivity" class="hidden" name="uploadActivity" />
                     <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
                 </div>
-
-                <form method="post" class="new-ac-upload-container">
-                    <input type="submit" class="btn smallbutton" name="backfill" value="バックフィール"/>
-                </form>
             
             </div>
 
