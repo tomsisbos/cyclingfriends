@@ -156,13 +156,6 @@
 
 /* -- Popups -- */
 
-/*.mapboxgl-popup {
-    -webkit-transition: all .1s;
-    -moz-transition: all .1s;
-    transition: all .1s;
-    z-index: 2;
-}*/
-
 .mapboxgl-popup-content {
     overflow: hidden;
     border-radius: inherit !important;
