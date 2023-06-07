@@ -9,8 +9,8 @@ export default class SegmentMap extends RouteMap {
 
     getRouteData () {
         return new Promise ( (resolve, reject) => {
-            if (this.data && this.data.routeData) {
-                resolve(this.data.routeData)
+            if (this.data && this.routeData) {
+                resolve(this.routeData)
             } else if (map.getSource('segment' + this.segmentId)) {
                 resolve(map.getSource('segment' + this.segmentId)._data)
             } else {

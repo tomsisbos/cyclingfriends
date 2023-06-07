@@ -993,8 +993,8 @@ export default class NewActivityMap extends ActivityMap {
         } )
 
         // Prepare photo blobs upload
-        const photos = this.data.photos        
-        cleanData.photos = await (async () => {
+        const photos = this.data.photos
+        if (photos.length > 0) cleanData.photos = await (async () => {
             return new Promise(async (resolve, reject) => {
                 var cleanPhotos = []
                 var loadedBlobsNumber = 0

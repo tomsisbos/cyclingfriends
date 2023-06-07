@@ -80,8 +80,8 @@ export default class Model {
 
     getRouteData (sourceName = 'route') {
         return new Promise((resolve, reject) => {
-            if (this.data && this.data.routeData) {
-                resolve(this.data.routeData)
+            if (this.data && this.routeData) {
+                resolve(this.routeData)
             } else if (this.map.getSource(sourceName)) {
                 resolve(this.map.getSource(sourceName)._data)
             } else {
@@ -210,9 +210,9 @@ export default class Model {
     }
 
     getFormattedTimeFromLngLat (lngLat) {
-        var routeClosestCoordinate = CFUtils.replaceOnRoute(lngLat, this.data.routeData)
-        var index = this.data.routeData.geometry.coordinates.findIndex((element) => element == routeClosestCoordinate)
-        var timestamp = this.data.routeData.properties.time[index] - this.data.routeData.properties.time[0]
+        var routeClosestCoordinate = CFUtils.replaceOnRoute(lngLat, this.routeData)
+        var index = this.routeData.geometry.coordinates.findIndex((element) => element == routeClosestCoordinate)
+        var timestamp = this.routeData.properties.time[index] - this.routeData.properties.time[0]
         return getFormattedDurationFromTimestamp(timestamp)
     }
 }

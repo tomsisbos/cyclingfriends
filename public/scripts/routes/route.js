@@ -37,7 +37,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
 
     // Populate instance route property
     routePageMap.data = route
-    routePageMap.data.routeData = geojson
+    routePageMap.routeData = geojson
     
     // Set map instance paint property data
     if (routePageMap.rideId) routePageMap.routeColor = '#FFFF00'
@@ -133,7 +133,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         var seasonLayer = encodeURIComponent(JSON.stringify(seasonData))
         
         // Build route overlay
-        const routeData = routePageMap.data.routeData
+        const routeData = routePageMap.routeData
         const routeCoordinates = routeData.geometry.coordinates
         if (routeData.geometry.coordinates.length < 10000) var tolerance = 0.0005
         else var tolerance = 0.002

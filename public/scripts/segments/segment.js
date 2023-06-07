@@ -37,7 +37,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
     // Populate instance route property
     segmentMap.mapdata.segment = segment
     segmentMap.data = segment.route
-    segmentMap.data.routeData = geojson
+    segmentMap.routeData = geojson
 
     // Load gpx file
     exportButton.href = CFUtils.loadGpx(geojson)
@@ -153,7 +153,7 @@ ajaxGetRequest (segmentMap.apiUrl + "?segment-load=" + segmentMap.segmentId, asy
         var seasonLayer = encodeURIComponent(JSON.stringify(seasonData))
         
         // Build route overlay
-        const routeData = segmentMap.data.routeData
+        const routeData = segmentMap.routeData
         const routeCoordinates = routeData.geometry.coordinates
         var staticRouteData = turf.simplify(routeData, {tolerance: 0.0005, highQuality: true})
         var revertedCoordinates = staticRouteData.geometry.coordinates.map(coordinate => {

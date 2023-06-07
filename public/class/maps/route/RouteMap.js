@@ -166,7 +166,7 @@ export default class RouteMap extends Map {
                             geojson.features.forEach(feature => {
                                 if (typeof feature.geometry.coordinates[0] == 'object') var coordinates = feature.geometry.coordinates[0]
                                 else var coordinates = feature.geometry.coordinates
-                                var remotenessValue = turf.pointToLineDistance(coordinates, this.data.routeData)
+                                var remotenessValue = turf.pointToLineDistance(coordinates, this.routeData)
                                 if (remotenessValue < 0.1) var remoteness = 'コース上'
                                 else var remoteness = Math.floor(remotenessValue * 1000) + 'm'
                                 if (remotenessValue < 0.3) {
@@ -177,8 +177,8 @@ export default class RouteMap extends Map {
                                         logo: '<img src="/map/media/_icon-toilets.svg">',
                                         name: 'トイレ',
                                         geolocation: '-',
-                                        distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
-                                        distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
+                                        distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
+                                        distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
                                         remoteness
                                     }
                                     if (this.map) entry.elevation = Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm'
@@ -201,7 +201,7 @@ export default class RouteMap extends Map {
                             geojson.features.forEach(feature => {
                                 if (typeof feature.geometry.coordinates[0] == 'object') var coordinates = feature.geometry.coordinates[0]
                                 else var coordinates = feature.geometry.coordinates
-                                var remotenessValue = turf.pointToLineDistance(coordinates, this.data.routeData)
+                                var remotenessValue = turf.pointToLineDistance(coordinates, this.routeData)
                                 if (remotenessValue < 0.1) var remoteness = 'コース上'
                                 else var remoteness = Math.floor(remotenessValue * 1000) + 'm'
                                 if (remotenessValue < 0.3) {
@@ -212,8 +212,8 @@ export default class RouteMap extends Map {
                                         logo: '<img src="/map/media/_icon-water.svg">',
                                         name: '水分補給',
                                         geolocation: '-',
-                                        distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
-                                        distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
+                                        distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
+                                        distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
                                         remoteness
                                     }
                                     if (this.map) entry.elevation = Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm'
@@ -237,7 +237,7 @@ export default class RouteMap extends Map {
                                 if (typeof feature.geometry.coordinates[0] == 'object') var coordinates = feature.geometry.coordinates[0]
                                 else var coordinates = feature.geometry.coordinates
                                 // Define remoteness
-                                var remotenessValue = turf.pointToLineDistance(coordinates, this.data.routeData)
+                                var remotenessValue = turf.pointToLineDistance(coordinates, this.routeData)
                                 if (remotenessValue < 0.1) var remoteness = 'コース上'
                                 else var remoteness = Math.floor(remotenessValue * 1000) + 'm'
                                 // Define logo
@@ -269,8 +269,8 @@ export default class RouteMap extends Map {
                                         logo,
                                         name,
                                         geolocation: '-',
-                                        distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
-                                        distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.data.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
+                                        distance: 'km ' + Math.floor(CFUtils.findDistanceWithTwins(this.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 10) / 10,
+                                        distanceValue: Math.floor(CFUtils.findDistanceWithTwins(this.routeData, {lng: coordinates[0], lat: coordinates[1]}).distance * 100) / 100,
                                         remoteness
                                     }
                                     if (this.map) entry.elevation = Math.floor(this.map.queryTerrainElevation(coordinates)) + 'm'
@@ -563,7 +563,7 @@ export default class RouteMap extends Map {
                 // Store ride properties inside map instance
                 if (Math.round(ride.checkpoints[0].lngLat.lng * 1000) / 1000 == Math.round(ride.checkpoints[ride.checkpoints.length - 1].lngLat.lng * 1000) / 1000 && Math.round(ride.checkpoints[0].lngLat.lat * 1000) / 1000 == Math.round(ride.checkpoints[ride.checkpoints.length - 1].lngLat.lat * 1000) / 1000) {
                     ride.options = {sf: true}
-                    ride.checkpoints[ride.checkpoints.length - 1].distance = Math.floor(turf.length(this.data.routeData) * 10) / 10
+                    ride.checkpoints[ride.checkpoints.length - 1].distance = Math.floor(turf.length(this.routeData) * 10) / 10
                 }
                 else ride.options = {sf: false}
                 this.ride = ride

@@ -28,7 +28,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     for (let i = 0; i < activityData.route.time.length; i++) {
         activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime()
     }
-    editActivityMap.data.routeData = {
+    editActivityMap.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
             type: 'LineString'
@@ -65,10 +65,10 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.setGrabber()
     editActivityMap.addSources()
     editActivityMap.addLayers()
-    editActivityMap.addRouteLayer(editActivityMap.data.routeData)
-    editActivityMap.displayStartGoalMarkers(editActivityMap.data.routeData)
+    editActivityMap.addRouteLayer(editActivityMap.routeData)
+    editActivityMap.displayStartGoalMarkers(editActivityMap.routeData)
     editActivityMap.updateDistanceMarkers()
-    editActivityMap.focus(editActivityMap.data.routeData)
+    editActivityMap.focus(editActivityMap.routeData)
     editActivityMap.displayCheckpointMarkers()
     editActivityMap.displayPhotoMarkers()
 
