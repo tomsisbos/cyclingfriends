@@ -136,9 +136,9 @@ class Activity extends Model {
     }
 
     public function getBreakTime() {
-        $h = $this->duration->h - $this->duration_running->h;
-        $i = $this->duration->i - $this->duration_running->i;
-        return new DateInterval('PT' .$h. 'H' .$i. 'S');
+        $duration = new DateTime($this->duration->format('%H:%i:%s'));
+        $duration_running = new DateTime($this->duration_running->format('%H:%i:%s'));
+        return $duration_running->diff($duration);
     }
 
     public function getPlace () {

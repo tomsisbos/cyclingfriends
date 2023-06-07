@@ -255,22 +255,20 @@ class Scenery extends Model {
     }
 
     public function findLastRelatedActivities ($limit) {
-        $i = 0;
-        $offset = 0;
-        $lastRelatedActivites = [];
-        while ($i < $limit) {
-            $getCloseActivitiy = $this->getPdo()->prepare("SELECT activities.id FROM activities INNER JOIN routes ON activities.route_id = routes.id WHERE routes.category = 'activity' AND (routes.goalplace LIKE '%" .$this->prefecture. "%' OR routes.startplace LIKE '%" .$this->prefecture. "%') LIMIT 1 OFFSET " .$offset);
-            $getCloseActivitiy->execute();
-            if ($getCloseActivitiy->rowCount() > 0) {
-                $activity_data = $getCloseActivitiy->fetch(PDO::FETCH_ASSOC);
-                $activity = new Activity($activity_data['id']);
-                $range = 10000;
-                if ($activity->route->isPointInRoughArea(new Coordinate($this->lngLat->lat, $this->lngLat->lng), $range)) {
-                    if ($this->getRemoteness($activity->route) < 500) array_push($lastRelatedActivites, $activity);
-                }
-                $offset++;
-            } else return $lastRelatedActivites;
-        }
+        $getCloseActivitiy = $this->getPdo()->prepare("
+            SELECT a.id
+            FROM activities AS a
+            JOIN routes AS r ON a.route_id = r.id
+            JOIN linestrings AS l ON r.id = l.segment_id
+            WHERE ST_Intersects(ST_Buffer((SELECT point FROM sceneries WHERE id = ?), 0.001), l.linestring)
+            ORDER BY datetime DESC
+            LIMIT 10
+        ");
+        $getCloseActivitiy->execute([$this->id]);
+        $activity_ids = $getCloseActivitiy->fetchAll(PDO::FETCH_COLUMN);
+        return array_map(function ($id) {
+            return new Activity($id);
+        }, $activity_ids);
     }
 
     public function getRemoteness ($route, $step = 5) {
