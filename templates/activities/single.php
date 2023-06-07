@@ -79,10 +79,10 @@ include '../includes/head.php'; ?>
 				<div class="pg-ac-spec-container front <?= $activity->setBackgroundColor('duration')?>">
 					<div class="pg-ac-spec-label">活動時間</div>
 					<div class="pg-ac-spec-value"> <?php
-						if (substr($activity->duration_running->format('H'), 0, 1) == '0') echo substr($activity->duration_running->format('H'), 1, strlen($activity->duration_running->format('H')));
-						else echo $activity->duration_running->format('H') ?>
+						if (substr($activity->duration_running->h, 0, 1) == '0') echo substr($activity->duration_running->h, 1, strlen($activity->duration_running->h));
+						else echo $activity->duration_running->h ?>
 						<span class="my-pg-ac-spec-unit"> h </span>
-						<?= $activity->duration_running->format('i') ?>
+						<?= $activity->duration_running->i ?>
 					</div>
 				</div>
 				<div class="pg-ac-spec-container back <?= $activity->setBackgroundColor('break_time')?>" style="display: none;">

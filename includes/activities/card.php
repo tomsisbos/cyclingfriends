@@ -29,8 +29,8 @@
                 <div class="ac-spec <?= $activity->setBackgroundColor('duration')?> ">
                     <div class="ac-spec-label"><strong>時間 : </strong></div>
                     <div class="ac-spec-value"> <?php
-                        if (substr($activity->duration->format('H'), 0, 1) == '0') echo substr($activity->duration->format('H'), 1, strlen($activity->duration->format('H')));
-                        else echo $activity->duration->format('H') ?><span class="ac-spec-unit"> h </span><?= $activity->duration->format('i') ?></div>
+                        if (substr($activity->duration->h, 0, 1) == '0') echo substr($activity->duration->h, 1, strlen($activity->duration->h));
+                        else echo $activity->duration->h ?><span class="ac-spec-unit"> h </span><?= $activity->duration->i ?></div>
                 </div>
                 <div class="ac-spec <?= $activity->setBackgroundColor('elevation')?> ">
                     <div class="ac-spec-label"><strong>獲得標高 : </strong></div>

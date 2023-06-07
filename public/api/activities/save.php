@@ -189,8 +189,7 @@ if (is_array($data)) {
     // If any error have been catched, response error info
     } catch (Error $e) {
 
-        var_dump($e);
-        ///echo json_encode($e->getMessage() .' ('. $e->getTraceAsString(). ')');
+        echo json_encode($e->getMessage() .' ('. $e->getTraceAsString(). ')');
         die();
 
     }

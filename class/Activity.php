@@ -28,10 +28,10 @@ class Activity extends Model {
             $this->id = intval($id);
             $data = $this->getData($this->table);
             $this->user_id          = $data['user_id'];
-            $this->datetime         = new Datetime($data['datetime']);
+            $this->datetime         = new DateTime($data['datetime']);
             $this->title            = $data['title'];
-            $this->duration         = new Datetime($data['duration']);
-            $this->duration_running = new Datetime($data['duration_running']);
+            $this->duration         = new DateInterval('PT' .explode(':', $data['duration'])[0]. 'H' .explode(':', $data['duration'])[1]. 'M' .explode(':', $data['duration'])[2]. 'S');
+            $this->duration_running = new DateInterval('PT' .explode(':', $data['duration_running'])[0]. 'H' .explode(':', $data['duration_running'])[1]. 'M' .explode(':', $data['duration_running'])[2]. 'S');
             $this->temperature_min  = floatval($data['temperature_min']);
             $this->temperature_avg  = floatval($data['temperature_avg']);
             $this->temperature_max  = floatval($data['temperature_max']);
@@ -129,14 +129,16 @@ class Activity extends Model {
     }
 
     public function getAverageSpeed () {
-        $hours = intval($this->duration_running->format('H'));
-        $minutes = intval($this->duration_running->format('i')) / 60;
+        $hours = intval($this->duration_running->h);
+        $minutes = intval($this->duration_running->i) / 60;
         $duration_running_value = $hours + $minutes; 
         return round($this->route->distance / $duration_running_value, 1);
     }
 
     public function getBreakTime() {
-        return $this->duration->diff($this->duration_running);
+        $h = $this->duration->h - $this->duration_running->h;
+        $i = $this->duration->i - $this->duration_running->i;
+        return new DateInterval('PT' .$h. 'H' .$i. 'S');
     }
 
     public function getPlace () {
@@ -158,19 +160,19 @@ class Activity extends Model {
             case 'duration':
                 if ($isColor) $string .= 'yellow';
                 else $string .= 'grey';
-                if (intval($this->duration->format('H') < 2)) $string .= '-3';
-                else if (!intval($this->duration->format('H') > 5)) $string .= '-2';
+                if (intval($this->duration->h < 2)) $string .= '-3';
+                else if (!intval($this->duration->h > 5)) $string .= '-2';
                 break;
             case 'duration_running':
                 if ($isColor) $string .= 'yellow';
                 else $string .= 'grey';
-                if (intval($this->duration->format('H') < 2)) $string .= '-3';
-                else if (!intval($this->duration->format('H') > 5)) $string .= '-2';
+                if (intval($this->duration->h < 2)) $string .= '-3';
+                else if (!intval($this->duration->h > 5)) $string .= '-2';
                 break;
             case 'break_time':
                 if ($isColor) $string .= 'yellow';
                 else $string .= 'grey';
-                if (intval($this->getBreakTime()->format('H') > 1)) $string .= '-3';
+                if (intval($this->getBreakTime()->h > 1)) $string .= '-3';
                 break;
             case 'elevation': 
                 if ($isColor) $string .= 'blue';
@@ -219,7 +221,7 @@ class Activity extends Model {
     }
 
     public function getEndDateTime() {
-        $end_timestamp = $this->datetime->getTimeStamp() + $this->duration->getTimeStamp();
+        $end_timestamp = $this->datetime->getTimeStamp() + strtotime($this->duration->format('H:i:s'));
         $end_datetime = new DateTime();
         return $end_datetime->setTimestamp($end_timestamp);
     }
