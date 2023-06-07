@@ -24,8 +24,8 @@ if (isset($_FILES['activity'])) {
         } catch (Exception $e) {
             echo json_encode(['error' => $e->getMessage()]);
         }
-        $activity_data->createActivity($connected_user->id);
-        echo json_encode(['success' => 'アップロードが完了しました。', 'file' => $activity_data], JSON_INVALID_UTF8_SUBSTITUTE);
+        $activity_data->sceneries = $activity_data->linestring->getCloseSceneries(1000);
+        echo json_encode(['success' => 'アップロードが完了しました。', 'activityData' => $activity_data], JSON_INVALID_UTF8_SUBSTITUTE);
 
     // If file extension is not supported
     } else {

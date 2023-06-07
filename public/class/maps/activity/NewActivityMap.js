@@ -11,298 +11,75 @@ export default class NewActivityMap extends ActivityMap {
 
     pageType = 'new'
     apiUrl = '/api/activities/save.php'
-    data
+    activityData
+    routeData
+    storyData
     cursor = 2
 
-    // Parse file data and store it inside map instance
-    async importDataFromGpx (gpx) {
-        return new Promise(async (resolve, reject) => {
+    // Load activity data from parsed file
+    async loadActivityData (activityData) {
 
-            // Build trackpoints and routeCoords
-            const track = gpx.tracks[0]
-            const segment = track.segments[0]
-            const trkpt = segment.points
+        this.activityData = activityData
 
-            var trackpoints = []
-            var routeCoords = []
-            var routeTime = []
-            for (let i = 0; i < trkpt.length; i++) {
-                if (trkpt[i].time == null) return resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
-                else {
-                    var date = new Date(trkpt[i].time.date)
-                    let trackpoint = {
-                        lngLat: {
-                            lng: trkpt[i].longitude,
-                            lat: trkpt[i].latitude
-                        },
-                        elevation: trkpt[i].elevation,
-                        time: date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) // Needs to add the timezone difference to be correct
-                    }
-                    routeCoords.push([trkpt[i].longitude, trkpt[i].latitude])
-                    routeTime.push(trackpoint.time)
-                    if (trkpt[i].extensions) {
-                        if (trkpt[i].extensions.trackPointExtension.aTemp) trackpoint.temperature = trkpt[i].extensions.trackPointExtension.aTemp
-                        if (trkpt[i].extensions.trackPointExtension.cad) trackpoint.cadence = trkpt[i].extensions.trackPointExtension.cad
-                        if (trkpt[i].extensions.unsupported.power) trackpoint.power = parseInt(trkpt[i].extensions.unsupported.power)
-                    }
-                    trackpoints.push(trackpoint)
-                }
-            }
+        const coordinates = activityData.linestring.coordinates
+        const trackpoints = activityData.linestring.trackpoints
 
-            // Build max speed, max altitude and max slope
-            var speed_max = 0
-            var altitude_max = 0
-            var slope_max = 0
-            var duration_running = 0
-            const precision = 20 // Speed and slope calculation interval in seconds
+        console.log(activityData)
 
-            /* For each coordinate */
-            for (let i = 1; i < routeCoords.length; i++) {
-                // Build max altitude
-                if (parseInt(trackpoints[i].elevation) > altitude_max) altitude_max = Math.round(trackpoints[i].elevation)
-                var distance = turf.distance(routeCoords[i], routeCoords[i - 1])
-                // Build time running
-                var seconds = (trackpoints[i].time - trackpoints[i - 1].time) / 1000
-                if (distance / seconds > 0.001) duration_running += (trackpoints[i].time - trackpoints[i - 1].time)
+        // Build route geojson
+        this.routeData = turf.lineString(coordinates.map((lngLat) => [lngLat.lng, lngLat.lat]))
+        this.routeData.properties.time = trackpoints.map((trackpoint) => trackpoint.time)
 
-                /* On rougher intervals */
-                if (routeCoords[i - precision] && Number.isInteger(i / precision)) {
-                    // Build max speed
-                    let distanceInterval = 0
-                    for (let j = 0; j < precision; j++) distanceInterval += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
-                    let secondsInterval = (trackpoints[i].time - trackpoints[i - precision].time) / 1000
-                    let hours = secondsInterval / 60 / 60
-                    var speed = distanceInterval / hours
-                    if (distanceInterval < 0.3 && speed > speed_max) speed_max = Math.round(speed * 10) / 10 // Cut longer distance to prevent bugs from tunnels or signal lost
-                    // Build max slope
-                    let elevation = 0
-                    let slope = 0
-                    for (let j = 0; j < precision; j++) elevation += parseInt(trackpoints[i - j].elevation) - parseInt(trackpoints[i - j - 1].elevation)
-                    if (distanceInterval > 0) slope = elevation * 100 / (distanceInterval * 1000)
-                    if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
-                }
-            }
+        // Build start and end checkpoints
+        var checkpoints = []
+        var startPoint = {
+            name: 'Start',
+            type: 'Start',
+            story: '',
+            number: 0,
+            lngLat: coordinates[0],
+            datetime: trackpoints[0].time,
+            geolocation: activityData.summary.startplace,
+            elevation: trackpoints[0].elevation,
+            distance: 0,
+            temperature: trackpoints[0].temperature
+        }
+        var goalPoint = {
+            name: 'Goal',
+            type: 'Goal',
+            story: '',
+            number: 1,
+            lngLat: coordinates[coordinates.length - 1],
+            datetime: trackpoints[trackpoints.length - 1].time,
+            geolocation: activityData.summary.goalplace,
+            elevation: trackpoints[trackpoints.length - 1].elevation,
+            distance: trackpoints[trackpoints.length - 1].distance,
+            temperature: trackpoints[trackpoints.length - 1].temperature
+        }
+        checkpoints.push(startPoint)
+        checkpoints.push(goalPoint)
 
-            // Build route geojson
-            var routeData = turf.lineString(routeCoords)
-            routeData.properties.time = routeTime
-            this.data = { routeData }
+        // Build data
+        this.data = {
+            title: activityData.summary.title,
+            bike_id: document.querySelector('#selectBikes').value,
+            privacy: document.querySelector('#selectPrivacy').value,
+            checkpoints,
+            photos: []
+        }
 
-            // Build temperature
-            var hasTemperatureData = false
-            for (let j = 0; ('temperature' in trackpoints[j]) && j < trackpoints.length - 1; j++) {
-                if (trackpoints[j].temperature) hasTemperatureData = true
-            }
-            if (hasTemperatureData) {
-                var sumTemperature = 0
-                var minTemperature = 100
-                var maxTemperature = -100
-                for (let i = 0; i < trackpoints.length; i++) {
-                    if (trackpoints[i].temperature) sumTemperature += parseInt(trackpoints[i].temperature)
-                    if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
-                    if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
-                }
-                var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
-            }
-
-            // Build duration
-            const endDate = trackpoints[trackpoints.length - 1].time
-            const startDate = trackpoints[0].time
-            var duration = getDurationFromTimestamp(endDate - startDate)
-            // If no time data, display an error message
-            if (endDate - startDate <= 60) return resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
-            else {
-                // Build start and end checkpoints
-                var checkpoints = []
-                var startPoint = {
-                    name: 'Start',
-                    type: 'Start',
-                    story: '',
-                    number: 0,
-                    lngLat: trackpoints[0].lngLat,
-                    datetime: startDate,
-                    geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
-                    elevation: Math.floor(trackpoints[0].elevation),
-                    distance: 0,
-                    temperature: parseInt(trackpoints[0].temperature)
-                }
-                var goalPoint = {
-                    name: 'Goal',
-                    type: 'Goal',
-                    story: '',
-                    number: 1,
-                    lngLat: trackpoints[trackpoints.length - 1].lngLat,
-                    datetime: endDate,
-                    geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
-                    elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
-                    distance: Math.floor(turf.length(routeData) * 10) / 10,
-                    temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
-                }
-                checkpoints.push(startPoint)
-                checkpoints.push(goalPoint)
-
-                // Build data
-                this.data = {
-                    title: track.name,
-                    distance: Math.ceil(turf.length(routeData) * 10) / 10,
-                    duration,
-                    duration_running: getDurationFromTimestamp(duration_running),
-                    bike_id: document.querySelector('#selectBikes').value,
-                    privacy: document.querySelector('#selectPrivacy').value,
-                    elevation: Math.floor(this.calculateElevation(trackpoints)),
-                    speed_max,
-                    altitude_max,
-                    slope_max,
-                    temperature: {
-                        min: minTemperature,
-                        avg: avgTemperature,
-                        max: maxTemperature
-                    },
-                    routeData,
-                    checkpoints,
-                    sceneries: await this.loadCloseSceneries(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
-                    photos: [],
-                    trackpoints
-                }
-                console.log(this.data)
-                resolve({success: true})
-            }
-        } )
+        // Append necessary data to sceneries
+        activityData.sceneries.forEach(scenery => {
+            var coord = [scenery.lngLat.lng, scenery.lngLat.lat]
+            var closestPoint = CFUtils.replaceOnRoute(coord, this.routeData)
+            scenery.distance = CFUtils.findDistanceWithTwins(this.routeData, {lng: closestPoint[0], lat: closestPoint[1]}).distance
+            scenery.remoteness = turf.pointToLineDistance(coord, this.routeData)
+            if (scenery.remoteness < 0,3) scenery.on_route = true
+        })
+        this.data.sceneries = activityData.sceneries
     }
 
-    // Parse file data and store it inside map instance
-    async importDataFromFit (fit) {
-        return new Promise(async (resolve, reject) => {
-
-            // Build trackpoints and routeCoords
-            const record = fit.record
-            var trackpoints = []
-            var routeCoords = []
-            var routeTime = []
-            for (let i = 0; i < record.position_long.length; i++) {
-                let trackpoint = {
-                    lngLat: {
-                        lng: record.position_long[i],
-                        lat: record.position_lat[i],
-                    },
-                    elevation: record.altitude[i],
-                    time: record.timestamp[i] * 1000
-                }
-                if (record.temperature) trackpoint.temperature = record.temperature[i]
-                if (record.cadence) trackpoint.cadence = record.cadence[i]
-                if (record.power) trackpoint.power = record.power[i]
-                trackpoints.push(trackpoint)
-                routeCoords.push([record.position_long[i], record.position_lat[i]])
-                routeTime.push(record.timestamp[i] * 1000)
-            }
-
-            const session = fit.session
-            // Build max altitude
-            var altitude_max = record.altitude.reduce((a, b) => Math.max(a, b), -Infinity)
-            // Build max speed
-            var speed_max = Math.floor(session.max_speed * 10) / 10
-            // Build max slope
-            var slope_max = 0
-            const precision = 20 // Calculation interval in seconds
-            /* On rougher intervals */
-            for (let i = 0; i < routeCoords.length; i += precision) {
-                if (routeCoords[i - precision] && Number.isInteger(i / precision)) {
-                    // Build distance
-                    let distance = 0
-                    for (let j = 0; j < precision; j++) distance += turf.distance(routeCoords[i - j], routeCoords[i - j - 1])
-                    // Build max slope
-                    let elevation = 0
-                    for (let j = 0; j < precision; j++) elevation += parseInt(trackpoints[i - j].elevation) - parseInt(trackpoints[i - j - 1].elevation)
-                    var slope = elevation * 100 / (distance * 1000)
-                    if (slope > slope_max) slope_max = Math.round(slope * 10) / 10
-                }
-            }
-            // Build time running
-            var duration_running = session.total_timer_time * 1000
-            
-            // Build route geojson
-            var routeData = turf.lineString(routeCoords)
-            routeData.properties.time = routeTime
-            this.data = { routeData }
-
-            // Build temperature
-            if (trackpoints[0].temperature) {
-                var sumTemperature = 0
-                var minTemperature = 100
-                var maxTemperature = -100
-                for (let i = 0; i < trackpoints.length; i++) {
-                    sumTemperature += parseInt(trackpoints[i].temperature)
-                    if (trackpoints[i].temperature < minTemperature) minTemperature = parseInt(trackpoints[i].temperature)
-                    if (trackpoints[i].temperature > maxTemperature) maxTemperature = parseInt(trackpoints[i].temperature)
-                }
-                var avgTemperature = Math.floor(sumTemperature / trackpoints.length * 10) / 10
-            }
-
-            // Build duration
-            const endDate = trackpoints[trackpoints.length - 1].time
-            const startDate = trackpoints[0].time
-            var duration = getDurationFromTimestamp(endDate - startDate)
-            // If no time data, display an error message
-            if (endDate - startDate <= 60) resolve({error: 'このファイルにはタイムデータが付随されていないため、アクティビティとして保存することが出来ません。'})
-            else {
-                // Build start and end checkpoints
-                var checkpoints = []
-                var startPoint = {
-                    name: 'Start',
-                    type: 'Start',
-                    story: '',
-                    number: 0,
-                    lngLat: trackpoints[0].lngLat,
-                    datetime: startDate,
-                    geolocation: await this.getCourseGeolocation(trackpoints[0].lngLat),
-                    elevation: Math.floor(trackpoints[0].elevation),
-                    distance: 0,
-                    temperature: parseInt(trackpoints[0].temperature)
-                }
-                var goalPoint = {
-                    name: 'Goal',
-                    type: 'Goal',
-                    story: '',
-                    number: 1,
-                    lngLat: trackpoints[trackpoints.length - 1].lngLat,
-                    datetime: endDate,
-                    geolocation: await this.getCourseGeolocation(trackpoints[trackpoints.length - 1].lngLat),
-                    elevation: Math.floor(trackpoints[trackpoints.length - 1].elevation),
-                    distance: Math.floor(turf.length(routeData) * 10) / 10,
-                    temperature: parseInt(trackpoints[trackpoints.length - 1].temperature)
-                }
-                checkpoints.push(startPoint)
-                checkpoints.push(goalPoint)
-
-                // Build data
-                this.data = {
-                    title: startPoint.geolocation.city + ' ride',
-                    distance: Math.ceil(turf.length(routeData) * 10) / 10,
-                    duration,
-                    duration_running: getDurationFromTimestamp(duration_running),
-                    bike_id: document.querySelector('#selectBikes').value,
-                    privacy: document.querySelector('#selectPrivacy').value,
-                    elevation: Math.floor(this.calculateElevation(trackpoints)),
-                    speed_max,
-                    altitude_max,
-                    slope_max,
-                    temperature: {
-                        min: minTemperature,
-                        avg: avgTemperature,
-                        max: maxTemperature
-                    },
-                    routeData,
-                    checkpoints,
-                    sceneries: await this.loadCloseSceneries(1, {displayOnMap: false}),
-                    photos: [],
-                    trackpoints
-                }
-                resolve({success: true})
-            }
-        } )
-    }
-
-    updateForm () {
+    populateForm () {
         const $form = document.querySelector('#activityForm')
         var $title = $form.querySelector('#inputTitle')
         var $start = $form.querySelector('#divStart')
@@ -313,16 +90,16 @@ export default class NewActivityMap extends ActivityMap {
         var $minTemperature = $form.querySelector('#divMinTemperature')
         var $avgTemperature = $form.querySelector('#divAvgTemperature')
         var $maxTemperature = $form.querySelector('#divMaxTemperature')
-        if (this.data.title != $title.value) $title.value = this.data.title
+        if (this.activityData.summary.title != $title.value) $title.value = this.activityData.summary.title
         $title.addEventListener('change', () => this.data.title = $title.value)
-        $start.innerHTML = '<strong>スタート : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
-        $goal.innerHTML = '<strong>ゴール : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
-        $distance.innerHTML = '<strong>距離 : </strong>' + this.data.distance + 'km'
-        $duration.innerHTML = '<strong>時間 : </strong>' + getFormattedDurationFromTimestamp(this.data.trackpoints[this.data.trackpoints.length - 1].time - this.data.trackpoints[0].time)
-        $elevation.innerHTML = '<strong>獲得標高 : </strong>' + this.data.elevation + 'm'
-        if (this.data.temperature.min) $minTemperature.innerHTML = '<strong>最低気温 : </strong>' + this.data.temperature.min + '°C'
-        if (this.data.temperature.avg) $avgTemperature.innerHTML = '<strong>平均気温 : </strong>' + this.data.temperature.avg + '°C'
-        if (this.data.temperature.max) $maxTemperature.innerHTML = '<strong>最高気温 : </strong>' + this.data.temperature.max + '°C'
+        $start.innerHTML = '<strong>スタート : </strong>' + this.activityData.summary.startplace.city + ' (' + this.activityData.summary.startplace.prefecture + ')'
+        $goal.innerHTML = '<strong>ゴール : </strong>' + this.activityData.summary.goalplace.city + ' (' + this.activityData.summary.goalplace.prefecture + ')'
+        $distance.innerHTML = '<strong>距離 : </strong>' + (Math.round(this.activityData.summary.distance * 10) / 10) + 'km'
+        $duration.innerHTML = '<strong>時間 : </strong>' + this.activityData.summary.duration.h + ' h ' + this.activityData.summary.duration.m
+        $elevation.innerHTML = '<strong>獲得標高 : </strong>' + Math.round(this.activityData.summary.positive_elevation) + 'm'
+        if (this.activityData.summary.temperature_min) $minTemperature.innerHTML = '<strong>最低気温 : </strong>' + this.activityData.summary.temperature_min + '°C'
+        if (this.activityData.summary.temperature_avg) $avgTemperature.innerHTML = '<strong>平均気温 : </strong>' + (Math.round(this.activityData.summary.temperature_avg * 10) / 10) + '°C'
+        if (this.activityData.summary.temperature_max) $maxTemperature.innerHTML = '<strong>最高気温 : </strong>' + this.activityData.summary.temperature_max + '°C'
         this.updateCheckpointForms()
     }
 
@@ -335,12 +112,12 @@ export default class NewActivityMap extends ActivityMap {
         var $checkpoints = document.querySelector('#divCheckpoints')
 
         // Sort by distance
-        this.data.checkpoints.sort( (a, b) => {
+        this.data.checkpoints.sort((a, b) => {
             return a.distance - b.distance
-        } )
+        })
 
         // Build elements
-        this.data.checkpoints.forEach( (checkpoint) => {
+        this.data.checkpoints.forEach((checkpoint) => {
             if (!checkpoint.form) { // Only build checkpoint form elements if not existing yet
                 checkpoint.form = document.createElement('div')
                 checkpoint.form.id = 'checkpointForm' + checkpoint.number
@@ -551,8 +328,8 @@ export default class NewActivityMap extends ActivityMap {
                                 var dateOriginal = new Date(year, month - 1, day, hours, minutes, seconds)
 
                                 // If the photo has been taken during the activity
-                                var startDatetime = new Date(this.data.checkpoints[0].datetime)
-                                var endDatetime = new Date(this.data.checkpoints[this.data.checkpoints.length - 1].datetime)
+                                var startDatetime = new Date(this.data.checkpoints[0].datetime * 1000)
+                                var endDatetime = new Date(this.data.checkpoints[this.data.checkpoints.length - 1].datetime * 1000)
                                 if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) {
 
                                     // Resize, compress photo and generate data url
@@ -567,7 +344,7 @@ export default class NewActivityMap extends ActivityMap {
                                         size: files[i].size,
                                         name: files[i].name,
                                         type: files[i].type,
-                                        datetime: dateOriginal.getTime(),
+                                        datetime: dateOriginal.getTime() / 1000,
                                         featured: false,
                                         privacy: 'public',
                                         number
@@ -836,7 +613,7 @@ export default class NewActivityMap extends ActivityMap {
                 this.data.photos.forEach(photo => {
                     var photoLocation = {lng: this.getPhotoLocation(photo)[0], lat: this.getPhotoLocation(photo)[1]}
                     // If photo and scenery have same coords
-                    var distance = turf.distance(turf.point([photoLocation.lng, photoLocation.lat]), turf.point([scenery.lng, scenery.lat]))
+                    var distance = turf.distance(turf.point([photoLocation.lng, photoLocation.lat]), turf.point([scenery.lngLat.lng, scenery.lngLat.lat]))
                     if (distance < 0.2) {
                         photosToAsk.push({photo, scenery})
                         // If any photo close to an existing scenery have been added to the create sceneries list, discard it
@@ -959,6 +736,7 @@ export default class NewActivityMap extends ActivityMap {
             this.data.photos = []
         }
         this.updatePhotosButtons()
+        this.clearPhotoMarkers()
     }
 
     async changePhotosPrivacy () {
@@ -1009,7 +787,7 @@ export default class NewActivityMap extends ActivityMap {
         return new Promise ((resolve, reject) => {
 
             // Focus on route for ensuring that all photos are inside loaded data range
-            this.focus()
+            this.focus(this.routeData)
             
             // Build window structure
             var modal = document.createElement('div')
@@ -1026,7 +804,7 @@ export default class NewActivityMap extends ActivityMap {
 
             // Build each scenery element
             this.data.sceneriesToCreate.forEach(async (entry) => {
-                var distance = turf.length(turf.lineSlice(this.data.routeData.geometry.coordinates[0], this.getPhotoLocation(entry), this.data.routeData))
+                var distance = turf.length(turf.lineSlice(this.routeData.geometry.coordinates[0], this.getPhotoLocation(entry), this.routeData))
                 var content = ''
                 var sceneryElement = document.createElement('div')
                 sceneryElement.id = 'form' + entry.number
@@ -1195,119 +973,83 @@ export default class NewActivityMap extends ActivityMap {
     }
 
     async saveActivity (sceneryPhotos = null, sceneriesToCreate = null) {
-        return new Promise(async (resolve, reject) => {
 
-            // Start loader
-            var loader = new FadeLoader('準備中...')
-            loader.start()
-            
-            // Remove trackpoints and photos data
-            var cleanData = {}
-            for (var key in this.data) {
-                if (key != 'trackpoints' && key != 'photos') cleanData[key] = this.data[key]
-            }
-            // Remove marker data
-            cleanData.checkpoints.forEach(checkpoint => {
-                delete checkpoint.marker
-            } )
+        // Start loader
+        var loader = new FadeLoader('準備中...')
+        loader.start()
 
-            // Prepare photo blobs upload
-            const photos = this.data.photos
-            cleanData.photos = []
-            photos.forEach(async (photo) => {
-                cleanData.photos.push( {
-                    blob: await blobToBase64(photo.blob),
-                    size: photo.size,
-                    name: photo.name,
-                    type: photo.type,
-                    lng: this.getPhotoLocation(photo)[0],
-                    lat: this.getPhotoLocation(photo)[1],
-                    datetime: photo.datetime,
-                    featured: photo.featured,
-                    privacy: photo.privacy
-                } )
-            })
-
-            // If photos need to be added to a scenery, append info data
-            if (sceneryPhotos) cleanData.sceneryPhotos = sceneryPhotos
-            
-            // If sceneries need to be created, append data
-            if (sceneriesToCreate) cleanData.sceneriesToCreate = sceneriesToCreate
-
-            // Resize to a 9:16 format
-            this.$map.style.width = '1600px'
-            this.$map.style.height = this.$map.offsetWidth * 9 / 16
-            this.map.resize()
-
-            // Focus on route
-            var {lng, lat} = this.map.getCenter()
-            this.map.setCenter({lng: lng + 0.01, lat: lat + 0.01})
-            await this.focus(this.data.routeData)
-
-            // Save canvas as a picture
-            html2canvas(this.map.getCanvas()).then( (canvas) => {
-                canvas.toBlob( async (blob) => {
-                    cleanData.thumbnail = await blobToBase64(blob)
-
-                    // Set pending record in sessionStorage
-                    sessionStorage.setItem('pending', 'activity')
-
-                    // Send data to server and redirect user
-                    ajaxSaveActivity(this.apiUrl, cleanData, (response) => {
-                    
-                        // Redirect to my rides page
-                        window.location.replace('/user/activities')
-
-                    }, loader)
-
-                    // Ajax POST json request generic function
-                    function ajaxSaveActivity (url, jsonData, callback, loader = null) {
-                        // If a 'pending' key is set inside sessionStorage
-                        if (sessionStorage.getItem('pending')) {
-
-                            // Get id new activity will be saved at
-                            ajaxGetRequest ("/api/loading.php?request-type=next-entry-id&entry-table=activities", (entryId) => {
-
-                                // Ask server very second for upload status
-                                const uploadStatusCheck = window.setInterval(() => {
-
-                                    ajaxGetRequest ("/api/loading.php?request-type=record&entry-table=activities&entry-id=" + entryId, (record) => {
-
-                                        // First show a common message
-                                        if (record.message != undefined) loader.setHTML(record.message)
-
-                                        // If upload is finished, clear interval and session storage
-                                        if (record.status == 'success') {
-                                            window.clearInterval(uploadStatusCheck)
-                                            sessionStorage.clear()
-                                        } else if (record.status == 'error') {
-                                            window.clearInterval(uploadStatusCheck)
-                                            showResponseMessage({'error': record.message})
-                                            sessionStorage.clear()
-                                        }
-                                    } )
-
-                                }, 1000)
-                            } )
-                        }
-                        var xhr = getHttpRequest()
-                        xhr.onreadystatechange = async function () {                            
-                            // When request have been received
-                            if (xhr.readyState === 4) {
-                                if (loader) loader.stop()
-                                callback(JSON.parse(xhr.responseText))
-                            }
-                        }
-                        // Send request through POST method
-                        xhr.open('POST', url, true)
-                        xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')
-                        xhr.setRequestHeader('Content-Type', 'application/json')
-                        xhr.send(JSON.stringify(jsonData))
-                    }
-
-                }, 'image/jpeg', 0.7)
-            } ) 
+        // Add activity data
+        var cleanData = {
+            activityData: this.activityData
+        }
+        
+        // Remove photos data
+        for (var key in this.data) {
+            if (key != 'photos') cleanData[key] = this.data[key]
+        }
+        // Remove marker data
+        cleanData.checkpoints.forEach(checkpoint => {
+            delete checkpoint.marker
         } )
+
+        // Prepare photo blobs upload
+        const photos = this.data.photos        
+        cleanData.photos = await (async () => {
+            return new Promise(async (resolve, reject) => {
+                var cleanPhotos = []
+                var loadedBlobsNumber = 0
+                photos.forEach(async (photo) => {
+                    var blob = await blobToBase64(photo.blob)
+                    cleanPhotos.push( {
+                        blob,
+                        size: photo.size,
+                        name: photo.name,
+                        type: photo.type,
+                        lng: this.getPhotoLocation(photo)[0],
+                        lat: this.getPhotoLocation(photo)[1],
+                        datetime: photo.datetime,
+                        featured: photo.featured,
+                        privacy: photo.privacy
+                    } )
+                    loadedBlobsNumber++
+                    if (loadedBlobsNumber == photos.length) resolve(cleanPhotos)
+                })
+            })
+        }) ()
+
+        loader.setText('保存中...')
+
+        // If photos need to be added to a scenery, append info data
+        if (sceneryPhotos) cleanData.sceneryPhotos = sceneryPhotos
+        
+        // If sceneries need to be created, append data
+        if (sceneriesToCreate) cleanData.sceneriesToCreate = sceneriesToCreate
+
+        console.log(cleanData)
+        
+        // Send data to server and redirect user
+        ajaxSaveActivity(this.apiUrl, cleanData, (activity_id) => {
+        
+            // Redirect to newly created activity page
+            window.location.replace('/activity/' + activity_id)
+
+        }, loader)
+
+        function ajaxSaveActivity (url, jsonData, callback, loader = null) {
+            var xhr = getHttpRequest()
+            xhr.onreadystatechange = async function () {                            
+                // When request have been received
+                if (xhr.readyState === 4) {
+                    if (loader) loader.stop()
+                    callback(JSON.parse(xhr.responseText))
+                }
+            }
+            // Send request through POST method
+            xhr.open('POST', url, true)
+            xhr.setRequestHeader('X-Requested-With', 'xmlhttprequest')
+            xhr.setRequestHeader('Content-Type', 'application/json')
+            xhr.send(JSON.stringify(jsonData))
+        }
     }
 
 }

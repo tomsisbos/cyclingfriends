@@ -26,7 +26,7 @@ $upload.addEventListener('change', async (e) => {
 
     // When upload has finished, send it to server
     reader.onload = () => {
-        loader.setText('データをアップロード中... (1/2)')
+        loader.setText('データを解析中...')
         xhr.send(formData)
     }
 
@@ -41,93 +41,81 @@ $upload.addEventListener('change', async (e) => {
             // If successful response, start parsing
             if (xhr.status == '200') {
 
-                loader.setText('データを解析中... (2/2)')
+                loader.stop()
 
                 // If file upload has succeed
                 if (response.success) {
 
-                    // Instantiate activity map
+                    // Instantiate and populate activity map
                     var newActivityMap = new NewActivityMap()
+                    newActivityMap.loadActivityData(response.activityData)
 
                     // Clear data and elements if necessary
                     newActivityMap.clearForm()
 
-                    // Format data from parsed js object
-                    if (response.filetype == 'fit') var response = await newActivityMap.importDataFromFit(response.file)
-                    else if (response.filetype == 'gpx') var response = await newActivityMap.importDataFromGpx(response.file)
-
-                    loader.stop()
-
                     // Get activity data
-                    if (response.success) {
 
-                        // Display and prefill form
-                        document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'
-                        hideResponseMessage()
-                        $form.style.display = 'block'
-                        newActivityMap.updateForm()
-                        document.querySelector('#selectBikes').addEventListener('change', e => newActivityMap.data.bike_id = e.target.value)
-                        document.querySelector('#selectPrivacy').addEventListener('change', e => newActivityMap.data.privacy = e.target.value)
+                    // Display and prefill form
+                    document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'
+                    hideResponseMessage()
+                    $form.style.display = 'block'
+                    newActivityMap.populateForm()
+                    document.querySelector('#selectBikes').addEventListener('change', e => newActivityMap.data.bike_id = e.target.value)
+                    document.querySelector('#selectPrivacy').addEventListener('change', e => newActivityMap.data.privacy = e.target.value)
 
-                        // Load map on first upload
-                        if (!newActivityMap.loaded) {
-                            newActivityMap.map = await newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
-                            newActivityMap.addRouteControl( {
-                                displaySceneries: false,
-                                flyAlong: false
-                            } )
-                            newActivityMap.map.once('load', () => newActivityMap.map.resize())
-                        }
-
-                        // Add route layer and paint route properties
-                        newActivityMap.setGrabber()
-                        newActivityMap.addSources()
-                        newActivityMap.addLayers()
-                        newActivityMap.addRouteLayer(newActivityMap.data.routeData)
-                        newActivityMap.displayStartGoalMarkers(newActivityMap.data.routeData)
-                        newActivityMap.updateDistanceMarkers()
-                        newActivityMap.focus(newActivityMap.data.routeData)
-
-                        // Add photos treatment
-                        document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
-                            newActivityMap.loadPhotos(e.target.files)
-                            .then(async () => newActivityMap.updatePhotos())
-                            .then(() => newActivityMap.displayPhotoMarkers())
+                    // Load map on first upload
+                    if (!newActivityMap.loaded) {
+                        newActivityMap.map = await newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z')
+                        newActivityMap.addRouteControl( {
+                            displaySceneries: false,
+                            flyAlong: false
                         } )
-                        document.querySelector('#clearPhotos').addEventListener('click', () => newActivityMap.clearPhotos())
-                        document.querySelector('#changePhotosPrivacy').addEventListener('click', () => newActivityMap.changePhotosPrivacy())
-
-                        // Save activity treatment
-                        document.querySelector('#saveActivity').addEventListener('click', async () => {
-                            var photosToShare = await newActivityMap.checkForCloseSceneries()
-                            if (newActivityMap.data.sceneriesToCreate && newActivityMap.data.sceneriesToCreate.length > 0) var sceneriesToCreate = await newActivityMap.createSceneries()
-                            else var sceneriesToCreate = null
-                            newActivityMap.saveActivity(photosToShare, sceneriesToCreate)
-                        } )
-
-                        // Create new checkpoint on click on route
-                        newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
-                        newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
-                        newActivityMap.map.on('click', 'route', async (e) => {
-                            await newActivityMap.addMarkerOnRoute(e.lngLat)
-                            newActivityMap.updatePhotos()
-                        } )
-
-                        // Change photos privacy to private if activity privacy is set to private
-                        document.querySelector('#selectPrivacy').addEventListener('change', (e) => {
-                            if (e.target.value == 'private') {
-                                newActivityMap.data.photos.forEach(photo => {
-                                    photo.privacy = 'private'
-                                    newActivityMap.updatePrivacyButton(photo)
-                                })
-                            }
-                        })
-
-                    // Else, display error message
-                    } else if (response.error) {
-                        loader.stop()
-                        showResponseMessage(response)
+                        newActivityMap.map.once('load', () => newActivityMap.map.resize())
                     }
+
+                    // Add route layer and paint route properties
+                    newActivityMap.setGrabber()
+                    newActivityMap.addSources()
+                    newActivityMap.addLayers()
+                    newActivityMap.addRouteLayer(newActivityMap.routeData)
+                    newActivityMap.displayStartGoalMarkers(newActivityMap.routeData)
+                    newActivityMap.updateDistanceMarkers()
+                    newActivityMap.focus(newActivityMap.routeData)
+
+                    // Add photos treatment
+                    document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {
+                        newActivityMap.loadPhotos(e.target.files)
+                        .then(async () => newActivityMap.updatePhotos())
+                        .then(() => newActivityMap.displayPhotoMarkers())
+                    } )
+                    document.querySelector('#clearPhotos').addEventListener('click', () => newActivityMap.clearPhotos())
+                    document.querySelector('#changePhotosPrivacy').addEventListener('click', () => newActivityMap.changePhotosPrivacy())
+
+                    // Save activity treatment
+                    document.querySelector('#saveActivity').addEventListener('click', async () => {
+                        var photosToShare = await newActivityMap.checkForCloseSceneries()
+                        if (newActivityMap.data.sceneriesToCreate && newActivityMap.data.sceneriesToCreate.length > 0) var sceneriesToCreate = await newActivityMap.createSceneries()
+                        else var sceneriesToCreate = null
+                        newActivityMap.saveActivity(photosToShare, sceneriesToCreate)
+                    } )
+
+                    // Create new checkpoint on click on route
+                    newActivityMap.map.on('mouseenter', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'crosshair')
+                    newActivityMap.map.on('mouseleave', 'route', () => newActivityMap.map.getCanvas().style.cursor = 'grab')
+                    newActivityMap.map.on('click', 'route', async (e) => {
+                        await newActivityMap.addMarkerOnRoute(e.lngLat)
+                        newActivityMap.updatePhotos()
+                    } )
+
+                    // Change photos privacy to private if activity privacy is set to private
+                    document.querySelector('#selectPrivacy').addEventListener('change', (e) => {
+                        if (e.target.value == 'private') {
+                            newActivityMap.data.photos.forEach(photo => {
+                                photo.privacy = 'private'
+                                newActivityMap.updatePrivacyButton(photo)
+                            })
+                        }
+                    })
 
                 } else if (response.error) {
                     loader.stop()

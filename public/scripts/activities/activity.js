@@ -30,7 +30,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     for (let i = 0; i < activityData.route.time.length; i++) {
         activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime()
     }
-    activityData.routeData = {
+    activityMap.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
             type: 'LineString'
@@ -69,7 +69,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
     if ($map.getAttribute('interactive') == 'true') {
     
         // Set default layer according to current season
-        var map = await activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.data.routeData.geometry.coordinates[0])
+        var map = await activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.routeData.geometry.coordinates[0])
 
         // Build controls
         activityMap.addStyleControl()
@@ -80,11 +80,11 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         activityMap.setGrabber()
         activityMap.addSources()
         activityMap.addLayers()
-        activityMap.addRouteLayer(activityMap.data.routeData)
+        activityMap.addRouteLayer(activityMap.routeData)
         activityMap.profile.generate()
-        ///activityMap.displayStartGoalMarkers(activityMap.data.routeData)
+        ///activityMap.displayStartGoalMarkers(activityMap.routeData)
         activityMap.updateDistanceMarkers()
-        activityMap.focus(activityMap.data.routeData).then(() => {
+        activityMap.focus(activityMap.routeData).then(() => {
             activityMap.profile.generate({
                 poiData: {
                     activityCheckpoints: activityMap.data.checkpoints
@@ -176,7 +176,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         var seasonLayer = encodeURIComponent(JSON.stringify(seasonData))
         
         // Build route overlay
-        const routeData = activityMap.data.routeData
+        const routeData = activityMap.routeData
         const routeCoordinates = routeData.geometry.coordinates
         if (routeData.geometry.coordinates.length < 10000) var tolerance = 0.0005
         else var tolerance = 0.002

@@ -16,8 +16,11 @@ class ActivityData {
      */
     public $linestring;
 
-    function __construct () {
-        
+    function __construct ($summary = null, $coordinates = null, $trackpoints = null) {
+        if ($summary && $coordinates && $trackpoints) {
+            $this->summary = $summary;
+            $this->linestring = new CFLinestringWithTrackpoints($coordinates, $trackpoints);
+        }
     }
 
     /**
@@ -181,9 +184,10 @@ class ActivityData {
     /**
      * If instance holds parsed data, create an activity from it
      * @param int $user_id User to create activity for
-     * @return boolean True if activity has been created, else false
+     * @param array $editable_data Editable data to append to activity
+     * @return int Id of created activity
      */
-    public function createActivity ($user_id) {
+    public function createActivity ($user_id, $editable_data = []) {
 
         $user = new User($user_id);
 
@@ -206,7 +210,7 @@ class ActivityData {
             'name' => 'Start',
             'type' => 'Start',
             'story' => '',
-            'datetime' => new DateTime(date('Y-m-d H:i:s', $this->linestring->trackpoints[0]->time), new DateTimeZone('Asia/Tokyo')),
+            'datetime' => (new DateTime('@' .$this->linestring->trackpoints[0]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
             'city' => $this->summary['startplace']->city,
             'prefecture' => $this->summary['startplace']->prefecture,
             'elevation' => $this->linestring->trackpoints[0]->elevation,
@@ -222,7 +226,7 @@ class ActivityData {
             'name' => 'Goal',
             'type' => 'Goal',
             'story' => '',
-            'datetime' => new DateTime(date('Y-m-d H:i:s', $this->linestring->trackpoints[$this->linestring->length - 1]->time), new DateTimeZone('Asia/Tokyo')),
+            'datetime' => (new DateTime('@' .$this->linestring->trackpoints[$this->linestring->length - 1]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
             'city' => $this->summary['goalplace']->city,
             'prefecture' => $this->summary['goalplace']->prefecture,
             'elevation' => $this->linestring->trackpoints[$this->linestring->length - 1]->elevation,
@@ -235,7 +239,7 @@ class ActivityData {
 
         $activity_data = [
             'user_id' => $user->id,
-            'datetime' => new DateTime(date('Y-m-d H:i:s', $this->linestring->trackpoints[0]->time), new DateTimeZone('Asia/Tokyo')),
+            'datetime' => (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo')),
             'title' => $this->summary['title'],
             'distance' => $this->summary['distance'],
             'duration' => $this->summary['duration'],
@@ -256,9 +260,15 @@ class ActivityData {
             'checkpoints_data' => [$checkpoint_start, $checkpoint_goal]
         ];
 
-        $activity = new Activity();
-        $activity->create($activity_data);
+        // Editable data
+        if (isset($activity_data['title'])) $activity_data['title'] = $editable_data['title'];
+        if (isset($activity_data['privacy'])) $activity_data['privacy'] = $editable_data['privacy'];
+        if (isset($editable_data['bike_id'])) $activity_data['bike_id'] = $editable_data['bike_id'];
+        if (isset($activity_data['checkpoints'])) $activity_data['checkpoints_data'] = $editable_data['checkpoints'];
 
-        return true;
+        $activity = new Activity();
+        $activity_id = $activity->create($activity_data);
+
+        return $activity_id;
     }
 }

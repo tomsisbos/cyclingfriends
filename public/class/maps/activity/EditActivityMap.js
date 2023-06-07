@@ -10,7 +10,7 @@ export default class EditActivityMap extends NewActivityMap {
     pageType = 'edit'
     apiUrl = '/api/activities/edit.php'
 
-    updateForm () {
+    populateForm () {
         const $form = document.querySelector('#activityForm')
         var $title = $form.querySelector('#inputTitle')
         var $start = $form.querySelector('#divStart')

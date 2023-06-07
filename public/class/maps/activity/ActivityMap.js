@@ -8,6 +8,7 @@ export default class ActivityMap extends Map {
     constructor () {
         super()
         this.activityId = getIdFromString(location.pathname)
+        console.log(this)
     }
 
     pageType = 'activity'
@@ -67,23 +68,23 @@ export default class ActivityMap extends Map {
         if (!type) {
 
             // If working with an extacted log file
-            if (this.data.trackpoints) {
+            if (this.activityData) {
                 var correspondingTrackpoint
                 var bestCloseness = 9999
-                this.data.trackpoints.forEach(trackpoint => {
-                    let closeness = turf.distance(turf.point([lngLat.lng, lngLat.lat]), turf.point([trackpoint.lngLat.lng, trackpoint.lngLat.lat]))
+                for (let i = 0; i < this.activityData.linestring.trackpoints.length; i++) {
+                    let closeness = turf.distance(turf.point([lngLat.lng, lngLat.lat]), turf.point([this.activityData.linestring.coordinates[i].lng, this.activityData.linestring.coordinates[i].lat]))
                     if (closeness < bestCloseness) {
                         bestCloseness = closeness
-                        correspondingTrackpoint = trackpoint
+                        correspondingTrackpoint = this.activityData.linestring.trackpoints[i]
                     }
-                } )
+                }
                 var datetime = correspondingTrackpoint.time
                 var temperature = parseInt(correspondingTrackpoint.temperature)
             // If working with a previously saved cyclingfriends activity data
             } else {
-                var correspondingPoint = CFUtils.replaceOnRoute([lngLat.lng, lngLat.lat], this.data.routeData)
-                var index = CFUtils.getCoordIndex(correspondingPoint, this.data.routeData.geometry.coordinates)
-                var datetime = this.data.routeData.properties.time[index]
+                var correspondingPoint = CFUtils.replaceOnRoute([lngLat.lng, lngLat.lat], this.routeData)
+                var index = CFUtils.getCoordIndex(correspondingPoint, this.routeData.geometry.coordinates)
+                var datetime = this.routeData.properties.time[index]
                 var temperature = 0 /// Temperature data not saved in coords table data
             }
 
@@ -100,7 +101,7 @@ export default class ActivityMap extends Map {
             }
 
             // Add remove listener on click (except for start and goal markers)
-            const routeCoordinates = this.data.routeData.geometry.coordinates
+            const routeCoordinates = this.routeData.geometry.coordinates
             if (lngLat != routeCoordinates[0] && lngLat != routeCoordinates[routeCoordinates.length - 1]) {
                 marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
             }
@@ -116,7 +117,7 @@ export default class ActivityMap extends Map {
             marker.setPopup(popup)
 
             // Add remove listener on click (except for start and goal markers)
-            const routeCoordinates = this.data.routeData.geometry.coordinates
+            const routeCoordinates = this.routeData.geometry.coordinates
             if (lngLat != routeCoordinates[0] && lngLat != routeCoordinates[routeCoordinates.length - 1]) {
                 marker.getElement().addEventListener('contextmenu', this.removeOnClickHandler)
             }
@@ -238,7 +239,7 @@ export default class ActivityMap extends Map {
         } )
     }
 
-    getPhotoLocation (photo, routeData = this.data.routeData) {
+    getPhotoLocation (photo, routeData = this.routeData) {
         const routeCoordinates = routeData.geometry.coordinates
         const routeTime = routeData.properties.time
         var smallestGap = routeTime[0]
@@ -254,7 +255,7 @@ export default class ActivityMap extends Map {
         return closestCoordinate
     }
 
-    getPhotoDistance (photo, routeData = this.data.routeData) {
+    getPhotoDistance (photo, routeData = this.routeData) {
         const photoLocation = this.getPhotoLocation(photo, routeData)
         var segment = turf.lineSlice(turf.point(routeData.geometry.coordinates[0]), turf.point(photoLocation), routeData)
         return turf.length(segment)

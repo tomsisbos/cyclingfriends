@@ -253,6 +253,8 @@ class Activity extends Model {
 
     /**
      * Create a new activity
+     * @param ActivityData An activity data instance
+     * @return int Id of created activity
      */
     public function create ($activity_data) {
         
@@ -273,6 +275,8 @@ class Activity extends Model {
             $checkpoint_data['activity_id'] = $activity_id;
             $checkpoint->create($checkpoint_data);
         }
+
+        return $activity_id;
     }
 
     public function delete () {

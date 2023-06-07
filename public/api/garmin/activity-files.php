@@ -24,12 +24,8 @@ foreach ($data['activityFiles'] as $activity_files) {
     if (!file_exists($temp_directory)) mkdir($temp_directory, 0777, true); // Create user directory if necessary
     $temp_url = $temp_directory. '/' .$activity_files['summaryId']. '.json';
     file_put_contents($temp_url, $json);
-    
-    // Retrieve a 200 response code
-    http_response_code(200);
 
     // Prepare parameters
-    
     $parsed = parse_url($activity_files['callbackURL']);
     parse_str($parsed['query'], $params);
     $id = $params['id'];
@@ -45,5 +41,8 @@ foreach ($data['activityFiles'] as $activity_files) {
 
     // Parse file and create an activity
     $activity_data = $activity_file->parse();
-    $activity_data->createActivity();
+    $activity_data->createActivity($activity_file->getUserIdFromGarminId($activity_files['userId']));
+    
+    // Retrieve a 200 response code
+    http_response_code(200);
 }

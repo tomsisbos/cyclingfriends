@@ -11,14 +11,7 @@ class CFLinestringWithTrackpoints extends CFLinestring {
      * @param LngLat[]|array[] $coordinates An array of lngLat or float coordinates
      */
     function __construct ($coordinates = null, $trackpoints = null) {
-        parent::__construct();
-        if ($coordinates) {
-            forEach($coordinates as $lngLat) {
-                if (!($lngLat instanceof LngLat)) $lngLat = new LngLat($lngLat[0], $lngLat[1]);
-                array_push($this->coordinates, $lngLat);
-            }
-            $this->length = count($coordinates);
-        }
+        parent::__construct($coordinates);
         $this->trackpoints = $trackpoints;
     }
 

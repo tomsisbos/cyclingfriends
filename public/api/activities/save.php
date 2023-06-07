@@ -15,98 +15,37 @@ require $folder . '/actions/blobStorageAction.php';
 
 if (is_array($data)) {
 
-    // Get activity id
-    $activity_id = getNextAutoIncrement('activities');
-
-    // Set loading record
-    $loading_record = new LoadingRecord($connected_user->id, 'activities', $activity_id);
-    $loading_record->register();
-
     try {
 
-        // Build route data
-        $loading_record->setStatus('pending', 'ルートデータ保存中...');
-        $author_id   = $connected_user->id;
-        $route_id    = 'new';
-        $category    = 'activity';
-        $name        = $data['title'];
-        $description = '';
-        $distance    = $data['distance'];
-        $elevation   = $data['elevation'];
-        $startplace  = $data['checkpoints'][0]['geolocation'];
-        $goalplace   = $data['checkpoints'][count($data['checkpoints']) - 1]['geolocation'];
-        $tunnels     = [];
-
-        // Insert data in 'routes' table
-        $routeCoordinates = new CFLinestring($data['routeData']['geometry']['coordinates'], $data['routeData']['properties']['time'] / 1000);
-        $route_id         = $routeCoordinates->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $tunnels, $loading_record);
-
-        // Build activity data
-        $loading_record->setStatus('pending', 'アクティビティデータ保存中...');
-        $user_id          = $connected_user->id;
-        $datetime         = new DateTime();
-        $datetime->setTimestamp($data['checkpoints'][0]['datetime'] / 1000);
-        $datetime->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-        $posting_date     = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
-        $title            = $data['title'];
-        $duration         = $data['duration'];
-        $duration_running = $data['duration_running'];
-        if (count($data['temperature']) == 3) {
-            $temperature_min = $data['temperature']['min'];
-            $temperature_avg = $data['temperature']['avg'];
-            $temperature_max = $data['temperature']['max'];
-        } else {
-            $temperature_min = null;
-            $temperature_avg = null;
-            $temperature_max = null;
+        // Prepare data structure
+        $summary = $data['activityData']['summary'];
+        $coordinates = [];
+        $trackpoints = [];
+        for ($i = 0; $i < count($data['activityData']['linestring']['coordinates']); $i++) {
+            $coord = $data['activityData']['linestring']['coordinates'][$i];
+            $tpoint = $data['activityData']['linestring']['trackpoints'][$i];
+            array_push($coordinates, new LngLat($coord['lng'], $coord['lat']));
+            array_push($trackpoints, new Trackpoint($tpoint));
         }
-        $speed_max        = $data['speed_max'];
-        $altitude_max     = $data['altitude_max'];
-        $slope_max        = $data['slope_max'];
-        if (isset($data['bike_id'])) $bike_id = $data['bike_id'];
-        else $bike_id = null;
-        $privacy          = $data['privacy'];
+        $summary['startplace'] = new Geolocation($summary['startplace']['city'], $summary['startplace']['prefecture']);
+        $summary['goalplace'] = new Geolocation($summary['goalplace']['city'], $summary['goalplace']['prefecture']);
+        $summary['duration'] = new DateInterval('PT' .$summary['duration']['h']. 'H' .$summary['duration']['i']. 'M' .$summary['duration']['s']. 'S');
+        $summary['duration_running'] = new DateInterval('PT' .$summary['duration_running']['h']. 'H' .$summary['duration_running']['i']. 'M' .$summary['duration_running']['s']. 'S');
+    
+        // Prepare activity data
+        $activity_data = new ActivityData($summary, $coordinates, $trackpoints);
+        $editable_data = [
+            'title' => $data['title'],
+            'privacy' => $data['privacy'],
+            'bike_id' => $data['bike_id'],
+            'checkpoints' => $data['checkpoints']
+        ];
+        $activity_id = $activity_data->createActivity($connected_user->id, $editable_data);
 
-        // Insert data in 'activities' table
-        $insert_activity = $db->prepare('INSERT INTO activities(user_id, datetime, posting_date, title, duration, duration_running, temperature_min, temperature_avg, temperature_max, speed_max, altitude_max, slope_max, bike_id, privacy, route_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $insert_activity->execute(array($user_id, $datetime->format('Y-m-d H:i:s'), $posting_date->format('Y-m-d H:i:s'), $title, $duration, $duration_running, $temperature_min, $temperature_avg, $temperature_max, $speed_max, $altitude_max, $slope_max, $bike_id, $privacy, $route_id));
-
-        // Build checkpoints data
-        $loading_record->setStatus('pending', 'チェックポイントデータ保存中...');
-        foreach ($data['checkpoints'] as $checkpoint) {
-            $checkpoint_data['activity_id'] = $activity_id;
-            $checkpoint_data['number'] = $checkpoint['number'];
-            $checkpoint_data['name'] = $checkpoint['name'];
-            $checkpoint_data['type'] = $checkpoint['type'];
-            $checkpoint_data['story'] = $checkpoint['story'];
-            $checkpoint_data['datetime'] = new DateTime();
-            $checkpoint_data['datetime']->setTimestamp($checkpoint['datetime'] / 1000);
-            $checkpoint_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-            if (isset($checkpoint['geolocation'])) {
-                $checkpoint_data['city'] = $checkpoint['geolocation']['city'];
-                $checkpoint_data['prefecture'] = $checkpoint['geolocation']['prefecture'];
-            } else {
-                $checkpoint_data['city'] = NULL;
-                $checkpoint_data['prefecture'] = NULL;
-            }
-            $checkpoint_data['elevation'] = $checkpoint['elevation'];
-            $checkpoint_data['distance'] = ceil($checkpoint['distance'] * 10) / 10;
-            $checkpoint_data['temperature'] = $checkpoint['temperature'];
-            $checkpoint_data['lng'] = $checkpoint['lngLat']['lng'];
-            $checkpoint_data['lat'] = $checkpoint['lngLat']['lat'];
-            if ($checkpoint['number'] == 0) $checkpoint_data['special'] = 'start';
-            else if ($checkpoint['number'] == count($data['checkpoints']) - 1) $checkpoint_data['special'] = 'goal';
-            else $checkpoint_data['special'] = NULL;
-
-            $checkpoint = new ActivityCheckpoint();
-            $checkpoint->create($checkpoint_data);
-        }
-
-        $photo_number = 1;
-        // For each photo
-
+        $activity = new Activity($activity_id);
+        
+        // Add photos
         foreach ($data['photos'] as $photo) {
-            $loading_record->setStatus('pending', '写真データ保存中... (' .$photo_number. '/' .count($data['photos']). ')');
 
             // Get blob ready to upload
             $temp_image = new TempImage($photo['name']);
@@ -121,7 +60,7 @@ if (is_array($data)) {
             $activity_photo_data['lng'] = $photo['lng'];
             $activity_photo_data['lat'] = $photo['lat'];
             $activity_photo_data['datetime'] = new DateTime();
-            $activity_photo_data['datetime']->setTimestamp($photo['datetime'] / 1000);
+            $activity_photo_data['datetime']->setTimestamp($photo['datetime']);
             $activity_photo_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             if ($photo['featured'] == true) $activity_photo_data['featured'] = 1;
             else $activity_photo_data['featured'] = 0;
@@ -140,12 +79,9 @@ if (is_array($data)) {
                     }
                 }
             }
-
-            $photo_number++;
         }
 
         // Create new sceneries if necessary
-        $loading_record->setStatus('pending', '新規絶景スポット作成中...');
         if (isset($data['sceneriesToCreate']) && !empty($data['sceneriesToCreate'])) {
 
             forEach($data['sceneriesToCreate'] as $entry) {
@@ -185,7 +121,7 @@ if (is_array($data)) {
                 $scenery_data['prefecture']       = $entry['prefecture'];
                 $scenery_data['elevation']        = $entry['elevation'];
                 $scenery_data['date']             = new DateTime();
-                $scenery_data['date']->setTimestamp($entry['date'] / 1000);
+                $scenery_data['date']->setTimestamp($entry['date']);
                 $scenery_data['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
                 $scenery_data['month']            = date("n");
                 $scenery_data['description']      = htmlspecialchars($entry['description']);
@@ -203,14 +139,13 @@ if (is_array($data)) {
         }
 
         // If necessary, add selected photos to corresponding scenery
-        $loading_record->setStatus('pending', '絶景スポットへ写真追加中...');
         if (isset($data['sceneryPhotos']) && !empty($data['sceneryPhotos'])) {
             foreach ($data['sceneryPhotos'] as $entry) {
                 
                 // Insert table data
                 $entry['filename'] = setFilename('img');
                 $insertImgScenery = $db->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-                $insertImgScenery->execute(array($entry['scenery_id'], $_SESSION['id'], $datetime->format('Y-m-d H:i:s'), 0, $entry['filename']));
+                $insertImgScenery->execute(array($entry['scenery_id'], $_SESSION['id'], $summary['start_time']['date'], 0, $entry['filename']));
 
                 // Get scenery lngLat data
                 $current_scenery = new Scenery($entry['scenery_id']);
@@ -239,8 +174,8 @@ if (is_array($data)) {
                     'file_type' => $entry['type'],
                     'file_size' => $entry['size'],
                     'scenery_id' => $entry['scenery_id'],
-                    'author_id' => $_SESSION['id'],
-                    'date' => $datetime->format('Y-m-d H:i:s'),
+                    'author_id' => $connected_user->id,
+                    'date' => $summary['start_time']['date'],
                     'lat' => $entry['lat'],
                     'lng' => $entry['lng']
                 ];
@@ -248,14 +183,14 @@ if (is_array($data)) {
             }
         }
         
-        $loading_record->setStatus('success', '「' .$title. '」が無事に保存されました。詳細を<a href="/activity/' .$activity_id. '">こちら</a>でご確認ただけます。');
-        echo json_encode(true);
+        echo json_encode($activity_id);
         die();
 
     // If any error have been catched, response error info
     } catch (Error $e) {
 
-        $loading_record->setStatus('error', $e->getMessage() .' ('. $e->getTraceAsString(). ')');
+        var_dump($e);
+        ///echo json_encode($e->getMessage() .' ('. $e->getTraceAsString(). ')');
         die();
 
     }

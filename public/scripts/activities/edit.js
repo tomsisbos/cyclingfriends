@@ -49,7 +49,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     // Display and prefill form
     hideResponseMessage()
     $form.style.display = 'block'
-    editActivityMap.updateForm()
+    editActivityMap.populateForm()
     editActivityMap.updatePhotos()
     document.querySelector('#inputTitle').addEventListener('change', e => editActivityMap.data.title = e.target.value)
     document.querySelector('#selectBikes').addEventListener('change', e => editActivityMap.data.bike_id = e.target.value)

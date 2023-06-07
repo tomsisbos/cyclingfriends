@@ -12,6 +12,8 @@ class CFLinestring extends Model {
     protected $table = 'linestrings';
 
     protected $container_name = 'route-thumbnails';
+
+    public $id;
     
     /**
      * @var LngLat[]|array[] An array of lngLat or float coordinates
@@ -241,6 +243,20 @@ class CFLinestring extends Model {
         foreach ($this->coordinates as $coord) $polyline->addPoint(new Coordinate($coord->lat, $coord->lng));
         
         return $polyline->getLength(new Vincenty()) / 1000;
+    }
+
+    /**
+     * Get all scenery spots less than $tolerance meters from linestring
+     */
+    public function getCloseSceneries () {
+
+        $d = 0.005; // About 1000m
+        $getCloseSceneries = $this->getPdo()->prepare("SELECT id FROM sceneries WHERE ST_Intersects(point, ST_Buffer(ST_LineStringFromText(?), ?))");
+        $getCloseSceneries->execute([$this->toWKT(), $d]);
+        $scenery_ids = $getCloseSceneries->fetchAll(PDO::FETCH_COLUMN);
+        return array_map(function ($id) {
+            return new Scenery($id);
+        }, $scenery_ids);
     }
 
     /**

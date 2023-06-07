@@ -459,14 +459,14 @@ function calculateAverage (array) {
 }
 
 function getFormattedDurationFromTimestamp (timestamp) {
-	var hours = Math.floor(timestamp / 1000 / 60 / 60)
-	var minutes = Math.floor(((timestamp / 1000 / 60 / 60) - hours) * 60)
+	var hours = Math.floor(timestamp / 60 / 60)
+	var minutes = Math.floor(((timestamp / 60 / 60) - hours) * 60)
 	return hours + 'h' + ('0' + minutes).slice(-2)
 }
 
 function getDurationFromTimestamp (timestamp) {
-	var hours = Math.floor(timestamp / 1000 / 60 / 60)
-	var minutes = Math.floor(((timestamp / 1000 / 60 / 60) - hours) * 60)
+	var hours = Math.floor(timestamp / 60 / 60)
+	var minutes = Math.floor(((timestamp / 60 / 60) - hours) * 60)
 	return hours + ':' + minutes + ':' + '00'
 }
 
