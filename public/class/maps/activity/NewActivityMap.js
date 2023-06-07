@@ -994,6 +994,7 @@ export default class NewActivityMap extends ActivityMap {
 
         // Prepare photo blobs upload
         const photos = this.data.photos
+        cleanData.photos = []
         if (photos.length > 0) cleanData.photos = await (async () => {
             return new Promise(async (resolve, reject) => {
                 var cleanPhotos = []
