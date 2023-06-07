@@ -299,7 +299,7 @@ class CFLinestring extends Model {
         $height = 1280;
         $bbox = $this->getBBox();
         $bbox_string = '[' .$bbox[0]->lng. ',' .$bbox[0]->lat. ',' .$bbox[1]->lng. ',' .$bbox[1]->lat. ']';
-        $padding = 350;
+        $padding = 280;
         $pitch = 30;
 
         // Make request
