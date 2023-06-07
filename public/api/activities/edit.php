@@ -44,7 +44,7 @@ if (is_array($data)) {
         $checkpoint_data['type'] = $checkpoint['type'];
         $checkpoint_data['story'] = $checkpoint['story'];
         $checkpoint_data['datetime'] = new DateTime();
-        $checkpoint_data['datetime']->setTimestamp($checkpoint['datetime'] / 1000);
+        $checkpoint_data['datetime']->setTimestamp($checkpoint['datetime']);
         $checkpoint_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
         if (isset($checkpoint['geolocation'])) {
             $checkpoint_data['city'] = $checkpoint['geolocation']['city'];
@@ -88,7 +88,7 @@ if (is_array($data)) {
             $activity_photo_data['lng'] = $photo['lng'];
             $activity_photo_data['lat'] = $photo['lat'];
             $activity_photo_data['datetime'] = new DateTime();
-            $activity_photo_data['datetime']->setTimestamp($photo['datetime'] / 1000);
+            $activity_photo_data['datetime']->setTimestamp($photo['datetime']);
             $activity_photo_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             if ($photo['featured'] == true) $activity_photo_data['featured'] = 1;
             else $activity_photo_data['featured'] = 0;
@@ -145,6 +145,7 @@ if (is_array($data)) {
                     foreach ($data['photos'] as $activity_photo) {
                         if (isset($activity_photo['name']) && $activity_photo['name'] == $entry_photo['name']) {
                             $scenery_photo = $entry_photo;
+                            $scenery_photo['filename'] = setFilename('img');
                             $base64 = $activity_photo['blob'];
                         }
                     }
@@ -152,7 +153,6 @@ if (is_array($data)) {
 
                 // Get blob ready to upload
                 $temp_image = new TempImage($scenery_photo['filename']);
-                $scenery_photo['filename'] = setFilename('img');
                 $scenery_photo['blob'] = $temp_image->treatBase64($base64);
 
                 // Add photo data to scenery photos
@@ -174,7 +174,7 @@ if (is_array($data)) {
             $scenery_data['prefecture']       = $entry['prefecture'];
             $scenery_data['elevation']        = $entry['elevation'];
             $scenery_data['date']             = new DateTime();
-            $scenery_data['date']->setTimestamp($entry['date'] / 1000);
+            $scenery_data['date']->setTimestamp($entry['date']);
             $scenery_data['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
             $scenery_data['month']            = date("n");
             $scenery_data['description']      = htmlspecialchars($entry['description']);

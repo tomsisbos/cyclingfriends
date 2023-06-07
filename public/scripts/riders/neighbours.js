@@ -75,7 +75,9 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 } )
                 marker.togglePopup()
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), await neighboursMap.getUserLocation()], 2))
+                console.log(marker.getLngLat())
+                var userLocation = await neighboursMap.getUserLocation()
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 2))
                 document.querySelector('.main').scrollIntoView()///neighboursMap.$map.scrollIntoView()
             } else {
                 $marker.querySelector('img').classList.remove('selected-marker')
@@ -94,7 +96,8 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                     }
                 } )
                 neighboursMap.displaySelectedLink(neighbour)
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), await neighboursMap.getUserLocation()], 4))
+                var userLocation = await neighboursMap.getUserLocation()
+                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 4))
             } else {
                 marker.togglePopup()
                 $marker.querySelector('img').classList.remove('selected-marker')

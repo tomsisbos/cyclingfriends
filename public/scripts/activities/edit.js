@@ -26,7 +26,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
 
     // Clean data architecture to match instance data format
     for (let i = 0; i < activityData.route.time.length; i++) {
-        activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime()
+        activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime() / 1000
     }
     editActivityMap.routeData = {
         geometry: {
@@ -39,10 +39,10 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
         type: 'Feature'
     }
     editActivityMap.data.checkpoints.forEach( (checkpoint) => {
-        checkpoint.datetime = new Date(checkpoint.datetime.date).getTime()
+        checkpoint.datetime = new Date(checkpoint.datetime.date).getTime() / 1000
     } )
     editActivityMap.data.photos.forEach( (photo) => {
-        photo.datetime = new Date(photo.datetime.date).getTime()
+        photo.datetime = new Date(photo.datetime.date).getTime() / 1000
     } )
     editActivityMap.mapdata.sceneries = await editActivityMap.loadCloseSceneries(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
 
