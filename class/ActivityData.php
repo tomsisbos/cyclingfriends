@@ -261,10 +261,10 @@ class ActivityData {
         ];
 
         // Editable data
-        if (isset($activity_data['title'])) $activity_data['title'] = $editable_data['title'];
-        if (isset($activity_data['privacy'])) $activity_data['privacy'] = $editable_data['privacy'];
+        if (isset($editable_data['title'])) $activity_data['title'] = $editable_data['title'];
+        if (isset($editable_data['privacy'])) $activity_data['privacy'] = $editable_data['privacy'];
         if (isset($editable_data['bike_id'])) $activity_data['bike_id'] = $editable_data['bike_id'];
-        if (isset($activity_data['checkpoints'])) $activity_data['checkpoints_data'] = $editable_data['checkpoints'];
+        if (isset($editable_data['checkpoints'])) $activity_data['checkpoints_data'] = $editable_data['checkpoints'];
 
         $activity = new Activity();
         $activity_id = $activity->create($activity_data);
