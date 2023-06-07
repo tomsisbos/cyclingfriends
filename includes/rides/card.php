@@ -2,12 +2,14 @@
             
     <!-- Left container -->
     <div class="rd-top-container">
-        <a href="<?= 'ride/' .$ride->id;?>" class="fullwidth">
-            <?php // Truncate ride name if more than 60 characters
-            $featuredImage = $ride->getFeaturedImage(); ?>
-            <div class="rd-image" style="background-image: url(<?= $featuredImage->url; ?>); background-color: lightgrey">
-                <div class="<?php if ($featuredImage){ echo 'rd-ride-title'; } else { echo 'rd-ride-name'; }?>"><?= $ride->name; ?></div>
-                <div class="<?php if ($featuredImage){ echo 'rd-ride-date'; } else { echo 'rd-ride-date'; }?>"><?= $ride->date; ?></div>
+        <a href="<?= 'ride/' .$ride->id;?>" class="fullwidth"> <?php
+            // Truncate ride name if more than 60 characters
+            $featured_image = $ride->getFeaturedImage();
+            if ($featured_image instanceof CheckpointImage) $featured_image_url = $featured_image->url;
+            else $featured_image_url = $featured_image ?>
+            <div class="rd-image" style="background-image: url(<?= $featured_image_url; ?>); background-color: lightgrey">
+                <div class="<?php if ($featured_image){ echo 'rd-ride-title'; } else { echo 'rd-ride-name'; }?>"><?= $ride->name; ?></div>
+                <div class="<?php if ($featured_image){ echo 'rd-ride-date'; } else { echo 'rd-ride-date'; }?>"><?= $ride->date; ?></div>
             </div>
         </a> <?php
         if (isset($ride->route_id)) echo '<img class="rd-route-thumbnail" src="' . $ride->getRoute()->getThumbnail() . '">' ?>
