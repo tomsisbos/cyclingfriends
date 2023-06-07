@@ -221,9 +221,8 @@ class Activity extends Model {
     }
 
     public function getEndDateTime() {
-        $end_timestamp = $this->datetime->getTimeStamp() + strtotime($this->duration->format('H:i:s'));
-        $end_datetime = new DateTime();
-        return $end_datetime->setTimestamp($end_timestamp);
+        $end_timestamp = $this->datetime->getTimeStamp() + strtotime($this->duration->format('%H:%i:%s'));
+        return (new DateTime())->setTimestamp($end_timestamp);
     }
 
     public function exists () {
