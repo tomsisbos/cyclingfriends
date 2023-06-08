@@ -52,6 +52,8 @@ if (is_array($var)) {
     
     if ($var['type'] == 'route-save' OR $var['type'] == 'route-edit') {
         $linestring = new CFLinestring($var['coordinates']);
+        $var['startplace'] = new Geolocation($var['startplace']['city'], $var['startplace']['prefecture']);
+        $var['goalplace'] = new Geolocation($var['goalplace']['city'], $var['goalplace']['prefecture']);
         if (empty($var['name'])) $var['name'] = 'My route';
         if (empty($var['description'])) $var['description'] = '';
         if (!isset($var['tunnels'])) $var['tunnels'] = [];
