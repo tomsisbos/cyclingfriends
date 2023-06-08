@@ -442,9 +442,6 @@ export default class Profile extends Model {
                         const ctx = chart.canvas.getContext('2d')
                         const routeDistance = turf.length(this.routeData)
                         var drawPoi = async (poi, type) => {
-                            console.log(type)
-                            console.log(poi.distance)
-                            console.log(routeDistance)
                             // Get X position
                             if (poi.distance > routeDistance) var pointDistance = routeDistance
                             else var pointDistance = poi.distance

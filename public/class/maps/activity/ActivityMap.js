@@ -8,7 +8,6 @@ export default class ActivityMap extends Map {
     constructor () {
         super()
         this.activityId = getIdFromString(location.pathname)
-        console.log(this)
     }
 
     pageType = 'activity'

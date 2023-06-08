@@ -22,7 +22,6 @@ export default function Connections () {
 
     function updateSettings () {
         axios('/api/settings.php' + '?connection-settings=true').then(response => {
-            console.log(response)
             setSettings({ ...response.data })
         } )
     }

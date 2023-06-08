@@ -75,7 +75,6 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
                 } )
                 marker.togglePopup()
                 neighboursMap.displaySelectedLink(neighbour)
-                console.log(marker.getLngLat())
                 var userLocation = await neighboursMap.getUserLocation()
                 map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 2))
                 document.querySelector('.main').scrollIntoView()///neighboursMap.$map.scrollIntoView()
