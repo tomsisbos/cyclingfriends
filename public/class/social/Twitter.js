@@ -175,7 +175,7 @@ export default class Twitter {
         switch (id) {
             case 'username': return '@' + this.activity.route.author.login
             case 'title': return this.activity.title
-            case 'distance': return 'km ' + Math.round(this.activity.photos[nb].distance * 10) / 10 + ' / ' + this.activity.route.distance
+            case 'distance': return 'km ' + Math.round(this.activity.photos[nb].distance * 10) / 10 + ' / ' + Math.round(this.activity.route.distance * 10) / 10
             case 'time': return new Date(this.activity.photos[nb].datetime).toLocaleTimeString('ja-JP').slice(0, -3)
             default : return 'ERROR'
         }
@@ -234,15 +234,15 @@ export default class Twitter {
                         if ($option.id == 'time') {
                             ctx.textAlign = 'left'
                             var posX = 50
-                            var fontsize = Math.round(img.width / 50)
+                            var fontsize = Math.round(img.width / 72)
                         } else if ($option.id == 'distance') {
                             ctx.textAlign = 'right'
                             var posX = img.width - 50
-                            var fontsize = Math.round(img.width / 50)
+                            var fontsize = Math.round(img.width / 72)
                         } else {
                             ctx.textAlign = 'center'
                             var posX = img.width / 2
-                            var fontsize = Math.round(img.width / 36)
+                            var fontsize = Math.round(img.width / 42)
                         }
                         ctx.font = fontsize + 'px monospace'
                         ctx.strokeText(this.getText($option.id, nb), posX, img.height - (80 + (centerLine * fontsize * 1.15)))
