@@ -296,7 +296,7 @@ class ActivityData {
         // Editable data
         if (isset($editable_data['title'])) $activity_data['title'] = $editable_data['title'];
         if (isset($editable_data['privacy'])) $activity_data['privacy'] = $editable_data['privacy'];
-        if (isset($editable_data['bike_id'])) $activity_data['bike_id'] = $editable_data['bike_id'];
+        if (isset($editable_data['bike_id']) && !empty($editable_data['bike_id'])) $activity_data['bike_id'] = $editable_data['bike_id'];
 
         $activity = new Activity();
         $activity_id = $activity->create($activity_data);

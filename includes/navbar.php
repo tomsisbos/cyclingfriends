@@ -1,6 +1,5 @@
 <!--Displays the navbar-->
 <nav class="main-navbar navbar navbar-expand-lg navbar-light bg-white"> <?php
-        if (isset($connected_user)) var_dump($connected_user->getBikes());
 
 	if (isset($_SESSION['auth'])) $default_url = '/dashboard';
 	else $default_url = '/' ?>
