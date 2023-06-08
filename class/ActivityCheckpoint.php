@@ -46,6 +46,10 @@ class ActivityCheckpoint extends Model {
         return $lngLat;
     }
 
+    /**
+     * Create a checkpoint from data
+     * @param array $data An array of properties
+     */
     public function create ($data) {
 
         $lngLat = new LngLat($data['lng'], $data['lat']);

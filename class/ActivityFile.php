@@ -119,6 +119,7 @@ class ActivityFile extends Model {
 
         // Treatment of tcx files (unavailable at this time)
         } else if ($this->ext == 'tcx') throw new Exception ('*.tcxファイルの解析には対応しておりません。ご迷惑をお掛けしますが、次のファイル形式に変換してから再度お使いください。' .implode('、', $this->allowed_extensions));
+
     }
 
 }

@@ -442,8 +442,12 @@ export default class Profile extends Model {
                         const ctx = chart.canvas.getContext('2d')
                         const routeDistance = turf.length(this.routeData)
                         var drawPoi = async (poi, type) => {
+                            console.log(type)
+                            console.log(poi.distance)
+                            console.log(routeDistance)
                             // Get X position
-                            const pointDistance = poi.distance
+                            if (poi.distance > routeDistance) var pointDistance = routeDistance
+                            else var pointDistance = poi.distance
                             var roughPositionProportion = pointDistance / routeDistance * 100
                             var roughPositionPixel = roughPositionProportion * (chart.scales.x._maxLength - chart.scales.x.left - chart.scales.x.paddingRight) / 100
                             poi.position = roughPositionPixel + chart.scales.x.left

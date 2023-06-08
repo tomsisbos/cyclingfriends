@@ -34,6 +34,7 @@ class ActivityData {
     /**
      * Populate instance from gpx parsed data
      * @param GpxFile $parsed_data Previously parsed gpx data
+     * @throws Exception If parsing failed, throws exception
      */
     public function buildFromGpx ($parsed_data) {
 
@@ -46,6 +47,8 @@ class ActivityData {
         $temperature_array = [];
         $duration_running = 0;
         foreach ($track->segments[0]->points as $point) {
+
+            if (!isset($point->time)) throw new Exception('このファイルには時間データが付随されていません。');
 
             // Build coordinates array
             array_push($coordinates, [$point->longitude, $point->latitude]);
@@ -145,6 +148,10 @@ class ActivityData {
             $this->summary['temperature_min'] = min($record['temperature']);
             $this->summary['temperature_avg'] = avg($record['temperature']);
             $this->summary['temperature_max'] = max($record['temperature']);
+        } else {
+            $this->summary['temperature_min'] = null;
+            $this->summary['temperature_avg'] = null;
+            $this->summary['temperature_max'] = null;
         }
 
         // Build trackpoints
@@ -205,37 +212,59 @@ class ActivityData {
             'linestring'  => $this->linestring
         ];
         
-        $checkpoint_start = [
-            'number' => 0,
-            'name' => 'Start',
-            'type' => 'Start',
-            'story' => '',
-            'datetime' => (new DateTime('@' .$this->linestring->trackpoints[0]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
-            'city' => $this->summary['startplace']->city,
-            'prefecture' => $this->summary['startplace']->prefecture,
-            'elevation' => $this->linestring->trackpoints[0]->elevation,
-            'distance' => 0,
-            'temperature' => $this->linestring->trackpoints[0]->temperature,
-            'lng' => $this->linestring->coordinates[0]->lng,
-            'lat' => $this->linestring->coordinates[0]->lat,
-            'special' => 'start'
-        ];
-        
-        $checkpoint_goal = [
-            'number' => 1,
-            'name' => 'Goal',
-            'type' => 'Goal',
-            'story' => '',
-            'datetime' => (new DateTime('@' .$this->linestring->trackpoints[$this->linestring->length - 1]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
-            'city' => $this->summary['goalplace']->city,
-            'prefecture' => $this->summary['goalplace']->prefecture,
-            'elevation' => $this->linestring->trackpoints[$this->linestring->length - 1]->elevation,
-            'distance' => $this->linestring->trackpoints[$this->linestring->length - 1]->distance,
-            'temperature' => $this->linestring->trackpoints[$this->linestring->length - 1]->temperature,
-            'lng' => $this->linestring->coordinates[$this->linestring->length - 1]->lng,
-            'lat' => $this->linestring->coordinates[$this->linestring->length - 1]->lat,
-            'special' => 'goal'
-        ];
+        // If checkpoint data is appended, use it
+        if (isset($editable_data['checkpoints'])) {
+            $checkpoints_data = array_map(function ($checkpoint) {
+                if ($checkpoint['type'] == 'Start') $checkpoint['special'] = 'start';
+                if ($checkpoint['type'] == 'Goal') $checkpoint['special'] = 'goal';
+                $checkpoint['lng'] = $checkpoint['lngLat']['lng'];
+                $checkpoint['lat'] = $checkpoint['lngLat']['lat'];
+                if (isset($checkpoint['geolocation'])) {
+                    $checkpoint['city'] = $checkpoint['geolocation']['city'];
+                    $checkpoint['prefecture'] = $checkpoint['geolocation']['prefecture'];
+                } else {
+                    $checkpoint['city'] = null;
+                    $checkpoint['prefecture'] = null;
+                }
+                $checkpoint['datetime'] = (new DateTime('@' .$checkpoint['datetime']))->setTimezone(new DateTimeZone('Asia/Tokyo')); // Change timestamp to datetime instance
+                return $checkpoint;
+            }, $editable_data['checkpoints']);
+        }
+        // Else, build start and goal checkpoints from scratch
+        else {
+            $checkpoints_data = [
+                [
+                    'number' => 0,
+                    'name' => 'Start',
+                    'type' => 'Start',
+                    'story' => '',
+                    'datetime' => (new DateTime('@' .$this->linestring->trackpoints[0]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
+                    'city' => $this->summary['startplace']->city,
+                    'prefecture' => $this->summary['startplace']->prefecture,
+                    'elevation' => $this->linestring->trackpoints[0]->elevation,
+                    'distance' => 0,
+                    'temperature' => $this->linestring->trackpoints[0]->temperature,
+                    'lng' => $this->linestring->coordinates[0]->lng,
+                    'lat' => $this->linestring->coordinates[0]->lat,
+                    'special' => 'start'
+                ],
+                [
+                    'number' => 1,
+                    'name' => 'Goal',
+                    'type' => 'Goal',
+                    'story' => '',
+                    'datetime' => (new DateTime('@' .$this->linestring->trackpoints[$this->linestring->length - 1]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
+                    'city' => $this->summary['goalplace']->city,
+                    'prefecture' => $this->summary['goalplace']->prefecture,
+                    'elevation' => $this->linestring->trackpoints[$this->linestring->length - 1]->elevation,
+                    'distance' => $this->linestring->trackpoints[$this->linestring->length - 1]->distance,
+                    'temperature' => $this->linestring->trackpoints[$this->linestring->length - 1]->temperature,
+                    'lng' => $this->linestring->coordinates[$this->linestring->length - 1]->lng,
+                    'lat' => $this->linestring->coordinates[$this->linestring->length - 1]->lat,
+                    'special' => 'goal'
+                ]
+            ];
+        }
 
         $activity_data = [
             'user_id' => $user->id,
@@ -251,20 +280,22 @@ class ActivityData {
             'slope_max' => null,
             'altitude_max' => $this->summary['altitude_max'],
             'altitude_min' => $this->summary['altitude_min'],
-            'temperature' => [
-                'min' => $this->summary['temperature_min'],
-                'avg' => $this->summary['temperature_avg'],
-                'max' => $this->summary['temperature_max']
-            ],
             'route_data' => $route_data,
-            'checkpoints_data' => [$checkpoint_start, $checkpoint_goal]
+            'checkpoints_data' => $checkpoints_data
         ];
+
+        // Possibly missing data
+        if (isset($this->summary['temperature_min'])) $activity_data['temperature']['min'] = $this->summary['temperature_min'];
+        else $activity_data['temperature']['min'] = null;
+        if (isset($this->summary['temperature_avg'])) $activity_data['temperature']['avg'] = $this->summary['temperature_avg'];
+        else $activity_data['temperature']['avg'] = null;
+        if (isset($this->summary['temperature_max'])) $activity_data['temperature']['max'] = $this->summary['temperature_max'];
+        else $activity_data['temperature']['max'] = null;
 
         // Editable data
         if (isset($editable_data['title'])) $activity_data['title'] = $editable_data['title'];
         if (isset($editable_data['privacy'])) $activity_data['privacy'] = $editable_data['privacy'];
         if (isset($editable_data['bike_id'])) $activity_data['bike_id'] = $editable_data['bike_id'];
-        if (isset($editable_data['checkpoints'])) $activity_data['checkpoints_data'] = $editable_data['checkpoints'];
 
         $activity = new Activity();
         $activity_id = $activity->create($activity_data);

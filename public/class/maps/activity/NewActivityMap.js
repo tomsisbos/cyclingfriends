@@ -1029,10 +1029,15 @@ export default class NewActivityMap extends ActivityMap {
         console.log(cleanData)
         
         // Send data to server and redirect user
-        ajaxSaveActivity(this.apiUrl, cleanData, (activity_id) => {
-        
-            // Redirect to newly created activity page
-            window.location.replace('/activity/' + activity_id)
+        ajaxSaveActivity(this.apiUrl, cleanData, (response) => {
+
+            console.log(response)
+            debugger
+
+            // If error, display error message
+            if (response.error) showResponseMessage(response)
+            // Else, redirect to newly created activity page
+            else if (response.success) window.location.replace('/activity/' + response.success)
 
         }, loader)
 

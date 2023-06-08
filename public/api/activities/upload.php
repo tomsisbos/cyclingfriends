@@ -21,11 +21,11 @@ if (isset($_FILES['activity'])) {
         // Parse data and send it back to client with a message to display
         try {
             $activity_data = $activity_file->parse();
+            $activity_data->sceneries = $activity_data->linestring->getCloseSceneries(1000);
+            echo json_encode(['success' => 'アップロードが完了しました。', 'activityData' => $activity_data], JSON_INVALID_UTF8_SUBSTITUTE);
         } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode(['error' => $e->getMessage()], JSON_INVALID_UTF8_SUBSTITUTE);
         }
-        $activity_data->sceneries = $activity_data->linestring->getCloseSceneries(1000);
-        echo json_encode(['success' => 'アップロードが完了しました。', 'activityData' => $activity_data], JSON_INVALID_UTF8_SUBSTITUTE);
 
     // If file extension is not supported
     } else {

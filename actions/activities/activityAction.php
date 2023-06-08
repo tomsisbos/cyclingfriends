@@ -17,9 +17,9 @@
 			if (!$activity->hasAccess($connected_user)) header('location: /' . $connected_user->login . '/activities');       
 
 		// If id doesn't exist, redirect to myactivities.php
-		} else header('location: /' . $connected_user->login . '/activities');
+		} else header('location: /activities');
 	
 	// If id is not set, redirect to myactivities.php
-	} else header('location: /' . $connected_user->login . '/activities');
+	} else header('location: /activities');
 	
 ?>

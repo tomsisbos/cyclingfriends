@@ -183,14 +183,12 @@ if (is_array($data)) {
             }
         }
         
-        echo json_encode($activity_id);
-        die();
+        echo json_encode(['success' => $activity_id]);
 
     // If any error have been catched, response error info
     } catch (Error $e) {
 
-        echo json_encode($e->getMessage() .' ('. $e->getTraceAsString(). ')');
-        die();
+        echo json_encode(['error' => $e->getMessage() .' ('. $e->getTraceAsString(). ')']);
 
     }
 
