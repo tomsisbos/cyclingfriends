@@ -9,8 +9,8 @@ if (!empty($user->getBikes())) { ?>
 		} ?>
 		<div class="d-flex flex-column gap my-2"> <?php
 			
-			forEach ($user->getBikes() as $bike) {
-				$bike = new Bike ($bike['id']); ?>
+			forEach ($user->getBikes() as $bike_id) {
+				$bike = new Bike ($bike_id); ?>
 
 				<div class="pf-bike-container <?php if ($bike->number != 1) echo 'hidden' ?>">
 					<div class="col-4 pf-bike-image-container">

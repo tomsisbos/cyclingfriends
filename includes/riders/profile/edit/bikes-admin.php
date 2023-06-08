@@ -5,7 +5,7 @@
 
 <div id="bikes"> <?php
 	forEach ($user->getBikes() as $bike) {
-		$bike = new Bike ($bike['id']); 
+		$bike = new Bike ($bike); 
 		include 'bike-admin-single.php';
 		unset($bike); // To prevent influence on template
 	} ?>

@@ -71,8 +71,8 @@ include '../includes/head.php'; ?>
                                     <label class="form-label">バイク</label>
                                     <select id="selectBikes" class="form-select"> <?php
                                         $bikes = $connected_user->getBikes();
-                                        if (count($bikes) > 0) foreach ($bikes as $entry) {
-                                            $bike = new Bike($entry['id']) ?>
+                                        if (count($bikes) > 0) foreach ($bikes as $bike_id) {
+                                            $bike = new Bike($bike_id) ?>
                                             <option value="<?= $bike->id ?>"><?= $bike->model . '(' . $bike->type . ')' ?></option><?php
                                         }
                                         else echo '<option value="null" disabled>登録バイクがありません。</option>' ?>

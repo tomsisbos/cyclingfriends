@@ -574,7 +574,7 @@ class User extends Model {
     public function getBikes () {
         $getBikes = $this->getPdo()->prepare('SELECT id FROM bikes WHERE user_id = ? ORDER BY number');
         $getBikes->execute(array($this->id));
-        return $getBikes->fetchAll(PDO::FETCH_ASSOC);
+        return $getBikes->fetchAll(PDO::FETCH_COLUMN);
     }
 
     // Check if user bikes and ride accepted bikes correspond or not

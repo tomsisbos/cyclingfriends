@@ -83,8 +83,8 @@
 							if ($rider->getBikes()) { ?>
 								<div class="mt-1 mb-1">
 									<strong>バイク : </strong> <?php
-									foreach ($rider->getBikes() as $bike_data) {
-										$bike = new Bike($bike_data['id']);
+									foreach ($rider->getBikes() as $bike_id) {
+										$bike = new Bike($bike_id);
 										if (!empty($bike->type)) { ?>
 											<div class="tag">
 												<?= $bike->type; ?>

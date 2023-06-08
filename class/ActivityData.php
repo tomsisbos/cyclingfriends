@@ -273,7 +273,6 @@ class ActivityData {
             'distance' => $this->summary['distance'],
             'duration' => $this->summary['duration'],
             'duration_running' => $this->summary['duration_running'],
-            'bike_id' => $user->getBikes()[0]['id'],
             'privacy' => 'private',
             'elevation' => $this->summary['positive_elevation'],
             'speed_max' => $this->summary['speed_max'],
@@ -291,6 +290,8 @@ class ActivityData {
         else $activity_data['temperature']['avg'] = null;
         if (isset($this->summary['temperature_max'])) $activity_data['temperature']['max'] = $this->summary['temperature_max'];
         else $activity_data['temperature']['max'] = null;
+        if (count($user->getBikes()) > 0) $activity_data['bike_id'] = $user->getBikes()[0];
+        else $activity_data['bike_id'] = null;
 
         // Editable data
         if (isset($editable_data['title'])) $activity_data['title'] = $editable_data['title'];

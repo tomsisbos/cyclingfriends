@@ -81,7 +81,7 @@
                     <div class="mt-1 mb-1">
                         <strong>バイク : </strong> <?php
                         foreach ($rider->getBikes() as $bike) {
-                            $bike = new Bike($bike['id']);
+                            $bike = new Bike($bike);
                             if (!empty($bike->type)) { ?>
                                 <div class="tag"><?= $bike->type; ?></div> <?php
                             } 

@@ -58,9 +58,9 @@ if ($connected_user->id != $activity->user_id) header('location: /' .$connected_
                         <label class="form-label">バイク</label>
                         <select id="selectBikes" class="form-select"> <?php
                             $bikes = $connected_user->getBikes();
-                            if (count($bikes) > 0) foreach ($bikes as $entry) {
-                                $bike = new Bike($entry['id']) ?>
-                                <option value="<?= $bike->id ?>" <?php if ($activity->bike == $entry['id']) echo 'selected'; ?>><?= $bike->model . ' (' . $bike->type . ')' ?></option><?php
+                            if (count($bikes) > 0) foreach ($bikes as $bike_id) {
+                                $bike = new Bike($bike_id) ?>
+                                <option value="<?= $bike->id ?>" <?php if ($activity->bike == $bike_id) echo 'selected'; ?>><?= $bike->model . ' (' . $bike->type . ')' ?></option><?php
                             }
                             else echo '<option value="null" disabled>登録バイクがありません。</option>' ?>
                         </select>
