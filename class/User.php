@@ -677,28 +677,29 @@ class User extends Model {
         else $period = 10;
 
         // Request activities
-        $getActivities = $this->getPdo()->prepare(
-            "SELECT
-            id, user_id, datetime, posting_date, title, privacy
-            FROM
-            activities
-        WHERE 
-            datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)
-            AND
-                (
-                    (privacy = 'private' AND user_id = ?)
-                    OR
-                    (privacy = 'friends_only' AND user_id IN ('".implode("','",$friends_list)."'))
-                    OR
-                    (privacy = 'public' AND (
-                        user_id IN ('".implode("','",$friends_list)."') OR
-                        user_id IN ('".implode("','",$scout_list)."')
+        $getActivities = $this->getPdo()->prepare("
+            SELECT
+                id, user_id, datetime, posting_date, title, privacy
+                FROM
+                activities
+            WHERE 
+                datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)
+                AND
+                    (
+                        (privacy = 'private' AND user_id = ?)
+                        OR
+                        (privacy = 'friends_only' AND user_id IN ('".implode("','",$friends_list)."'))
+                        OR
+                        (privacy = 'public' AND (
+                            user_id IN ('".implode("','",$friends_list)."') OR
+                            user_id IN ('".implode("','",$scout_list)."')
+                        )
                     )
                 )
-            )
-        ORDER BY
-            datetime DESC
-        LIMIT " .$offset. ", " .$limit);
+            ORDER BY
+                datetime DESC
+            LIMIT " .$offset. ", " .$limit
+        );
 
 	    $getActivities->execute(array($period, $this->id));
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
