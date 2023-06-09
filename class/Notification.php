@@ -42,13 +42,13 @@ class Notification extends Model {
         // If similar entry exists, reset checked and datetime values
         if ($checkIfExists->rowCount() > 0) {
             $current_notification_id = $checkIfExists->fetch(PDO::FETCH_COLUMN);
-            $updateNotification = $this->getPdo()->prepare("UPDATE {$this->table} SET checked = 0, datetime = NOW() WHERE id = ?");
-            $updateNotification->execute([$current_notification_id]);
+            $updateNotification = $this->getPdo()->prepare("UPDATE {$this->table} SET checked = 0, datetime = ? WHERE id = ?");
+            $updateNotification->execute([$datetime->format('Y-m-d H:i:s'), $current_notification_id]);
         // Else, insert it
         } else {
             $id = getNextAutoIncrement($this->table);
             $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, actor_id, entry_table, entry_id, datetime) VALUES (?, ?, ?, ?, ?, ?)");
-            $createNotification->execute([$user_id, $type, $actor_id, $entry_table, $entry_id, $datetime]);
+            $createNotification->execute([$user_id, $type, $actor_id, $entry_table, $entry_id, $datetime->format('Y-m-d H:i:s')]);
             $this->id          = $id;
             $this->user_id     = $user_id;
             $this->type        = $type;
