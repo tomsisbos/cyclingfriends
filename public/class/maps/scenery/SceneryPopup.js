@@ -396,7 +396,7 @@ export default class SceneryPopup extends Popup {
     async loadReviews () {
 
         // Get reviews on this scenery
-        ajaxGetRequest (this.apiUrl + "?get-reviews-scenery=" + this.data.scenery.id,async  (reviews) => {
+        ajaxGetRequest (this.apiUrl + "?get-reviews-scenery=" + this.data.scenery.id, async (reviews) => {
                 
             const $popup = this.popup._content
 
@@ -513,7 +513,7 @@ export default class SceneryPopup extends Popup {
                 messageBlock.appendChild(content)
             }
             // Add (or replace) stars if voted
-            ajaxGetRequest (this.apiUrl + "?check-user-vote=" + review.scenery_id + "&user_id=" + review.user.id, (response) => {
+            ajaxGetRequest (this.apiUrl + "?check-user-vote=" + review.entry_id + "&user_id=" + review.user.id, (response) => {
                 if (response != false) {
                     var number = parseInt(response)
                     // Remove stars previously displayed

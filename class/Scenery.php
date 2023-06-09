@@ -150,39 +150,51 @@ class Scenery extends Model {
     }
 
     public function getReviews () {
-        $getReviews = $this->getPdo()->prepare('SELECT id FROM scenery_reviews WHERE scenery_id = ? ORDER BY time DESC');
+        $getReviews = $this->getPdo()->prepare('SELECT id FROM scenery_reviews WHERE entry_id = ? ORDER BY time DESC');
         $getReviews->execute(array($this->id));
-        $reviews_data = $getReviews->fetchAll(PDO::FETCH_ASSOC);
+        $reviews_data = $getReviews->fetchAll(PDO::FETCH_COLUMN);
         $reviews = [];
-        foreach ($reviews_data as $review_data) {
-            array_push($reviews, new SceneryReview($review_data['id']));
+        foreach ($reviews_data as $review_id) {
+            array_push($reviews, new SceneryReview($review_id));
         }
         return $reviews;
     }
 
+    /**
+     * Get stars string according to this scenery rating
+     */
+    public function getStars () {
+        if ($this->rating == 5) return '★★★★★';
+        else if ($this->rating >= 4) return '★★★★☆';
+        else if ($this->rating >= 3) return '★★★☆☆';
+        else if ($this->rating >= 2) return '★★☆☆☆';
+        else if ($this->rating >= 1) return '★☆☆☆☆';
+        else return '☆☆☆☆☆';
+    }
+
     public function postReview ($content) {
-        $connected_user = new User($_SESSION['id']);
-        $propic  = $connected_user->getPropicUrl();
+        $user    = new User($_SESSION['id']);
+        $propic  = $user->getPropicUrl();
         $time    = date('Y-m-d H:i:s');
 
         // Check if user has already posted a review
-        $reviews = $this->getUserReview($connected_user);
+        $reviews = $this->getUserReview($user);
         // If there is one..
         if (!empty($reviews)) {
             // ..and if content is not empty, update it
             if (!empty($content)) {
-                $updateReview = $this->getPdo()->prepare('UPDATE scenery_reviews SET content = ?, time = ? WHERE scenery_id = ? AND user_id = ?');
-                $updateReview->execute(array($content, $time, $this->id, $connected_user->id));
+                $updateReview = $this->getPdo()->prepare('UPDATE scenery_reviews SET content = ?, time = ? WHERE entry_id = ? AND user_id = ?');
+                $updateReview->execute(array($content, $time, $this->id, $user->id));
             // ..and if content is empty, delete it
             } else {
-                $deleteReview = $this->getPdo()->prepare('DELETE FROM scenery_reviews WHERE scenery_id = ? AND user_id = ?');
-                $deleteReview->execute(array($this->id, $connected_user->id));
+                $deleteReview = $this->getPdo()->prepare('DELETE FROM scenery_reviews WHERE entry_id = ? AND user_id = ?');
+                $deleteReview->execute(array($this->id, $user->id));
             }
 
         // Else, insert into scenery_reviews table
         } else {
-            $insertReview = $this->getPdo()->prepare('INSERT INTO scenery_reviews(scenery_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
-            $insertReview->execute(array($this->id, $connected_user->id, $connected_user->login, $content, $time));
+            $insertReview = $this->getPdo()->prepare('INSERT INTO scenery_reviews(entry_id, user_id, user_login, content, time) VALUES (?, ?, ?, ?, ?)');
+            $insertReview->execute(array($this->id, $user->id, $user->login, $content, $time));
             $this->notify($this->user_id, 'scenery_review_posting');
         }
     }
@@ -214,7 +226,7 @@ class Scenery extends Model {
     }
 
     public function getUserReview ($user) {
-        $getUserReview = $this->getPdo()->prepare('SELECT id FROM scenery_reviews WHERE scenery_id = ? AND user_id = ?');
+        $getUserReview = $this->getPdo()->prepare('SELECT id FROM scenery_reviews WHERE entry_id = ? AND user_id = ?');
         $getUserReview->execute(array($this->id, $user->id));
         $review_id = $getUserReview->fetch(PDO::FETCH_COLUMN);
         if ($review_id) return new SceneryReview($review_id);

@@ -2,6 +2,7 @@
 
 include '../actions/users/initPublicSessionAction.php';
 include '../actions/sceneries/sceneryAction.php';
+include '../actions/sceneries/postReviewAction.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -103,14 +104,32 @@ include '../includes/head.php'; ?>
 			<div class="container p-0 pg-sg-map-box">
 				<iframe style="width: 100%; height: 100%" src="https://maps.google.com/maps?q=<?= $scenery->lngLat->lat ?>,<?= $scenery->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
-					<div class="pg-sg-itinerary-title">レビュー</div>
-					<div class="chat-reviews pt-2"></div> <?php
-					if (isset($_SESSION['auth'])) { ?>
-						<div class="chat-msgbox">
-							<textarea id="sceneryReview" class="fullwidth"></textarea>
-							<button id="sceneryReviewSend" class="mp-button bg-button text-white">レビューを投稿</button>
-						</div> <?php
+					<div class="pg-sg-itinerary-title">レビュー</div> <?php
+					if (isset($_SESSION['auth'])) {
+						$user_review = $scenery->getUserReview($connected_user);
+						if (!empty($user_review)) $submit_button_text = 'レビューを編集';
+						else $submit_button_text = 'レビューを投稿'; ?>
+						<form method="POST" class="chat-msgbox">
+							<textarea name="sceneryReview" class="fullwidth"> <?php
+								if (!empty($user_review)) echo $user_review->content; ?>
+							</textarea>
+							<input type="submit" class="btn button text-white text-wrap" value="<?= $submit_button_text ?>" />
+						</form> <?php
 					} ?>
+					<div class="chat-reviews pt-2"> <?php
+						foreach ($scenery->getReviews() as $review) { ?>
+							<div class="chat-line">
+								<?= $review->user->getPropicElement() ?>
+								<div class="chat-message-block" style="margin-left: 10px;">
+									<a href="/rider/<?= $review->user->id ?>" target="_blank">
+										<div class="chat-login"><?= $review->user->login ?></div>
+									</a>
+									<div class="chat-time"><?= $review->time ?></div>
+									<div class="chat-message"><?= $review->content ?></div>
+								</div>
+							</div> <?php
+						} ?>
+					</div>
 				</div>
 			</div>
 
@@ -121,4 +140,4 @@ include '../includes/head.php'; ?>
 </html>
 
 <script src="/scripts/user/favorites.js"></script>
-<script type="module" src="/scripts/sceneries/scenery.js"></script>
+<script type="module" src="/scripts/sceneries/single.js"></script>

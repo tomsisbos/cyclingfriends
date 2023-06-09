@@ -47,7 +47,7 @@ $router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
 // World
 $router->map('GET', '/world', 'world/map');
 $router->map('GET', '/segment/[i:segment_id]', 'segments/single', 'segment-single');
-$router->map('GET', '/scenery/[i:scenery_id]', 'sceneries/single', 'scenery-single');
+$router->map('GET|POST', '/scenery/[i:scenery_id]', 'sceneries/single', 'scenery-single');
 $router->map('GET', '/tag/[a:tagcategory]-[a:tagname]', 'world/tag', 'tag');
 
 // Activities

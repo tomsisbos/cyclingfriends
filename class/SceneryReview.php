@@ -1,28 +1,15 @@
 <?php
 
-class SceneryReview extends Model {
+class SceneryReview extends Comment {
     
     protected $table = 'scenery_reviews';
-    public $id;
-    public $scenery_id;
-    public $user;
-    public $content;
-    public $time;  
-    public $parent_id;
     
     function __construct ($id = NULL) {
-        parent::__construct();
-        $this->id = $id;
-        $data = $this->getData($this->table);
-        $this->scenery_id = intval($data['scenery_id']);
-        $this->user       = new User($data['user_id']);
-        $this->content    = $data['content'];
-        $this->time       = $data['time'];
-        $this->parent_id  = $data['parent_id'];
+        parent::__construct($id);
     }
 
     function getScenery () {
-        return new Scenery($this->scenery_id);
+        return new Scenery($this->entry_id);
     }
 
     function getParent () {
