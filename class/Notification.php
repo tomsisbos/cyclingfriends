@@ -28,10 +28,11 @@ class Notification extends Model {
         $this->entry_table = $data['entry_table'];
         $this->entry_id    = $data['entry_id'];
         $this->checked     = (intval($data['checked']) === 1);
-        $this->datetime    = new Datetime($data['datetime'], new DateTimezone('Asia/Tokyo'));
+        $this->datetime    = new Datetime($data['datetime']);
     }
 
     public function register ($user_id, $type, $entry_table, $entry_id, $actor_id = NULL) {
+        $datetime = new Datetime('now', new DateTimeZone('Asia/Tokyo'));
         $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
         require_once $base_directory. 'includes/functions.php';
         if ($actor_id != NULL) $query = "SELECT id FROM {$this->table} WHERE user_id = ? AND type = ? AND actor_id = {$actor_id} AND entry_table = ? AND entry_id = ?";
@@ -46,8 +47,8 @@ class Notification extends Model {
         // Else, insert it
         } else {
             $id = getNextAutoIncrement($this->table);
-            $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, actor_id, entry_table, entry_id) VALUES (?, ?, ?, ?, ?)");
-            $createNotification->execute([$user_id, $type, $actor_id, $entry_table, $entry_id]);
+            $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, actor_id, entry_table, entry_id, datetime) VALUES (?, ?, ?, ?, ?, ?)");
+            $createNotification->execute([$user_id, $type, $actor_id, $entry_table, $entry_id, $datetime]);
             $this->id          = $id;
             $this->user_id     = $user_id;
             $this->type        = $type;
@@ -55,7 +56,7 @@ class Notification extends Model {
             $this->entry_table = $entry_table;
             $this->entry_id    = $entry_id;
             $this->checked     = false;
-            $this->datetime    = new Datetime('now', new DateTimezone('Asia/Tokyo'));
+            $this->datetime    = $datetime;
         }
     }
 

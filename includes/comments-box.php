@@ -4,7 +4,7 @@
 </form> <?php
 
 foreach ($object->getComments() as $comment) { ?>
-    <div class="chat-line">
+    <div class="chat-line<?php if ($comment->user->id == $object->user_id) echo ' py-2 bg-admin'?>">
         <?= $comment->user->getPropicElement() ?>
         <div class="chat-message-block" style="margin-left: 10px;">
             <a href="/rider/<?= $comment->user->id ?>" target="_blank">
