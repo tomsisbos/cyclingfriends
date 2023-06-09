@@ -175,7 +175,7 @@ class Scenery extends Model {
     public function postReview ($content) {
         $user    = new User($_SESSION['id']);
         $propic  = $user->getPropicUrl();
-        $time    = date('Y-m-d H:i:s');
+        $time    = (new Datetime('now', new DateTimeZone('Asia/Tokyo')))->format('Y-m-d H:i:s');
 
         // Check if user has already posted a review
         $reviews = $this->getUserReview($user);

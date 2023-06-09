@@ -102,6 +102,12 @@ class Notification extends Model {
                 $this->text = $entry->login. 'がフォローしてくれました。';
                 $this->ref = 'rider/' .$entry->id;
                 break;
+            // Activities
+            case 'activity_new_comment':
+                $actor = new User($this->actor_id);
+                $this->text = $actor->login. 'が「' .$entry->name. '」にコメントしました。';
+                $this->ref = 'activity/' .$entry->id;
+                break;
             // Sceneries
             case 'scenery_review_posting':
                 $this->text = '絶景スポット「' .$entry->name. '」に新しいコメントが投稿されました。';

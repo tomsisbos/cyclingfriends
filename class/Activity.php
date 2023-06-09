@@ -3,6 +3,7 @@
 class Activity extends Model {
     
     protected $table = 'activities';
+    protected $subtable = 'activity';
     public $id;
     public $user_id;
     public $datetime;
@@ -250,6 +251,31 @@ class Activity extends Model {
             if ($user && $author->id == $user->id) return true;
             else return false;
         } else return true;
+    }
+
+    /** 
+     * Retrieve all comments of this instance
+     * @return ActivityComment[]
+     */
+    public function getComments () {
+        $getComments = $this->getPdo()->prepare("SELECT id FROM {$this->subtable}_comments WHERE entry_id = ?");
+        $getComments->execute([$this->id]);
+        $comment_ids = $getComments->fetchAll(PDO::FETCH_COLUMN);
+        $comments = [];
+        foreach ($comment_ids as $id) array_push($comments, new ActivityComment($id));
+        return $comments;
+    }
+
+    /**
+     * Post a new comment from $user_id
+     * @param int $user_id
+     * @param string $content
+     */
+    public function postComment ($user_id, $content) {
+        $user = new User($user_id);
+        $time = (new Datetime('now', new DateTimeZone('Asia/Tokyo')))->format('Y-m-d H:i:s');
+        $postComment = $this->getPdo()->prepare("INSERT INTO {$this->subtable}_comments (entry_id, user_id, content, time) VALUES (?, ?, ?, ?)");
+        $postComment->execute(array($this->id, $user->id, $content, $time));
     }
 
     /**
