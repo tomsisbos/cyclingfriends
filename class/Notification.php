@@ -105,7 +105,7 @@ class Notification extends Model {
             // Activities
             case 'activity_new_comment':
                 $actor = new User($this->actor_id);
-                $this->text = $actor->login. 'が「' .$entry->name. '」にコメントしました。';
+                $this->text = $actor->login. 'が「' .$entry->title. '」にコメントしました。';
                 $this->ref = 'activity/' .$entry->id;
                 break;
             // Sceneries
