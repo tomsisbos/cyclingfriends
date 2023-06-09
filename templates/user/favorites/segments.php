@@ -44,7 +44,7 @@ include '../includes/head.php'; ?>
             if (isset($_GET['p'])) $p = $_GET['p'];
             else $p = 1;
             $url = strtok($_SERVER["REQUEST_URI"], '?');
-            $total_pages = $connected_user->getFavoritesNumber('segments') / $limit;
+            $total_pages = ceil($connected_user->getFavoritesNumber('segments') / $limit);
             
             // Build pagination menu
             include '../includes/pagination.php' ?>

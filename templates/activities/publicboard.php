@@ -43,7 +43,7 @@ include '../includes/head.php'; ?>
 			$getPublicActivitiesNumber = $db->prepare("SELECT id FROM activities");
 			$getPublicActivitiesNumber->execute();
 			$public_activities_number = $getPublicActivitiesNumber->rowCount();
-			$total_pages = $public_activities_number / $limit;
+			$total_pages = ceil($public_activities_number / $limit);
 			
 			// Build pagination menu
 			include '../includes/pagination.php' ?>

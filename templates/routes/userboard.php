@@ -73,7 +73,7 @@ include '../includes/head.php'; ?>
 			if (isset($_GET['p'])) $p = $_GET['p'];
 			else $p = 1;
 			$url = strtok($_SERVER["REQUEST_URI"], '?');
-			$total_pages = $connected_user->getRoutesNumber() / $limit;
+			$total_pages = ceil($connected_user->getRoutesNumber() / $limit);
 			
 			// Build pagination menu
 			include '../includes/pagination.php' ?>

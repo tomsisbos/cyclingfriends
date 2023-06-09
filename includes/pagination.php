@@ -1,4 +1,13 @@
 <div class="pages"> <?php
+
+    if ($p > 3) { ?>
+        <a href="<?= $url. '?p=1' ?>">
+            <div class="pages-number">
+                1
+            </div>
+        </a>
+        ... <?php
+    }
     if ($p > 2) { ?>
         <a href="<?= $url. '?p=' .($p - 2) ?>">
             <div class="pages-number">

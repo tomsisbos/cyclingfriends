@@ -50,7 +50,7 @@ include '../includes/head.php'; ?>
                 if (isset($_GET['p'])) $p = $_GET['p'];
                 else $p = 1;
                 $url = strtok($_SERVER["REQUEST_URI"], '?');
-                $total_pages = $tag->getEntriesNumber() / $limit;
+                $total_pages = ceil($tag->getEntriesNumber() / $limit);
                 
                 // Build pagination menu
                 include '../includes/pagination.php' ?>

@@ -39,7 +39,7 @@ include '../includes/head.php'; ?>
         $url = strtok($_SERVER["REQUEST_URI"], '?');
         $total_dev_notes = $db->prepare($query);
         $total_dev_notes->execute($params);
-        $total_pages = $total_dev_notes->rowCount() / $limit;
+        $total_pages = ceil($total_dev_notes->rowCount() / $limit);
         
         // Build pagination menu
         include '../includes/pagination.php' ?>

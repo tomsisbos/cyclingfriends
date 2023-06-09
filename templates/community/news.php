@@ -38,7 +38,7 @@ include '../includes/navbar.php';?>
                 if (isset($_GET['p'])) $p = $_GET['p'];
                 else $p = 1;
                 $url = strtok($_SERVER["REQUEST_URI"], '?');
-                $total_pages = $getResultsNumber->rowCount() / $limit;
+                $total_pages = ceil($getResultsNumber->rowCount() / $limit);
                 include '../includes/pagination.php';
             } ?>
         </div> <?php
