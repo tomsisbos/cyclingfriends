@@ -39,10 +39,11 @@ foreach ($data['activityFiles'] as $activity_files) {
         'garmin_user_id' => $activity_files['userId']
     ]);
 
-    // Parse file and create an activity
-    $activity_data = $activity_file->parse();
-    $activity_data->createActivity($activity_file->getUserIdFromGarminId($activity_files['userId']));
-    
     // Retrieve a 200 response code
     http_response_code(200);
+
+    // Parse file and create an activity
+    $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
+    $activity_data = $activity_file->parse();
+    if (!$activity_data->alreadyExists($user_id)) $activity_data->createActivity($user_id);
 }

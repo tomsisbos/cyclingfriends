@@ -186,7 +186,17 @@ class ActivityData {
         $this->getGeolocation();
     }
 
-    
+    /**
+     * Check if a similar entry exists for a specific user
+     * @param int $user_id
+     * @return boolean
+     */
+    public function alreadyExists ($user_id) {
+        $checkIfExists = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND datetime = ?");
+        $checkIfExists->execute([$user_id, (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo'))]);
+        if ($checkIfExists->rowCount() > 0) return true;
+        else return false;
+    }   
 
     /**
      * If instance holds parsed data, create an activity from it

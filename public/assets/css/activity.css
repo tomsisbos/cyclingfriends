@@ -625,7 +625,7 @@
 }
 .pg-ac-map-img-container.grown {
     width: 700px;
-    height: 400px;
+    height: 394px;
     z-index: 3;
     top: -220px;
     transition: height 0.5s, width 0.5s, top 0.5s, opacity 0.5s, z-index 0.5s;

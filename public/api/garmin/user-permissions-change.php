@@ -10,11 +10,17 @@ CFAutoloader::register();
 $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
 
-$garmin = new Garmin($data['userId']);
+// Save all ping calls logs in a json file
+$temp_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/temp';
+if (!file_exists($temp_directory)) mkdir($temp_directory, 0777, true); // Create user directory if necessary
+$temp_url = $temp_directory. '/permission-change.json';
+file_put_contents($temp_url, $json);
+
+$garmin = new Garmin($data['userPermissionsChange']['userId']);
 $garmin->populateUserTokens();
-if (in_array('ACTIVITY_EXPORT', $permissions)) $garmin->setPermission('activity', true);
+if (in_array('ACTIVITY_EXPORT', $garmin->permissions)) $garmin->setPermission('activity', true);
 else $garmin->setPermission('activity', false);
-if (in_array('COURSE_IMPORT', $permissions)) $garmin->setPermission('course', true);
+if (in_array('COURSE_IMPORT', $garmin->permissions)) $garmin->setPermission('course', true);
 else $garmin->setPermission('course', false);
 
 // Retrieve a 200 response code

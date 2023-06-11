@@ -11,8 +11,8 @@ class Garmin extends Model {
     private $garmin_user_id;
     private $oauth_token;
     private $oauth_token_secret;
-    private $permissions = [];
     protected $table = 'user_garmin';
+    public $permissions = [];
 
     function __construct ($garmin_user_id = null, $oauth_token = null, $oauth_token_secret = null) {
         $this->consumer_key = getenv('GARMIN_CONSUMER_KEY');
