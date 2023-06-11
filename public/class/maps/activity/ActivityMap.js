@@ -198,11 +198,13 @@ export default class ActivityMap extends Map {
         marker.addTo(this.map)
         // Define growing method
         marker.grow = () => {
+            console.log(marker.getElement())
+            console.log(marker.getElement().offsetHeight)
             setStyle(`
             .pg-ac-map-img-container.grown {
-                max-height: ` + (this.$map.offsetHeight - 80) + `px !important;
-                max-width: ` + (this.$map.offsetWidth - 80) + `px !important;
-                top: ` + (25 - (this.$map.offsetHeight / 2)) + `px !important;
+                height: auto !important;
+                max-width: ` + (this.$map.offsetWidth - 40) + `px !important;
+                top: ` + (25 - (marker.getElement().offsetHeight)) + `px !important;
             }`)
             var isGrown = false
             if (marker.getElement().classList.contains('grown')) isGrown = true

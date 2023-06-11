@@ -117,8 +117,8 @@ class Garmin extends Model {
             $this->oauth_token = $user_tokens['oauth_token'];
             $this->oauth_token_secret = $user_tokens['oauth_token_secret'];
             foreach ($this->api_types as $api_type) {
-                if ($user_tokens['permission_' .$api_type] == 1) $this->setPermission($api_type, true);
-                else $this->setPermission($api_type, false);
+                if ($user_tokens['permission_' .$api_type] == 1) $this->setPermission($api_type, 1);
+                else $this->setPermission($api_type, 0);
             }
             return true;
         } else return false;
@@ -127,7 +127,7 @@ class Garmin extends Model {
     /**
      * Update permission
      * @param string $permission
-     * @param boolean $boolean
+     * @param int $boolean 0 or 1
      */
     public function setPermission ($permission, $boolean) {
         $setPermission = $this->getPdo()->prepare("UPDATE {$this->table} SET permission_{$permission} = ?");
