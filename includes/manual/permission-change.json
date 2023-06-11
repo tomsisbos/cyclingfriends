@@ -1,0 +1,54 @@
+{
+    "userPermissionsChange": [
+        {
+            "userId": "f569a249-9cb6-4b7c-ad6d-02cf2215ef3a",
+            "userAccessToken": "23db856e-cc6b-41a2-ab87-9dff6dbffa63",
+            "summaryId": "x3b665c6-64815082",
+            "permissions": [
+                "COURSE_IMPORT",
+                "ACTIVITY_EXPORT"
+            ],
+            "changeTimeInSeconds": 1686196354
+        },
+        {
+            "userId": "f569a249-9cb6-4b7c-ad6d-02cf2215ef3a",
+            "userAccessToken": "23db856e-cc6b-41a2-ab87-9dff6dbffa63",
+            "summaryId": "x3b665c6-648157fe",
+            "permissions": [
+                "COURSE_IMPORT",
+                "ACTIVITY_EXPORT"
+            ],
+            "changeTimeInSeconds": 1686198270
+        },
+        {
+            "userId": "f569a249-9cb6-4b7c-ad6d-02cf2215ef3a",
+            "userAccessToken": "23db856e-cc6b-41a2-ab87-9dff6dbffa63",
+            "summaryId": "x3b665c6-64815843",
+            "permissions": [
+                "COURSE_IMPORT",
+                "ACTIVITY_EXPORT"
+            ],
+            "changeTimeInSeconds": 1686198339
+        },
+        {
+            "userId": "f569a249-9cb6-4b7c-ad6d-02cf2215ef3a",
+            "userAccessToken": "23db856e-cc6b-41a2-ab87-9dff6dbffa63",
+            "summaryId": "x3b665c6-6481a1cb",
+            "permissions": [
+                "COURSE_IMPORT",
+                "ACTIVITY_EXPORT"
+            ],
+            "changeTimeInSeconds": 1686217163
+        },
+        {
+            "userId": "f569a249-9cb6-4b7c-ad6d-02cf2215ef3a",
+            "userAccessToken": "23db856e-cc6b-41a2-ab87-9dff6dbffa63",
+            "summaryId": "x3b665c6-64852284",
+            "permissions": [
+                "ACTIVITY_EXPORT",
+                "COURSE_IMPORT"
+            ],
+            "changeTimeInSeconds": 1686446724
+        }
+    ]
+}
