@@ -198,6 +198,7 @@ export default class ActivityMap extends Map {
         marker.addTo(this.map)
         // Define growing method
         marker.grow = () => {
+            const imgWidth = marker.getElement().querySelector('img').naturalWidth
             const imgHeight = marker.getElement().querySelector('img').naturalHeight
             const mapWidth = this.$map.offsetWidth
             const padding = 20
