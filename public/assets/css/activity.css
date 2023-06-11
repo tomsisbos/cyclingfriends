@@ -633,9 +633,12 @@
 .pg-ac-map-img-container.grown::after {
     font-size: 50px;
     color: #ff5555;
+    bottom: 0px;
 }
 .pg-ac-map-img-container.grown img {
+    background-color: #000;
     border-color: #ff5555;
+    object-fit: contain;
 }
 
 .pg-ac-map-img-container.half-grown {
