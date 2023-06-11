@@ -2,7 +2,7 @@
 
 use phpGPX\Models\GpxFile;
 
-class ActivityData {
+class ActivityData extends Model {
 
     /**
      * Activity summary data
