@@ -16,7 +16,7 @@ class ActivityPhoto extends Model {
 
     function __construct ($id = NULL) {
         parent::__construct();
-        $this->id          = $id;
+        $this->id = $id;
         $data = $this->getData($this->table);
         if ($id != NULL) {
             $this->activity_id = $data['activity_id'];

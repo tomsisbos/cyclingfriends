@@ -1,5 +1,5 @@
 import React from 'react'
-import Loader from '/react/settings/Loader.jsx'
+import Loader from '/react/components/Loader.jsx'
 
 export default function ConnectionButton ({ type, connected, authenticateUrl = false, handleDisconnect}) {
 

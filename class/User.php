@@ -656,12 +656,27 @@ class User extends Model {
      * Get an users' activities
      * @param int $offset
      * @param int $limit
-     * @param string $first_column Column based on which to order request results by
+     * @param string $order_by Column based on which to order request results by
      */
-    public function getActivities ($offset = 0, $limit = 20, $first_column = 'r.posting_date') {
-        $getActivities = $this->getPdo()->prepare("SELECT a.id FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? ORDER BY {$first_column} DESC LIMIT " .$offset. ", " .$limit);
+    public function getActivities ($offset = 0, $limit = 20, $order_by = 'posting_date') {
+        $getActivities = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? ORDER BY {$order_by} DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($this->id));
         return $getActivities->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get activities from a certain year and month
+     * @param int $year
+     * @param int $month
+     * @return Activity[]
+     */
+    public function getActivitiesByMonth ($year, $month) {
+        $getActivitiesByDate = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND YEAR(datetime) = ? AND MONTH(datetime) = ? ORDER BY datetime DESC");
+        $getActivitiesByDate->execute([$this->id, $year, $month]);
+        $activity_ids = $getActivitiesByDate->fetchAll(PDO::FETCH_COLUMN);
+        return array_map(function ($activity_id) {
+            return new Activity($activity_id);
+        }, $activity_ids);
     }
 
     public function getPublicActivities ($offset = 0, $limit = 20) {

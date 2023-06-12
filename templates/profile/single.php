@@ -159,7 +159,7 @@ include '../includes/head.php'; ?>
 			</div>
 
 			<div class="acsm-list dashboard-block"> <?php
-				$activities = $user->getActivities(0, 6, 'a.datetime');
+				$activities = $user->getActivities(0, 6, 'datetime');
 				foreach ($activities as $activity) {
 					$activity = new Activity($activity['id']);
 					include '../includes/activities/small-card.php';

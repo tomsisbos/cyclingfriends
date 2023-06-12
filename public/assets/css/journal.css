@@ -1,0 +1,54 @@
+
+
+.journal-month {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(7, 150px);
+}
+
+.journal-day {
+    position: relative;
+    min-height: 150px;
+    width: 150px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.journal-day.worked {
+    cursor: pointer;
+}
+
+.journal-day.rested::after {
+    content: '';
+    width: 50px;
+    height: 50px;
+    min-height: 50px;
+    background-color: #ccc;
+}
+
+.journal-record {
+    width: 100%;
+    text-align: center;
+    background-position: center;
+    background-size: cover;
+    color: #fff;
+    padding: 10px;
+}
+
+.journal-record:hover {
+    width: 250px;
+    background-color: #5c9999;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.5s width ease-out, 0.5s min-height ease-out;
+    position: absolute;
+}
+
+.journal-activity-title {
+    font-weight: bold;
+}

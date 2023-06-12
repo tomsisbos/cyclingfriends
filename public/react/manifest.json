@@ -1,4 +1,5 @@
 {
   "public/settings.js": "/public/react/settings.js",
+  "public/journal.js": "/public/react/journal.js",
   "public/runtime.js": "/public/react/runtime.js"
 }
