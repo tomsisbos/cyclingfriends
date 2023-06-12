@@ -14,17 +14,18 @@ export default function Day ({dayActivities, dayNumber}) {
             )
         }
         setRecords(elements)
-        console.log(records)
     }, [])
 
     const getElements = (records) => {
-        if (records.length > 0) var dayType = 'journal-day worked'
-        else dayType = 'journal-day rested'
-        
-        return (
-            <div className={dayType}>
-                <div className="journal-day-number">{dayNumber + 1}日</div>
+        if (records.length > 0) return (
+            <div className="journal-day worked">
+                <div className="journal-day-number">{dayNumber}日</div>
                 {records}
+            </div>
+        )
+        else return (
+            <div className="journal-day rested">
+                <div className="journal-day-number">{dayNumber}日</div>
             </div>
         )
     }

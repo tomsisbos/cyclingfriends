@@ -7,16 +7,14 @@ export default function Month ({activities, monthNumber, daysInMonth}) {
 
     useEffect( () => {
         var elements = [];
-        for (let dayNumber = 0; dayNumber < daysInMonth; dayNumber++) {
+        for (let dayNumber = daysInMonth; dayNumber > 0; dayNumber--) {
             var dayActivities = []
             Object.values(activities).forEach(activity => {
-                if (new Date(activity.datetime.date).getDate() == dayNumber + 1) dayActivities.push(activity)
+                if (new Date(activity.datetime.date).getDate() == dayNumber) dayActivities.push(activity)
             })
             elements.push(<Day key={dayNumber} dayNumber={dayNumber} dayActivities={dayActivities} />)
         }
         setDays(elements)
-        console.log(daysInMonth)
-        console.log(elements)
     }, [])
 
     return (

@@ -1,7 +1,24 @@
+.journal-board {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(0deg, #fff, transparent);
+    backdrop-filter: blur(10px);
+}
 
+.journal-month-name {
+    font-size: 34px;
+    padding: 20px;
+}
+
+.journal-month-name, .journal-day-number {
+    font-family: Yu Mincho;
+}
 
 .journal-month {
     display: grid;
+    justify-content: center;
     grid-gap: 20px;
     grid-template-columns: repeat(7, 150px);
 }
@@ -19,36 +36,125 @@
 
 .journal-day.worked {
     cursor: pointer;
+    z-index: 2;
 }
 
-.journal-day.rested::after {
-    content: '';
+.journal-record {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: #5c9999;
+    background-position: center;
+    background-size: cover;
+    color: #fff;
+    text-shadow: 0 0 3px black;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.5s width ease-in, 0.5s height ease-in;
+}
+.journal-record.x-small {
+    width: 70%;
+    height: 70%;
+}
+.journal-record.small {
+    width: 85%;
+    height: 85%;
+}
+.journal-record.medium {
+    width: 100%;
+    height: 100%;
+}
+.journal-record.large {
+    width: 110%;
+    height: 110%;
+}
+.journal-record.x-large {
+    width: 120%;
+    height: 120%;
+}
+.journal-record.xx-large {
+    width: 130%;
+    height: 130%;
+}
+.journal-record:hover {
+    width: 250px !important;
+    height: 250px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    transition: 0.5s width ease-out, 0.5s height ease-out;
+    z-index: 2;
+}
+
+
+.journal-day.worked .journal-day-number {
+    display: none;
+}
+.journal-day.rested .journal-day-number {
+    justify-content: center;
+    display: flex;
+    align-items: center;
     width: 50px;
     height: 50px;
     min-height: 50px;
     background-color: #ccc;
-}
-
-.journal-record {
-    width: 100%;
-    text-align: center;
-    background-position: center;
-    background-size: cover;
     color: #fff;
-    padding: 10px;
-}
-
-.journal-record:hover {
-    width: 250px;
-    background-color: #5c9999;
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: 0.5s width ease-out, 0.5s min-height ease-out;
-    position: absolute;
 }
 
 .journal-activity-title {
     font-weight: bold;
+}
+
+
+@media only screen and (max-width: 1200px) {
+    .journal-month {
+        grid-template-columns: repeat(7, 100px);
+    }
+}
+
+@media only screen and (min-width: 800px) and (max-width: 1200px) {
+    .journal-record.x-small {
+        height: 60%;
+        width: 60%;
+    }
+    .journal-record.small {
+        height: 70%;
+        width: 70%;
+    }
+    .journal-record.medium {
+        height: 80%;
+        width: 80%;
+    }
+    .journal-record.large {
+        height: 88%;
+        width: 88%;
+    }
+    .journal-record.x-large {
+        height: 95%;
+        width: 95%;
+    }
+    .journal-record.xx-large {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 980px) {
+    .journal-month {
+        grid-template-columns: repeat(7, 80px);
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .journal-month {
+        grid-template-columns: repeat(1, 100%);
+    }
+    .journal-record:hover {
+        width: 90vw !important;
+        height: 90vw !important;
+    }
 }

@@ -4,7 +4,7 @@ require '../../../includes/api-head.php';
 
 if (isset($_GET)) {
 
-    if (isset($_GET['user_id'])) {
+    if ($_GET['task'] == 'activity_data') {
 
         $user = new User($_GET['user_id']);
         $year = intval($_GET['year']);
@@ -18,6 +18,14 @@ if (isset($_GET)) {
         }, $activities);
 
         echo json_encode($activities);
+
+    }
+
+    if ($_GET['task'] == 'user_inscription_date') {
+
+        $user = new User($_GET['user_id']);
+
+        echo json_encode($user->inscription_date);
 
     }
 
