@@ -15,7 +15,7 @@ class Model {
     }
 
     protected static function getPdo () {
-        require Manual::getRootFolder() . '/actions/databaseAction.php';
+        require Model::getRootFolder() . '/actions/databaseAction.php';
         return $db;
     }
 
