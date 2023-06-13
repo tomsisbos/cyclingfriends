@@ -1,9 +1,12 @@
-.journal-board {
+
+.journal-board {    
+    background-color: #f9f9f9;
+}
+.journal-board > div {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    background: linear-gradient(0deg, #fff, transparent);
     backdrop-filter: blur(10px);
 }
 
@@ -35,8 +38,10 @@
 }
 
 .journal-day.worked {
-    cursor: pointer;
     z-index: 2;
+}
+.journal-day.worked:hover {
+    z-index: 3;
 }
 
 .journal-record {
@@ -90,6 +95,23 @@
     z-index: 2;
 }
 
+.journal-record a {
+    opacity: 0;
+    transition: 1s opacity, 1s font-size;
+    cursor: pointer;
+    color: #fff;
+    font-family: Yu Mincho;
+    width: fit-content;
+    margin: 10px 0px;
+    font-size: 0;
+    padding: 10px;
+    border: 1px solid;
+    align-self: center;
+}
+.journal-record:hover a {
+    opacity: 1;
+    font-size: 16;
+}
 
 .journal-day.worked .journal-day-number {
     display: none;
@@ -101,7 +123,6 @@
     width: 50px;
     height: 50px;
     min-height: 50px;
-    background-color: #ccc;
     color: #fff;
 }
 
@@ -143,6 +164,19 @@
     }
 }
 
+.journal-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 5;
+    font-family: Yu Mincho;
+    background-color: #ffffff99;
+    backdrop-filter: blur(10px);
+}
+
 @media only screen and (max-width: 980px) {
     .journal-month {
         grid-template-columns: repeat(7, 80px);
@@ -157,4 +191,79 @@
         width: 90vw !important;
         height: 90vw !important;
     }
+}
+
+
+
+.journal-month-1 {
+    background-color: #eaf5fe22;
+}
+.journal-month-1 .journal-day-number {
+    background-color: #e5e8ea;
+}
+.journal-month-2 {
+    background-color: #9afffd22;
+}
+.journal-month-2 .journal-day-number {
+    background-color: #c2eceb;
+}
+.journal-month-3 {
+    background-color: #e2c6ff22;
+}
+.journal-month-3 .journal-day-number {
+    background-color: #e2c6ff99;
+}
+.journal-month-4 {
+    background-color: #ffc6df22;
+}
+.journal-month-4 .journal-day-number {
+    background-color: #ffc6df99;
+}
+.journal-month-5 {
+    background-color: #25e02322;
+}
+.journal-month-5 .journal-day-number {
+    background-color: #25e02355;
+}
+.journal-month-6 {
+    background-color: #148b0e22;
+}
+.journal-month-6 .journal-day-number {
+    background-color: #148b0e55;
+}
+.journal-month-7 {
+    background-color: #d3ff0022;
+}
+.journal-month-7 .journal-day-number {
+    background-color: #d3ff0055;
+}
+.journal-month-8 {
+    background-color: #dcd90022;
+}
+.journal-month-8 .journal-day-number {
+    background-color: #dcd90055;
+}
+.journal-month-9 {
+    background-color: #aeb00022;
+}
+.journal-month-9 .journal-day-number {
+    background-color: #aeb00055;
+}
+.journal-month-10 {
+    background-color: #8a540022;
+}
+.journal-month-10 .journal-day-number {
+    background-color: #8a540055;
+}
+.journal-month-11 {
+    background-color: #ff551122;
+}
+.journal-month-11 .journal-day-number {
+    background-color: #ff551155;
+}
+.journal-month-12 {
+    background-color: #d9bdd622;
+}
+.journal-month-12 .journal-day-number {
+    background-color: #d9bdd699;
 }

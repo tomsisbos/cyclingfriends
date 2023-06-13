@@ -3,10 +3,7 @@ import React from 'react'
 
 export default function Record ({data}) {
 
-    console.log(data)
-
     const style = () => {
-        console.log(data.filename)
         if (data.filename != null) return {backgroundImage: 'url(' + data.url + ')'}
         else return {}
     }
@@ -24,6 +21,7 @@ export default function Record ({data}) {
         <div className={getSizeClass()} style={style()}>
             <div className="journal-activity-title">{data.title}</div>
             <div>{(Math.round(data.distance * 10) / 10)} km</div>
+            <a href={'/activity/' + data.id}>ストーリーはこちら</a>
         </div>
     )
 }
