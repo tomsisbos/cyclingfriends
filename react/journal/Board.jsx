@@ -30,7 +30,7 @@ export default function Board () {
                 setData(defaultData)
                 const newElements = prepareElements(defaultData)
                 setElements(newElements)
-                console.log(elements)
+                console.log(response)
                 resolve(true)
             })
         })
@@ -41,19 +41,23 @@ export default function Board () {
      * @param {int} year The year to query activities for
      * @param {int} month The month to query activities for (!starts from 0)
      */
-    const loadDate = (year, month) => {
-        var skipUpdate = false
-        var newData = data
-        if (year in newData) {
-            if (month in newData[year] && newData[year][month].length > 0) skipUpdate = true // Don't fetch new data if the year/month pair is already populated
-        } else newData[year] = {} // Create a new year property if necessary
-        // Query for year/month corresponding data and add it to data
-        if (!skipUpdate) axios('/api/activities/journal.php?task=activity_data&user_id=' + user_id + '&year=' + year + '&month=' + month).then(response => {
-            newData[year][month] = response.data
-            setData(newData)
-            const newElements = prepareElements(newData)
-            setElements(newElements)
-            console.log(elements)
+    const loadDate = async (year, month) => {
+        return new Promise((resolve, reject) => {
+            console.log(data)
+            var skipUpdate = false
+            var newData = data
+            if (year in newData) {
+                if (month in newData[year] && newData[year][month].length > 0) skipUpdate = true // Don't fetch new data if the year/month pair is already populated
+            } else newData[year] = {} // Create a new year property if necessary
+            // Query for year/month corresponding data and add it to data
+            if (!skipUpdate) axios('/api/activities/journal.php?task=activity_data&user_id=' + user_id + '&year=' + year + '&month=' + month).then(response => {
+                console.log(data)
+                newData[year][month] = response.data
+                setData(newData)
+                const newElements = prepareElements(newData)
+                setElements(newElements)
+                resolve(true)
+            })
         })
     }
     
@@ -80,8 +84,13 @@ export default function Board () {
 
     // Get user activities data at component loading
     useEffect( () => {
-        initialize().then(() => loadDate(defaultYear, defaultMonth))
+        initialize()
     }, [])
+
+    // Rerender on data change
+    useEffect( () => {
+        loadDate(defaultYear, defaultMonth)
+    }, [data])
 
     return (
         <div className="journal-board">{elements}</div>
