@@ -12,7 +12,7 @@ function App () {
   
     return (
         <>
-            <Board currentDate={date} setDate={setDate} />
+            <Board setDate={setDate} />
             <Footer date={date}/>
         </>
     )

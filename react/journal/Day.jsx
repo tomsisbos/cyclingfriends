@@ -1,8 +1,13 @@
 
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import Record from '/react/journal/Record.jsx'
 
-export default function Day ({dayActivities, dayNumber}) {
+export default function Day ({dayNumber, weekDay, dayActivities}) {
+
+    // Set a special class to the first day
+    const dayClass = () => {
+        return ' day-' + weekDay
+    }
 
     const getRecords = () => {
         var records = []
@@ -13,13 +18,13 @@ export default function Day ({dayActivities, dayNumber}) {
         }
 
         if (records.length > 0) return (
-            <div className="journal-day worked">
+            <div className={"journal-day worked" + dayClass()}>
                 <div className="journal-day-number">{dayNumber}日</div>
                 {records}
             </div>
         )
         else return (
-            <div className="journal-day rested">
+            <div className={"journal-day rested" + dayClass()}>
                 <div className="journal-day-number">{dayNumber}日</div>
             </div>
         )

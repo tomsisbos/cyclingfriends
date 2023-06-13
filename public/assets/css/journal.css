@@ -24,6 +24,82 @@
     justify-content: center;
     grid-gap: 20px;
     grid-template-columns: repeat(7, 150px);
+    direction: rtl;
+}
+
+
+
+.journal-month-1 {
+    background-color: #eaf5fe22;
+}
+.journal-month-1 .journal-day-number {
+    background-color: #e5e8ea;
+}
+.journal-month-2 {
+    background-color: #9afffd22;
+}
+.journal-month-2 .journal-day-number {
+    background-color: #c2eceb;
+}
+.journal-month-3 {
+    background-color: #e2c6ff22;
+}
+.journal-month-3 .journal-day-number {
+    background-color: #e2c6ff99;
+}
+.journal-month-4 {
+    background-color: #ffc6df22;
+}
+.journal-month-4 .journal-day-number {
+    background-color: #ffc6df99;
+}
+.journal-month-5 {
+    background-color: #25e02322;
+}
+.journal-month-5 .journal-day-number {
+    background-color: #25e02355;
+}
+.journal-month-6 {
+    background-color: #148b0e22;
+}
+.journal-month-6 .journal-day-number {
+    background-color: #148b0e55;
+}
+.journal-month-7 {
+    background-color: #d3ff0022;
+}
+.journal-month-7 .journal-day-number {
+    background-color: #d3ff0055;
+}
+.journal-month-8 {
+    background-color: #dcd90022;
+}
+.journal-month-8 .journal-day-number {
+    background-color: #dcd90055;
+}
+.journal-month-9 {
+    background-color: #aeb00022;
+}
+.journal-month-9 .journal-day-number {
+    background-color: #aeb00055;
+}
+.journal-month-10 {
+    background-color: #8a540022;
+}
+.journal-month-10 .journal-day-number {
+    background-color: #8a540055;
+}
+.journal-month-11 {
+    background-color: #ff551122;
+}
+.journal-month-11 .journal-day-number {
+    background-color: #ff551155;
+}
+.journal-month-12 {
+    background-color: #d9bdd622;
+}
+.journal-month-12 .journal-day-number {
+    background-color: #d9bdd699;
 }
 
 .journal-day {
@@ -42,6 +118,28 @@
 }
 .journal-day.worked:hover {
     z-index: 3;
+}
+
+.journal-day.day-6 {
+    grid-column-start: 2;
+}
+.journal-day.day-5 {
+    grid-column-start: 3;
+}
+.journal-day.day-4 {
+    grid-column-start: 4;
+}
+.journal-day.day-3 {
+    grid-column-start: 5;
+}
+.journal-day.day-2 {
+    grid-column-start: 6;
+}
+.journal-day.day-1 {
+    grid-column-start: 7;
+}
+.journal-day.day-0 {
+    grid-column-start: 1;
 }
 
 .journal-record {
@@ -166,16 +264,38 @@
 
 .journal-footer {
     position: fixed;
+    display: flex;
+    flex-direction: column;
     bottom: 0;
     width: 100%;
-    padding: 20px 0;
-    text-align: center;
+    align-items: center;
+    justify-content: center;
     font-size: 22px;
     letter-spacing: 5;
     font-family: Yu Mincho;
     background-color: #ffffff99;
     backdrop-filter: blur(10px);
 }
+.journal-subfooter {
+    padding: 8px 0;
+    font-size: 14px;
+}
+.journal-footer-date {
+    backdrop-filter: blur(10px);
+    justify-content: center;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 14px 0;
+}
+.journal-footer-month {
+    font-size: 20px;
+}
+.journal-footer-day {
+    min-height: auto !important;
+}
+
 
 @media only screen and (max-width: 980px) {
     .journal-month {
@@ -191,79 +311,36 @@
         width: 90vw !important;
         height: 90vw !important;
     }
-}
-
-
-
-.journal-month-1 {
-    background-color: #eaf5fe22;
-}
-.journal-month-1 .journal-day-number {
-    background-color: #e5e8ea;
-}
-.journal-month-2 {
-    background-color: #9afffd22;
-}
-.journal-month-2 .journal-day-number {
-    background-color: #c2eceb;
-}
-.journal-month-3 {
-    background-color: #e2c6ff22;
-}
-.journal-month-3 .journal-day-number {
-    background-color: #e2c6ff99;
-}
-.journal-month-4 {
-    background-color: #ffc6df22;
-}
-.journal-month-4 .journal-day-number {
-    background-color: #ffc6df99;
-}
-.journal-month-5 {
-    background-color: #25e02322;
-}
-.journal-month-5 .journal-day-number {
-    background-color: #25e02355;
-}
-.journal-month-6 {
-    background-color: #148b0e22;
-}
-.journal-month-6 .journal-day-number {
-    background-color: #148b0e55;
-}
-.journal-month-7 {
-    background-color: #d3ff0022;
-}
-.journal-month-7 .journal-day-number {
-    background-color: #d3ff0055;
-}
-.journal-month-8 {
-    background-color: #dcd90022;
-}
-.journal-month-8 .journal-day-number {
-    background-color: #dcd90055;
-}
-.journal-month-9 {
-    background-color: #aeb00022;
-}
-.journal-month-9 .journal-day-number {
-    background-color: #aeb00055;
-}
-.journal-month-10 {
-    background-color: #8a540022;
-}
-.journal-month-10 .journal-day-number {
-    background-color: #8a540055;
-}
-.journal-month-11 {
-    background-color: #ff551122;
-}
-.journal-month-11 .journal-day-number {
-    background-color: #ff551155;
-}
-.journal-month-12 {
-    background-color: #d9bdd622;
-}
-.journal-month-12 .journal-day-number {
-    background-color: #d9bdd699;
+    .journal-day {
+        grid-column-start: unset !important;
+    }
+    .journal-day::after {
+        position: absolute;
+        left: -60px;
+        opacity: 0.3;
+    }
+    .journal-day.day-6::after {
+        content: '土';
+    }
+    .journal-day.day-5::after {
+        content: '金';
+    }
+    .journal-day.day-4::after {
+        content: '木';
+    }
+    .journal-day.day-3::after {
+        content: '水';
+    }
+    .journal-day.day-2::after {
+        content: '火';
+    }
+    .journal-day.day-1::after {
+        content: '月';
+    }
+    .journal-day.day-0::after {
+        content: '日';
+    }
+    .journal-subfooter {
+        display: none;
+    }
 }
