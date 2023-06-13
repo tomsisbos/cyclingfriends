@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import Loader from '/react/components/Loader.jsx'
 import Month from '/react/journal/Month.jsx'
 import axios from 'axios'
 
 export default function Board () {
 
     const user_id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
-
     const defaultYear = new Date().getFullYear()
     const defaultMonth = new Date().getMonth() + 1
-
+    
     const [elements, setElements] = useState([])
+    const [scroll, setScroll] = useState(0)
 
     const initialize = async () => {
         return new Promise((resolve, reject) => {
-            axios('/api/activities/journal.php?task=user_inscription_date&user_id=' + user_id).then(response => {
+            axios('/api/activities/journal.php?task=first_activity_date&user_id=' + user_id).then(response => {
                 var defaultData = {}
                 var inscriptionDate = new Date(response.data)
                 const inscriptionYear = inscriptionDate.getFullYear()
@@ -41,11 +40,14 @@ export default function Board () {
      */
     const loadDate = async (newData, year, month) => {
         return new Promise((resolve, reject) => {
+
+            // Check for currently existing data
             var skipUpdate = false
             if (year in newData) {
                 if (month in newData[year] && newData[year][month].length > 0) skipUpdate = true // Don't fetch new data if the year/month pair is already populated
             } else newData[year] = {} // Create a new year property if necessary
-            // Query for year/month corresponding data and add it to data
+
+            // Query for year/month corresponding data and update elements accordingly
             if (!skipUpdate) axios('/api/activities/journal.php?task=activity_data&user_id=' + user_id + '&year=' + year + '&month=' + month).then(response => {
                 console.log(response)
                 newData[year][month] = response.data
@@ -62,11 +64,11 @@ export default function Board () {
      * @returns {Month[]}
      */
     const prepareElements = (newData) => {
-        var elements = [];
-        let keyNumber = 0;
+        var elements = []
+        let keyNumber = 0
         for (const [year, yearData] of Object.entries(newData)) {
             for (const [month, monthData] of Object.entries(yearData)) {
-                elements.push(<Month key={keyNumber} activities={monthData} monthNumber={month} daysInMonth={getDaysInMonth(year, month)} />)
+                elements.push(<Month data={newData} load={loadDate} key={keyNumber} activities={monthData} yearNumber={year} monthNumber={month} daysInMonth={getDaysInMonth(year, month)} />)
                 keyNumber++
             }
         }
@@ -79,7 +81,6 @@ export default function Board () {
 
     // Get user activities data at component loading
     useEffect(() => {
-        console.log('initialize')
         initialize().then((newData) => loadDate(newData, defaultYear, defaultMonth))
     }, [])
 

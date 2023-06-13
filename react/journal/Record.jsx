@@ -3,6 +3,14 @@ import React from 'react'
 
 export default function Record ({data}) {
 
+    console.log(data)
+
+    const style = () => {
+        console.log(data.filename)
+        if (data.filename != null) return {backgroundImage: 'url(' + data.url + ')'}
+        else return {}
+    }
+
     const getSizeClass = () => {
         if (data.distance < 25) return 'journal-record x-small'
         else if (data.distance < 50) return 'journal-record small'
@@ -13,7 +21,7 @@ export default function Record ({data}) {
     }
 
     return (
-        <div className={getSizeClass()} style={{backgroundImage: 'url(' + data.url + ')'}}>
+        <div className={getSizeClass()} style={style()}>
             <div className="journal-activity-title">{data.title}</div>
             <div>{(Math.round(data.distance * 10) / 10)} km</div>
         </div>

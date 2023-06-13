@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useRef } from 'react'
+import useIntersection from '/react/hooks/useIntersection.jsx'
 import Day from '/react/journal/Day.jsx'
 
-export default function Month ({activities, monthNumber, daysInMonth}) {
+export default function Month ({data, load, activities, yearNumber, monthNumber, daysInMonth}) {
+    
+    const ref = useRef();
+    const inViewport = useIntersection(ref, '0px')
+    if (inViewport) {
+        load(data, yearNumber, monthNumber)
+        console.log(ref.current)
+    }
 
     const getDays = () => {
         var elements = [];
@@ -16,10 +24,10 @@ export default function Month ({activities, monthNumber, daysInMonth}) {
     }
 
     return (
-        <>
+        <div ref={ref}>
             <div className="journal-month-name">{monthNumber}月</div>
             <div className="journal-month">{getDays()}</div>
-        </>
+        </div>
     )
 
 }
