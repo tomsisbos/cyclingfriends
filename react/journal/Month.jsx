@@ -1,15 +1,14 @@
-import React, { useState, useRef, useContext } from 'react'
-import AppContext from "/react/journal/AppContext.js"
+import React, { useState, useRef } from 'react'
 import useIntersection from '/react/hooks/useIntersection.jsx'
 import Day from '/react/journal/Day.jsx'
-import Loader from '/react/components/loader.jsx'
+import Loader from '/react/components/Loader.jsx'
 
-export default function Month ({data, load, activities, yearNumber, monthNumber, daysInMonth}) {
+export default function Month ({data, load, activities, yearNumber, monthNumber, daysInMonth, currentDate, setDate}) {
     
     // Define constants
     const ref = useRef()
     const inViewport = useIntersection(ref, '0px')
-    const fullyInViewport = useIntersection(ref, '50%')
+    const fullViewport = useIntersection(ref, '50%')
     
     // Display a loader if activities have not finished loading
     const [loading, setLoading] = useState(false)
@@ -19,9 +18,12 @@ export default function Month ({data, load, activities, yearNumber, monthNumber,
     // Load activity data when enters viewport
     if (inViewport) load(data, yearNumber, monthNumber)
 
-    // Change displayed year in footer in accordance with currently displayed month
-    const setCurrentYear = useContext(AppContext)
-    if (fullyInViewport) setCurrentYear(yearNumber)
+    if (fullViewport) {
+        if (yearNumber != currentDate.year || monthNumber != currentDate.month) {
+            console.log('date set')
+            setDate({year: yearNumber, month: monthNumber + 1})
+        }
+    }
 
     // Build day components in accordance with activities held on this day
     const getDays = () => {
@@ -38,14 +40,14 @@ export default function Month ({data, load, activities, yearNumber, monthNumber,
 
     // Render component
     if (loading) return (
-        <div className={"journal-month-" + monthNumber} ref={ref}>
-            <div className="journal-month-name">{monthNumber}月</div>
+        <div className={"journal-month-" + monthNumber}>
+            <div className="journal-month-name" ref={ref}>{monthNumber}月</div>
             <Loader />
         </div>
     )
     else return (
-        <div className={"journal-month-" + monthNumber} ref={ref}>
-            <div className="journal-month-name">{monthNumber}月</div>
+        <div className={"journal-month-" + monthNumber}>
+            <div className="journal-month-name" ref={ref}>{monthNumber}月</div>
             <div className="journal-month">{getDays()}</div>
         </div>
     )

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import Loader from '/react/components/loader.jsx'
+import Loader from '/react/components/Loader.jsx'
 import Month from '/react/journal/Month.jsx'
 import axios from 'axios'
 
-export default function Board () {
+export default function Board ({currentDate, setDate}) {
 
     const user_id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
     const defaultYear = new Date().getFullYear()
@@ -71,7 +71,7 @@ export default function Board () {
         let keyNumber = 0
         for (const [year, yearData] of Object.entries(newData)) {
             for (const [month, monthData] of Object.entries(yearData)) {
-                elements.push(<Month data={newData} load={loadDate} key={keyNumber} activities={monthData} yearNumber={year} monthNumber={month} daysInMonth={getDaysInMonth(year, month)} />)
+                elements.push(<Month data={newData} load={loadDate} key={keyNumber} activities={monthData} yearNumber={parseInt(year)} monthNumber={parseInt(month)} daysInMonth={getDaysInMonth(year, month)} currentDate={currentDate} setDate={setDate}/>)
                 keyNumber++
             }
         }
