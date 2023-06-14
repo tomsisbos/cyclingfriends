@@ -136,14 +136,16 @@ class ActivityData extends Model {
             'distance' => $session['total_distance'],
             'duration' => timestampToDateInterval(round($session['total_elapsed_time'])),
             'duration_running' => $duration_running,
-            'positive_elevation' => $session['total_ascent'],
-            'negative_elevation' => $session['total_descent'],
-            'altitude_min' => min($record['altitude']),
-            'altitude_max' => max($record['altitude']),
             'speed_max' => $session['max_speed'],
             'start_time' => new DateTime(date('Y-m-d H:i:s', $session['start_time'])), new DateTimeZone('Asia/Tokyo'),
             'finish_time' => new DateTime(date('Y-m-d H:i:s', $record['timestamp'][count($record['timestamp']) - 1]), new DateTimeZone('Asia/Tokyo'))
         ];
+        if (isset($session['total_ascent'])) $this->summary['positive_elevation'] = $session['total_ascent'];
+        else $this->summary['positive_elevation'] = 0;
+        if (isset($session['total_descent'])) $this->summary['negative_elevation'] = $session['total_descent'];
+        else $this->summary['negative_elevation'] = 0;
+        if (isset($record['altitude'])) $this->summary['altitude_max'] = max($record['altitude']);
+        else $this->summary['altitude_max'] = 0;
         if (isset($record['temperature'][0])) {
             $this->summary['temperature_min'] = min($record['temperature']);
             $this->summary['temperature_avg'] = avg($record['temperature']);
