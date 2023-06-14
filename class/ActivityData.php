@@ -193,7 +193,7 @@ class ActivityData extends Model {
      */
     public function alreadyExists ($user_id) {
         $checkIfExists = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND datetime = ?");
-        $checkIfExists->execute([$user_id, (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo'))]);
+        $checkIfExists->execute([$user_id, (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')]);
         if ($checkIfExists->rowCount() > 0) return true;
         else return false;
     }   
