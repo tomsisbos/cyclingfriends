@@ -566,6 +566,11 @@ nav .site-logo {
 		margin: 0px;
 	}
 }
+@media only screen and (max-width: 400px) {
+	nav .navbar-brand {
+        display: none !important;
+    }
+}
 nav .navbar-brand.f {
     font-size: xx-large;
 }
@@ -1555,8 +1560,8 @@ input[type="range"]::-webkit-slider-thumb {
     position: fixed;
     width: 60px;
     height: 60px;
-    bottom: 20px;
-    right: 20px;
+    bottom: -6px;
+    right: -6px;
     background-color: #fffa9c;
     padding: 20px;
     border-radius: 99px;
