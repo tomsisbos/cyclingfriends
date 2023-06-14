@@ -290,13 +290,15 @@ class ActivityData extends Model {
             'elevation' => $this->summary['positive_elevation'],
             'speed_max' => $this->summary['speed_max'],
             'slope_max' => null,
-            'altitude_max' => $this->summary['altitude_max'],
-            'altitude_min' => $this->summary['altitude_min'],
             'route_data' => $route_data,
             'checkpoints_data' => $checkpoints_data
         ];
 
         // Possibly missing data
+        if (isset($this->summary['altitude_max'])) $activity_data['altitude_max'] = $this->summary['altitude_max'];
+        else $activity_data['altitude_max'] = null;
+        if (isset($this->summary['altitude_min'])) $activity_data['altitude_min'] = $this->summary['altitude_min'];
+        else $activity_data['altitude_min'] = null;
         if (isset($this->summary['temperature_min'])) $activity_data['temperature']['min'] = $this->summary['temperature_min'];
         else $activity_data['temperature']['min'] = null;
         if (isset($this->summary['temperature_avg'])) $activity_data['temperature']['avg'] = $this->summary['temperature_avg'];
