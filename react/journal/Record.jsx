@@ -17,8 +17,13 @@ export default function Record ({data}) {
         else if (data.distance >= 160) return 'journal-record xx-large'
     }
 
+    const getPrivacyClass = () => {
+        if (data.privacy == 'private') return ' private'
+        else return ''
+    }
+
     return (
-        <div className={getSizeClass()} style={style()}>
+        <div className={getSizeClass() + getPrivacyClass()} style={style()}>
             <div className="journal-activity-title">{data.title}</div>
             <div>{(Math.round(data.distance * 10) / 10)} km</div>
             <a href={'/activity/' + data.id}>ストーリーはこちら</a>

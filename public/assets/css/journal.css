@@ -211,6 +211,16 @@
     font-size: 16;
 }
 
+.journal-record.private::after {
+    content: '非公開';
+    background-color: #ff5555;
+    display: inline;
+    width: fit-content;
+    padding: 2px 8px;
+    border-radius: 4px;
+    place-self: center;
+}
+
 .journal-day.worked .journal-day-number {
     display: none;
 }

@@ -20,7 +20,10 @@ if (isset($_GET)) {
         $year = intval($_GET['year']);
         $month = intval($_GET['month']);
 
-        $getActivitiesByDate = $db->prepare("SELECT a.id, a.title, a.datetime, r.distance, a.duration_running, (
+        if (!isset($connected_user) || $connected_user->id != $user->id) $privacy_contition = "AND a.privacy = 'public'";
+        else $privacy_contition = '';
+
+        $getActivitiesByDate = $db->prepare("SELECT a.id, a.title, a.datetime, r.distance, a.duration_running, a.privacy, (
             SELECT
                 filename
             FROM
@@ -31,7 +34,7 @@ if (isset($_GET)) {
                     ELSE activity_id = a.id
                 END
             LIMIT 1
-        ) AS filename FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? AND YEAR(a.datetime) = ? AND MONTH(a.datetime) = ? ORDER BY a.datetime DESC");
+        ) AS filename FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? " .$privacy_contition. "AND YEAR(a.datetime) = ? AND MONTH(a.datetime) = ? ORDER BY a.datetime DESC");
         $getActivitiesByDate->execute([$user->id, $year, $month]);
         $result = $getActivitiesByDate->fetchAll(PDO::FETCH_ASSOC);
         $activity_data = array_map(function ($entry) {
