@@ -55,6 +55,7 @@ export default function Board ({setDate}) {
                     newData[year][month] = response.data
                     const newElements = prepareElements(newData)
                     setElements(newElements)
+                    console.log(newData)
                     resolve(true)
                 })
             }
