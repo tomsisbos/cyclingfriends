@@ -45,5 +45,9 @@ foreach ($data['activityFiles'] as $activity_files) {
     // Parse file and create an activity
     $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
     $activity_data = $activity_file->parse();
-    if (!$activity_data->alreadyExists($user_id)) $activity_data->createActivity($user_id, ['title' => $activity_files['activityName']]);
+    if (!$activity_data->alreadyExists($user_id)) $activity_id = $activity_data->createActivity($user_id, ['title' => $activity_files['activityName']]);
+
+    // Send a notification
+    $activity = new Activity($activity_id);
+    $activity->notify($user_id, 'new_synced_activity');
 }

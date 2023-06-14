@@ -109,6 +109,10 @@ class Notification extends Model {
                 $this->text = $actor->login. 'が「' .$entry->title. '」にコメントしました。';
                 $this->ref = 'activity/' .$entry->id;
                 break;
+            case 'new_synced_activity':
+                $this->text = '新規アクティビティ「' .$entry->title. '」が同期されました。こちらにクリックして、ストーリーを完成させましょう！';
+                $this->ref = 'activity/' .$entry->id;
+                break;
             // Sceneries
             case 'scenery_review_posting':
                 $this->text = '絶景スポット「' .$entry->name. '」に新しいコメントが投稿されました。';
