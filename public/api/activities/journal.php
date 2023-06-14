@@ -8,7 +8,8 @@ if (isset($_GET)) {
 
         $getFirstActivityDate = $db->prepare("SELECT datetime FROM activities WHERE user_id = ? ORDER BY datetime ASC LIMIT 1");
         $getFirstActivityDate->execute([$_GET['user_id']]);
-        $first_activity_date = $getFirstActivityDate->fetch(PDO::FETCH_COLUMN);
+        if ($getFirstActivityDate->rowCount() > 0) $first_activity_date = $getFirstActivityDate->fetch(PDO::FETCH_COLUMN);
+        else $first_activity_date = (new DateTime('now'))->format('Y-m-d');
 
         echo json_encode($first_activity_date);
 

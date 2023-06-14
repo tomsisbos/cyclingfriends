@@ -62,6 +62,7 @@ foreach ($data['activityFiles'] as $activity_files) {
     } catch (Exception $e) {
         $user = new User($user_id);
         if ($e->getMessage() == 'missing_coordinates') $user->notify($user_id, 'new_synced_activity_error_missing_coordinates');
+        else if ($e->getMessage() == 'no_record_data') $user->notify($user_id, 'new_synced_activity_error_missing_record');
         else $user->notify($user_id, 'new_synced_activity_error');
     }
 }

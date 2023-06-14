@@ -141,9 +141,9 @@ class Route extends Model {
             $activity_photos = $this->getPublicPhotos();
             $photos = [];
             foreach ($activity_photos as $photo_data) {
-                $photo = new ActivityPhoto($photo_data['id']);
-                $photo->remoteness = $photo_data['remoteness'];
-                $photo->closest_point = $photo_data['closest_point'];
+                $photo = new ActivityPhoto($photo_data->id);
+                $photo->remoteness = $photo_data->remoteness;
+                $photo->closest_point = $photo_data->closest_point;
                 array_push($photos, $photo);
             }
             $remoteness_column = array_column($photos, 'remoteness');
@@ -277,6 +277,7 @@ class Route extends Model {
      * Get public photos on the route (with remoteness and distance to start appended if $append_distance param is true)
      * @param int $tolerance tolerance remoteness from route in meters
      * @param boolean $append_distance whether append remoteness and distance or not
+     * @return ActivityPhoto
      */
     public function getPublicPhotos ($tolerance = 3000, $append_distance = true) {
 

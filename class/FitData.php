@@ -7,6 +7,7 @@ class FitData {
     
     function __construct($data) {
 
+        if (!isset($data['record'])) throw new Exception('no_record_data');
         foreach ($data['record'] as $key => $entry) {
             $data_record[$key] = array_values($entry);
         }
