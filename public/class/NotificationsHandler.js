@@ -84,7 +84,7 @@ export default class NotificationsHandler {
                 // Set click listener
                 element.addEventListener('click', async () => {
                     await this.setToChecked(notification.id)
-                    window.location.href = '/' + notification.ref
+                    if (notification.ref) window.location.href = '/' + notification.ref
                 } )
             } )
             // Append 'check all notifications' element

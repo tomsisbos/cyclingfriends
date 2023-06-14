@@ -44,7 +44,13 @@ foreach ($data['activityFiles'] as $activity_files) {
 
     // Parse file and create an activity
     $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
-    $activity_data = $activity_file->parse();
+    try {
+        $activity_data = $activity_file->parse();
+    } catch (Exception $e) {
+        $user = new User($user_id);
+        if ($e->getMessage() == 'missing_coordinates') $user->notify($user_id, 'new_synced_activity_error_missing_coordinates');
+        else $user->notify($user_id, 'new_synced_activity_error');
+    }
     if (!$activity_data->alreadyExists($user_id)) $activity_id = $activity_data->createActivity($user_id, ['title' => $activity_files['activityName']]);
 
     // Send a notification

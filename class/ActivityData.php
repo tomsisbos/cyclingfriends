@@ -144,7 +144,7 @@ class ActivityData extends Model {
         else $this->summary['positive_elevation'] = 0;
         if (isset($session['total_descent'])) $this->summary['negative_elevation'] = $session['total_descent'];
         else $this->summary['negative_elevation'] = 0;
-        if (isset($record['altitude'])) $this->summary['altitude_max'] = max($record['altitude']);
+        if (isset($record['altitude'][0]) && $record['altitude'][0] != null) $this->summary['altitude_max'] = max($record['altitude']);
         else $this->summary['altitude_max'] = 0;
         if (isset($record['temperature'][0])) {
             $this->summary['temperature_min'] = min($record['temperature']);
@@ -157,6 +157,7 @@ class ActivityData extends Model {
         }
 
         // Build trackpoints
+        if (!isset($record['position_long']) || $record['position_long'] == null) throw new Exception('missing_coordinates');
         $coordinates = [];
         $trackpoints = [];
         for ($i = 0; $i < count($record['position_long']) - 1; $i++) {
