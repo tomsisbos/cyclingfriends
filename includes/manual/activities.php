@@ -25,7 +25,8 @@ $content = [
                     [
                         'title' => '（１）Garminコネクトとの同期',
                         'text' => [
-                            '<a href="https://www.garmin.co.jp/" target="_blank">Garmin社</a>のサイクルコンピューターをお持ちの方は、「Garmin Connect」と同期することができます。'
+                            '<a href="https://www.garmin.co.jp/" target="_blank">Garmin社</a>のサイクルコンピューターをお持ちの方は、「Garmin Connect」と同期することができます。接続方法に関しましてはこちらをご参照ください。',
+                            '新規のログがGarmin Connect上で保存されたら、ログファイルがCyclingFriendsのサーバーに通知され、解析を経て、新規のアクティビティが自動作成されるようになっています。デフォルトでは、「非公開」設定で作成されるので、通知にクリックして頂くと、写真やストーリーを追加したり、公開設定を変更したり、好きなようにストーリーページを作り上げて頂きます。'
                         ]
                     ],
                     [

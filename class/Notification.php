@@ -111,7 +111,7 @@ class Notification extends Model {
                 break;
             case 'new_synced_activity':
                 $this->text = '新規アクティビティ「' .$entry->title. '」が同期されました。こちらにクリックして、ストーリーを完成させましょう！';
-                $this->ref = 'activity/' .$entry->id;
+                $this->ref = 'activity/' .$entry->id. '/edit';
                 break;
             case 'new_synced_activity_error':
                 $this->text = 'Garmin Connectとの同期に失敗しました。';
