@@ -142,6 +142,14 @@
     grid-column-start: 1;
 }
 
+.journal-record-box {
+    position: relative;
+    height: 70px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .journal-record {
     position: absolute;
     width: 100%;
@@ -159,36 +167,36 @@
     transition: 0.5s width ease-in, 0.5s height ease-in;
 }
 .journal-record.x-small {
-    width: 70%;
-    height: 70%;
+    width: 128px;
+    height: 128px;
 }
 .journal-record.small {
-    width: 85%;
-    height: 85%;
+    width: 140px;
+    height: 140px;
 }
 .journal-record.medium {
-    width: 100%;
-    height: 100%;
+    width: 152px;
+    height: 152px;
 }
 .journal-record.large {
-    width: 110%;
-    height: 110%;
+    width: 164px;
+    height: 164px;
 }
 .journal-record.x-large {
-    width: 120%;
-    height: 120%;
+    width: 176px;
+    height: 176px;
 }
 .journal-record.xx-large {
-    width: 130%;
-    height: 130%;
+    width: 188px;
+    height: 188px;
 }
 .journal-record:hover {
     width: 250px !important;
     height: 250px !important;
     display: flex;
+    position: absolute;
     flex-direction: column;
     justify-content: center;
-    position: absolute;
     transition: 0.5s width ease-out, 0.5s height ease-out;
     z-index: 2;
 }
@@ -212,7 +220,7 @@
 }
 
 .journal-record.private::after {
-    content: '非公開';
+    content: '\975e\516c\958b';
     background-color: #ff5555;
     display: inline;
     width: fit-content;
@@ -247,28 +255,28 @@
 
 @media only screen and (min-width: 800px) and (max-width: 1200px) {
     .journal-record.x-small {
-        height: 60%;
-        width: 60%;
+        width: 108px;
+        height: 108px;
     }
     .journal-record.small {
-        height: 70%;
-        width: 70%;
+        width: 120px;
+        height: 120px;
     }
     .journal-record.medium {
-        height: 80%;
-        width: 80%;
+        width: 132px;
+        height: 132px;
     }
     .journal-record.large {
-        height: 88%;
-        width: 88%;
+        width: 144px;
+        height: 144px;
     }
     .journal-record.x-large {
-        height: 95%;
-        width: 95%;
+        width: 156px;
+        height: 156px;
     }
     .journal-record.xx-large {
-        height: 100%;
-        width: 100%;
+        width: 168px;
+        height: 168px;
     }
 }
 
@@ -330,25 +338,25 @@
         opacity: 0.3;
     }
     .journal-day.day-6::after {
-        content: '土';
+        content: '\571f';
     }
     .journal-day.day-5::after {
-        content: '金';
+        content: '\91d1';
     }
     .journal-day.day-4::after {
-        content: '木';
+        content: '\6728';
     }
     .journal-day.day-3::after {
-        content: '水';
+        content: '\6c34';
     }
     .journal-day.day-2::after {
-        content: '火';
+        content: '\706b';
     }
     .journal-day.day-1::after {
-        content: '月';
+        content: '\6708';
     }
     .journal-day.day-0::after {
-        content: '日';
+        content: '\65e5';
     }
     .journal-subfooter {
         display: none;

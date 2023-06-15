@@ -13,7 +13,9 @@ export default function Day ({dayNumber, weekDay, dayActivities}) {
         var records = []
         for (let number = 0; number < dayActivities.length; number++) {
             records.push(
-                <Record key={number} data={dayActivities[number]} />
+                <div className="journal-record-box">
+                    <Record key={number} data={dayActivities[number]} />
+                </div>
             )
         }
 

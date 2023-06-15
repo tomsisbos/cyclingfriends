@@ -26,6 +26,10 @@ class Manual extends Model {
             'chapter' => 'world',
             'id' => 'segments'
         ],
+        'activity-import' => [
+            'chapter' => 'activities',
+            'id' => 'aboutFiles'
+        ],
         'activity-photos' => [
             'chapter' => 'activities',
             'id' => 'activityphotos'
@@ -105,6 +109,14 @@ class Manual extends Model {
             'chapter' => 'user',
             'id' => 'settingrealname'
         ],
+        'user-settings-twitter' => [
+            'chapter' => 'user',
+            'id' => 'twitter'
+        ],
+        'user-settings-garmin' => [
+            'chapter' => 'user',
+            'id' => 'garmin'
+        ],
         'user-rights' => [
             'chapter' => 'user',
             'id' => 'rights'
@@ -140,8 +152,8 @@ class Manual extends Model {
             'subtitle' => 'Community'
         ],
         'user' => [
-            'title' => 'ユーザー情報',
-            'subtitle' => 'User information'
+            'title' => 'ユーザー情報＆設定',
+            'subtitle' => 'User information & settings'
         ],
         'sceneryguidelines' => [
             'title' => '絶景スポットの作成ガイドライン',
