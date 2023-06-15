@@ -239,16 +239,12 @@ class Manual extends Model {
                 else $query_string = "SELECT login FROM users ORDER BY RAND() LIMIT 1";
                 break;
             case '[activity_id]':
-                // If user is connected, return a random activity from connected user
-                if (isset($_SESSION['auth'])) $query_string = "SELECT id FROM activities WHERE user_id = {$_SESSION['id']} ORDER BY RAND() LIMIT 1";
-                // Else return a random activity
-                else $query_string = "SELECT id FROM activities WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                // Return a random public activity
+                $query_string = "SELECT id FROM activities WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
                 break;
             case '[ride_id]': 
-                // If user is connected, return a random ride from connected user
-                if (isset($_SESSION['auth'])) $query_string = "SELECT id FROM rides WHERE author_id = {$_SESSION['id']} ORDER BY RAND() LIMIT 1";
-                // Else return a random activity
-                else $query_string = "SELECT id FROM rides WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                // Return a random ride from connected user
+                $query_string = "SELECT id FROM rides WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
                 break;
             case '[route_id]': 
                 // If user is connected, return a route among his routes if exists, else return a random public route

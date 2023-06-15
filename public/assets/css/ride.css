@@ -8,6 +8,10 @@
     background-position: center !important;
 }
 
+.ride-infos a {
+    word-break: break-all;
+}
+
 .mySlides.rd-slide {
     height: 70% !important;
 }

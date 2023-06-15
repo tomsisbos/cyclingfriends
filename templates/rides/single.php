@@ -73,7 +73,7 @@ include '../includes/head.php'; ?>
 			if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; ?>
 			
 			<!-- Infos section -->
-			<div class="container margin-bottom">
+			<div class="container ride-infos margin-bottom">
 				<div class="row">
 					<div class="col-sm">
 						<p><strong>開催日 :</strong> <?= $ride->date; ?></p>

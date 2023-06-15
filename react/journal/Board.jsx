@@ -5,7 +5,7 @@ import axios from 'axios'
 
 export default function Board ({setDate}) {
 
-    const user_id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+    const user_id = document.querySelector('#journal').dataset.user
     const defaultYear = new Date().getFullYear()
     const defaultMonth = new Date().getMonth() + 1
     
@@ -55,7 +55,6 @@ export default function Board ({setDate}) {
                     newData[year][month] = response.data
                     const newElements = prepareElements(newData)
                     setElements(newElements)
-                    console.log(newData)
                     resolve(true)
                 })
             }

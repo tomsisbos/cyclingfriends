@@ -31,7 +31,7 @@
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div></a>
-						<a class="dropdown-item interactive" href="/journal/<?= $connected_user->id ?>"><div class="mainitem">活動日記</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('activity-journal', ['user_login' => $connected_user->login]) ?>"><div class="mainitem">活動日記</div></a>
 						<a class="dropdown-item interactive" href="/<?= $connected_user->login ?>/activities"><div class="mainitem">マイアクティビティ</div></a>
 					</div>
 				</li>

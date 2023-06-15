@@ -1,6 +1,7 @@
 <?php
 
 include '../actions/users/initPublicSessionAction.php';
+include '../actions/activities/getJournalIdAction.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -18,7 +19,7 @@ include '../includes/head.php'; ?>
 		// Space for error messages
 		include '../includes/result-message.php'; ?>
 		
-		<div id="journal"></div>
+		<div id="journal" data-user="<?= $user_id ?>"></div>
 	
 	</div>
 
