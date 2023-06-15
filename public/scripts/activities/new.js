@@ -56,7 +56,7 @@ $upload.addEventListener('change', async (e) => {
                     // Get activity data
 
                     // Display and prefill form
-                    document.querySelector('#topContainer').style.borderBottom = '1px solid #ced4da'
+                    document.querySelector('#topContainer').style.display = 'none'
                     hideResponseMessage()
                     $form.style.display = 'block'
                     newActivityMap.populateForm()

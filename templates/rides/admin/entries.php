@@ -29,6 +29,7 @@ include '../includes/head.php'; ?>
                                 <th class="sticky-th-row">ユーザーネーム</th>
                                 <th class="sticky-th-row">姓</th>
                                 <th class="sticky-th-row">名</th>
+                                <th class="sticky-th-row">メール</th>
                                 <th class="sticky-th-row text-center">性別</th>
                                 <th class="sticky-th-row text-center">年齢</th>
                                 <th class="sticky-th-row">場所</th> <?php
@@ -46,6 +47,7 @@ include '../includes/head.php'; ?>
                                         <td><?= $participant->login ?></td>
                                         <td><?= $participant->last_name ?></td>
                                         <td><?= $participant->first_name ?></td>
+                                        <td><?= $participant->email ?></td>
                                         <td class="text-center"><?= $participant->getGenderString() ?></td>
                                         <td class="text-center"><?= $participant->calculateAge() ?></td>
                                         <td><?php

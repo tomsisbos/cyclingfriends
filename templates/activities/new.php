@@ -1,6 +1,8 @@
 <?php 
 
 include '../actions/users/initSessionAction.php';
+include '../actions/garmin/disconnectionAction.php';
+include '../actions/garmin/authentificationAction.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -10,22 +12,55 @@ include '../includes/head.php'; ?>
 <link rel="stylesheet" href="/assets/css/ride.css" />
 <link rel="stylesheet" href="/assets/css/lightbox-style.css">
 
-<body>
+<body> <?php
 
-	<?php include '../includes/navbar.php'; ?>
+    include '../includes/navbar.php';
+	
+    // Space for general error messages
+    include '../includes/result-message.php'; ?>
 
     <div class="main">
-        
-        <h2 class="top-title">New activity</h2>
 
-            <div id="topContainer" class="container new-ac-container mb-0">
+        <div id="topContainer" class="container new-ac-container mb-0">
+        
+            <h2 class="top-title">新規アクティビティ作成</h2>
 
                 <div class="new-ac-upload-container">
-                    <label for="uploadActivity">
-                        <div class="btn smallbutton">アップロード</div>
-                    </label>
-                    <input type="file" id="uploadActivity" class="hidden" name="uploadActivity" />
-                    <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
+                    <div class="new-ac-upload-manual">
+                        <div class="new-ac-partner-logo">
+                            対応可能ファイル形式：<br>*.gpx、*.fit
+                        </div>
+                        <label class="btn smallbutton" for="uploadActivity">
+                            <div>ファイルをアップロード</div>
+                        </label>
+                        <input type="file" id="uploadActivity" class="hidden" name="uploadActivity" />
+                        <input type="hidden" name="MAX_FILE_SIZE" value="500000" />
+                    </div>
+                    <form method="POST" class="new-ac-upload-garmin">
+                        <div class="new-ac-partner-logo">
+                            <img src="/media/connect_logo_blue.png"></img>
+                        </div> <?php
+                        if ($connected_user->getGarmin()->isUserConnected()) { ?>
+                            <input class="btn smallbutton" type="submit" value="Garmin Connectと接続中（接続を解除）" name="garmin_disconnect"></input><?php
+                        } else { ?>
+                            <a class="btn smallbutton" href="<?= $authenticate_url ?>">Garmin Connectと同期</a><?php
+                        } ?>
+                    </form>
+                </div>
+                <div class="new-ac-upload-guidelines">
+                    <h4>１．走行データのインポート</h4>
+                    <p>上記の方法を用いて、まずはログデータを取り組みましょう。</p>
+                    <h4>２．アクティビティの設定</h4>
+                    <p>はじめに、タイトル、プライバシー設定、使用した自転車を入力します。</p>
+                    <h4>３．写真のインポート</h4>
+                    <p>次に、走行中に撮影した写真を取り組みましょう。</p>
+                    <p>ハイライト写真や絶景スポットの作成元に使う写真を指定します。必要に応じて、写真単体のプライバシー設定も確認します。</p>
+                    <h4>４．ストーリーの作成</h4>
+                    <p>どこで何が起きたかなど、コース上をクリックすることで、タイムラインにストーリーの記入欄が追加されるので、走行データとストーリーを結び付けることができます。</p>
+                    <h4>５．アクティビティの保存</h4>
+                    <p>走行データ、写真と文書が繋がっているブログ記事のようなページが出来上がりました。あとは保存するのみ！</p>
+                    <p>保存の際、必要に応じて絶景スポットの作成に関する案内ウィンドウが表示されます。</p>
+                    <p>詳細については<a href="/manual/activities" target="_blank">マニュアルを参照しましょう</a>！</p>
                 </div>
             
             </div>

@@ -26,6 +26,9 @@ class Manual extends Model {
             'chapter' => 'world',
             'id' => 'segments'
         ],
+        'activity' => [
+            'chapter' => 'activities',
+        ],
         'activity-import' => [
             'chapter' => 'activities',
             'id' => 'aboutFiles'
@@ -273,6 +276,7 @@ class Manual extends Model {
             if (is_numeric($class)) echo '<p>' .$text. '</p>';
             else if ($class == 'list') self::list($text['style'], $text['content']);
             else if ($class == 'table') self::table($text);
+            else if ($class == 'point') self::point($text);
             else echo '<div class="m-' .$class. '">' .$text. '</div>';
         }
         echo '</div>';

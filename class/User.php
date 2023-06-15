@@ -658,8 +658,10 @@ class User extends Model {
      * @param int $limit
      * @param string $order_by Column based on which to order request results by
      */
-    public function getActivities ($offset = 0, $limit = 20, $order_by = 'posting_date') {
-        $getActivities = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? ORDER BY {$order_by} DESC LIMIT " .$offset. ", " .$limit);
+    public function getActivities ($offset = 0, $limit = 20, $order_by = 'posting_date', $privacy = null) {
+        if (isset($privacy)) $privacy_string = " AND privacy = '" .$privacy. "'";
+        else $privacy_string = '';
+        $getActivities = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ?" .$privacy_string. " ORDER BY {$order_by} DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($this->id));
         return $getActivities->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -758,7 +760,7 @@ class User extends Model {
 
     // Get $number last activity photos
     public function getLastActivityPhotos ($number) {
-        $getLastActivityPhotos = $this->getPdo()->prepare("SELECT id FROM activity_photos WHERE user_id = ? ORDER BY datetime DESC LIMIT " . $number);
+        $getLastActivityPhotos = $this->getPdo()->prepare("SELECT id FROM activity_photos WHERE user_id = ? AND privacy = 'public' ORDER BY datetime DESC LIMIT " . $number);
         $getLastActivityPhotos->execute(array($this->id));
         return array_column($getLastActivityPhotos->fetchAll(PDO::FETCH_NUM), 0);
     }
