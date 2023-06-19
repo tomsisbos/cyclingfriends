@@ -16,7 +16,7 @@ if (!sessionStorage.getItem('helper-activity-new')) {
             <p><strong>4/4 ストーリーの作成</strong></p>
             <p>どこで何が起きたかなど、コース上をクリックすることで、タイムラインにストーリーの記入欄が追加されるので、走行データとストーリーを結び付けることができます。</p>
             `, document.querySelector('#divCheckpoints'), {class: 'medium-popup', position: 'topright'})
-
+            sessionStorage.setItem('helper-activity-new', true)
         })
 
     })
