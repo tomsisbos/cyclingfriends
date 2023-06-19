@@ -46,6 +46,11 @@ $upload.addEventListener('change', async (e) => {
                 // If file upload has succeed
                 if (response.success) {
 
+                    // Load helper
+                    var helperScript = document.createElement('script')
+                    helperScript.src = '/scripts/helpers/activities/after-upload.js'
+                    document.body.appendChild(helperScript)
+
                     // Instantiate and populate activity map
                     var newActivityMap = new NewActivityMap()
                     newActivityMap.loadActivityData(response.activityData)

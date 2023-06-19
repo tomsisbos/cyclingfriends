@@ -17,7 +17,7 @@ if (isAjax()) {
         require $folder . '/actions/blobStorageAction.php';
 
         // Select a random image amongst [imgs_number] most popular scenery images in the database
-        $getPopularSceneryImages = $db->prepare('SELECT img.id, img.filename, img.date, sc.name, sc.city, sc.prefecture FROM scenery_photos AS img JOIN sceneries AS sc ON img.scenery_id = sc.id WHERE MONTH(img.date) = MONTH(NOW()) ORDER BY img.likes DESC LIMIT 0, ' .$imgs_number);
+        $getPopularSceneryImages = $db->prepare('SELECT img.id, img.filename, img.date, sc.name, sc.city, sc.prefecture FROM scenery_photos AS img JOIN sceneries AS sc ON img.scenery_id = sc.id WHERE MONTH(img.date) = MONTH(NOW()) ORDER BY img.likes, RAND() DESC LIMIT 0, ' .$imgs_number);
         $getPopularSceneryImages->execute();
         $data = $getPopularSceneryImages->fetchAll(PDO::FETCH_ASSOC);
         $images = [];

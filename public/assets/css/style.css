@@ -23,6 +23,7 @@ body {
 	background-repeat: no-repeat;
 	background-position: bottom;
 	background-attachment: fixed !important;
+    word-break: break-word;
 }
 
 .main {

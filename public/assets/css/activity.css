@@ -56,6 +56,40 @@
     }
 }
 
+.new-ac-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#photosNumberElement {
+    margin-top: 12px;
+}
+
+.ac-photos-legend {
+    font-size: smaller;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #f0f0f0;
+}
+
+.ac-photos-legend .line {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.ac-photos-legend .icon {
+    width: 24;
+    text-align: center;
+}
+
+.ac-photos-legend .text {
+    color: #333;
+}
+
+
 #activityMapContainer {
     height: 70vh;
     width: 100%;

@@ -450,9 +450,9 @@ export default class NewActivityMap extends ActivityMap {
      */
     colorPrivacyString (privacyString) {
         switch (privacyString) {
-            case '公開': return '<div class="pg-ac-public">' + privacyString + '</>'
-            case '非公開': return '<div class="pg-ac-private">' + privacyString + '</>'
-            case '限定公開': return '<div class="pg-ac-limited">' + privacyString + '</>'
+            case '公開': return '<div class="pg-ac-public"><span class="iconify" data-icon="material-symbols:public"></span></div>'
+            case '非公開': return '<div class="pg-ac-private"><span class="iconify" data-icon="bxs:lock"></span></div>'
+            case '限定公開': return '<div class="pg-ac-limited"><span class="iconify" data-icon="mdi:world-off"></span></div>'
         }
     }
 
@@ -484,7 +484,7 @@ export default class NewActivityMap extends ActivityMap {
             // Delete button
             var $deleteButton = document.createElement('div')
             $deleteButton.className = 'pg-ac-photo-button pg-ac-close-button'
-            $deleteButton.innerText = 'x'
+            $deleteButton.innerHTML = '<span class="iconify" data-icon="iconamoon:close-bold"></span>'
             $deleteButton.title = '写真を削除する'
             photo.$thumbnail.appendChild($deleteButton)
             // Feature button
