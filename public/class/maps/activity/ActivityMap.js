@@ -159,8 +159,10 @@ export default class ActivityMap extends Map {
     }
 
     setCheckpointPopupContent (checkpoint) {
-        var checkpointTime = checkpoint.datetime
-        var startTime = this.data.checkpoints[0].datetime
+        var checkpointTime = checkpoint.datetime / 1000
+        var startTime = this.data.checkpoints[0].datetime / 1000
+        console.log(checkpointTime)
+        console.log(startTime)
         return `
             <div class="pg-ac-checkpoint-topline">
                 <div>km ` + checkpoint.distance + `</div>
