@@ -7,7 +7,7 @@ if (!empty($_POST)) {
     $result = $post->create($_POST['title'], $_POST['type'], nl2br($_POST['content']));
 
     // Post a tweet on admin account
-    $twitter = (new User(11))->getTwitter();
+    $twitter = (new User(2))->getTwitter();
     $nl = chr(13) . chr(10);
     $tweet_head = '【' .$_POST['title']. '】' . $nl . $nl;
     $tweet_foot = $nl . $nl .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/news';
