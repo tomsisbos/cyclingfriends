@@ -14,7 +14,6 @@ if (!empty($_POST)) {
     if (strlen($tweet_head . $_POST['content']) < 135) $content = $tweet_head . $_POST['content'] . $tweet_foot;
     else $content = mb_substr($tweet_head . $_POST['content'], 0, 134). '...' .$tweet_foot;
     $response = $twitter->post($content);
-    var_dump($response);
 
     if ($result) $successmessage = '「' .$post->title. '」が投稿されました！';
 }
