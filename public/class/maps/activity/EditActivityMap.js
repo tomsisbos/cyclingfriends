@@ -27,7 +27,7 @@ export default class EditActivityMap extends NewActivityMap {
         $start.innerHTML = '<strong>スタート : </strong>' + this.data.checkpoints[0].geolocation.city + ' (' + this.data.checkpoints[0].geolocation.prefecture + ')'
         $goal.innerHTML = '<strong>ゴール : </strong>' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.city + ' (' + this.data.checkpoints[this.data.checkpoints.length - 1].geolocation.prefecture + ')'
         $distance.innerHTML = '<strong>距離 : </strong>' + (Math.round(this.data.route.distance * 10) / 10) + 'km'
-        $duration.innerHTML = '<strong>時間 : </strong>' + (new Date(this.data.duration.date).getHours()) + 'h' + (new Date(this.data.duration.date).getMinutes())
+        $duration.innerHTML = '<strong>時間 : </strong>' + this.data.duration.h + 'h' + this.data.duration.i
         $elevation.innerHTML = '<strong>獲得標高 : </strong>' + this.data.route.elevation + 'm'
         $minTemperature.innerHTML = '<strong>最低気温 : </strong>' + this.data.temperature_min + '°C'
         $avgTemperature.innerHTML = '<strong>平均気温 : </strong>' + (Math.round(this.data.temperature_avg * 10) / 10) + '°C'

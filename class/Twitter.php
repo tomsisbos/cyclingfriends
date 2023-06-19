@@ -165,7 +165,7 @@ class Twitter extends Model {
      * @param array $photos Array of photo urls (up to 4)
      * @return any
      */
-    public function post ($text, $photos) {
+    public function post ($text, $photos = []) {
         
         $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->oauth_token, $this->oauth_token_secret);
 
@@ -180,7 +180,9 @@ class Twitter extends Model {
             array_push($photo_ids, $media->media_id_string);
         }
         $oauth->setApiVersion('2');
-        $result = $oauth->post('tweets', ['text' => $text, 'media' => ['media_ids' => $photo_ids]], true);
+        if (count($photos) > 0) $content = ['text' => $text, 'media' => ['media_ids' => $photo_ids]];
+        else $content = ['text' => $text];
+        $result = $oauth->post('tweets', $content, true);
         return $result;
     }
 
