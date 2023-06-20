@@ -9,6 +9,7 @@ use Location\Utility\PointToLineDistance;
 class Route extends Model {
     
     private $container_name = 'route-thumbnails';
+    private $lngLatFormat;
     protected $table = 'routes';
     public $id;
     public $author;
@@ -20,14 +21,13 @@ class Route extends Model {
     public $elevation;
     public $startplace;
     public $goalplace;
-    public $coordinates;
     public $thumbnail_filename;
-    public $time;
     public $tunnels;
     
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
         $this->id                 = $id;
+        $this->lngLatFormat       = $lngLatFormat;
         $data = $this->getData($this->table);
         $this->author             = new User($data['author_id']);
         $this->category           = $data['category'];
@@ -38,31 +38,8 @@ class Route extends Model {
         $this->elevation          = floatval($data['elevation']);
         $this->startplace         = $data['startplace'];
         $this->goalplace          = $data['goalplace'];
-        if ($lngLatFormat) $this->coordinates = $this->getLinestring($lngLatFormat)->coordinates;
-        else $this->coordinates = $this->getLinestring($lngLatFormat)->getArray();
         $this->thumbnail_filename = $data['thumbnail_filename'];
-        $this->time               = $this->getTime();
         $this->tunnels            = $this->getTunnels();
-    }
-
-    /**
-     * Retrieve time data from database
-     */
-    private function getTime () {
-        $getTime = $this->getPdo()->prepare('SELECT time_array FROM linestrings WHERE segment_id = ?');
-        $getTime->execute(array($this->id));
-        $result = $getTime->fetch(PDO::FETCH_COLUMN);
-        if ($result) {
-            $time_array = json_decode($result);
-            $time = [];
-            foreach ($time_array as $timestamp) {
-                $datetime = new DateTime();
-                $datetime->setTimestamp($timestamp);
-                $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
-                array_push($time, $datetime);
-            }
-            return $time;
-        } else return NULL;
     }
 
     /**
@@ -76,24 +53,25 @@ class Route extends Model {
         $closest_point = [];
 
         // Step of route coordinates to evaluate (defined accordingly to number of route coords for optimization purposes)
-        if (count($this->coordinates) > 500) $step = 5;
-        else if (count($this->coordinates) > 100 && count($this->coordinates) < 500) $step = 2;
+        $coordinates = $this->getLinestring();
+        if (count($coordinates) > 500) $step = 5;
+        else if (count($coordinates) > 100 && count($coordinates) < 500) $step = 2;
         else $step = 1;
 
         // For points inside this range, test remoteness for each route segment on a step
         if ($this->isPointInRoughArea($point, $range)) {
 
             $remoteness_min = 500000000;
-            for ($j = 0; $j < count($this->coordinates) - $step - 1; $j += $step) {
+            for ($j = 0; $j < count($coordinates) - $step - 1; $j += $step) {
                 $line = new Line(
-                    new Coordinate($this->coordinates[$j]->lat, $this->coordinates[$j]->lng),
-                    new Coordinate($this->coordinates[$j + $step]->lat, $this->coordinates[$j + $step]->lng)
+                    new Coordinate($coordinates[$j]->lat, $coordinates[$j]->lng),
+                    new Coordinate($coordinates[$j + $step]->lat, $coordinates[$j + $step]->lng)
                 );
                 $pointToLineDistanceCalculator = new PointToLineDistance(new Vincenty());
                 $segment_remoteness = $pointToLineDistanceCalculator->getDistance($point, $line);
                 if ($segment_remoteness < $remoteness_min) { // If distance is the shortest calculated until this point, then erase distance_min record
                     $remoteness_min = $segment_remoteness;
-                    $closest_point = $this->coordinates[$j];
+                    $closest_point = $coordinates[$j];
                 }
             }
             return ['remoteness' => $remoteness_min, 'closest_point' => $closest_point];
@@ -110,7 +88,28 @@ class Route extends Model {
         $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
         $coordinates = new CFLinestring();
         $coordinates->fromWKT($linestring_wkt);
-        return $coordinates;
+        if ($this->lngLatFormat) return $coordinates;
+        else return $coordinates->getArray();
+    }
+
+    /**
+     * Retrieve time data from database
+     */
+    public function getTime () {
+        $getTime = $this->getPdo()->prepare('SELECT time_array FROM linestrings WHERE segment_id = ?');
+        $getTime->execute(array($this->id));
+        $result = $getTime->fetch(PDO::FETCH_COLUMN);
+        if ($result) {
+            $time_array = json_decode($result);
+            $time = [];
+            foreach ($time_array as $timestamp) {
+                $datetime = new DateTime();
+                $datetime->setTimestamp($timestamp);
+                $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+                array_push($time, $datetime);
+            }
+            return $time;
+        } else return NULL;
     }
 
     public function getThumbnail () {
@@ -257,7 +256,7 @@ class Route extends Model {
 
     // Check if $point is located inside $range from a straight line from start to half and half to goal
     public function isPointInRoughArea($point, $range) { // $point = Coordinate
-        $routeCoords = $this->coordinates;
+        $routeCoords = $this->getLinestring();
         $first_core_line = new Line(
             new Coordinate($routeCoords[0]->lat, $routeCoords[0]->lng),
             new Coordinate($routeCoords[floor(count($routeCoords) / 2)]->lat, $routeCoords[floor(count($routeCoords) / 2)]->lng)
@@ -336,7 +335,7 @@ class Route extends Model {
                 if ($scenery_data['remoteness'] < $tolerance) {
                     // Calculate distance from start
                     if ($append_distance) {
-                        $sublineCoords = array_slice($this->coordinates, 0, array_search($scenery_data['closest_point'], $this->coordinates));
+                        $sublineCoords = array_slice($this->getLinestring(), 0, array_search($scenery_data['closest_point'], $this->getLinestring()));
                         $subline = new Polyline();
                         forEach ($sublineCoords as $lngLat) {
                             $coordinates = new Coordinate($lngLat->lat, $lngLat->lng);

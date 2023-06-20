@@ -285,7 +285,7 @@ class Scenery extends Model {
 
     public function getRemoteness ($route, $step = 5) {
         $remoteness_min = 500000000;
-        $routeCoords = $route->coordinates;
+        $routeCoords = $route->getLinestring();
         $simplifiedRouteCoords = [];
         for ($j = 0; $j < count($routeCoords) - $step - 1; $j += $step) {
             array_push($simplifiedRouteCoords, $routeCoords[$j]);

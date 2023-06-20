@@ -11,6 +11,8 @@ if (isAjax()) {
             $activity = new Activity($_GET['load'], false);
             $activity->checkpoints = $activity->getCheckpoints();
             $activity->photos = $activity->getPhotos();
+            $activity->coordinates = $activity->getLinestring();
+            $activity->time = $activity->getTime();
             echo json_encode($activity);
         }
 

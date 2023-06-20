@@ -537,6 +537,7 @@ if (isAjax()) {
         while ($ride_data = $getRides->fetch(PDO::FETCH_COLUMN)) {
             $ride = new Ride($ride_data, false);
             $ride->route = $ride->getRoute();
+            $ride->route->coordinates = $ride->route->getLinestring();
             $ride->author_login = $ride->getAuthor()->login;
             array_push($rides, $ride);
         }

@@ -663,4 +663,34 @@ class Ride extends Model {
         $checkGuide->execute([$this->id, $user_id]);
     }
 
+    /**
+     * Get activity report data
+     * @return RideReport
+     */
+    public function getReport () {
+        $getReport = $this->getPdo()->prepare("SELECT id FROM ride_reports WHERE ride_id = ?");
+        $getReport->execute([$this->id]);
+        $report_id = $getReport->fetch(PDO::FETCH_COLUMN);
+        return new RideReport($report_id);
+    }
+
+    /**
+     * Insert or update a new report for this ride
+     * @param string $entry_type A value among RideReport::$report_types
+     */
+    public function setReportEntry ($entry_type, $entry_value) {
+        if (in_array($entry_type, RideReport::$report_types)) {
+            $checkIfReportEntryExists = $this->getPdo()->prepare("SELECT id FROM ride_reports WHERE ride_id = ?");
+            $checkIfReportEntryExists->execute([$this->id]);
+            if ($checkIfReportEntryExists->rowCount() > 0) {
+                $updateReport = $this->getPdo()->prepare("UPDATE ride_reports SET {$entry_type} = ? WHERE ride_id = ?");
+                $updateReport->execute([$entry_value, $this->id]);
+            } else {
+                $insertReport = $this->getPdo()->prepare("INSERT INTO ride_reports(ride_id, {$entry_type}) VALUES (?, ?)");
+                $insertReport->execute([$this->id, $entry_value]);
+            }
+        } else throw new Exception("Specified entry type '" .$entry_type. "' doesn't exist");
+
+    }
+
 }

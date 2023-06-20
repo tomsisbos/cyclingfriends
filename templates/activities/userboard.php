@@ -26,9 +26,7 @@ include '../includes/head.php'; ?>
 				else $offset = 0;
 			
 				///$number = 0;
-				forEach ($connected_user->getActivities($offset, $limit) as $activity) {
-
-					$activity = new Activity($activity['id']); ?>
+				forEach ($connected_user->getActivities($offset, $limit) as $activity) { ?>
 
 					<div class="my-ac-panel">
 						

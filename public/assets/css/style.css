@@ -1235,6 +1235,12 @@ a .strava:hover {
     padding: 0px 5px;
 }
 
+.responsive-iframe {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+}
+
 /* 
 --- Containers ---
 */

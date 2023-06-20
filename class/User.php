@@ -657,13 +657,17 @@ class User extends Model {
      * @param int $offset
      * @param int $limit
      * @param string $order_by Column based on which to order request results by
+     * @return Activity[]
      */
     public function getActivities ($offset = 0, $limit = 20, $order_by = 'posting_date', $privacy = null) {
         if (isset($privacy)) $privacy_string = " AND privacy = '" .$privacy. "'";
         else $privacy_string = '';
         $getActivities = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ?" .$privacy_string. " ORDER BY {$order_by} DESC LIMIT " .$offset. ", " .$limit);
 	    $getActivities->execute(array($this->id));
-        return $getActivities->fetchAll(PDO::FETCH_ASSOC);
+        $result = $getActivities->fetchAll(PDO::FETCH_COLUMN);
+        return array_map(function ($id) {
+            return new Activity($id);
+        }, $result);
     }
 
     /**
