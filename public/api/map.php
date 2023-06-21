@@ -258,7 +258,7 @@ if (isAjax()) {
 
     if (isset($_GET['get-close-sceneries'])) {
         $route = new Route($_GET['get-close-sceneries']);
-        $close_sceneries = $route->getCloseSceneries();
+        $close_sceneries = $route->getLinestring()->getCloseSceneries();
         echo json_encode($close_sceneries);
     }
 
@@ -595,7 +595,7 @@ if (isAjax()) {
 
     if (isset($_GET['segment-sceneries'])) {
         $segment = new Segment($_GET['segment-sceneries']);
-        $close_sceneries = $segment->route->getCloseSceneries(200);
+        $close_sceneries = $segment->route->getLinestring()->getCloseSceneries(200);
         foreach ($close_sceneries as $scenery) $scenery->photos = $scenery->getImages();
         echo json_encode($close_sceneries);
     }

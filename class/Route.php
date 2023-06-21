@@ -53,7 +53,7 @@ class Route extends Model {
         $closest_point = [];
 
         // Step of route coordinates to evaluate (defined accordingly to number of route coords for optimization purposes)
-        $coordinates = $this->getLinestring();
+        $coordinates = $this->getLinestring()->coordinates;
         if (count($coordinates) > 500) $step = 5;
         else if (count($coordinates) > 100 && count($coordinates) < 500) $step = 2;
         else $step = 1;
@@ -122,7 +122,7 @@ class Route extends Model {
 
     public function getFeaturedImage () {
         // Get close sceneries
-        $sceneries_on_route = $this->getCloseSceneries(300);
+        $sceneries_on_route = $this->getLineString()->getCloseSceneries(300);
 
         // If more than one scenery is on the course, use the most liked photo among them
         if (count($sceneries_on_route) > 0) {
@@ -256,7 +256,7 @@ class Route extends Model {
 
     // Check if $point is located inside $range from a straight line from start to half and half to goal
     public function isPointInRoughArea($point, $range) { // $point = Coordinate
-        $routeCoords = $this->getLinestring();
+        $routeCoords = $this->getLinestring()->coordinates;
         $first_core_line = new Line(
             new Coordinate($routeCoords[0]->lat, $routeCoords[0]->lng),
             new Coordinate($routeCoords[floor(count($routeCoords) / 2)]->lat, $routeCoords[floor(count($routeCoords) / 2)]->lng)
@@ -301,72 +301,6 @@ class Route extends Model {
         return $public_photos;
     }
 
-    /** Get Sceneries that are less than [basis] km from the route (with remoteness and distance to start appended if $append_distance param is true)
-     * @param int $tolerance tolerance remoteness from route in meters
-     * @return Scenery[]
-     */
-    public function getCloseSceneries ($tolerance = 3000, $classFormat = true, $append_distance = false) { // m
-
-        // Get all Sceneries registered in the database
-        $getSceneries = $this->getPdo()->prepare('SELECT id, name, ST_X(point) as lng, ST_Y(point) as lat FROM sceneries');
-        $getSceneries->execute();
-        $sceneries = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
-        $sceneries_in_range = [];
-
-        // Filter sceneries inside a certain range from route
-        for ($i = 0; $i < count($sceneries); $i++) {
-            $range_data = $this->inRange(new Coordinate($sceneries[$i]['lat'], $sceneries[$i]['lng']), $tolerance * 10);
-            if ($range_data) {
-                $sceneries[$i]['remoteness'] = $range_data['remoteness'];
-                $sceneries[$i]['closest_point'] = $range_data['closest_point'];
-                array_push($sceneries_in_range, $sceneries[$i]);
-            }
-        }
-
-        // Return an array of Sceneries less than [tolerance] from route
-        $close_sceneries = array();
-        if (isset($sceneries_in_range[0]['distance'])) {
-            $distance_column = array_column($sceneries_in_range, 'distance');
-            array_multisort($distance_column, SORT_ASC, $sceneries_in_range);
-        }
-        foreach ($sceneries_in_range as $scenery_data) {
-            // If scenery is located inside tolerance zone
-            if (isset($scenery_data['remoteness'])) {
-                if ($scenery_data['remoteness'] < $tolerance) {
-                    // Calculate distance from start
-                    if ($append_distance) {
-                        $sublineCoords = array_slice($this->getLinestring(), 0, array_search($scenery_data['closest_point'], $this->getLinestring()));
-                        $subline = new Polyline();
-                        forEach ($sublineCoords as $lngLat) {
-                            $coordinates = new Coordinate($lngLat->lat, $lngLat->lng);
-                            $subline->addPoint($coordinates);
-                        }
-                        $scenery_data['distance'] = $subline->getLength(new Vincenty());
-                    }
-                    // If classFormat is set to true, build scenery object and append relevant data to it
-                    if ($classFormat) {
-                        $scenery = new Scenery($scenery_data['id']);
-                        if ($scenery_data['remoteness'] < 200) $scenery->on_route = true;
-                        else {
-                            $scenery->on_route = false;
-                            $scenery->remoteness = $scenery_data['remoteness']; // Append remoteness from the route
-                        }
-                        if ($append_distance) $scenery->distance = $scenery_data['distance']; // Append distance from the start of the route
-                    // Else, only return id and relevant data 
-                    } else {
-                        if ($scenery_data['remoteness'] < 200) $scenery = ['id' => $scenery_data['id'], 'on_route' => true];
-                        else $scenery = ['id' => $scenery_data['id'], 'on_route' => false, 'remoteness' => $scenery_data['remoteness']];
-                        if ($append_distance) $scenery['distance'] = $scenery_data['distance'];
-                    }
-                    // Add it to close_sceneries array
-                    array_push($close_sceneries, $scenery);
-                }
-            }
-        }
-
-        return $close_sceneries;
-    }
-
     public function delete () {
         $message = $this->name. 'が削除されました。';
         // Delete route summary
@@ -408,7 +342,7 @@ class Route extends Model {
 
     public function getSceneriesWithPhotos ($tolerance = 300) {
         // Get sceneries on route
-        $sceneries = $this->getCloseSceneries($tolerance);
+        $sceneries = $this->getLinestring()->getCloseSceneries($tolerance);
         // Get corresponding photos
         foreach ($sceneries as $scenery) {
             $scenery->photos = $scenery->getImages();

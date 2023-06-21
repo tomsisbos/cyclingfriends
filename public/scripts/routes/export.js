@@ -5,6 +5,7 @@ const exportButtons = document.querySelectorAll('#export')
 exportButtons.forEach((exportButton) => {
 
     ajaxGetRequest ('/api/route.php' + "?route-load=" + exportButton.dataset.id, async (route) => {
+        console.log(route)
         // Build route geojson
         var coordinates = []
         route.coordinates.forEach( (coordinate) => {

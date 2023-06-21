@@ -9,14 +9,14 @@ if (isAjax()) {
 
         if (isset($_GET['route-load'])) {
             $route = new Route($_GET['route-load']);
-            $route->coordinates = $route->getLinestring();
+            $route->coordinates = $route->getLinestring()->coordinates;
             echo json_encode($route);
         }
 
         if (isset($_GET['route-load-from-ride'])) {
             $ride = new Ride($_GET['route-load-from-ride']);
             $route = $ride->getRoute();
-            $route->coordinates = $route->getLinestring();
+            $route->coordinates = $route->getLinestring()->coordinates;
             echo json_encode($route);
         }
 
@@ -28,13 +28,13 @@ if (isAjax()) {
         
         if (isset($_GET['ride-load'])) {
             $ride = new Ride($_GET['ride-load']);
-            $ride->route->coordinates = $ride->route->getLinestring();
+            $ride->route->coordinates = $ride->route->getLinestring()->coordinates;
             echo json_encode($ride);
         }
     
         if (isset($_GET['segment-load'])) {
             $segment = new Segment($_GET['segment-load']);
-            $segment->route->coordinates = $segment->route->getLinestring();
+            $segment->route->coordinates = $segment->route->getLinestring()->coordinates;
             echo json_encode($segment);
         }
     
