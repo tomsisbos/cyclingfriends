@@ -37,10 +37,10 @@ include '../actions/routes/routeAction.php'; ?>
                         <a href="/ride/<?= $ride->id ?>">
                             <button class="mp-button normal" type="button">ライドページに戻る</button>
                         </a> <?php
-                    } ?>
-                    <a id="export" download>
-                        <button class="mp-button success" type="button">エクスポート</button>
-                    </a> <?php
+                    }
+
+                    include '../includes/routes/export-button.php';
+
                     if (isset($_SESSION['auth']) && $route->author->id == $connected_user->id) { ?>
                         <a href="/route/<?= $route->id ?>/edit">
                             <button class="mp-button success" type="button" name="edit">編集</button>
@@ -69,46 +69,23 @@ include '../actions/routes/routeAction.php'; ?>
                     <div><strong>難易度 : </strong><?= $route->getStars($route->calculateDifficulty()) ?></div>
                 </div>
             </div>
-            <div class="rt-slider"></div>
+            <div class="rt-slider" id="routeSlider"></div>
         </div>
-        <div id="routePageMapContainer">
-            <div class="cf-map" id="routePageMap" <?php
-                if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
-                if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
-                    <a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
-                } ?>
-            </div>
-            <div class="grabber"></div>
-        </div>
-        <div id="profileBox" class="container p-0" style="height: 20vh; background-color: white;">
-            <canvas id="elevationProfile"></canvas>
-        </div>
-        <div class="container p-0 spec-table-container">
-            <div class="spec-table-buttons">
-                <button id="addToilets" data-entry="toilets" class="mp-button bg-button text-white">トイレを追加</button>
-                <button id="addWater" data-entry="water" class="mp-button bg-button text-white">給水場を追加</button>
-                <button id="addKonbinis" data-entry="konbinis" class="mp-button bg-button text-white">コンビニを追加</button>
-            </div>
-            <div class="spec-table">
-                <table id="routeTable">
-                    <tbody>
-                        <tr class="spec-table-th">
-                            <th class="table-element e20 text-left">距離</th>
-                            <th class="table-element e10 text-center">種類</th>
-                            <th class="table-element e40 text-left">名称</th>
-                            <th class="table-element e20 text-center">場所</th>
-                            <th class="table-element e15 text-center">標高</th>
-                            <th class="table-element e25 text-center">コースまで</th>
-                        </tr>
-                        <tr class="loader-center"></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        
+        <div id="routeMapContainer"><?php
+
+            include '../includes/routes/map.php'; ?>
+
+        </div> <?php
+
+            include '../includes/routes/profile.php';
+
+            include '../includes/routes/itinerary.php';
+
+        ?>
     </div>
 
 <script src="/scripts/map/vendor.js"></script>
-<script type="module" src="/class/utils/CFUtils.js"></script>
 <script type="module" src="/scripts/routes/route.js"></script>
 <script src="/scripts/routes/delete.js"></script>
 

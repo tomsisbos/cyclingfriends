@@ -1026,10 +1026,6 @@ li.nav-item {
     cursor: pointer;
 }
 
-.margin-bottom {
-	margin-bottom: 20px;
-}
-
 .flex {
 	display: flex;
 }

@@ -1,4 +1,4 @@
-<div class="container margin-bottom container-admin">
+<div class="container mb-3 container-admin">
 	<h3>管理ボード</h3>
 	<form class="admin-panel nav flex" enctype="multipart/form-data" method="POST">
 		<div class="d-flex flex-column">

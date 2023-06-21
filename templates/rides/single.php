@@ -73,7 +73,7 @@ include '../includes/head.php'; ?>
 			if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; ?>
 			
 			<!-- Infos section -->
-			<div class="container ride-infos margin-bottom">
+			<div class="container ride-infos mb-3">
 				<div class="row">
 					<div class="col-sm">
 						<p><strong>開催日 :</strong> <?= $ride->date; ?></p>
@@ -118,29 +118,51 @@ include '../includes/head.php'; ?>
 			include '../includes/rides/checkpoints-gallery.php'; ?>
 				
 			<!-- Course section -->
-			<div class="container margin-bottom d-flow-root"> <?php
+			<div class="container d-flow-root"> <?php
 				
-				if ($ride->getRoute() != null) { ?>
+				/*if ($ride->getRoute() != null) { ?>
 					<div class="rd-course-thumbnail">
 						<a href="/ride/<?= $ride->id ?>/route"><img src="<?= $ride->getMapThumbnail() ?>"></img></a>
 					</div> <?php
-				} ?>
+				}*/ ?>
 			
 				<div class="rd-course-infos">
 					<h3>コースについて</h3>
+
 					<p><strong>距離 :</strong> <?php 
 						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. "から" .$ride->finish_place. "まで";
 						else echo $ride->distance. "km - " .$ride->meeting_place. "発着"; ?></p>
 					<p><strong>起伏 :</strong> <?= $ride->getTerrainIcon() ?></p>
 					<p><?= $ride->course_description; ?></p>
-					<a href="<?= $router->generate('ride-route', ['ride_id' => $ride->id]); ?>">
-						<button class="btn button">詳細はこちら</button>
-					</a>
 				</div>
-				<div style="clear: both"></div>
-			</div>
+			</div> <?php
 
-			<div class="container margin-bottom">
+			if ($ride->getRoute() != null) { ?>
+			
+				<div class="container pt-0 d-flex gap">
+					<a href="<?= $router->generate('ride-route', ['ride_id' => $ride->id]); ?>">
+						<button class="mp-button bg-button text-white">詳細</button>
+					</a> <?php
+
+					include '../includes/routes/export-button.php'; ?>
+				
+				</div>
+
+				<div class="container p-0"> <?php
+
+					$route = $ride->getRoute(); 
+			
+					include '../includes/routes/map.php';
+
+					include '../includes/routes/profile.php';
+
+					include '../includes/routes/itinerary.php'; ?>
+
+				</div> <?php
+
+			} ?>
+
+			<div class="container mt-3">
 				<!-- Include chat panel -->
 				<div style="clear: both; display: block"> <?php
 					include '../includes/rides/chat.php' ?>
@@ -158,3 +180,4 @@ include '../includes/head.php'; ?>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/rides/checkpoints-gallery.js"></script>
 <script src="/scripts/riders/friends.js"></script>
+<script type="module" src="/scripts/routes/route.js"></script>

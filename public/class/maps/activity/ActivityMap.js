@@ -9,7 +9,8 @@ export default class ActivityMap extends Map {
         super()
         this.activityId = parseInt(document.querySelector('#activityMap').dataset.id)
     }
-
+    
+    defaultPitch = 40
     pageType = 'activity'
     apiUrl = '/api/activity.php'
     data

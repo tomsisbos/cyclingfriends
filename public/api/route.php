@@ -28,7 +28,8 @@ if (isAjax()) {
         
         if (isset($_GET['ride-load'])) {
             $ride = new Ride($_GET['ride-load']);
-            $ride->route->coordinates = $ride->route->getLinestring()->coordinates;
+            $ride->route = $ride->getRoute();
+            $ride->route->coordinates = $ride->getRoute()->getLinestring()->coordinates;
             echo json_encode($ride);
         }
     

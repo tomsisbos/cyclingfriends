@@ -29,6 +29,7 @@ export default class Map extends Model {
     loaded = false
     defaultCenter = [139.7673068, 35.6809591]
     defaultZoom = 10
+    defaultPitch = 0
     sceneries
     tunnelNumber = 0
     month = new Date().getMonth() + 1
@@ -225,8 +226,10 @@ export default class Map extends Model {
         boxSet3D.addEventListener('change', () => {
             if (boxSet3D.checked) {
                 this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 1})
+                this.map.setPitch(this.defaultPitch)
             } else {
                 this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 0})
+                this.map.setPitch()
             }
         } )
         // Line 5
@@ -320,6 +323,7 @@ export default class Map extends Model {
                 accessToken: this.apiKey,
                 attributionControl: false
             } )
+            this.map.setPitch(this.defaultPitch)
 
             // Add basic controls
             this.map.addControl(new mapboxgl.NavigationControl())
@@ -2370,9 +2374,7 @@ export default class Map extends Model {
             if (routeData) var routeBounds = CFUtils.defineRouteBounds(routeData.geometry.coordinates)
             else if (!routeData && this.map.getSource('startPoint')) var routeBounds = CFUtils.defineRouteBounds([this.map.getSource('startPoint')._data.features[0].geometry.coordinates])
             this.map.fitBounds(routeBounds)
-            this.map.once('idle', () => {
-                resolve(true)
-            } )
+            this.map.once('idle', () => resolve(true))
         } )
     }
 

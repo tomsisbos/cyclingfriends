@@ -9,11 +9,10 @@ export default class RouteMap extends Map {
         super()
         if (location.pathname.includes('ride')) {
             this.rideId = getIdFromString(location.pathname)
-        } else if (location.pathname.includes('route')) {
-            this.routeId = getIdFromString(location.pathname)
-        }
+        } else this.routeId = document.querySelector('#routeMap').dataset.id
     }
 
+    defaultPitch = 25
     sceneriesOnRouteNumber = 0
     apiUrl = '/api/route.php'
     data
@@ -345,12 +344,12 @@ export default class RouteMap extends Map {
                                     // To clicked marker
                                     document.querySelector('.mapboxgl-canvas-container #' + entry.type + entry.id).classList.add('selected-marker')
                                     // To clicked thumbnail
-                                    document.querySelector('.rt-slider #' + entry.type + entry.id).querySelector('img').classList.add('selected-marker')
+                                    if (document.querySelector('#routeSlider')) document.querySelector('#routeSlider #' + entry.type + entry.id).querySelector('img').classList.add('selected-marker')
                                 } else if (entry.id == 0) { // If click on goal on a ride with same start and finish
                                     // To clicked marker
                                     document.querySelector('.mapboxgl-canvas-container #' + entry.type + 0).classList.add('selected-marker')
                                     // To clicked thumbnail
-                                    document.querySelector('.rt-slider #' + entry.type + 0).querySelector('img').classList.add('selected-marker')
+                                    if (document.querySelector('#routeSlider')) document.querySelector('#routeSlider #' + entry.type + 0).querySelector('img').classList.add('selected-marker')
                                 }
                             } else {
                                 if (marker.getPopup() && marker.getPopup().isOpen()) marker.getPopup().remove()
@@ -480,7 +479,7 @@ export default class RouteMap extends Map {
                 var thumbnail = document.createElement('div')
                 thumbnail.className = 'rt-preview-photo'
                 thumbnail.id = entry.type + entry.id
-                document.querySelector('.rt-slider').appendChild(thumbnail)
+                document.querySelector('#routeSlider').appendChild(thumbnail)
                 var img = document.createElement('img')
                 img.src = entry.thumbnailSrc
                 thumbnail.appendChild(img)

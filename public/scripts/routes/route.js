@@ -3,18 +3,18 @@ import RouteMap from "/class/maps/route/RouteMap.js"
 import Polyline from '/node_modules/@mapbox/polyline/index.js'
 import Profile from '/class/Profile.js'
 
-var routePageMap = new RouteMap()
+var routeMap = new RouteMap()
 
-var $map = document.getElementById('routePageMap')
+var $map = document.getElementById('routeMap')
 
 const exportButton = document.querySelector('#export')
 
 // Get route data from server
-if (routePageMap.routeId) var queryString = "?route-load=" + routePageMap.routeId
-else var queryString = "?route-load-from-ride=" + routePageMap.rideId
-ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
+if (routeMap.routeId) var queryString = "?route-load=" + routeMap.routeId
+else var queryString = "?route-load-from-ride=" + routeMap.rideId
+ajaxGetRequest (routeMap.apiUrl + queryString, async (route) => {
     
-    routePageMap.routeId = route.id
+    routeMap.routeId = route.id
     var coordinates = []
     route.coordinates.forEach( (coordinate) => {
         coordinates.push([parseFloat(coordinate.lng), parseFloat(coordinate.lat)])
@@ -36,28 +36,28 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
     exportButton.download = route.name + '.gpx'
 
     // Populate instance route property
-    routePageMap.data = route
-    routePageMap.routeData = geojson
+    routeMap.data = route
+    routeMap.routeData = geojson
     
     // Set map instance paint property data
-    if (routePageMap.rideId) routePageMap.routeColor = '#FFFF00'
+    if (routeMap.rideId) routeMap.routeColor = '#FFFF00'
 
     // If map is interactive
     if ($map.getAttribute('interactive') == 'true') {
     
         // Set default layer according to current season
-        var map = await routePageMap.load($map, routePageMap.defaultStyle, coordinates[0])
+        var map = await routeMap.load($map, routeMap.defaultStyle, coordinates[0])
         
         // Set grabber 
-        routePageMap.setGrabber()
+        routeMap.setGrabber()
 
         // Display CF Layers
-        routePageMap.addSources()
-        routePageMap.addLayers()
+        routeMap.addSources()
+        routeMap.addLayers()
 
         // Controls
-        routePageMap.addStyleControl()
-        routePageMap.addRouteControl()
+        routeMap.addStyleControl()
+        routeMap.addRouteControl()
 
         document.querySelector('.mapboxgl-ctrl-logo').style.display = 'none'
         map.addControl(
@@ -69,44 +69,44 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         )
         
         // Display route
-        routePageMap.addRouteLayer(geojson)
+        routeMap.addRouteLayer(geojson)
         
         // Generate profile on idle
-        routePageMap.profile.generate()
+        routeMap.profile.generate()
         
         // Focus
         var routeBounds = CFUtils.defineRouteBounds(coordinates)
         map.fitBounds(routeBounds)
         
         // Paint route properties
-        routePageMap.paintTunnels(route.tunnels)
-        routePageMap.updateDistanceMarkers()
-        if (!routePageMap.rideId) routePageMap.displayStartGoalMarkers(geojson)
+        routeMap.paintTunnels(route.tunnels)
+        routeMap.updateDistanceMarkers()
+        if (!routeMap.rideId) routeMap.displayStartGoalMarkers(geojson)
 
         // Request and display sceneries close to the route
-        routePageMap.loadCloseSceneries(2).then( async (sceneries) => {
+        routeMap.loadCloseSceneries(2).then( async (sceneries) => {
 
             // Load sceneries into map instance
-            routePageMap.mapdata.sceneries = sceneries
+            routeMap.mapdata.sceneries = sceneries
             
             // Generate profile with sceneries data
-            routePageMap.profile.generate({
+            routeMap.profile.generate({
                 poiData: {sceneries}
             })
             
             // If ride ID is found inside query string parameters, get ride data from server
-            if (routePageMap.rideId) await routePageMap.loadRide()
+            if (routeMap.rideId) await routeMap.loadRide()
                 
             // Build route specs table
-            routePageMap.buildSlider()
-            routePageMap.buildTable(['sceneries', 'checkpoints'])
-            routePageMap.enableTableButtons()
+            if (document.querySelector('#routeSlider')) routeMap.buildSlider()
+            routeMap.buildTable(['sceneries', 'checkpoints'])
+            routeMap.enableTableButtons()
         } )
 
         /*
-        var fittingSegments = await routePageMap.getFittingSegments()
+        var fittingSegments = await routeMap.getFittingSegments()
         fittingSegments.forEach( (segment) => {
-            routePageMap.displaySegment(segment)
+            routeMap.displaySegment(segment)
         } )*/
 
     // If map is static
@@ -114,12 +114,12 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
 
         // Hide grabber element and build profile
         document.querySelector('.grabber').style.display = 'none'
-        routePageMap.profile = new Profile()
-        routePageMap.profile.routeData = geojson
-        routePageMap.profile.generate({precise: true})
+        routeMap.profile = new Profile()
+        routeMap.profile.routeData = geojson
+        routeMap.profile.generate({precise: true})
 
         // Build seasons layer
-        var colors = routePageMap.getSeasonalColors(routePageMap.season)
+        var colors = routeMap.getSeasonalColors(routeMap.season)
         var seasonData = {
             'id': 'landcover-season',
             'type': 'fill',
@@ -133,7 +133,7 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
         var seasonLayer = encodeURIComponent(JSON.stringify(seasonData))
         
         // Build route overlay
-        const routeData = routePageMap.routeData
+        const routeData = routeMap.routeData
         const routeCoordinates = routeData.geometry.coordinates
         if (routeData.geometry.coordinates.length < 10000) var tolerance = 0.0005
         else var tolerance = 0.002
@@ -151,22 +151,22 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
 
         // Build checkpoints
         var checkpoints = ''
-        if (routePageMap.rideId) {
-            routePageMap.ride = await getRide()
+        if (routeMap.rideId) {
+            routeMap.ride = await getRide()
             
-            const markerColor = routePageMap.routeColor.slice(1)
+            const markerColor = routeMap.routeColor.slice(1)
             var number = 0
-            routePageMap.ride.checkpoints.forEach(checkpoint => {
+            routeMap.ride.checkpoints.forEach(checkpoint => {
                 if (!checkpoint.special.length > 0) checkpoints += ',pin-l-' + number + '+' + markerColor + '('  + checkpoint.lngLat.lng + ',' + checkpoint.lngLat.lat + ')' // remove start and goal markers
                 number++
             } )
         }
 
         // Request and display sceneries close to the route
-        routePageMap.loadCloseSceneries(2, {displayOnMap: false, generateProfile: false, getFileBlob: false}).then( async (sceneries) => {
-            routePageMap.mapdata.sceneries = sceneries
-            routePageMap.buildTable(['sceneries', 'checkpoints'])
-            routePageMap.enableTableButtons()
+        routeMap.loadCloseSceneries(2, {displayOnMap: false, generateProfile: false, getFileBlob: false}).then( async (sceneries) => {
+            routeMap.mapdata.sceneries = sceneries
+            routeMap.buildTable(['sceneries', 'checkpoints'])
+            routeMap.enableTableButtons()
         } )
 
 
@@ -182,8 +182,8 @@ ajaxGetRequest (routePageMap.apiUrl + queryString, async (route) => {
 https://api.mapbox.com/
 styles/v1/sisbos/cl07xga7c002616qcbxymnn5z/
 static/
-path-` + (routePageMap.routeWidth + 4) + `+` + routePageMap.routeCapColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
-path-` + routePageMap.routeWidth + `+` + routePageMap.routeColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
+path-` + (routeMap.routeWidth + 4) + `+` + routeMap.routeCapColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
+path-` + routeMap.routeWidth + `+` + routeMap.routeColor.slice(1) +  `-1(` + staticRoutePolylineUri + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/stop.png') + `(` + routeCoordinates[routeCoordinates.length - 1][0] + `,` + routeCoordinates[routeCoordinates.length - 1][1] + `),
 url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(` + routeCoordinates[0][0] + `,` + routeCoordinates[0][1] + `)
 ` + checkpoints + `/
@@ -200,7 +200,7 @@ url-` + encodeURIComponent('https://img.icons8.com/flat-round/64/play.png') + `(
 
         async function getRide () {
             return new Promise((resolve, reject) => {
-                ajaxGetRequest (routePageMap.apiUrl + "?ride-load=" + routePageMap.rideId, async (ride) => resolve(ride))
+                ajaxGetRequest (routeMap.apiUrl + "?ride-load=" + routeMap.rideId, async (ride) => resolve(ride))
             } )
         }
 

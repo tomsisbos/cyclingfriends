@@ -72,7 +72,7 @@ include '../includes/head.php'; ?>
 
         // Video if set
         if (isset($ride->getReport()->video_url)) { ?>
-            <div class="container text-center">
+            <div class="container px-0 text-center">
                 <?= $ride->getReport()->getVideoIframe() ?>
             </div> <?php
         }

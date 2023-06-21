@@ -71,7 +71,7 @@ include '../includes/head.php'; ?>
 
 		</div>
 		
-		<div class="container margin-bottom"> 
+		<div class="container mb-3"> 
 			
 			<!-- Profile infos -->
 			<div class="pf-general-infos"> <?php 
@@ -147,13 +147,13 @@ include '../includes/head.php'; ?>
 		</div> <?php
 
 		if (!empty($user->getBikes())) { ?>
-			<div class="container margin-bottom d-flex flex-column gap"> <?php
+			<div class="container mb-3 d-flex flex-column gap"> <?php
 				// Include bikes
 				include '../includes/riders/profile/bikes.php'; ?>
 			</div> <?php
 		} ?>
 
-		<div class="container margin-bottom p-0">
+		<div class="container mb-3 p-0">
 			<div class="profile-title-block">
 				<h3>Latest activities</h3><div class="cleared-counter"><?= '(' . $user->getActivitiesNumber() . ')' ?></div>
 			</div>
