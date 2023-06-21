@@ -182,10 +182,10 @@ include '../includes/head.php'; ?>
 			<div class="container p-0">
 
 				<div class="pg-sg-map-box">
-					<div class="cf-map" id="segmentMap" <?php if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php
-					if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
+					<div class="cf-map" id="segmentMap" <?php /*if (isset($_SESSION['auth']) && $connected_user->isPremium())*/ echo 'interactive="true"' ?>> <?php
+					/*if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
 						<a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
-					} ?>
+					}*/ ?>
 					</div>
 					<div class="pg-sg-itinerary">
 						<div class="p-0 spec-table-container">

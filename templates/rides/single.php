@@ -70,33 +70,17 @@ include '../includes/head.php'; ?>
 		include '../includes/rides/participants.php';
 			
 			// Include admin panel if the user has admin rights on this ride
-			if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; ?>
+			if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; 
 			
-			<!-- Infos section -->
+			// General infos ?>
 			<div class="container ride-infos mb-3">
+				<h3>基本情報</h3>
 				<div class="row">
 					<div class="col-sm">
 						<p><strong>開催日 :</strong> <?= $ride->date; ?></p>
 					</div>
 					<div class="col-sm">
 						<p><strong>エントリー :</strong> <?= $ride->entry_start. ' ~ ' .$ride->entry_end; ?></p>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm">
-						<p><strong>集合時間 :</strong> <?= $ride->meeting_time; ?></p>
-					</div>
-					<div class="col-sm"> <?php
-						$first_checkpoint = $ride->getCheckpoints()[0]; ?>
-						<p><strong>集合場所 :</strong> <?php
-							if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/?api=1&query=' .$first_checkpoint->lngLat->lat. '%2C' .$first_checkpoint->lngLat->lng. '&query_place_id=' .$first_checkpoint->name. '" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place;
-							///if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/' .$first_checkpoint->name. '/@' .$first_checkpoint->lngLat->lat. ',' .$first_checkpoint->lngLat->lng. ',14z" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place; ?>
-						</p>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm">
-						<p><strong>出発時間 :</strong> <?= $ride->departure_time. " (" .$ride->finish_time. "頃に解散予定)"; ?></p>
 					</div>
 				</div>
 				<div class="row">
@@ -112,22 +96,54 @@ include '../includes/head.php'; ?>
 						<p><?= $ride->getFormattedDescription(); ?></p>
 					</div>
 				</div>
+			</div>
+			
+			<div class="container mb-3">
+				<h3>集合情報</h3>
+				<div class="row">
+					<div class="col-sm">
+						<p><strong>集合時間 :</strong> <?= $ride->meeting_time; ?></p>
+					</div>
+					<div class="col-sm">
+						<p><strong>出発時間 :</strong> <?= $ride->departure_time. " (" .$ride->finish_time. "頃に解散予定)"; ?></p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm"> <?php
+						$first_checkpoint = $ride->getCheckpoints()[0]; ?>
+						<p><strong>集合場所 :</strong> <?php
+							if ($first_checkpoint->name != 'Start') echo '<a href="https://www.google.com/maps/search/?api=1&query=' .$first_checkpoint->lngLat->lat. '%2C' .$first_checkpoint->lngLat->lng. '&query_place_id=' .$first_checkpoint->name. '" target="_blank">' .$first_checkpoint->name. '</a>・' .$ride->meeting_place; ?>
+							<iframe class="mt-3" style="width: 100%; height: 240px" src="https://maps.google.com/maps?q=<?= $first_checkpoint->lngLat->lat ?>,<?= $first_checkpoint->lngLat->lng ?>&t=k&z=17&output=embed"></iframe>
+						</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class="container d-flex flex-column gap mb-3">
+				<h3>ガイド</h3><?php
+				foreach ($ride->getGuides() as $guide) { ?>
+					<div class="guide-card bg-white">
+						<a href="<?= $router->generate('profile-single', ['user_id' => $guide->id]) ?>"><?= $guide->getPropicElement() ?></a>
+						<div class="guide-text">
+							<div class="guide-identity">
+								<div class="guide-position"><strong><?= $guide->getPositionString() ?></strong></div>
+								<a href="<?= $router->generate('profile-single', ['user_id' => $guide->id]) ?>"><div class="guide-login">@<?= $guide->login ?></div></a>
+								<div class="guide-name">(<?= $guide->last_name. ' ' .$guide->first_name ?>)</div>
+							</div>
+							<div class="guide-description"><?= $guide->description ?></div>
+						</div>
+					</div> <?php
+				} ?>
 			</div> <?php
 
 			// Include checkpoints gallery
-			include '../includes/rides/checkpoints-gallery.php'; ?>
-				
-			<!-- Course section -->
-			<div class="container d-flow-root"> <?php
-				
-				/*if ($ride->getRoute() != null) { ?>
-					<div class="rd-course-thumbnail">
-						<a href="/ride/<?= $ride->id ?>/route"><img src="<?= $ride->getMapThumbnail() ?>"></img></a>
-					</div> <?php
-				}*/ ?>
+			include '../includes/rides/checkpoints-gallery.php'; 
+			
+			// Course section ?>
+			<div class="container d-flow-root">
 			
 				<div class="rd-course-infos">
-					<h3>コースについて</h3>
+					<h3>コース</h3>
 
 					<p><strong>距離 :</strong> <?php 
 						if (isset($ride->finish_place)) echo $ride->distance. "km - " .$ride->meeting_place. "から" .$ride->finish_place. "まで";
@@ -160,13 +176,13 @@ include '../includes/head.php'; ?>
 
 				</div> <?php
 
-			} ?>
+			}
+			
+			// Chat ?>
+			<div class="container my-3"> <?php
+				
+				include '../includes/rides/chat.php' ?>
 
-			<div class="container mt-3">
-				<!-- Include chat panel -->
-				<div style="clear: both; display: block"> <?php
-					include '../includes/rides/chat.php' ?>
-				</div>
 			</div>
 			
 		</div>

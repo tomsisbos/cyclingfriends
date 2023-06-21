@@ -1,3 +1,9 @@
+h3 {
+    font-size: 24px;
+    padding: 6px 18px;
+    border-bottom: 1px solid #5c9998;
+}
+
 .rd-header {
     margin-bottom: 0px !important;
     background-color: #555555 !important;
@@ -14,6 +20,29 @@
 
 .mySlides.rd-slide {
     height: 70% !important;
+}
+
+#participantsWindow .small-rdr-cards-container {
+    background-color: #fff;
+}
+#participantsWindow .small-rdr-cards-container .small-rdr-card {
+    background-color: #c1e3e9 
+}
+
+.guide-card {
+    display: flex;
+    gap: 20px;
+    padding: 12px;
+}
+.guide-identity * {
+    display: inline;
+}
+.guide-description {
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* Course */
