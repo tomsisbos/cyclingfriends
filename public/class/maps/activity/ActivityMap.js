@@ -7,7 +7,7 @@ export default class ActivityMap extends Map {
 
     constructor () {
         super()
-        this.activityId = getIdFromString(location.pathname)
+        this.activityId = parseInt(document.querySelector('#activityMap').dataset.id)
     }
 
     pageType = 'activity'
@@ -161,8 +161,6 @@ export default class ActivityMap extends Map {
     setCheckpointPopupContent (checkpoint) {
         var checkpointTime = checkpoint.datetime / 1000
         var startTime = this.data.checkpoints[0].datetime / 1000
-        console.log(checkpointTime)
-        console.log(startTime)
         return `
             <div class="pg-ac-checkpoint-topline">
                 <div>km ` + checkpoint.distance + `</div>

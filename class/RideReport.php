@@ -33,4 +33,8 @@ class RideReport extends Model {
         return '<iframe class="responsive-iframe" id="ytplayer" type="text/html" width="' .$width. '" height="' .$height. '" src="https://www.youtube.com/embed/' .$this->getVideoId(). '?autoplay=1&list=PLh5FHR57HS40VebyT_ZD5acIwlcJto-b4&listType=playlist&loop=1&modestbranding=1&color=white" frameborder="0" allowfullscreen></iframe>';
     }
 
+    public function getVideoBackgroundUrl () {
+        return 'https://www.youtube.com/embed/' .$this->getVideoId(). '?controls=0&autoplay=1&mute=1&playsinline=1&playlist=' .$this->getVideoId(). '&loop=1';
+    }
+
 }

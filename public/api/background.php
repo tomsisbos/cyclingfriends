@@ -1,6 +1,7 @@
 <?php
 
 $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/vendor/autoload.php';
 require_once $base_directory . '/class/CFAutoloader.php'; 
 CFAutoloader::register(); 
 require $base_directory . '/includes/functions.php';
@@ -36,6 +37,13 @@ if (isAjax()) {
         $images = $ride->getImages($imgs_number);
         if ($ride->checkpoints[0]->img->url) echo json_encode(array_slice($images, 1, count($images) - 2));
         else echo json_encode($images);
+    }
+
+    if (isset($_GET['activity-imgs'])) {
+        $activity = new Activity($_GET['activity-imgs']);
+        $imgs_number = intval($_GET['number']);
+        $images = $activity->getPhotos($imgs_number);
+        echo json_encode($images);
     }
 }
 

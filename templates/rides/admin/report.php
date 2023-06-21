@@ -9,7 +9,9 @@ include '../actions/rides/admin/report.php';
 if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride-admin', ['ride_id' => $ride->id])) ?>
 
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
+
+<link rel="stylesheet" href="/assets/css/activity.css">
     
     <body> <?php
 
@@ -30,7 +32,7 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
 
                 else { ?>
 
-                    <div class="rd-ad-section">
+                    <div class="rd-ad-section rd-ad-report-section">
 
                         <h4>アクティビティレポート</h4>
 
@@ -39,8 +41,9 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
 
                             // If an activity report has been selected for this ride, display it
                             if (isset($ride->getReport()->activity_id)) { ?>
-                                <div class="rd-ad-report-container">
-                                    <?= $ride->getReport()->getActivity()->title ?>
+                                <div class="rd-ad-report-container"> <?php
+                                    $activity = new Activity($ride->getReport()->activity_id);
+                                    include '../includes/activities/small-card.php' ?>
                                 </div><?php
                             } ?>
 
@@ -57,12 +60,13 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
                         
                     </div>
 
-                    <div class="rd-ad-section">
+                    <div class="rd-ad-section rd-ad-report-section">
                         
                         <h4>フォトレポート</h4>
 
                         <div class="rd-ad-form mb-3">
-                            Google PhotosアルバムのURLを記入してください。
+                            Google PhotosアルバムのURLを記入してください。<?php
+                            if (isset($ride->getReport()->photoalbum_url)) echo '<a href="' .$ride->getReport()->photoalbum_url. '" target="_blank"><div class="btn smallbutton">フォトアルバムはこちら</div></a>' ?>
                             <form method="POST" id="photoReport" class="d-flex gap">
                                 <input type="text" name="url" class="form-control" value="<?php
                                     if (isset($ride->getReport()->photoalbum_url)) echo $ride->getReport()->photoalbum_url;
@@ -74,15 +78,15 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
                         
                     </div>
 
-                    <div class="rd-ad-section">
+                    <div class="rd-ad-section rd-ad-report-section">
                         
                         <h4>ビデオレポート</h4>
 
-                        <div class="rd-ad-form mb-3"><?php
+                        <div class="rd-ad-form mb-3">
+                            Youtube動画のURLを記入してください。<?php
                             if (isset($ride->getReport()->video_url)) {
                                 echo $ride->getReport()->getVideoIframe();
                             } ?>
-                            Youtube動画のURLを記入してください。
                             <form method="POST" id="videoReport" class="d-flex gap">
                                 <input type="text" name="url" class="form-control" id="floatingVideoInput" value="<?php
                                     if (isset($ride->getReport()->video_url)) echo $ride->getReport()->video_url;

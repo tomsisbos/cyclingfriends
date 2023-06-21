@@ -5,6 +5,7 @@ CFAutoloader::register();
 include_once("../vendor/phayes/geophp/geoPHP.inc");
 
 $uri = $_SERVER['REQUEST_URI'];
+
 $router = new AltoRouter();
 
 /* List of targets to match */
@@ -70,7 +71,15 @@ $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" wh
 });
 
 // Rides
-$router->map('GET|POST', '/ride/[i:ride_id]', 'rides/single', 'ride-single');
+$router->map('GET|POST', '/ride/[i:ride_id]', function ($ride_id) {
+    global $router;
+    $ride = new Ride($ride_id);
+    // If ride date is past, or if report activity id has been set, show report page
+    if ((new DateTime($ride->date) < new DateTime('now', new DateTimezone('Asia/Tokyo'))) OR (isset($ride->getReport()->activity_id))) {
+        include '../templates/rides/report.php';
+    // Else, show ride page
+    } else include '../templates/rides/single.php';
+}, 'ride-single');
 $router->map('GET', '/ride/new', 'rides/new', 'ride-new');
 $router->map('GET|POST', '/ride/new/[i:stage]', 'rides/new');
 $router->map('GET', '/ride/[i:ride_id]/edit', 'rides/edit', 'ride-edit');

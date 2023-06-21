@@ -136,69 +136,12 @@ include '../includes/head.php'; ?>
 					}?>
 			</div>
 
-			<div class="container p-0">
-
-				<div id="activityMapContainer">
-					<div class="cf-map" id="activityMap" <?php if (isset($_SESSION['auth']) && $connected_user->isPremium()) echo 'interactive="true"' ?>> <?php 
-						if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
-							<a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
-						} ?>
-					</div>
-					<div class="grabber"></div>
-				</div>
-				<div id="profileBox" class="container p-0" style="height: 22vh; background-color: white;">
-					<canvas id="elevationProfile"></canvas>
-				</div>
-						
+			<div class="container p-0"> <?php
+				include '../includes/activities/map.php'; ?>						
 			</div>
 
-			<div class="container pg-ac-summary-container">
-				<div class="pg-ac-timeline">
-				</div>
-				<div class="pg-ac-checkpoints-container"> <?php
-					$photo_number = 1;
-					foreach ($activity->getCheckpoints() as $checkpoint) { ?>
-						<div class="pg-ac-checkpoint-container" id="checkpoint<?= $checkpoint->number ?>" data-number="<?= $checkpoint->number ?>">
-							<div class="pg-ac-photos-container"> <?php
-								foreach ($checkpoint->getPhotos() as $photo) {
-									// Only add photos which privacy is not set to true, except for the author
-									if ($photo->privacy != 'private' || (isset($_SESSION['auth']) && $activity->user_id == $connected_user->id)) { ?>
-										<div class="pg-ac-photo-container">
-											<div class="pg-ac-photo-specs">
-												<div class="pg-ac-photo-number"><?= $photo_number ?></div>
-												<div class="pg-ac-photo-distance"></div>
-											</div>
-											<img class="pg-ac-photo" data-id="<?= $photo->id ?>" src="<?= $photo->url ?>" />
-										</div> <?php
-										$photo_number++;
-									}
-								} ?>
-							</div>
-							<div class="pg-ac-checkpoint-topline">
-								<?= $checkpoint->getIcon() . ' km ' . round($checkpoint->distance, 1); ?>
-								<span class="pg-ac-checkpoint-time"> <?php
-									$time = $checkpoint->datetime->diff($activity->getCheckpoints()[0]->datetime);
-									if ($time->h != 0 AND $time->i != 0) {
-										echo ' (';
-										if ($time->h > 0) {
-											if (substr($time->h, 0, 1) == '0') echo substr($time->h, 1, strlen($time->h)) . 'h';
-											else echo $time->h . 'h';
-											if (strlen($time->i) == 1) echo '0' . $time->i;
-											else echo $time->i;
-										} else {
-											echo $time->i . ' min'; 
-										}
-										echo ') ';
-									} ?>
-								</span>
-								<?= ' - ' . $checkpoint->name ?>
-							</div>
-							<div class="pg-ac-checkpoint-story">
-								<?= $checkpoint->story ?>
-							</div>
-						</div> <?php
-					} ?>
-				</div>
+			<div class="container pg-ac-summary-container"> <?php
+				include '../includes/activities/timeline.php'; ?>
 			</div>
 			
 			<div class="container"><?php

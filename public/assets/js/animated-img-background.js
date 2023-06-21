@@ -1,11 +1,12 @@
 const defaultImgsNumber = 30
-const interval = 10 // seconds
+var interval = 10 // seconds
 var background = document.querySelector('.with-background-img')
 var flash = document.querySelector('.with-background-flash')
 var text = document.querySelector('.js-scenery-info')
 const parameter = background.dataset.parameter
 var value = background.dataset.value
 var imgsNumber = background.dataset.number
+if (background.dataset.interval) interval = parseInt(background.dataset.interval)
 
 // Request [imgsNumber] images with the most likes from scenery images table
 
@@ -19,7 +20,7 @@ ajaxGetRequest(request, (imgs) => {
 	imgs.forEach(img => new Image().src = img.url)
 
 	// Initialize css properties
-	background.style.setProperty('--imgAnimation', 'animatedImage 10s linear infinite alternate')
+	background.style.setProperty('--imgAnimation', 'animatedImage ' + interval + 's linear infinite alternate')
 	flash.style.animation = 'animatedOpacity ' + (interval / 2) + 's cubic-bezier(0,0,0,1) infinite alternate'
 
 	// Function for dynamically change image and meta information

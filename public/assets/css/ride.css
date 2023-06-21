@@ -441,6 +441,11 @@
     width: 100%;
 }
 
+.rd-ad-report-section {
+    padding: 15px;
+    background-color: #fff;
+}
+
 
 
 .rd-cards {

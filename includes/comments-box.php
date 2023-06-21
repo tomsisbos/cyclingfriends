@@ -1,7 +1,4 @@
-<form method="POST" class="chat-msgbox">
-    <textarea name="content" class="fullwidth" placeholder="コメントを記入..."></textarea>
-    <input type="submit" name="comment" class="btn button text-white text-wrap" value="投稿" />
-</form> <?php
+<?php
 
 foreach ($object->getComments() as $comment) { ?>
     <div class="chat-line<?php if ($comment->user->id == $object->user_id) echo ' py-2 bg-admin'?>">
@@ -16,3 +13,7 @@ foreach ($object->getComments() as $comment) { ?>
     </div> <?php
 } ?>
 
+<form method="POST" class="chat-msgbox">
+    <textarea name="content" class="fullwidth" placeholder="コメントを記入..."></textarea>
+    <input type="submit" name="comment" class="btn button text-white text-wrap" value="投稿" />
+</form>

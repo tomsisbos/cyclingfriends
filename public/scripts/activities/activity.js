@@ -71,6 +71,8 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         // Set default layer according to current season
         var map = await activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.routeData.geometry.coordinates[0])
 
+        map.setPitch(40)
+
         // Build controls
         activityMap.addStyleControl()
         activityMap.addOptionsControl()
