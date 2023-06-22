@@ -59,7 +59,7 @@ include '../includes/head.php'; ?>
 				</div>
 				<div class="header-row mt-2"> <?php
 					// Include admin buttons if the user has admin rights on this ride
-					if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-buttons.php'; 
+					if (isset($_SESSION['auth']) && ($connected_user->id == $ride->author_id OR in_array($connected_user->id, array_map(function ($guide) { return $guide->id; }, $ride->getGuides())))) include '../includes/rides/admin-buttons.php'; 
 					// Else, include participation buttons
 					else include '../includes/rides/participation-buttons.php'; ?>
 				</div>

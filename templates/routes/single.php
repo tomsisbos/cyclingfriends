@@ -22,7 +22,7 @@ include '../actions/routes/routeAction.php'; ?>
         if (isset($header_background_img)) { ?>
             <div class="container header" style="background-image: <?= 'url(' .$header_background_img->url. '); background-size: cover;' ?>"> <?php
         } else { ?>
-            <div class="container" style="background-color: #5c9999;"> <?php
+            <div class="container bg-grey"> <?php
         } ?>
             <div class="header-block">
                 <div class="header-row">
