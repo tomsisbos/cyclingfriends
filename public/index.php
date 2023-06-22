@@ -88,6 +88,7 @@ $router->map('GET', '/ride/[i:ride_id]/admin', 'rides/admin/entries', 'ride-admi
 $router->map('GET', '/ride/[i:ride_id]/admin/entries', 'rides/admin/entries', 'ride-admin-entries');
 $router->map('GET|POST', '/ride/[i:ride_id]/admin/forms', 'rides/admin/forms', 'ride-admin-forms');
 $router->map('GET|POST', '/ride/[i:ride_id]/admin/guides', 'rides/admin/guides', 'ride-admin-guides');
+$router->map('GET|POST', '/ride/guide-requests', 'rides/guide-requests', 'ride-guide-requests');
 $router->map('GET|POST', '/ride/[i:ride_id]/admin/report', 'rides/admin/report', 'ride-admin-report');
 $router->map('GET|POST', '/rides', 'rides/publicboard', 'rides-publicboard');
 $router->map('GET', '/ride/organizations', 'rides/organizations', 'ride-organizations');

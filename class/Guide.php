@@ -9,7 +9,7 @@ class Guide extends User {
     function __construct($user_id = NULL, $ride_id = NULL, $position = NULL) {
         parent::__construct($user_id);
         $this->rank = $this->getRank();
-        if (isset($ride)) $this->ride = new Ride($ride_id);
+        if (isset($ride_id)) $this->ride = new Ride($ride_id);
         if (isset($position)) $this->position = intval($position);
     }
 
