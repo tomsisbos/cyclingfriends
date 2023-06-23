@@ -82,71 +82,14 @@ export default class ActivityPhotoPopup extends Popup {
             const content = this.popup._content.innerHTML
             if (content.includes('target-button')) this.setTarget()
             if (content.includes('round-propic-img')) this.addPropic(this.data.activityPhoto.user_id)
+
+            // Set lightbox listener
+            const photoElement = this.popup.getElement().querySelector('.popup-activity-photo')
+            photoElement.addEventListener('click', () => {
+                this.lightbox.open()
+            } )
         } )
     }
-
-    /*
-    async populate () {
-        return new Promise(async (resolve, reject) => {
-
-            // Get scenery details
-            if (!this.data.scenery.photos) {
-                var scenery = await this.getDetails(this.data.scenery.id)
-                this.data.scenery = { ...scenery }
-            }
-
-            // Build visited icon if necessary
-            if (this.data.scenery.isCleared) {
-                var visitedIcon = document.createElement('div')
-                visitedIcon.id = 'visited-icon'
-                visitedIcon.title = 'この絶景スポットを訪れたことがあります。'
-                visitedIcon.innerHTML = `
-                    <a href="/activity/` + scenery.isCleared + `" target="_blank">
-                        <span class="iconify" data-icon="akar-icons:circle-check-fill" data-width="20" data-height="20"></span>
-                    </a>
-                `
-            }
-
-            // Build tagslist
-            var tags = ''
-            if (this.data.scenery.tags) this.data.scenery.tags.map((tag) => {
-                tags += `
-                <a target="_blank" href="/tag/` + tag + `">
-                    <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
-                </a>`
-            } )
-
-            // Add administration panel if connected user has admin rights
-            var sessionId = await CFSession.get('id')
-            if (scenery.user_id == sessionId) {
-                var adminPanel = document.createElement('div')
-                adminPanel.id = 'sceneryAdminPanel'
-                adminPanel.className = 'popup-content container-admin'
-                adminPanel.innerHTML = `
-                    <div class="popup-head">管理者ツール</div>
-                    <div class="popup-buttons">
-                        <button class="mp-button bg-button text-white" id="sceneryEdit">情報編集</button>
-                        <button class="mp-button bg-button text-white" id="sceneryMove">位置変更</button>
-                        <button class="mp-button bg-danger text-white" id="sceneryDelete">削除</button>
-                    </div>
-                `
-                // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-                if (this.popup && this.popup._map) var marker = this.getMarker()
-                else resolve(false)
-                if (marker && this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
-                else if (marker && this.data.mapInstance.mode == 'default') marker.setDraggable(false)
-                this.popup._content.querySelector('#popup-content').before(adminPanel)
-            }
-
-            if (this.data.scenery.isFavorite) this.popup._content.querySelector('.js-favorite-button').classList.add('favoured')
-            if (this.data.scenery.isCleared) this.popup._content.querySelector('.popup-icons').appendChild(visitedIcon)
-            this.popup._content.querySelector('.popup-properties-location').innerHTML = this.data.scenery.city + ' (' + this.data.scenery.prefecture + ') - ' + this.data.scenery.elevation + 'm'
-            this.popup._content.querySelector('.popup-description').innerHTML = this.data.scenery.description
-            this.popup._content.querySelector('.js-tags').innerHTML = tags
-
-            resolve(true)
-        } )
-    }*/
 
     // Setup lightbox
     loadLightbox (container = this.popup._map.getContainer()) {

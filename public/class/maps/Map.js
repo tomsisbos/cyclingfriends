@@ -131,18 +131,18 @@ export default class Map extends Model {
         else var controller = this.addController()
         // Add style control
         // Map options container
-        var mapContainer = document.createElement('div')
-        mapContainer.className = 'map-controller-block flex-column'
-        controller.appendChild(mapContainer)
+        var optionsContainer = document.createElement('div')
+        optionsContainer.className = 'map-controller-block flex-column'
+        controller.appendChild(optionsContainer)
         // Label
         var mapOptionsLabel = document.createElement('div')
         mapOptionsLabel.innerText = '地図設定'
         mapOptionsLabel.className = 'map-controller-label'
-        mapContainer.appendChild(mapOptionsLabel)
+        optionsContainer.appendChild(mapOptionsLabel)
         // Line 1
         let line1 = document.createElement('div')
         line1.className = 'map-controller-line hide-on-mobiles'
-        mapContainer.appendChild(line1)
+        optionsContainer.appendChild(line1)
         this.dislayKonbinisBox = document.createElement('input')
         this.dislayKonbinisBox.id = 'dislayKonbinisBox'
         this.dislayKonbinisBox.setAttribute('type', 'checkbox')
@@ -159,7 +159,7 @@ export default class Map extends Model {
         // Line 2
         let line2 = document.createElement('div')
         line2.className = 'map-controller-line hide-on-mobiles'
-        mapContainer.appendChild(line2)
+        optionsContainer.appendChild(line2)
         this.displayAmenitiesBox = document.createElement('input')
         this.displayAmenitiesBox.id = 'displayAmenitiesBox'
         this.displayAmenitiesBox.setAttribute('type', 'checkbox')
@@ -194,7 +194,7 @@ export default class Map extends Model {
         
         // Hide and open on click on mobile display
         mapOptionsLabel.addEventListener('click', () => {
-            mapContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
+            optionsContainer.querySelectorAll('.map-controller-line').forEach( (line) => {
                 if (getComputedStyle(controller).flexDirection == 'row') {
                     mapOptionsLabel.classList.toggle('up')
                     line.classList.toggle('hide-on-mobiles')

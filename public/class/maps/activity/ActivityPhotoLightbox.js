@@ -43,9 +43,21 @@ export default class ActivityPhotoLightbox extends Popup {
         img.src = this.data.activityPhoto.url
         img.classList.add('fullwidth')
         slide.appendChild(img)
+        slideBox.appendChild(slide)
 
         // Remove on popup closing
         this.data.popup.on('close', () => this.modal.remove())
     }
+
+    open () {
+        this.modal.style.display = "block"
+
+        // Close on clicking outside modal-block
+        this.modal.addEventListener('click', (e) => {
+            if ((e.target == this.modalBlock) || (e.target == this.modal)) this.close()
+        } )
+    }
+
+    close = () => this.modal.style.display = "none"
 
 }
