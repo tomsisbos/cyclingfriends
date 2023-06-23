@@ -609,7 +609,7 @@ export default class RouteMap extends Map {
         let checkpointPopup = new CheckpointPopup(checkpoint)
         let popup = checkpointPopup.popup
         popup.on('open', () => {
-            this.unselectMarkers()
+            this.unselectMarkers(this.map)
             checkpointPopup.select()
             this.profile.generate({
                 poiData: {
@@ -619,9 +619,7 @@ export default class RouteMap extends Map {
             })
             checkpointPopup.setTarget() // Set target button
         } )
-        popup.on('close', () => {
-            this.unselectMarkers()
-        } )
+        popup.on('close', () => this.unselectMarkers(this.map))
         marker.setPopup(popup)
 
         // Set modal

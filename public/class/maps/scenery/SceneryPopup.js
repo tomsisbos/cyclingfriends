@@ -165,10 +165,11 @@ export default class SceneryPopup extends Popup {
             
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
-                this.data.mapInstance.unselectMarkers()
+                this.unselectMarkers(this.popup._map)
                 this.select()
             } )
-            this.popup.on('close', () => this.data.mapInstance.unselectMarkers())
+            const map = this.popup._map
+            this.popup.on('close', () => this.unselectMarkers(map))
 
             await this.populate().then((stillExists) => {
                 if (stillExists) {
@@ -380,7 +381,7 @@ export default class SceneryPopup extends Popup {
     }
 
     // Setup lightbox
-    loadLightbox (container = this.data.mapInstance.$map) {
+    loadLightbox (container = this.popup._map.getContainer()) {
         var lightboxData = {
             container,
             popup: this.popup,

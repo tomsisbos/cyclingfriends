@@ -18,11 +18,11 @@ export default class HomeSceneryPopup extends SceneryPopup {
 
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
-                this.data.mapInstance.unselectMarkers()
+                this.unselectMarkers(this.popup._map)
                 this.select()
             } )
             this.popup.on('close', () => {
-                this.data.mapInstance.unselectMarkers()
+                this.unselectMarkers(this.popup._map)
             } )
 
             await this.populate().then(() => {

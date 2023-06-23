@@ -215,4 +215,37 @@ export default class Model {
         var timestamp = this.routeData.properties.time[index] - this.routeData.properties.time[0]
         return getFormattedDurationFromTimestamp(timestamp)
     }
+
+    /**
+     * Remove 'selected-marker' class from all selected markers
+     * @param {mapboxgl.Map} map
+     */ 
+    unselectMarkers (map) {
+        var openedPopupId = 'none' // Prevent auto unselecting if popup opening and closing timing is wrong. If below condition is not included, style will not be switched in case of clicking another marker.
+        // Remove selected class from map marker elements
+        map._markers.forEach( (marker) => {
+            if (!marker.getPopup() || !marker.getPopup().isOpen()) {
+                marker.getElement().classList.remove('selected-marker')
+                if (marker.getElement().querySelector('*')) marker.getElement().querySelector('*').classList.remove('selected-marker')
+            } else openedPopupId = marker.getElement().id
+        } )
+        // Remove selected class from spec-table entries
+        if (document.querySelector('.spec-table tr')) document.querySelectorAll('.spec-table tr').forEach( (tableEntry) => {
+            if (tableEntry.id != '' && getIdFromString(openedPopupId) != getIdFromString(tableEntry.id)) {
+                tableEntry.classList.remove('selected-entry')
+            }
+        } )
+        // Remove selected class from slider thumbnails
+        if (document.querySelector('.rt-slider img')) document.querySelectorAll('.rt-slider .rt-preview-photo').forEach( (thumbnail) => {
+            if (getIdFromString(openedPopupId) != getIdFromString(thumbnail.id)) {
+                thumbnail.querySelector('img').classList.remove('selected-marker')
+            }
+        } )
+        // Remove selected class from POI icons
+        if (document.querySelector('.js-poi-icon')) document.querySelectorAll('.js-poi-icon').forEach( (poiIcon) => {
+            if (getIdFromString(openedPopupId) != getIdFromString(poiIcon.id)) {
+                poiIcon.classList.remove('selected-marker')
+            }
+        } )
+    }
 }

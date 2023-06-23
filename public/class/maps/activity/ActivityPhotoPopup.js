@@ -72,10 +72,11 @@ export default class ActivityPhotoPopup extends Popup {
 
             // Define actions to perform on each popup display
             this.popup.on('open', () => {
-                this.data.mapInstance.unselectMarkers()
+                this.unselectMarkers(this.popup._map)
                 this.select()
             } )
-            this.popup.on('close', () => this.data.mapInstance.unselectMarkers())
+            const map = this.popup._map
+            this.popup.on('close', () => this.unselectMarkers(map))
 
             // Setup interactions depending on content
             const content = this.popup._content.innerHTML
@@ -148,11 +149,10 @@ export default class ActivityPhotoPopup extends Popup {
     }*/
 
     // Setup lightbox
-    loadLightbox (container = this.data.mapInstance.$map) {
+    loadLightbox (container = this.popup._map.getContainer()) {
         var lightboxData = {
             container,
             popup: this.popup,
-            mapInstance: this.data.mapInstance,
             activityPhoto: this.data.activityPhoto
         }
         this.lightbox = new ActivityPhotoLightbox(lightboxData)
@@ -171,7 +171,7 @@ export default class ActivityPhotoPopup extends Popup {
     }
 
     select () {
-        var $map = this.data.mapInstance.$map
+        var $map = this.popup._map.getContainer()
         $map.querySelector('#activityPhoto' + this.data.activityPhoto.id + ' > *').classList.add('selected-marker')
     }
 
