@@ -37,7 +37,7 @@ export default class ActivityPhotoLightbox extends Popup {
 
         // Slide display
         var slide = document.createElement('div')
-        slide.className = 'mySlides wider-slide'
+        slide.className = 'wider-slide'
         // Create image
         var img = document.createElement('img')
         img.src = this.data.activityPhoto.url
