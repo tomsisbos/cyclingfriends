@@ -85,7 +85,7 @@ include '../actions/routes/routeAction.php'; ?>
         ?>
     </div>
 
-<script src="/scripts/map/vendor.js"></script>
+<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/routes/route.js"></script>
 <script src="/scripts/routes/delete.js"></script>
 

@@ -119,7 +119,7 @@ export default class SceneryPopup extends Popup {
             if (this.data.scenery.tags) this.data.scenery.tags.map((tag) => {
                 tags += `
                 <a target="_blank" href="/tag/` + tag + `">
-                    <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+                    <div class="popup-tag tag-light">#` + CFUtils.getTagString(tag) + `</div>
                 </a>`
             } )
 
@@ -661,7 +661,7 @@ export default class SceneryPopup extends Popup {
                     tagsContainer.style.display = 'block'
                     tagsContainer.innerHTML = ''
                     if (response.tags) response.tags.map(tag => {
-                        tagsContainer.innerHTML += `<div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
+                        tagsContainer.innerHTML += `<div class="popup-tag tag-light">#` + CFUtils.getTagString(tag) + `</div>`
                     } )
                     // Reload map instance sceneries data
                     mapInstance.loadSceneries()

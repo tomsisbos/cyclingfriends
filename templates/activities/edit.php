@@ -107,6 +107,6 @@ if ($connected_user->id != $activity->user_id) header('location: /' .$connected_
 </body>
 </html>
 
-<script src="/scripts/map/vendor.js"></script>
+<script src="/scripts/vendor.js"></script>
 <script src="/node_modules/exif-js/exif.js"></script>
 <script type="module" src="/scripts/activities/edit.js"></script>

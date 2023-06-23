@@ -32,7 +32,7 @@ if ($connected_user->id != $route->author->id) header('location: /routes') ?>
 	
 </body>
 
-<script src="/scripts/map/vendor.js"></script>
+<script src="/scripts/vendor.js"></script>
 <script type="module" src="/class/utils/CFUtils.js"></script>
 <script type="module" src="/scripts/routes/edit.js"></script>
 

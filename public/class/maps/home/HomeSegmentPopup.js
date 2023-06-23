@@ -28,7 +28,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
         this.data.tags.map( (tag) => {
             tags += `
             <a target="_blank" href="/tag/` + tag + `">
-                <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+                <div class="popup-tag tag-light">#` + CFUtils.getTagString(tag) + `</div>
             </a>`
         } )
 

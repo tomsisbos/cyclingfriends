@@ -28,8 +28,8 @@ include '../includes/head.php'; ?>
 	
 </body>
 
-<script src="/scripts/map/vendor.js"></script>
+<script src="/scripts/vendor.js"></script>
 <script src="/assets/js/lightbox-script.js"></script>
-<script type="module" src="/scripts/map/map.js"></script>
+<script type="module" src="/scripts/world/world.js"></script>
 
 </html>

@@ -44,7 +44,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
         var tags = ''
         if (scenery.tags) scenery.tags.map( (tag) => {
             tags += `
-            <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>`
+            <div class="popup-tag tag-light">#` + CFUtils.getTagString(tag) + `</div>`
         } )
 
         return `
@@ -87,7 +87,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
             if (this.data.scenery.tags) this.data.scenery.tags.map( (tag) => {
                 tags += `
                 <a target="_blank" href="/tag/` + tag + `">
-                    <div class="popup-tag tag-dark">#` + CFUtils.getTagString(tag) + `</div>
+                    <div class="popup-tag tag-light">#` + CFUtils.getTagString(tag) + `</div>
                 </a>`
             } )
 

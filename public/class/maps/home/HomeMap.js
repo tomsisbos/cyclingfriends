@@ -38,7 +38,7 @@ export default class HomeMap extends WorldMap {
         stop: () => this.element.remove()
     }
 
-    setScenery (scenery) {  
+    setSceneryMarker (scenery) {  
         
         // Build element
         let element = document.createElement('div')

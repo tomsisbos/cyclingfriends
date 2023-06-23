@@ -163,7 +163,7 @@ include '../includes/head.php'; ?>
 </body>
 </html>
 
-<script src="/scripts/map/vendor.js"></script>
+<script src="/scripts/vendor.js"></script>
 <script src="/node_modules/exif-js/exif.js"></script>
 <script type="module" src="/scripts/activities/new.js"></script>
 <script src="/scripts/helpers/activities/new.js"></script>

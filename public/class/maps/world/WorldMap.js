@@ -158,11 +158,29 @@ export default class WorldMap extends Map {
         let line4 = document.createElement('div')
         line4.className = 'map-controller-line hide-on-mobiles'
         optionsContainer.appendChild(line4)
+        this.displayActivityPhotosBox = document.createElement('input')
+        this.displayActivityPhotosBox.id = 'displayActivityPhotosBox'
+        this.displayActivityPhotosBox.setAttribute('type', 'checkbox')
+        this.displayActivityPhotosBox.setAttribute('checked', 'true')
+        line4.appendChild(this.displayActivityPhotosBox)
+        this.displayActivityPhotosBox.addEventListener('click', () => {
+            if (this.displayActivityPhotosBox.checked) this.updateActivityPhotos()
+            else this.activityPhotosMarkerCollection.forEach( (marker) => marker.remove())
+            this.activityPhotosMarkerCollection = []
+        } )
+        var displayActivityPhotosBoxLabel = document.createElement('label')
+        displayActivityPhotosBoxLabel.setAttribute('for', 'displayActivityPhotosBox')
+        displayActivityPhotosBoxLabel.innerText = 'アクティビティ写真を表示'
+        line4.appendChild(displayActivityPhotosBoxLabel)
+        // Line 5
+        let line5 = document.createElement('div')
+        line5.className = 'map-controller-line hide-on-mobiles'
+        optionsContainer.appendChild(line5)
         this.dislayKonbinisBox = document.createElement('input')
         this.dislayKonbinisBox.id = 'dislayKonbinisBox'
         this.dislayKonbinisBox.setAttribute('type', 'checkbox')
         this.dislayKonbinisBox.setAttribute('checked', 'true')
-        line4.appendChild(this.dislayKonbinisBox)
+        line5.appendChild(this.dislayKonbinisBox)
         this.dislayKonbinisBox.addEventListener('click', () => {
             if (this.dislayKonbinisBox.checked) this.addKonbiniLayers()
             else this.hideKonbiniLayers()
@@ -170,16 +188,16 @@ export default class WorldMap extends Map {
         var dislayKonbinisBoxLabel = document.createElement('label')
         dislayKonbinisBoxLabel.setAttribute('for', 'dislayKonbinisBox')
         dislayKonbinisBoxLabel.innerText = 'コンビニを表示'
-        line4.appendChild(dislayKonbinisBoxLabel)
-        // Line 5
-        let line5 = document.createElement('div')
-        line5.className = 'map-controller-line hide-on-mobiles'
-        optionsContainer.appendChild(line5)
+        line5.appendChild(dislayKonbinisBoxLabel)
+        // Line 6
+        let line6 = document.createElement('div')
+        line6.className = 'map-controller-line hide-on-mobiles'
+        optionsContainer.appendChild(line6)
         this.displayAmenitiesBox = document.createElement('input')
         this.displayAmenitiesBox.id = 'displayAmenitiesBox'
         this.displayAmenitiesBox.setAttribute('type', 'checkbox')
         this.displayAmenitiesBox.setAttribute('checked', 'true')
-        line5.appendChild(this.displayAmenitiesBox)
+        line6.appendChild(this.displayAmenitiesBox)
         this.displayAmenitiesBox.addEventListener('click', () => {
             if (this.displayAmenitiesBox.checked) this.addAmenityLayers()
             else this.hideAmenityLayers()
@@ -187,7 +205,7 @@ export default class WorldMap extends Map {
         var displayAmenitiesBoxLabel = document.createElement('label')
         displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
         displayAmenitiesBoxLabel.innerText = 'アメニティを表示'
-        line5.appendChild(displayAmenitiesBoxLabel)
+        line6.appendChild(displayAmenitiesBoxLabel)
         
         // Hide and open on click on mobile display
         optionsLabel.addEventListener('click', () => {
@@ -318,6 +336,7 @@ export default class WorldMap extends Map {
         if (!this.displaySceneriesBox || this.displaySceneriesBox.checked) this.updateSceneries()
         if (!this.displayRidesBox || this.displayRidesBox.checked) this.updateRides()
         if (!this.displaySegmentsBox || this.displaySegmentsBox.checked) this.updateSegments()
+        if (!this.displayActivityPhotos || this.displayActivityPhotos.checked) this.updateActivityPhotos()
     }
 
     updateRides () {

@@ -616,4 +616,19 @@ if (isAjax()) {
         echo json_encode($path);
     }
 
+    if (isset($_GET['activity-photos'])) {
+
+        $ne = new LngLat(explode(',', $_GET['ne'])[0], explode(',', $_GET['ne'])[1]);
+        $sw = new LngLat(explode(',', $_GET['sw'])[0], explode(',', $_GET['sw'])[1]);
+
+        $getFittingActivityPhotos = $db->prepare("SELECT id FROM activity_photos WHERE point IS NOT NULL AND privacy = 'public' AND ST_WITHIN(point, ST_GEOMETRYFROMTEXT('POLYGON(({$ne->lng} {$ne->lat},{$sw->lng} {$ne->lat},{$sw->lng} {$sw->lat},{$ne->lng} {$sw->lat},{$ne->lng} {$ne->lat}))'))");
+        $getFittingActivityPhotos->execute();
+        $photo_ids = $getFittingActivityPhotos->fetchAll(PDO::FETCH_COLUMN);
+
+        echo json_encode(array_map(function ($id) {
+            return new ActivityPhoto($id);
+        }, $photo_ids));
+
+    }
+
 }

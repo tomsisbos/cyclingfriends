@@ -3,6 +3,7 @@ import CFSession from "/class/utils/CFSession.js"
 import Profile from "/class/Profile.js"
 import Model from "/class/Model.js"
 import SceneryPopup from "/class/maps/scenery/SceneryPopup.js"
+import ActivityPhotoPopup from "/class/maps/activity/ActivityPhotoPopup.js"
 
 // Global class initialization
 export default class Map extends Model {
@@ -22,10 +23,13 @@ export default class Map extends Model {
     sceneriesZoomRoof = 7 // Scenery display minimum zoom level
     sceneriesMinNumber = 20 // Number of sceneries displayed to try to reach at minimum
     sceneriesMaxNumber = 40 // Maximum number of sceneries displayed at the same time
+    activityPhotosMarkerCollection = []
+    activityPhotosZoomRoof = 12 // Activity photos display minimum zoom level
     selectStyle
     dislayKonbinisBox
     displayAmenitiesBox
     displaySceneriesBox
+    displayActivityPhotosBox
     loaded = false
     defaultCenter = [139.7673068, 35.6809591]
     defaultZoom = 10
@@ -169,6 +173,24 @@ export default class Map extends Model {
         displayAmenitiesBoxLabel.setAttribute('for', 'displayAmenitiesBox')
         displayAmenitiesBoxLabel.innerText = 'アメニティを表示'
         line2.appendChild(displayAmenitiesBoxLabel)
+        // Line 3
+        let line3 = document.createElement('div')
+        line3.className = 'map-controller-line hide-on-mobiles'
+        optionsContainer.appendChild(line3)
+        this.displayActivityPhotosBox = document.createElement('input')
+        this.displayActivityPhotosBox.id = 'displayActivityPhotosBox'
+        this.displayActivityPhotosBox.setAttribute('type', 'checkbox')
+        this.displayActivityPhotosBox.setAttribute('checked', 'true')
+        line3.appendChild(this.displayActivityPhotosBox)
+        this.displayActivityPhotosBox.addEventListener('click', () => {
+            if (this.displayActivityPhotosBox.checked) this.updateActivityPhotos()
+            else this.activityPhotosMarkerCollection.forEach( (marker) => marker.remove())
+            this.activityPhotosMarkerCollection = []
+        } )
+        var displayActivityPhotosBoxLabel = document.createElement('label')
+        displayActivityPhotosBoxLabel.setAttribute('for', 'displayActivityPhotosBox')
+        displayActivityPhotosBoxLabel.innerText = 'アクティビティ写真を表示'
+        line3.appendChild(displayActivityPhotosBoxLabel)
         
         // Hide and open on click on mobile display
         mapOptionsLabel.addEventListener('click', () => {
@@ -1635,6 +1657,14 @@ export default class Map extends Model {
         element.style.border = size/15 + 'px solid white'
     }
 
+    scaleActivityPhotoMarkerAccordingToZoom (element) {
+        var zoom = this.map.getZoom()
+        var size = (zoom * 3 - 10) - 5
+        if (size < 15) size = 15
+        element.style.height = size + 'px'
+        element.style.width = size + 'px'
+    }
+
     hideDistanceMarkers () {
         if (this.map.getSource('distanceMarkers')) {
             this.map.removeLayer('distanceMarkers')
@@ -2821,7 +2851,7 @@ export default class Map extends Model {
                     if (!document.querySelector('#scenery' + sceneries[j].id)) {
                         // Filter through zoom popularity algorithm
                         if (this.zoomPopularityFilter(sceneries[j].popularity) == true) {
-                            this.setScenery(sceneries[j])
+                            this.setSceneryMarker(sceneries[j])
                             sceneriesSet++
                         } else keepSceneries.push(sceneries[j])
                     }
@@ -2832,7 +2862,7 @@ export default class Map extends Model {
             // Third, if overall number of sceneries is still less than sceneriesMinNumber, add other sceneries inside bounds up to a total number of sceneriesMinNumber
             if (sceneriesSet < this.sceneriesMinNumber) {
                 for (let sceneriesToSet = 0; sceneriesToSet < this.sceneriesMinNumber - sceneriesSet && sceneriesToSet < keepSceneries.length; sceneriesToSet++) {
-                    this.setScenery(keepSceneries[sceneriesToSet])
+                    this.setSceneryMarker(keepSceneries[sceneriesToSet])
                 }
             }
 
@@ -2850,7 +2880,7 @@ export default class Map extends Model {
         }
     }
 
-    async setScenery (scenery) {
+    async setSceneryMarker (scenery) {
         
         // Build element
         let element = document.createElement('div')
@@ -2900,9 +2930,104 @@ export default class Map extends Model {
         this.mapdata.sceneries.forEach( (scenery) => {
             // Verify it has not already been loaded
             if (!document.querySelector('#scenery' + scenery.id)) {
-                if (scenery.isFavorite) this.setScenery(scenery)
+                if (scenery.isFavorite) this.setSceneryMarker(scenery)
             }
         } )
+    }
+
+    updateActivityPhotos () {
+
+        if (this.map.getZoom() > this.activityPhotosZoomRoof) {
+
+            const bounds = this.map.getBounds()
+
+            // First, remove all activity photos that have left bounds
+            var collection = this.activityPhotosMarkerCollection
+            let i = 0
+            while (i < collection.length) {
+                // If existing marker is not inside new bounds OR should not be displayed at this zoom level
+                if ((!(collection[i]._lngLat.lat < bounds._ne.lat && collection[i]._lngLat.lat > bounds._sw.lat) || !(collection[i]._lngLat.lng < bounds._ne.lng && collection[i]._lngLat.lng > bounds._sw.lng)) || this.map.getZoom() < this.activityPhotosZoomRoof) {
+                    collection[i].remove() // Remove it from the DOM
+                    collection.splice(i, 1) // Remove it from instance Nodelist
+                    i--
+                }
+                i++
+            }
+
+            console.log('REQUEST FOR ACTIVITY PHOTOS...')
+
+            ajaxGetRequest ('/api/map.php?activity-photos=true&ne=' + bounds._ne.lng + ',' + bounds._ne.lat + '&sw='  + bounds._sw.lng + ',' + bounds._sw.lat, async (activityPhotos) => {
+
+                console.log(activityPhotos)
+                
+                // Second, add all activity photos that have entered bounds
+                let activityPhotosSet = collection.length
+                let keepActivityPhotos = []
+                let j = 0
+                while (j < activityPhotos.length) {
+                    // If scenery is inside bounds
+                    if ((activityPhotos[j].lngLat.lat < bounds._ne.lat && activityPhotos[j].lngLat.lat > bounds._sw.lat) && (activityPhotos[j].lngLat.lng < bounds._ne.lng && activityPhotos[j].lngLat.lng > bounds._sw.lng)) {
+                        
+                        // Verify it has not already been loaded
+                        if (!document.querySelector('#activityPhoto' + activityPhotos[j].id)) {
+                            // Filter zoom level
+                            if (this.map.getZoom() > this.activityPhotosZoomRoof) {
+                                this.setActivityPhotoMarker(activityPhotos[j])
+                                activityPhotosSet++
+                            } else keepActivityPhotos.push(activityPhotos[j])
+                        }
+                    }
+                    j++
+                }
+
+                // Update markers scale
+                document.querySelectorAll('.activity-photo-icon').forEach((ActivityPhotoIcon) => this.scaleActivityPhotoMarkerAccordingToZoom(ActivityPhotoIcon))
+
+            } )
+
+        } else {
+            for (let i = 0; i < this.activityPhotosMarkerCollection.length; i++) {
+                this.activityPhotosMarkerCollection[i].remove()
+                this.sceneriesMarkerCollection.splice(i, 1)
+                i--
+            }
+        }
+    }
+
+    async setActivityPhotoMarker (activityPhoto) {
+        
+        // Build element
+        let element = document.createElement('div')
+        let icon = document.createElement('img')
+        icon.classList.add('activity-photo-icon')
+        icon.src = activityPhoto.url
+        element.appendChild(icon)
+        this.scaleActivityPhotoMarkerAccordingToZoom(icon) // Set scale according to current zoom
+        var marker = new mapboxgl.Marker ( {
+            anchor: 'center',
+            color: '#5e203c',
+            draggable: false,
+            element: element
+        } )
+        marker.setLngLat([activityPhoto.lngLat.lng, activityPhoto.lngLat.lat])
+        marker.addTo(this.map)
+        marker.getElement().id = 'activityPhoto' + activityPhoto.id
+        marker.getElement().classList.add('activity-photo-marker')
+        marker.getElement().dataset.id = activityPhoto.id
+        marker.getElement().dataset.user_id = activityPhoto.user_id
+        this.activityPhotosMarkerCollection.push(marker)
+
+        // Build and attach popup
+        var popupOptions = {
+            closeOnMove: false
+        }
+        var instanceOptions = {}
+        var instanceData = {
+            mapInstance: this,
+            activityPhoto
+        }
+        let activityPhotoPopup = new ActivityPhotoPopup(popupOptions, instanceData, instanceOptions)
+        marker.setPopup(activityPhotoPopup.popup)
     }
 
     zoomPopularityFilter (popularity) {

@@ -689,6 +689,15 @@ form#sceneryForm input[type="file" i] {
 }
 
 
+.popup-activity-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.activity-photo-icon {
+    object-fit: contain;
+}
+
 /* Tooltip */
 
 .map-tooltip {

@@ -225,5 +225,5 @@ include '../includes/head.php'; ?>
 </html>
 
 <script src="/scripts/user/favorites.js"></script>
-<script src="/scripts/map/vendor.js"></script>
+<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/segments/segment.js"></script>
