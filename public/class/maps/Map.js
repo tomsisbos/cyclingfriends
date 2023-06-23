@@ -2967,7 +2967,7 @@ export default class Map extends Model {
         } else {
             for (let i = 0; i < this.activityPhotosMarkerCollection.length; i++) {
                 this.activityPhotosMarkerCollection[i].remove()
-                this.sceneriesMarkerCollection.splice(i, 1)
+                this.activityPhotosMarkerCollection.splice(i, 1)
                 i--
             }
         }
