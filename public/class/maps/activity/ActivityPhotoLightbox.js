@@ -41,7 +41,7 @@ export default class ActivityPhotoLightbox extends Popup {
         // Create image
         var img = document.createElement('img')
         img.src = this.data.activityPhoto.url
-        img.classList.add('fullwidth')
+        img.classList.add('responsive-slide')
         slide.appendChild(img)
         slideBox.appendChild(slide)
 

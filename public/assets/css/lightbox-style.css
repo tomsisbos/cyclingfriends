@@ -107,6 +107,12 @@
   }
 }
 
+.responsive-slide {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .name-container,
 .caption-container {
   text-align: center;
