@@ -2987,10 +2987,12 @@ export default class Map extends Model {
                     j++
                 }
 
+                console.log(this)
+
             } )
             
             // Update markers scale
-            document.querySelectorAll('.activity-photo-marker > *').forEach((ActivityPhotoIcon) => scaleActivityPhotoMarkerAccordingToZoom(ActivityPhotoIcon, {img: false}))
+            document.querySelectorAll('.activity-photo-marker > *').forEach((ActivityPhotoIcon) => this.scaleActivityPhotoMarkerAccordingToZoom(ActivityPhotoIcon, {img: false}))
 
         } else {
             for (let i = 0; i < this.activityPhotosMarkerCollection.length; i++) {
