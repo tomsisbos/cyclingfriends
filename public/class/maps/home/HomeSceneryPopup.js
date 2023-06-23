@@ -140,7 +140,7 @@ export default class HomeSceneryPopup extends SceneryPopup {
                     photo.$element.src = photo.url
                     photosContainer.prepend(photo.$element)
                     photo.$period = document.createElement('div')
-                    photo.$period.classList.add('scenery-period', setPeriodClass(photo.month))
+                    photo.$period.classList.add('photo-period', setPeriodClass(photo.month))
                     photo.$period.innerText = photo.period
                     // Display first photo and period by default
                     if (number == 1) {

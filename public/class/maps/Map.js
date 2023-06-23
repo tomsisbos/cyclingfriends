@@ -1504,7 +1504,7 @@ export default class Map extends Model {
         this.map._markers.forEach( (marker) => {
             if (!marker.getPopup() || !marker.getPopup().isOpen()) {
                 marker.getElement().classList.remove('selected-marker')
-                if (marker.getElement().querySelector('img')) marker.getElement().querySelector('img').classList.remove('selected-marker')
+                if (marker.getElement().querySelector('*')) marker.getElement().querySelector('*').classList.remove('selected-marker')
             } else openedPopupId = marker.getElement().id
         } )
         // Remove selected class from spec-table entries
@@ -1650,17 +1650,24 @@ export default class Map extends Model {
 
     scaleMarkerAccordingToZoom (element) {
         var zoom = this.map.getZoom()
-        var size = (zoom * 3 - 10) - 5
+        var size = zoom * 3 - 15
         if (size < 15) size = 15
         element.style.height = size + 'px'
         element.style.width = size + 'px'
         element.style.border = size/15 + 'px solid white'
     }
 
-    scaleActivityPhotoMarkerAccordingToZoom (element) {
+    /**
+     * Scale (style) marker element according to zoom
+     * @param {HTMLElement} element 
+     * @param {Object} options
+     * @param {Boolean} options.img Whether icon is an image or not
+     */
+    scaleActivityPhotoMarkerAccordingToZoom (element, options = {img: true}) {
         var zoom = this.map.getZoom()
-        var size = (zoom * 3 - 10) - 5
-        if (size < 15) size = 15
+        if (options.img) var size = zoom * 3 - 15
+        else var size = (zoom * 7 - 35) / 5
+        if (size < 5) size = 5
         element.style.height = size + 'px'
         element.style.width = size + 'px'
     }
@@ -2980,10 +2987,10 @@ export default class Map extends Model {
                     j++
                 }
 
-                // Update markers scale
-                document.querySelectorAll('.activity-photo-icon').forEach((ActivityPhotoIcon) => this.scaleActivityPhotoMarkerAccordingToZoom(ActivityPhotoIcon))
-
             } )
+            
+            // Update markers scale
+            document.querySelectorAll('.activity-photo-marker > *').forEach((ActivityPhotoIcon) => scaleActivityPhotoMarkerAccordingToZoom(ActivityPhotoIcon, {img: false}))
 
         } else {
             for (let i = 0; i < this.activityPhotosMarkerCollection.length; i++) {
@@ -2998,11 +3005,10 @@ export default class Map extends Model {
         
         // Build element
         let element = document.createElement('div')
-        let icon = document.createElement('img')
-        icon.classList.add('activity-photo-icon')
-        icon.src = activityPhoto.url
+        let icon = document.createElement('div')
+        icon.classList.add('activity-photo-smallicon')
         element.appendChild(icon)
-        this.scaleActivityPhotoMarkerAccordingToZoom(icon) // Set scale according to current zoom
+        this.scaleActivityPhotoMarkerAccordingToZoom(icon, {img: false}) // Set scale according to current zoom
         var marker = new mapboxgl.Marker ( {
             anchor: 'center',
             color: '#5e203c',

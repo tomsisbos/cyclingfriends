@@ -626,7 +626,13 @@ if (isAjax()) {
         $photo_ids = $getFittingActivityPhotos->fetchAll(PDO::FETCH_COLUMN);
 
         echo json_encode(array_map(function ($id) {
-            return new ActivityPhoto($id);
+            $activity_photo = new ActivityPhoto($id);
+            $activity = new Activity($activity_photo->activity_id);
+            $user = new User($activity_photo->user_id);
+            $activity_photo->activity_title = $activity->title;
+            $activity_photo->activity_privacy = $activity->privacy;
+            $activity_photo->user_login = $user->login;
+            return $activity_photo;
         }, $photo_ids));
 
     }

@@ -129,7 +129,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
             newPhoto.src = photo.url
             photoContainer.appendChild(newPhoto)
             var newPhotoPeriod = document.createElement('div')
-            newPhotoPeriod.classList.add('scenery-period', setPeriodClass(photo.month))
+            newPhotoPeriod.classList.add('photo-period', setPeriodClass(photo.month))
             newPhotoPeriod.innerText = photo.period
             newPhotoPeriod.style.display = 'none'
             newPhoto.after(newPhotoPeriod)
@@ -146,7 +146,7 @@ export default class HomeSegmentPopup extends SegmentPopup {
         // Set slider system
 
         var photos = this.data.mapInstance.map.getContainer().getElementsByClassName("popup-img")
-        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("scenery-period")
+        var photosPeriods = this.data.mapInstance.map.getContainer().getElementsByClassName("photo-period")
 
         // If there is more than one photo in the database
         if (this.photos.length > 1) {

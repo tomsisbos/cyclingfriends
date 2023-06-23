@@ -652,4 +652,39 @@ export default class RouteMap extends Map {
         return element
     }
 
+    async setActivityPhotoMarker (activityPhoto) {
+        
+        // Build element
+        let element = document.createElement('div')
+        let icon = document.createElement('div')
+        icon.classList.add('activity-photo-smallicon')
+        element.appendChild(icon)
+        this.scaleActivityPhotoMarkerAccordingToZoom(icon) // Set scale according to current zoom
+        var marker = new mapboxgl.Marker ( {
+            anchor: 'center',
+            color: '#5e203c',
+            draggable: false,
+            element: element
+        } )
+        marker.setLngLat([activityPhoto.lngLat.lng, activityPhoto.lngLat.lat])
+        marker.addTo(this.map)
+        marker.getElement().id = 'activityPhoto' + activityPhoto.id
+        marker.getElement().classList.add('activity-photo-marker')
+        marker.getElement().dataset.id = activityPhoto.id
+        marker.getElement().dataset.user_id = activityPhoto.user_id
+        this.activityPhotosMarkerCollection.push(marker)
+
+        // Build and attach popup
+        var popupOptions = {
+            closeOnMove: false
+        }
+        var instanceOptions = {}
+        var instanceData = {
+            mapInstance: this,
+            activityPhoto
+        }
+        let activityPhotoPopup = new ActivityPhotoPopup(popupOptions, instanceData, instanceOptions)
+        marker.setPopup(activityPhotoPopup.popup)
+    }
+
 }

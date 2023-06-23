@@ -282,7 +282,7 @@ form#sceneryForm input[type="file" i] {
     cursor: pointer;
     filter: drop-shadow(1px 1px 1px black);
 }
-.scenery-period {
+.photo-period {
     z-index: 2;
     display: inline-block;
     position: absolute;
@@ -696,6 +696,10 @@ form#sceneryForm input[type="file" i] {
 }
 .activity-photo-icon {
     object-fit: contain;
+}
+.activity-photo-smallicon {
+    border-radius: 99px;
+    background-color: #000;
 }
 
 /* Tooltip */

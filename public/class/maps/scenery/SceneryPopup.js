@@ -168,9 +168,7 @@ export default class SceneryPopup extends Popup {
                 this.data.mapInstance.unselectMarkers()
                 this.select()
             } )
-            this.popup.on('close', () => {
-                this.data.mapInstance.unselectMarkers()
-            } )
+            this.popup.on('close', () => this.data.mapInstance.unselectMarkers())
 
             await this.populate().then((stillExists) => {
                 if (stillExists) {
@@ -185,11 +183,11 @@ export default class SceneryPopup extends Popup {
             } )
 
             // Setup interactions depending on content
-            var content = this.popup._content.innerHTML
+            const content = this.popup._content.innerHTML
             if (content.includes('sceneryAdminPanel')) this.sceneryAdmin()
             if (content.includes('target-button')) this.setTarget()
             if (content.includes('js-favorite-button')) this.setFavorite()
-            if (content.includes('round-propic-img')) this.addPropic()
+            if (content.includes('round-propic-img')) this.addPropic(this.data.scenery.user_id)
         } )
     }
 
@@ -310,7 +308,7 @@ export default class SceneryPopup extends Popup {
             photo.$element.src = photo.url
             photosContainer.prepend(photo.$element)
             photo.$period = document.createElement('div')
-            photo.$period.classList.add('scenery-period', setPeriodClass(photo.month))
+            photo.$period.classList.add('photo-period', setPeriodClass(photo.month))
             photo.$period.innerText = photo.period
             // Display first photo and period by default
             if (number == 1) {
@@ -336,7 +334,7 @@ export default class SceneryPopup extends Popup {
                 this.data.scenery.photos = newPhotos
                 // Clear current photo and period elements
                 photosContainer.querySelectorAll('.popup-img').forEach(element => element.remove())
-                photosContainer.querySelectorAll('.scenery-period').forEach(element => element.remove())
+                photosContainer.querySelectorAll('.photo-period').forEach(element => element.remove())
                 // Add newest photos
                 for (let i = 0; i < newPhotos.length; i++) addPhoto(newPhotos[i], i + 1)
             } )
@@ -531,23 +529,6 @@ export default class SceneryPopup extends Popup {
 
     }
 
-    setTarget = () => {
-        this.popup._content.querySelector('#target-button').addEventListener('click', () => {
-            var map = this.popup._map
-            var lngLat = this.popup._lngLat
-            map.flyTo( {
-                center: lngLat,
-                zoom: 17,
-                speed: 0.4,
-                curve: 1,
-                pitch: 40,
-                easing(t) {
-                return t
-                }
-            } )
-        } )
-    }
-
     /**
      * Get the marker element corresponding to popup instance data scenery id
      * @returns {mapboxgl.Marker}
@@ -591,8 +572,6 @@ export default class SceneryPopup extends Popup {
             } )
         } )
     }
-
-    addPropic = async () => this.popup._content.querySelector('.round-propic-img').src = await this.loadPropic(this.data.scenery.user_id)
     
     sceneryAdmin () {
         const mapInstance = this.data.mapInstance

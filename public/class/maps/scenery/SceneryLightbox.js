@@ -125,7 +125,7 @@ export default class SceneryLightbox extends Popup {
             imgMeta.className = 'scenery-img-meta'
             slides[i].appendChild(imgMeta)
             var period = document.createElement('div')
-            period.className = 'scenery-period lightbox-period'
+            period.className = 'photo-period lightbox-period'
             period.classList.add('period-' + photos[i].month)
             period.innerText = photos[i].period
             imgMeta.appendChild(period)

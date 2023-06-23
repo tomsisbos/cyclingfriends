@@ -100,7 +100,7 @@ export default class Popup extends Model {
                 likes.innerText = photo.likes
                 imgMeta.appendChild(likes)
                 var period = document.createElement('div')
-                period.className = 'scenery-period lightbox-period'
+                period.className = 'photo-period lightbox-period'
                 period.classList.add('period-' + photo.month)
                 period.innerText = photo.period
                 imgMeta.appendChild(period)
@@ -375,4 +375,23 @@ export default class Popup extends Model {
             } )
         } )
     }
+
+    setTarget = () => {
+        this.popup._content.querySelector('#target-button').addEventListener('click', () => {
+            var map = this.popup._map
+            var lngLat = this.popup._lngLat
+            map.flyTo( {
+                center: lngLat,
+                zoom: 17,
+                speed: 0.4,
+                curve: 1,
+                pitch: 40,
+                easing(t) {
+                return t
+                }
+            } )
+        } )
+    }
+
+    addPropic = async (user_id) => this.popup._content.querySelector('.round-propic-img').src = await this.loadPropic(user_id)
 }

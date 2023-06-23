@@ -66,7 +66,7 @@ export default class HomeSegmentLightbox extends SegmentLightbox {
                 imgMeta.className = 'scenery-img-meta'
                 slides[cursor].appendChild(imgMeta)
                 var period = document.createElement('div')
-                period.className = 'scenery-period lightbox-period'
+                period.className = 'photo-period lightbox-period'
                 period.classList.add('period-' + photo.month)
                 period.innerText = photo.period
                 imgMeta.appendChild(period)

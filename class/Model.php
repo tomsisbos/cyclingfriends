@@ -42,6 +42,35 @@ class Model {
             case 3: return '研修生';
         }
     }
+
+    protected function getPeriod () {
+        
+        // Get part of the month from the day
+        if (isset($this->date)) $date = $this->date;
+        else if (isset($this->datetime)) $date = $this->datetime->format('Y-m-d H:i:s');
+        $day = date("d", strtotime($date));
+        if ($day < 10) $third = "上旬";
+        else if (($day >= 10) AND ($day <= 20)) $third = "中旬";
+        else if ($day > 20) $third = "下旬";
+
+        // Get month in letters
+        switch (date("n", strtotime($date))) {
+            case 1: $month = "1月"; break;
+            case 2: $month = "2月"; break;
+            case 3: $month = "3月"; break;
+            case 4: $month = "4月"; break;
+            case 5: $month = "5月"; break;
+            case 6: $month = "6月"; break;
+            case 7: $month = "7月"; break;
+            case 8: $month = "8月"; break;
+            case 9: $month = "9月"; break;
+            case 10: $month = "10月"; break;
+            case 11: $month = "11月"; break;
+            case 12: $month = "12月"; 
+        }
+
+        return $month . $third;
+    }
     
     /**
      * Attribute a color depending on the level

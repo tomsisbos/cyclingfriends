@@ -8,6 +8,7 @@ class ActivityPhoto extends Model {
     public $activity_id;
     public $user_id;
     public $datetime;
+    public $period;
     public $featured;
     public $lngLat;
     public $filename;
@@ -22,6 +23,7 @@ class ActivityPhoto extends Model {
             $this->activity_id = $data['activity_id'];
             $this->user_id     = $data['user_id'];
             $this->datetime    = new DateTime($data['datetime']);
+            $this->period      = $this->getPeriod();
             if (intval($data['featured']) == 1) $this->featured = true;
             else $this->featured = false;
             $this->lngLat      = $this->getLngLat();

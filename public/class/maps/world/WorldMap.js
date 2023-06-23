@@ -13,6 +13,7 @@ export default class WorldMap extends Map {
     }
 
     type = 'worldMap'
+    defaultPitch = 10
     data = {}
     cursor = 1
     tempMarkerCollection = []
