@@ -86,6 +86,7 @@ $upload.addEventListener('change', async (e) => {
                     newActivityMap.displayStartGoalMarkers(newActivityMap.routeData)
                     newActivityMap.updateDistanceMarkers()
                     newActivityMap.focus(newActivityMap.routeData)
+                    newActivityMap.profile.generate()
 
                     // Add photos treatment
                     document.querySelector('#uploadPhotos').addEventListener('change', async (e) => {

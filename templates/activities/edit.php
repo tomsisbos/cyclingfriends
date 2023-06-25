@@ -69,11 +69,8 @@ if ($connected_user->id != $activity->user_id) header('location: /' .$connected_
             </div>
         </div>
 
-        <div class="container p-0">
-            <div id="activityMapContainer">
-                <div class="cf-map" id="activityMap"></div>
-                <div class="grabber"></div>
-            </div>
+        <div class="container p-0"> <?php
+            include '../includes/activities/map.php' ?>
         </div>
 
         <div class="container new-ac-container">

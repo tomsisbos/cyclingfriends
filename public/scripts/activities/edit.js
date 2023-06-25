@@ -69,6 +69,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     editActivityMap.displayStartGoalMarkers(editActivityMap.routeData)
     editActivityMap.updateDistanceMarkers()
     editActivityMap.focus(editActivityMap.routeData)
+    editActivityMap.profile.generate()
     editActivityMap.displayCheckpointMarkers()
     editActivityMap.displayPhotoMarkers()
 

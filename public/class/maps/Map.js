@@ -2931,11 +2931,7 @@ export default class Map extends Model {
                 i++
             }
 
-            console.log('REQUEST FOR ACTIVITY PHOTOS...')
-
             ajaxGetRequest ('/api/map.php?activity-photos=true&ne=' + bounds._ne.lng + ',' + bounds._ne.lat + '&sw='  + bounds._sw.lng + ',' + bounds._sw.lat, async (activityPhotos) => {
-
-                console.log(activityPhotos)
                 
                 // Second, add all activity photos that have entered bounds
                 let activityPhotosSet = collection.length

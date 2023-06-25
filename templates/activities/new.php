@@ -117,12 +117,9 @@ include '../includes/head.php'; ?>
 
                         </div>
 
-                    </div>
+                    </div> <?php
 
-                    <div id="activityMapContainer">
-                        <div class="cf-map" id="activityMap"></div>
-                        <div class="grabber"></div>
-                    </div>
+                    include '../includes/activities/map.php' ?>
 
                     <div class="container new-ac-container">
                         <h3>写真</h3>
