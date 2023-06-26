@@ -107,20 +107,22 @@ class Garmin extends Model {
 
     /**
      * Populate instance with garmin user id corresponding oauth token and oauth token secret from database
-     * @return boolean false if garmin user id is not set
+     * @return boolean false if garmin user id or garmin data is not set
      */
     public function populateUserTokens () {
         if (isset($this->garmin_user_id)) {
             $getUserTokens = $this->getPdo()->prepare("SELECT oauth_token, oauth_token_secret, permission_activity, permission_course FROM {$this->table} WHERE garmin_user_id = ?");
             $getUserTokens->execute([$this->garmin_user_id]);
-            $user_tokens = $getUserTokens->fetch(PDO::FETCH_ASSOC);
-            $this->oauth_token = $user_tokens['oauth_token'];
-            $this->oauth_token_secret = $user_tokens['oauth_token_secret'];
-            foreach ($this->api_types as $api_type) {
-                if ($user_tokens['permission_' .$api_type] == 1) $this->setPermission($api_type, 1);
-                else $this->setPermission($api_type, 0);
-            }
-            return true;
+            if ($getUserTokens->rowCount() > 0) {
+                $user_tokens = $getUserTokens->fetch(PDO::FETCH_ASSOC);
+                $this->oauth_token = $user_tokens['oauth_token'];
+                $this->oauth_token_secret = $user_tokens['oauth_token_secret'];
+                foreach ($this->api_types as $api_type) {
+                    if ($user_tokens['permission_' .$api_type] == 1) $this->setPermission($api_type, 1);
+                    else $this->setPermission($api_type, 0);
+                }
+                return true;
+            } else return false;
         } else return false;
     }
 
@@ -130,8 +132,8 @@ class Garmin extends Model {
      * @param int $boolean 0 or 1
      */
     public function setPermission ($permission, $boolean) {
-        $setPermission = $this->getPdo()->prepare("UPDATE {$this->table} SET permission_{$permission} = ?");
-        $setPermission->execute([$boolean]);
+        $setPermission = $this->getPdo()->prepare("UPDATE {$this->table} SET permission_{$permission} = ? WHERE garmin_user_id = ?");
+        $setPermission->execute([$boolean, $this->garmin_user_id]);
     }
 
     /**

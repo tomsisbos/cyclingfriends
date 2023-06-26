@@ -16,12 +16,16 @@ if (!file_exists($temp_directory)) mkdir($temp_directory, 0777, true); // Create
 $temp_url = $temp_directory. '/permission-change.json';
 file_put_contents($temp_url, $json);
 
-$garmin = new Garmin($data['userPermissionsChange']['userId']);
-$garmin->populateUserTokens();
-if (in_array('ACTIVITY_EXPORT', $garmin->permissions)) $garmin->setPermission('activity', true);
-else $garmin->setPermission('activity', false);
-if (in_array('COURSE_IMPORT', $garmin->permissions)) $garmin->setPermission('course', true);
-else $garmin->setPermission('course', false);
+foreach ($data['userPermissionsChange'] as $entry) {
+    $garmin = new Garmin($entry['userId']);
+    $result = $garmin->populateUserTokens();
+    if ($result) {
+        if (in_array('ACTIVITY_EXPORT', $garmin->permissions)) $garmin->setPermission('activity', true);
+        else $garmin->setPermission('activity', false);
+        if (in_array('COURSE_IMPORT', $garmin->permissions)) $garmin->setPermission('course', true);
+        else $garmin->setPermission('course', false);
+    }
+}
 
 // Retrieve a 200 response code
 http_response_code(200);

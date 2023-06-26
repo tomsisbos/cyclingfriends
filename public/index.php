@@ -75,7 +75,7 @@ $router->map('GET|POST', '/ride/[i:ride_id]', function ($ride_id) {
     global $router;
     $ride = new Ride($ride_id);
     // If ride date is past, or if report activity id has been set, show report page
-    if ((new DateTime($ride->date) < new DateTime('now', new DateTimezone('Asia/Tokyo'))) OR (isset($ride->getReport()->activity_id))) {
+    if (isset($ride->getReport()->activity_id)) {
         include '../templates/rides/report.php';
     // Else, show ride page
     } else include '../templates/rides/single.php';

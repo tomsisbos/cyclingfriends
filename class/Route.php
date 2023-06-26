@@ -247,7 +247,7 @@ class Route extends Model {
         $getPublicPhotos = $this->getPdo()->prepare("
             SELECT
                 id,
-                ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$this->id}), 'metre') as 'remoteness'
+                ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$this->id})) as 'remoteness'
             FROM activity_photos
             WHERE
                 ST_IsEmpty(point) = 0
