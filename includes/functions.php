@@ -9,6 +9,16 @@ function root () {
 	return substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));	
 }
 
+/**
+ * Get connected user instance if connected, else throw exception
+ * @return User
+ * @throws Exception
+ */
+function getConnectedUser () {
+	if (isset($_SESSION['id']) && $_SESSION['id'] > 0) return new User($_SESSION['id']);
+	else throw new Exception('セッションが切れてしまいました。お手数ですが、再度ログインしてください。');
+}
+
 // Check for an AJAX request
 function isAjax () {
 	return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';

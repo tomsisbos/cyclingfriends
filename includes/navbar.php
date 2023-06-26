@@ -31,12 +31,12 @@
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div></a>
-						<a class="dropdown-item interactive" href="<?= $router->generate('activity-journal', ['user_login' => $connected_user->login]) ?>"><div class="mainitem">活動日記</div></a>
-						<a class="dropdown-item interactive" href="/<?= $connected_user->login ?>/activities"><div class="mainitem">マイアクティビティ</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('activity-journal', ['user_login' => getConnectedUser()->login]) ?>"><div class="mainitem">活動日記</div></a>
+						<a class="dropdown-item interactive" href="/<?= getConnectedUser()->login ?>/activities"><div class="mainitem">マイアクティビティ</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/<?= $connected_user->login ?>/routes"><div class="mainitem">ルート</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/<?= getConnectedUser()->login ?>/routes"><div class="mainitem">ルート</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/route/new"><div class="mainitem">新規作成</div></a>
@@ -55,7 +55,7 @@
 					<a class="nav-link nav-dropdown-link interactive" href="/neighbours"><div class="mainitem">コミュニティ</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu"> <?php
-						if ($connected_user->hasAdministratorRights()) { ?>
+						if (getConnectedUser()->hasAdministratorRights()) { ?>
 							<a class="dropdown-item bg-admin interactive" href="/community"><div class="mainitem">ユーザー一覧</div></a> <?php
 						} ?>
 						<a class="dropdown-item bg-admin interactive" href="/dev/board"><div class="mainitem">開発ボード</div></a>
@@ -71,7 +71,7 @@
 		<div class="nav-item d-flex align-items-center gap">
 			<div>
 				<a href="/rider/<?= $_SESSION['id']; ?>">
-					<?php $connected_user->getPropicElement(60, 60, 60); ?>
+					<?php getConnectedUser()->getPropicElement(60, 60, 60); ?>
 				</a>
 				<div id="notificationsContainer"></div>
 			</div>

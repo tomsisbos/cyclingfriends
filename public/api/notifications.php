@@ -8,13 +8,13 @@ if (isAjax()) {
     if (isset($_GET['get'])) {
 
         if (isset($_GET['reset'])) {
-            $notifications = $connected_user->getNotifications();
+            $notifications = getConnectedUser()->getNotifications();
             setcookie("loadedNotificationsNumber", "10", time() + 86400, "/" );
 
         } else {
             if (isset($_COOKIE["loadedNotificationsNumber"])) $loaded_number = intval($_COOKIE["loadedNotificationsNumber"]);
             else $loaded_number = 0;
-            $notifications = $connected_user->getNotifications($loaded_number);
+            $notifications = getConnectedUser()->getNotifications($loaded_number);
             setcookie("loadedNotificationsNumber", $loaded_number + 10, time() + 86400, "/" );
         }
 
@@ -29,7 +29,7 @@ if (isAjax()) {
         if ($_GET['check'] == 'all') {
             if (isset($_COOKIE["loadedNotificationsNumber"])) $limit = $_COOKIE["loadedNotificationsNumber"];
             else $limit = 10;
-            $notifications = $connected_user->getNotifications(0, $limit);
+            $notifications = getConnectedUser()->getNotifications(0, $limit);
             foreach ($notifications as $notification) $notification->check();
             echo json_encode(true);
             

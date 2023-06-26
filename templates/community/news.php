@@ -43,7 +43,7 @@ include '../includes/navbar.php';?>
             } ?>
         </div> <?php
         
-        if (isset($_SESSION['auth']) AND $connected_user->hasModeratorRights()) { ?>
+        if (isset($_SESSION['auth']) AND getConnectedUser()->hasModeratorRights()) { ?>
 
             <div class="container bg-admin mb-3">
 

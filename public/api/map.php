@@ -183,7 +183,7 @@ if (isAjax()) {
 
     if (isset($_GET['getpropic'])) {
         if (is_numeric($_GET['getpropic'])) $user = new User($_GET['getpropic']);
-        else $user = $connected_user;
+        else $user = getConnectedUser();
         $profile_picture_src = $user->getPropicUrl();
         echo json_encode([$profile_picture_src]);
     }
@@ -294,7 +294,7 @@ if (isAjax()) {
 
         // Check if user has already given a like
         $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
-        $checkIfUserHasAlreadyGivenALike->execute(array($connected_user->id, $img->id));
+        $checkIfUserHasAlreadyGivenALike->execute(array(getConnectedUser()->id, $img->id));
 
         // If user has already liked
         if ($checkIfUserHasAlreadyGivenALike->rowcount() > 0) {
@@ -306,7 +306,7 @@ if (isAjax()) {
             $removeLikeFromScenery->execute(array($scenery->id));
             // Remove corresponding entry in scenery_photos_likes table
             $removeEntryFromIslikeSceneryTable = $db->prepare('DELETE FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
-            $removeEntryFromIslikeSceneryTable->execute(array($connected_user->id, $img->id));
+            $removeEntryFromIslikeSceneryTable->execute(array(getConnectedUser()->id, $img->id));
             $is_given_point = false;
 
         // If user has not liked yet
@@ -319,7 +319,7 @@ if (isAjax()) {
             $addLikeFromScenery->execute(array($scenery->id));
             // Add corresponding entry in scenery_photos_likes table
             $setEntryInIslikeSceneryTable = $db->prepare('INSERT INTO scenery_photos_likes(user_id, img_id) VALUES (?, ?)');
-            $setEntryInIslikeSceneryTable->execute(array($connected_user->id, $img->id));
+            $setEntryInIslikeSceneryTable->execute(array(getConnectedUser()->id, $img->id));
             $is_given_point = true;
         }
         // Update scenery infos
@@ -375,7 +375,7 @@ if (isAjax()) {
         $rating_infos = $checkRating->fetch(PDO::FETCH_ASSOC);
         // Add user vote info
         if (isset($_SESSION['id'])) {
-            $vote = $object->getUserVote($connected_user);
+            $vote = $object->getUserVote(getConnectedUser());
             $rating_infos['vote'] = $vote;
         }
         echo json_encode($rating_infos);
@@ -403,16 +403,16 @@ if (isAjax()) {
 
         // Add or update grade to table
         $checkIfUserAlreadyRated = $db->prepare("SELECT grade FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");
-        $checkIfUserAlreadyRated->execute(array($object->id, $connected_user->id));
+        $checkIfUserAlreadyRated->execute(array($object->id, getConnectedUser()->id));
         $grade_infos = $checkIfUserAlreadyRated->fetch(PDO::FETCH_NUM);
         if ($checkIfUserAlreadyRated->rowCount() > 0){ // If user already rated this object, update the corresponding grade
             $current_grade = $grade_infos[0]; // Get user's current grade 
             $updateGrade = $db->prepare("UPDATE {$grades_table} SET grade = ? WHERE {$id_entry} = ? AND user_id = ?");
-            $updateGrade->execute(array($grade, $object->id, $connected_user->id));
+            $updateGrade->execute(array($grade, $object->id, getConnectedUser()->id));
             $operation_type = 'update';
         } else { // Else, insert a new grade
             $insertGrade = $db->prepare("INSERT INTO {$grades_table} ({$id_entry}, user_id, grade) VALUES (?, ?, ?)");
-            $insertGrade->execute(array($object->id, $connected_user->id, $grade));
+            $insertGrade->execute(array($object->id, getConnectedUser()->id, $grade));
             $operation_type = 'insertion';
         }
 
@@ -468,7 +468,7 @@ if (isAjax()) {
 
         // Get current grade
         $getCurrentGrade = $db->prepare("SELECT grade FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");
-        $getCurrentGrade->execute(array($object->id, $connected_user->id));
+        $getCurrentGrade->execute(array($object->id, getConnectedUser()->id));
         $grade_infos = $getCurrentGrade->fetch(PDO::FETCH_NUM);
         if ($getCurrentGrade->rowCount() > 0){
             $current_grade = $grade_infos[0];
@@ -479,7 +479,7 @@ if (isAjax()) {
 
         // Remove grade entry from grade table
         $removeGrade = $db->prepare("DELETE FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");
-        $removeGrade->execute(array($object->id, $connected_user->id));
+        $removeGrade->execute(array($object->id, getConnectedUser()->id));
         // Get current rating infos
         $getRating = $db->prepare("SELECT rating, grades_number FROM {$table} WHERE id = ?");
         $getRating->execute(array($object->id));
@@ -515,20 +515,20 @@ if (isAjax()) {
     if (isset($_GET['add-review-scenery'])) {
         // Prepare data
         $content = nl2br(htmlspecialchars($_GET['content']));
-        $propic  = $connected_user->getPropicUrl();
+        $propic  = getConnectedUser()->getPropicUrl();
         $time    = date('Y-m-d H:i:s');
         // Post review
         $scenery = new Scenery($_GET['add-review-scenery']);
         $scenery->postReview($content);
         // Return necessary data
-        echo json_encode(['scenery_id' => $scenery->id, "user" => ["id" => $connected_user->id, "login" => $connected_user->login], "content" => $content, "time" => $time, "propic" => $propic]);
+        echo json_encode(['scenery_id' => $scenery->id, "user" => ["id" => getConnectedUser()->id, "login" => getConnectedUser()->login], "content" => $content, "time" => $time, "propic" => $propic]);
     }
 
     if (isset($_GET['display-rides'])) {
         define('RIDES_DATE_RANGE', 3); // Define interval in which rides must be displayed in months
         $getRides = $db->prepare("SELECT id FROM rides
         WHERE
-            (privacy = 'public' OR (privacy = 'friends_only' AND author_id IN ('".implode("','",$connected_user->getFriends())."')))
+            (privacy = 'public' OR (privacy = 'friends_only' AND author_id IN ('".implode("','",getConnectedUser()->getFriends())."')))
         AND
             date BETWEEN :today AND :datemax");
         $today = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
@@ -607,7 +607,7 @@ if (isAjax()) {
     }
     
     if (isset($_GET['get-user-favorite-sceneries'])) {
-        echo json_encode($connected_user->getFavorites('scenery'));
+        echo json_encode(getConnectedUser()->getFavorites('scenery'));
     }
 
     if (isset($_GET['get-icon'])) {

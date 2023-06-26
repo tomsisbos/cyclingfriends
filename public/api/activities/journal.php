@@ -21,7 +21,7 @@ if (isset($_GET)) {
         $year = intval($_GET['year']);
         $month = intval($_GET['month']);
 
-        if (!isset($_SESSION['auth']) || $connected_user->id != $user->id) $privacy_contition = "AND a.privacy = 'public' ";
+        if (!isset($_SESSION['auth']) || getConnectedUser()->id != $user->id) $privacy_contition = "AND a.privacy = 'public' ";
         else $privacy_contition = '';
 
         $getActivitiesByDate = $db->prepare("SELECT a.id, a.title, a.datetime, r.distance, a.duration_running, a.privacy, (

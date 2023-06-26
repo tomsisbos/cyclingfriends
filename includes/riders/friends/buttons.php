@@ -4,9 +4,9 @@
 	if (isset($_SESSION['auth'])) {
 
 		// If rider and connected user are not the same
-		if ($connected_user->id !== $rider->id) {
+		if (getConnectedUser()->id !== $rider->id) {
 			// If connected user don't already follow the rider
-			if (!$connected_user->follows($rider)) { ?>
+			if (!getConnectedUser()->follows($rider)) { ?>
 				<button data-action="follow" data-id="<?= $rider->id ?>" class="rdr-button success js-follower">
 					<span class="iconify-inline" data-icon="mdi:eye-arrow-right-outline" style="color: white;" data-width="20" data-height="20"></span>
 					フォローする
@@ -21,13 +21,13 @@
 		}
 
 		// If the rider is friend with connected user
-		if ($rider->isFriend($connected_user)) { ?>
+		if ($rider->isFriend(getConnectedUser())) { ?>
 			<button data-action="remove" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button danger js-friend">
 				<span class="iconify-inline" data-icon="eva:person-remove-outline" style="color: white;" data-width="20" data-height="20"></span>
 				友達を辞める
 			</button> <?php
 		// If the rider has sent a request to connected user
-		} else if (in_array($rider->id, $connected_user->getRequesters())){ ?>
+		} else if (in_array($rider->id, getConnectedUser()->getRequesters())){ ?>
 			<button data-action="accept" data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button success js-friend">
 				<span class="iconify-inline" data-icon="eva:person-done-outline" style="color: white;" data-width="20" data-height="20"></span>
 				友達申請を承認する
@@ -37,7 +37,7 @@
 				友達申請を却下する
 			</button> <?php
 		// If connected user has sent a request to the rider
-		} else if (in_array($connected_user->id, $rider->getRequesters())){ ?>
+		} else if (in_array(getConnectedUser()->id, $rider->getRequesters())){ ?>
 			<button data-id="<?= $rider->id ?>" data-login="<?= $rider->login; ?>" class="rdr-button no-click">
 				友達申請中...
 			</button> <?php

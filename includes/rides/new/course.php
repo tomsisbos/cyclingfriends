@@ -69,7 +69,7 @@ $previous_page = intval($slug) - 1; ?>
 				</div>
 			</div>
 			<div class="rd-course-fields"> <?php
-				$routes = $connected_user->getRoutes(0, 100); ?>				
+				$routes = getConnectedUser()->getRoutes(0, 100); ?>				
 				<div class="mb-3">
 					<label class="form-label required">自分のルートの中から選ぶ</label>
 					<select class="form-select" id="selectRoute" name="my-routes">

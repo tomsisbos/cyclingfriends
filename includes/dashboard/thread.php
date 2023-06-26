@@ -6,7 +6,7 @@ define("PREVIEW_PHOTOS_QUANTITY", 5); ?>
 
 <div class="dashboard-thread-container" id="threadContainer" data-limit="<?= THREAD_LIMIT ?>" data-photosquantity="<?= PREVIEW_PHOTOS_QUANTITY ?>"> <?php
 
-    forEach ($connected_user->getThread(0, THREAD_LIMIT) as $entry) { 
+    forEach (getConnectedUser()->getThread(0, THREAD_LIMIT) as $entry) { 
 
         // Get activity card if entry type is activity
         if ($entry['type'] == 'activity') {

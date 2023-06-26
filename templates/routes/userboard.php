@@ -23,7 +23,7 @@ include '../includes/head.php'; ?>
 				if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 				else $offset = 0;
 			
-				forEach ($connected_user->getRoutes($offset, $limit) as $route) {
+				forEach (getConnectedUser()->getRoutes($offset, $limit) as $route) {
 
 					$route = new Route($route['id']); ?>
 
@@ -64,7 +64,7 @@ include '../includes/head.php'; ?>
 			</div> <?php
 			
 			// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
-			if (empty($connected_user->getRoutes())) { ?>
+			if (empty(getConnectedUser()->getRoutes())) { ?>
 				<div class="error-block"><div class="error-message">表示するデータがありません。</div></div>
 				<a class="d-block p-4 text-center" href="/route/new">新規ルートを作成する</a> <?php		
 			}
@@ -73,7 +73,7 @@ include '../includes/head.php'; ?>
 			if (isset($_GET['p'])) $p = $_GET['p'];
 			else $p = 1;
 			$url = strtok($_SERVER["REQUEST_URI"], '?');
-			$total_pages = ceil($connected_user->getRoutesNumber() / $limit);
+			$total_pages = ceil(getConnectedUser()->getRoutesNumber() / $limit);
 			
 			// Build pagination menu
 			include '../includes/pagination.php' ?>

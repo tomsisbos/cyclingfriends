@@ -42,7 +42,7 @@
 			AND
 			(CASE
 				WHEN :friends = 'No filter' THEN true
-				ELSE author_id IN ('".implode("','",$connected_user->getFriends())."')
+				ELSE author_id IN ('".implode("','",getConnectedUser()->getFriends())."')
 			END)
 		ORDER BY 
 			(CASE 

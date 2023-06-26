@@ -542,11 +542,11 @@ class Ride extends Model {
     }
 
     public function postMessage ($content) {
-        $connected_user = new User($_SESSION['id']);
+        $user = new User($_SESSION['id']);
         // Send variables into database
 		$insertChatMessage = $this->getPdo()->prepare('INSERT INTO ride_chat(ride_id, author_id, user_login, message, time) VALUES (?, ?, ?, ?, ?)');
-		$insertChatMessage->execute(array($this->id, $connected_user->id, $connected_user->login, $content, date('Y-m-d H:i:s')));
-        $this->notify($this->author_id, 'ride_message_post', $_SESSION['id']);
+		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, date('Y-m-d H:i:s')));
+        $this->notify($this->author_id, 'ride_message_post', $user->id);
     }
 
     public function getMapThumbnail () {

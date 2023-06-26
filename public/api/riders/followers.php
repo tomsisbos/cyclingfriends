@@ -9,13 +9,13 @@ if (isAjax()) {
 
     if (isset($_GET['follow'])) {
         $user = new User($_GET['follow']);
-        $response = $connected_user->follow($user);
+        $response = getConnectedUser()->follow($user);
         echo json_encode($response);
     }
 
     if (isset($_GET['unfollow'])) {
         $user = new User($_GET['unfollow']);
-        $response = $connected_user->unfollow($user);
+        $response = getConnectedUser()->unfollow($user);
         echo json_encode($response);
     }
 

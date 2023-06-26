@@ -9,19 +9,19 @@ if (isAjax()) {
 
     if (isset($_GET['add'])) {
         $user = new User($_GET['add']);
-        $response = $connected_user->sendFriendRequest($user);
+        $response = getConnectedUser()->sendFriendRequest($user);
         echo json_encode($response);
     }
 
     if (isset($_GET['accept'])) {
         $user = new User($_GET['accept']);
-        $response = $connected_user->acceptFriendRequest($user);
+        $response = getConnectedUser()->acceptFriendRequest($user);
         echo json_encode($response);
     }
 
     if (isset($_GET['dismiss'])) {
         $user = new User($_GET['dismiss']);
-        $result = $connected_user->removeFriend($user);
+        $result = getConnectedUser()->removeFriend($user);
         if ($result[0]) {
             $response = array(true, $user->login .'の友達申請を却下しました。');
         } else {
@@ -32,7 +32,7 @@ if (isAjax()) {
 
     if (isset($_GET['remove'])) {
         $user = new User($_GET['remove']);
-        $response = $connected_user->removeFriend($user);
+        $response = getConnectedUser()->removeFriend($user);
         echo json_encode($response);
     }
 

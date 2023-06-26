@@ -39,10 +39,10 @@ include '../includes/head.php'; ?>
 						$ride = new Ride ($ride['id']);
 						
 						// Only display rides accepting bike types matching connected user's registered bikes
-						if (!(isset($_POST['filter_bike']) AND !$connected_user->checkIfAcceptedBikesMatches($ride))) {
+						if (!(isset($_POST['filter_bike']) AND !getConnectedUser()->checkIfAcceptedBikesMatches($ride))) {
 						
 							// Only display 'Friends only' rides if connected user is on the ride author's friends list
-							if ($ride->privacy != 'Friends only' OR ($ride->privacy == 'Friends only' AND ($ride->author_id == $connected_user->id OR $ride->getAuthor()->isFriend($connected_user)))) {
+							if ($ride->privacy != 'Friends only' OR ($ride->privacy == 'Friends only' AND ($ride->author_id == getConnectedUser()->id OR $ride->getAuthor()->isFriend(getConnectedUser())))) {
 
 								$is_ride = true; // Set "is_ride" variable to true as long as one ride to display has been found 
 
@@ -74,8 +74,8 @@ include '../includes/head.php'; ?>
 			if (!isset($is_ride)) $errormessage = '表示できるデータがありません。';
 
 			// If no bike is displaying, filter bike is checked and connected user doesn't have any bike set, display a message advising to register bikes
-			if (isset($errormessage) AND $errormessage == '表示できるデータがありません。' AND isset($_POST['filter_bike']) AND is_array($connected_user->getBikes())){
-				$submessage = '<a href="/rider/' .$connected_user->id. '#addBike1">プロフィール設定</a>でバイクを登録しましょう。';
+			if (isset($errormessage) AND $errormessage == '表示できるデータがありません。' AND isset($_POST['filter_bike']) AND is_array(getConnectedUser()->getBikes())){
+				$submessage = '<a href="/rider/' .getConnectedUser()->id. '#addBike1">プロフィール設定</a>でバイクを登録しましょう。';
 			} ?>
 			
 			<?php // Space for error messages and submessage

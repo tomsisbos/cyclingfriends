@@ -30,7 +30,7 @@
         <div class="append-buttons">
             <a href="/ride/<?= $ride->id ?>">
                 <button class="mp-button normal">詳細</button>
-            </a> <?php if ($connected_user->id == $ride->author_id) { ?>
+            </a> <?php if (getConnectedUser()->id == $ride->author_id) { ?>
                 <a href="/ride/<?= $ride->id ?>/edit">
                     <button class="mp-button admin">編集</button>
                 </a>

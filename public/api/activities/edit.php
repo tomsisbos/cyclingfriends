@@ -80,7 +80,7 @@ if (is_array($data)) {
             $activity_photo_data['blob'] = $temp_image->treatBase64($photo['blob']);
 
             // Set variables ready for upload
-            $activity_photo_data['user_id'] = $connected_user->id;
+            $activity_photo_data['user_id'] = getConnectedUser()->id;
             $activity_photo_data['activity_id'] = $activity_id;
             $activity_photo_data['size'] = $photo['size'];
             $activity_photo_data['name'] = $photo['name'];

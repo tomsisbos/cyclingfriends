@@ -26,7 +26,7 @@ include '../includes/head.php'; ?>
 				else $offset = 0;
 			
 				///$number = 0;
-				forEach ($connected_user->getActivities($offset, $limit) as $activity) { ?>
+				forEach (getConnectedUser()->getActivities($offset, $limit) as $activity) { ?>
 
 					<div class="my-ac-panel">
 						
@@ -101,7 +101,7 @@ include '../includes/head.php'; ?>
 				}
 			
 				// Set an error message if $is_ride variable have not been declared (meaning that no iteration of the loop have been performed)
-				if (empty($connected_user->getActivities())) { ?>
+				if (empty(getConnectedUser()->getActivities())) { ?>
 					<div class="error-block"><div class="error-message">表示するデータがありません。</div></div> <?php		
 				} ?>
 
@@ -111,7 +111,7 @@ include '../includes/head.php'; ?>
 			if (isset($_GET['p'])) $p = $_GET['p'];
 			else $p = 1;
 			$url = strtok($_SERVER["REQUEST_URI"], '?');
-			$total_pages = ceil($connected_user->getActivitiesNumber() / $limit);
+			$total_pages = ceil(getConnectedUser()->getActivitiesNumber() / $limit);
 			
 			// Build pagination menu
 			include '../includes/pagination.php' ?>

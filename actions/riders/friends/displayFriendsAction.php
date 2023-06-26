@@ -13,7 +13,7 @@
 	}
 		
 	// Get connected user friends
-	$friends = $connected_user->getFriends();
+	$friends = getConnectedUser()->getFriends();
 		
 	// Get user data of each friend id from the database according to filter queries
 	$query = 

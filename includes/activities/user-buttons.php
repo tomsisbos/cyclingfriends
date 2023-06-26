@@ -8,7 +8,7 @@ if (isset($_SESSION['auth'])) { ?>
     <div class="social-panel"> <?php
 
         // Twitter
-        $twitter = $connected_user->getTwitter();
+        $twitter = getConnectedUser()->getTwitter();
         if (!$twitter->isUserConnected()) {
             $_SESSION['redirect_uri'] = $_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             echo '<a href="' .$twitter_auth_url. '">';

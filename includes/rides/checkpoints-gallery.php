@@ -82,7 +82,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
         <a class="next nav-link lightbox-arrow">&#10095;</a>
 
         <?php // Display name as an input if current user have ride admin rights
-        if (isset($_SESSION['auth']) && $connected_user->id == $ride->author_id) { ?>
+        if (isset($_SESSION['auth']) && getConnectedUser()->id == $ride->author_id) { ?>
             <div class="lightbox-admin-panel container-admin name-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>
@@ -112,7 +112,7 @@ Only display currently selected thumbnail picture, if a corresponding blob exist
         </div>
 
         <?php // Display caption as a text area if current user have ride admin rights
-        if (isset($_SESSION['auth']) && $connected_user->id == $ride->author_id) { ?>
+        if (isset($_SESSION['auth']) && getConnectedUser()->id == $ride->author_id) { ?>
             <div class="lightbox-admin-panel container-admin caption-container"> <?php
                 for ($i = 0; $i < count($ride->checkpoints); $i++) {
                     $checkpoint = $ride->checkpoints[$i]; ?>

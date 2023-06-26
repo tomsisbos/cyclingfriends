@@ -1,6 +1,6 @@
 	<?php
 		
-	$requesters = $connected_user->getRequesters();
+	$requesters = getConnectedUser()->getRequesters();
 		
 	if ($requesters) { ?>
 		

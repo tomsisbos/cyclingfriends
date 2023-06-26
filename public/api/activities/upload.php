@@ -13,7 +13,7 @@ if (isset($_FILES['activity'])) {
 
         // Upload activity file on server
         $metadata = [
-            'user_id' => $connected_user->id,
+            'user_id' => getConnectedUser()->id,
             'ext' => $ext
         ];
         $activity_file->create(file_get_contents($_FILES['activity']['tmp_name']), $metadata);

@@ -4,7 +4,7 @@
 </a> <?php
 
 // Only display edit and delete buttons to ride author
-if ($connected_user->id == $ride->author_id) { ?>
+if (getConnectedUser()->id == $ride->author_id) { ?>
 	<a href="/ride/<?= $ride->id ?>/edit">
 		<button class="mp-button admin" type="button">編集</button>
 	</a>

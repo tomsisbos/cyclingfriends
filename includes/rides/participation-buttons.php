@@ -4,7 +4,7 @@
 if (isset($_SESSION['auth'])) {
 
 	// Check if user is already participating
-	if (!$ride->isParticipating($connected_user)) {
+	if (!$ride->isParticipating(getConnectedUser())) {
 		
 		// If entries are open, display entry infos
 		if ($ride->isOpen() == 'open') {

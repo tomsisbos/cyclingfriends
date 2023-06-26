@@ -35,7 +35,7 @@ if (isset($_SESSION['forms']['created'])) {
 			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 			else $offset = 0;
 
-			$rides = $connected_user->getRides($offset, $limit);
+			$rides = getConnectedUser()->getRides($offset, $limit);
 
 			if (!empty($rides)) {
 
@@ -46,13 +46,13 @@ if (isset($_SESSION['forms']['created'])) {
 
 				}
 				
-				if ($connected_user->getRidesNumber() > $limit) {
+				if (getConnectedUser()->getRidesNumber() > $limit) {
     
 					// Set pagination system
 					if (isset($_GET['p'])) $p = $_GET['p'];
 					else $p = 1;
 					$url = strtok($_SERVER["REQUEST_URI"], '?');
-					$total_pages = ceil($connected_user->getRidesNumber() / $limit);
+					$total_pages = ceil(getConnectedUser()->getRidesNumber() / $limit);
 					
 					// Build pagination menu
 					include '../includes/pagination.php';

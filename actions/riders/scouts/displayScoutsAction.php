@@ -13,7 +13,7 @@
 	}
 		
 	// Get connected user scouts
-	$scouts = $connected_user->getScoutsList();
+	$scouts = getConnectedUser()->getScoutsList();
 		
 	// Get user data of each scout id from the database according to filter queries
 	$query = 

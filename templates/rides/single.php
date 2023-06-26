@@ -21,12 +21,12 @@ include '../includes/head.php'; ?>
 <body> <?php
 
 	// If set as private and connected user does not have admin rights on this ride, redirect to the dashboard
-	if ($ride->privacy == 'private' AND (!isset($_SESSION['auth']) OR $ride->author_id != $connected_user->id)) {
+	if ($ride->privacy == 'private' AND (!isset($_SESSION['auth']) OR $ride->author_id != getConnectedUser()->id)) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the ride author, redirect to the dashboard
-	if ($ride->privacy == 'friends_only' AND (!isset($_SESSION['auth']) OR (isset($_SESSION['auth']) && $ride->author_id != $connected_user->id AND !$ride->getAuthor()->isFriend($connected_user)))) {
+	if ($ride->privacy == 'friends_only' AND (!isset($_SESSION['auth']) OR (isset($_SESSION['auth']) && $ride->author_id != getConnectedUser()->id AND !$ride->getAuthor()->isFriend(getConnectedUser())))) {
 		header('Location: /');
 	}
 
@@ -59,7 +59,7 @@ include '../includes/head.php'; ?>
 				</div>
 				<div class="header-row mt-2"> <?php
 					// Include admin buttons if the user has admin rights on this ride
-					if (isset($_SESSION['auth']) && ($connected_user->id == $ride->author_id OR in_array($connected_user->id, array_map(function ($guide) { return $guide->id; }, $ride->getGuides())))) include '../includes/rides/admin-buttons.php'; 
+					if (isset($_SESSION['auth']) && (getConnectedUser()->id == $ride->author_id OR in_array(getConnectedUser()->id, array_map(function ($guide) { return $guide->id; }, $ride->getGuides())))) include '../includes/rides/admin-buttons.php'; 
 					// Else, include participation buttons
 					else include '../includes/rides/participation-buttons.php'; ?>
 				</div>
@@ -70,7 +70,7 @@ include '../includes/head.php'; ?>
 		include '../includes/rides/participants.php';
 			
 			// Include admin panel if the user has admin rights on this ride
-			if (isset($_SESSION['auth']) && $ride->author_id == $connected_user->id) include '../includes/rides/admin-panel.php'; 
+			if (isset($_SESSION['auth']) && $ride->author_id == getConnectedUser()->id) include '../includes/rides/admin-panel.php'; 
 			
 			// General infos ?>
 			<div class="container ride-infos mb-3">

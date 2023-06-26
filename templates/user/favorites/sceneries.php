@@ -28,7 +28,7 @@ include '../includes/head.php'; ?>
             $limit = 20;
             if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
             else $offset = 0;
-            $sceneries = $connected_user->getFavorites('scenery', $offset, $limit);
+            $sceneries = getConnectedUser()->getFavorites('scenery', $offset, $limit);
             foreach ($sceneries as $scenery) { ?>
                 <div class="fav-card"> <?php
                     include '../includes/sceneries/card.php'; ?>
@@ -44,7 +44,7 @@ include '../includes/head.php'; ?>
             if (isset($_GET['p'])) $p = $_GET['p'];
             else $p = 1;
             $url = strtok($_SERVER["REQUEST_URI"], '?');
-            $total_pages = ceil($connected_user->getFavoritesNumber('sceneries') / $limit);
+            $total_pages = ceil(getConnectedUser()->getFavoritesNumber('sceneries') / $limit);
             
             // Build pagination menu
             include '../includes/pagination.php' ?>

@@ -12,10 +12,10 @@ include '../includes/head.php'; ?>
 <body> <?php
 
 	// If set as private and connected user does not have admin rights on this ride, redirect to the dashboard
-	if ($ride->privacy == 'private' AND (!isset($_SESSION['auth']) OR $ride->author_id != $connected_user->id)) header('Location: /');
+	if ($ride->privacy == 'private' AND (!isset($_SESSION['auth']) OR $ride->author_id != getConnectedUser()->id)) header('Location: /');
 
 	// If set as Friends only and connected user is not on the friends list on the ride author, redirect to the dashboard
-	if ($ride->privacy == 'friends_only' AND (!isset($_SESSION['auth']) OR (isset($_SESSION['auth']) && $ride->author_id != $connected_user->id AND !$ride->getAuthor()->isFriend($connected_user)))) header('Location: /');
+	if ($ride->privacy == 'friends_only' AND (!isset($_SESSION['auth']) OR (isset($_SESSION['auth']) && $ride->author_id != getConnectedUser()->id AND !$ride->getAuthor()->isFriend(getConnectedUser())))) header('Location: /');
 
 	include '../includes/navbar.php'; ?>
 		

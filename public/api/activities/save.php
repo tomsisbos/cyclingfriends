@@ -40,7 +40,7 @@ if (is_array($data)) {
             'bike_id' => $data['bike_id'],
             'checkpoints' => $data['checkpoints']
         ];
-        $activity_id = $activity_data->createActivity($connected_user->id, $editable_data);
+        $activity_id = $activity_data->createActivity(getConnectedUser()->id, $editable_data);
 
         $activity = new Activity($activity_id);
         
@@ -52,7 +52,7 @@ if (is_array($data)) {
             $activity_photo_data['blob'] = $temp_image->treatBase64($photo['blob']);
 
             // Build photo data
-            $activity_photo_data['user_id'] = $connected_user->id;
+            $activity_photo_data['user_id'] = getConnectedUser()->id;
             $activity_photo_data['activity_id'] = $activity_id;
             $activity_photo_data['size'] = $photo['size'];
             $activity_photo_data['name'] = $photo['name'];
@@ -174,7 +174,7 @@ if (is_array($data)) {
                     'file_type' => $entry['type'],
                     'file_size' => $entry['size'],
                     'scenery_id' => $entry['scenery_id'],
-                    'author_id' => $connected_user->id,
+                    'author_id' => getConnectedUser()->id,
                     'date' => $summary['start_time']['date'],
                     'lat' => $entry['lat'],
                     'lng' => $entry['lng']

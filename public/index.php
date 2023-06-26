@@ -67,7 +67,7 @@ $router->map('GET', '/route/[i:route_id]/edit', 'routes/edit', 'route-edit');
 $router->map('GET', '/[*:user_login]/routes', 'routes/userboard', 'route-userboard');
 $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" when typing "/routes"
     require_once '../actions/users/initSessionAction.php';
-    header('location: /' .$connected_user->login. '/routes');
+    header('location: /' .getConnectedUser()->login. '/routes');
 });
 
 // Rides

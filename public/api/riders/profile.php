@@ -12,7 +12,7 @@ if (isAjax()) {
         $index = key($_GET);
         if ($index == 'description') $value = nl2br($_GET[$index]);
         else $value = $_GET[$index];
-        $connected_user->update($index, $value);
+        getConnectedUser()->update($index, $value);
         echo json_encode([$index, $value]);
     }
 
@@ -27,7 +27,7 @@ if (isAjax()) {
 
         // If value is 'new', create a new entry in bikes table and return the corresponding bike id
         if ($id == 'new') {
-            $bike->create($connected_user->id);
+            $bike->create(getConnectedUser()->id);
             $id = $bike->id;
             
         // Else, update existing bike

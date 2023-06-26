@@ -18,9 +18,9 @@ if (isAjax()) {
 
         if (isset($_GET['delete'])) {
             $activity = new Activity($_GET['delete']);
-            if ($connected_user->id == $activity->user_id) $activity->delete();
+            if (getConnectedUser()->id == $activity->user_id) $activity->delete();
             else "このアクティビティを削除する権限がありません。";
-            echo json_encode($connected_user->login);
+            echo json_encode(getConnectedUser()->login);
         }
 
     }

@@ -106,7 +106,7 @@ include '../includes/head.php'; ?>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">レビュー</div> <?php
 					if (isset($_SESSION['auth'])) {
-						$user_review = $scenery->getUserReview($connected_user);
+						$user_review = $scenery->getUserReview(getConnectedUser());
 						if (!empty($user_review)) $submit_button_text = 'レビューを編集';
 						else $submit_button_text = 'レビューを投稿'; ?>
 						<form method="POST" class="chat-msgbox">

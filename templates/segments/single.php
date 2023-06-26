@@ -38,7 +38,7 @@ include '../includes/head.php'; ?>
 						<a id="export" download>
 							<button class="mp-button normal" type="button">エクスポート</button>
 						</a> <?php
-						if (isset($_SESSION['auth']) && $connected_user->hasEditorRights()) { ?>
+						if (isset($_SESSION['auth']) && getConnectedUser()->hasEditorRights()) { ?>
 							<a id="delete">
 								<button class="mp-button danger">削除</button>
 							</a> <?php
@@ -84,7 +84,7 @@ include '../includes/head.php'; ?>
 							</div>
 							<div class="pg-sg-specs">
 								<div><strong>予測時間 : </strong> <?php
-									if (isset($_SESSION['auth'])) echo $segment->route->calculateEstimatedTime($connected_user->level)->format('H:i');
+									if (isset($_SESSION['auth'])) echo $segment->route->calculateEstimatedTime(getConnectedUser()->level)->format('H:i');
 									else echo $segment->route->calculateEstimatedTime(1)->format('H:i') ?>
 								</div>
 								<div><strong>難易度 : </strong><?= $segment->route->getStars($segment->route->calculateDifficulty()) ?></div>
@@ -182,8 +182,8 @@ include '../includes/head.php'; ?>
 			<div class="container p-0">
 
 				<div class="pg-sg-map-box">
-					<div class="cf-map" id="segmentMap" <?php /*if (isset($_SESSION['auth']) && $connected_user->isPremium())*/ echo 'interactive="true"' ?>> <?php
-					/*if (!isset($_SESSION['auth']) || !$connected_user->isPremium()) { ?>
+					<div class="cf-map" id="segmentMap" <?php /*if (isset($_SESSION['auth']) && getConnectedUser()->isPremium())*/ echo 'interactive="true"' ?>> <?php
+					/*if (!isset($_SESSION['auth']) || !getConnectedUser()->isPremium()) { ?>
 						<a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
 					}*/ ?>
 					</div>

@@ -19,7 +19,7 @@ if (!isset($_SESSION['auth'])) {
 if (isset($_GET['oauth_token'])) {
     $twitter = new Twitter();
     $user_data = $twitter->getAccessToken($_GET['oauth_token'], $_GET['oauth_verifier']);
-    $twitter->saveUserData($connected_user->id, $user_data);
+    $twitter->saveUserData(getConnectedUser()->id, $user_data);
     $twitter_user_info = $twitter->verifyCredentials($user_data['oauth_token'], $user_data['oauth_token_secret']);
     if ($twitter_user_info) {
         $_SESSION['successmessage'] = '<a href="https://twitter.com/' .$twitter_user_info->screen_name. '" target="_blank">@' .$twitter_user_info->screen_name. '</a>と接続できました！';

@@ -33,7 +33,7 @@ if (isAjax()) {
 
     if (isset($_GET['getpropic'])) {
         if (is_numeric($_GET['getpropic'])) $user = new User($_GET['getpropic']);
-        else $user = $connected_user;
+        else $user = getConnectedUser();
         $profile_picture_src = $user->getPropicUrl();
         echo json_encode([$profile_picture_src]);
     }
@@ -108,7 +108,7 @@ if (isAjax()) {
         $rating_infos = $checkRating->fetch(PDO::FETCH_ASSOC);
         // Add user vote info
         if (isset($_SESSION['id'])) {
-            $vote = $object->getUserVote($connected_user);
+            $vote = $object->getUserVote(getConnectedUser());
             $rating_infos['vote'] = $vote;
         }
         echo json_encode($rating_infos);

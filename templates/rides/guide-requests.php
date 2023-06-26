@@ -29,10 +29,10 @@ if (isset($_POST['remove'])) {
         <h2 class="py-3">ガイドを託されている場合、下記の表示されます。</h2><?php
 
         $getGuideRequests = $db->prepare("SELECT g.ride_id, g.position FROM ride_guides AS g JOIN rides AS r ON g.ride_id = r.id WHERE g.user_id = ? AND r.date > NOW()");
-        $getGuideRequests->execute([$connected_user->id]);
+        $getGuideRequests->execute([getConnectedUser()->id]);
         if ($getGuideRequests->rowCount() > 0) {
             while ($guide_data = $getGuideRequests->fetch(PDO::FETCH_ASSOC)) {
-                $guide = new Guide($connected_user->id, $guide_data['ride_id'], $guide_data['position']); ?>
+                $guide = new Guide(getConnectedUser()->id, $guide_data['ride_id'], $guide_data['position']); ?>
                 <form method="POST" class="align-items-center d-flex gap-20 bg-white px-4 py-2">
                     <div><?= $guide->ride->date ?></div>
                     <a href="<?= $router->generate('ride-single', ['ride_id' => $guide->ride->id]) ?>"><strong><?= $guide->ride->name ?></a></strong>

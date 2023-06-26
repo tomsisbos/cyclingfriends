@@ -14,7 +14,7 @@ include '../includes/head.php'; ?>
 include '../includes/navbar.php';
 
 // Start guidance if poor user info is set
-if ($connected_user->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>'
+if (getConnectedUser()->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>'
 
 // Display general guidance during beta testing period ?>
 <script src="/scripts/helpers/beta/default-guidance.js"></script>

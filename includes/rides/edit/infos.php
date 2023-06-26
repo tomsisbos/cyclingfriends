@@ -43,7 +43,7 @@
 	</div> <?php
 
 	// Set max riders number depending on if user has guide or moderator rights or not
-	if ($connected_user->hasModeratorRights() || $connected_user->isGuide()) $nb_riders_max = 30;
+	if (getConnectedUser()->hasModeratorRights() || getConnectedUser()->isGuide()) $nb_riders_max = 30;
 	else $nb_riders_max = 7; ?>
 
 	<div class="mb-3 row g-2">

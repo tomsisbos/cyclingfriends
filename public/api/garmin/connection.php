@@ -26,7 +26,7 @@ if (isset($_GET['oauth_token'])) {
 
         // Get user token credentials and id
         $user_data = $garmin->getAccessToken($temporary_credentials, $_GET['oauth_token'], $_GET['oauth_verifier']);
-        $garmin->saveUserData($connected_user->id, $user_data);
+        $garmin->saveUserData(getConnectedUser()->id, $user_data);
         
         $_SESSION['successmessage'] = 'Garmin Connectと接続できました！';
         if (isset($_SESSION['redirect_uri'])) {

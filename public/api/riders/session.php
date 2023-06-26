@@ -16,10 +16,10 @@ if (isAjax()) {
     // Return info about connected user rights
     if (isset($_GET['has-rights'])) {
         switch ($_GET['has-rights']) {
-            case 'premium': $result = $connected_user->isPremium(); break;
-            case 'editor': $result = $connected_user->hasEditorRights(); break;
-            case 'moderator': $result = $connected_user->hasModeratorRights(); break;
-            case 'administrator': $result = $connected_user->hasAdministratorRights(); break;
+            case 'premium': $result = getConnectedUser()->isPremium(); break;
+            case 'editor': $result = getConnectedUser()->hasEditorRights(); break;
+            case 'moderator': $result = getConnectedUser()->hasModeratorRights(); break;
+            case 'administrator': $result = getConnectedUser()->hasAdministratorRights(); break;
             default: $result = false;
         }
         echo json_encode($result);
@@ -33,7 +33,7 @@ if (isAjax()) {
     }
 
     // Return profile picture src of connected user
-    if (isset($_GET['get-propic'])) echo json_encode($connected_user->getPropicUrl());
+    if (isset($_GET['get-propic'])) echo json_encode(getConnectedUser()->getPropicUrl());
 
     // Return all session information
     if (isset($_GET['get-session'])) {

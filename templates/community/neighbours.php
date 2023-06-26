@@ -29,7 +29,7 @@ include '../includes/head.php'; ?>
 		<div class="nbr-container container bg-white"> <?php
 
 			// Only allow display if connected user has specified location
-			if ($connected_user->lngLat != null) {
+			if (getConnectedUser()->lngLat != null) {
 
 				if ($getRiders->rowCount() > 0) {
 					foreach ($riders as $rider) { ?>					
@@ -69,4 +69,4 @@ include '../includes/head.php'; ?>
 </html>
 
 <script src="/scripts/riders/friends.js"></script> <?php
-if ($connected_user->lngLat == null) echo '<script src="/scripts/helpers/community/neighbours.js"></script>'; ?>
+if (getConnectedUser()->lngLat == null) echo '<script src="/scripts/helpers/community/neighbours.js"></script>'; ?>

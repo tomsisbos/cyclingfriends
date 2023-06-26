@@ -41,7 +41,7 @@ include '../actions/routes/routeAction.php'; ?>
 
                     include '../includes/routes/export-button.php';
 
-                    if (isset($_SESSION['auth']) && $route->author->id == $connected_user->id) { ?>
+                    if (isset($_SESSION['auth']) && $route->author->id == getConnectedUser()->id) { ?>
                         <a href="/route/<?= $route->id ?>/edit">
                             <button class="mp-button success" type="button" name="edit">編集</button>
                         </a>
@@ -63,7 +63,7 @@ include '../actions/routes/routeAction.php'; ?>
                 </div>
                 <div class="spec-column">
                     <div><strong>予測時間 : </strong><?php
-                        if (isset($_SESSION['auth'])) echo $route->calculateEstimatedTime($connected_user->level)->format('H:i');
+                        if (isset($_SESSION['auth'])) echo $route->calculateEstimatedTime(getConnectedUser()->level)->format('H:i');
                         else echo $route->calculateEstimatedTime(1)->format('H:i') ?>
                     </div>
                     <div><strong>難易度 : </strong><?= $route->getStars($route->calculateDifficulty()) ?></div>

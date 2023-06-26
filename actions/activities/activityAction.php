@@ -14,7 +14,7 @@
 			$activity = new Activity($slug);
 
 			// If id doesn't exist, redirect to myactivities.php
-			if (!$activity->hasAccess($connected_user)) header('location: /' . $connected_user->login . '/activities');       
+			if (!$activity->hasAccess(getConnectedUser())) header('location: /' . getConnectedUser()->login . '/activities');       
 
 		// If id doesn't exist, redirect to myactivities.php
 		} else header('location: /activities');

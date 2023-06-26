@@ -11,7 +11,7 @@ if (isAjax()) {
         $limit = $parameters[0];
         $offset = $parameters[1];
         $preview_photos_quantity = $parameters[2];
-        $results = $connected_user->getThread($offset, $limit);
+        $results = getConnectedUser()->getThread($offset, $limit);
         $entries = [];
         foreach ($results as $result) {
             // Activity data preparation

@@ -7,14 +7,14 @@ if (isAjax()) {
 
     if (isset($_GET['is-bike-accepted'])) {
         $ride = new Ride($_GET['is-bike-accepted']);
-        if ($ride->isBikeAccepted($connected_user)) echo json_encode(['answer' => true, 'bikes_list' => $ride->getAcceptedBikesString()]);
+        if ($ride->isBikeAccepted(getConnectedUser())) echo json_encode(['answer' => true, 'bikes_list' => $ride->getAcceptedBikesString()]);
         else echo json_encode(['answer' => false, 'bikes_list' => $ride->getAcceptedBikesString()]);
     }
 
     if (isset($_GET['get-missing-information'])) {
         $missing_information = [];
-        if (empty($connected_user->first_name) || empty($connected_user->last_name)) array_push($missing_information, '実名');
-        if (!$connected_user->birthdate) array_push($missing_information, '生年月日');
+        if (empty(getConnectedUser()->first_name) || empty(getConnectedUser()->last_name)) array_push($missing_information, '実名');
+        if (!getConnectedUser()->birthdate) array_push($missing_information, '生年月日');
         echo json_encode($missing_information);
     }
 
@@ -31,15 +31,15 @@ if (isAjax()) {
 
     if (isset($_GET['ride-delete'])) {
         $ride = new Ride($_GET['ride-delete']);
-        if ($connected_user->id == $ride->author_id) $ride->delete();
+        if (getConnectedUser()->id == $ride->author_id) $ride->delete();
         else "このライドを削除する権限はありません。";
-        echo json_encode($connected_user->login);
+        echo json_encode(getConnectedUser()->login);
     }
 
     if (isset($_GET['quit'])) {
         $ride = new Ride($_GET['quit']);
-        if ($ride->isParticipating($connected_user)) {
-            $ride->quit($connected_user);
+        if ($ride->isParticipating(getConnectedUser())) {
+            $ride->quit(getConnectedUser());
             echo json_encode(['success' => $ride->name. 'への参加を取り消しました。エントリー期間中であれば、いつでもエントリーできます。']);		
         } else echo json_encode(['false' => $errormessage = $ride->name. 'への参加を既に取り消しています。']);
     }
@@ -59,15 +59,15 @@ if (is_array($var)) {
             $field_id = $answer['id'];
             $answer = $answer['answer'];
             $field = new AdditionalField($field_id);
-            $field->setAnswer($connected_user->id, $answer);
+            $field->setAnswer(getConnectedUser()->id, $answer);
         }
 
         // If connected user has not already joined,
         $ride = new Ride($ride_id);
-        if (!$ride->isParticipating($connected_user)) {
+        if (!$ride->isParticipating(getConnectedUser())) {
             // If ride is not already full,
             if (!$ride->isFull()) {
-                $ride->join($connected_user);
+                $ride->join(getConnectedUser());
                 echo json_encode(['success' => $ride->name. 'にエントリーしました！楽しいライドになることは間違いありません！']);
             } else json_encode(['error' => $ride->name. 'が既に定員に達成しています。']);
         } else json_encode(['error' => $ride->name. 'に既にエントリーしています。']);

@@ -7,7 +7,7 @@ include '../includes/head.php';
 $url_fragments = explode('/', $_SERVER['REQUEST_URI']);
 $slug = array_slice($url_fragments, -2)[0];
 $route = new Route($slug);
-if ($connected_user->id != $route->author->id) header('location: /routes') ?>
+if (getConnectedUser()->id != $route->author->id) header('location: /routes') ?>
 
 <!DOCTYPE html>
 <html lang="en">

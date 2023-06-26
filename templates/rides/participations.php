@@ -26,7 +26,7 @@ include '../includes/head.php'; ?>
 			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 			else $offset = 0;
 
-			$rides = $connected_user->getRideParticipations($offset, $limit);
+			$rides = getConnectedUser()->getRideParticipations($offset, $limit);
 
 			if (!empty($rides)) {
 
@@ -37,13 +37,13 @@ include '../includes/head.php'; ?>
 
 				}
 				
-				if ($connected_user->getRideParticipationsNumber() > $limit) {
+				if (getConnectedUser()->getRideParticipationsNumber() > $limit) {
     
 					// Set pagination system
 					if (isset($_GET['p'])) $p = $_GET['p'];
 					else $p = 1;
 					$url = strtok($_SERVER["REQUEST_URI"], '?');
-					$total_pages = ceil($connected_user->getRideParticipationsNumber() / $limit);
+					$total_pages = ceil(getConnectedUser()->getRideParticipationsNumber() / $limit);
 					
 					// Build pagination menu
 					include '../includes/pagination.php';

@@ -40,7 +40,7 @@ include '../includes/head.php'; ?>
                         <div class="new-ac-partner-logo">
                             <img src="/media/connect_logo_blue.png"></img>
                         </div> <?php
-                        if ($connected_user->getGarmin()->isUserConnected()) { ?>
+                        if (getConnectedUser()->getGarmin()->isUserConnected()) { ?>
                             <input class="btn smallbutton" type="submit" value="Garmin Connectと接続中（接続を解除）" name="garmin_disconnect"></input><?php
                         } else { ?>
                             <a class="btn smallbutton" href="<?= $authenticate_url ?>">Garmin Connectと同期</a><?php
@@ -105,7 +105,7 @@ include '../includes/head.php'; ?>
                                 <div class="new-ac-inputgroup">
                                     <label class="form-label">バイク</label>
                                     <select id="selectBikes" class="form-select"> <?php
-                                        $bikes = $connected_user->getBikes();
+                                        $bikes = getConnectedUser()->getBikes();
                                         if (count($bikes) > 0) foreach ($bikes as $bike_id) {
                                             $bike = new Bike($bike_id) ?>
                                             <option value="<?= $bike->id ?>"><?= $bike->model . '(' . $bike->type . ')' ?></option><?php

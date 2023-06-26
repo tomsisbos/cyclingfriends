@@ -15,7 +15,7 @@ include '../includes/head.php'; ?>
 
 <body> <?php
 
-	$user = $connected_user;
+	$user = getConnectedUser();
 	
 	include '../includes/navbar.php';
 	
@@ -35,29 +35,29 @@ include '../includes/head.php'; ?>
 
 				</div>
 				<div class="flex-column">
-					<h2 class="title-with-subtitle js-login"><?= $connected_user->login; ?></h2>
+					<h2 class="title-with-subtitle js-login"><?= getConnectedUser()->login; ?></h2>
 					<div class="d-flex gap">
 					<?php // Only display social links if filled
 					// Twitter
-					$twitter = $connected_user->getTwitter(); 
+					$twitter = getConnectedUser()->getTwitter(); 
 					if ($twitter->isUserConnected()) {?>
 						<a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a> <?php
 					} // Facebook
-					if (isset($connected_user->facebook) AND !empty($connected_user->facebook)) { ?>
-						<a target="_blank" href="<?= $connected_user->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a> <?php
+					if (isset(getConnectedUser()->facebook) AND !empty(getConnectedUser()->facebook)) { ?>
+						<a target="_blank" href="<?= getConnectedUser()->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a> <?php
 					} // Instagram
-					if (isset($connected_user->instagram) AND !empty($connected_user->instagram)) { ?>
-						<a target="_blank" href="<?= $connected_user->instagram ?>"><span class="social iconify instagram" data-icon="ant-design:instagram-filled" data-width="20"></span></a> <?php
+					if (isset(getConnectedUser()->instagram) AND !empty(getConnectedUser()->instagram)) { ?>
+						<a target="_blank" href="<?= getConnectedUser()->instagram ?>"><span class="social iconify instagram" data-icon="ant-design:instagram-filled" data-width="20"></span></a> <?php
 					} // Strava
-					if (isset($connected_user->strava) AND !empty($connected_user->strava)) { ?>
-						<a target="_blank" href="<?= $connected_user->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a> <?php
+					if (isset(getConnectedUser()->strava) AND !empty(getConnectedUser()->strava)) { ?>
+						<a target="_blank" href="<?= getConnectedUser()->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a> <?php
 					} ?>
 					</div>
 				</div> <?php
 				
 				// Include buttons ?>
 				<div class="td-row push gap-30">
-					<a href="/rider/<?= $connected_user->id ?>">
+					<a href="/rider/<?= getConnectedUser()->id ?>">
 						<button class="button btn">
 							プロフィールを表示
 						</button>
@@ -91,4 +91,4 @@ include '../includes/head.php'; ?>
 <script type="module" src="/scripts/riders/infos-admin.js"></script>
 <script type="module" src="/scripts/riders/bikes-admin.js"></script>
 <script type="module" src="/scripts/riders/user-location-admin.js"></script> <?php
-if ($connected_user->userInfoQuantitySet() < 30 && empty($_POST)) echo '<script src="/scripts/helpers/profile/on-empty-profile.js"></script>' ?> 
+if (getConnectedUser()->userInfoQuantitySet() < 30 && empty($_POST)) echo '<script src="/scripts/helpers/profile/on-empty-profile.js"></script>' ?> 

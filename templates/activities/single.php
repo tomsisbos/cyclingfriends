@@ -1,10 +1,10 @@
 <?php
 
 include '../actions/users/initPublicSessionAction.php';
+include '../includes/head.php';
 include '../actions/activities/activityAction.php';
 $object = $activity;
-include '../actions/postCommentAction.php';
-include '../includes/head.php'; ?>
+include '../actions/postCommentAction.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,12 +18,12 @@ include '../includes/head.php'; ?>
 <?php
 
 	// If set as private and connected user does not have admin rights on this activity, redirect to the dashboard
-	if ($activity->privacy == 'Private' AND (!isset($_SESSION['auth']) || $activity->user_id != $connected_user->id)) {
+	if ($activity->privacy == 'Private' AND (!isset($_SESSION['auth']) || $activity->user_id != getConnectedUser()->id)) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the activity author, redirect to the dashboard
-	else if ($activity->privacy == 'Friends only' AND (!isset($_SESSION['auth']) || ($activity->user_id != $connected_user->id AND !$activity->getAuthor()->isFriend($connected_user)))) {
+	else if ($activity->privacy == 'Friends only' AND (!isset($_SESSION['auth']) || ($activity->user_id != getConnectedUser()->id AND !$activity->getAuthor()->isFriend(getConnectedUser())))) {
 		header('Location: /');
 	}
 
@@ -62,7 +62,7 @@ include '../includes/head.php'; ?>
 					</div>
 					<div class="header-row mt-2"> <?php
 						// Include admin buttons if the user has admin rights on this activity
-						if (isset($_SESSION['auth']) && $activity->user_id == $connected_user->id) include '../includes/activities/admin-buttons.php';
+						if (isset($_SESSION['auth']) && $activity->user_id == getConnectedUser()->id) include '../includes/activities/admin-buttons.php';
 						// Include user buttons
 						include '../includes/activities/user-buttons.php';?>
 					</div>

@@ -13,6 +13,6 @@ if (is_numeric($slug)) {
 
         $activity = new Activity($slug);
 
-	} else header('location: ' . $connected_user->login . '/activities');
+	} else header('location: ' . getConnectedUser()->login . '/activities');
 
-} else header('location: ' . $connected_user->login . '/activities'); ?>
+} else header('location: ' . getConnectedUser()->login . '/activities'); ?>

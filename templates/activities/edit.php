@@ -4,7 +4,7 @@ include '../actions/users/initSessionAction.php';
 include '../includes/head.php';
 include '../actions/activities/getActivityAction.php';
 
-if ($connected_user->id != $activity->user_id) header('location: /' .$connected_user->login. '/activities') ?>
+if (getConnectedUser()->id != $activity->user_id) header('location: /' .getConnectedUser()->login. '/activities') ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -57,7 +57,7 @@ if ($connected_user->id != $activity->user_id) header('location: /' .$connected_
                     <div class="new-ac-inputgroup">
                         <label class="form-label">バイク</label>
                         <select id="selectBikes" class="form-select"> <?php
-                            $bikes = $connected_user->getBikes();
+                            $bikes = getConnectedUser()->getBikes();
                             if (count($bikes) > 0) foreach ($bikes as $bike_id) {
                                 $bike = new Bike($bike_id) ?>
                                 <option value="<?= $bike->id ?>" <?php if ($activity->bike == $bike_id) echo 'selected'; ?>><?= $bike->model . ' (' . $bike->type . ')' ?></option><?php

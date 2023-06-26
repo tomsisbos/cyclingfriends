@@ -8,7 +8,7 @@ $data = json_decode($json, true);
 
 if (is_array($data)) {
 
-    $twitter = $connected_user->getTwitter();
+    $twitter = getConnectedUser()->getTwitter();
     if ($twitter->isUserConnected()) {
         $result = $twitter->post($data['text'], $data['photos']);
         echo json_encode($result);

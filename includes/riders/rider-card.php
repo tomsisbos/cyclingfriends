@@ -1,4 +1,4 @@
-<div class="rdr-card <?php if ($connected_user->isFriend($rider)) { echo 'bg-friend'; } else { echo 'bg-rider'; } ?>">
+<div class="rdr-card <?php if (getConnectedUser()->isFriend($rider)) { echo 'bg-friend'; } else { echo 'bg-rider'; } ?>">
     <div class="rdr-card-inner">
 
         <div class="rdr-card-main">
@@ -46,8 +46,8 @@
                                 <a target="_blank" href="<?= $rider->strava ?>"><span class="social iconify strava" data-icon="bi:strava" data-width="20"></span></a> <?php
                             } ?>
                         </div> <?php
-                        if ($rider->isFriend($connected_user)) {
-                            $friends_since = new Datetime($rider->friendsSince($connected_user->id));
+                        if ($rider->isFriend(getConnectedUser())) {
+                            $friends_since = new Datetime($rider->friendsSince(getConnectedUser()->id));
                             echo $friends_since->format('Y-m-d'). ' から友達'; 
                         } ?>
                     </div>

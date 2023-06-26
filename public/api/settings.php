@@ -4,19 +4,19 @@ require '../../includes/api-head.php';
 
 if (isset($_GET)) {
 
-    if (isset($_GET['email'])) echo json_encode($connected_user->email);
+    if (isset($_GET['email'])) echo json_encode(getConnectedUser()->email);
     
-    if (isset($_GET['login'])) echo json_encode($connected_user->login);
+    if (isset($_GET['login'])) echo json_encode(getConnectedUser()->login);
 
     if (isset($_GET['privacy-settings'])) {
-        $settings = $connected_user->getSettings();
+        $settings = getConnectedUser()->getSettings();
         unset($settings->id);
         echo json_encode($settings);
     }
 
     if (isset($_GET['connection-settings'])) {
         // Twitter
-        $twitter = $connected_user->getTwitter();
+        $twitter = getConnectedUser()->getTwitter();
         if ($twitter->isUserConnected()) {
             $twitter_data = [
                 'authenticateUrl' => '/api/settings.php',
@@ -29,7 +29,7 @@ if (isset($_GET)) {
             ];
         }
         // Garmin
-        $garmin = $connected_user->getGarmin();
+        $garmin = getConnectedUser()->getGarmin();
         if ($garmin->isUserConnected()) {
             $garmin_data = [
                 'authenticateUrl' => '/api/settings.php',
@@ -58,17 +58,17 @@ if (is_array($settings)) {
 
     if ($settings['type'] === 'settings') {
         unset($settings['type']);
-        $response = $connected_user->updateSettings($settings);
+        $response = getConnectedUser()->updateSettings($settings);
         if ($response === true) echo json_encode(['success' => '変更が保存されました。']);
         else echo json_encode(['error' => '保存中にエラーが発生しました。']);
 
     } else if ($settings['type'] === 'disconnections') {
         if ($settings['api'] === 'Twitter') {
-            $twitter = $connected_user->getTwitter();
+            $twitter = getConnectedUser()->getTwitter();
             $twitter->disconnect();
             echo json_encode(['success' => 'Twitterとの接続が解除されました。']);
         } else if ($settings['api'] == 'Garmin Connect') {
-            $garmin = $connected_user->getGarmin();
+            $garmin = getConnectedUser()->getGarmin();
             $garmin->disconnect();
             echo json_encode(['success' => 'Garmin Connectとの接続が解除されました。']);
         }
@@ -80,14 +80,13 @@ if (is_array($settings)) {
         // Check if posted email corresponds to posted verification email
         if ($posted_email == $posted_verification_email) {
             // Check if filled password matches connected user registered password
-            if (password_verify($posted_password, $connected_user->getPassword())) {    
+            if (password_verify($posted_password, getConnectedUser()->getPassword())) {    
                 // Check if filled email format is valid
                 if (filter_var($posted_email, FILTER_VALIDATE_EMAIL)) {
                     // Update user data
                     $updateEmail = $db->prepare('UPDATE users SET slug = FLOOR(RAND() * 1000000000), email = ?, verified = 0 WHERE id = ?');
-                    $updateEmail->execute(array($posted_email, $connected_user->id));
-                    $connected_user = new User($connected_user->id);
-                    $connected_user->sendVerificationMail(['redirect' => false]);
+                    $updateEmail->execute(array($posted_email, getConnectedUser()->id));
+                    getConnectedUser()->sendVerificationMail(['redirect' => false]);
                     echo json_encode(['success' => '登録の新メールアドレス宛に確認用のメールを送信しました。新メールアドレスでご利用頂くために、そのメール内にある確認用URLをクリックしてください。']);
                 } else echo json_encode(['error' => 'この形式のメールアドレスをご利用頂けません。メールアドレスの記載に誤字がないか、再度ご確認ください。']);
             } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
@@ -97,9 +96,9 @@ if (is_array($settings)) {
         $posted_login = htmlspecialchars($settings['login']);
         $posted_password = htmlspecialchars($settings['password']);
         // Check if filled password matches connected user registered password
-        if (password_verify($posted_password, $connected_user->getPassword())) {
+        if (password_verify($posted_password, getConnectedUser()->getPassword())) {
             $updateLogin = $db->prepare('UPDATE users SET login = ? WHERE id = ?');
-            $updateLogin->execute(array($posted_login, $connected_user->id));
+            $updateLogin->execute(array($posted_login, getConnectedUser()->id));
             echo json_encode(['success' => 'ユーザーネームが更新されました！']);
         } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
     
@@ -110,11 +109,11 @@ if (is_array($settings)) {
                 $new_password = htmlspecialchars($settings['newPassword']);
                 
                 // Check if filled password matches registered password
-                if (password_verify($current_password, $connected_user->getPassword())) {
+                if (password_verify($current_password, getConnectedUser()->getPassword())) {
                     // Check if the new passport is different as the former one
                     if ($current_password != $new_password) {
                         // Check if password format is valid
-                        if ($connected_user->checkPasswordStrength($new_password)) {
+                        if (getConnectedUser()->checkPasswordStrength($new_password)) {
                             // Hash new password
                             $encrypted_password = password_hash($new_password, PASSWORD_DEFAULT);
                             $updatePassword = $db->prepare('UPDATE users SET password = ? WHERE id = ?');
