@@ -109,11 +109,14 @@ class ActivityFile extends Model {
             $url = $_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp/temp.' . $this->ext;
             file_put_contents($url, file_get_contents($this->getUrl()));
 
-            // Then parse 
+            // Then parse
+
             $pFFA = new phpFITFileAnalysis($url);
             $fit = new FitData($pFFA->data_mesgs);
+            
             $activity_data = new ActivityData();
             $activity_data->buildFromFit($fit);
+
             $this->data = $activity_data;
             return $activity_data;
 

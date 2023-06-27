@@ -89,6 +89,12 @@ class Notification extends Model {
 
         $entry = $this->getEntry();
 
+        // If synced activity custom error
+        if (str_contains($this->type, 'new_synced_activity_othererror_')) {
+            $this->text = str_replace('new_synced_activity_othererror_', '', $this->type);
+            return;
+        }
+
         switch ($this->type) {
             // Users
             case 'friends_request':
@@ -112,9 +118,6 @@ class Notification extends Model {
             case 'new_synced_activity':
                 $this->text = '新規アクティビティ「' .$entry->title. '」が同期されました。こちらにクリックして、ストーリーを完成させましょう！';
                 $this->ref = 'activity/' .$entry->id. '/edit';
-                break;
-            case 'new_synced_activity_error':
-                $this->text = 'Garmin Connectとの同期に失敗しました。';
                 break;
             case 'new_synced_activity_error_missing_coordinates':
                 $this->text = '座標データの含まれていないファイルがあったため、Garmin Connectからの同期に失敗しました。';
