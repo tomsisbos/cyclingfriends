@@ -1,7 +1,7 @@
 <?php
 
-include '../includes/rides/admin/head.php';
 include '../includes/head.php';
+include '../includes/rides/admin/head.php';
 include '../actions/databaseAction.php'; 
 include '../actions/rides/admin/guides.php';
 

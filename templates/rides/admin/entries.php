@@ -1,7 +1,7 @@
 <?php
 
-include '../includes/rides/admin/head.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/rides/admin/head.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en"> 
