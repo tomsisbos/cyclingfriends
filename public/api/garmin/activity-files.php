@@ -39,9 +39,6 @@ foreach ($data['activityFiles'] as $activity_files) {
         'garmin_user_id' => $activity_files['userId']
     ]);
 
-    // Retrieve a 200 response code
-    http_response_code(200);
-
     // Parse file
 
     $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
@@ -77,4 +74,7 @@ foreach ($data['activityFiles'] as $activity_files) {
             $user->notify($user_id, 'new_synced_activity_othererror_' . $e->getMessage());
         }
     }
+
+    // Retrieve a 200 response code
+    http_response_code(200);
 }
