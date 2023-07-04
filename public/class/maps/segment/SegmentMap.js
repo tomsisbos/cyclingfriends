@@ -4,7 +4,7 @@ export default class SegmentMap extends RouteMap {
     
     constructor () {
         super()
-        this.segmentId = document.querySelector('#segmentMap').dataset.id
+        this.segmentId = document.querySelector('#routeMap').dataset.segmentid
     }
 
     getRouteData () {

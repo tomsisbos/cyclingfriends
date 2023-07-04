@@ -6,7 +6,7 @@ import Polyline from '/node_modules/@mapbox/polyline/index.js'
 
 var segmentMap = new SegmentMap()
 
-var $map = document.getElementById('segmentMap')
+var $map = document.getElementById('routeMap')
 const exportButton = document.querySelector('#export')
 const deleteButton = document.querySelector('#delete')
 
