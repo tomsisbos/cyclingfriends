@@ -11,7 +11,7 @@ class Geolocation extends Model {
         $this->city         = $city;
         $this->prefecture   = $prefecture;
         if (isset($country_code)) {
-            $this->country_code = $country_code;
+            $this->country_code = strtoupper($country_code);
             $this->timezone     = $this->getTimeZone();
         }
     }
@@ -26,7 +26,7 @@ class Geolocation extends Model {
         WHERE `time_start` <= UNIX_TIMESTAMP(UTC_TIMESTAMP()) AND `country_code` = ?
         ORDER BY `time_start` DESC LIMIT 1");
         $getTimeZone->execute([$this->country_code]);
-        $this->timezone = $getTimeZone->fetch(PDO::FETCH_COLUMN);
+        return $getTimeZone->fetch(PDO::FETCH_ASSOC);
     }
 
     public function toString () {

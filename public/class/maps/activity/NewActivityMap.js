@@ -313,19 +313,17 @@ export default class NewActivityMap extends ActivityMap {
                         
                         loader.setText('写真データを解析中...')
                         EXIF.getData(img, async () => {
-                            console.log(EXIF.getAllTags(img))
                             // Extract date data
                             var exifDateTimeOriginal = EXIF.getTag(img, 'DateTimeOriginal')
-                            var exifDateTime         = EXIF.getTag(img, 'DateTime')
 
                             // If photo has valid date data
-                            if (exifDateTimeOriginal || exifDateTime) {
+                            if (exifDateTimeOriginal) {
 
                                 const [dateValues, timeValues] = exifDateTimeOriginal.split(' ')
                                 const [year, month, day] = dateValues.split(':')
                                 const [hours, minutes, seconds] = timeValues.split(':')
-                                console.log(this.activityData.summary.startplace)
-                                var dateOriginal = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds))
+                                var timezone = this.activityData.summary.startplace.timezone
+                                var dateOriginal = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds) - timezone.gmt_offset * 1000)
                                 ///var timestamp = Date.UTC(year, month - 1, day, hours, minutes, seconds).getTime()
 
                                 // If the photo has been taken during the activity

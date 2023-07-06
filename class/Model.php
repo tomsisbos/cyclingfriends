@@ -21,7 +21,6 @@ class Model {
     
     protected static function getGis () {
         $db_name = getenv('GIS_NAME');
-        var_dump($db_name);
         require Model::getRootFolder() . '/actions/databaseAction.php';
         return $db;
     }
