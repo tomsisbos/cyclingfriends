@@ -27,8 +27,8 @@ class ActivityData extends Model {
      * Get geolocation for start and goal place from linestring start and goal coordinates
      */
     private function getGeolocation () {
-        $this->summary['startplace'] = $this->linestring->coordinates[0]->queryGeolocation();
-        $this->summary['goalplace']  = $this->linestring->coordinates[$this->linestring->length - 1]->queryGeolocation();
+        $this->summary['startplace']     = $this->linestring->coordinates[0]->queryGeolocation();
+        $this->summary['goalplace']      = $this->linestring->coordinates[$this->linestring->length - 1]->queryGeolocation();
     }
 
     /**

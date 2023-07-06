@@ -313,6 +313,7 @@ export default class NewActivityMap extends ActivityMap {
                         
                         loader.setText('写真データを解析中...')
                         EXIF.getData(img, async () => {
+                            console.log(EXIF.getAllTags(img))
                             // Extract date data
                             var exifDateTimeOriginal = EXIF.getTag(img, 'DateTimeOriginal')
                             var exifDateTime         = EXIF.getTag(img, 'DateTime')
@@ -323,11 +324,16 @@ export default class NewActivityMap extends ActivityMap {
                                 const [dateValues, timeValues] = exifDateTimeOriginal.split(' ')
                                 const [year, month, day] = dateValues.split(':')
                                 const [hours, minutes, seconds] = timeValues.split(':')
-                                var dateOriginal = new Date(year, month - 1, day, hours, minutes, seconds)
+                                console.log(this.activityData.summary.startplace)
+                                var dateOriginal = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds))
+                                ///var timestamp = Date.UTC(year, month - 1, day, hours, minutes, seconds).getTime()
 
                                 // If the photo has been taken during the activity
                                 var startDatetime = new Date(this.data.checkpoints[0].datetime * 1000)
                                 var endDatetime = new Date(this.data.checkpoints[this.data.checkpoints.length - 1].datetime * 1000)
+
+                                console.log(startDatetime + ' < ' + dateOriginal + ' < ' + endDatetime)
+
                                 if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) {
 
                                     // Resize, compress photo and generate data url
@@ -352,7 +358,7 @@ export default class NewActivityMap extends ActivityMap {
                                     stopIfFinished(number, filesLength, currentPhotosNumber)
 
                                 } else {
-                                    showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。'})
+                                    showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。<br>' + startDatetime + ' < ' + dateOriginal + ' < ' + endDatetime})
                                     filesLength--
                                     stopIfFinished(number, filesLength, currentPhotosNumber)
                                 }

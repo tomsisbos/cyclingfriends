@@ -101,7 +101,11 @@ class LngLat {
                 break;
             }
         }
-        return new Geolocation($city, $prefecture);
+        // Look for country code
+        for ($i = 0; $i < count($data->features[0]->properties->context); $i++) {
+            $country_code = $data->features[0]->properties->metadata->iso_3166_1;
+        }
+        return new Geolocation($city, $prefecture, $country_code);
     }
 
 }
