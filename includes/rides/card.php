@@ -30,11 +30,11 @@
                 <?= $ride->getAcceptedLevelTags(). ' (' .$ride->getAcceptedBikesString(). ')'; ?>
             </div>
             <div class="rd-checkpoints"> <?php
-                if (isset($ride->checkpoints)) {
+                if (is_array($ride->getCheckpoints())) {
                     $i = 0;
-                    foreach ($ride->checkpoints as $checkpoint) {
+                    foreach ($ride->getCheckpoints() as $checkpoint) {
                     $i++ ?>
-                    <div class="rd-checkpoint <?php if ($i < count($ride->checkpoints)) echo 'arrow' ?>">
+                    <div class="rd-checkpoint <?php if ($i < count($ride->getCheckpoints())) echo 'arrow' ?>">
                         <div class="rd-cpt-details">
                             <div class="rd-cpt-number"><?= $checkpoint->number ?></div><?= $checkpoint->name ?>
                         </div>

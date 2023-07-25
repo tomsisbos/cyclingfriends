@@ -539,6 +539,7 @@ if (isAjax()) {
             $ride->route = $ride->getRoute();
             $ride->route->coordinates = $ride->route->getLinestring();
             $ride->author_login = $ride->getAuthor()->login;
+            $ride->checkpoints = $ride->getCheckpoints();
             array_push($rides, $ride);
         }
         echo json_encode($rides);

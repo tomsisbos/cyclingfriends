@@ -36,7 +36,6 @@ class Ride extends Model {
     public $status;
     public $substatus;
     public $lngLatFormat;
-    public $checkpoints;
     
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
@@ -73,7 +72,6 @@ class Ride extends Model {
         $this->lngLatFormat                            = $lngLatFormat;
         $this->status                                  = $this->getStatus()['status'];
         $this->substatus                               = $this->getStatus()['substatus'];
-        $this->checkpoints                             = $this->getCheckpoints();
     }
 
     public function getAuthor () {
@@ -530,7 +528,8 @@ class Ride extends Model {
 
     // Check if Start and Finish are the same place
     public function isSameSF () {
-        if ($this->checkpoints[0]->lngLat->lng === $this->checkpoints[count($this->checkpoints)-1]->lngLat->lng) {
+        $checkpoints = $this->getCheckpoints();
+        if ($checkpoints[0]->lngLat->lng === $checkpoints[count($checkpoints)-1]->lngLat->lng) {
             return true;
         } else return false;
     }
@@ -578,7 +577,7 @@ class Ride extends Model {
      */
     public function getImages ($imgs_number) {
         $images = [];
-        $checkpoints = $this->checkpoints;
+        $checkpoints = $this->getCheckpoints();
         for ($i = 0; $i < count($checkpoints) && $i < $imgs_number; $i++) {
             if ($checkpoints[$i]->img->url) array_push($images, $checkpoints[$i]->img);
         }
