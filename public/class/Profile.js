@@ -102,7 +102,9 @@ export default class Profile extends Model {
             ///if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
             var toSlice = endKey - startKey + 1
             var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)
-
+            console.log(profileData)
+            console.log(startKey)
+            console.log(endKey)
             var lengthToReplace = turf.length(turf.lineSlice(profileData.profilePointsCoordinates[startKey], profileData.profilePointsCoordinates[endKey], turf.lineString(profileData.profilePointsCoordinates)))
             var lengthOfTunnel = turf.length(turf.lineString(tunnel))
 

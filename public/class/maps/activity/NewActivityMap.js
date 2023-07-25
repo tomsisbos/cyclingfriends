@@ -330,8 +330,6 @@ export default class NewActivityMap extends ActivityMap {
                                 var startDatetime = new Date(this.data.checkpoints[0].datetime * 1000)
                                 var endDatetime = new Date(this.data.checkpoints[this.data.checkpoints.length - 1].datetime * 1000)
 
-                                console.log(startDatetime + ' < ' + dateOriginal + ' < ' + endDatetime)
-
                                 if (dateOriginal.getTime() > startDatetime.getTime() && dateOriginal.getTime() < endDatetime.getTime()) {
 
                                     // Resize, compress photo and generate data url

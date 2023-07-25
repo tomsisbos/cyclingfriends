@@ -2953,8 +2953,6 @@ export default class Map extends Model {
                     j++
                 }
 
-                console.log(this)
-
             } )
             
             // Update markers scale

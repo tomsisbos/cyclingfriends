@@ -11,7 +11,6 @@ export default class EditActivityMap extends NewActivityMap {
     apiUrl = '/api/activities/edit.php'
 
     populateForm () {
-        console.log(this.data)
         const $form = document.querySelector('#activityForm')
         var $title = $form.querySelector('#inputTitle')
         var $start = $form.querySelector('#divStart')

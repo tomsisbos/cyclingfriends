@@ -67,7 +67,7 @@ include '../includes/head.php'; ?>
         
         <div class="container smaller">
             <h2 class="text-white js-fade-on-scroll" data-reverse="true">実績</h2>
-                <p>2020年10月から2023年5月の法人化に至るまで、富士山地域で合計<strong>22回のライドイベント</strong>を通して、延べ<strong>350名</strong>の参加者に合計<strong>22の自治体</strong>を訪問して頂きました。</p>
+                <p>2020年10月から、富士山地域で合計<strong>24回のライドイベント</strong>を通して、延べ<strong>375名</strong>の参加者に合計<strong>23の自治体</strong>を訪問して頂きました。</p>
             <div style="font-size: 12px">
                 <ul>
                     <li>ロータスランドライド（＋富士市、＋富士宮市）</li>
@@ -93,6 +93,8 @@ include '../includes/head.php'; ?>
                     <li>南足柄の春めき桜ライド（＋南足柄市、＋山北町、＋開成町）</li>
                     <li>河口湖花見ライド（＋富士河口湖町、＋西桂町）</li>
                     <li>牧之原台地の新茶ライド（＋島田市、＋牧之原市、＋菊川市）</li>
+                    <li>柚野の棚田ライド</li>
+                    <li>松崎町のなまこ壁ライド（＋松崎町）</li>
                 </ul>
             </div>
         </div>
