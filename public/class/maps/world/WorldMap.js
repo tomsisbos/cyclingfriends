@@ -275,7 +275,7 @@ export default class WorldMap extends Map {
         else var controller = this.addController()
         // Container
         var editorContainer = document.createElement('div')
-        editorContainer.className = 'map-controller-block flex-column bg-admin'
+        editorContainer.className = 'map-controller-block flex-column bg-admin-important'
         controller.appendChild(editorContainer)
         // Label
         var editorLabel = document.createElement('div')

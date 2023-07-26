@@ -9,6 +9,7 @@ buildRouteMap.addStyleControl()
 buildRouteMap.addRouteControl()
 buildRouteMap.addRouteEditionControl()
 buildRouteMap.addOptionsControl()
+buildRouteMap.addSearchControl()
 
 // Layers
 buildRouteMap.addSources()

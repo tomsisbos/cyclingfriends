@@ -2,7 +2,7 @@
 	<meta charset="UTF-8">
 	
 	<!-- Title -->
-	<title>Cyclingfriends</title>
+	<title>CyclingFriends</title>
   	<link rel="icon" type="image/x-icon" href="/media/cf.png">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">

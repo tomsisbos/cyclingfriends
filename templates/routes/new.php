@@ -7,6 +7,7 @@ include '../includes/head.php'; ?>
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/lightbox-style.css" />
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 
 <body>
 

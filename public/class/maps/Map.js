@@ -330,11 +330,12 @@ export default class Map extends Model {
      */
     addSearchControl () {
         require(["/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js"], (MapboxGeocoder) => {
-            const searchBar = new MapboxGeocoder({
-                accessToken: this.apiKey,
-                marker: false
-            })
-            searchBar.addTo('.map-controller-left')
+            this.map.addControl(
+                new MapboxGeocoder({
+                    accessToken: this.apiKey,
+                    marker: false
+                })
+            , 'top-left')
         })
     }
     

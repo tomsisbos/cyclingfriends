@@ -433,6 +433,9 @@ input[type="checkbox"] {
 .bg-admin {
     background-color: #fffa9c;
 }
+.bg-admin-important {
+    background-color: #fffa9c !important;
+}
 
 .bg-user {
 	background-color: #c1e3e9 !important;

@@ -773,10 +773,8 @@ form#sceneryForm input[type="file" i] {
     gap: 10px;
     margin-top: 10px;
     margin-left: 10px;
-    padding: 6px 10px;
     pointer-events: none;
     z-index: 3;
-    max-width: 92%;
 }
 .map-inner-controller {
     position: relative;
@@ -839,17 +837,23 @@ form#sceneryForm input[type="file" i] {
     cursor: crosshair !important;
 }
 
-.map-controller .mapboxgl-ctrl-geocoder {
+.cf-map .mapboxgl-ctrl-geocoder {
     background-color: white;
     box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
     pointer-events: auto;
-    margin: 0px !important;
+    margin: 10px;
+    max-width: 240px;
+    min-width: 160px;
+    width: 220px;
 }
-.map-controller .mapboxgl-ctrl-geocoder--input {
+.cf-map .mapboxgl-ctrl-geocoder--input {
     height: unset;
-    padding: 6px 30px; 
+    padding: 6px 30px;
+    font-family: monospace;
+    font-size: medium;
+    max-height: 30px;
 }
-.map-controller .mapboxgl-ctrl-geocoder--icon-search {
+.cf-map .mapboxgl-ctrl-geocoder--icon-search {
     width: 15px;
     height: 20px;
     top: 6px;
