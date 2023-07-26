@@ -85,17 +85,16 @@ class Route extends Model {
     }
 
     public function getFeaturedImage () {
+
         // Get close sceneries
-        $sceneries_on_route = $this->getLineString()->getCloseSceneries(300);
+        $sceneries_on_route = $this->getLineString()->getCloseSceneryIds();
 
         // If more than one scenery is on the course, use the most liked photo among them
         if (count($sceneries_on_route) > 0) {
-            $images = [];
-            foreach ($sceneries_on_route as $scenery) array_push($images, $scenery->getImages(1)[0]);
-            usort($images, function ($a, $b) {
-                return $a->likes <=> $b->likes;
-            } );
-            return $images[0];
+            $getMostLikedPhoto = $this->getPdo()->prepare("SELECT p.id FROM scenery_photos AS p JOIN sceneries AS s ON s.id = p.scenery_id WHERE s.id IN (".implode(',', $sceneries_on_route).") ORDER BY p.likes DESC LIMIT 1");
+            $getMostLikedPhoto->execute();
+            $photo_id = $getMostLikedPhoto->fetch(PDO::FETCH_COLUMN);
+            return new SceneryImage($photo_id);
         }
 
         // If no scenery is on the course, return closest activity photo from the route if exists
