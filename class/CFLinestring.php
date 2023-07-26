@@ -262,7 +262,6 @@ class CFLinestring extends Model {
      */
     public function getCloseSceneries ($tolerance = 300) {
         $scenery_ids = $this->getCloseSceneryIds($tolerance);
-        var_dump($scenery_ids); die();
         return array_map(function ($id) {
             return new Scenery($id);
         }, $scenery_ids);
