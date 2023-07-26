@@ -249,7 +249,7 @@ class CFLinestring extends Model {
      * Get all scenery spot ids less than 
      * @param int $tolerance Tolerance in meters
      */
-    public function getCloseSceneryIds ($tolerance = 1000) {
+    public function getCloseSceneryIds ($tolerance = 300) {
         $d = $tolerance / 200000; // About 1000m
         $getCloseSceneries = $this->getPdo()->prepare("SELECT id FROM sceneries WHERE ST_Intersects(point, ST_Buffer(ST_LineStringFromText(?), ?))");
         $getCloseSceneries->execute([$this->toWKT(), $d]);
@@ -260,7 +260,7 @@ class CFLinestring extends Model {
      * Get all scenery spots less than $tolerance meters from linestring
      * @param int $tolerance Tolerance in meters
      */
-    public function getCloseSceneries ($tolerance = 1000) {
+    public function getCloseSceneries ($tolerance = 300) {
         $scenery_ids = $this->getCloseSceneryIds($tolerance);
         var_dump($scenery_ids); die();
         return array_map(function ($id) {
