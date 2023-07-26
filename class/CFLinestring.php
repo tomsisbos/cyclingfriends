@@ -212,7 +212,7 @@ class CFLinestring extends Model {
             array_push($array_lng, $lngLat->lng);
             array_push($array_lat, $lngLat->lat);
         }
-        return [new LngLat(min($array_lng) - $margin, min($array_lat) - $margin), new LngLat(max($array_lng) + $margin, max($array_lat) + $margin)];
+        return new CFRectangle(min($array_lng) - $margin, min($array_lat) - $margin, max($array_lng) + $margin, max($array_lat) + $margin);
     }
 
     /**
@@ -250,9 +250,9 @@ class CFLinestring extends Model {
      * @param int $tolerance Tolerance in meters
      */
     public function getCloseSceneryIds ($tolerance = 300) {
-        $d = $tolerance / 200000; // About 1000m
-        $getCloseSceneries = $this->getPdo()->prepare("SELECT id FROM sceneries WHERE ST_Intersects(point, ST_Buffer(ST_LineStringFromText(?), ?))");
-        $getCloseSceneries->execute([$this->toWKT(), $d]);
+        ///$d = $tolerance / 200000;
+        $getCloseSceneries = $this->getPdo()->prepare("SELECT id FROM sceneries WHERE MBRContains(ST_PolygonFromText('".$this->getBBox()->toWKT()."'), point)");
+        $getCloseSceneries->execute();
         return $getCloseSceneries->fetchAll(PDO::FETCH_COLUMN);
     }
 
@@ -306,7 +306,7 @@ class CFLinestring extends Model {
         $width = 1280;
         $height = 1280;
         $bbox = $this->getBBox();
-        $bbox_string = '[' .$bbox[0]->lng. ',' .$bbox[0]->lat. ',' .$bbox[1]->lng. ',' .$bbox[1]->lat. ']';
+        $bbox_string = '[' .$bbox->coordinates[0]->lng. ',' .$bbox->coordinates[0]->lat. ',' .$bbox->coordinates[1]->lng. ',' .$bbox->coordinates[1]->lat. ']';
         $padding = 280;
         $pitch = 30;
 

@@ -1,7 +1,7 @@
 <!--Displays the navbar-->
 <nav class="main-navbar navbar navbar-expand-lg navbar-light bg-white"> <?php
 
-	if (isSessionActive() || $_SESSION['auth'] === 0)  $default_url = '/dashboard';
+	if (isSessionActive()) $default_url = '/dashboard';
 	else $default_url = '/' ?>
 	
 		<div class="navbar-brand" >
