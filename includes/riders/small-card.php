@@ -1,4 +1,4 @@
-<div class="small-rdr-card <?php if (isset($_SESSION['auth']) && $rider->isFriend(getConnectedUser())) echo 'bg-friend' ?>">
+<div class="small-rdr-card <?php if (isSessionActive() && $rider->isFriend(getConnectedUser())) echo 'bg-friend' ?>">
     <div class="small-rdr-sub">
         <a style="text-decoration: none;" href="/rider/<?= $rider->id ?>"><?php $rider->getPropicElement(80, 80, 80); ?></a>
         <div>

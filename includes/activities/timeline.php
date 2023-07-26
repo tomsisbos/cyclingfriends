@@ -7,7 +7,7 @@
             <div class="pg-ac-photos-container"> <?php
                 foreach ($checkpoint->getPhotos() as $photo) {
                     // Only add photos which privacy is not set to true, except for the author
-                    if ($photo->privacy != 'private' || (isset($_SESSION['auth']) && $activity->user_id == getConnectedUser()->id)) { ?>
+                    if ($photo->privacy != 'private' || (isSessionActive() && $activity->user_id == getConnectedUser()->id)) { ?>
                         <div class="pg-ac-photo-container">
                             <div class="pg-ac-photo-specs">
                                 <div class="pg-ac-photo-number"><?= $photo_number ?></div>

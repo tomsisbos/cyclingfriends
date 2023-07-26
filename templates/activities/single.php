@@ -18,12 +18,12 @@ include '../actions/postCommentAction.php'; ?>
 <?php
 
 	// If set as private and connected user does not have admin rights on this activity, redirect to the dashboard
-	if ($activity->privacy == 'Private' AND (!isset($_SESSION['auth']) || $activity->user_id != getConnectedUser()->id)) {
+	if ($activity->privacy == 'Private' AND (!isSessionActive() || $activity->user_id != getConnectedUser()->id)) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the activity author, redirect to the dashboard
-	else if ($activity->privacy == 'Friends only' AND (!isset($_SESSION['auth']) || ($activity->user_id != getConnectedUser()->id AND !$activity->getAuthor()->isFriend(getConnectedUser())))) {
+	else if ($activity->privacy == 'Friends only' AND (!isSessionActive() || ($activity->user_id != getConnectedUser()->id AND !$activity->getAuthor()->isFriend(getConnectedUser())))) {
 		header('Location: /');
 	}
 
@@ -62,7 +62,7 @@ include '../actions/postCommentAction.php'; ?>
 					</div>
 					<div class="header-row mt-2"> <?php
 						// Include admin buttons if the user has admin rights on this activity
-						if (isset($_SESSION['auth']) && $activity->user_id == getConnectedUser()->id) include '../includes/activities/admin-buttons.php';
+						if (isSessionActive() && $activity->user_id == getConnectedUser()->id) include '../includes/activities/admin-buttons.php';
 						// Include user buttons
 						include '../includes/activities/user-buttons.php';?>
 					</div>

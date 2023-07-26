@@ -1,7 +1,7 @@
 <?php
 
 // If user is connected
-if (isset($_SESSION['auth'])) {
+if (isSessionActive()) {
 
 	// Check if user is already participating
 	if (!$ride->isParticipating(getConnectedUser())) {

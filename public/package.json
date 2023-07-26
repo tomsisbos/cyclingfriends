@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@mapbox/mapbox-gl-geocoder": "^5.0.1",
     "@mapbox/polyline": "^1.1.1",
     "@mapbox/tile-cover": "^3.0.2",
     "@mapbox/tilebelt": "^1.0.2",

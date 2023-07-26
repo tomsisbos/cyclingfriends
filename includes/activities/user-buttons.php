@@ -3,7 +3,7 @@
 include '../actions/twitter/authentificationAction.php';
 
 // Display social buttons if user is connected
-if (isset($_SESSION['auth'])) { ?>
+if (isSessionActive()) { ?>
 
     <div class="social-panel"> <?php
 

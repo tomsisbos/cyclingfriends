@@ -11,7 +11,7 @@ require $base_directory . '/actions/databaseAction.php';
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 // 
-if (!isset($_SESSION['auth'])) {
+if (!isSessionActive()) {
     header('location: /signin');
 }
 

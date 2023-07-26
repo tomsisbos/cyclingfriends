@@ -8,7 +8,7 @@ include '../includes/navbar.php';?>
 <!DOCTYPE html>
 <html lang="en">
 
-<body <?php if (!isset($_SESSION['auth'])) echo ' class="black-theme"' ?>>
+<body <?php if (!isSessionActive()) echo ' class="black-theme"' ?>>
 
     <link rel="stylesheet" href="/assets/css/posts.css" />
 
@@ -43,7 +43,7 @@ include '../includes/navbar.php';?>
             } ?>
         </div> <?php
         
-        if (isset($_SESSION['auth']) AND getConnectedUser()->hasModeratorRights()) { ?>
+        if (isSessionActive() AND getConnectedUser()->hasModeratorRights()) { ?>
 
             <div class="container bg-admin mb-3">
 

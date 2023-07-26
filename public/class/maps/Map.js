@@ -1,3 +1,4 @@
+///import MapboxGeocoder from '/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js'
 import CFUtils from "/class/utils/CFUtils.js"
 import CFSession from "/class/utils/CFSession.js"
 import Profile from "/class/Profile.js"
@@ -81,10 +82,14 @@ export default class Map extends Model {
         }
     }
 
+    clearMapData () {
+        return true
+    }
+
     addController () {
         var controller = document.createElement('div')
         controller.className = 'map-controller map-controller-left'
-        this.$map.appendChild(controller)
+        this.$map.querySelector('.mapboxgl-ctrl-top-left').appendChild(controller)
         return controller
     }
 
@@ -119,10 +124,6 @@ export default class Map extends Model {
             if (layerId === 'seasons') layerId = this.season
             this.setMapStyle(layerId)
         }
-    }
-
-    clearMapData () {
-        return true
     }
 
     addOptionsControl () {
@@ -322,6 +323,19 @@ export default class Map extends Model {
                 }
             } )
         } )
+    }
+
+    /**
+     * Add a search control to the map
+     */
+    addSearchControl () {
+        require(["/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js"], (MapboxGeocoder) => {
+            const searchBar = new MapboxGeocoder({
+                accessToken: this.apiKey,
+                marker: false
+            })
+            searchBar.addTo('.map-controller-left')
+        })
     }
     
     addFullscreenControl () {

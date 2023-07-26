@@ -22,12 +22,12 @@ include '../includes/head.php'; ?>
 <body> <?php
 
 	// If set as private and connected user does not have admin rights on this ride, redirect to the dashboard
-	if ($ride->privacy == 'private' AND (!isset($_SESSION['auth']) OR $ride->author_id != getConnectedUser()->id)) {
+	if ($ride->privacy == 'private' AND (!isSessionActive() OR $ride->author_id != getConnectedUser()->id)) {
 		header('Location: /');
 	}
 	
 	// If set as Friends only and connected user is not on the friends list on the ride author, redirect to the dashboard
-	if ($ride->privacy == 'friends_only' AND (!isset($_SESSION['auth']) OR (isset($_SESSION['auth']) && $ride->author_id != getConnectedUser()->id AND !$ride->getAuthor()->isFriend(getConnectedUser())))) {
+	if ($ride->privacy == 'friends_only' AND (!isSessionActive() OR (isSessionActive() && $ride->author_id != getConnectedUser()->id AND !$ride->getAuthor()->isFriend(getConnectedUser())))) {
 		header('Location: /');
 	}
 
@@ -60,7 +60,7 @@ include '../includes/head.php'; ?>
                     </div>
                     <div class="header-row mt-2"> <?php
                         // Include admin buttons if the user has admin rights on this ride
-                        if (isset($_SESSION['auth']) && $ride->author_id == getConnectedUser()->id) include '../includes/rides/admin-buttons.php';
+                        if (isSessionActive() && $ride->author_id == getConnectedUser()->id) include '../includes/rides/admin-buttons.php';
                         if (isset($ride->getReport()->photoalbum_url)) echo '<a href="' .$ride->getReport()->photoalbum_url. '" target="_blank"><button class="mp-button success">フォトアルバム</div></a>' ?>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 <div class="rdr-container-buttons"> <?php
 
 	// If user is connected
-	if (isset($_SESSION['auth'])) {
+	if (isSessionActive()) {
 
 		// If rider and connected user are not the same
 		if (getConnectedUser()->id !== $rider->id) {

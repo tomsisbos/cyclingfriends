@@ -35,7 +35,7 @@ include '../includes/head.php'; ?>
 						$scenery->getAuthor()->getPropicElement(30, 30, 30) ?><p>by <a href="/rider/<?= $scenery->user_id ?>"><?= $scenery->getAuthor()->login ?></a></p>
 					</div>
 					<div class="header-row"> <?php
-						if (isset($_SESSION['auth'])) { ?>
+						if (isSessionActive()) { ?>
 							<button class="mp-button normal js-favorite-button" type="button"> <?php
 								if ($scenery->isFavorite()) echo 'お気に入りから削除';
 								else echo 'お気に入りに追加' ?>
@@ -66,7 +66,7 @@ include '../includes/head.php'; ?>
 							</a> <?php
 						} ?>
 					</div> <?php
-					if (isset($_SESSION['auth'])) { ?>
+					if (isSessionActive()) { ?>
 						<div class="popup-rating" style="color: darkgrey"></div> <?php
 					} ?>
 				</div>
@@ -105,7 +105,7 @@ include '../includes/head.php'; ?>
 				<iframe style="width: 100%; height: 100%" src="https://maps.google.com/maps?q=<?= $scenery->lngLat->lat ?>,<?= $scenery->lngLat->lng ?>&t=k&z=12&output=embed"></iframe>
 				<div class="pg-sg-itinerary">
 					<div class="pg-sg-itinerary-title">レビュー</div> <?php
-					if (isset($_SESSION['auth'])) {
+					if (isSessionActive()) {
 						$user_review = $scenery->getUserReview(getConnectedUser());
 						if (!empty($user_review)) $submit_button_text = 'レビューを編集';
 						else $submit_button_text = 'レビューを投稿'; ?>

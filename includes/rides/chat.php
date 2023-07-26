@@ -53,7 +53,7 @@ else forEach ($chat as $rideMessage){
 }
 
 // If user is connected, display input box
-if (isset($_SESSION['auth'])) { ?>
+if (isSessionActive()) { ?>
 	<form method="post" class="chat-msgbox form-floating">
 		<textarea class="form-control" name="message" id="floatingMessage"></textarea>
 		<label class="form-label" for="floatingMessage">コメントを書く...</label>

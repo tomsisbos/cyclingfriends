@@ -10,13 +10,22 @@ function root () {
 }
 
 /**
+ * Check whether an user is currently connected or not
+ * @return boolean
+ */
+function isSessionActive () {
+	if (isset($_SESSION['auth']) && $_SESSION['auth'] != 0) return true;
+	else return false;
+}
+
+/**
  * Get connected user instance if connected, else throw exception
  * @return User
- * @throws Exception
  */
 function getConnectedUser () {
 	if (isset($_SESSION['id']) && $_SESSION['id'] > 0) return new User($_SESSION['id']);
-	else throw new Exception('セッションが切れてしまいました。お手数ですが、再度ログインしてください。');
+	else return false;
+	///else throw new Exception('セッションが切れてしまいました。お手数ですが、再度ログインしてください。');
 }
 
 // Check for an AJAX request

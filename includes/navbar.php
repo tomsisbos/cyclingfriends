@@ -1,7 +1,7 @@
 <!--Displays the navbar-->
 <nav class="main-navbar navbar navbar-expand-lg navbar-light bg-white"> <?php
 
-	if (isset($_SESSION['auth'])) $default_url = '/dashboard';
+	if (isSessionActive() || $_SESSION['auth'] === 0)  $default_url = '/dashboard';
 	else $default_url = '/' ?>
 	
 		<div class="navbar-brand" >
@@ -12,7 +12,7 @@
 		</div> <?php
 
 	// If the user is connected, displays the links 
-	if (isset($_SESSION['auth'])) { ?>
+	if (isSessionActive()) { ?>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedMenu">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -85,7 +85,7 @@
 					<a class="dropdown-item interactive" href="/settings"><div class="mainitem">設定</div></a>
 					<a class="dropdown-item interactive" href="/manual"><div class="mainitem">マニュアル</div></a> <?php
 					// If the user is connected, displays the sign out button 
-					if (isset($_SESSION['auth'])) { ?>
+					if (isSessionActive()) { ?>
 						<hr class="dropdown-divider">
 						<a class="dropdown-item interactive" href="<?= $_SERVER['REQUEST_URI'] ?>/signout">
 							<div class="mainitem">サインアウト</div>
@@ -131,13 +131,13 @@
 
 	<div class="header-buttons push"> <?php
 		// If the user is not connected and is on the signin page, displays the sign up button 
-		if (!isset($_SESSION['auth']) AND (strpos($url,'signin') == true)) { ?>
+		if (!isSessionActive() AND (strpos($url,'signin') == true)) { ?>
 			<a href="/signup">
 				<button class="btn button" name="validate">新規登録</button>
 			</a> <?php
 
 		// Else, displays the sign in button		
-		} else if (!isset($_SESSION['auth'])) {
+		} else if (!isSessionActive()) {
 			if (session_status() == PHP_SESSION_ACTIVE && $_SERVER['REQUEST_URI'] != '/') { ?>
 				<a href="<?= $_SERVER['REQUEST_URI']?>/signin"> <?php
 			} else { ?>
@@ -151,7 +151,7 @@
 </nav> <?php
 
 // Display dev note adding icon on session pages
-if (isset($_SESSION['auth'])) echo '<script src="/scripts/dev/note.js"></script>';
+if (isSessionActive()) echo '<script src="/scripts/dev/note.js"></script>';
 
 // Request and show notifications
-if (isset($_SESSION['auth'])) echo '<script type="module" src="/scripts/user/notifications.js"></script>'; ?>
+if (isSessionActive()) echo '<script type="module" src="/scripts/user/notifications.js"></script>'; ?>

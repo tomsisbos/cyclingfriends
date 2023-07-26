@@ -12,7 +12,7 @@ require $base_directory . '/actions/databaseAction.php';
 if (isAjax()) {
 
     /*if (isset($_GET['get-session'])) {
-        if (isset($_SESSION['auth'])) echo json_encode($_SESSION);
+        if (isSessionActive()) echo json_encode($_SESSION);
     }*/
 
     if (isset($_GET['scenery-photos'])) {
