@@ -404,6 +404,12 @@ export default class Map extends Model {
             'data': '/map/sources/compressed_sources/vending-machine-drinks.geojson',
             'generateId': true
         } )
+        // Cycling Shops
+        this.map.addSource('bicycle-rentals', {
+            'type': 'geojson',
+            'data': '/map/sources/bicycle-rentals.geojson',
+            'generateId': true
+        } )
         // Onsens
         this.map.addSource('onsens', {
             'type': 'geojson',
@@ -441,6 +447,8 @@ export default class Map extends Model {
         this.addAmenityLayers()
         // Konbinis
         this.addKonbiniLayers()
+        // Cycle shops
+        this.addCycleShopLayers()
         // Onsens
         this.map.addLayer( {
             'id': 'onsens',
@@ -607,6 +615,41 @@ export default class Map extends Model {
         amenityLayerNames.forEach( (layerName) => this.map.removeLayer(layerName))
     }
 
+    addCycleShopLayers () {
+        // Bicycle rentals
+        this.map.addLayer( {
+            'id': 'bicycle-rentals',
+            'type': 'symbol',
+            'source': 'bicycle-rentals',
+            'minzoom': 12,
+            'layout': {
+                'icon-image': '_icon-bicycle-rentals',
+                'icon-size': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    12,
+                    0.45,
+                    22,
+                    2
+                ]
+            },
+            'paint': {
+                'icon-opacity': [
+                    "case",
+                    ["boolean", ["feature-state", "hover"], false],
+                    0.5,
+                    1
+                ]
+            },
+        } )
+    }
+    
+    hideCycleShopLayers () {
+        var cycleShopLayerNames = ['bicycle_rental']
+        cycleShopLayerNames.forEach( (layerName) => this.map.removeLayer(layerName))
+    }
+
     addKonbiniLayers () {
         
         var getKonbiniExpressionArray = (keyword, name) => {
@@ -618,15 +661,15 @@ export default class Map extends Model {
             'id': 'seven-eleven',
             'type': 'symbol',
             'source': 'konbinis',
-            'minzoom': 12,
+            'minzoom': 11.5,
             'layout': {
                 'icon-image': '_icon-seven-eleven',
                 'icon-size': [
                     "interpolate",
                     ["linear"],
                     ["zoom"],
-                    12.5,
-                    0.8,
+                    11.5,
+                    0.6,
                     20,
                     3
                 ]
@@ -656,15 +699,15 @@ export default class Map extends Model {
             'id': 'family-mart',
             'type': 'symbol',
             'source': 'konbinis',
-            'minzoom': 12,
+            'minzoom': 11.5,
             'layout': {
                 'icon-image': '_icon-family-mart',
                 'icon-size': [
                     "interpolate",
                     ["linear"],
                     ["zoom"],
-                    12.5,
-                    0.8,
+                    11.5,
+                    0.6,
                     20,
                     3
                 ]
@@ -705,15 +748,15 @@ export default class Map extends Model {
             'type': 'symbol',
             'source': 'composite',
             'source-layer': 'poi_label',
-            'minzoom': 12,
+            'minzoom': 11.5,
             'layout': {
                 'icon-image': '_icon-family-mart',
                 'icon-size': [
                     'interpolate',
                     ['linear'],
                     ['zoom'],
-                    12.5,
-                    0.8,
+                    11.5,
+                    0.6,
                     20,
                     3
                 ]
@@ -753,15 +796,15 @@ export default class Map extends Model {
             'id': 'lawson',
             'type': 'symbol',
             'source': 'konbinis',
-            'minzoom': 12,
+            'minzoom': 11.5,
             'layout': {
                 'icon-image': '_icon-lawson',
                 'icon-size': [
                     "interpolate",
                     ["linear"],
                     ["zoom"],
-                    12.5,
-                    0.8,
+                    11.5,
+                    0.6,
                     20,
                     3
                 ]
@@ -791,15 +834,15 @@ export default class Map extends Model {
             'id': 'mini-stop',
             'type': 'symbol',
             'source': 'konbinis',
-            'minzoom': 12,
+            'minzoom': 11.5,
             'layout': {
                 'icon-image': '_icon-mini-stop',
                 'icon-size': [
                     'interpolate',
                     ['linear'],
                     ['zoom'],
-                    12.5,
-                    0.8,
+                    11.5,
+                    0.6,
                     20,
                     3
                 ]
@@ -829,15 +872,15 @@ export default class Map extends Model {
             'id': 'daily-yamazaki',
             'type': 'symbol',
             'source': 'konbinis',
-            'minzoom': 12,
+            'minzoom': 11.5,
             'layout': {
                 'icon-image': '_icon-daily-yamazaki',
                 'icon-size': [
                     'interpolate',
                     ['linear'],
                     ['zoom'],
-                    12.5,
-                    0.8,
+                    11.5,
+                    0.6,
                     20,
                     3
                 ]
@@ -870,7 +913,7 @@ export default class Map extends Model {
             'type': 'symbol',
             'source': "composite",
             'source-layer': "poi_label",
-            'minzoom': 11.5,
+            'minzoom': 11,
             'layout': {
                 'icon-image': '_icon-michi-no-eki',
                 'icon-size': [
@@ -915,10 +958,6 @@ export default class Map extends Model {
     hideKonbiniLayers () {
         var konbiniLayerNames = ['seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki']
         konbiniLayerNames.forEach( (layerName) => this.map.removeLayer(layerName))
-    }
-
-    addCyclingLayers () {
-
     }
 
     // Rindos
@@ -1333,6 +1372,19 @@ export default class Map extends Model {
             ]
         } )
         this.map.addLayer( {
+            'id': 'no-bicycle-cap',
+            'type': 'line',
+            'source': 'no-bicycle',
+            'source-layer': 'no-bicycle-2drz45',
+            'minzoom': 11,
+            'paint': {
+                'line-color': '#fff',
+                'line-width': 5,
+                'line-color': '#ff5555'
+            },
+            'filter': ['in', 'id', 'default']
+        } )
+        this.map.addLayer( {
             'id': 'no-bicycle-rindos-cap',
             'type': 'line',
             'source': 'rindos',
@@ -1488,7 +1540,7 @@ export default class Map extends Model {
                 this.map.addImage('leader-line-white', image)
             } )
         }
-        var amenityIcons = ['toilets', 'water', 'vending-machine', 'seven-eleven', 'family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsen', 'footbath']
+        var amenityIcons = ['toilets', 'water', 'vending-machine', 'seven-eleven', 'family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsen', 'footbath', 'bicycle-rentals']
         amenityIcons.forEach( async (amenityIcon) => {
             var imageName = '_icon-' + amenityIcon
             if (!this.map.hasImage(imageName)) {

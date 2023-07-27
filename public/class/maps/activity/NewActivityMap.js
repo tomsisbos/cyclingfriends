@@ -322,7 +322,9 @@ export default class NewActivityMap extends ActivityMap {
                                 const [dateValues, timeValues] = exifDateTimeOriginal.split(' ')
                                 const [year, month, day] = dateValues.split(':')
                                 const [hours, minutes, seconds] = timeValues.split(':')
-                                var timezone = this.activityData.summary.startplace.timezone
+                                console.log(this)
+                                if (this.activityData) var timezone = this.activityData.summary.startplace.timezone
+                                else var timezone = this.data.route.startplace.timezone
                                 var dateOriginal = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds) - timezone.gmt_offset * 1000)
                                 ///var timestamp = Date.UTC(year, month - 1, day, hours, minutes, seconds).getTime()
 

@@ -687,7 +687,13 @@ form#sceneryForm input[type="file" i] {
     border-radius: 10px;
     text-align: center;
 }
-
+.amenity-popup-name {
+    font-weight: bold;
+    text-align: center;
+}
+.amenity-popup-details {
+    text-align: left;
+}
 
 .popup-activity-photo {
     width: 100%;

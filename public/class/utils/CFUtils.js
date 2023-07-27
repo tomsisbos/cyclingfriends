@@ -235,6 +235,7 @@ export default class CFUtils {
         if      (amenity == 'toilets') return 'トイレ'
         else if (amenity == 'drinking-water') return '水補給'
         else if (amenity == 'vending-machine-drinks') return '自販機'
+        else if (amenity == 'bicycle-rentals') return 'レンタルサイクル'
         else if (amenity == 'seven-eleven') return 'Seven Eleven'
         else if (amenity == 'family-mart' || amenity == 'mb-family-mart') return 'Family Mart'
         else if (amenity == 'lawson') return 'Lawson'

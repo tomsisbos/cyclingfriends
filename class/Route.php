@@ -36,8 +36,8 @@ class Route extends Model {
         $this->description        = $data['description'];
         $this->distance           = floatval($data['distance']);
         $this->elevation          = floatval($data['elevation']);
-        $this->startplace         = $data['startplace'];
-        $this->goalplace          = $data['goalplace'];
+        $this->startplace         = new Geolocation(explode('(' , rtrim($data['startplace'], ')'))[0], explode('(' , rtrim($data['startplace'], ')'))[1], 'JP');
+        $this->goalplace          = new Geolocation(explode('(' , rtrim($data['goalplace'], ')'))[0], explode('(' , rtrim($data['goalplace'], ')'))[1], 'JP');
         $this->thumbnail_filename = $data['thumbnail_filename'];
         $this->tunnels            = $this->getTunnels();
     }

@@ -47,7 +47,7 @@ ajaxGetRequest (worldMap.apiUrl + "?display-rides=true", (rides) => {
 // Update map data on ending moving the map
 map.on('moveend', worldMap.updateMapDataListener)
 
-var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path']
+var amenities = ['toilets', 'drinking-water', 'vending-machine-drinks', 'bicycle-rentals', 'seven-eleven', 'family-mart', 'mb-family-mart', 'lawson', 'mini-stop', 'daily-yamazaki', 'michi-no-eki', 'onsens', 'footbaths', 'rindos-case', 'cycle-path', 'no-bicycle']
 amenities.forEach( (amenity) => {
     let hoveredFeatureId = null
     let feature
@@ -74,12 +74,28 @@ amenities.forEach( (amenity) => {
         if (!feature.properties.name) feature.properties.name = ''
         if (amenity == 'rindos-case') map.setFilter('rindos-cap', ['in', 'name', feature.properties.name]) // Display rindo cap on rindo hovering
         if (amenity == 'cycle-path' && feature.properties.name != '') map.setFilter('cycle-path-cap', ['in', 'name', feature.properties.name]) // Display cycling road cap on cycling road hovering
-        else map.setFilter('cycle-path-cap', ['in', 'id', feature.properties.id])
+        else if (amenity == 'cycle-path') map.setFilter('cycle-path-cap', ['in', 'id', feature.properties.id])
+        if (amenity == 'no-bicycle') map.setFilter('no-bicycle-cap', ['in', 'id', feature.properties.id]) // Display no-bicycle cap on restricted area hovering
 
         // Define popup content
         if (amenity == 'onsens' || amenity == 'michi-no-eki') {
             if (amenityPopup.data.name.includes(';')) var text = amenityPopup.data.name.replace(';', '<br>')
             else var text = amenityPopup.data.name
+            
+        } else if (amenity == 'bicycle-rentals') {
+            // Build title
+            var text = '<div class="pb-2">'
+            if (amenityPopup.data.name) text += '<div class="amenity-popup-name">' + amenityPopup.data.name + '</div>'
+            else if (amenityPopup.data.network) text += '<div class="amenity-popup-name">' + amenityPopup.data.network + '</div>'
+            else text += '<div class="amenity-popup-name">' + CFUtils.getAmenityName(amenity) + '</div>'
+            if (amenityPopup.data.brand) text += amenityPopup.data.brand
+            text += '</div>'
+            // Build details
+            text += '<div class="amenity-popup-details">'
+            if (amenityPopup.data.capacity) text += '<strong>台数：</strong>' + amenityPopup.data.capacity + '<br>'
+            if (amenityPopup.data.website) text += '<strong>URL：</strong>' + amenityPopup.data.website + '<br>'
+            else if (amenityPopup.data['contact:website']) text += '<strong>URL：</strong>' + amenityPopup.data['contact:website'] + '<br>'
+            text += '</div>'
 
         } else if (amenity == 'seven-eleven' || amenity == 'family-mart' || amenity == 'mb-family-mart' || amenity == 'lawson' || amenity == 'mini-stop' || amenity == 'daily-yamazaki') {
             if (amenityPopup.data.branch) var text = CFUtils.getAmenityName(amenity) + '<br>' + amenityPopup.data.branch
@@ -89,7 +105,7 @@ amenities.forEach( (amenity) => {
 
         } else if (amenity == 'rindos-case') {
             // Build title
-            var text = '<div class="pb-2"><div class="popup-properties-name">' + amenityPopup.data.name + '</div>'
+            var text = '<div class="pb-2"><div class="amenity-popup-name">' + amenityPopup.data.name + '</div>'
             if (amenityPopup.data['name:en']) text += amenityPopup.data['name:en']
             text += '</div>'
             // Set surface
@@ -123,10 +139,14 @@ amenities.forEach( (amenity) => {
 
         } else if (amenity == 'cycle-path') {
             // Build title
-            if (amenityPopup.data.name) var text = '<div class="pb-2"><div class="popup-properties-name">' + amenityPopup.data.name + '</div>'
-            else var text = '<div class="pb-2"><div class="popup-properties-name">' + CFUtils.getAmenityName(amenity) + '</div>'
+            if (amenityPopup.data.name) var text = '<div class="pb-2"><div class="amenity-popup-name">' + amenityPopup.data.name + '</div>'
+            else var text = '<div class="pb-2"><div class="amenity-popup-name">' + CFUtils.getAmenityName(amenity) + '</div>'
             if (amenityPopup.data['name:en']) text += amenityPopup.data['name:en']
             text += '</div>'
+
+        } else if (amenity == 'no-bicycle') {
+            // Build title
+            var text = 'この道は自転車の立ち入りができません。'
 
         } else var text = CFUtils.getAmenityName(amenity)
         amenityPopup.popup.setHTML(text)
@@ -149,6 +169,7 @@ amenities.forEach( (amenity) => {
         // Remove hover style from this feature
         if (amenity == 'rindos-case') map.setFilter('rindos-cap', ['in', 'name', 'default'])
         if (amenity == 'cycle-path') map.setFilter('cycle-path-cap', ['in', 'name', 'default'])
+        if (amenity == 'no-bicycle') map.setFilter('no-bicycle-cap', ['in', 'id', 'default'])
         if (hoveredFeatureId !== null) {
             var state = {source: feature.source, id: hoveredFeatureId}
             if (feature.sourceLayer) state.sourceLayer = feature.sourceLayer
