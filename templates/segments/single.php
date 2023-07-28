@@ -52,7 +52,7 @@ include '../includes/head.php'; ?>
 			else $main_color = '#d9d9d9' ?>
 			<div class="container pg-sg-topline" style="background-color: <?= luminanceLight($main_color, 0.85) ?>">
 				<div class="pg-sg-location">
-					<?= $segment->route->startplace ?>
+					<?= $segment->route->startplace->toString() ?>
 				</div> <?php
 				if (isSessionActive()) {
 					$cleared_activity_id = $segment->isCleared();

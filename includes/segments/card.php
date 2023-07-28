@@ -17,7 +17,7 @@
                         </a>
                     </div> <?php
                 } ?>
-                <div class="sg-place-elevation"><?= $segment->route->startplace . ' - ' . round($segment->route->distance, 1) . 'km' ?></div>
+                <div class="sg-place-elevation"><?= $segment->route->startplace->toString() . ' - ' . round($segment->route->distance, 1) . 'km' ?></div>
             </div>
         </div>
         <div class="sg-description"><?= $segment->description ?></div>

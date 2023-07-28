@@ -54,8 +54,8 @@ include '../actions/routes/routeAction.php'; ?>
             <?= $route->description ?>
             <div class="specs">
                 <div class="spec-column">
-                    <div><strong>集合場所 : </strong><?= $route->startplace ?></div>
-                    <div><strong>解散場所 : </strong><?= $route->goalplace ?></div>
+                    <div><strong>集合場所 : </strong><?= $route->startplace->toString() ?></div>
+                    <div><strong>解散場所 : </strong><?= $route->goalplace->toString() ?></div>
                 </div>
                 <div class="spec-column">
                 <div><strong>距離 : </strong><?= round($route->distance, 1) ?>km</div>
