@@ -64,7 +64,7 @@ $content = [
                                     '足湯',
                                     Manual::temp('サイクルステーション'),
                                     Manual::temp('自転車整備店'),
-                                    Manual::temp('レンタサイクル施設'),
+                                    'バイクレンタル施設',
                                     Manual::temp('サイクリストに優しい宿泊施設'),
                                     Manual::temp('サイクリストに優しい飲食店'),
                                     Manual::temp('その他コミュニティが希望し、導入が可能なデータ')

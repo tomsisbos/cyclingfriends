@@ -21,6 +21,7 @@ include '../includes/rides/admin/head.php'; ?>
             <div class="container rd-ad-container">
 
                 <h3>エントリーリスト</h3>
+
                 <div class="responsive-table-container">
                     <table class="rd-ad-entry-table gridtable">
                         <tbody>

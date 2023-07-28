@@ -115,9 +115,11 @@ if (is_array($data)) {
     }
 
     // Only delete activity photos that have not been uploaded this time
-    $filenames_string = implode(',', $already_uploaded_filenames);
-    $delete_photos = $db->prepare("DELETE FROM activity_photos WHERE activity_id = ? AND filename NOT IN ({$filenames_string})");
-    $delete_photos->execute(array($activity_id));
+    if (count($already_uploaded_filenames) > 0) {
+        $filenames_string = implode(',', $already_uploaded_filenames);
+        $delete_photos = $db->prepare("DELETE FROM activity_photos WHERE activity_id = ? AND filename NOT IN ({$filenames_string})");
+        $delete_photos->execute(array($activity_id));
+    }
 
 
     // Create new sceneries if necessary
