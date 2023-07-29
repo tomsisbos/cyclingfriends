@@ -350,10 +350,10 @@ export default class RideDrawMap extends RideMap {
         // Update course data
         var data = {
             meetingplace: {
-                geolocation: CFUtils.buildGeolocationFromString(this.route.startplace)
+                geolocation: CFUtils.buildGeolocationFromString(this.route.startplace.city + ' (' + this.route.startplace.prefecture + ')')
             },
             finishplace: {
-                geolocation: CFUtils.buildGeolocationFromString(this.route.goalplace)
+                geolocation: CFUtils.buildGeolocationFromString(this.route.goalplace.city + ' (' + this.route.goalplace.prefecture + ')')
             },
             checkpoints: this.data.checkpoints,
             options

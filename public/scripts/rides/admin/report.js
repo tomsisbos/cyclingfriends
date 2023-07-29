@@ -1,4 +1,4 @@
-import CircleLoader from "/class/loaders/CircleLoader"
+import CircleLoader from "/class/loaders/CircleLoader.js"
 
 var selectGuide = document.querySelector('#selectGuide')
 var selectActivitiesContainer = document.querySelector('#selectActivitiesContainer')
