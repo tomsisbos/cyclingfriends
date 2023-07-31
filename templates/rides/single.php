@@ -85,6 +85,14 @@ include '../includes/head.php'; ?>
 				</div>
 				<div class="row">
 					<div class="col-sm">
+						<p><strong>最低催行人数 :</strong> <?= $ride->nb_riders_min; ?></p>
+					</div>
+					<div class="col-sm">
+						<p><strong>定員 :</strong> <?= $ride->nb_riders_max; ?></p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
 						<p><strong>レベル :</strong> <?= $ride->getAcceptedLevelString(); ?></p>
 					</div>
 					<div class="col-sm">
