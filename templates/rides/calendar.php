@@ -1,7 +1,7 @@
 <?php
 
-require '../actions/users/signupAction.php';
-require '../actions/rides/officialAction.php';
+require '../actions/users/signup.php';
+require '../actions/rides/official.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

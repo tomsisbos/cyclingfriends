@@ -1,6 +1,6 @@
 <?php
 
-require '../actions/users/signupAction.php';
+require '../actions/users/signup.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

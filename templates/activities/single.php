@@ -1,10 +1,10 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
+include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
-include '../actions/activities/activityAction.php';
+include '../actions/activities/activity.php';
 $object = $activity;
-include '../actions/postCommentAction.php'; ?>
+include '../actions/postComment.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

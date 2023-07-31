@@ -46,7 +46,7 @@ class ActivityPhoto extends Model {
 
     private function getUrl () {
         // Connect to blob storage
-        require ActivityPhoto::$root_folder . '/actions/blobStorageAction.php';
+        require ActivityPhoto::$root_folder . '/actions/blobStorage.php';
 
         // Retrieve blob url
         return $blobClient->getBlobUrl($this->container_name, $this->filename);
@@ -70,7 +70,7 @@ class ActivityPhoto extends Model {
 
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require $folder . '/actions/blobStorage.php';
 
         // Send file to blob storage
         $containername = 'activity-photos';

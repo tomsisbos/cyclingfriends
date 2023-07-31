@@ -1,7 +1,7 @@
 <?php
 
-include '../actions/beta/signupAction.php';
-require '../actions/users/signupAction.php';
+include '../actions/beta/signup.php';
+require '../actions/users/signup.php';
 include '../includes/head.php';
 
 // If user has been created, update privatebeta members table

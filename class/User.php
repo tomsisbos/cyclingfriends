@@ -505,7 +505,7 @@ class User extends Model {
                 'datetime' => $current_date->format('Y-m-d H:i:s')
             ];
 
-            require User::$root_folder . '/actions/blobStorageAction.php';
+            require User::$root_folder . '/actions/blobStorage.php';
             $blobClient->createBlockBlob($this->container_name, $filename, $img_blob);
             $blobClient->setBlobMetadata($this->container_name, $filename, $metadata);
 
@@ -549,7 +549,7 @@ class User extends Model {
             $filename = $getImage->fetch(PDO::FETCH_COLUMN);
 
             // Connect to blob storage
-            require User::$root_folder . '/actions/blobStorageAction.php';
+            require User::$root_folder . '/actions/blobStorage.php';
 
             // Retrieve blob url
             return $blobClient->getBlobUrl($this->container_name, $filename);
@@ -825,7 +825,7 @@ class User extends Model {
     // Insert a new message in the message table
     public function sendMessage ($receiver, $message){        
         $addMessage = $this->getPdo()->prepare('INSERT INTO messages (sender_id, receiver_id, message, time) VALUES (?, ?, ?, ?)');
-        $addMessage->execute(array($this->id, $receiver->id, $message, date('Y-m-d H:i:s')));
+        $addMessage->execute(array($this->id, $receiver->id, $message, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))));
     }
 
     public function getFavorites ($type, $offset = 0, $limit = 9999) {

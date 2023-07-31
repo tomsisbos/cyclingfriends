@@ -66,7 +66,7 @@ class Scenery extends Model {
 
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require $folder . '/actions/blobStorage.php';
 
         // Insert photos data
         foreach ($scenery_data['photos'] as $photo) {
@@ -101,7 +101,7 @@ class Scenery extends Model {
 
     public function delete () {
         // Connect to blob storage and delete relevant blobs
-        require Scenery::$root_folder . '/actions/blobStorageAction.php';
+        require Scenery::$root_folder . '/actions/blobStorage.php';
         foreach ($this->getImages() as $photo) $blobClient->deleteBlob($this->container_name, $photo->filename);
 
         // Remove database entry

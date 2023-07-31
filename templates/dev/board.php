@@ -5,8 +5,8 @@ $limit = 20;
 if (isset($_GET['p'])) $offset = (intval($_GET['p']) - 1) * $limit;
 else $offset = 0;
 
-include '../actions/users/initSessionAction.php';
-include '../actions/dev/devNotesAction.php';
+include '../actions/users/initSession.php';
+include '../actions/dev/devNotes.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

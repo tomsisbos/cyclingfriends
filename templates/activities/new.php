@@ -1,8 +1,8 @@
 <?php 
 
-include '../actions/users/initSessionAction.php';
-include '../actions/garmin/disconnectionAction.php';
-include '../actions/garmin/authentificationAction.php';
+include '../actions/users/initSession.php';
+include '../actions/garmin/disconnection.php';
+include '../actions/garmin/authentification.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

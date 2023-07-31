@@ -78,7 +78,7 @@ class Route extends Model {
 
     public function getThumbnail () {
         // Connect to blob storage
-        require Route::$root_folder . '/actions/blobStorageAction.php';
+        require Route::$root_folder . '/actions/blobStorage.php';
 
         // Retrieve blob url
         return $blobClient->getBlobUrl($this->container_name, $this->thumbnail_filename);

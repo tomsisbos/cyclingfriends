@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -27,7 +27,7 @@ include '../includes/head.php'; ?>
 			else $offset = 0;
 			
 			// Select rides from database according to filter queries
-			include '../actions/rides/displayAction.php'; 
+			include '../actions/rides/display.php'; 
 			
 			// Display ride cards ?>
 			

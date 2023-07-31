@@ -99,7 +99,7 @@ class CFLinestring extends Model {
             'route_id' => $route_id,
         ];
 
-        require CFLinestring::$root_folder . '/actions/blobStorageAction.php';
+        require CFLinestring::$root_folder . '/actions/blobStorage.php';
         $blobClient->createBlockBlob($this->container_name, $thumbnail_filename, $thumbnail);
         $blobClient->setBlobMetadata($this->container_name, $thumbnail_filename, $metadata);
 

@@ -1,11 +1,11 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php';
-include '../actions/riders/profile/propicAction.php';
-include '../actions/riders/profile/profileInfosAction.php';
-include "../actions/riders/profile/bikeImageAction.php";
-include '../actions/twitter/disconnectionAction.php'; ?>
+include '../actions/riders/profile/propic.php';
+include '../actions/riders/profile/profileInfos.php';
+include "../actions/riders/profile/bikeImage.php";
+include '../actions/twitter/disconnection.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

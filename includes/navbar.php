@@ -91,6 +91,9 @@
 						<a class="dropdown-item interactive" href="<?= $_SERVER['REQUEST_URI'] ?>/signout">
 							<div class="mainitem">サインアウト</div>
 						</a> <?php
+					}
+					if (getConnectedUser()->hasAdministratorRights()) { ?>
+						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries.php"><div class="mainitem">自動投稿設定</div></a> <?php
 					} ?>
 				</div>
 			</div>

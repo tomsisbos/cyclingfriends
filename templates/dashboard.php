@@ -1,7 +1,7 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
-require '../actions/databaseAction.php';
+include '../actions/users/initSession.php';
+require '../actions/database.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

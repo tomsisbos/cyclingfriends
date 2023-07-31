@@ -2,7 +2,7 @@
 
 include '../includes/head.php';
 include '../includes/rides/admin/head.php';
-include '../actions/databaseAction.php';
+include '../actions/database.php';
 include '../actions/rides/admin/report.php';
 
 // If ride author is not guide, don't show guide admin page

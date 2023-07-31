@@ -1,7 +1,7 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
-include '../actions/segments/segmentAction.php';
+include '../actions/users/initPublicSession.php';
+include '../actions/segments/segment.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

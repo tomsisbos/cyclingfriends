@@ -96,7 +96,7 @@ class Bike extends Model {
         if (isset($this->filename)) { 
 
             // Connect to blob storage
-            require Bike::$root_folder . '/actions/blobStorageAction.php';
+            require Bike::$root_folder . '/actions/blobStorage.php';
 
             // Retrieve blob url
             echo '<img class="pf-bike-image" src="' .$blobClient->getBlobUrl($this->container_name, $this->filename). '" />';
@@ -123,11 +123,11 @@ class Bike extends Model {
         $filename = setFilename('img');
         $metadata = [
             'user_id' => $this->user->id,
-            'datetime' => date('Y-m-d H:i:s')
+            'datetime' => (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))
         ];
 
         // Connect to blob storage
-        require Bike::$root_folder . '/actions/blobStorageAction.php';
+        require Bike::$root_folder . '/actions/blobStorage.php';
 
         $blobClient->createBlockBlob($this->container_name, $filename, $img_blob);
         $blobClient->setBlobMetadata($this->container_name, $filename, $metadata);

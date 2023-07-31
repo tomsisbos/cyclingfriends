@@ -1,6 +1,6 @@
 <?php
 
-require '../actions/users/sendResetPasswordMailAction.php';
+require '../actions/users/sendResetPasswordMail.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

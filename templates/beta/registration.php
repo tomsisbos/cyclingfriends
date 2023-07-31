@@ -1,7 +1,7 @@
 <?php
 
 include '../includes/head.php';
-require '../actions/beta/registerAction.php'; ?>
+require '../actions/beta/register.php'; ?>
 
 <html>
     

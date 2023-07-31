@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php';
 
 // Prepare multipage system
@@ -24,8 +24,8 @@ if (isset($ride_slug)) $_SESSION['edit-forms']['ride-id'] = $ride_slug;
 if (isset($stage_slug)) define('CFG_STAGE_ID', intval($stage_slug));
 else define('CFG_STAGE_ID', 1);
 
-include '../actions/rides/edit/getRideAction.php';
-include '../actions/rides/edit/editAction.php'; 
+include '../actions/rides/edit/getRide.php';
+include '../actions/rides/edit/edit.php'; 
 include '../includes/navbar.php';?>
 
 <!DOCTYPE html>
@@ -34,7 +34,7 @@ include '../includes/navbar.php';?>
     <link rel="stylesheet" href="/assets/css/ride.css" />
 
     <div class="main"> <?php
-        include '../actions/rides/edit/dataProcessAction.php'; ?>
+        include '../actions/rides/edit/dataProcess.php'; ?>
     </div>
 
 </html>

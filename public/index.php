@@ -35,10 +35,10 @@ $router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-fa
 $router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
 $router->map('GET|POST', '/account/verification/guidance', 'user/verification-guidance', 'user-verification-guidance');
 $router->map('GET', '/account/verification/[i:user_slug]-[*:email]', function ($user_slug, $email) {
-    require_once '../actions/users/verificationAction.php';
+    require_once '../actions/users/verification.php';
 });
 $router->map('GET', '[*:url]/account/verification/[i:user_slug]-[*:email]', function ($url, $user_slug, $email) {
-    require_once '../actions/users/verificationAction.php';
+    require_once '../actions/users/verification.php';
 });
 
 // Manual
@@ -66,7 +66,7 @@ $router->map('GET', '/route/new', 'routes/new', 'route-new');
 $router->map('GET', '/route/[i:route_id]/edit', 'routes/edit', 'route-edit');
 $router->map('GET', '/[*:user_login]/routes', 'routes/userboard', 'route-userboard');
 $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" when typing "/routes"
-    require_once '../actions/users/initSessionAction.php';
+    require_once '../actions/users/initSession.php';
     require_once '../includes/functions.php';
     header('location: /' .getConnectedUser()->login. '/routes');
 });
@@ -109,6 +109,9 @@ $router->map('GET|POST', '/news', 'community/news', 'community/news');
 $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
 $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
+
+// Admin
+$router->map('GET|POST', '/admin/autoposting/sceneries', '/admin/autoposting/sceneries', 'admin-autoposting-sceneries');
 
 
 // Treatment of results

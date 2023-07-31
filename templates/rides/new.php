@@ -1,7 +1,7 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
-require '../actions/rides/new/createAction.php';
+include '../actions/users/initSession.php';
+require '../actions/rides/new/create.php';
 require_once '../includes/head.php';
 
 // Clear session form data if ride already posted
@@ -34,7 +34,7 @@ if (empty($_SESSION['forms'])) $_SESSION['forms'] = array(); ?>
 include '../includes/navbar.php'; ?>
 
 <div class="main"> <?php
-    include '../actions/rides/new/dataProcessAction.php'; ?>
+    include '../actions/rides/new/dataProcess.php'; ?>
 </div>
 
 </html>

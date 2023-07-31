@@ -263,7 +263,7 @@ class Ride extends Model {
     public function join ($participant) {
         // Add a line into participation database
         $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
-        $joinRide->execute(array($participant->id, $this->id, date('Y-m-d H:i:s')));
+        $joinRide->execute(array($participant->id, $this->id, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))));
 
         // Prepare additional fields data
         $additional_fields = $this->getAdditionalFields();
@@ -544,7 +544,7 @@ class Ride extends Model {
         $user = new User($_SESSION['id']);
         // Send variables into database
 		$insertChatMessage = $this->getPdo()->prepare('INSERT INTO ride_chat(ride_id, author_id, user_login, message, time) VALUES (?, ?, ?, ?, ?)');
-		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, date('Y-m-d H:i:s')));
+		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))));
         $this->notify($this->author_id, 'ride_message_post', $user->id);
     }
 
@@ -555,7 +555,7 @@ class Ride extends Model {
         $thumbnail_filename = $getMapThumbnail->fetch(PDO::FETCH_COLUMN);
         
         // Connect to blob storage
-        require Ride::$root_folder . '/actions/blobStorageAction.php';
+        require Ride::$root_folder . '/actions/blobStorage.php';
 
         // Retrieve blob url
         return $blobClient->getBlobUrl('route-thumbnails', $thumbnail_filename);

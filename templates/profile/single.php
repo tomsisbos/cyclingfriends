@@ -1,10 +1,10 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php';
-include '../actions/riders/profile/profileAction.php';
-include '../actions/riders/profile/propicAction.php';
-include '../actions/riders/profile/profileInfosAction.php'; ?>
+include '../actions/riders/profile/profile.php';
+include '../actions/riders/profile/propic.php';
+include '../actions/riders/profile/profileInfos.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

@@ -54,7 +54,7 @@ class ActivityFile extends Model {
         $insertFileData->execute([$this->user_id, $this->activity_id, $this->filename, $this->ext, $this->posting_date->format('Y-m-d H:i:s')]);
         
         // Connect to blob storage
-        require ActivityFile::$root_folder . '/actions/blobStorageAction.php';
+        require ActivityFile::$root_folder . '/actions/blobStorage.php';
         
         // Send file to blob storage
         $blobClient->createBlockBlob($this->container_name, $this->filename, $content);
@@ -71,7 +71,7 @@ class ActivityFile extends Model {
      */
     public function getUrl () {
         // Connect to blob storage
-        require ActivityFile::$root_folder . '/actions/blobStorageAction.php';
+        require ActivityFile::$root_folder . '/actions/blobStorage.php';
 
         // Retrieve blob url
         return $blobClient->getBlobUrl($this->container_name, $this->filename);

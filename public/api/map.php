@@ -48,7 +48,7 @@ if (isAjax()) {
                 $scenery_data['file_type']        = $_FILES['file']['type'];
                 $scenery_data['lng']              = $_POST['lng'];
                 $scenery_data['lat']              = $_POST['lat'];
-                $scenery_data['publication_date'] = date('Y-m-d H:i:s');
+                $scenery_data['publication_date'] = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
                 $scenery_data['error']            = $_FILES['file']['error'];
                 $scenery_data['popularity']       = 30;
 
@@ -124,7 +124,7 @@ if (isAjax()) {
 
                 // Connect to blob storage
                 $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-                require $folder . '/actions/blobStorageAction.php';
+                require $folder . '/actions/blobStorage.php';
                 // Send file to blob storage
                 $containername = 'scenery-photos';
                 $filename = setFilename('img');
@@ -516,7 +516,7 @@ if (isAjax()) {
         // Prepare data
         $content = nl2br(htmlspecialchars($_GET['content']));
         $propic  = getConnectedUser()->getPropicUrl();
-        $time    = date('Y-m-d H:i:s');
+        $time    = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
         // Post review
         $scenery = new Scenery($_GET['add-review-scenery']);
         $scenery->postReview($content);

@@ -1,6 +1,6 @@
 <?php
 
-require '../actions/users/registerMailAction.php';
+require '../actions/users/registerMail.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -181,8 +181,8 @@ include '../includes/foot.php'; ?>
 <script type="module" src="/scripts/home/segment-map.js"></script>
 
 <?php
-    require_once "../actions/blobStorageAction.php";
-    include "../actions/databaseAction.php";
+    require_once "../actions/blobStorage.php";
+    include "../actions/database.php";
     
     ini_set('memory_limit', '1024M');
     ini_set('max_execution_time', '70000');

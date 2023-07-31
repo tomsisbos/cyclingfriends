@@ -15,13 +15,13 @@ class Model {
     }
 
     protected static function getPdo () {
-        require Model::getRootFolder() . '/actions/databaseAction.php';
+        require Model::getRootFolder() . '/actions/database.php';
         return $db;
     }
     
     protected static function getGis () {
         $db_name = getenv('GIS_NAME');
-        require Model::getRootFolder() . '/actions/databaseAction.php';
+        require Model::getRootFolder() . '/actions/database.php';
         return $db;
     }
 

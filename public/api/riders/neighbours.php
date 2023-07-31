@@ -8,7 +8,7 @@ require '../../../includes/api-head.php';
 if (isAjax()) {
 
     if (isset($_GET['get-neighbours'])) {
-        include '../../../actions/riders/displayNeighboursAction.php';
+        include '../../../actions/riders/displayNeighbours.php';
         foreach ($riders as $rider) $rider->propic = $rider->getPropicUrl();
         echo json_encode($riders);
     }

@@ -1,8 +1,8 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
-include '../actions/rides/rideAction.php';
-include '../actions/rides/edit/adminPanelAction.php';
+include '../actions/users/initPublicSession.php';
+include '../actions/rides/ride.php';
+include '../actions/rides/edit/adminPanel.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

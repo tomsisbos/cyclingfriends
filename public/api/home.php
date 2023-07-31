@@ -6,7 +6,7 @@ CFAutoloader::register();
 include_once $base_directory . "/vendor/phayes/geophp/geoPHP.inc";
 require_once $base_directory . '/includes/functions.php';
 $connected_user = new User(11);
-require $base_directory . '/actions/databaseAction.php';
+require $base_directory . '/actions/database.php';
 
 // In case an Ajax request have been detected
 if (isAjax()) {

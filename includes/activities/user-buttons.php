@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/twitter/authentificationAction.php';
+include '../actions/twitter/authentification.php';
 
 // Display social buttons if user is connected
 if (isSessionActive()) { ?>

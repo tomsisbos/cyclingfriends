@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/resendingVerificationEmailAction.php';
+include '../actions/users/resendingVerificationEmail.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

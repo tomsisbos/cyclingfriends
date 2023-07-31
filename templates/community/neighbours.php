@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ include '../includes/head.php'; ?>
 		</div> <?php 
 		
 		// Select riders from database according to filter queries
-		include '../actions/riders/displayNeighboursAction.php';
+		include '../actions/riders/displayNeighbours.php';
 		
 		// Define offset (limit is defined in the action script)
 		if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;

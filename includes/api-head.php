@@ -5,8 +5,8 @@ require_once $base_directory . '/vendor/autoload.php';
 require_once $base_directory . '/class/CFAutoloader.php'; 
 CFAutoloader::register();
 require $base_directory . '/includes/functions.php';
-require $base_directory . '/actions/users/initPublicSessionAction.php';
-require $base_directory . '/actions/databaseAction.php';
+require $base_directory . '/actions/users/initPublicSession.php';
+require $base_directory . '/actions/database.php';
 
 
 // Only allow request coming from $allowed_hosts

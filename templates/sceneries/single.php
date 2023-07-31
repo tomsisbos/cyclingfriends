@@ -1,8 +1,8 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
-include '../actions/sceneries/sceneryAction.php';
-include '../actions/sceneries/postReviewAction.php';
+include '../actions/users/initPublicSession.php';
+include '../actions/sceneries/scenery.php';
+include '../actions/sceneries/postReview.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

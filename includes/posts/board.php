@@ -7,7 +7,7 @@
 <div class="container mb-3 bg-white posts-container posts-container-board"> <?php
 
     $offset = 0; $limit = 6;
-    include '../actions/posts/getAllAction.php';
+    include '../actions/posts/getAll.php';
     if ($getPosts->rowCount() > 0) {
         while ($post_id = $getPosts->fetch(PDO::FETCH_COLUMN)) {
             $post = new Post();

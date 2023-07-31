@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -40,7 +40,7 @@ include '../includes/head.php'; ?>
 			else $offset = 0;
 			
 			// Select friends from database according to filter queries
-			include '../actions/riders/friends/displayFriendsAction.php';
+			include '../actions/riders/friends/displayFriends.php';
 		
 			if ($getFriendsData->rowCount() > 0) {
 

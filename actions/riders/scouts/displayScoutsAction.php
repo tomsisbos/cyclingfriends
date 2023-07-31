@@ -1,6 +1,6 @@
 <?php
  
-	require '../actions/databaseAction.php';
+	require '../actions/database.php';
 		
 	// If no value, set scout_search to '%' in order to select all entries
 	if (empty($_POST['scout_search'])) {

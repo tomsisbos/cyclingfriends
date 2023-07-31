@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -30,7 +30,7 @@ include '../includes/head.php'; ?>
 			else $offset = 0;
 
 			// Select riders from database according to filter queries
-			include '../actions/riders/displayRidersAction.php'; ?>
+			include '../actions/riders/displayRiders.php'; ?>
 			
 		<div class="container end bg-white"> <?php
 

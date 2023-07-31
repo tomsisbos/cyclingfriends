@@ -4,7 +4,7 @@ require '../../../includes/api-head.php';
 
 // Connect to blob storage
 $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-require $folder . '/actions/blobStorageAction.php';
+require $folder . '/actions/blobStorage.php';
 
 // In case an Ajax request have been detected
 if (isAjax()) {
@@ -183,7 +183,7 @@ if (is_array($data)) {
             $scenery_data['thumbnail']        = $thumbnail;
             $scenery_data['lng']              = $entry['lngLat']['lng'];
             $scenery_data['lat']              = $entry['lngLat']['lat'];
-            $scenery_data['publication_date'] = date('Y-m-d H:i:s');
+            $scenery_data['publication_date'] = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
             $scenery_data['popularity']       = 30;
             $scenery_data['tags']             = $entry['tags'];
             

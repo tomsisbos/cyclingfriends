@@ -31,7 +31,7 @@ class SceneryImage extends Model {
 
     private function getUrl () {
         // Connect to blob storage
-        require SceneryImage::$root_folder . '/actions/blobStorageAction.php';
+        require SceneryImage::$root_folder . '/actions/blobStorage.php';
 
         // Retrieve blob url
         return $blobClient->getBlobUrl($this->container_name, $this->filename);
@@ -39,7 +39,7 @@ class SceneryImage extends Model {
 
     public function delete () {
         // Connect to blob storage and delete blob
-        require SceneryImage::$root_folder . '/actions/blobStorageAction.php';
+        require SceneryImage::$root_folder . '/actions/blobStorage.php';
         $blobClient->deleteBlob($this->container_name, $this->filename);
 
         // Remove database entry

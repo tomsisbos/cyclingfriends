@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 
 // Get ride from slug
 $slug = basename($_SERVER['REQUEST_URI']);

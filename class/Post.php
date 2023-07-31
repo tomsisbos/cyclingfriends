@@ -24,7 +24,7 @@ class Post extends Model {
         // If no similar data exists, insert data
         if ($checkSimilarData->rowCount() == 0) {
             $insertIntoTable = $this->getPdo()->prepare("INSERT INTO {$this->table} (title, content, type, datetime) VALUES (?, ?, ?, ?)");
-            $insertIntoTable->execute(array($this->title, $this->content, $this->type, date('Y-m-d H:i:s')));
+            $insertIntoTable->execute(array($this->title, $this->content, $this->type, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))));
             return true;
         } else return false;
     }

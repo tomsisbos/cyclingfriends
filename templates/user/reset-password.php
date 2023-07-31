@@ -1,6 +1,6 @@
 <?php
 
-require '../actions/users/resetPasswordAction.php';
+require '../actions/users/resetPassword.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

@@ -1,8 +1,8 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
+include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
-include '../actions/posts/postAction.php';
+include '../actions/posts/post.php';
 include '../includes/navbar.php';?>
 
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ include '../includes/navbar.php';?>
             if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
             else $offset = 0;
 
-            include '../actions/posts/getAllAction.php';
+            include '../actions/posts/getAll.php';
             while ($post_id = $getPosts->fetch(PDO::FETCH_COLUMN)) {
                 $post = new Post();
                 $post->load($post_id);

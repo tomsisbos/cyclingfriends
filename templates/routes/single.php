@@ -1,8 +1,8 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
+include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
-include '../actions/routes/routeAction.php'; ?>
+include '../actions/routes/route.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

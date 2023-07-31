@@ -104,7 +104,7 @@ function updateSessionSettings() {
 
 // Check if ride name is already set in the database
 function checkIfRideIsAlreadySet($ride_name) {
-	require '../actions/databaseAction.php';
+	require '../actions/database.php';
 	// Get all ride_names from the database
 	$getRideInfos = $db->prepare('SELECT name FROM rides');
 	$getRideInfos->execute();
@@ -199,7 +199,7 @@ function getBikesFromColumnName ($bike) {
 
 // Delete a bike from the users table
 function deleteBike ($bike_number, $user_id) {
-	require '../actions/databaseAction.php';
+	require '../actions/database.php';
 	if (checkIfBikeIsSet($bike_number, $user_id)) {
 		$deleteBike = $db->prepare('DELETE FROM bikes WHERE user_id = ? AND bike_number = ?');
 		$deleteBike->execute(array($user_id, $bike_number));
@@ -210,7 +210,7 @@ function deleteBike ($bike_number, $user_id) {
 
 // Add a bike into the users table
 function addBike ($bike_number, $user_id) {
-	require '../actions/databaseAction.php';
+	require '../actions/database.php';
 	if (!checkIfBikeIsSet($bike_number, $user_id)) {
 		$addBike = $db->prepare('INSERT INTO bikes (user_id, bike_number) VALUES (?, ?)');
 		$addBike->execute(array($user_id, $bike_number));
@@ -221,7 +221,7 @@ function addBike ($bike_number, $user_id) {
 
 // Get the gender of an user and return it as an icon
 function getGenderAsIcon($user_id){
-	require '../actions/databaseAction.php';
+	require '../actions/database.php';
 	$getGender = $db->prepare('SELECT gender FROM users WHERE id = ?');
 	$getGender->execute(array($user_id));
 	$gender = $getGender->fetch();
@@ -465,14 +465,14 @@ function setFilename ($prefix, $ext = 'jpg') {
 }
 
 function getNextAutoIncrement ($table_name) {
-	require root(). '/actions/databaseAction.php';
+	require root(). '/actions/database.php';
     $getTableStatus = $db->prepare("SHOW TABLE STATUS LIKE '{$table_name}'");
     $getTableStatus->execute();
     return $getTableStatus->fetchAll(PDO::FETCH_ASSOC)[0]['Auto_increment'];
 }
 
 function exists ($table, $id) {
-	require root(). '/actions/databaseAction.php';
+	require root(). '/actions/database.php';
     $checkIfExists = $db->prepare("SELECT id FROM {$table} WHERE id = ?");
     $checkIfExists->execute(array($id));
 	if ($checkIfExists->rowCount() > 0) return true;

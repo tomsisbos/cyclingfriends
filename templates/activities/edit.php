@@ -1,8 +1,8 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php';
-include '../actions/activities/getActivityAction.php';
+include '../actions/activities/getActivity.php';
 
 if (getConnectedUser()->id != $activity->user_id) header('location: /' .getConnectedUser()->login. '/activities') ?>
 

@@ -1,7 +1,7 @@
 <?php
 
 include '../includes/head.php'; 
-include '../actions/company/contactAction.php'; ?>
+include '../actions/company/contact.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

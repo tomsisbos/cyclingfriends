@@ -5,7 +5,7 @@ require_once $base_directory . '/vendor/autoload.php';
 require_once $base_directory . '/class/CFAutoloader.php'; 
 CFAutoloader::register(); 
 require $base_directory . '/includes/functions.php';
-require $base_directory . '/actions/databaseAction.php';
+require $base_directory . '/actions/database.php';
 
 // In case an Ajax request have been detected
 if (isAjax()) {
@@ -15,7 +15,7 @@ if (isAjax()) {
 
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-        require $folder . '/actions/blobStorageAction.php';
+        require $folder . '/actions/blobStorage.php';
 
         // Select a random image amongst [imgs_number] most popular scenery images in the database
         $getPopularSceneryImages = $db->prepare('SELECT img.id, img.filename, img.date, sc.name, sc.city, sc.prefecture FROM scenery_photos AS img JOIN sceneries AS sc ON img.scenery_id = sc.id WHERE MONTH(img.date) = MONTH(NOW()) ORDER BY img.likes, RAND() DESC LIMIT 0, ' .$imgs_number);

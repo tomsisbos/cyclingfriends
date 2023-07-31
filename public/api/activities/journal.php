@@ -40,7 +40,7 @@ if (isset($_GET)) {
         $result = $getActivitiesByDate->fetchAll(PDO::FETCH_ASSOC);
         $activity_data = array_map(function ($entry) {
             $root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-            require $root_folder . '/actions/blobStorageAction.php';
+            require $root_folder . '/actions/blobStorage.php';
             $entry['url'] = $blobClient->getBlobUrl('activity-photos', $entry['filename']);
             return $entry;
         }, $result);

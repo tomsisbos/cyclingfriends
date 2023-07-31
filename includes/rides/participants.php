@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/assets/css/lightbox-style.css" />
 
 <?php
-require '../actions/databaseAction.php';
+require '../actions/database.php';
 
 $participation = $ride->getParticipants();
 

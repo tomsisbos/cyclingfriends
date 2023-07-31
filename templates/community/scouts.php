@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSessionAction.php';
+include '../actions/users/initSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -29,7 +29,7 @@ include '../includes/head.php'; ?>
 			else $offset = 0;
 			
 			// Select scouts from database according to filter queries
-			include '../actions/riders/scouts/displayScoutsAction.php'; ?>
+			include '../actions/riders/scouts/displayScouts.php'; ?>
 		
 		</div>
 		

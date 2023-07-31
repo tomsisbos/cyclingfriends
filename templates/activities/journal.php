@@ -1,7 +1,7 @@
 <?php
 
-include '../actions/users/initPublicSessionAction.php';
-include '../actions/activities/getJournalIdAction.php';
+include '../actions/users/initPublicSession.php';
+include '../actions/activities/getJournalId.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
