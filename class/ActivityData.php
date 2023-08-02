@@ -123,6 +123,7 @@ class ActivityData extends Model {
     /**
      * Populate instance from fit parsed data
      * @param FitData $parsed_data Previously parsed fit data
+     * @throws Exception
      */
     public function buildFromFit ($parsed_data) {
 
@@ -136,10 +137,10 @@ class ActivityData extends Model {
             'distance' => $session['total_distance'],
             'duration' => timestampToDateInterval(round($session['total_elapsed_time'])),
             'duration_running' => $duration_running,
-            'speed_max' => $session['max_speed'],
             'start_time' => new DateTime(date('Y-m-d H:i:s', $session['start_time'])), new DateTimeZone('Asia/Tokyo'),
             'finish_time' => new DateTime(date('Y-m-d H:i:s', $record['timestamp'][count($record['timestamp']) - 1]), new DateTimeZone('Asia/Tokyo'))
         ];
+        if (isset($session['max_speed'])) $this->summary['max_speed'] =  $session['max_speed'];
         if (isset($session['total_ascent'])) $this->summary['positive_elevation'] = $session['total_ascent'];
         else $this->summary['positive_elevation'] = 0;
         if (isset($session['total_descent'])) $this->summary['negative_elevation'] = $session['total_descent'];
@@ -168,14 +169,13 @@ class ActivityData extends Model {
             // Add basic properties
             $trackpoint_data = [
                 'time' => $record['timestamp'][$i],
-                'elevation' => $record['altitude'][$i],
                 'distance' => $record['distance'][$i],
-                'speed' => $record['speed'][$i]
             ];
 
             // Add other properties
             if (isset($record['temperature'][$i])) $trackpoint_data['temperature'] = $record['temperature'][$i];
             if (isset($record['speed'][$i])) $trackpoint_data['speed'] = $record['speed'][$i];
+            if (isset($record['altitude'][$i])) $trackpoint_data['elevation'] = $record['altitude'][$i];
             if (isset($record['heart_rate'][$i])) $trackpoint_data['heart_rate'] = $record['heart_rate'][$i];
             if (isset($record['cadence'][$i])) $trackpoint_data['cadence'] = $record['cadence'][$i];
 
@@ -197,7 +197,7 @@ class ActivityData extends Model {
     public function alreadyExists ($user_id) {
         $checkIfExists = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND datetime = ?");
         $checkIfExists->execute([$user_id, (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')]);
-        if ($checkIfExists->rowCount() > 0) return true;
+        if ($checkIfExists->rowCount() > 0) return $checkIfExists->fetch(PDO::FETCH_COLUMN);
         else return false;
     }   
 
@@ -312,6 +312,8 @@ class ActivityData extends Model {
         if (isset($editable_data['title'])) $activity_data['title'] = $editable_data['title'];
         if (isset($editable_data['privacy'])) $activity_data['privacy'] = $editable_data['privacy'];
         if (isset($editable_data['bike_id']) && !empty($editable_data['bike_id'])) $activity_data['bike_id'] = $editable_data['bike_id'];
+
+        if (isset($this->file_id)) $activity_data['file_id'] = $this->file_id;
 
         $activity = new Activity();
         $activity_id = $activity->create($activity_data);

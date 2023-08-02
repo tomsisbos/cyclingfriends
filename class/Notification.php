@@ -120,10 +120,13 @@ class Notification extends Model {
                 $this->ref = 'activity/' .$entry->id. '/edit';
                 break;
             case 'new_synced_activity_error_missing_coordinates':
-                $this->text = '座標データの含まれていないファイルがあったため、Garmin Connectからの同期に失敗しました。';
+                $this->text = '座標データの含まれていないファイルがあったため、Garmin Connectとの同期に失敗しました。';
+                break;
+            case 'new_synced_activity_file_not_found':
+                $this->text = '該当するファイルがサーバー上に存在出来なかったため、アクティビティデータを解析できませんでした。';
                 break;
             case 'new_synced_activity_error_missing_record':
-                $this->text = 'データが不完全なファイルがあったため、Garmin Connectからの同期に失敗しました。';
+                $this->text = 'データが不完全なファイルがあったため、Garmin Connectとの同期に失敗しました。';
                 break;
             // Sceneries
             case 'scenery_review_posting':

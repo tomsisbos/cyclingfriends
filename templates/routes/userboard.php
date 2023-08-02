@@ -23,7 +23,7 @@ include '../includes/head.php'; ?>
 				if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 				else $offset = 0;
 			
-				forEach (getConnectedUser()->getRoutes($offset, $limit) as $route) {
+				foreach (getConnectedUser()->getRoutes($offset, $limit) as $route) {
 
 					$route = new Route($route['id']); ?>
 

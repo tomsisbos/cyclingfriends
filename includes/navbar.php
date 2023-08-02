@@ -93,7 +93,8 @@
 						</a> <?php
 					}
 					if (getConnectedUser()->hasAdministratorRights()) { ?>
-						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries.php"><div class="mainitem">自動投稿設定</div></a> <?php
+						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries"><div class="mainitem">自動投稿設定</div></a>
+						<a class="dropdown-item bg-admin interactive" href="/admin/garmin"><div class="mainitem">Garmin同期管理</div></a> <?php
 					} ?>
 				</div>
 			</div>

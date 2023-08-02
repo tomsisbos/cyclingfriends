@@ -8,27 +8,15 @@ var selectingContainer = document.querySelector('#selectingContainer')
 // Load posting schedule
 var scheduleLoader = new CircleLoader(scheduleContainer)
 ajaxGetRequest ("/api/admin/autoposting.php" + "?type=schedule&entry_type=scenery", async (entries) => {
+    console.log(entries)
 
     // If no entry has been found, display message
-    if (entries.length == 0) selectingContainer.innerText = 'スケジュールされている投稿はありません。'
+    if (entries.length == 0) scheduleContainer.innerText = 'スケジュールされている投稿はありません。'
 
     // For each entry
     else entries.forEach(entry => {
 
-        // Build table
-        var row = document.createElement('div')
-        row.className = "d-flex gap-20 mb-1"
-        row.dataset.id = entry.id
-        var name = document.createElement('div')
-        name.innerText = entry.instance.name
-        var datetime = document.createElement('div')
-        datetime.innerText = entry.datetime.toLocaleString()
-        var removeButton = document.createElement('button')
-        removeButton.className = 'push btn smallbutton bg-darkred'
-        removeButton.innerText = '削除'
-        row.appendChild(name)
-        row.appendChild(datetime)
-        row.appendChild(removeButton)
+        var row = buildScheduleRow(entry)
         scheduleContainer.appendChild(row)
     })
 
@@ -49,19 +37,62 @@ prefectureSelect.addEventListener('change', (e) => {
         sceneries.forEach(scenery => {
 
             // Build table
-            var row = buildRow(scenery)
+            var row = buildSelectingRow(scenery)
             selectingContainer.appendChild(row)
         })
 
     }, filteringLoader)
 })
 
-function buildRow (scenery) {
+function buildScheduleRow (entry) {
+    
+    var row = document.createElement('div')
+    row.className = "autoposting-row"
+    row.dataset.id = entry.id
+
+    var medias = document.createElement('div')
+    medias.className = 'autoposting-thumb'
+    var name = document.createElement('div')
+    name.innerText = entry.instance.name
+    name.className = 'autoposting-name'
+    const length = entry.medias.filter(element => element !== null).length
+    for (let i = 0; i < length; i++) {
+        let media = document.createElement('img')
+        media.src = entry.medias[i]
+        media.dataset.number = i
+        medias.appendChild(media)
+    }
+    medias.appendChild(name)
+    row.appendChild(medias)
+
+    var text = document.createElement('div')
+    text.className = 'autoposting-text'
+    text.innerText = entry.text
+    var removeButton = document.createElement('button')
+    removeButton.className = 'push btn smallbutton bg-darkred m-1'
+    removeButton.innerText = '削除'
+    row.appendChild(text)
+    row.appendChild(removeButton)
+
+    // On entry removing
+    removeButton.addEventListener('click', () => {
+        
+        // Remove row from schedule
+        row.remove()
+        ajaxGetRequest("/api/admin/autoposting.php?type=remove&id=" + entry.id, (response) => {})
+        
+    })
+
+    return row
+}
+
+function buildSelectingRow (scenery) {
 
     var row = document.createElement('div')
-    row.className = "d-flex gap-20 mb-1"
+    row.className = "d-flex gap-20 mb-1 py-1 px-3 bg-white align-items-center"
     row.dataset.id = scenery.id
     var name = document.createElement('div')
+    name.className = "bold"
     name.innerText = scenery.name
     var city = document.createElement('div')
     city.innerText = scenery.city
@@ -81,7 +112,7 @@ function buildRow (scenery) {
         
         // Append a new row to schedule
         ajaxJsonPostRequest("/api/admin/autoposting.php", data, (response) => {
-            scheduleContainer.appendChild(buildRow(scenery))
+            scheduleContainer.appendChild(buildScheduleRow(response))
         })
         
     })

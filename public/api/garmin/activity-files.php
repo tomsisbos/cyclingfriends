@@ -57,17 +57,19 @@ foreach ($data['activityFiles'] as $activity_files) {
             $activity = new Activity($activity_id);
             $activity->notify($user_id, 'new_synced_activity');
 
-        } else throw new Exception('already_exists');
+        } else throw new Exception('already_exists', $activity_data->alreadyExists($user_id));
+
     // If error has occured during parsing, abort and send a notification
     } catch (Exception $e) {
 
         $errors_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/errors';
         if (!file_exists($errors_directory)) mkdir($errors_directory, 0777, true); // Create user directory if necessary
         $temp_url = $errors_directory. '/' .'error-' . $user_id . '-' . $activity_files['activityId'] . '.log';
-        file_put_contents($temp_url, 'Garmin Connectよりアクティビティ「' .$activity_files['activityId']. '」を同期しようとしたところ、次の通りエラーが発生しました：' .$e->getMessage());
+        file_put_contents($temp_url, 'Garmin Connectよりアクティビティ「' .$activity_files['activityId']. '」を同期しようとしたところ、次の通りエラーが発生しました：' .$e->getMessage(). ', id: ' .$e->getCode());
 
         $user = new User($user_id);
         if ($e->getMessage() == 'missing_coordinates') $user->notify($user_id, 'new_synced_activity_error_missing_coordinates');
+        else if ($e->getMessage() == 'file_not_found') $user->notify($user_id, 'new_synced_activity_file_not_found');
         else if ($e->getMessage() == 'no_record_data') $user->notify($user_id, 'new_synced_activity_error_missing_record');
         else if ($e->getMessage() == 'already_exists') return;
         else {

@@ -6,6 +6,7 @@ include '../actions/users/initAdminSession.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en"> 
+<link rel="stylesheet" href="/assets/css/autoposting.css">
 
     <body> <?php
 
@@ -14,10 +15,6 @@ include '../actions/users/initAdminSession.php'; ?>
         <div class="main">
 
             <div class="container bg-admin">
-                
-                <h3>投稿スケジュール</h3> 
-                
-                <div class="mb-2" id="scheduleContainer"></div>
             
                 <h3>絶景スポットを追加</h3> <?php
 
@@ -25,7 +22,7 @@ include '../actions/users/initAdminSession.php'; ?>
                 $getPrefectureData->execute();
                 $prefectures = $getPrefectureData->fetchAll(PDO::FETCH_COLUMN); ?>
 
-                <div class="mb-2" id="filteringContainer">
+                <div id="filteringContainer" class="autoposting-container mb-2">
                     <select id="prefecture"> <?php
                         foreach ($prefectures as $prefecture) { ?>
                             <option><?= $prefecture ?></option><?php
@@ -33,8 +30,12 @@ include '../actions/users/initAdminSession.php'; ?>
                     </select>
                 </div>
                 
-                <div id="selectingContainer">
-                </div>
+                <div id="selectingContainer" class="autoposting-container mb-5">
+                </div>                
+                
+                <h3>投稿スケジュール</h3> 
+                
+                <div id="scheduleContainer" class="autoposting-container mb-5"></div>
 
             </div>
 

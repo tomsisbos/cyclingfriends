@@ -1,0 +1,46 @@
+.autoposting-container {
+    height: fit-content;
+}
+
+.autoposting-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    height: 160px;
+    background-color: #fff;
+}
+
+.autoposting-thumb img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    flex-grow: 1;
+    height: auto;
+}
+
+.autoposting-thumb {
+    position: relative;
+    width: 160px !important;
+    min-width: 160px;
+    height: 100%;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.autoposting-name {
+    position: absolute;
+    width: inherit;
+    bottom: 0;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(#00000000, #00000055);
+    text-shadow: 0 0 5px #000;
+}
+
+.autoposting-text {
+    font-size: small;
+    overflow: auto;
+    width: 100%;
+    padding: 6px;
+}

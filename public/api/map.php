@@ -521,7 +521,7 @@ if (isAjax()) {
         $scenery = new Scenery($_GET['add-review-scenery']);
         $scenery->postReview($content);
         // Return necessary data
-        echo json_encode(['scenery_id' => $scenery->id, "user" => ["id" => getConnectedUser()->id, "login" => getConnectedUser()->login], "content" => $content, "time" => $time, "propic" => $propic]);
+        echo json_encode(['scenery_id' => $scenery->id, "user" => ["id" => getConnectedUser()->id, "login" => getConnectedUser()->login], "content" => $content, "time" => $time->format('Y-m-d H:i:s'), "propic" => $propic]);
     }
 
     if (isset($_GET['display-rides'])) {

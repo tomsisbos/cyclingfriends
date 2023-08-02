@@ -296,6 +296,12 @@ class Activity extends Model {
         $insert_activity = $this->getPdo()->prepare('INSERT INTO activities(user_id, datetime, posting_date, title, duration, duration_running, temperature_min, temperature_avg, temperature_max, speed_max, altitude_max, altitude_min, slope_max, bike_id, privacy, route_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $insert_activity->execute(array($activity_data['user_id'], $activity_data['datetime']->format('Y-m-d H:i:s'), (new Datetime('now', new DateTimeZone('Asia/Tokyo')))->format('Y-m-d H:i:s'), $activity_data['title'], $activity_data['duration']->format('%H:%i:%s'), $activity_data['duration_running']->format('%H:%i:%s'), $activity_data['temperature']['min'],  $activity_data['temperature']['avg'], $activity_data['temperature']['max'], $activity_data['speed_max'], $activity_data['altitude_max'], $activity_data['altitude_min'], $activity_data['slope_max'], $activity_data['bike_id'], $activity_data['privacy'], $route_id));
 
+        // If a corresponding file exists, add activity id to this file entry
+        if (isset($activity_data['file_id'])) {
+            $update_file = $this->getPdo()->prepare("UPDATE activity_files SET activity_id = ? WHERE id = ?");
+            $update_file->execute([$activity_id, $activity_data['file_id']]);
+        }
+
         // Insert data in 'checkpoints' table
         foreach ($activity_data['checkpoints_data'] as $checkpoint_data) {
             $checkpoint = new ActivityCheckpoint();

@@ -1004,6 +1004,13 @@ li.nav-item {
 	text-shadow: 2px 2px 2px white;
 }
 
+.text-green {
+    color: #00e06e !important;
+}
+.text-red {
+    color: #ff5555 !important;
+}
+
 .box-shadow {
 	box-shadow: 3px 3px 8px black;
 }

@@ -825,7 +825,7 @@ class User extends Model {
     // Insert a new message in the message table
     public function sendMessage ($receiver, $message){        
         $addMessage = $this->getPdo()->prepare('INSERT INTO messages (sender_id, receiver_id, message, time) VALUES (?, ?, ?, ?)');
-        $addMessage->execute(array($this->id, $receiver->id, $message, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))));
+        $addMessage->execute(array($this->id, $receiver->id, $message, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))->format('Y-m-d H:i:s')));
     }
 
     public function getFavorites ($type, $offset = 0, $limit = 9999) {

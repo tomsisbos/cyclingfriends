@@ -112,6 +112,7 @@ $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact
 
 // Admin
 $router->map('GET|POST', '/admin/autoposting/sceneries', '/admin/autoposting/sceneries', 'admin-autoposting-sceneries');
+$router->map('GET', '/admin/garmin', '/admin/garmin', 'admin-garmin');
 
 
 // Treatment of results
