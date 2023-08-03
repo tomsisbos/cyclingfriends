@@ -8,7 +8,7 @@ require $base_directory . '/includes/functions.php';
 require $base_directory . '/actions/database.php';
 
 // Function
-$getSceneryToPost = $db->prepare("SELECT id FROM autoposting WHERE entry_type = 'scenery' ORDER BY id DESC");
+$getSceneryToPost = $db->prepare("SELECT id FROM autoposting WHERE entry_type = 'scenery' ORDER BY id ASC");
 $getSceneryToPost->execute();
 $id = $getSceneryToPost->fetch(PDO::FETCH_COLUMN);
 $entry = new AutopostingEntry();

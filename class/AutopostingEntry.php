@@ -2,7 +2,7 @@
 
 class AutopostingEntry extends Model {
 
-    private $twitter_account_user_id = 11; // 11 = TestCfds, 2 = cyclingfds
+    private $twitter_account_user_id = 2; // 11 = TestCfds, 2 = cyclingfds
 
     protected $table = 'autoposting';
 
