@@ -62,7 +62,7 @@ class Scenery extends Model {
         // Insert scenery data
         $scenery_data['id'] = getNextAutoIncrement($this->table); // Get id for referring photos
         $insertSceneryData = $this->getPdo()->prepare("INSERT INTO sceneries (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, thumbnail, publication_date, popularity, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
-        $insertSceneryData->execute(array($scenery_data['user_id'], $scenery_data['user_login'], $scenery_data['category'], $scenery_data['name'], $scenery_data['city'], $scenery_data['prefecture'], $scenery_data['elevation'], $scenery_data['date']->format('Y-m-d H:i:s'), $scenery_data['month'], $scenery_data['description'], $scenery_data['thumbnail'], $scenery_data['publication_date'], $scenery_data['popularity'], $point_wkt));
+        $insertSceneryData->execute(array($scenery_data['user_id'], $scenery_data['user_login'], $scenery_data['category'], $scenery_data['name'], $scenery_data['city'], $scenery_data['prefecture'], $scenery_data['elevation'], $scenery_data['date']->format('Y-m-d H:i:s'), $scenery_data['month'], $scenery_data['description'], $scenery_data['thumbnail'], $scenery_data['publication_date']->format('Y-m-d H:i:s'), $scenery_data['popularity'], $point_wkt));
 
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
@@ -83,7 +83,7 @@ class Scenery extends Model {
                 'file_size' => $photo['size'],
                 'scenery_id' => $scenery_data['id'],
                 'author_id' => $scenery_data['user_id'],
-                'date' => $scenery_data['publication_date'],
+                'date' => $scenery_data['publication_date']->format('Y-m-d H:i:s'),
                 'lat' => $scenery_data['lat'],
                 'lng' => $scenery_data['lng']
             ];

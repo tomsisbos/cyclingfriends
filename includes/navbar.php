@@ -85,16 +85,17 @@
 					<a class="dropdown-item interactive" href="/rider/<?= $_SESSION['id'] ?>"><div class="mainitem">プロフィール</div></a>
 					<a class="dropdown-item interactive" href="/settings"><div class="mainitem">設定</div></a>
 					<a class="dropdown-item interactive" href="/manual"><div class="mainitem">マニュアル</div></a> <?php
+					if (getConnectedUser()->hasAdministratorRights()) { ?>
+						<hr class="dropdown-divider">
+						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries"><div class="mainitem">自動投稿設定</div></a>
+						<a class="dropdown-item bg-admin interactive" href="/admin/garmin"><div class="mainitem">Garmin同期管理</div></a> <?php
+					}
 					// If the user is connected, displays the sign out button 
 					if (isSessionActive()) { ?>
 						<hr class="dropdown-divider">
 						<a class="dropdown-item interactive" href="<?= $_SERVER['REQUEST_URI'] ?>/signout">
 							<div class="mainitem">サインアウト</div>
 						</a> <?php
-					}
-					if (getConnectedUser()->hasAdministratorRights()) { ?>
-						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries"><div class="mainitem">自動投稿設定</div></a>
-						<a class="dropdown-item bg-admin interactive" href="/admin/garmin"><div class="mainitem">Garmin同期管理</div></a> <?php
 					} ?>
 				</div>
 			</div>
