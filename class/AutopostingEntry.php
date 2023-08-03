@@ -2,6 +2,8 @@
 
 class AutopostingEntry extends Model {
 
+    private $twitter_account_user_id = 11; // 11 = TestCfds, 2 = cyclingfds
+
     protected $table = 'autoposting';
 
     public $id;
@@ -21,6 +23,8 @@ class AutopostingEntry extends Model {
 
     public $instance;
 
+    public $history;
+
 
     function __construct ($entry_type = null, $entry_id = null, $api = null) {
         parent::__construct();
@@ -31,6 +35,7 @@ class AutopostingEntry extends Model {
             $this->instance = $this->getInstance();
             $this->text = $this->generateText();
             $this->medias = $this->generateMedias();
+            $this->history = $this->getHistory();
         }
     }
 
@@ -93,6 +98,7 @@ class AutopostingEntry extends Model {
         $this->text = $data['text'];
         $this->instance = $this->getInstance();
         $this->medias = $this->generateMedias();
+        $this->history = $this->getHistory();
         return $this;
     }
 
@@ -106,5 +112,34 @@ class AutopostingEntry extends Model {
     public function remove () {        
         $removePostingEntry = $this->getPdo()->prepare("DELETE FROM autoposting WHERE id = ?");
         $removePostingEntry->execute([$this->id]);
+    }
+
+    /**
+     * Return posting history for this specific entry
+     */
+    public function getHistory () {
+        $getPostingHistory = $this->getPdo()->prepare("SELECT datetime FROM autoposting_history WHERE entry_type = ? AND entry_id = ? AND api = ?");
+        $getPostingHistory->execute([$this->entry_type, $this->entry_id, $this->api]);
+        return $getPostingHistory->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Post entry to twitter
+     * @return $result
+     */
+    public function post () {
+        $photos = [];
+        $twitter = (new User($this->twitter_account_user_id))->getTwitter();
+        $result = $twitter->post($this->text, $this->medias);
+        if (isset($result['data'])) $this->addToHistory();
+        return $result;
+    }
+
+    /**
+     * Add entry to posting history
+     */
+    public function addToHistory () {
+        $addToHistory = $this->getPdo()->prepare("INSERT INTO autoposting_history (entry_type, entry_id, api, datetime) VALUES (?, ?, ?, ?)");
+        $addToHistory->execute([$this->entry_type, $this->entry_id, $this->api, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')]);
     }
 }

@@ -90,6 +90,7 @@ function buildSelectingRow (scenery) {
 
     var row = document.createElement('div')
     row.className = "d-flex gap-20 mb-1 py-1 px-3 bg-white align-items-center"
+    if (scenery.history.length > 0) row.classList.add('bg-darkred')
     row.dataset.id = scenery.id
     var name = document.createElement('div')
     name.className = "bold"
