@@ -47,8 +47,9 @@ prefectureSelect.addEventListener('change', (e) => {
 function buildScheduleRow (entry) {
     
     var row = document.createElement('div')
-    row.className = "autoposting-row"
     row.dataset.id = entry.id
+    row.className = "autoposting-row"
+    if (entry.history.length > 0) row.classList.add('bg-darkred')
 
     var medias = document.createElement('div')
     medias.className = 'autoposting-thumb'
@@ -90,18 +91,23 @@ function buildSelectingRow (scenery) {
 
     var row = document.createElement('div')
     row.className = "d-flex gap-20 mb-1 py-1 px-3 bg-white align-items-center"
-    if (scenery.history.length > 0) row.classList.add('bg-darkred')
     row.dataset.id = scenery.id
     var name = document.createElement('div')
     name.className = "bold"
     name.innerText = scenery.name
     var city = document.createElement('div')
     city.innerText = scenery.city
+    var showButton = document.createElement('a')
+    showButton.href = '/scenery/' + scenery.id
+    showButton.setAttribute('target', '_blank')
+    showButton.className = 'push btn smallbutton'
+    showButton.innerText = '詳細'
     var addButton = document.createElement('button')
-    addButton.className = 'push btn smallbutton bg-darkgreen'
+    addButton.className = 'btn smallbutton bg-darkgreen'
     addButton.innerText = '追加'
     row.appendChild(name)
     row.appendChild(city)
+    row.appendChild(showButton)
     row.appendChild(addButton)
 
     // On entry adding
