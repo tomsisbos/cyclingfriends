@@ -13,7 +13,7 @@ $getSceneryToPost->execute();
 $id = $getSceneryToPost->fetch(PDO::FETCH_COLUMN);
 $entry = new AutopostingEntry();
 $entry->populate($id);
-var_dump($entry); die();
 $result = $entry->post();
+if (isset($result->data)) $entry->remove();
 
 echo json_encode($result);

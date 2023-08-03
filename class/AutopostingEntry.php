@@ -78,10 +78,7 @@ class AutopostingEntry extends Model {
             $medias = [];
             $images = $this->instance->getImages(4);
 
-            for ($i = 0; $i < 4; $i++) {
-                if (isset($images[$i])) array_push($medias, $images[$i]->url);
-                else array_push($medias, null);
-            }
+            for ($i = 0; $i < 4; $i++) if (isset($images[$i])) array_push($medias, $images[$i]->url);
 
             return $medias;
         }
@@ -131,7 +128,7 @@ class AutopostingEntry extends Model {
         $photos = [];
         $twitter = (new User($this->twitter_account_user_id))->getTwitter();
         $result = $twitter->post($this->text, $this->medias);
-        if (isset($result['data'])) $this->addToHistory();
+        if (isset($result->data)) $this->addToHistory();
         return $result;
     }
 
