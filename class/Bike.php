@@ -123,7 +123,7 @@ class Bike extends Model {
         $filename = setFilename('img');
         $metadata = [
             'user_id' => $this->user->id,
-            'datetime' => (new DateTime('now'))->setTimezone('Asia/Tokyo')->format('Y-m-d H:i:s')
+            'datetime' => (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')
         ];
 
         // Connect to blob storage

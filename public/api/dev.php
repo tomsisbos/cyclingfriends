@@ -11,7 +11,7 @@ if (is_array($data)) {
     $content = nl2br(htmlspecialchars($data['content']));
     $id = getNextAutoIncrement('dev_notes');
     $registerDevNote = $db->prepare("INSERT INTO dev_notes (user_id, time, type, title, content, url, browser) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $registerDevNote->execute(array(getConnectedUser()->id, (new DateTime('now'))->setTimezone('Asia/Tokyo')->format('Y-m-d H:i:s'), $data['type'], $title, $content, $data['url'], $data['browser']));
+    $registerDevNote->execute(array(getConnectedUser()->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s'), $data['type'], $title, $content, $data['url'], $data['browser']));
     $dev_note = new DevNote($id);
 
     // Notify administrators
