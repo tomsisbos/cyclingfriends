@@ -263,7 +263,7 @@ class Ride extends Model {
     public function join ($participant) {
         // Add a line into participation database
         $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
-        $joinRide->execute(array($participant->id, $this->id, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))->format('Y-m-d H:i:s')->format('Y-m-d H:i:s')));
+        $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone('Asia/Tokyo')->format('Y-m-d H:i:s')->format('Y-m-d H:i:s')));
 
         // Prepare additional fields data
         $additional_fields = $this->getAdditionalFields();
@@ -544,7 +544,7 @@ class Ride extends Model {
         $user = new User($_SESSION['id']);
         // Send variables into database
 		$insertChatMessage = $this->getPdo()->prepare('INSERT INTO ride_chat(ride_id, author_id, user_login, message, time) VALUES (?, ?, ?, ?, ?)');
-		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')))->format('Y-m-d H:i:s')));
+		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, (new DateTime('now'))->setTimezone('Asia/Tokyo')->format('Y-m-d H:i:s')));
         $this->notify($this->author_id, 'ride_message_post', $user->id);
     }
 
