@@ -12,7 +12,7 @@ export default class RouteMap extends Map {
         } else this.routeId = document.querySelector('#routeMap').dataset.id
     }
 
-    defaultPitch = 25
+    defaultPitch = 35
     sceneriesOnRouteNumber = 0
     apiUrl = '/api/route.php'
     data
@@ -566,6 +566,9 @@ export default class RouteMap extends Map {
                 }
                 else ride.options = {sf: false}
                 this.ride = ride
+                this.month = new Date(ride.date).getMonth() + 1
+                this.setSeason()
+                this.styleSeason()
 
                 resolve()
 
