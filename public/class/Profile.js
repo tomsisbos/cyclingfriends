@@ -97,8 +97,10 @@ export default class Profile extends Model {
         tunnels.forEach( (tunnel) => {
             var startClosestSectionCoordinates = CFUtils.closestLocation(tunnel[0], profileData.profilePointsCoordinates)
             var startKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, startClosestSectionCoordinates)) - 1
+            startKey = startKey < 0 ? 0 : startKey
             var endClosestSectionCoordinates = CFUtils.closestLocation(tunnel[tunnel.length - 1], profileData.profilePointsCoordinates)
             var endKey = parseInt(getKeyByValue(profileData.profilePointsCoordinates, endClosestSectionCoordinates)) + 1
+            endKey = endKey >= profileData.profilePointsCoordinates.length ? profileData.profilePointsCoordinates.length - 1 : endKey
             ///if (startKey > endKey) [startKey, endKey] = [endKey, startKey] // Revert variables if found reverse order
             var toSlice = endKey - startKey + 1
             var toInsert = averageElevationFromTips(profileData.pointsElevation[startKey], profileData.pointsElevation[endKey], toSlice)

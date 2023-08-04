@@ -34,7 +34,7 @@ export default class Map extends Model {
     loaded = false
     defaultCenter = [139.7673068, 35.6809591]
     defaultZoom = 10
-    defaultPitch = 0
+    defaultPitch = 20
     sceneries
     tunnelNumber = 0
     month = new Date().getMonth() + 1
