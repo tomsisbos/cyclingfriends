@@ -1,7 +1,6 @@
 <?php
 
 include '../actions/users/initPublicSession.php';
-require '../actions/users/signup.php';
 require '../actions/rides/official.php';
 include '../includes/head.php'; ?>
 
