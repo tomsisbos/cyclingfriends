@@ -361,7 +361,7 @@ class Ride extends Model {
         $getParticipants = $this->getPdo()->prepare('SELECT user_id FROM ride_participants WHERE ride_id = ?');
         $getParticipants->execute(array($this->id));
         if ($getParticipants->rowCount() > 0) return $getParticipants->fetchAll(PDO::FETCH_COLUMN);
-        else return NULL;
+        else return [];
     }
 
     // Check if a ride is full or not
