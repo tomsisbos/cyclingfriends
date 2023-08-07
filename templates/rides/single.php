@@ -182,7 +182,9 @@ include '../includes/head.php'; ?>
 
 					include '../includes/routes/itinerary.php'; ?>
 
-				</div> <?php
+				</div>
+				
+				<script type="module" src="/scripts/routes/route.js"></script> <?php
 
 			}
 			
@@ -204,4 +206,3 @@ include '../includes/head.php'; ?>
 <script src="/assets/js/lightbox-script.js"></script>
 <script src="/scripts/rides/checkpoints-gallery.js"></script>
 <script src="/scripts/riders/friends.js"></script>
-<script type="module" src="/scripts/routes/route.js"></script>
