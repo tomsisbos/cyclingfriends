@@ -169,6 +169,15 @@ class User extends Model {
         $_SESSION['lngLat']                    = $this->lngLat;
         $_SESSION['settings']                  = $this->getSettings();
 		$_SESSION['rights']                    = $this->rights;
+        $this->addSessionRecord();
+    }
+
+    /**
+     * Insert a new record in user_session_records table
+     */
+    public function addSessionRecord () {
+        $insert = $this->getPdo()->prepare("INSERT INTO user_session_records (user_id, user_login, datetime) VALUES (?, ?, ?)");
+        $insert->execute([$this->id, $this->login, (new Datetime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')]);
     }
 
     /**
