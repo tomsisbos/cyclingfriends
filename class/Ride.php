@@ -555,6 +555,13 @@ class Ride extends Model {
 		$insertChatMessage = $this->getPdo()->prepare('INSERT INTO ride_chat(ride_id, author_id, user_login, message, time) VALUES (?, ?, ?, ?, ?)');
 		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
         $this->notify($this->author_id, 'ride_message_post', $user->id);
+        $this->mail($this->getAuthor(), '【CyclingFriends】「' .$this->name. '」に新規投稿',
+            '<p>' .$this->getAuthor()->login. 'が主催するライド「' .$this->name. '」に新規の投稿がありました。内容は下記の通り：</p>
+            <p>---</p>
+            <p>' .$content. '</p>
+            <p>---</p>
+            <p>ご確認／返信用URLは<a href="' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/ride/' .$this->id. '">こちら</a></p>'
+        );
     }
 
     public function getMapThumbnail () {

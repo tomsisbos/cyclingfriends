@@ -1,5 +1,7 @@
 <?php
 
+use \SendGrid\Mail\Mail;
+
 class Model {
     
     protected $table;
@@ -111,6 +113,23 @@ class Model {
     public function notify ($user_id, $type, $actor_id = NULL) {
         $notification = new Notification();
         $notification->register($user_id, $type, $this->table, $this->id, $actor_id);
+    }
+
+    /**
+     * Send an email from cyclingfriends
+     */
+    public function mail ($user, $subject, $content) {
+        
+        $email = new Mail();
+        $email->setFrom(
+            'contact@cyclingfriends.co',
+            'CyclingFriends'
+        );
+        $email->setSubject($subject);
+        $email->addTo($user->email);
+        $email->addContent('text/html', $content);
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $response = $sendgrid->send($email);
     }
 
 }
