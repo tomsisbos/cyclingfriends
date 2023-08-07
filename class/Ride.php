@@ -67,7 +67,7 @@ class Ride extends Model {
         $this->privacy                                 = $data['privacy'];
         $this->entry_start                             = $data['entry_start'];
         $this->entry_end                               = $data['entry_end'];
-        $this->participants_number                     = $data['participants_number'];
+        $this->participants_number                     = count($this->getParticipants());
         if (isset($data['route_id'])) $this->route_id  = $data['route_id'];
         $this->lngLatFormat                            = $lngLatFormat;
         $this->status                                  = $this->getStatus()['status'];

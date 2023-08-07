@@ -37,6 +37,7 @@ export default class RidePopup extends Popup {
         var checkpointsTable = '<table class="popup-checkpoints-table"><tbody>' + trs + '</tbody></table>'
 
         // Set content
+        console.log(this.data)
         this.popup.setHTML(`
         <div class="popup-img-container">
             <a target="_blank" href="/ride/` + this.data.id + `">
