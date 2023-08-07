@@ -50,7 +50,7 @@ class ActivityFile extends Model {
         $this->user_id = $metadata['user_id'];
         $this->ext = $metadata['ext'];
         $this->filename = setFilename('activity', $this->ext);
-        $this->posting_date = (new DateTime(date('Y-m-d H:i:s')))->setTimeZone('Asia/Tokyo');
+        $this->posting_date = (new DateTime(date('Y-m-d H:i:s')))->setTimeZone(new DateTimeZone('Asia/Tokyo'));
         $this->id = getNextAutoIncrement($this->table);
 
         // Insert file data in table
@@ -96,8 +96,7 @@ class ActivityFile extends Model {
 
             // On success, send analyzed data back to client
             $phpGpx = new phpGPX();
-            if (file_exists($this->getUrl())) $gpx = $phpGpx->load($this->getUrl());
-            else throw new Exception('file_not_found');
+            $gpx = $phpGpx->load($this->getUrl());
             $activity_data = new ActivityData();
             $activity_data->buildFromGpx($gpx);
             $activity_data->file_id = $this->id;
@@ -114,8 +113,7 @@ class ActivityFile extends Model {
             if (!is_dir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data')) mkdir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data');
             if (!is_dir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp')) mkdir($_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp');
             $url = $_SERVER["DOCUMENT_ROOT"] . '/media/activities/data/temp/temp.' . $this->ext;
-            if (file_exists($this->getUrl())) file_put_contents($url, file_get_contents($this->getUrl()));
-            else throw new Exception('file_not_found');
+            file_put_contents($url, file_get_contents($this->getUrl()));
 
             // Then parse
 

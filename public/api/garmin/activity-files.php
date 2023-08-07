@@ -31,6 +31,7 @@ foreach ($data['activityFiles'] as $activity_files) {
     $id = $params['id'];
     $token = $params['token'];
     $ext = strtolower($activity_files['fileType']);
+    
 
     // Retrieve corresponding activity details
     $activity_file = $garmin->retrieveActivityFile($id, $token, [

@@ -18,7 +18,7 @@ if (!isSessionActive()) {
 // If connection has been authorized
 if (isset($_GET['oauth_token'])) {
     
-    try {
+    ///try {
 
         $garmin = new Garmin();
         $temporary_credentials = $_SESSION['garmin_temporary_credentials'];
@@ -35,9 +35,8 @@ if (isset($_GET['oauth_token'])) {
             header('location: ' .$uri);
         } else header('location: /settings');
         
-    } catch (\Throwable $th) {
+    /*} catch (\Throwable $th) {
         echo 'ERROR2';
-        var_dump($th);
         // catch your exception here
-    }
+    }*/
 } ?>

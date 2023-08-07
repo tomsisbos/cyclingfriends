@@ -69,7 +69,7 @@ if (is_array($settings)) {
             echo json_encode(['success' => 'Twitterとの接続が解除されました。']);
         } else if ($settings['api'] == 'Garmin Connect') {
             $garmin = getConnectedUser()->getGarmin();
-            $garmin->disconnect();
+            $garmin->deregister();
             echo json_encode(['success' => 'Garmin Connectとの接続が解除されました。']);
         }
 

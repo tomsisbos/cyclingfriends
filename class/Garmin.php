@@ -176,6 +176,11 @@ class Garmin extends Model {
         $server = new GarminApi($this->getConfig());
         $token_credentials = $this->getTokenCredentials();
 
+        $temp_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/temp';
+        if (!file_exists($temp_directory)) mkdir($temp_directory, 0777, true); // Create user directory if necessary
+        $temp_url = $temp_directory. '/' .$file_id. '-credentials'. '.json';
+        file_put_contents($temp_url, json_encode(['$this->oauth_token' => $this->oauth_token, '$this->oauth_token_secret' => $this->oauth_token_secret, '$token_credentials' => $token_credentials]));
+
         $params = [
             'id' => $file_id,
             'token' => $activity_token
@@ -199,6 +204,21 @@ class Garmin extends Model {
     public function isUserConnected () {
         if (isset($this->garmin_user_id)) return true;
         else return false;
+    }
+
+    /**
+     * Send a deregistration request to garmin api server and if successful then remove entry from database
+     */
+    public function deregister () {
+
+        $server = new GarminApi($this->getConfig());
+        $token_credentials = $this->getTokenCredentials();
+        
+        // Send a deregistration request
+        $result = $server->deleteUserAccessToken($token_credentials);
+
+        // Remove entry from user_garmin database
+        $this->disconnect();
     }
 
     /**
@@ -240,8 +260,6 @@ class Garmin extends Model {
             'uploadEndTimeInSeconds' => $upload_end // time in seconds utc
         ];
         $summary = $server->getActivitySummary($token_credentials, $params);
-
-        var_dump($summary);
     }
 
 }

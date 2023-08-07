@@ -430,8 +430,14 @@ class Ride extends Model {
     
             // If not set as private, ride date is yet to come but entries are closed
             else if (($this->privacy != 'private') AND ($this->date >= $current_date->format('Y-m-d')) AND ($this->entry_start < $current_date->format('Y-m-d') AND $this->entry_end < $current_date->format('Y-m-d'))) {
-                $status = 'エントリー終了'; // status is Closed
-                $substatus = 'まもなく開催'; //substatus is ready to depart
+                $participants_number = $this->setParticipationInfos()['participants_number'];
+                if ($participants_number < $this->nb_riders_min) {
+                    $status = '中止';
+                    $substatus = '最低催行人数に達成しませんでした';
+                } else { // If minimum number is reached
+                    $status = 'エントリー終了';
+                    $substatus = 'まもなく開催'; 
+                }
             }
     
             else {
@@ -458,7 +464,10 @@ class Ride extends Model {
             case '定員達成' : // blue
                 return 'rd-status-blue';
                 break;
-            case 'ライド終了' : // red
+            case '終了' : // red
+                return 'rd-status-red';
+                break;
+            case '中止' : // red
                 return 'rd-status-red';
                 break;
             default :
