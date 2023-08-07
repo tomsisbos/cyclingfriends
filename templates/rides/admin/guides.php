@@ -24,7 +24,7 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
             <div class="container rd-ad-container">
 
                 <h3>ガイド管理</h3>
-                <p>このライドを担当するガイドの管理</p>
+                <p>このツアーを担当するガイドの管理</p>
 
                 <div class="rd-ad-section">
 

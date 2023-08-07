@@ -147,7 +147,7 @@ class Manual extends Model {
             'subtitle' => 'Routes'
         ],
         'rides' => [
-            'title' => 'ライド',
+            'title' => 'ツアー',
             'subtitle' => 'Rides'
         ],
         'community' => [

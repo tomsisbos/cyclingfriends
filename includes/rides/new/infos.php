@@ -2,12 +2,12 @@
 <div class="container smaller page">
 
 	<!-- Page title -->
-	<h1 class="text-center">ライド開催</h1>
+	<h1 class="text-center">ツアー開催</h1>
 
 	<!--Displays the Ride Infos form-->
 	<form class="container smaller inner" method="POST" action="<?= $base_uri . (CFG_STAGE_ID + 1) ?>">
 
-		<legend>ライド情報</legend>
+		<legend>ツアー情報</legend>
 		
 		<!--Displays an error message if needed-->
 		<?php if (isset($errormessage)) { echo '<div class="error-block"><p class="error-message">' .$errormessage. '</p></div>'; } ?>
@@ -104,7 +104,7 @@
 			</div>
 		</div>
 		<div class="mb-3">
-			<label class="form-label required">ライド紹介</label>
+			<label class="form-label required">ツアー紹介</label>
 			<textarea class="form-control" name="ride-description"><?= $_SESSION['forms'][CFG_STAGE_ID]['ride-description']; ?></textarea>
 		</div>
 		

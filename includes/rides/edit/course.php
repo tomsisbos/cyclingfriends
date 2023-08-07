@@ -4,7 +4,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 <div class="container smaller page">
 
 	<!-- Page title -->
-	<h1 class="text-center">ライド編集</h1>
+	<h1 class="text-center">ツアー編集</h1>
 	<legend>コース情報</legend>
 
 	<!-- Displays an error message if needed -->

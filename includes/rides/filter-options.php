@@ -17,7 +17,7 @@
 				<input type="checkbox" id="filter_bike" name="filter_bike" onChange="this.form.submit();" <?php if(isset($_POST['filter_bike'])){echo 'checked';} ?>>
 			</div>
 			<div class="td-row">
-				<label for="filter_bike"><a href="/profile/edit#addBike">私が持っている自転車</a>が参加できるライドのみ表示する</label>
+				<label for="filter_bike"><a href="/profile/edit#addBike">私が持っている自転車</a>が参加できるツアーのみ表示する</label>
 			</div>
 		</div>
 		<div class="tr-row">
@@ -25,7 +25,7 @@
 				<input type="checkbox" id="filter_friends_only" name="filter_friends_only" onChange="this.form.submit();" <?php if(isset($_POST['filter_friends_only'])){echo 'checked';} ?>>
 			</div>
 			<div class="td-row">
-				<label for="filter_friends_only">私の友達が開催しているライドのみ表示する</label>
+				<label for="filter_friends_only">私の友達が開催しているツアーのみ表示する</label>
 			</div>
 		</div>
 		<!-- Needs to implement maps system
@@ -49,7 +49,7 @@
 					<option value="No filter">フィルター無し</option>
 					<option value="Open" <?php if(isset($_POST['filter_status']) AND $_POST['filter_status'] == 'Open'){echo 'selected';} ?>>募集中</option>
 					<option value="Closed" <?php if(isset($_POST['filter_status']) AND $_POST['filter_status'] == 'Closed'){echo 'selected';} ?>>エントリー終了</option>
-					<option value="Finished" <?php if(isset($_POST['filter_status']) AND $_POST['filter_status'] == 'Finished'){echo 'selected';} ?>>ライド終了</option>
+					<option value="Finished" <?php if(isset($_POST['filter_status']) AND $_POST['filter_status'] == 'Finished'){echo 'selected';} ?>>ツアー終了</option>
 				</select>
 			</div>
 		</div>

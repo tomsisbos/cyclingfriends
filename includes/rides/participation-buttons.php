@@ -11,7 +11,7 @@ if (isSessionActive()) {
 			
 			// If ride is full, display a message
 			if ($ride->isFull()) { ?>
-				<p class="bold text-danger">このライドは定員に達しました！誰かがキャンセルすることを待つか、他のライドにエントリーしてみましょう。</p> <?php
+				<p class="bold text-danger">このツアーは定員に達しました！誰かがキャンセルすることを待つか、他のツアーにエントリーしてみましょう。</p> <?php
 			// Else, display Join button
 			} else { ?>
 				<button id="join" class="mp-button success">参加する</button> <?php 
@@ -21,7 +21,7 @@ if (isSessionActive()) {
 		} else if ($ride->isOpen() == 'not yet') { ?>
 			<div class="tag-light"><div class="bold text-danger">エントリー期間はまだ開始していません。<?= $ride->entry_start ?>から開始される予定です。</div></div> <?php
 		} else if ($ride->isOpen() == 'closed') { ?>
-			<div class="tag-light"><div class="bold text-danger">エントリー期間が終了しました。<a href="/rides">他のライド</a>に参加してみましょう !</div></div> <?php
+			<div class="tag-light"><div class="bold text-danger">エントリー期間が終了しました。<a href="/rides">他のツアー</a>に参加してみましょう !</div></div> <?php
 		} 
 		
 	// Else, display Quit button
@@ -36,7 +36,7 @@ if (isSessionActive()) {
 		
 		// If ride is full, display a message
 		if ($ride->isFull()) { ?>
-			<p class="bold text-danger">このライドは定員に達しました！誰かがキャンセルすることを待つか、他のライドにエントリーしてみましょう。</p> <?php
+			<p class="bold text-danger">このツアーは定員に達しました！誰かがキャンセルすることを待つか、他のツアーにエントリーしてみましょう。</p> <?php
 		// Else, display Join button
 		} else { ?>
 			<button id="signup_join" class="mp-button success">参加する</button> <?php 
@@ -46,7 +46,7 @@ if (isSessionActive()) {
 	} else if ($ride->isOpen() == 'not yet') { ?>
 		<div class="tag-light"><div class="bold text-danger">エントリー期間はまだ開始していません。<?= $ride->entry_start ?>から開始される予定です。</div></div> <?php
 	} else if ($ride->isOpen() == 'closed') { ?>
-		<div class="tag-light"><div class="bold text-danger">エントリー期間が終了しました。<a href="/rides">他のライド</a>に参加してみましょう !</div></div> <?php
+		<div class="tag-light"><div class="bold text-danger">エントリー期間が終了しました。<a href="/rides">他のツアー</a>に参加してみましょう !</div></div> <?php
 	} 
 
 }

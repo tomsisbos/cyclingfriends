@@ -35,7 +35,7 @@ include '../actions/routes/route.php'; ?>
                 <div class="header-row mt-2"> <?php
                     if (isset($ride)) { ?>
                         <a href="/ride/<?= $ride->id ?>">
-                            <button class="mp-button normal" type="button">ライドページに戻る</button>
+                            <button class="mp-button normal" type="button">ツアーページに戻る</button>
                         </a> <?php
                     }
 

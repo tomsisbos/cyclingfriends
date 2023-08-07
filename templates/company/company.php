@@ -47,7 +47,7 @@ include '../includes/head.php'; ?>
                 <tbody>
                     <tr>
                         <td class="text-right">2021年10月</td>
-                        <td>最初のライドイベントを開催</td>
+                        <td>最初のツアーイベントを開催</td>
                     </tr>
                     <tr>
                         <td class="text-right">2023年1月</td>

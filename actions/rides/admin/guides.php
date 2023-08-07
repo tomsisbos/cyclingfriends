@@ -29,8 +29,8 @@ if (isset($_POST['add'])) {
         $email->addContent(
             'text/html',
             '<p>いつもCyclingFriendsをご利用頂き、ありがとうございます。</p>
-            <p>この度、<a href="' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/rider/' .$ride->getAuthor()->id. '">@' .$ride->getAuthor()->login. '</a>が主催しているライド「' .$ride->name. '」に' .$added_guide->getPositionString(). 'ガイドとして追加してくれました。</p>
-            <p>' .$ride->name. 'の<a href="' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/ride/' .$ride->id. '">専用ページ</a>にアクセスし、上部に表示されている「管理」ボタンにクリックすると、ライドの管理画面にアクセスして頂けます。</p>
+            <p>この度、<a href="' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/rider/' .$ride->getAuthor()->id. '">@' .$ride->getAuthor()->login. '</a>が主催しているツアー「' .$ride->name. '」に' .$added_guide->getPositionString(). 'ガイドとして追加してくれました。</p>
+            <p>' .$ride->name. 'の<a href="' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/ride/' .$ride->id. '">専用ページ</a>にアクセスし、上部に表示されている「管理」ボタンにクリックすると、ツアーの管理画面にアクセスして頂けます。</p>
             <p>本件に関して見覚えがない、あるいはガイド登録を却下したい場合は、<a href="' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/ride/guide-requests">こちらをクリックしてください。</p>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));

@@ -270,7 +270,7 @@ export default class RidePickMap extends RideMap {
 
         var $firstMarker = document.querySelector('.checkpoint-marker')
         // If no checkpoint have been set
-        if (!$firstMarker || (this.data.checkpoints.length === 1 && $firstMarker.innerText == 'S')) showResponseMessage({error: '少なくとも、ライドのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'})
+        if (!$firstMarker || (this.data.checkpoints.length === 1 && $firstMarker.innerText == 'S')) showResponseMessage({error: '少なくとも、ツアーのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'})
         // Else, validate, send data to API and go to next page
         else {
             await this.updateMeetingFinishPlace()

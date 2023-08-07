@@ -133,7 +133,7 @@ export default class WorldMap extends Map {
         } )
         var displayRidesBoxLabel = document.createElement('label')
         displayRidesBoxLabel.setAttribute('for', 'displayRidesBox')
-        displayRidesBoxLabel.innerText = 'ライドを表示'
+        displayRidesBoxLabel.innerText = 'ツアーを表示'
         line2.appendChild(displayRidesBoxLabel)
         // Line 3
         let line3 = document.createElement('div')

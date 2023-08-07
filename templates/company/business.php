@@ -60,7 +60,7 @@ include '../includes/head.php'; ?>
                         <div class="schema-row">日本の絶景スポット＆美しい道事典</div>
                         <div class="schema-row">走行日記の管理＆共有機能</div>
                         <div class="schema-row">ルート作成ツール</div>
-                        <div class="schema-row">グループライド開催ツール...等</div>
+                        <div class="schema-row">ツアー開催ツール...等</div>
                     </div>
                 </div>
             </div>

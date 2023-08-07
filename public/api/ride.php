@@ -32,7 +32,7 @@ if (isAjax()) {
     if (isset($_GET['ride-delete'])) {
         $ride = new Ride($_GET['ride-delete']);
         if (getConnectedUser()->id == $ride->author_id) $ride->delete();
-        else "このライドを削除する権限はありません。";
+        else "このツアーを削除する権限はありません。";
         echo json_encode(getConnectedUser()->login);
     }
 
@@ -68,7 +68,7 @@ if (is_array($var)) {
             // If ride is not already full,
             if (!$ride->isFull()) {
                 $ride->join(getConnectedUser());
-                echo json_encode(['success' => $ride->name. 'にエントリーしました！楽しいライドになることは間違いありません！']);
+                echo json_encode(['success' => $ride->name. 'にエントリーしました！楽しいツアーになることは間違いありません！']);
             } else json_encode(['error' => $ride->name. 'が既に定員に達成しています。']);
         } else json_encode(['error' => $ride->name. 'に既にエントリーしています。']);
     }

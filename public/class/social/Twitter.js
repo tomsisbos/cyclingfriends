@@ -4,7 +4,7 @@ export default class Twitter {
 
     constructor (activity) {
         this.activity = activity
-        this.defaultText = '「' + activity.title + '」のライドレポートはこちら：'
+        this.defaultText = '「' + activity.title + '」のツアーレポートはこちら：'
     }
 
     charsLimit = 280

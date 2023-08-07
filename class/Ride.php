@@ -287,15 +287,15 @@ class Ride extends Model {
         $email->addContent(
             'text/html',
             '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
-            <p>エントリー情報及びライド情報は、下記の通りご確認頂けます。</p>
-            <p>【ライド情報】</p>
-            <p><a href="' .$origin. '/ride/' .$this->id. '">ライド情報はこちら</a></p><br>
+            <p>エントリー情報及びツアー情報は、下記の通りご確認頂けます。</p>
+            <p>【ツアー情報】</p>
+            <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>
             <p>【エントリー情報】</p>
             姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
             性別：' .$participant->getGenderString(). '<br>
             生年月日：' .$participant->birthdate. '<br>'
                 .$additional_fields_li.
-            '<br><p>現在エントリーしているライドの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
+            '<br><p>現在エントリーしているツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
@@ -329,7 +329,7 @@ class Ride extends Model {
         $email->addContent(
             'text/html',
             '<p><a href="' .$origin. '/ride/' .$this->id. '">' .$this->name. '</a>へのエントリーが取り消されました。</p>
-            <p>現在エントリーしているライドの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
+            <p>現在エントリーしているツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
@@ -396,7 +396,7 @@ class Ride extends Model {
         
         // If ride date is passed
         if ($this->date < $current_date->format('Y-m-d')) {
-            $status = 'ライド終了'; } // status is Finished
+            $status = 'ツアー終了'; } // status is Finished
         
         // If ride is full
         else if ($this->isFull()) {
@@ -556,7 +556,7 @@ class Ride extends Model {
 		$insertChatMessage->execute(array($this->id, $user->id, $user->login, $content, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
         $this->notify($this->author_id, 'ride_message_post', $user->id);
         $this->mail($this->getAuthor(), '【CyclingFriends】「' .$this->name. '」に新規投稿',
-            '<p>' .$this->getAuthor()->login. 'が主催するライド「' .$this->name. '」に新規の投稿がありました。内容は下記の通り：</p>
+            '<p>' .$this->getAuthor()->login. 'が主催するツアー「' .$this->name. '」に新規の投稿がありました。内容は下記の通り：</p>
             <p>---</p>
             <p>' .$content. '</p>
             <p>---</p>

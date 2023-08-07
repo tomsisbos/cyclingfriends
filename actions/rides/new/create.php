@@ -29,7 +29,7 @@ if (isset($_POST['validate'])) {
 		if ($ride_infos['nb-riders-min'] > $ride_infos['nb-riders-max']) $errormessage = '最低催行人数が定員を達しています。';
 		else if ($ride_infos['departure-time'] < $ride_infos['meeting-time']) $errormessage = '出発時間は集合時間より前に設定されています。';
 		else if (($ride_infos['finish-time'] < $ride_infos['meeting-time']) OR ($ride_infos['finish-time'] < $ride_infos['departure-time'])) $errormessage = '解散時間は集合時間や出発時間より前に設定されています。';
-		else if (checkIfRideIsAlreadySet($ride_infos['ride-name']) == true) $errormessage = 'このライドは既に作成されています。';
+		else if (checkIfRideIsAlreadySet($ride_infos['ride-name']) == true) $errormessage = 'このツアーは既に作成されています。';
 		else {
 	
 			// Setting input data into variables

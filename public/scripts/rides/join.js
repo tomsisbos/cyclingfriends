@@ -18,7 +18,7 @@ if (joinButton) {
             ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
                 if (response.answer || response.bikes_list == '車種問わず') resolve(true)
                 else {
-                    var answer = await openConfirmationPopup ('このライドで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
+                    var answer = await openConfirmationPopup ('このツアーで参加が認められている車種は次の通り： ' + response.bikes_list + '。登録されているバイクの中で、該当する車種はありません。それでもエントリーしますか？')
                     if (answer) resolve(true)
                 }
             })
@@ -29,7 +29,7 @@ if (joinButton) {
                 ajaxGetRequest (apiUrl + "?get-missing-information=" + rideId, async (response) => {
                     if (response.length > 0)  {
                         var string = response.join('、')
-                        var answer = await openAlertPopup('ライドに申し込むためには、次の情報の記入が必要です：' + string + '。<a href="/profile/edit" target="_blank">プロフィールページ</a>にてご記入頂けます。')
+                        var answer = await openAlertPopup('ツアーに申し込むためには、次の情報の記入が必要です：' + string + '。<a href="/profile/edit" target="_blank">プロフィールページ</a>にてご記入頂けます。')
                         if (answer) resolve(false)
                     }
                     else resolve(true)
@@ -47,7 +47,7 @@ if (quitButton) {
 
     quitButton.addEventListener('click', async () => {
         
-        var answer = await openConfirmationPopup ('ライドへのエントリーが取り消されます。宜しいですか？')
+        var answer = await openConfirmationPopup ('ツアーへのエントリーが取り消されます。宜しいですか？')
         if (answer) {
             var loader = new CircleLoader(quitButton)
             loader.start()
@@ -65,7 +65,7 @@ if (quitButton) {
 if (signupJoinButton) {
     signupJoinButton.addEventListener('click', async () => {
 
-        var answer = await openAlertPopup ('ライドに参加するには、ログインする必要があります。<br><br>アカウントをお持ちの方は<a style="font-weight: bold" href="' + window.location.href + '/signin">こちら</a><br>アカウントをお持ちでない方は<a style="font-weight: bold" href="' + window.location.href + '/signup">こちら</a>')
+        var answer = await openAlertPopup ('ツアーに参加するには、ログインする必要があります。<br><br>アカウントをお持ちの方は<a style="font-weight: bold" href="' + window.location.href + '/signin">こちら</a><br>アカウントをお持ちでない方は<a style="font-weight: bold" href="' + window.location.href + '/signup">こちら</a>')
         
     })
 }
@@ -97,7 +97,7 @@ function join () {
         var contract = await getContract()
 
         // Get contract agreement
-        var agreement = await openConfirmationPopup('<p>ライドのご参加頂くには、開催規約をご確認の上、承諾して頂く必要があります。</p><div class="popup-contract">' + contract + '</div><p>承諾しますか？</p>')
+        var agreement = await openConfirmationPopup('<p>ツアーのご参加頂くには、開催規約をご確認の上、承諾して頂く必要があります。</p><div class="popup-contract">' + contract + '</div><p>承諾しますか？</p>')
         if (agreement) {
             loader.start()
             ajaxJsonPostRequest(apiUrl, answers, (response) => {

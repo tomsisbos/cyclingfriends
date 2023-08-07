@@ -44,7 +44,7 @@ include '../includes/head.php'; ?>
                 <div class="header-block">
                     <div class="header-row mb-2">
                         <div class="rd-status">
-                            <p class="tag-dark text-light">ライドレポート</p> <?php
+                            <p class="tag-dark text-light">ツアーレポート</p> <?php
                             // Only add substatus if there is one
                             if ($ride->privacy == 'friends_only') { ?>
                                 <p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->getAuthor()->login; ?>の友達に限定</p> <?php

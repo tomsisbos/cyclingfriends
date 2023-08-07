@@ -17,7 +17,7 @@ include '../includes/head.php'; ?>
 		// Space for general error messages
 		include '../includes/result-message.php'; ?>
 		
-		<h2 class="top-title">参加ライド一覧</h2>
+		<h2 class="top-title">参加ツアー一覧</h2>
 
 		<div class="container end"> <?php
 		
@@ -51,7 +51,7 @@ include '../includes/head.php'; ?>
 				}
 
 			} else {
-				$noride = 'あなたが参加しているライドがありません。';
+				$noride = 'あなたが参加しているツアーがありません。';
 				if (isset($noride)) echo '<div class="error-block fullwidth text-center"><p class="error-message">' .$noride. '</p></div>';
 			} ?>
 

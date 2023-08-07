@@ -77,9 +77,9 @@
 							<source src="/media/videos/rides.mp4" type="video/mp4">
 						</video>
 						<div class="carousel-caption d-md-block">
-							<h5>ライド開催機能</h5>
+							<h5>ツアー開催機能</h5>
 							<a class="home-carousel-subtitle" href="/manual/rides">rides</a>
-							<p>コニュニティーが主催するライドを検索し、参加できます！</p>
+							<p>コニュニティーが主催するツアーを検索し、参加できます！</p>
 						</div>
                     </div>
                     <div class="item__3d-frame__box item__3d-frame__box--left"></div>

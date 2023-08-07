@@ -4,7 +4,7 @@ $previous_page = intval($slug) - 1; ?>
 <div class="container smaller page">
 
 	<!-- Page title -->
-	<h1 class="text-center">ライド開催</h1>
+	<h1 class="text-center">ツアー開催</h1>
 	<legend>コース情報</legend>
 
 	<!-- Displays an error message if needed -->

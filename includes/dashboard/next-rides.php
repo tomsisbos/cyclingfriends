@@ -20,7 +20,7 @@ $getRides->execute(array(":level" => getConnectedUser()->level, ":today" => $tod
 
 // Display ride cards ?>
 <div class="dashboard-title-block">
-    募集中のライド
+    募集中のツアー
 </div>
 
 <div class="dashboard-cards"> <?php

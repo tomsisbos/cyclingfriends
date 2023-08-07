@@ -25,10 +25,10 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
             <!-- Main section -->
             <div class="container rd-ad-container">
 
-                <h3>ライドレポート</h3>
+                <h3>ツアーレポート</h3>
                 <p>レポートページの自動生成</p> <?php
 
-                if (new DateTime($ride->date) >= new DateTime('now', new DateTimezone('Asia/Tokyo'))) echo '<div class="text-center">ライドが終わったら、こちらでライドレポートの設定ができるようになります。</div>';
+                if (new DateTime($ride->date) >= new DateTime('now', new DateTimezone('Asia/Tokyo'))) echo '<div class="text-center">ツアーが終わったら、こちらでツアーレポートの設定ができるようになります。</div>';
 
                 else { ?>
 

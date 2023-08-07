@@ -43,7 +43,7 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/rides"><div class="mainitem">ライド</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/rides"><div class="mainitem">ツアー</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/rides/calendar"><div class="mainitem">公式ツアーカレンダー</div></a>
@@ -57,9 +57,9 @@
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu"> <?php
 						if (getConnectedUser()->hasAdministratorRights()) { ?>
-							<a class="dropdown-item bg-admin interactive" href="/community"><div class="mainitem">ユーザー一覧</div></a> <?php
+							<a class="dropdown-item bg-admin interactive" href="/community"><div class="mainitem text-dark">ユーザー一覧</div></a> <?php
 						} ?>
-						<a class="dropdown-item bg-admin interactive" href="/dev/board"><div class="mainitem">開発ボード</div></a>
+						<a class="dropdown-item bg-admin interactive" href="/dev/board"><div class="mainitem text-dark">開発ボード</div></a>
 						<a class="dropdown-item interactive" href="/news"><div class="mainitem">ニュース</div></a>
 						<a class="dropdown-item interactive" href="/friends"><div class="mainitem">お友達</div></a>
 						<a class="dropdown-item interactive" href="/scouts"><div class="mainitem">スカウト</div></a>
@@ -87,8 +87,8 @@
 					<a class="dropdown-item interactive" href="/manual"><div class="mainitem">マニュアル</div></a> <?php
 					if (getConnectedUser()->hasAdministratorRights()) { ?>
 						<hr class="dropdown-divider">
-						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries"><div class="mainitem">自動投稿設定</div></a>
-						<a class="dropdown-item bg-admin interactive" href="/admin/garmin"><div class="mainitem">Garmin同期管理</div></a> <?php
+						<a class="dropdown-item bg-admin interactive" href="/admin/autoposting/sceneries"><div class="mainitem text-dark">自動投稿設定</div></a>
+						<a class="dropdown-item bg-admin interactive" href="/admin/garmin"><div class="mainitem text-dark">Garmin同期管理</div></a> <?php
 					}
 					// If the user is connected, displays the sign out button 
 					if (isSessionActive()) { ?>

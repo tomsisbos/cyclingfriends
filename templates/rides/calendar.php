@@ -1,5 +1,6 @@
 <?php
 
+include '../actions/users/initPublicSession.php';
 require '../actions/users/signup.php';
 require '../actions/rides/official.php';
 include '../includes/head.php'; ?>
@@ -22,7 +23,7 @@ include '../includes/head.php'; ?>
 
         <p>CyclingFriendsのロゴマークの四色が意味している、「<strong>景色</strong>、<strong>食</strong>、<strong>分化</strong>、<strong>仲間</strong>」の４柱を主軸に、思い出に深く残るコンテンツづくりにこだわっています。</p>
 
-        <p>お好きなライド名をクリックすると、詳細ページにアクセスできます。参加するには、アカウントを新規作成／ログインの上、詳細ページに表示されている「参加」ボタンをクリックし、必要情報を入力して頂くだけです。</p>
+        <p>お好きなツアー名をクリックすると、詳細ページにアクセスできます。参加するには、アカウントを新規作成／ログインの上、詳細ページに表示されている「参加」ボタンをクリックし、必要情報を入力して頂くだけです。</p>
         
         <div class="rd-calendar">
             <div class="rd-cd-th"></div>

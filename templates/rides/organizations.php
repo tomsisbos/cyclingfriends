@@ -11,7 +11,7 @@ if (isset($_SESSION['forms']['created'])) {
 	unset($_SESSION['forms'][1]);
 	unset($_SESSION['forms'][2]);
 	unset($_SESSION['course']);
-	$successmessage = "ライドページが作成されました！「非公開」に設定されているので、募集を開始する際にはライドページからプライバシー設定を変更しましょう。";
+	$successmessage = "ツアーページが作成されました！「非公開」に設定されているので、募集を開始する際にはツアーページからプライバシー設定を変更しましょう。";
 	unset($_SESSION['forms']['created']);
 } ?>
 
@@ -26,7 +26,7 @@ if (isset($_SESSION['forms']['created'])) {
 		// Space for general error messages
 		include '../includes/result-message.php'; ?>
 		
-		<h2 class="top-title">主催ライド一覧</h2>
+		<h2 class="top-title">主催ツアー一覧</h2>
 
 		<div class="container end"> <?php
 		
@@ -60,7 +60,7 @@ if (isset($_SESSION['forms']['created'])) {
 				}
 
 			} else {
-				$noride = 'あなたが管理しているライドがありません。';
+				$noride = 'あなたが管理しているツアーがありません。';
 				if (isset($noride)) echo '<div class="error-block fullwidth text-center"><p class="error-message">' .$noride. '</p></div>';
 			} ?>
 
