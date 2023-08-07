@@ -307,8 +307,9 @@ class Ride extends Model {
         $to_email = [];
         foreach ($this->getGuides() as $guide) array_push($to_email, new User($guide->id));
         foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
-        $this->mail(new User(1), $this->date. ' ' .$this->name. '【新規エントリー】',
+        foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【新規エントリー】',
             '<p>' .$this->date. ' 開催予定の「' .$this->name. '」に下記の通り新規エントリーがありましたので、お知らせします。</p>
+            <p>これで合計エントリー人数が' .$this->participants_number. '名になりました。</p>
             <p>---</p>
             <p>【エントリー情報】</p>
             ユーザーネーム：' .$participant->login. '<br>
@@ -354,6 +355,28 @@ class Ride extends Model {
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
+
+        // Send mail to guides and admin
+        $getAdmins = $this->getPdo()->prepare("SELECT id FROM users WHERE rights = 'administrator'");
+        $getAdmins->execute();
+        $admin_ids = $getAdmins->fetchAll(PDO::FETCH_COLUMN);
+        $to_email = [];
+        foreach ($this->getGuides() as $guide) array_push($to_email, new User($guide->id));
+        foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
+        foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【キャンセル】',
+            '<p>' .$participant->last_name. ' ' .$participant->first_name. 'さんが ' .$this->date. ' 開催予定の「' .$this->name. '」への参加を取り下げました。</p>
+            <p>これで合計エントリー人数が' .$this->participants_number. '名になりました。</p>
+            <p>---</p>
+            <p>【キャンセル情報】</p>
+            ユーザーネーム：' .$participant->login. '<br>
+            メールアドレス：' .$participant->email. '<br>
+            姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
+            性別：' .$participant->getGenderString(). '<br>
+            生年月日：' .$participant->birthdate. '<br>'
+                .$additional_fields_li. '
+            <p>---</p>
+            <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>'
+        );
 
         // Set notification
         $this->notify($this->author_id, 'ride_quit', $participant->id);
