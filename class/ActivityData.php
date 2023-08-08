@@ -286,12 +286,14 @@ class ActivityData extends Model {
             'distance' => $this->summary['distance'],
             'duration' => $this->summary['duration'],
             'duration_running' => $this->summary['duration_running'],
-            'privacy' => 'private',
+            'privacy' => 'public',
             'elevation' => $this->summary['positive_elevation'],
             'slope_max' => null,
             'route_data' => $route_data,
             'checkpoints_data' => $checkpoints_data
         ];
+
+        if ($user->getSettings()->hide_garmin_activities) $activity_data['privacy'] = 'private';
 
         // Possibly missing data
         if (isset($this->summary['altitude_max'])) $activity_data['altitude_max'] = $this->summary['altitude_max'];

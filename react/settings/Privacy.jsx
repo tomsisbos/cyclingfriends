@@ -9,7 +9,8 @@ export default function Privacy () {
     const [settings, setSettings] = useState( {
         hide_on_neighbours: null,
         hide_realname: null,
-        hide_age: null
+        hide_age: null,
+        hide_garmin_activities: null,
     } )
 
     // On change, set changed value (=id) to opposite one
@@ -52,6 +53,14 @@ export default function Privacy () {
                     label="年齢／生年月日を公開しない"
                     value={settings.hide_age}
                     id={'hide_age'}
+                    onChange={handleChange}
+                />
+			</div>
+			<div className="tr-row gap-20 mb-3">
+                <Checkbox
+                    label="Garmin Connectとの接続で同期された新規アクティビティを非公開にする"
+                    value={settings.hide_garmin_activities}
+                    id={'hide_garmin_activities'}
                     onChange={handleChange}
                 />
 			</div>
