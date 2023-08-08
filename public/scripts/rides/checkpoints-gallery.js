@@ -18,7 +18,7 @@ function updateInput (e) {
         checkpoint_id: getIdFromString(e.target.name)
     }
     return new Promise ((resolve, reject) => {
-        ajaxJsonPostRequest ('/api/rides/course', updateInfos, afterUpdating)
+        ajaxJsonPostRequest ('/api/rides/course.php', updateInfos, afterUpdating)
         function afterUpdating (response) {
             document.querySelectorAll('.numbertext').forEach(numbertext => {
                 if (numbertext.closest('.mySlides').style.display === 'block') resolve(response)
@@ -37,7 +37,7 @@ function updateTextArea (e) {
         checkpoint_id: getIdFromString(e.target.name)
     }
     return new Promise ((resolve, reject) => {
-        ajaxJsonPostRequest ('/api/rides/course', updateInfos, afterUpdating)
+        ajaxJsonPostRequest ('/api/rides/course.php', updateInfos, afterUpdating)
         function afterUpdating (response) {
             document.querySelectorAll('.numbertext').forEach(numbertext => {
                 if (numbertext.closest('.mySlides').style.display === 'block') resolve(response)
