@@ -42,8 +42,8 @@
 								<div class="rdr-sub">
 									<div class="d-flex gap"> <?php
 									// Only display social links if filled
-									if ($user->getTwitter()->isUserConnected()) {
-										$twitter = $user->getTwitter(); ?>
+									if ($rider->getTwitter()->isUserConnected()) {
+										$twitter = $rider->getTwitter(); ?>
 										<a target="_blank" href="<?= $twitter->url ?>"><span class="social iconify twitter" data-icon="ant-design:twitter-circle-filled" data-width="20"></span></a><?php
 									} if (isset($rider->facebook) AND !empty($rider->facebook)) { ?>
 										<a target="_blank" href="<?= $rider->facebook ?>"><span class="social iconify facebook" data-icon="akar-icons:facebook-fill" data-width="20"></span></a><?php

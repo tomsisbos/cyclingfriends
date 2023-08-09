@@ -14,7 +14,7 @@ if (isSessionActive()) {
 				<p class="bold text-danger">このツアーは定員に達しました！誰かがキャンセルすることを待つか、他のツアーにエントリーしてみましょう。</p> <?php
 			// Else, display Join button
 			} else { ?>
-				<button id="join" class="mp-button success">参加する</button> <?php 
+				<a href="<?= $router->generate('ride-entry', ['ride_id' => $ride->id]) ?>"><button id="join" class="mp-button success">参加する</button></a> <?php 
 			}
 			
 		// If entries are not open, display a text message instead of button

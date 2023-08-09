@@ -32,10 +32,10 @@ class Ride extends Model {
     public $privacy;
     public $entry_start;
     public $entry_end;
-    public $participants_number;
     public $status;
     public $substatus;
     public $lngLatFormat;
+    public $price;
     
     function __construct($id = NULL, $lngLatFormat = true) {
         parent::__construct();
@@ -67,11 +67,11 @@ class Ride extends Model {
         $this->privacy                                 = $data['privacy'];
         $this->entry_start                             = $data['entry_start'];
         $this->entry_end                               = $data['entry_end'];
-        $this->participants_number                     = count($this->getParticipants());
         if (isset($data['route_id'])) $this->route_id  = $data['route_id'];
         $this->lngLatFormat                            = $lngLatFormat;
         $this->status                                  = $this->getStatus()['status'];
         $this->substatus                               = $this->getStatus()['substatus'];
+        $this->price                                   = intval($data['price']);
     }
 
     public function getAuthor () {
@@ -261,11 +261,11 @@ class Ride extends Model {
      * @param User $participant
      */
     public function join ($participant) {
-        // Add a line into participation database
+        /*// Add a line into participation database
         $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
         $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
 
-        // Prepare additional fields data
+        // Prepare additional fields data*/
         $additional_fields = $this->getAdditionalFields();
         $additional_fields_li = '';
         foreach ($additional_fields as $additional_field) {
@@ -299,6 +299,8 @@ class Ride extends Model {
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
+        
+        /*
 
         // Send mail to guides and admin
         $getAdmins = $this->getPdo()->prepare("SELECT id FROM users WHERE rights = 'administrator'");
@@ -309,7 +311,7 @@ class Ride extends Model {
         foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
         foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【新規エントリー】',
             '<p>' .$this->date. ' 開催予定の「' .$this->name. '」に下記の通り新規エントリーがありましたので、お知らせします。</p>
-            <p>これで合計エントリー人数が' .$this->participants_number. '名になりました。</p>
+            <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名になりました。</p>
             <p>---</p>
             <p>【エントリー情報】</p>
             ユーザーネーム：' .$participant->login. '<br>
@@ -323,7 +325,7 @@ class Ride extends Model {
         );
 
         // Set notification
-        $this->notify($this->author_id, 'ride_join', $participant->id);
+        $this->notify($this->author_id, 'ride_join', $participant->id);*/
     }
 
     /**
@@ -339,6 +341,13 @@ class Ride extends Model {
         // Get origin
         if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
         else $origin = parse_url($_SERVER['HTTP_REFERER'])['scheme'] . '://' . parse_url($_SERVER['HTTP_REFERER'])['host'];
+            
+        // Prepare additional fields data
+        $additional_fields = $this->getAdditionalFields();
+        $additional_fields_li = '';
+        foreach ($additional_fields as $additional_field) {
+            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
+        }
 
         // Send confirmation email
         $email = new Mail();
@@ -365,7 +374,7 @@ class Ride extends Model {
         foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
         foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【キャンセル】',
             '<p>' .$participant->last_name. ' ' .$participant->first_name. 'さんが ' .$this->date. ' 開催予定の「' .$this->name. '」への参加を取り下げました。</p>
-            <p>これで合計エントリー人数が' .$this->participants_number. '名になりました。</p>
+            <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名になりました。</p>
             <p>---</p>
             <p>【キャンセル情報】</p>
             ユーザーネーム：' .$participant->login. '<br>

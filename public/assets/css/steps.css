@@ -1,0 +1,42 @@
+.steps-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3%;
+    margin: 10px 0;
+}
+
+.step {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-circle {
+    position: relative;
+    border: 1px solid #5c9999;
+    background-color: #f9f9f9;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow {
+    place-self: center;
+    width: 15px;
+    height: 10px;
+    margin-bottom: 20px;
+    clip-path: polygon(0 0, 86.6% 50%, 0 100%);
+    background-color: #5c9999;
+}
+
+.step-circle.step-current {
+    border: 3px solid #ff5555;
+}

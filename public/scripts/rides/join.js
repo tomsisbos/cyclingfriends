@@ -13,6 +13,7 @@ if (joinButton) {
         var loader = new CircleLoader(joinButton)
         loader.start()
 
+        /*
         // Check if proper bike has been registered
         return new Promise((resolve, reject) => {
             ajaxGetRequest (apiUrl + "?is-bike-accepted=" + rideId, async (response) => {
@@ -39,7 +40,8 @@ if (joinButton) {
             loader.stop()
             if (result) join()
             else return
-        })
+        })*/
+
     })
 }
 
@@ -65,13 +67,13 @@ if (quitButton) {
 if (signupJoinButton) {
     signupJoinButton.addEventListener('click', async () => {
 
-        var answer = await openAlertPopup ('ツアーに参加するには、ログインする必要があります。<br><br>アカウントをお持ちの方は<a style="font-weight: bold" href="' + window.location.href + '/signin">こちら</a><br>アカウントをお持ちでない方は<a style="font-weight: bold" href="' + window.location.href + '/signup">こちら</a>')
+        var answer = await openAlertPopup ('ツアーに参加するには、アカウントが必要です。<br><br>アカウントをお持ちの方は<a style="font-weight: bold" href="' + window.location.href + '/entry/signin">こちら</a><br>アカウントをお持ちでない方は<a style="font-weight: bold" href="' + window.location.href + '/entry">こちら</a>')
         
     })
 }
 
 
-function join () {
+/*function join () {
     
     var loader = new CircleLoader(joinButton)
     loader.start()
@@ -107,9 +109,9 @@ function join () {
             })
         }
     })
-}
+}*/
 
-function openPopup (question) {
+/*function openPopup (question) {
 	return new Promise ((resolve, reject) => {
 		var modal = document.createElement('div')
 		modal.classList.add('modal', 'd-flex')
@@ -143,12 +145,12 @@ function openPopup (question) {
 			reject()
 		})
 	})
-}
+}*/
 
-function getContract () {
+/*function getContract () {
     return new Promise((resolve, reject) => {
         fetch('/api/rides/contract.html')
         .then(response => response.text())
         .then(text => resolve(text))
     })
-}
+}*/

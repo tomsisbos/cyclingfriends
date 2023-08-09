@@ -124,11 +124,8 @@ class User extends Model {
     public function sendVerificationMail ($options = ['redirect' => true]) {
         
         // Get uri to redirect user to
-        if ($options['redirect']) {
-            $uri_array = explode('/', $_SERVER['REQUEST_URI']);
-            array_pop($uri_array);
-            $redirection_uri = implode('/', $uri_array);
-        } else $redirection_uri = '';
+        if ($options['redirect']) $redirection_uri = $_SERVER['REQUEST_URI'];
+        else $redirection_uri = '';
 
         // Send verification mail
         $email = new Mail();

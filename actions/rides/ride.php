@@ -5,7 +5,7 @@
 	// Get id from URL
 	$slug = basename($_SERVER['REQUEST_URI']);
 
-	if ($slug === 'signup') {
+	if ($slug === 'signup' || $slug === 'entry' || $slug === 'payment' || isset($_GET['payment_intent'])) {
 
 		$url_fragments = explode('/', $_SERVER['REQUEST_URI']);
 		$slug = array_slice($url_fragments, -2)[0];
@@ -34,15 +34,15 @@
 		
 		} else {
 			
-		// If id doesn't exist, redirect to my rides page
-		header('location: ' .$router->generate('ride-organizations'));
+		// If id doesn't exist, redirect to rides page
+		header('location: ' .$router->generate('rides-publicboard'));
 		
 		}
 	
 	} else {
 		
-		// If id is not set, redirect to my rides page
-		header('location: ' .$router->generate('ride-organizations'));
+		// If id is not set, redirect to rides page
+		header('location: ' .$router->generate('rides-publicboard'));
 		
 	}
 ?>

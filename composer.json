@@ -18,6 +18,7 @@
         "phayes/geophp": "^1.2",
         "abraham/twitteroauth": "^5.0",
         "vlucas/phpdotenv": "^5.4",
-        "tomsisbos/php-garmin-connect-api": "dev-master"
+        "tomsisbos/php-garmin-connect-api": "dev-master",
+        "stripe/stripe-php": "^10.20"
     }
 }
