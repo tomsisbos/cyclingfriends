@@ -16,7 +16,10 @@ class AdditionalFieldAnswer extends Model {
         $this->user_id  = $data['user_id'];
         $this->type     = $data['type'];
         if ($this->type == 'text') $this->content = $data['content'];
-        else $this->option = new AdditionalFieldOption($data['option_id']);
+        else {
+            $this->option = new AdditionalFieldOption($data['option_id']);
+            $this->content = $this->option->content;
+        }
     }
 
 }

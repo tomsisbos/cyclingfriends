@@ -24,13 +24,11 @@ $additionalFields.forEach($aField => {
 async function updateAmount (fieldId = null, optionId = null) {
     return new Promise((resolve, reject) => {
         let queryString = '/api/rides/amount.php' + "?ride=" + rideId
-        console.log(fieldId, optionId)
         if (fieldId) queryString += '&fieldId=' + fieldId + '&optionId=' + optionId
         
         var loader = new CircleLoader($amount, {compact: true})
         loader.start()
         ajaxGetRequest(queryString, async (amount) => {
-            console.log(amount)
             loader.stop()
             resolve(amount)
         })

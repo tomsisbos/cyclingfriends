@@ -2,13 +2,15 @@
 
 include '../actions/users/initPublicSession.php';
 include '../actions/rides/ride.php';
-include '../includes/head.php';
-include '../actions/rides/entry/process.php'; ?>
+include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/steps.css" />
+<link rel="stylesheet" href="/assets/css/stripe.css" />
+<script src="https://js.stripe.com/v3/"></script>
+<script src="/scripts/stripe/checkout.js" defer></script>
 
 <body> <?php
 
@@ -23,11 +25,7 @@ include '../actions/rides/entry/process.php'; ?>
 	$step = 3;
 	include '../includes/rides/entry/steps.php'; ?>
 
-	<div class="main container">
-        
-        エントリーが完了しました！メールを送信させて頂きました。（TEST）
-
-	</div>
+	<div class="main container" id="payment-message"></div>
 
 </body>
 </html>

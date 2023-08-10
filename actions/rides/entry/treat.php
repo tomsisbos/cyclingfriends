@@ -20,6 +20,9 @@ else $entry_data['birthdate'] = getConnectedUser()->birthdate;
 
 // Additional fields
 $a_fields = $ride->getAdditionalFields();
-foreach ($a_fields as $a_field) $entry_data['a_field_' .$a_field->id] = $_POST['a_field_' .$a_field->id];
+foreach ($a_fields as $a_field) {
+    $entry_data['a_field_' .$a_field->id] = $_POST['a_field_' .$a_field->id];
+    $entry_data['a_field_' .$a_field->id. '_type'] = $_POST['a_field_' .$a_field->id. '_type'];
+}
 
 $_SESSION['ride_entry_data_' .$ride->id] = $entry_data;

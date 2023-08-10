@@ -4,7 +4,6 @@ var selectGuide = document.querySelector('#selectGuide')
 var selectActivitiesContainer = document.querySelector('#selectActivitiesContainer')
 
 selectGuide.addEventListener('change', () => {
-    console.log('changed')
 
     var selectActivity = document.createElement('select')
     selectActivity.className = "form-select"

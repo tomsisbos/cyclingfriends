@@ -13,7 +13,7 @@ include '../actions/rides/entry/treat.php'; ?>
 <link rel="stylesheet" href="/assets/css/stripe.css" />
 <link rel="stylesheet" href="/assets/css/amount.css" />
 <script src="https://js.stripe.com/v3/"></script>
-<script src="/scripts/stripe/checkout.js" defer></script>
+<script src="/scripts/stripe/payment.js" defer></script>
 
 <body> <?php
 

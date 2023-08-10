@@ -8,7 +8,6 @@ var selectingContainer = document.querySelector('#selectingContainer')
 // Load posting schedule
 var scheduleLoader = new CircleLoader(scheduleContainer)
 ajaxGetRequest ("/api/admin/autoposting.php" + "?type=schedule&entry_type=scenery", async (entries) => {
-    console.log(entries)
 
     // If no entry has been found, display message
     if (entries.length == 0) scheduleContainer.innerText = 'スケジュールされている投稿はありません。'

@@ -75,8 +75,6 @@ export default class TempPopup extends Popup {
                 sceneryData.append('elevation', elevation)
                 
                 // Proceed AJAX request and treat data in the callback function
-                console.log(sceneryData)
-                console.log(elevation)
                 ajaxPostFormDataRequest(this.apiUrl, sceneryData, (response) => {
                     if (response.error) {
                         if (document.querySelector('.error-block')) document.querySelector('.error-block').remove()
