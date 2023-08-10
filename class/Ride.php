@@ -758,7 +758,26 @@ class Ride extends Model {
                 $insertReport->execute([$this->id, $entry_value]);
             }
         } else throw new Exception("Specified entry type '" .$entry_type. "' doesn't exist");
+    }
 
+    /**
+     * Calculate price for a specific user
+     * @param int $user_id
+     * @param Product[]|null $products If specified, array of products to add to this amount. If not specified, get products from registered ride additional fields answers
+     * @return int
+     */
+    public function calculateAmount ($user_id): Amount {
+    
+        $amount = new Amount();
+        $amount->addProduct($this->name. ' 参加費', $this->price);
+
+        // If products is not specified, get products from registered ride additional fields answers
+        foreach ($this->getAdditionalFields() as $a_field) {
+            $answer = $a_field->getAnswer($user_id);
+            if ($answer AND $answer->type == 'product') $amount->add($answer->option->product);
+        }
+    
+        return $amount;
     }
 
 }

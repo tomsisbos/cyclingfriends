@@ -64,7 +64,7 @@ include '../actions/rides/admin/forms.php' ?>
                                                     for ($i = 0; $i < count($options); $i++) { ?>
                                                         <div class="d-flex align-items-center rd-ad-options-block">
                                                             <div class="rd-ad-options-label"><?= $i + 1 ?>. </div>
-                                                            <input type="text" value="<?= $options[$i] ?>" class="form-control rd-ad-options-input" name="select_option_<?= $i + 1 ?>">
+                                                            <input type="text" value="<?= $options[$i]->content ?>" class="form-control rd-ad-options-input" name="select_option_<?= $i + 1 ?>">
                                                             <div class="btn smallbutton rd-ad-options-remove" id="removeOption<?= ($i + 1) ?>">x</div>
                                                         </div> <?php
                                                     } ?>
@@ -86,7 +86,7 @@ include '../actions/rides/admin/forms.php' ?>
                                                 for ($i = 0; $i < count($options); $i++) { ?>
                                                     <div class="rd-ad-form-option">
                                                         <div class="rd-ad-form-prefix">n°<?= $i + 1 ?></div>
-                                                        <div class="rd-ad-form-option-content"><?= $options[$i] ?></div>
+                                                        <div class="rd-ad-form-option-content"><?= $options[$i]->content ?></div>
                                                     </div> <?php
                                                 }
                                             } ?>

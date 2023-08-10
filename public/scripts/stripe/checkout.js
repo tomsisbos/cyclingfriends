@@ -1,11 +1,9 @@
 // This is your test publishable API key.
 const stripe = Stripe("pk_test_51NchR1IjJ2ELyWfBNtY0qlpT8tfIly7jajA6YJBCGNDIw8Ym0BHCy64eju21ohxiDkZRWDGNmtr3xu1rfJtmjSZL00GrFe1HIl")
-
-let parts = new URL(window.location).pathname.match(/[^\/]+/g)
-const rideId = parts.find(part => !isNaN(parseFloat(part)))
 const form = document.querySelector("#payment-form")
 const emailAddress = form.dataset.email
-let elements
+var ride_id = (new URL(window.location).pathname.match(/[^\/]+/g)).find(part => !isNaN(parseFloat(part)))
+var elements
 
 initialize()
 checkStatus()
@@ -14,10 +12,11 @@ form.addEventListener("submit", handleSubmit)
 
 // Fetches a payment intent and captures the client secret
 async function initialize() {
+
     const { clientSecret } = await fetch("/api/stripe/ride/create-payment-intent.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rideId),
+        body: JSON.stringify(ride_id),
     }).then((r) => r.json())
 
     elements = stripe.elements({ clientSecret })
@@ -41,7 +40,7 @@ async function handleSubmit(e) {
         elements,
         confirmParams: {
             // Make sure to change this to your payment completion page
-            return_url: "http://cyclingfriends.co:8080/ride/" + rideId + "/checkout",
+            return_url: "http://cyclingfriends.co:8080/ride/" + ride_id + "/checkout",
             receipt_email: emailAddress,
         },
     })

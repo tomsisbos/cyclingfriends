@@ -4,11 +4,11 @@
     // Name
     if (empty(getConnectedUser()->first_name) || empty(getConnectedUser()->last_name)) { ?>
         <div class="d-flex justify-content-between">
-            <div class="form-floating col-5 mb-3">
+            <div class="form-floating col-5 mt-3">
                 <input name="last_name" type="text" id="floatingLastName" placeholder="姓" class="form-control js-field"<?php if (isset($entry_data['last_name'])) echo ' value="' .$entry_data['last_name']. '"'?>>
                 <label class="form-label" for="floatingLastName">姓</label>
             </div>
-            <div class="form-floating col-5 mb-3">
+            <div class="form-floating col-5 mt-3">
                 <input name="first_name" type="text" id="floatingFirstName" placeholder="名" class="form-control js-field"<?php if (isset($entry_data['first_name'])) echo ' value="' .$entry_data['first_name']. '"'?>>
                 <label class="form-label" for="floatingFirstName">名</label>
             </div>

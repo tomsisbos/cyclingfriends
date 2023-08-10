@@ -43,34 +43,4 @@ if (isAjax()) {
             echo json_encode(['success' => $ride->name. 'への参加を取り消しました。エントリー期間中であれば、いつでもエントリーできます。']);		
         } else echo json_encode(['false' => $errormessage = $ride->name. 'への参加を既に取り消しています。']);
     }
-
-}
-
-// In case a Json request have been detected
-$json = file_get_contents('php://input'); // Get json file from xhr request
-$var = json_decode($json, true);
-
-if (is_array($var)) {
-
-    if ($var['type'] == 'post-answers') {
-        $data = $var['data'];
-        $ride_id = $var['id'];
-        foreach ($data as $answer) {
-            $field_id = $answer['id'];
-            $answer = $answer['answer'];
-            $field = new AdditionalField($field_id);
-            $field->setAnswer(getConnectedUser()->id, $answer);
-        }
-
-        // If connected user has not already joined,
-        $ride = new Ride($ride_id);
-        if (!$ride->isParticipating(getConnectedUser())) {
-            // If ride is not already full,
-            if (!$ride->isFull()) {
-                $ride->join(getConnectedUser());
-                echo json_encode(['success' => $ride->name. 'にエントリーしました！楽しいツアーになることは間違いありません！']);
-            } else json_encode(['error' => $ride->name. 'が既に定員に達成しています。']);
-        } else json_encode(['error' => $ride->name. 'に既にエントリーしています。']);
-    }
-
 }

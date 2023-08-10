@@ -3,10 +3,6 @@
     box-sizing: border-box;
 }
 
-form {
-    padding: 40px;
-}
-
 .hidden {
     display: none;
 }

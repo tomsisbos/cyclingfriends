@@ -7,27 +7,17 @@ $stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST');
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 
-function calculateOrderAmount ($ride_id): int {
-
-    $ride = new Ride($ride_id);
-    
-    $ride_price = $ride->price;
-
-    $total_amount = $ride_price;
-
-    return $total_amount;
-}
-
 header('Content-Type: application/json');
 
 try {
     // retrieve JSON from POST body
     $json = file_get_contents('php://input');
     $ride_id = json_decode($json);
+    $ride = new Ride($ride_id);
 
     // Create a PaymentIntent with amount and currency
     $paymentIntent = \Stripe\PaymentIntent::create([
-        'amount' => calculateOrderAmount($ride_id),
+        'amount' => $ride->calculateAmount(getConnectedUser()->id)->total,
         'currency' => 'jpy',
         'automatic_payment_methods' => [
             'enabled' => true,

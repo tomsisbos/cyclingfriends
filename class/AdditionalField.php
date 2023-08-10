@@ -15,22 +15,23 @@ class AdditionalField extends Model {
         $this->ride_id  = $data['ride_id'];
         $this->question = $data['question'];
         $this->type     = $data['type'];
-        if ($this->type == 'select') $this->options = $this->getOptions();
+        if ($this->type == 'select' || $this->type == 'product') $this->options = $this->getOptions();
     }
 
     public function getTypeString () {
         switch ($this->type) {
             case 'text': return '質問式';
             case 'select': return '選択式';
+            case 'product': return '購入式';
         }
     }
 
     public function getAnswers () {
         $getAnswers = $this->getPdo()->prepare('SELECT id FROM ride_additional_field_answers WHERE field_id = ?');
         $getAnswers->execute(array($this->id));
-        $entries = $getAnswers->fetchAll(PDO::FETCH_ASSOC);
+        $ids = $getAnswers->fetchAll(PDO::FETCH_COLUMN);
         $answers = [];
-        foreach ($entries as $entry) array_push($answers, new AdditionalFieldAnswer($entry['id']));
+        foreach ($ids as $id) array_push($answers, new AdditionalFieldAnswer($id));
         return $answers;
     }
 
@@ -42,18 +43,30 @@ class AdditionalField extends Model {
         return false;
     }
 
-    public function setAnswer ($user_id, $answer) {
-        $insertAnswer = $this->getPdo()->prepare('INSERT INTO ride_additional_field_answers(field_id, user_id, content) VALUES (?, ?, ?)');
-        $insertAnswer->execute(array($this->id, $user_id, $answer));
+    /**
+     * @param int $user_id
+     * @param string $type text | select | product
+     * @param int|string $data string (content) if text, int (option id) if select or product
+     */
+    public function setAnswer ($user_id, $type, $data) {
+        if ($type == 'text') $parameter = 'content';
+        else $parameter = 'option_id';
+        if ($this->getAnswer($user_id)) {
+            $updateAnswer = $this->getPdo()->prepare("UPDATE ride_additional_field_answers SET {$parameter} = ? WHERE field_id = ? AND user_id = ?");
+            $updateAnswer->execute([$data, $this->id, $user_id]);
+        } else {
+            $insertAnswer = $this->getPdo()->prepare("INSERT INTO ride_additional_field_answers(field_id, user_id, type, {$parameter}) VALUES (?, ?, ?, ?)");
+            $insertAnswer->execute(array($this->id, $user_id, $type, $data));
+        }
         return true;
     }
 
     public function getOptions () {
-        $getOptions = $this->getPdo()->prepare('SELECT content FROM ride_additional_field_options WHERE field_id = ? ORDER BY number ASC');
+        $getOptions = $this->getPdo()->prepare('SELECT id FROM ride_additional_field_options WHERE field_id = ? ORDER BY number ASC');
         $getOptions->execute(array($this->id));
         $options = [];
         if ($getOptions->rowCount() > 0) {
-            while ($option = $getOptions->fetch(PDO::FETCH_ASSOC)) array_push($options, $option['content']);
+            while ($id = $getOptions->fetch(PDO::FETCH_COLUMN)) array_push($options, new AdditionalFieldOption($id));
         }
         return $options;
     }

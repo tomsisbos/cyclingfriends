@@ -11,6 +11,7 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/ride.css" />
 <link rel="stylesheet" href="/assets/css/steps.css" />
+<link rel="stylesheet" href="/assets/css/amount.css" />
 
 <body> <?php
 
@@ -50,6 +51,9 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
                 // Entry form
                 if (getConnectedUser()) include '../includes/rides/entry/member-form.php';
                 else include '../includes/rides/entry/guest-form.php';
+                
+                // Amount display
+                if (getConnectedUser()) include '../includes/rides/entry/amount.php';
                 
                 // Submit button ?>
                 <div class="container mt-3 d-flex gap"> <?php
