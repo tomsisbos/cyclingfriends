@@ -43,7 +43,7 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
             include '../includes/rides/entry/steps.php';
 
             // If guest user has created accound, display announce for mail validation
-            if (!getConnectedUser() && (isset($_POST) && !empty($_POST))) include '../includes/rides/entry/waiting-for-verification.php';
+            if (!getConnectedUser() && isset($user->id)) include '../includes/rides/entry/waiting-for-verification.php';
 
             // On any other case, show entry form
             else {

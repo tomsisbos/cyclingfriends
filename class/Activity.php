@@ -144,8 +144,13 @@ class Activity extends Model {
 
     public function getPlace () {
         $checkpoints = $this->getCheckpoints();
-        $start = $checkpoints[0]->geolocation;
-        $goal = $checkpoints[count($checkpoints) - 1]->geolocation;
+        if (isset($checkpoints[0])) {
+            $start = $checkpoints[0]->geolocation;
+            $goal = $checkpoints[count($checkpoints) - 1]->geolocation;
+        } else {
+            $start = new Geolocation('', '');
+            $goal = new Geolocation('', '');
+        }
         return ['start' => $start, 'goal' => $goal];
     }
 

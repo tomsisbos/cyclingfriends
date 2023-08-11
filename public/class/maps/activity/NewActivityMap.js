@@ -355,7 +355,7 @@ export default class NewActivityMap extends ActivityMap {
                                     stopIfFinished(number, filesLength, currentPhotosNumber)
 
                                 } else {
-                                    showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。<br>' + startDatetime + ' < ' + dateOriginal + ' < ' + endDatetime})
+                                    showResponseMessage({error: '\"' + files[i].name + '\"はアクティビティ中に撮影された写真ではありません。'})///<br>' + startDatetime + ' < ' + dateOriginal + ' < ' + endDatetime})
                                     filesLength--
                                     stopIfFinished(number, filesLength, currentPhotosNumber)
                                 }

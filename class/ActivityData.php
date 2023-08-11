@@ -235,16 +235,18 @@ class ActivityData extends Model {
                 if (isset($checkpoint['geolocation'])) {
                     $checkpoint['city'] = $checkpoint['geolocation']['city'];
                     $checkpoint['prefecture'] = $checkpoint['geolocation']['prefecture'];
-                } else {
-                    $checkpoint['city'] = null;
-                    $checkpoint['prefecture'] = null;
+                } else { // If geolocation was not set previously, try to set it again
+                    if ($checkpoint['type'] == 'Start') $geolocation = $this->linestring->coordinates[0]->queryGeolocation();
+                    else if ($checkpoint['type'] == 'Goal') $geolocation = $this->linestring->coordinates[$this->linestring->length - 1]->queryGeolocation();
+                    $checkpoint['city'] = $geolocation->city;
+                    $checkpoint['prefecture'] = $geolocation->prefecture;
                 }
                 $checkpoint['datetime'] = (new DateTime('@' .$checkpoint['datetime']))->setTimezone(new DateTimeZone('Asia/Tokyo')); // Change timestamp to datetime instance
                 return $checkpoint;
             }, $editable_data['checkpoints']);
-        }
+        
         // Else, build start and goal checkpoints from scratch
-        else {
+        } else {
             $checkpoints_data = [
                 [
                     'number' => 0,
