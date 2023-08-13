@@ -1,6 +1,25 @@
 <?php
 
 include '../actions/users/initPublicSession.php';
+
+
+require '../actions/database.php';
+$getOfficialRides = $db->prepare("SELECT id FROM rides WHERE privacy = 'public' AND author_id IN (SELECT id FROM users WHERE rights = 'administrator') ORDER BY date > NOW() DESC, date ASC");
+$getOfficialRides->execute();
+$rides = array_map(function ($id) {
+    return new Ride($id);
+}, $getOfficialRides->fetchAll(PDO::FETCH_COLUMN));
+
+
+
+
+
+
+
+
+
+
+
 require '../actions/rides/official.php';
 include '../includes/head.php'; ?>
 
@@ -37,11 +56,11 @@ include '../includes/head.php'; ?>
             <div class="rd-cd-hr"></div><?php
             foreach ($rides as $ride) {
                 $date = new DateTime($ride->date); ?>
-                <div class="rd-cd-td cd-status <?= $ride->getStatusClass() ?>"><?= $ride->status ?></div>
+                <div class="rd-cd-td cd-status <?= $ride->getStatusClass() ?>"><?= $ride->getStatus()['status'] ?></div>
                 <div class="rd-cd-td cd-year"><?= $date->format('Y') ?></div>
                 <div class="rd-cd-td cd-month"><?= $date->format('m') ?></div>
                 <div class="rd-cd-td cd-day"><?= $date->format('d'). '（' .getWeekDay($date). '）' ?></div>
-                <a class="rd-cd-td cd-title <?php
+                <a class="rd-cd-td cd-title <?php 
                     if ($ride->hasFeaturedImage()) echo 'with-img' ?>" <?php
                     if ($ride->hasFeaturedImage()) echo ' style="--bg-image: url(' .$ride->getFeaturedImage()->url. ');"' ?> 
                     href="<?= $router->generate('ride-single', ['ride_id' => $ride->id]) ?>">

@@ -65,7 +65,7 @@
             </div>
             <div class="rd-section-entry <?= $ride->getStatusClass(); ?>">
                 <span style="vertical-align: -webkit-baseline-middle;">
-                    <?= '<strong>Entry : </strong>' .$ride->status;
+                    <?= '<strong>Entry : </strong>' .$ride->getStatus()['status'];
 			        $current_date = new DateTimeImmutable('now', new DateTimezone('Asia/Tokyo'));                    
                     if ($ride->entry_start > $current_date->format('Y-m-d')) {
                         if (nbDaysLeftToDate($ride->entry_start) == 1) echo '<br><div class="xsmallfont">明日開始</div>';

@@ -32,8 +32,6 @@ class Ride extends Model {
     public $privacy;
     public $entry_start;
     public $entry_end;
-    public $status;
-    public $substatus;
     public $lngLatFormat;
     public $price;
     
@@ -69,8 +67,6 @@ class Ride extends Model {
         $this->entry_end                               = $data['entry_end'];
         if (isset($data['route_id'])) $this->route_id  = $data['route_id'];
         $this->lngLatFormat                            = $lngLatFormat;
-        $this->status                                  = $this->getStatus()['status'];
-        $this->substatus                               = $this->getStatus()['substatus'];
         $this->price                                   = intval($data['price']);
     }
 
@@ -443,7 +439,7 @@ class Ride extends Model {
         } else return true;
     }
 
-    private function getStatus () {
+    public function getStatus () {
         $substatus = NULL; // Set substatus to NULL for preventing errors in case of no substatus set
         $current_date = new DateTime('now', new DateTimezone('Asia/Tokyo'));
         
@@ -503,8 +499,7 @@ class Ride extends Model {
     }
 
     public function getStatusClass () {
-        switch ($this->status)
-        {
+        switch ($this->getStatus()['status']) {
             case '非公開' : // red
                 return 'rd-status-red';
                 break;
