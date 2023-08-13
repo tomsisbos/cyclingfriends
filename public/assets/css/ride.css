@@ -744,7 +744,7 @@ h3 {
 .rd-calendar {
     margin-top: 50px;
     display: grid;
-    grid-template-columns: auto 50px 28px 70px repeat(5, auto);
+    grid-template-columns: auto 50px 28px 70px repeat(4, auto);
     text-align: center;
     grid-gap: 16px 0px;
 }
@@ -807,7 +807,7 @@ h3 {
     .rd-cd-th, .rd-cd-hr {
         display: none;
     }
-    .rd-cd-td:nth-child(9n +1) {
+    .rd-cd-td:nth-child(8n +1) {
         margin-bottom: 30px;
         padding-bottom: 30px;
     }

@@ -1,25 +1,6 @@
 <?php
 
 include '../actions/users/initPublicSession.php';
-
-
-require '../actions/database.php';
-$getOfficialRides = $db->prepare("SELECT id FROM rides WHERE privacy = 'public' AND author_id IN (SELECT id FROM users WHERE rights = 'administrator') ORDER BY date > NOW() DESC, date ASC");
-$getOfficialRides->execute();
-$rides = array_map(function ($id) {
-    return new Ride($id);
-}, $getOfficialRides->fetchAll(PDO::FETCH_COLUMN));
-
-
-
-
-
-
-
-
-
-
-
 require '../actions/rides/official.php';
 include '../includes/head.php'; ?>
 
@@ -52,7 +33,6 @@ include '../includes/head.php'; ?>
             <div class="rd-cd-th">場所</div>
             <div class="rd-cd-th">距離</div>
             <div class="rd-cd-th">地形</div>
-            <div class="rd-cd-th">ガイド</div>
             <div class="rd-cd-hr"></div><?php
             foreach ($rides as $ride) {
                 $date = new DateTime($ride->date); ?>
@@ -68,11 +48,7 @@ include '../includes/head.php'; ?>
                 </a>
                 <div class="rd-cd-td cd-place"><?= $ride->meeting_place ?></div>
                 <div class="rd-cd-td cd-distance"><?= $ride->distance. ' km' ?></div>
-                <div class="rd-cd-td cd-terrain"><?= $ride->getTerrainIcon() ?></div>
-                <div class="rd-cd-td cd-guides"><?php
-                    if (count($ride->getGuides()) > 0) echo '<div class="cd-guides-label">ガイド：</div>';
-                    foreach ($ride->getGuides() as $guide) $guide->getPropicElement(30, 30) ?>
-                </div> <?php
+                <div class="rd-cd-td cd-terrain"><?= $ride->getTerrainIcon() ?></div> <?php
             } ?>
         </div> <?php
 
