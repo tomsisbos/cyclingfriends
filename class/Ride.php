@@ -773,6 +773,18 @@ class Ride extends Model {
     }
 
     /**
+     * Check if any payment is necessary for this tour
+     * @return boolean
+     */
+    public function isFree () {
+        if (isset($this->price) && $this->price > 0) return false;
+        else {
+            foreach ($this->getAdditionalFields() as $a_field) if ($a_field->type == 'product') return false;
+            return true;
+        }
+    }
+
+    /**
      * Calculate price for a specific user
      * @param int $user_id
      * @param Product[]|null $products If specified, array of products to add to this amount. If not specified, get products from registered ride additional fields answers

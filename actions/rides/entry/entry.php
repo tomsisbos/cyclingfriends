@@ -8,7 +8,7 @@ if (!$ride->isParticipating(getConnectedUser())) {
     if (isset($_SESSION['ride_entry_data_' .$ride->id])) $entry_data = $_SESSION['ride_entry_data_' .$ride->id];
 
     // Pre populate entry data using post global variable (if newly create account)
-    else if (!empty($_POST)) {
+    else if (!empty($_POST) && !isset($_POST['free'])) {
         $entry_data = [
             'email' => $_POST['email'],
             'login' => $_POST['login'],

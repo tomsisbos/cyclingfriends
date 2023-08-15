@@ -33,7 +33,7 @@ if ($endpoint_secret) {
         $event = \Stripe\Webhook::constructEvent(
         $payload, $sig_header, $endpoint_secret
         );
-    } catch(\Stripe\Exception\SignatureVerificationException $e) {
+    } catch (\Stripe\Exception\SignatureVerificationException $e) {
         // Invalid signature
         echo '⚠️ Webhook error while validating signature.';
         http_response_code(400);
