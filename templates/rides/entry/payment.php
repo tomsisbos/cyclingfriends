@@ -40,7 +40,7 @@ include '../actions/rides/entry/payment.php'; ?>
                 <p><strong>姓名：</strong><?= $entry_data['last_name'] .' '. $entry_data['first_name'] ?></p>
                 <p><strong>生年月日：</strong><?= $entry_data['birthdate'] ?></p>
                 <p><strong>メールアドレス：</strong><?= $entry_data['email'] ?></p>
-                <p><strong>緊急時連絡先</strong><?= $entry_data['email'] ?></p> <?php
+                <p><strong>緊急時連絡先：</strong><?= $entry_data['emergency_number'] ?></p> <?php
                 foreach ($ride->getAdditionalFields() as $a_field) echo '<p><strong>' .$a_field->question. '：</strong>' .(new AdditionalFieldOption($entry_data['a_field_' .$a_field->id]))->content; ?>
                 <p>修正したい情報がある場合は、<a href="<?= $router->generate('profile-edit') ?>">プロフィールページ</a>より編集してください。</p>
             </div> <?php
