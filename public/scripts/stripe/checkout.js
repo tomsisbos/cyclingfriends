@@ -17,7 +17,7 @@ async function checkStatus() {
 
     const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret)
 
-    switch (paymentIntent.status) {
+    /*switch (paymentIntent.status) {
         case "succeeded":
             showMessage("決済手続きが完了しました！")
             break
@@ -30,7 +30,7 @@ async function checkStatus() {
         default:
             showMessage("エラーが発生しました。")
             break
-    }
+    }*/
 }
 
 // ------- UI helpers -------

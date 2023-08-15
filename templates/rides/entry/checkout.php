@@ -8,6 +8,7 @@ include '../includes/head.php'; ?>
 <html lang="en">
 
 <link rel="stylesheet" href="/assets/css/steps.css" />
+<link rel="stylesheet" href="/assets/css/ride.css" />
 <link rel="stylesheet" href="/assets/css/stripe.css" />
 <script src="https://js.stripe.com/v3/"></script>
 <script src="/scripts/stripe/checkout.js" defer></script>
@@ -27,14 +28,12 @@ include '../includes/head.php'; ?>
 
 	<div class="main container">
 
-		<div class="success-block">
-			<div class="success-message" id="payment-message"></div>
-		</div>
+		<h3>手続き完了</h3>
 
 		<p><?= $ride->name ?>へエントリー頂き、ありがとうございます！</p>
 		<p>ご登録頂きましたメールアドレス宛にエントリー内容を送信させて頂きました。</p>
 
-		<div class="d-flex justify-space-evenly"><a href="<?= $router->generate('ride-single', ['ride_id' => $ride->id]) ?>"><button class="btn button">ツアーページへ戻る</button></div>
+		<div class="mt-3 d-flex justify-content-evenly"><a href="<?= $router->generate('ride-single', ['ride_id' => $ride->id]) ?>"><button class="btn button">ツアーページへ戻る</button></div>
 	
 	</div>
 
