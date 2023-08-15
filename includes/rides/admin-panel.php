@@ -55,6 +55,14 @@
 				// If there is no data in the table, set default date to ride's previous day
 				else echo $oneDayBeforeRide->format('Y-m-d'); ?>" min="<?php if (isset($ride->entry_start)) { echo $ride->entry_start; } ?>" max="<?= $oneDayBeforeRide->format('Y-m-d') ?>">
 			</div>
+
+			<div>
+				<label class="form-label">エントリー料金</label>
+				<input type="number" class="admin-field" name="price" value="<?php
+					if (isset($ride->price) && $ride->price > 0) echo $ride->price;
+					else echo 0;
+				?>"></input>
+			</div>
 		</div>
 		
 		<div class="push flex-end">

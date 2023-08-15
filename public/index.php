@@ -97,9 +97,9 @@ $router->map('GET', '/ride/participations', 'rides/participations', 'ride-partic
 $router->map('GET', '/ride/[i:ride_id]/route', 'routes/single', 'ride-route');
 $router->map('GET|POST', '/ride/[i:ride_id]/signup', 'rides/signup', 'rides-signup');
 $router->map('GET', '/rides/calendar', 'rides/calendar', 'rides-calendar');
-$router->map('GET|POST', '/ride/[i:ride_id]/entry', 'rides/entry', 'ride-entry');
-$router->map('GET|POST', '/ride/[i:ride_id]/payment', 'rides/payment', 'ride-payment');
-$router->map('GET', '/ride/[i:ride_id]/checkout', 'rides/checkout', 'ride-checkout');
+$router->map('GET|POST', '/ride/[i:ride_id]/entry', 'rides/entry/entry', 'ride-entry');
+$router->map('GET|POST', '/ride/[i:ride_id]/payment', 'rides/entry/payment', 'ride-payment');
+$router->map('GET', '/ride/[i:ride_id]/checkout', 'rides/entry/checkout', 'ride-checkout');
 
 // Community
 $router->map('GET', '/community', 'community/community', 'community');

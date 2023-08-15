@@ -39,7 +39,7 @@ async function handleSubmit(e) {
         elements,
         confirmParams: {
             // Make sure to change this to your payment completion page
-            return_url: "http://cyclingfriends.co:8080/ride/" + ride_id + "/checkout",
+            return_url: "https://cyclingfriends-preprod.azurewebsites.net/ride/" + ride_id + "/checkout",
             receipt_email: emailAddress,
         },
     })

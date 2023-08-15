@@ -10,6 +10,7 @@ if (isset($entry_data) && !empty($entry_data)) {
     if (!isset($entry_data['last_name']) || empty($entry_data['last_name'])) array_push($missing, '姓');
     if (!isset($entry_data['first_name']) || empty($entry_data['first_name'])) array_push($missing, '名');
     if (!isset($entry_data['birthdate']) || empty($entry_data['birthdate'])) array_push($missing, '生年月日');
+    if (!isset($entry_data['emergency_number']) || empty($entry_data['emergency_number'])) array_push($missing, '緊急連絡先');
 
     // If missing fields have been detected, display an error message
     if (!empty($missing)) $errormessage = '記入漏れがあります。次の項目をご確認ください：' .implode('、', $missing);
@@ -26,6 +27,7 @@ if (isset($entry_data) && !empty($entry_data)) {
             $user->update('last_name', htmlspecialchars($entry_data['last_name']));
             $user->update('first_name', htmlspecialchars($entry_data['first_name']));
             $user->update('birthdate', $entry_data['birthdate']);
+            $user->update('emergency_number', $entry_data['emergency_number']);
 
             // Set success message
             $successmessage = '登録のメールアドレスに確認用のメールを送信しました。アカウント作成を完了するためには、そのメール内にある確認用URLをクリックしてください。';

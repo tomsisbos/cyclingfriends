@@ -24,6 +24,10 @@ if (isset($_POST['save'])) {
 		$updateEntryEndInfos->execute(array($_POST['entry_end'], $ride->id));
 		if (is_array($ride->getParticipants())) foreach ($ride->getParticipants() as $participant_id) $ride->notify($participant_id, 'ride_entry_end_change');
 	}
+
+	if (isset($_POST['price'])) {
+		$ride->setPrice(intval($_POST['price']));
+	}
 	
 		$successmessage = '変更が保存されました。';
 

@@ -53,4 +53,4 @@ if (isSessionActive()) {
 	
 // Script ?>
 
-<script type="module" src="/scripts/rides/join.js"></script>
+<script type="module" src="/scripts/rides/quit.js"></script>

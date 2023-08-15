@@ -3,7 +3,7 @@
 include '../actions/users/initPublicSession.php';
 include '../actions/rides/ride.php';
 include '../includes/head.php';
-include '../actions/rides/entry/treat.php'; ?>
+include '../actions/rides/entry/payment.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,12 +35,14 @@ include '../actions/rides/entry/treat.php'; ?>
             $step = 2;
             include '../includes/rides/entry/steps.php'; ?>
 
-            <div class="container mt-3">
+            <div class="container d-flex flex-column gap-6 mt-3">
                 <h3>エントリー情報</h3>
                 <p><strong>姓名：</strong><?= $entry_data['last_name'] .' '. $entry_data['first_name'] ?></p>
                 <p><strong>生年月日：</strong><?= $entry_data['birthdate'] ?></p>
-                <p><strong>メールアドレス：</strong><?= $entry_data['email'] ?></p> <?php
+                <p><strong>メールアドレス：</strong><?= $entry_data['email'] ?></p>
+                <p><strong>緊急時連絡先</strong><?= $entry_data['email'] ?></p> <?php
                 foreach ($ride->getAdditionalFields() as $a_field) echo '<p><strong>' .$a_field->question. '：</strong>' .(new AdditionalFieldOption($entry_data['a_field_' .$a_field->id]))->content; ?>
+                <p>修正したい情報がある場合は、<a href="<?= $router->generate('profile-edit') ?>">プロフィールページ</a>より編集してください。</p>
             </div> <?php
                 
             // Amount display

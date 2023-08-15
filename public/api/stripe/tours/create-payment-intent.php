@@ -10,10 +10,18 @@ $stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST');
 header('Content-Type: application/json');
 
 try {
-    // retrieve JSON from POST body
+    // Retrieve ride id from POST body
     $json = file_get_contents('php://input');
     $ride_id = json_decode($json);
     $ride = new Ride($ride_id);
+
+    // Retrieve entry data from session
+    $entry_data = $_SESSION['ride_entry_data_' .$ride->id];
+    $metadata = [
+        'ride_id' => $ride_id,
+        'user_id' => getConnectedUser()->id
+    ];
+    foreach ($entry_data as $key => $value) $metadata[$key] = $value;
 
     // Create a PaymentIntent with amount and currency
     $paymentIntent = \Stripe\PaymentIntent::create([
@@ -22,6 +30,7 @@ try {
         'automatic_payment_methods' => [
             'enabled' => true,
         ],
+        'metadata' => $metadata
     ]);
 
     $output = [

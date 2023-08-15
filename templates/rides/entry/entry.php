@@ -3,7 +3,7 @@
 include '../actions/users/initPublicSession.php';
 include '../actions/rides/ride.php';
 include '../includes/head.php';
-include '../actions/rides/entry/populate.php';
+include '../actions/rides/entry/entry.php';
 if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
 
 <!DOCTYPE html>
@@ -51,6 +51,18 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
                 // Entry form
                 if (getConnectedUser()) include '../includes/rides/entry/member-form.php';
                 else include '../includes/rides/entry/guest-form.php';
+
+                // Tours contract ?>
+                <div class="container mt-3">
+                    <h3>ツアー規約</h3>
+                    <div class="popup-contract"><?php
+                        include '../public/api/rides/contract.html'; ?>
+                    </div>
+                    <div class="form-floating justify-center d-flex gap mb-3">
+                        <input type="checkbox" name="agreement" id="agreement" class="js-field">
+                        <p class="required">ツアー規約をすべて読み、同意します</p>
+                    </div>
+                </div> <?php
                 
                 // Amount display
                 if (getConnectedUser()) include '../includes/rides/entry/amount.php';

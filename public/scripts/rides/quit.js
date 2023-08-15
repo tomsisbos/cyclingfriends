@@ -23,7 +23,7 @@ if (quitButton) {
             ajaxGetRequest(apiUrl + "?quit=" + rideId, async (response) => {
                 loader.stop()
                 showResponseMessage(response)
-                window.location.href = "/ride/participations"
+                window.location.href = window.location.href
             })
         }
     })

@@ -27,5 +27,10 @@ include '../includes/head.php'; ?>
 
 	<div class="main container" id="payment-message"></div>
 
+	<p><?= $ride->name ?>へエントリー頂き、ありがとうございます！</p>
+	<p>ご登録頂きましたメールアドレス宛にエントリー内容を送信させて頂きました。</p>
+
+	<div class="d-flex justify-space-evenly"><a href="<?= $router->generate('ride-single', ['ride_id' => $ride->id]) ?>"><button class="btn button">ツアーページへ戻る</button></div>
+
 </body>
 </html>

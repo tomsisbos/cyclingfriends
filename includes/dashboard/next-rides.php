@@ -25,11 +25,10 @@ $getRides->execute(array(":level" => getConnectedUser()->level, ":today" => $tod
 
 <div class="dashboard-cards"> <?php
     while ($data = $getRides->fetch(PDO::FETCH_ASSOC)) {
-        $ride = new Ride($data['id']);
-        $featured_image = $ride->getFeaturedImage(); ?>
+        $ride = new Ride($data['id']); ?>
         <div class="rd-card">
             <a href="/ride/<?= $ride->id ?>">
-                <div class="rd-header" style="background-image: url(data:image/jpeg;base64,<?= $featured_image['img']; ?>); background-color: lightgrey">
+                <div class="rd-header" style="background-image: url(<?= $ride->getFeaturedImage()->url ?>); background-color: lightgrey">
                     <div class="rd-title"><?= $ride->name ?></div>
                     <div class="rd-date"><?= $ride->date ?></div>
                 </div>

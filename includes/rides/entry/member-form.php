@@ -23,6 +23,14 @@
         </div> <?php
     } 
 
+    // Emergency number
+    if (!getConnectedUser()->emergency_number) { ?>
+        <div class="form-floating mt-3">
+            <input name="emergency_number" type="tel" class="form-control js-field" id="floatingEmergencyNumber"<?php if (isset($entry_data['emergency_number'])) echo ' value="' .$entry_data['emergency_number']. '"'?>>
+            <label class="form-label" for="floatingEmergencyNumber">緊急時連絡先</label>
+        </div> <?php
+    } 
+
     // Additional fields
     include '../includes/rides/entry/additional-fields.php'; ?>
 </div>

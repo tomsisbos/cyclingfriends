@@ -165,6 +165,9 @@ class Notification extends Model {
                 $this->text = 'エントリーしている「' .$entry->name. '」のエントリー締切日が主催者によって' .$entry->entry_end. 'に変更されました。';
                 $this->ref = 'ride/' .$entry->id;
                 break;
+            case 'ride_payment_failed':
+                $this->text = '決済が失敗したため、「' .$entry->name. '」へのエントリーを付け付けることができませんでした。大変お手数ですが、決済方法をご確認頂きますようお願い致します。';
+                $this->ref = 'ride/' .$entry->id;
             // Dev notes
             case 'new_devnote':
                 $this->text = '新しい開発ノートが「' .$entry->title. '」というタイトルで投稿されました。';

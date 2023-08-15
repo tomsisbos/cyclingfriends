@@ -261,71 +261,72 @@ class Ride extends Model {
      * @param User $participant
      */
     public function join ($participant) {
-        /*// Add a line into participation database
-        $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
-        $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
+        if (!$this->isParticipating($participant)) {
+            // Add a line into participation database
+            $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
+            $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
 
-        // Prepare additional fields data*/
-        $additional_fields = $this->getAdditionalFields();
-        $additional_fields_li = '';
-        foreach ($additional_fields as $additional_field) {
-            if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
+            // Prepare additional fields data*/
+            $additional_fields = $this->getAdditionalFields();
+            $additional_fields_li = '';
+            foreach ($additional_fields as $additional_field) {
+                if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
+            }
+
+            // Get origin
+            if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
+            else if (array_key_exists('HTTP_REFERER', $_SERVER)) $origin = parse_url($_SERVER['HTTP_REFERER'])['scheme'] . '://' . parse_url($_SERVER['HTTP_REFERER'])['host'];
+            else $origin = $_SERVER['REQUEST_SCHEME'] . '://' .$_SERVER['HTTP_HOST'];
+
+            // Send confirmation email
+            $email = new Mail();
+            $email->setFrom(
+                'contact@cyclingfriends.co',
+                'CyclingFriends'
+            );
+            $email->setSubject($this->date. ' ' .$this->name. '【エントリー情報】');
+            $email->addTo($participant->email);
+            $email->addContent(
+                'text/html',
+                '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
+                <p>エントリー情報及びツアー情報は、下記の通りご確認頂けます。</p>
+                <p>【ツアー情報】</p>
+                <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>
+                <p>【エントリー情報】</p>
+                姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
+                性別：' .$participant->getGenderString(). '<br>
+                生年月日：' .$participant->birthdate. '<br>'
+                    .$additional_fields_li.
+                '<br><p>現在エントリーしているツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
+            );
+            $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+            $response = $sendgrid->send($email);
+
+            // Send mail to guides and admin
+            $getAdmins = $this->getPdo()->prepare("SELECT id FROM users WHERE rights = 'administrator'");
+            $getAdmins->execute();
+            $admin_ids = $getAdmins->fetchAll(PDO::FETCH_COLUMN);
+            $to_email = [];
+            foreach ($this->getGuides() as $guide) array_push($to_email, new User($guide->id));
+            foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
+            foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【新規エントリー】',
+                '<p>' .$this->date. ' 開催予定の「' .$this->name. '」に下記の通り新規エントリーがありましたので、お知らせします。</p>
+                <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名になりました。</p>
+                <p>---</p>
+                <p>【エントリー情報】</p>
+                ユーザーネーム：' .$participant->login. '<br>
+                メールアドレス：' .$participant->email. '<br>
+                姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
+                性別：' .$participant->getGenderString(). '<br>
+                生年月日：' .$participant->birthdate. '<br>'
+                    .$additional_fields_li. '
+                <p>---</p>
+                <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>'
+            );
+
+            // Set notification
+            $this->notify($this->author_id, 'ride_join', $participant->id);
         }
-
-        // Get origin
-        if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
-        else $origin = parse_url($_SERVER['HTTP_REFERER'])['scheme'] . '://' . parse_url($_SERVER['HTTP_REFERER'])['host'];
-
-        // Send confirmation email
-        $email = new Mail();
-        $email->setFrom(
-            'contact@cyclingfriends.co',
-            'CyclingFriends'
-        );
-        $email->setSubject($this->date. ' ' .$this->name. '【エントリー情報】');
-        $email->addTo($participant->email);
-        $email->addContent(
-            'text/html',
-            '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
-            <p>エントリー情報及びツアー情報は、下記の通りご確認頂けます。</p>
-            <p>【ツアー情報】</p>
-            <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>
-            <p>【エントリー情報】</p>
-            姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
-            性別：' .$participant->getGenderString(). '<br>
-            生年月日：' .$participant->birthdate. '<br>'
-                .$additional_fields_li.
-            '<br><p>現在エントリーしているツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
-        );
-        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
-        $response = $sendgrid->send($email);
-        
-        /*
-
-        // Send mail to guides and admin
-        $getAdmins = $this->getPdo()->prepare("SELECT id FROM users WHERE rights = 'administrator'");
-        $getAdmins->execute();
-        $admin_ids = $getAdmins->fetchAll(PDO::FETCH_COLUMN);
-        $to_email = [];
-        foreach ($this->getGuides() as $guide) array_push($to_email, new User($guide->id));
-        foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
-        foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【新規エントリー】',
-            '<p>' .$this->date. ' 開催予定の「' .$this->name. '」に下記の通り新規エントリーがありましたので、お知らせします。</p>
-            <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名になりました。</p>
-            <p>---</p>
-            <p>【エントリー情報】</p>
-            ユーザーネーム：' .$participant->login. '<br>
-            メールアドレス：' .$participant->email. '<br>
-            姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
-            性別：' .$participant->getGenderString(). '<br>
-            生年月日：' .$participant->birthdate. '<br>'
-                .$additional_fields_li. '
-            <p>---</p>
-            <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>'
-        );
-
-        // Set notification
-        $this->notify($this->author_id, 'ride_join', $participant->id);*/
     }
 
     /**
@@ -760,6 +761,15 @@ class Ride extends Model {
                 $insertReport->execute([$this->id, $entry_value]);
             }
         } else throw new Exception("Specified entry type '" .$entry_type. "' doesn't exist");
+    }
+
+    /**
+     * Update ride price
+     * @param int $price
+     */
+    public function setPrice ($price) {
+		$updatePrice = $this->getPdo()->prepare('UPDATE rides SET price = ? WHERE id = ?');
+		$updatePrice->execute(array($price, $this->id));
     }
 
     /**

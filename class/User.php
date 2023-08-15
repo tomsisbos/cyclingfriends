@@ -19,6 +19,7 @@ class User extends Model {
     public $last_name;
     public $gender;
     public $birthdate;
+    public $emergency_number;
     public $place;
     public $lngLat;
     public $level;
@@ -49,6 +50,7 @@ class User extends Model {
         $this->last_name                 = $data['last_name'];
         $this->gender                    = $data['gender'];
         $this->birthdate                 = $data['birthdate'];
+        $this->emergency_number          = $data['emergency_number'];
         $this->location                  = new Geolocation($data['city'], $data['prefecture']);
         $this->lngLat                    = $this->getLngLat();
         $this->level                     = $data['level'];

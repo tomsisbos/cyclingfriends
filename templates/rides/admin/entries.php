@@ -33,7 +33,8 @@ include '../includes/rides/admin/head.php'; ?>
                                 <th class="sticky-th-row">メール</th>
                                 <th class="sticky-th-row text-center">性別</th>
                                 <th class="sticky-th-row text-center">年齢</th>
-                                <th class="sticky-th-row">場所</th> <?php
+                                <th class="sticky-th-row">場所</th>
+                                <th class="sticky-th-row">緊急時連絡先</th> <?php
                                 foreach ($additional_fields as $additional_field) { ?>
                                     <th class="sticky-th-row"><?= $additional_field->question ?></th> <?php
                                 } ?>
@@ -54,7 +55,8 @@ include '../includes/rides/admin/head.php'; ?>
                                         <td><?php
                                             if (!empty($participant->location->city)) echo $participant->location->toString();
                                             else echo '-' ?>
-                                        </td> <?php
+                                        </td>
+                                        <td class="text-center"><?= $participant->emergency_number ?></td> <?php
                                         foreach ($additional_fields as $additional_field) { ?>
                                             <td> <?php
                                                 if ($additional_field->getAnswer($participant->id)) echo $additional_field->getAnswer($participant->id)->content; ?>
