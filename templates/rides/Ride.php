@@ -101,11 +101,7 @@ class Ride extends Model {
                 $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
                 return new CheckpointImage($checkpoint_image_id);
             // If still doesn't exist, return default image
-            } else {
-                $return = new stdClass();
-                $return->url = '\media\default-photo-' . rand(0, 9) . '.svg';
-                return $return;
-            }
+            } else return '\media\default-photo-' . rand(0, 9) . '.svg';
         }
     }
 
@@ -261,11 +257,11 @@ class Ride extends Model {
      * @param User $participant
      */
     public function join ($participant) {
-        /*// Add a line into participation database
+        // Add a line into participation database
         $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
         $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
 
-        // Prepare additional fields data*/
+        // Prepare additional fields data
         $additional_fields = $this->getAdditionalFields();
         $additional_fields_li = '';
         foreach ($additional_fields as $additional_field) {
@@ -299,8 +295,6 @@ class Ride extends Model {
         );
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         $response = $sendgrid->send($email);
-        
-        /*
 
         // Send mail to guides and admin
         $getAdmins = $this->getPdo()->prepare("SELECT id FROM users WHERE rights = 'administrator'");
@@ -325,7 +319,7 @@ class Ride extends Model {
         );
 
         // Set notification
-        $this->notify($this->author_id, 'ride_join', $participant->id);*/
+        $this->notify($this->author_id, 'ride_join', $participant->id);
     }
 
     /**

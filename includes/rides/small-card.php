@@ -3,7 +3,7 @@
         <div class="my-rd-thumbnail" style="background-image: url(<?= $ride->getFeaturedImage()->url; ?>);">
             <div class="my-rd-header header-block"> 
                 <div class="my-rd-status tag-light <?= $ride->getStatusClass(); ?>">
-                    <?= $ride->status;
+                    <?= $ride->getStatus()['status'];
                     // Only add substatus if there is one
                     if (!empty($ride->substatus)) { echo ' (' .$ride->substatus. ')'; } ?>
                 </div> 

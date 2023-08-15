@@ -8,27 +8,53 @@ typeInput.addEventListener('change', (e) => {
     document.getElementById(type).classList.remove('hidden')
 } )
 
-// Add an option input on click on addOptionField for select type fields
-var addOptionButtons = document.querySelectorAll('#addOptionField')
+// Add an option input on click on js-add-option-field for select type fields
+var addOptionButtons = document.querySelectorAll('.js-add-option-field')
 addOptionButtons.forEach(addOptionButton => {
     addOptionButton.addEventListener('click', () => {
-        var optionsNumber = updateOptionsNumber(addOptionButton.closest('form'))
+        const type = addOptionButton.closest('.js-question').id
+        var optionsNumber = updateOptionsNumber(addOptionButton.closest('form'), type)
         var optionBlock = document.createElement('div')
-        optionBlock.className = 'd-flex align-items-center rd-ad-options-block'
+        optionBlock.className = 'd-flex gap align-items-center rd-ad-options-block'
         var optionLabel = document.createElement('div')
         optionLabel.className = 'rd-ad-options-label'
         optionLabel.innerText = optionsNumber + '. '
+        var nameFloating = document.createElement('div')
+        nameFloating.className = 'form-floating'
         var optionInput = document.createElement('input')
         optionInput.type = 'text'
         optionInput.className = 'form-control rd-ad-options-input'
         optionInput.name = 'select_option_' + optionsNumber
+        optionInput.id = type + 'Name'
+        var nameLabel = document.createElement('label')
+        nameLabel.setAttribute('for', type + 'Name')
+        if (type == 'product') nameLabel.innerText = '商品名'
+        else nameLabel.innerText = '選択肢'
+        nameFloating.appendChild(optionInput)
+        nameFloating.appendChild(nameLabel)
+        // Add price input if type is product
+        if (type == 'product') {
+            var priceFloating = document.createElement('div')
+            priceFloating.className = 'form-floating'
+            var priceInput = document.createElement('input')
+            priceInput.type = 'number'
+            priceInput.className = 'form-control rd-ad-price-input'
+            priceInput.name = 'select_price_' + optionsNumber
+            priceInput.id = type + 'Price'
+            var priceLabel = document.createElement('label')
+            priceLabel.setAttribute('for', type + 'Price')
+            priceLabel.innerText = '価格'
+            priceFloating.appendChild(priceInput)
+            priceFloating.appendChild(priceLabel)
+        }
         var optionRemoveButton = document.createElement('div')
         optionRemoveButton.className = 'btn smallButton rd-ad-options-remove'
         optionRemoveButton.innerText = 'x'
         optionRemoveButton.id = 'removeOption' + optionsNumber
         setRemoveEventListener(optionRemoveButton)
         optionBlock.appendChild(optionLabel)
-        optionBlock.appendChild(optionInput)
+        optionBlock.appendChild(nameFloating)
+        if (type == 'product') optionBlock.appendChild(priceFloating)
         optionBlock.appendChild(optionRemoveButton)
         addOptionButton.before(optionBlock)
     } )
@@ -79,20 +105,22 @@ if (typeInput) typeInput.addEventListener('change', (e) => {
 function setRemoveEventListener (optionRemoveButton) {
     optionRemoveButton.addEventListener('click', () => {
         var optionBlock = optionRemoveButton.closest('.rd-ad-options-block')
+        var type = optionRemoveButton.closest('.js-question').id
         var form = optionRemoveButton.closest('form')
         optionBlock.remove()
-        updateOptionBlocks(form)
+        updateOptionBlocks(form, type)
     } )
 }
 
 // Count inputs for updating select options number
-function updateOptionsNumber (form) {
-    return form.querySelectorAll('.rd-ad-options-input').length + 1
+function updateOptionsNumber (form, type) {
+    return form.querySelectorAll('#' + type + ' .rd-ad-options-input').length + 1
 }
 
 // Function for updating select options numbers
-function updateOptionBlocks (form) {
-    var blocks = form.querySelectorAll('.rd-ad-options-block')
+function updateOptionBlocks (form, type) {
+    var blocks = form.querySelectorAll('#' + type + ' .rd-ad-options-block')
+    console.log(blocks)
     for (let i = 2; i < blocks.length; i++) {
         blocks[i].querySelector('.rd-ad-options-label').innerText = (i + 1) + '. '
         blocks[i].querySelector('.rd-ad-options-input').name = 'select_option_' + (i + 1)

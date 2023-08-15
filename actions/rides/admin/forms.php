@@ -20,16 +20,22 @@ if (isset($_POST) && isset($_POST['add'])) {
         $field_id = $getFieldId->fetch(PDO::FETCH_NUM)[0];
 
         // For select fields, insert options in table
-        if ($type == 'select') {
+        if ($type == 'select' || $type = 'product') {
             $field = new AdditionalField($field_id);
             $number = 1;
             $options = [];
+            $prices = [];
             while (isset($_POST['select_option_' . $number]) AND !empty($_POST['select_option_' . $number])) {
                 $option = htmlspecialchars($_POST['select_option_' . $number]);
                 array_push($options, $option);
+                if ($type == 'product') {
+                    $price = intval(htmlspecialchars($_POST['select_price_' . $number]));
+                    if (empty($price)) $price = 0;
+                    array_push($prices, $price);
+                }
                 $number++;
             }
-            $field->setOptions($options);
+            $field->setOptions($options, $prices);
         }
 
         $successmessage = "質問が追加されました！";
@@ -51,12 +57,18 @@ if (isset($_POST) && isset($_POST['editSave'])) {
     // Update field options
     $options_number = 1;
     $options = [];
-    while (isset($_POST['select_option_' . $options_number])) {
+    $prices = [];
+    while (isset($_POST['select_option_' . $options_number]) AND !empty($_POST['select_option_' . $options_number])) {
         $option = htmlspecialchars($_POST['select_option_' . $options_number]);
         array_push($options, $option);
+        if ($type == 'product') {
+            $price = intval(htmlspecialchars($_POST['select_price_' . $options_number]));
+            if (empty($price)) $price = 0;
+            array_push($prices, $price);
+        }
         $options_number++;
     }
-    $field->updateOptions($options);
+    $field->updateOptions($options, $prices);
     
     $successmessage = "質問の変更が保存されました！";
 }

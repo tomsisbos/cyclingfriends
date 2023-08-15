@@ -129,7 +129,8 @@ include '../includes/head.php'; ?>
 			
 			<div class="container d-flex flex-column gap mb-3">
 				<h3>ガイド</h3><?php
-				foreach ($ride->getGuides() as $guide) { ?>
+				$guides = $ride->getGuides();
+				if (count($guides) > 0) foreach ($guides as $guide) { ?>
 					<div class="guide-card bg-white">
 						<a href="<?= $router->generate('profile-single', ['user_id' => $guide->id]) ?>"><?= $guide->getPropicElement() ?></a>
 						<div class="guide-text">
@@ -141,7 +142,7 @@ include '../includes/head.php'; ?>
 							<div class="guide-description"><?= $guide->description ?></div>
 						</div>
 					</div> <?php
-				} ?>
+				} else echo '調整中' ?>
 			</div> <?php
 
 			// Include checkpoints gallery

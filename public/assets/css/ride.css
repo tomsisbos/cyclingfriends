@@ -456,13 +456,14 @@ h3 {
 .rd-ad-form-option {
     display: flex;
     gap: 10px;
+    margin: 2px 0px;
     margin-left: 20px;
 }
 .rd-ad-form form {
     margin: 0;
 }
 .rd-ad-options-label {
-    width: 100px;
+    min-width: 60px;
     text-align: right;
     padding: 0px 20px;
 }
@@ -473,6 +474,51 @@ h3 {
 .rd-ad-report-section {
     padding: 15px;
     background-color: #fff;
+}
+
+.rd-ad-add-section > div {
+    padding: 4px;
+}
+.rd-ad-add-section {
+    display: flex;
+    justify-content: space-between;
+}
+.rd-ad-add-section-main-column {
+    width: -webkit-fill-available;
+}
+
+.rd-ad-button {
+    width: max-content;
+}
+
+@media only screen and (max-width: 768px) {
+
+    .rd-ad-form-row {
+        flex-direction: column;
+    }
+
+    .rd-ad-add-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    .rd-ad-add-section > div {
+        padding: 10px;
+        width: fit-content;
+    }
+    .rd-ad-options-block {
+        flex-direction: column;
+        margin: 6px;
+        gap: 6px;
+        padding: 12px;
+        border: 1px solid #eee;
+        text-align: center;
+    }
+    .rd-ad-options-block * {
+        text-align: center;
+    }
+    .rd-ad-options-remove {
+        align-self: end;
+    }
 }
 
 
@@ -750,7 +796,7 @@ h3 {
 }
 .rd-cd-hr {
     grid-column-start: 1;
-    grid-column-end: 10;
+    grid-column-end: 9;
     display: grid;
     height: 1px;
 }
@@ -807,9 +853,8 @@ h3 {
     .rd-cd-th, .rd-cd-hr {
         display: none;
     }
-    .rd-cd-td:nth-child(8n +1) {
-        margin-bottom: 30px;
-        padding-bottom: 30px;
+    .rd-cd-td.cd-status, .rd-cd-td.cd-year, .rd-cd-td.cd-month, .rd-cd-td.cd-day {
+        margin-top: 40px;
     }
     .rd-cd-td {
         font-size: inherit;

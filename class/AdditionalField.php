@@ -76,17 +76,21 @@ class AdditionalField extends Model {
         $updateField->execute(array($question, $type, $this->id));
     }
 
-    public function setOptions ($options) {
+    public function setOptions ($options, $prices = []) {
+        if (count($prices) > 0) $query = 'INSERT INTO ride_additional_field_options(field_id, number, content, price) VALUES (?, ?, ?, ?)';
+        else $query = 'INSERT INTO ride_additional_field_options(field_id, number, content) VALUES (?, ?, ?)';
         for ($number = 1; $number <= count($options); $number++) {
-            $insertField = $this->getPdo()->prepare('INSERT INTO ride_additional_field_options(field_id, number, content) VALUES (?, ?, ?)');
-            $insertField->execute(array($this->id, $number, $options[$number - 1]));
+            if (count($prices) > 0) $params = [$this->id, $number, $options[$number - 1], $prices[$number - 1]];
+            else $params = [$this->id, $number, $options[$number - 1]];
+            $insertField = $this->getPdo()->prepare($query);
+            $insertField->execute($params);
         }
     }
 
-    public function updateOptions ($options) {
+    public function updateOptions ($options, $prices = []) {
         $removeOptions = $this->getPdo()->prepare('DELETE FROM ride_additional_field_options WHERE field_id = ?');
         $removeOptions->execute(array($this->id));
-        $this->setOptions($options);
+        $this->setOptions($options, $prices);
     }
 
     public function delete () {
