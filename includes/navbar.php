@@ -43,12 +43,13 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/rides"><div class="mainitem">ツアー</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/rides/calendar"><div class="mainitem">ツアー</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/rides/calendar"><div class="mainitem">公式ツアーカレンダー</div></a>
-						<a class="dropdown-item interactive" href="/ride/new"><div class="mainitem">新規開催</div></a>
-						<a class="dropdown-item interactive" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div></a>
+					<div class="dropdown-menu"> <?php
+						if (getConnectedUser()->hasAdministratorRights()) { ?>
+							<a class="dropdown-item interactive bg-admin" href="/ride/new"><div class="mainitem">新規開催</div></a>
+							<a class="dropdown-item interactive bg-admin" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div></a> <?php
+						} ?>
 						<a class="dropdown-item interactive" href="<?= $router->generate('ride-participations') ?>"><div class="mainitem">参加一覧</div></a>
 					</div>
 				</li>

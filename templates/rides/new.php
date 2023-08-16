@@ -4,37 +4,41 @@ include '../actions/users/initSession.php';
 require '../actions/rides/new/create.php';
 require_once '../includes/head.php';
 
-// Clear session form data if ride already posted
-if (isset($_SESSION['forms']['created'])) {
-    $_SESSION['forms'][1] = array();
-    $_SESSION['forms'][2] = array();
-    $_SESSION['course'] = array();
-}
+if (getConnectedUser()->hasAdministratorRights()) {
 
-// Prepare multipage system
+    // Clear session form data if ride already posted
+    if (isset($_SESSION['forms']['created'])) {
+        $_SESSION['forms'][1] = array();
+        $_SESSION['forms'][2] = array();
+        $_SESSION['course'] = array();
+    }
 
-// Get stage number from URL slug
-$slug = basename($_SERVER['REQUEST_URI']);
-if (empty($slug) or !is_numeric($slug)) {
-    unset($_SESSION['forms']); // If no slug in the query string, reset all forms info
-    define('CFG_STAGE_ID', 1);
-} else define('CFG_STAGE_ID', intval($slug));
+    // Prepare multipage system
 
-// Get base URI
-$base_uri = '/ride/new/';
- 
-// Sets the session variable with an array that will contain all form infos
-if (empty($_SESSION['forms'])) $_SESSION['forms'] = array(); ?>
+    // Get stage number from URL slug
+    $slug = basename($_SERVER['REQUEST_URI']);
+    if (empty($slug) or !is_numeric($slug)) {
+        unset($_SESSION['forms']); // If no slug in the query string, reset all forms info
+        define('CFG_STAGE_ID', 1);
+    } else define('CFG_STAGE_ID', intval($slug));
 
-<!DOCTYPE html>
-<html lang="en">
+    // Get base URI
+    $base_uri = '/ride/new/';
+    
+    // Sets the session variable with an array that will contain all form infos
+    if (empty($_SESSION['forms'])) $_SESSION['forms'] = array(); ?>
 
-<link rel="stylesheet" href="/assets/css/ride.css" /> <?php
+    <!DOCTYPE html>
+    <html lang="en">
 
-include '../includes/navbar.php'; ?>
+    <link rel="stylesheet" href="/assets/css/ride.css" /> <?php
 
-<div class="main"> <?php
-    include '../actions/rides/new/dataProcess.php'; ?>
-</div>
+    include '../includes/navbar.php'; ?>
 
-</html>
+    <div class="main"> <?php
+        include '../actions/rides/new/dataProcess.php'; ?>
+    </div>
+
+    </html> <?php
+
+} else header('location: ' .$router->generate('ride-single', ['ride_id' => $ride->id]));

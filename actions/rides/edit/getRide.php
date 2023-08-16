@@ -38,7 +38,7 @@ if (isset($ride_slug) AND !empty($ride_slug)) {
 			else $_SESSION['edit-forms'][2]['options'] = ['sf' => false]; // If route start coordinates equals route end coordinates, set SF options to true, else set to false
 			$_SESSION['edit-forms'][2]['checkpoints'] = $checkpoints;
 			if ($ride->getRoute() != null) $_SESSION['edit-forms'][2]['route-id'] = $ride->route_id;
-			// If not, redirect to my rides pages
+			// If not ride author, redirect to my rides pages
 			if ($ride->author_id != getConnectedUser()->id) header('location: ' .$router->generate('ride-organizations'));
 		}
 
