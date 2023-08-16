@@ -790,13 +790,13 @@ h3 {
 .rd-calendar {
     margin-top: 50px;
     display: grid;
-    grid-template-columns: auto 50px 28px 70px repeat(4, auto);
+    grid-template-columns: auto 50px 28px 70px repeat(5, auto);
     text-align: center;
     grid-gap: 16px 0px;
 }
 .rd-cd-hr {
     grid-column-start: 1;
-    grid-column-end: 9;
+    grid-column-end: 10;
     display: grid;
     height: 1px;
 }

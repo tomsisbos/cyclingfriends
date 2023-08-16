@@ -52,6 +52,7 @@
 							<a class="dropdown-item interactive bg-admin" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div></a> <?php
 						} ?>
 						<a class="dropdown-item interactive" href="<?= $router->generate('ride-participations') ?>"><div class="mainitem">参加一覧</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('ride-contract') ?>"><div class="mainitem">ツアー規約</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">

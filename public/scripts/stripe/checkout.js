@@ -1,5 +1,7 @@
 // This is your test publishable API key.
-const stripe = Stripe("pk_test_51NchR1IjJ2ELyWfBNtY0qlpT8tfIly7jajA6YJBCGNDIw8Ym0BHCy64eju21ohxiDkZRWDGNmtr3xu1rfJtmjSZL00GrFe1HIl")
+/// TEST MODE const stripe = Stripe("pk_test_51NchR1IjJ2ELyWfBNtY0qlpT8tfIly7jajA6YJBCGNDIw8Ym0BHCy64eju21ohxiDkZRWDGNmtr3xu1rfJtmjSZL00GrFe1HIl")
+const stripe = Stripe("pk_live_51NchR1IjJ2ELyWfBjQTMz8XdY8gbkPkZ6HuqnrmdolfM7WaXPFiKGEQBl3xYp7mdIUu8hiWvyAs58Gjaz1WSRZ7X00m9n1lOFr")
+
 var ride_id = (new URL(window.location).pathname.match(/[^\/]+/g)).find(part => !isNaN(parseFloat(part)))
 
 checkStatus()

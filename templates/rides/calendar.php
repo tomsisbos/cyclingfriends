@@ -33,6 +33,7 @@ include '../includes/head.php'; ?>
             <div class="rd-cd-th">場所</div>
             <div class="rd-cd-th">距離</div>
             <div class="rd-cd-th">地形</div>
+            <div class="rd-cd-th">料金</div>
             <div class="rd-cd-hr"></div><?php
             foreach ($rides as $ride) {
                 $date = new DateTime($ride->date); ?>
@@ -48,7 +49,8 @@ include '../includes/head.php'; ?>
                 </a>
                 <div class="rd-cd-td cd-place"><?= $ride->meeting_place ?></div>
                 <div class="rd-cd-td cd-distance"><?= $ride->distance. ' km' ?></div>
-                <div class="rd-cd-td cd-terrain"><?= $ride->getTerrainIcon() ?></div> <?php
+                <div class="rd-cd-td cd-terrain"><?= $ride->getTerrainIcon() ?></div>
+                <div class="rd-cd-td cd-terrain">¥<?= $ride->price ?></div> <?php
             } ?>
         </div> <?php
 

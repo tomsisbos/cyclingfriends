@@ -540,6 +540,7 @@ if (isAjax()) {
             $ride->route->coordinates = $ride->route->getLinestring();
             $ride->author_login = $ride->getAuthor()->login;
             $ride->checkpoints = $ride->getCheckpoints();
+            $ride->participants_number = count($ride->getParticipants());
             $ride->status = $ride->getStatus()['status'];
             array_push($rides, $ride);
         }

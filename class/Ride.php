@@ -290,14 +290,15 @@ class Ride extends Model {
                 'text/html',
                 '<p>この度、' .$this->name. 'にエントリーを頂き、ありがとうございます！</p>
                 <p>エントリー情報及びツアー情報は、下記の通りご確認頂けます。</p>
-                <p>【ツアー情報】</p>
-                <p><a href="' .$origin. '/ride/' .$this->id. '">ツアー情報はこちら</a></p><br>
-                <p>【エントリー情報】</p>
-                姓名：' .$participant->last_name. ' ' .$participant->first_name. '<br>
-                性別：' .$participant->getGenderString(). '<br>
-                生年月日：' .$participant->birthdate. '<br>'
+                <h3>エントリー情報</h3>
+                <strong>姓名：</strong>' .$participant->last_name. ' ' .$participant->first_name. '<br>
+                <strong>性別：</strong>' .$participant->getGenderString(). '<br>
+                <strong>生年月日：</strong>' .$participant->birthdate. '<br>
+                <strong>緊急時連絡先：</strong>' .$participant->emergency_number. '<br>'
                     .$additional_fields_li.
-                '<br><p>現在エントリーしているツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a>からご確認頂けます。</p>'
+                '<br><p>ツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a></p>
+                <p>ツアー規約は<a href="' .$origin. '/ride/contract">こちら</a></p><br>'
+                .file_get_contents('../public/api/rides/guidance.html')
             );
             $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
             $response = $sendgrid->send($email);
@@ -571,8 +572,8 @@ class Ride extends Model {
         $deleteChat->execute(array($this->id));
         $deleteParticipation = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE ride_id = ?');
         $deleteParticipation->execute(array($this->id));
-        $deleteNotifications = $this->getPdo()->prepare("DELETE FROM notifications WHERE entry_table = {$this->table} AND entry_id = ?");
-        $deleteNotifications->execute(array($this->id));
+        $deleteNotifications = $this->getPdo()->prepare("DELETE FROM notifications WHERE entry_table = ? AND entry_id = ?");
+        $deleteNotifications->execute(array($this->table, $this->id));
         $deleteRide = $this->getPdo()->prepare("DELETE FROM {$this->table} WHERE id = ?");
         $deleteRide->execute(array($this->id));
         return true;
