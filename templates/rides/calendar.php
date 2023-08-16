@@ -50,7 +50,7 @@ include '../includes/head.php'; ?>
                 <div class="rd-cd-td cd-place"><?= $ride->meeting_place ?></div>
                 <div class="rd-cd-td cd-distance"><?= $ride->distance. ' km' ?></div>
                 <div class="rd-cd-td cd-terrain"><?= $ride->getTerrainIcon() ?></div>
-                <div class="rd-cd-td cd-terrain">¥<?= $ride->price ?></div> <?php
+                <div class="rd-cd-td cd-price">¥<?= $ride->price ?></div> <?php
             } ?>
         </div> <?php
 

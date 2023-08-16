@@ -100,6 +100,12 @@ include '../includes/head.php'; ?>
 					</div>
 				</div>
 				<div class="row">
+					<div class="col-sm"> <?php
+						if ($ride->price > 0) echo '<p><strong>料金 :</strong> ¥' .$ride->price;
+						else echo '<p><strong>無料 </strong>' ?>
+					</div>
+				</div>
+				<div class="row">
 					<div class="col-sm">
 						<p><?= $ride->getFormattedDescription(); ?></p>
 					</div>

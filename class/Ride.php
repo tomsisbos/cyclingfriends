@@ -270,7 +270,7 @@ class Ride extends Model {
             $additional_fields = $this->getAdditionalFields();
             $additional_fields_li = '';
             foreach ($additional_fields as $additional_field) {
-                if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
+                if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= '<strong>' .$additional_field->question. '：</strong>' .$additional_field->getAnswer($participant->id)->content. '<br>';
             }
 
             // Get origin

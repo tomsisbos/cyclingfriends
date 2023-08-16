@@ -860,14 +860,14 @@ h3 {
         font-size: inherit;
     }
     .cd-status {
-        grid-column: span 6;
+        grid-column: span 4;
         max-width: 120px;
     }
     .cd-title {
         font-size: inherit;
     }
     .cd-year {
-        grid-column: span 1;
+        grid-column: span 2;
         text-align: right;
     }
     .cd-month {
@@ -878,7 +878,7 @@ h3 {
         display: contents;
     }
     .cd-day {
-        grid-column: span 1;
+        grid-column: span 2;
         text-align: left;
     }
     .cd-title {
@@ -889,17 +889,18 @@ h3 {
         height: 160px;
     }
     .cd-place {
-        grid-column: span 7;
+        grid-column: span 5;
     }
     .cd-distance {
-        grid-column: span 1;
+        grid-column: span 2;
     }
     .cd-terrain {
         grid-column: span 1;
+        padding: 0px 4px;
     }
-    .cd-guides {
-        grid-column: span 9;
-    }    
+    .cd-price {
+        grid-column: span 1;
+    }
     .cd-guides-label {
         display: inline;
     }
