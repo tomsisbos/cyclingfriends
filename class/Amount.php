@@ -6,6 +6,7 @@ class Amount {
     public $currency_symbol = '¥';
     public $products = [];
     public $products_number = 0;
+    public $discounts = [];
     public $total;
 
     function __construct () {
@@ -19,6 +20,16 @@ class Amount {
      */
     public function addProduct ($name, $price, $quantity = 1) {
         array_push($this->products, new Product($name, $price, $quantity));
+        $this->total = $this->getTotal();
+        $this->products_number = $this->getProductsNumber();
+    }
+
+    /**
+     * Generate a discount from scratch and add it
+     * @param int $price
+     */
+    public function addDiscount ($price, $name) {
+        array_push($this->discounts, new Discount($price, $name));
         $this->total = $this->getTotal();
         $this->products_number = $this->getProductsNumber();
     }
@@ -46,6 +57,7 @@ class Amount {
     public function getTotal () {
         $total = 0;
         foreach ($this->products as $product) $total += ($product->price * $product->quantity);
+        foreach ($this->discounts as $discount) $total += $discount->price;
         return $total;
     }
 
@@ -53,6 +65,17 @@ class Amount {
         $products_number = 0;
         foreach ($this->products as $product) $products_number + $product->quantity;
         return $products_number;
+    }
+
+    /**
+     * Use user_id's user points to discount this amount
+     * @param int $user_id
+     */
+    public function useCFPoints ($user_id) {
+        $user = new User($user_id);
+        $cf_points = $user->getCFPoints();
+        if ($cf_points > $this->getTotal()) $cf_points = $this->getTotal() - 500;
+        $this->addDiscount($cf_points, 'ポイント利用分');
     }
 
 }

@@ -792,6 +792,7 @@ class Ride extends Model {
      */
     public function calculateAmount ($user_id): Amount {
     
+        $user = new User($user_id);
         $amount = new Amount();
         $amount->addProduct($this->name. ' 参加費', $this->price);
 
@@ -800,6 +801,8 @@ class Ride extends Model {
             $answer = $a_field->getAnswer($user_id);
             if ($answer AND $answer->type == 'product') $amount->add($answer->option->product);
         }
+
+        if ($user->getCFPoints() > 0) $amount->useCFPoints($user_id);
     
         return $amount;
     }

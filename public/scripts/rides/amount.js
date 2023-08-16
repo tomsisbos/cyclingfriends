@@ -39,6 +39,7 @@ function updateAmountElement (amount) {
     $amount.innerText = amount.currency_symbol + amount.total
     $amountDetails.innerText = ''
     amount.products.forEach(product => $amountDetails.appendChild(buildProductElement(product, amount.currency_symbol)))
+    amount.discounts.forEach(discount => $amountDetails.appendChild(buildDiscountElement(discount, amount.currency_symbol)))
 }
 
 function buildProductElement (product, currency_symbol) {
@@ -57,4 +58,22 @@ function buildProductElement (product, currency_symbol) {
     $product.appendChild($productName)
     $productBlock.appendChild($product)
     return $productBlock
+}
+
+function buildDiscountElement (discount, currency_symbol) {
+    var $discountBlock = document.createElement('div')
+    $discountBlock.className = 'product-block'
+    var $discount = document.createElement('div')
+    $discount.className = 'product bg-darkgreen'
+    var $discountPrice = document.createElement('div')
+    $discountPrice.className = 'product-price'
+    $discountPrice.innerText = currency_symbol + discount.price
+    $discount.appendChild($discountPrice)
+    var $discountName = document.createElement('div')
+    $discountName.className = 'product-name'
+    $discountName.innerText = discount.name
+    $discount.appendChild($discountPrice)
+    $discount.appendChild($discountName)
+    $discountBlock.appendChild($discount)
+    return $discountBlock
 }

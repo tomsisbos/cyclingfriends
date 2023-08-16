@@ -100,6 +100,7 @@ $router->map('GET', '/rides/calendar', 'rides/calendar', 'rides-calendar');
 $router->map('GET|POST', '/ride/[i:ride_id]/entry', 'rides/entry/entry', 'ride-entry');
 $router->map('GET|POST', '/ride/[i:ride_id]/payment', 'rides/entry/payment', 'ride-payment');
 $router->map('GET', '/ride/[i:ride_id]/checkout', 'rides/entry/checkout', 'ride-checkout');
+$router->map('GET', '/ride/contract', 'rides/contract', 'ride-contract');
 
 // Community
 $router->map('GET', '/community', 'community/community', 'community');
@@ -112,6 +113,7 @@ $router->map('GET|POST', '/news', 'community/news', 'community/news');
 $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
 $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
+$router->map('GET', '/company/commerce-disclosure', 'company/commerce-disclosure', 'company-commerce-disclosure');
 
 // Admin
 $router->map('GET|POST', '/admin/autoposting/sceneries', '/admin/autoposting/sceneries', 'admin-autoposting-sceneries');

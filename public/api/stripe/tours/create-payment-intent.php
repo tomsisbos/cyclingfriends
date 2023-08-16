@@ -10,22 +10,35 @@ $stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST');
 header('Content-Type: application/json');
 
 try {
+    
     // Retrieve ride id from POST body
     $json = file_get_contents('php://input');
     $ride_id = json_decode($json);
     $ride = new Ride($ride_id);
 
-    // Retrieve entry data from session
+    // Calculate amount
+    $amount = $ride->calculateAmount(getConnectedUser()->id);
+
+    // Retrieve entry data from session and populate necessary metadata to perform after payment traitment
     $entry_data = $_SESSION['ride_entry_data_' .$ride->id];
     $metadata = [
         'ride_id' => $ride_id,
         'user_id' => getConnectedUser()->id
     ];
+
+    //
     foreach ($entry_data as $key => $value) $metadata[$key] = $value;
+    if (count($amount->discounts) > 0) {
+        $use_cf_points = 0;
+        foreach ($amount->discounts as $discount) {
+            if ($discount->name == 'ポイント利用分') $use_cf_points += abs($discount->price);
+        }
+        if ($use_cf_points > 0) $metadata['use_cf_points'] = $use_cf_points;
+    }
 
     // Create a PaymentIntent with amount and currency
     $paymentIntent = \Stripe\PaymentIntent::create([
-        'amount' => $ride->calculateAmount(getConnectedUser()->id)->total,
+        'amount' => $amount->total,
         'currency' => 'jpy',
         'automatic_payment_methods' => [
             'enabled' => true,

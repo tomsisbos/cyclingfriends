@@ -65,17 +65,19 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
                 if (getConnectedUser()) include '../includes/rides/entry/member-form.php';
                 else include '../includes/rides/entry/guest-form.php';
 
-                // Tours contract ?>
-                <div class="container mt-3">
-                    <h3>ツアー規約</h3>
-                    <div class="popup-contract"><?php
-                        include '../public/api/rides/contract.html'; ?>
-                    </div>
-                    <div class="justify-center d-flex gap mb-3">
-                        <input type="checkbox" name="agreement" id="agreement" class="js-field">
-                        <label class="required" for="agreement">ツアー規約をすべて読み、同意します</label>
-                    </div>
-                </div> <?php
+                // Tours contract
+                if (getConnectedUser()) { ?>
+                    <div class="container mt-3">
+                        <h3>ツアー規約</h3>
+                        <div class="popup-contract"><?php
+                            include '../public/api/rides/contract.html'; ?>
+                        </div>
+                        <div class="justify-center d-flex gap mb-3">
+                            <input type="checkbox" name="agreement" id="agreement" class="js-field">
+                            <label class="required" for="agreement">ツアー規約をすべて読み、同意します</label>
+                        </div>
+                    </div> <?php
+                }
                 
                 // Amount display
                 if (!$ride->isFree() && getConnectedUser()) include '../includes/rides/entry/amount.php';

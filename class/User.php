@@ -942,4 +942,24 @@ class User extends Model {
         } else return new Garmin();
     }
 
+    /**
+     * Get CF points for an user
+     * @return int
+     */
+    public function getCFPoints () {
+        $getCFPoints = $this->getPdo()->prepare("SELECT cf_points FROM users WHERE id = ?");
+        $getCFPoints->execute([$this->id]);
+        return intval($getCFPoints->fetch(PDO::FETCH_COLUMN));
+    }
+
+    /**
+     * remove $points from user's CF points
+     * @param int $points
+     */
+    public function removeCFPoints ($points) {
+        $getCFPoints = $this->getPdo()->prepare("UPDATE users SET cf_points = cf_points - ? WHERE id = ?");
+        $getCFPoints->execute([$this->points, $this->id]);
+        return intval($getCFPoints->fetch(PDO::FETCH_COLUMN));
+    }
+
 }

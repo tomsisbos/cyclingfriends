@@ -1200,6 +1200,9 @@ a .strava:hover {
     margin: 20px 0;
     padding: 10px 0;
 }
+.popup-contract h4 {
+    font-size: 14px;
+}
 
 .popup select {
     max-width: 100%;

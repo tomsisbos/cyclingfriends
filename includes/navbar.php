@@ -45,7 +45,8 @@
 				<li class="nav-item dropdown">
 					<a class="nav-link nav-dropdown-link interactive" href="/rides/calendar"><div class="mainitem">ツアー</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
-					<div class="dropdown-menu"> <?php
+					<div class="dropdown-menu">
+						<a class="dropdown-item interactive" href="<?= $router->generate('rides-calendar') ?>"><div class="mainitem">スケジュール</div></a> <?php
 						if (getConnectedUser()->hasAdministratorRights()) { ?>
 							<a class="dropdown-item interactive bg-admin" href="/ride/new"><div class="mainitem">新規開催</div></a>
 							<a class="dropdown-item interactive bg-admin" href="<?= $router->generate('ride-organizations') ?>"><div class="mainitem">主催一覧</div></a> <?php
@@ -116,6 +117,7 @@
 						<a class="dropdown-item interactive" href="/company/business"><div class="mainitem">事業構想</div></a>
 						<a class="dropdown-item interactive" href="/news"><div class="mainitem">ニュース</div></a>
 						<a class="dropdown-item interactive" href="/company/contact"><div class="mainitem">お問い合わせ</div></a>
+						<a class="dropdown-item interactive" href="/company/commerce-disclosure"><div class="mainitem">特定商取引法に基づく表記</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
@@ -128,7 +130,12 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link interactive" href="/rides/calendar"><div class="mainitem">ツアーカレンダー</div></a>
+					<a class="nav-link interactive" href="<?= $router->generate('rides-calendar') ?>"><div class="mainitem">ツアー</div></a>
+					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item interactive" href="<?= $router->generate('rides-calendar') ?>"><div class="mainitem">スケジュール</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('ride-contract') ?>"><div class="mainitem">ツアー規約</div></a>
+					</div>
 				</li>
 			</ul>
 		</div> <?php

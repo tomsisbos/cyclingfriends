@@ -20,6 +20,8 @@ include '../actions/company/contact.php'; ?>
         <form method="POST" class="container smaller">
 
             <h1 class="text-center mb-3">お問い合わせ</h1>
+
+            <p>ご自由にお問い合わせください。1営業日以内に対応させて頂きます。</p>
             
             <div class="mb-3 row g-2">
                 <div class="col-md">
