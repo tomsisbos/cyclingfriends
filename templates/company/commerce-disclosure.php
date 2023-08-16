@@ -21,18 +21,10 @@ include '../includes/head.php'; ?>
             <tbody>
                 <tr>
                     <th class="text-right">
-                        販売業者
+                        法人名
                     </th>
                     <td>
                         株式会社テラインコグニタ</td>
-                </tr>
-                <tr>
-                    <th class="text-right">
-                        代表責任者
-                    </th>
-                    <td>
-                        代表取締役CEO ボシス トム
-                    </td>
                 </tr>
                 <tr>
                     <th class="text-right">
@@ -45,10 +37,26 @@ include '../includes/head.php'; ?>
                 </tr>
                 <tr>
                     <th class="text-right">
-                        連絡情報
+                        電話番号
+                    </th>
+                    <td>
+                        請求があったら遅滞なく開示します
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        お問い合わせ
                     </th>
                     <td>
                         <a href="<?= $router->generate('company-contact') ?>" target="_blank">こちら</a>を参照
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        メールアドレス
+                    </th>
+                    <td>
+                        contact@cyclingfriends.co
                     </td>
                 </tr>
                 <tr>
@@ -61,18 +69,58 @@ include '../includes/head.php'; ?>
                 </tr>
                 <tr>
                     <th class="text-right">
-                        販売価格
+                        運営統括責任者
                     </th>
                     <td>
-                        各商品の紹介ページに記載している価格とします。
+                        ボシス トム
                     </td>
                 </tr>
                 <tr>
                     <th class="text-right">
-                        商品代金以外に必要な料金
+                        引渡時期
                     </th>
                     <td>
-                        消費税込みの表示価格となります
+                        なし（サービス業のため）
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        受け付け可能な決済手段
+                    </th>
+                    <td>
+                        クレジットカード、Google Pay
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        決済期間
+                    </th>
+                    <td>
+                        即時
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        販売価格
+                    </th>
+                    <td>
+                        各商品ページに記載の金額
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        追加手数料等の追加料金
+                    </th>
+                    <td>
+                        なし（決済画面記載のとおり）
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-right">
+                        交換および返品（返金ポリシー）
+                    </th>
+                    <td>
+                        なし（サービス業のため）
                     </td>
                 </tr>
                 <tr>

@@ -3,9 +3,23 @@
 
 require_once '../../../../includes/api-head.php';
 
-$stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST');
+$stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
+\Stripe\Stripe::setApiVersion('2022-11-15');
+
+// Stripe customer management
+if (getConnectedUser()->getCustomerId()) {
+    $customer = \Stripe\Customer::retrieve(getConnectedUser()->getCustomerId(), []);
+
+} else {
+    $customer = \Stripe\Customer::create([
+        'email' => getConnectedUser()->email,
+        'name' => getConnectedUser()->login,
+        'description' => getConnectedUser()->lastname. ' ' .getConnectedUser()->firstname
+    ]);
+    getConnectedUser()->setCustomerId($customer->id);
+}
 
 header('Content-Type: application/json');
 
@@ -38,6 +52,8 @@ try {
 
     // Create a PaymentIntent with amount and currency
     $paymentIntent = \Stripe\PaymentIntent::create([
+        'customer' => $customer->id,
+        'setup_future_usage' => 'off_session',
         'amount' => $amount->total,
         'currency' => 'jpy',
         'automatic_payment_methods' => [

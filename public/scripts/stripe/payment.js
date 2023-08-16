@@ -23,11 +23,13 @@ async function initialize() {
     const linkAuthenticationElement = elements.create("linkAuthentication")
     linkAuthenticationElement.mount("#link-authentication-element")
 
-    const paymentElementOptions = {
-        layout: "tabs",
-    }
-
-    const paymentElement = elements.create("payment", paymentElementOptions)
+    var paymentElement = elements.create('payment', {
+        fields: {
+            billingDetails: {
+                email: 'never'
+            }
+        }
+    })
     paymentElement.mount("#payment-element")
 }
 
@@ -38,9 +40,12 @@ async function handleSubmit(e) {
     const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-            // Make sure to change this to your payment completion page
             return_url: "https://cyclingfriends-preprod.azurewebsites.net/ride/" + ride_id + "/checkout",
-            receipt_email: emailAddress,
+            payment_method_data: {
+                billing_details: {
+                    email: emailAddress,
+                }
+            },
         },
     })
 

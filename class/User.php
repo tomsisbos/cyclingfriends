@@ -958,8 +958,27 @@ class User extends Model {
      */
     public function removeCFPoints ($points) {
         $getCFPoints = $this->getPdo()->prepare("UPDATE users SET cf_points = cf_points - ? WHERE id = ?");
-        $getCFPoints->execute([$this->points, $this->id]);
+        $getCFPoints->execute([$points, $this->id]);
         return intval($getCFPoints->fetch(PDO::FETCH_COLUMN));
+    }
+
+    /**
+     * Set stripe customer id for this user
+     * @param string $customer_id
+     */
+    public function setCustomerId ($customer_id) {
+        $setCustomerId = $this->getPdo()->prepare('UPDATE users SET customer_id = ? WHERE id = ?');
+        $setCustomerId->execute([$customer_id, $this->id]);
+    }
+
+    /**
+     * Get stripe customer id of this user
+     * @return string
+     */
+    public function getCustomerId () {
+        $getCustomerId = $this->getPdo()->prepare('SELECT customer_id FROM users WHERE id = ?');
+        $getCustomerId->execute([$this->id]);
+        return $getCustomerId->fetch(PDO::FETCH_COLUMN);
     }
 
 }

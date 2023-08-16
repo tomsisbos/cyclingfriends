@@ -40,7 +40,7 @@ if (isAjax()) {
         $ride = new Ride($_GET['quit']);
         if ($ride->isParticipating(getConnectedUser())) {
             $ride->quit(getConnectedUser());
-            echo json_encode(['success' => $ride->name. 'への参加を取り消しました。エントリー期間中であれば、いつでもエントリーできます。']);		
+            echo json_encode(['success' => $ride->name. 'への参加を取り消しました。また次の機会にご一生することを楽しみにしております！']);		
         } else echo json_encode(['false' => $errormessage = $ride->name. 'への参加を既に取り消しています。']);
     }
 }
