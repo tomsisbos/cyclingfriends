@@ -145,11 +145,11 @@ class Manual extends Model {
         'routes' => [
             'title' => 'ルート',
             'subtitle' => 'Routes'
-        ],
+        ],/*
         'rides' => [
             'title' => 'ツアー',
             'subtitle' => 'Rides'
-        ],
+        ],*/
         'community' => [
             'title' => 'コミュニティ',
             'subtitle' => 'Community'
