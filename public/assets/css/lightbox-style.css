@@ -257,6 +257,15 @@ img.hover-shadow {
   cursor: pointer;
 }
 
+.scenery-img-meta .close {
+  color: white;
+  height: 26px;
+  text-shadow: 1px -1px 2px black;
+  font-size: 64px;
+  font-weight: bold;
+  z-index: 1;
+}
+
 .slides-box {
   position: relative;
 }
