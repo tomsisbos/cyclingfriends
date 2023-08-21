@@ -31,8 +31,8 @@
 				WHEN :level = 'Beginner' THEN level_beginner 
 				WHEN :level = 'Intermediate' THEN level_intermediate
 				WHEN :level = 'Athlete' THEN level_athlete 
-				ELSE true 
-			END) = TRUE 
+				ELSE 1 
+			END) = 1 
 			AND
 			(CASE 
 				WHEN :status = 'Open' THEN entry_start < NOW() AND entry_end > NOW()
@@ -50,7 +50,7 @@
 				ELSE 1
 			END),
 			(CASE 
-				WHEN entry_end > CURDATE() THEN 0
+				WHEN entry_end > NOW() THEN 0
 				ELSE 1
 			END),
 			date, meeting_time ASC";
