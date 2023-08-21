@@ -636,6 +636,7 @@
 }
 .pg-ac-photo-number {
     border: 1px solid;
+    white-space: nowrap;
     border-radius: 99px;
     width: 20px;
     height: 20px;
