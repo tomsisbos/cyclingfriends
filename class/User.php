@@ -384,8 +384,8 @@ class User extends Model {
 
     public function getRequesters () {
         // Get all infos about friends of connected user from database in a multidimensionnal array
-        $getRequesters = $this->getPdo()->prepare('SELECT inviter_id FROM friends WHERE receiver_id = :user AND accepted = false');
-        $getRequesters->execute([":user" => $this->id]);
+        $getRequesters = $this->getPdo()->prepare('SELECT inviter_id FROM friends WHERE receiver_id = ? AND accepted = 0');
+        $getRequesters->execute([$this->id]);
         $combinedData = $getRequesters->fetchAll();
         // Get requesters ids into a simple array
         $requesters = array();

@@ -80,7 +80,7 @@ class Ride extends Model {
     }
 
     public function hasFeaturedImage () {
-        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true AND filename IS NOT NULL');
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = 1 AND filename IS NOT NULL');
         $getFeaturedImage->execute(array($this->id));
         if ($getFeaturedImage->rowCount() > 0) return true;
         else return false;
@@ -88,7 +88,7 @@ class Ride extends Model {
 
     public function getFeaturedImage () {
         // Select image if exists for checkpoint set as featured
-        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = true AND filename IS NOT NULL');
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = 1 AND filename IS NOT NULL');
         $getFeaturedImage->execute(array($this->id));
         if ($getFeaturedImage->rowCount() > 0) {
             $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
