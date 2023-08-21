@@ -2,12 +2,12 @@ const form = document.querySelector('#entry-form')
 const button = document.querySelector('#next')
 const fields = document.querySelectorAll('.js-field')
 
-button.addEventListener('click', (e) => {
+if (button) button.addEventListener('click', (e) => {
     e.preventDefault()
 
     // Only submit if contract agreement checkbox is checked
     const $agreement = document.querySelector('#agreement')
-    if (!$agreement.checked) showResponseMessage({'error': 'エントリーを頂くには、ツアー規約に賛同して頂く必要があります。'})
+    if ($agreement && !$agreement.checked) showResponseMessage({'error': 'エントリーを頂くには、ツアー規約に賛同して頂く必要があります。'})
     else {
         
         // Only sumbit if all fields are filled

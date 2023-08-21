@@ -231,23 +231,23 @@ class Manual extends Model {
             // Get database table name depending on slug string
             case '[user_id]': 
                 // If user is connected, return connected user id
-                if (isSessionActive()) $query_string = "SELECT id FROM users WHERE id = {$_SESSION['id']} ORDER BY RAND() LIMIT 1";
+                if (isSessionActive()) $query_string = "SELECT id FROM users WHERE id = {$_SESSION['id']} ORDER BY RANDOM() LIMIT 1";
                 // Else return a random user
-                else $query_string = "SELECT id FROM users ORDER BY RAND() LIMIT 1";
+                else $query_string = "SELECT id FROM users ORDER BY RANDOM() LIMIT 1";
                 break;
             case '[user_login]':
                 // If user is connected, return connected user login
                 if (isSessionActive()) $query_string = "SELECT login FROM users WHERE id = {$_SESSION['id']}";
                 // Else return a random user
-                else $query_string = "SELECT login FROM users ORDER BY RAND() LIMIT 1";
+                else $query_string = "SELECT login FROM users ORDER BY RANDOM() LIMIT 1";
                 break;
             case '[activity_id]':
                 // Return a random public activity
-                $query_string = "SELECT id FROM activities WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                $query_string = "SELECT id FROM activities WHERE privacy = 'public' ORDER BY RANDOM() LIMIT 1";
                 break;
             case '[ride_id]': 
                 // Return a random ride from connected user
-                $query_string = "SELECT id FROM rides WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                $query_string = "SELECT id FROM rides WHERE privacy = 'public' ORDER BY RANDOM() LIMIT 1";
                 break;
             case '[route_id]': 
                 // If user is connected, return a route among his routes if exists, else return a random public route
@@ -256,12 +256,12 @@ class Manual extends Model {
                     IF (EXISTS (SELECT id FROM routes WHERE author_id = {$_SESSION['id']}), 
                     author_id = {$_SESSION['id']},
                     privacy = 'public')
-                    ORDER BY RAND() LIMIT 1";
+                    ORDER BY RANDOM() LIMIT 1";
                 // Else return a random public route
-                } else $query_string = "SELECT id FROM routes WHERE privacy = 'public' ORDER BY RAND() LIMIT 1";
+                } else $query_string = "SELECT id FROM routes WHERE privacy = 'public' ORDER BY RANDOM() LIMIT 1";
                 break;
-            case '[scenery_id]': $query_string = "SELECT id FROM sceneries ORDER BY RAND() LIMIT 1"; break;
-            case '[segment_id]': $query_string = "SELECT id FROM segments ORDER BY RAND() LIMIT 1"; break;
+            case '[scenery_id]': $query_string = "SELECT id FROM sceneries ORDER BY RANDOM() LIMIT 1"; break;
+            case '[segment_id]': $query_string = "SELECT id FROM segments ORDER BY RANDOM() LIMIT 1"; break;
         }
         // Get number of entries and return a random number among it
         $getEntries = self::getPdo()->prepare($query_string);

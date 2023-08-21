@@ -43,7 +43,7 @@ export default class HomeMap extends WorldMap {
         // Build element
         let element = document.createElement('div')
         let icon = document.createElement('img')
-        icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+        icon.src = scenery.thumbnail
         icon.classList.add('scenery-icon')
         element.appendChild(icon)
         this.scaleMarkerAccordingToZoom(icon) // Set scale according to current zoom

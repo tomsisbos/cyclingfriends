@@ -2024,7 +2024,7 @@ export default class Map extends Model {
             // Build element
             let element = document.createElement('div')
             let icon = document.createElement('img')
-            icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+            icon.src = scenery.thumbnail
             icon.classList.add('scenery-icon')
             if (scenery.on_route === true) icon.style.boxShadow = '0 0 1px 3px ' + this.routeColor
             if (scenery.isCleared) element.classList.add('visited-marker') // Highlight if visited
@@ -2929,7 +2929,7 @@ export default class Map extends Model {
         // Build element
         let element = document.createElement('div')
         let icon = document.createElement('img')
-        icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+        icon.src = scenery.thumbnail
         icon.classList.add('scenery-icon')
         if (scenery.isCleared) element.classList.add('visited-marker') // Highlight if visited
         if (scenery.isFavorite) element.classList.add('favoured-marker') // Highlight if favoured

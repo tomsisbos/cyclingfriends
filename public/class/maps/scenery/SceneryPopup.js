@@ -35,7 +35,7 @@ export default class SceneryPopup extends Popup {
     setContent (scenery) {
 
         return `
-        <div class="popup-img-container">` +
+        <div class="popup-img-container" style="background: url('` + scenery.thumbnail + `'); background-position: center; background-size: cover;">` +
             this.centerLoader + `
             <div class="popup-icons">
                 <div id="target-button" title="この絶景スポットに移動する。">
@@ -125,6 +125,8 @@ export default class SceneryPopup extends Popup {
 
             // Add administration panel if connected user has admin rights
             var sessionId = await CFSession.get('id')
+            if (this.popup && this.popup._map) var marker = this.getMarker()
+            else resolve(false)
             if (scenery.user_id == sessionId) {
                 var adminPanel = document.createElement('div')
                 adminPanel.id = 'sceneryAdminPanel'
@@ -138,8 +140,6 @@ export default class SceneryPopup extends Popup {
                     </div>
                 `
                 // Set markerpoint to draggable depending on if user is marker admin and has set edit mode to true or not
-                if (this.popup && this.popup._map) var marker = this.getMarker()
-                else resolve(false)
                 if (marker && this.data.mapInstance.mode == 'edit') marker.setDraggable(true)
                 else if (marker && this.data.mapInstance.mode == 'default') marker.setDraggable(false)
                 this.popup._content.querySelector('#popup-content').before(adminPanel)

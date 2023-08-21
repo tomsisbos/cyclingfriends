@@ -86,9 +86,7 @@ if (is_array($data)) {
 
             forEach($data['sceneriesToCreate'] as $entry) {
                 
-                // Get photo blobs and thumbnail ready
-                $thumbnail_set = false;
-                $thumbnail = null;
+                // Get photo blobs ready
                 $scenery_data['photos'] = [];
                 foreach ($data['photos'] as $activity_photo) {
                     foreach ($entry['photos'] as $entry_photo) {
@@ -102,12 +100,6 @@ if (is_array($data)) {
 
                             // Add photo data to scenery photos
                             array_push($scenery_data['photos'], $scenery_photo);
-                            
-                            // Build and append scenery thumbnail (from first photo blob)
-                            if (!$thumbnail_set) {
-                                $thumbnail = $temp_image->getThumbnail();
-                                $thumbnail_set = true;
-                            }
                         }
                     }
                 }
@@ -125,7 +117,6 @@ if (is_array($data)) {
                 $scenery_data['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
                 $scenery_data['month']            = date("n");
                 $scenery_data['description']      = htmlspecialchars($entry['description']);
-                $scenery_data['thumbnail']        = $thumbnail;
                 $scenery_data['lng']              = $entry['lngLat']['lng'];
                 $scenery_data['lat']              = $entry['lngLat']['lat'];
                 $scenery_data['publication_date'] = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));

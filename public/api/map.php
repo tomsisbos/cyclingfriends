@@ -58,9 +58,6 @@ if (isAjax()) {
                 $scenery_data['photos'][0]['size']     = $scenery_data['file_size'];
                 $scenery_data['photos'][0]['name']     = $scenery_data['file_name'];
                 $scenery_data['photos'][0]['type']     = $scenery_data['file_type'];
-                    
-                // Build thumbnail
-                $scenery_data['thumbnail'] = $temp_image->getThumbnail();
             }
 
             // Create scenery
@@ -76,7 +73,6 @@ if (isAjax()) {
                 'name' => $scenery_data['name'],
                 'popularity' => $scenery_data['popularity'],
                 'rating' => null,
-                'thumbnail' => $scenery_data['thumbnail'],
                 'user_id' => $scenery_data['user_id']
             ];
             echo json_encode($scenery_response);
@@ -189,11 +185,15 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-sceneries'])) {
-        if (isset($_GET['details']) && $_GET['details'] == true) $getSceneries = $db->prepare('SELECT id, user_id, name, description, city, prefecture, thumbnail, elevation, rating, grades_number, popularity, ST_X(point::geometry) as lng, ST_Y(point::geometry) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
-        else $getSceneries = $db->prepare('SELECT id, user_id, name, thumbnail, rating, grades_number, popularity, ST_X(point::geometry) as lng, ST_Y(point::geometry) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        if (isset($_GET['details']) && $_GET['details'] == true) $getSceneries = $db->prepare('SELECT s.id, s.user_id, s.name, s.description, s.city, s.prefecture, s.elevation, s.rating, s.grades_number, s.popularity, ST_X(s.point::geometry) as lng, ST_Y(s.point::geometry) as lat, p.filename FROM sceneries as s JOIN scenery_photos AS p ON s.id = p.scenery_id ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        else $getSceneries = $db->prepare('SELECT s.id, s.user_id, s.name, s.rating, s.grades_number, s.popularity, ST_X(s.point::geometry) as lng, ST_Y(s.point::geometry) as lat, p.filename FROM sceneries as s JOIN scenery_photos as p ON s.id = p.scenery_id ORDER BY popularity, rating, grades_number DESC, elevation ASC');
         $getSceneries->execute();
         $result = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
-        $sceneries = $result;
+        $sceneries = array_map(function ($scenery) {
+            require substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT']))) . '/actions/blobStorage.php';
+            $scenery['thumbnail'] = $blobClient->getBlobUrl('scenery-photos', $scenery['filename']);
+            return $scenery;
+        }, $result);
         echo json_encode($sceneries);
     }
 
@@ -528,7 +528,7 @@ if (isAjax()) {
         define('RIDES_DATE_RANGE', 3); // Define interval in which rides must be displayed in months
         $getRides = $db->prepare("SELECT id FROM rides
         WHERE
-            (privacy = 'public' OR (privacy = 'friends_only' AND author_id IN ('".implode("','",getConnectedUser()->getFriends())."')))
+            (privacy = 'public')
         AND
             date BETWEEN :today AND :datemax");
         $today = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
@@ -624,7 +624,7 @@ if (isAjax()) {
         $ne = new LngLat(explode(',', $_GET['ne'])[0], explode(',', $_GET['ne'])[1]);
         $sw = new LngLat(explode(',', $_GET['sw'])[0], explode(',', $_GET['sw'])[1]);
 
-        $getFittingActivityPhotos = $db->prepare("SELECT id FROM activity_photos WHERE point IS NOT NULL AND privacy = 'public' AND ST_WITHIN(point, ST_GEOMETRYFROMTEXT('POLYGON(({$ne->lng} {$ne->lat},{$sw->lng} {$ne->lat},{$sw->lng} {$sw->lat},{$ne->lng} {$sw->lat},{$ne->lng} {$ne->lat}))'))");
+        $getFittingActivityPhotos = $db->prepare("SELECT id FROM activity_photos WHERE point IS NOT NULL AND privacy = 'public' AND point::geometry @ ST_MakeEnvelope({$ne->lng}, {$ne->lat},{$sw->lng}, {$sw->lat}, 4326)");
         $getFittingActivityPhotos->execute();
         $photo_ids = $getFittingActivityPhotos->fetchAll(PDO::FETCH_COLUMN);
 

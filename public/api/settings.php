@@ -84,7 +84,7 @@ if (is_array($settings)) {
                 // Check if filled email format is valid
                 if (filter_var($posted_email, FILTER_VALIDATE_EMAIL)) {
                     // Update user data
-                    $updateEmail = $db->prepare('UPDATE users SET slug = FLOOR(RAND() * 1000000000), email = ?, verified = 0 WHERE id = ?');
+                    $updateEmail = $db->prepare('UPDATE users SET slug = FLOOR(RANDOM() * 1000000000), email = ?, verified = 0 WHERE id = ?');
                     $updateEmail->execute(array($posted_email, getConnectedUser()->id));
                     getConnectedUser()->sendVerificationMail(['redirect' => false]);
                     echo json_encode(['success' => '登録の新メールアドレス宛に確認用のメールを送信しました。新メールアドレスでご利用頂くために、そのメール内にある確認用URLをクリックしてください。']);

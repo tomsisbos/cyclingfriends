@@ -41,13 +41,8 @@ export default class SceneryLightbox extends Popup {
         this.modal = document.createElement('div')
         this.modal.id = 'modal'
         this.modal.className = 'modal'
-        var closeButton = document.createElement('span')
-        closeButton.className = "close cursor"
-        closeButton.addEventListener('click', () => this.close())
-        closeButton.innerHTML = '&times;'
         this.modalBlock = document.createElement('div')
         this.modalBlock.className = "modal-block"
-        this.modalBlock.appendChild(closeButton)
         this.modal.appendChild(this.modalBlock)
         this.data.container.appendChild(this.modal)
         // If more than one photo, display arrows
@@ -123,6 +118,11 @@ export default class SceneryLightbox extends Popup {
             // Create image meta
             var imgMeta = document.createElement('div')
             imgMeta.className = 'scenery-img-meta'
+            var closeButton = document.createElement('span')
+            closeButton.className = "close cursor"
+            closeButton.addEventListener('click', () => this.close())
+            closeButton.innerHTML = '&times;'
+            imgMeta.appendChild(closeButton)
             slides[i].appendChild(imgMeta)
             var period = document.createElement('div')
             period.className = 'photo-period lightbox-period'

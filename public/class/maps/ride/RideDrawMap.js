@@ -229,7 +229,7 @@ export default class RideDrawMap extends RideMap {
     addSceneryMarker (scenery, content) {
         let element = document.createElement('div')
         let icon = document.createElement('img')
-        icon.src = 'data:image/jpeg;base64,' + scenery.thumbnail
+        icon.src = scenery.thumbnail
         icon.classList.add('scenery-icon')
         if (scenery.on_route === true) icon.classList.add('oncourse-marker')
         element.appendChild(icon)

@@ -6,7 +6,7 @@ class Model {
     
     protected $table;
     protected $db;
-    protected static $root_folder;
+    public static $root_folder;
 
     function __construct () {
         Model::$root_folder = $this->getRootFolder();

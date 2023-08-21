@@ -85,7 +85,7 @@ class User extends Model {
         $this->login = $login;
 
         // Create user entry
-        $register = $this->getPdo()->prepare('INSERT INTO users(slug, email, login, password, default_profilepicture_id, inscription_date, level) VALUES (FLOOR(RAND() * 1000000000), ?, ?, ?, ?, ?, ?)');
+        $register = $this->getPdo()->prepare('INSERT INTO users(slug, email, login, password, default_profilepicture_id, inscription_date, level) VALUES (FLOOR(RANDOM() * 1000000000), ?, ?, ?, ?, ?, ?)');
         $register->execute(array($email, $login, $password, rand(1,9), date('Y-m-d'), 1));
 
         // Get id
@@ -706,6 +706,8 @@ class User extends Model {
         else $period = 10;
 
         // Request activities
+        if (count($friends_list) > 0) $friends_only_condition = "OR (privacy = 'friends_only' AND user_id IN ('".implode("','",$friends_list)."'))";
+        else $friends_only_condition = '';
         $getActivities = $this->getPdo()->prepare("
             SELECT
                 id, user_id, datetime, posting_date, title, privacy
@@ -715,16 +717,11 @@ class User extends Model {
                 datetime > (NOW() - INTERVAL '{$period}' DAY)
                 AND
                     (
-                        (privacy = 'private' AND user_id = ?)
+                        (privacy = 'private' AND user_id = ?)"
+                        .$friends_only_condition. "
                         OR
-                        (privacy = 'friends_only' AND user_id IN ('".implode("','",$friends_list)."'))
-                        OR
-                        (privacy = 'public' AND (
-                            user_id IN ('".implode("','",$friends_list)."') OR
-                            user_id IN ('".implode("','",$scout_list)."')
-                        )
+                        (privacy = 'public')
                     )
-                )
             ORDER BY
                 datetime DESC
             LIMIT " .$limit. " OFFSET " .$offset
@@ -864,12 +861,12 @@ class User extends Model {
         else if ($friends_and_scout_number < 25) $period = 21;
         else $period = 14;
         // Request sceneries
-        if ($friends_and_scout_number == 0) $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY)");
-        else $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$limit. " OFFSET " .$offset);
+        if ($friends_and_scout_number == 0) $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > (NOW() - INTERVAL '{$period}' DAY)");
+        else $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > (NOW() - INTERVAL '{$period}' DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$limit. " OFFSET " .$offset);
         $getSceneries->execute();
         if ($getSceneries->rowCount() > 2) return $getSceneries->fetchAll(PDO::FETCH_ASSOC);
         else { // If this request has returned less than 3 results, return scenery spots shared in the last 14 days
-            $getOtherSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)");
+            $getOtherSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > (NOW() - INTERVAL '14' DAY)");
             $getOtherSceneries->execute();
             return $getOtherSceneries->fetchAll(PDO::FETCH_ASSOC);
         }

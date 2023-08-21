@@ -25,7 +25,7 @@ include '../includes/head.php'; ?>
 		<div class="container-fluid"> <?php
 
 			$scenery_photos = $scenery->getImages(8);
-			$main_color = getMainColor($scenery->thumbnail); ?>
+			$main_color = getMainColor($scenery->getThumbnail()); ?>
 			<div class="container header" style="background-image: url('<?= $scenery_photos[0]->url ?>');">
 				<div class="header-block">
 					<div class="header-row">

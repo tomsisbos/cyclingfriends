@@ -1,6 +1,6 @@
 <?php
 
-if (!$ride->isParticipating(getConnectedUser())) {
+if (!getConnectedUser() || !$ride->isParticipating(getConnectedUser())) {
 
     $entry_data = [];
 
