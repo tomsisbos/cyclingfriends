@@ -23,7 +23,7 @@ time BETWEEN :datemin AND :datemax
     ORDER BY time DESC";
 $params = [':datemin' => $_POST['filter_date_min'], 'datemax' => $_POST['filter_date_max'], ':type' => $_POST['filter_type'], ':search' => $_POST['filter_search']];
 
-$getDevNotes = $db->prepare($query. " LIMIT " .$offset. ", " .$limit);
+$getDevNotes = $db->prepare($query. " LIMIT " .$limit. " OFFSET " .$offset);
 $getDevNotes->execute($params);
 $dev_notes = [];
 

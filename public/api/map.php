@@ -168,7 +168,7 @@ if (isAjax()) {
             $sceneries_ids = explode(',', $_GET['sceneries-closest-photo']);
             $sceneries = [];
             foreach ($sceneries_ids as $scenery_id) {
-                $getSceneryPhoto = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? AND MONTH(date) > ? ORDER BY date ASC');
+                $getSceneryPhoto = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? AND EXTRACT(MONTH FROM date) > ? ORDER BY date ASC');
                 $getSceneryPhoto->execute([$scenery_id, date('m')]);
                 if ($getSceneryPhoto->rowCount() == 0) {
                     $getSceneryPhoto = $db->prepare('SELECT id FROM scenery_photos WHERE scenery_id = ? ORDER BY date DESC');
@@ -189,8 +189,8 @@ if (isAjax()) {
     }
 
     if (isset($_GET['display-sceneries'])) {
-        if (isset($_GET['details']) && $_GET['details'] == true) $getSceneries = $db->prepare('SELECT id, user_id, name, description, city, prefecture, thumbnail, elevation, rating, grades_number, popularity, ST_X(point) as lng, ST_Y(point) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
-        else $getSceneries = $db->prepare('SELECT id, user_id, name, thumbnail, rating, grades_number, popularity, ST_X(point) as lng, ST_Y(point) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        if (isset($_GET['details']) && $_GET['details'] == true) $getSceneries = $db->prepare('SELECT id, user_id, name, description, city, prefecture, thumbnail, elevation, rating, grades_number, popularity, ST_X(point::geometry) as lng, ST_Y(point::geometry) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
+        else $getSceneries = $db->prepare('SELECT id, user_id, name, thumbnail, rating, grades_number, popularity, ST_X(point::geometry) as lng, ST_Y(point::geometry) as lat FROM sceneries ORDER BY popularity, rating, grades_number DESC, elevation ASC');
         $getSceneries->execute();
         $result = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
         $sceneries = $result;
@@ -561,14 +561,14 @@ if (isAjax()) {
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {
             // Add coordinates
-            $getCoords = $db->prepare('SELECT ST_AsWKT(linestring) FROM linestrings WHERE segment_id = ?');
+            $getCoords = $db->prepare('SELECT ST_AsEWKT(linestring) FROM linestrings WHERE segment_id = ?');
             $getCoords->execute(array($segments[$i]['route_id']));
             $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
             $coordinates = new CFLinestring();
             $coordinates->fromWKT($linestring_wkt);
             $segments[$i]['coordinates'] = $coordinates->getArray();
             // Add tunnels
-            $getLinestring = $db->prepare('SELECT ST_AsWKT(linestring) FROM tunnels WHERE segment_id = ?');
+            $getLinestring = $db->prepare('SELECT ST_AsEWKT(linestring) FROM tunnels WHERE segment_id = ?');
             $getLinestring->execute(array($segments[$i]['route_id']));
             $tunnels = [];
             while ($linestring_wkt = $getLinestring->fetch(PDO::FETCH_COLUMN)) {

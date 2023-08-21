@@ -466,9 +466,9 @@ function setFilename ($prefix, $ext = 'jpg') {
 
 function getNextAutoIncrement ($table_name) {
 	require root(). '/actions/database.php';
-    $getTableStatus = $db->prepare("SHOW TABLE STATUS LIKE '{$table_name}'");
+    $getTableStatus = $db->prepare("SELECT last_value + 1 FROM id_serial_{$table_name}");
     $getTableStatus->execute();
-    return $getTableStatus->fetchAll(PDO::FETCH_ASSOC)[0]['Auto_increment'];
+    return $getTableStatus->fetchAll(PDO::FETCH_COLUMN);
 }
 
 function exists ($table, $id) {

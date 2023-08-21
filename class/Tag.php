@@ -51,7 +51,7 @@ class Tag extends Model {
     }
 
     function getEntries ($offset = 0, $limit = 20) {
-        $getEntries = $this->getPdo()->prepare("SELECT object_id, object_type FROM tags WHERE tag = ? LIMIT " .$offset. ", " .$limit);
+        $getEntries = $this->getPdo()->prepare("SELECT object_id, object_type FROM tags WHERE tag = ? LIMIT " .$limit. " OFFSET " .$offset);
         $getEntries->execute(array($this->name));
         $results = $getEntries->fetchAll(PDO::FETCH_ASSOC);
         $entries = [];

@@ -327,7 +327,7 @@ class Activity extends Model {
         $deleteLikeData->execute(array($this->id));
         $deleteActivity = $this->getPdo()->prepare('DELETE FROM activities WHERE id = ?');
         $deleteActivity->execute(array($this->id));
-        $deleteNotification = $this->getPdo()->prepare('DELETE FROM notifications WHERE entry_table = activities AND entry_id = ?');
+        $deleteNotification = $this->getPdo()->prepare("DELETE FROM notifications WHERE entry_table = 'activities' AND entry_id = ?");
         $deleteNotification->execute(array($this->id));
         return true;
     }

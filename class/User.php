@@ -458,7 +458,7 @@ class User extends Model {
     }
 
     public function getNotifications ($offset = 0, $limit = 10) {
-        $getNotifications = $this->getPdo()->prepare("SELECT id FROM notifications WHERE user_id = ? ORDER BY checked ASC, datetime DESC LIMIT {$offset}, {$limit}");
+        $getNotifications = $this->getPdo()->prepare("SELECT id FROM notifications WHERE user_id = ? ORDER BY checked ASC, datetime DESC LIMIT {$limit} OFFSET {$offset}");
         $getNotifications->execute([$this->id]);
         $notifications = [];
         while ($id = $getNotifications->fetch(PDO::FETCH_COLUMN)) array_push($notifications, new Notification($id));
@@ -625,7 +625,7 @@ class User extends Model {
     }
 
     public function getRides ($offset = 0, $limit = 20) {
-        $getRides = $this->getPdo()->prepare("SELECT id FROM rides WHERE author_id = ? ORDER BY date ASC LIMIT " .$offset. ", " .$limit);
+        $getRides = $this->getPdo()->prepare("SELECT id FROM rides WHERE author_id = ? ORDER BY date ASC LIMIT {$limit} OFFSET {$offset}");
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -637,7 +637,7 @@ class User extends Model {
     }
 
     public function getRideParticipations ($offset = 0, $limit = 20) {
-        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM ride_participants WHERE user_id = ? ORDER BY entry_date DESC LIMIT " .$offset. ", " .$limit);
+        $getRides = $this->getPdo()->prepare("SELECT ride_id FROM ride_participants WHERE user_id = ? ORDER BY entry_date DESC LIMIT {$limit} OFFSET {$offset}");
 	    $getRides->execute(array($this->id));
         return $getRides->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -649,7 +649,7 @@ class User extends Model {
     }
 
     public function getRoutes ($offset = 0, $limit = 20) {
-        $getRoutes = $this->getPdo()->prepare("SELECT * FROM routes WHERE author_id = ? AND category = 'route' ORDER BY posting_date DESC LIMIT " .$offset. ", " .$limit);
+        $getRoutes = $this->getPdo()->prepare("SELECT * FROM routes WHERE author_id = ? AND category = 'route' ORDER BY posting_date DESC LIMIT {$limit} OFFSET {$offset}");
 	    $getRoutes->execute(array($this->id));
         return $getRoutes->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -670,7 +670,7 @@ class User extends Model {
     public function getActivities ($offset = 0, $limit = 20, $order_by = 'posting_date', $privacy = null) {
         if (isset($privacy)) $privacy_string = " AND privacy = '" .$privacy. "'";
         else $privacy_string = '';
-        $getActivities = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ?" .$privacy_string. " ORDER BY {$order_by} DESC LIMIT " .$offset. ", " .$limit);
+        $getActivities = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ?" .$privacy_string. " ORDER BY {$order_by} DESC LIMIT {$limit} OFFSET {$offset}");
 	    $getActivities->execute(array($this->id));
         $result = $getActivities->fetchAll(PDO::FETCH_COLUMN);
         return array_map(function ($id) {
@@ -685,7 +685,7 @@ class User extends Model {
      * @return Activity[]
      */
     public function getActivitiesByMonth ($year, $month) {
-        $getActivitiesByDate = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND YEAR(datetime) = ? AND MONTH(datetime) = ? ORDER BY datetime DESC");
+        $getActivitiesByDate = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND EXTRACT(YEAR FROM datetime) = ? AND EXTRACT(MONTH FROM datetime) = ? ORDER BY datetime DESC");
         $getActivitiesByDate->execute([$this->id, $year, $month]);
         $activity_ids = $getActivitiesByDate->fetchAll(PDO::FETCH_COLUMN);
         return array_map(function ($activity_id) {
@@ -712,7 +712,7 @@ class User extends Model {
                 FROM
                 activities
             WHERE 
-                datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY)
+                datetime > (NOW() - INTERVAL '{$period}' DAY)
                 AND
                     (
                         (privacy = 'private' AND user_id = ?)
@@ -727,16 +727,16 @@ class User extends Model {
                 )
             ORDER BY
                 datetime DESC
-            LIMIT " .$offset. ", " .$limit
+            LIMIT " .$limit. " OFFSET " .$offset
         );
 
-	    $getActivities->execute(array($period, $this->id));
+	    $getActivities->execute(array($this->id));
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
 
         // If resulted array if shorter than [limit], complete with most liked public activities of last [period] days
         if ($results_number = count($activities) < $limit) {
-            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, datetime, posting_date, title, privacy FROM activities WHERE datetime > DATE_SUB(CURRENT_DATE, INTERVAL ? DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - $results_number));
-            $getFurtherActivities->execute(array($period));
+            $getFurtherActivities = $this->getPdo()->prepare("SELECT id, user_id, datetime, posting_date, title, privacy FROM activities WHERE datetime > (NOW() - INTERVAL '{$period}' DAY) AND privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .($limit - $results_number). " OFFSET " .$offset);
+            $getFurtherActivities->execute();
             $further_activities = $getFurtherActivities->fetchAll(PDO::FETCH_ASSOC);
             foreach ($further_activities as $further_activity) {
                 $already_listed = false;
@@ -749,7 +749,7 @@ class User extends Model {
 
         // If still shorter than [limit], complete with other most liked public activities, regardless of [period]
         if (count($activities) < $limit) {
-            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, datetime, posting_date, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .$offset. ", " .($limit - count($activities)));
+            $getFurtherActivities2 = $this->getPdo()->prepare("SELECT id, user_id, datetime, posting_date, title, privacy FROM activities WHERE privacy = 'public' ORDER BY likes, datetime, posting_date DESC LIMIT " .($limit - count($activities)). " OFFSET " .$offset);
             $getFurtherActivities2->execute();
             $further_activities2 = $getFurtherActivities2->fetchAll(PDO::FETCH_ASSOC);
             foreach ($further_activities2 as $further_activity) {
@@ -837,7 +837,7 @@ class User extends Model {
     }
 
     public function getFavorites ($type, $offset = 0, $limit = 9999) {
-        $getFavorites = $this->getPdo()->prepare("SELECT object_id FROM favorites WHERE user_id = ? AND object_type = ? LIMIT " .$offset. ", " .$limit);
+        $getFavorites = $this->getPdo()->prepare("SELECT object_id FROM favorites WHERE user_id = ? AND object_type = ? LIMIT " .$limit. " OFFSET " .$offset);
         $getFavorites->execute(array($this->id, $type));
         $favorites_data = $getFavorites->fetchAll(PDO::FETCH_ASSOC);
         $favorites = [];
@@ -865,7 +865,7 @@ class User extends Model {
         else $period = 14;
         // Request sceneries
         if ($friends_and_scout_number == 0) $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY)");
-        else $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$offset. ", " .$limit);
+        else $getSceneries = $this->getPdo()->prepare("SELECT id, publication_date FROM sceneries WHERE publication_date > DATE_SUB(CURRENT_DATE, INTERVAL {$period} DAY) AND user_id IN ('".implode("','",$friends_and_scout_list)."','".$this->id."') ORDER BY publication_date DESC LIMIT " .$limit. " OFFSET " .$offset);
         $getSceneries->execute();
         if ($getSceneries->rowCount() > 2) return $getSceneries->fetchAll(PDO::FETCH_ASSOC);
         else { // If this request has returned less than 3 results, return scenery spots shared in the last 14 days

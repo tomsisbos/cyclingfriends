@@ -18,7 +18,7 @@ include '../actions/routes/route.php'; ?>
     <div class="container-shrink"> <?php
         
         if (isset($ride)) $header_background_img = $ride->getFeaturedImage();
-        else if ($route->getFeaturedImage()) $header_background_img = $route->getFeaturedImage();
+        else if ($featured_image = $route->getFeaturedImage()) $header_background_img = $featured_image;
         if (isset($header_background_img)) { ?>
             <div class="container header" style="background-image: <?= 'url(' .$header_background_img->url. '); background-size: cover;' ?>"> <?php
         } else { ?>

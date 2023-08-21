@@ -41,7 +41,7 @@ class CFLinestring extends Model {
      * @param int $segment_id id of segment to refer to
      */
     protected function saveLinestring ($segment_id) {
-        $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring) VALUES (?, ST_LineStringFromText(?))");
+        $save = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, linestring) VALUES (?, ST_GeomFromText(?))");
         $save->execute([$segment_id, $this->toWKT()]);
     }
     
@@ -246,28 +246,6 @@ class CFLinestring extends Model {
     }
 
     /**
-     * Get all scenery spot ids less than 
-     * @param int $tolerance Tolerance in meters
-     */
-    public function getCloseSceneryIds ($tolerance = 300) {
-        ///$d = $tolerance / 200000;
-        $getCloseSceneries = $this->getPdo()->prepare("SELECT id FROM sceneries WHERE MBRContains(ST_PolygonFromText('".$this->getBBox()->toWKT()."'), point)");
-        $getCloseSceneries->execute();
-        return $getCloseSceneries->fetchAll(PDO::FETCH_COLUMN);
-    }
-
-    /**
-     * Get all scenery spots less than $tolerance meters from linestring
-     * @param int $tolerance Tolerance in meters
-     */
-    public function getCloseSceneries ($tolerance = 300) {
-        $scenery_ids = $this->getCloseSceneryIds($tolerance);
-        return array_map(function ($id) {
-            return new Scenery($id);
-        }, $scenery_ids);
-    }
-
-    /**
      * Query a static map from mapbox server and store it to the static_map property
      * @return File
      */
@@ -328,6 +306,40 @@ class CFLinestring extends Model {
         }
 
         return $thumbnail;
+    }
+
+    /**
+     * Get all scenery spot ids less than 
+     * @param int $tolerance Tolerance in meters
+     */
+    public function getCloseSceneryIds ($tolerance = 3000) {
+        
+        $getCloseSceneries = $this->getPdo()->prepare("
+            SELECT
+                id,
+                ST_Distance(point, (ST_GeomFromText('".$this->toWKT()."'))) as remoteness
+            FROM sceneries
+            WHERE
+                ST_DWithin(
+                    ST_GeomFromText('".$this->toWKT()."'),
+                    point,
+                    {$tolerance}
+                )
+            ORDER BY remoteness ASC
+        ");
+        $getCloseSceneries->execute();
+        return $getCloseSceneries->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Get all scenery spots less than $tolerance meters from linestring
+     * @param int $tolerance Tolerance in meters
+     */
+    public function getCloseSceneries ($tolerance = 300) {
+        $scenery_ids = $this->getCloseSceneryIds($tolerance);
+        return array_map(function ($id) {
+            return new Scenery($id);
+        }, $scenery_ids);
     }
 
 }

@@ -13,7 +13,7 @@ class Tunnel extends CFLinestring {
      * @param int $segment_id id of segment to refer to
      */
     public function saveTunnel ($segment_id, $number = NULL) {
-        $saveTunnel = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, number, linestring) VALUES (?, ?, ST_LineStringFromText(?))");
+        $saveTunnel = $this->getPdo()->prepare("INSERT INTO {$this->table} (segment_id, number, linestring) VALUES (?, ?, ST_GeomFromText(?))");
         $saveTunnel->execute([$segment_id, $number, $this->toWKT()]);
     }
 }

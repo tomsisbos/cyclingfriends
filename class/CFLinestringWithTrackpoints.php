@@ -21,7 +21,7 @@ class CFLinestringWithTrackpoints extends CFLinestring {
      */
     protected function saveLinestring ($segment_id) {
         $query_columns = 'segment_id, linestring';
-        $query_values  = '?, ST_LineStringFromText(?)';
+        $query_values  = '?, ST_GeomFromText(?)';
         $query_params  = [$segment_id, $this->toWKT()];
         foreach ($this->trackpoints[0] as $property => $value) {
             if (!($value instanceof LngLat) && $value !== null) { // If first trackpoint value is not null, save appended data

@@ -40,7 +40,7 @@ if (isAjax()) {
 
     if (isset($_GET['display-sceneries'])) {
         $sceneries_number = 30;
-        $getSceneries = $db->prepare("SELECT id, user_id, name, thumbnail, ST_X(point) as lng, ST_Y(point) as lat, rating, grades_number, popularity FROM sceneries ORDER BY popularity DESC LIMIT 0, {$sceneries_number}");
+        $getSceneries = $db->prepare("SELECT id, user_id, name, thumbnail, ST_X(point) as lng, ST_Y(point) as lat, rating, grades_number, popularity FROM sceneries ORDER BY popularity DESC LIMIT {$sceneries_number}");
         $getSceneries->execute();
         $sceneries = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($sceneries);
@@ -120,14 +120,14 @@ if (isAjax()) {
         $segments = $getSegments->fetchAll(PDO::FETCH_ASSOC);
         for ($i = 0; $i < count($segments); $i++) {
             // Add coordinates
-            $getCoords = $db->prepare('SELECT ST_AsWKT(linestring) FROM linestrings WHERE segment_id = ?');
+            $getCoords = $db->prepare('SELECT ST_AsEWKT(linestring) FROM linestrings WHERE segment_id = ?');
             $getCoords->execute(array($segments[$i]['route_id']));
             $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
             $coordinates = new CFLinestring();
             $coordinates->fromWKT($linestring_wkt);
             $segments[$i]['coordinates'] = $coordinates->getArray();
             // Add tunnels
-            $getLinestring = $db->prepare('SELECT ST_AsWKT(linestring) FROM tunnels WHERE segment_id = ?');
+            $getLinestring = $db->prepare('SELECT ST_AsEWKT(linestring) FROM tunnels WHERE segment_id = ?');
             $getLinestring->execute(array($segments[$i]['route_id']));
             $tunnels = [];
             while ($linestring_wkt = $getLinestring->fetch(PDO::FETCH_COLUMN)) {

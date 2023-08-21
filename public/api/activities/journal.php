@@ -35,7 +35,7 @@ if (isset($_GET)) {
                     ELSE activity_id = a.id
                 END
             LIMIT 1
-        ) AS filename FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? " .$privacy_contition. "AND YEAR(a.datetime) = ? AND MONTH(a.datetime) = ? ORDER BY a.datetime DESC");
+        ) AS filename FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? " .$privacy_contition. "AND EXTRACT(YEAR FROM a.datetime) = ? AND EXTRACT(MONTH FROM a.datetime) = ? ORDER BY a.datetime DESC");
         $getActivitiesByDate->execute([$user->id, $year, $month]);
         $result = $getActivitiesByDate->fetchAll(PDO::FETCH_ASSOC);
         $activity_data = array_map(function ($entry) {

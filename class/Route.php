@@ -47,7 +47,7 @@ class Route extends Model {
      * @param boolean $lngLatFormat whether retrieve coordinates as a Linestring instance or as a simple array of coordinates
      */
     public function getLinestring () {
-        $getCoords = $this->getPdo()->prepare('SELECT ST_AsWKT(linestring) FROM linestrings WHERE segment_id = ?');
+        $getCoords = $this->getPdo()->prepare('SELECT ST_AsEWKT(linestring) FROM linestrings WHERE segment_id = ?');
         $getCoords->execute(array($this->id));
         $linestring_wkt = $getCoords->fetch(PDO::FETCH_COLUMN);
         $coordinates = new CFLinestring();
@@ -87,7 +87,7 @@ class Route extends Model {
     public function getFeaturedImage () {
 
         // Get close sceneries
-        $sceneries_on_route = $this->getLineString()->getCloseSceneryIds();
+        $sceneries_on_route = $this->getLinestring()->getCloseSceneryIds(1000);
 
         // If more than one scenery is on the course, use the most liked photo among them
         if (count($sceneries_on_route) > 0) {
@@ -119,7 +119,7 @@ class Route extends Model {
      * @return Tunnel[]
      */
     public function getTunnels () {
-        $getLinestring = $this->getPdo()->prepare('SELECT ST_AsWKT(linestring) FROM tunnels WHERE segment_id = ?');
+        $getLinestring = $this->getPdo()->prepare('SELECT ST_AsEWKT(linestring) FROM tunnels WHERE segment_id = ?');
         $getLinestring->execute(array($this->id));
         $tunnels = [];
         while ($linestring_wkt = $getLinestring->fetch(PDO::FETCH_COLUMN)) {
@@ -242,18 +242,18 @@ class Route extends Model {
     public function getPublicPhotos ($tolerance = 300) {
 
         // Get all public activity photos registered in the database
-        $d = $tolerance / 200000; // 0.0015 = about 300m
         $getPublicPhotos = $this->getPdo()->prepare("
             SELECT
                 id,
-                ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$this->id})) as 'remoteness'
+                ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$this->id})) as remoteness
             FROM activity_photos
             WHERE
-                ST_IsEmpty(point) = 0
+                NOT ST_IsEmpty(point::geometry)
                     AND
                 privacy = 'public'
                     AND
-                ST_Intersects(point, ST_Buffer((SELECT linestring FROM linestrings WHERE segment_id = {$this->id}), {$d}))
+                ST_DWithin((SELECT linestring FROM linestrings WHERE segment_id = {$this->id}), point, {$tolerance})
+            ORDER BY remoteness ASC
         ");
         $getPublicPhotos->execute();
         $result = $getPublicPhotos->fetchAll(PDO::FETCH_ASSOC);

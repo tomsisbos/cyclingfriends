@@ -21,10 +21,10 @@ class Geolocation extends Model {
      * @return array
      */
     private function getTimeZone () {
-        $getTimeZone = $this->getGis()->prepare("SELECT `country_code`, `zone_name`, `abbreviation`, `gmt_offset`, `dst`
-        FROM `time_zone`
-        WHERE `time_start` <= UNIX_TIMESTAMP(UTC_TIMESTAMP()) AND `country_code` = ?
-        ORDER BY `time_start` DESC LIMIT 1");
+        $getTimeZone = $this->getGis()->prepare("SELECT country_code, zone_name, abbreviation, gmt_offset, dst
+        FROM gis.time_zone
+        WHERE time_start <= extract(epoch from NOW()) AND country_code = ?
+        ORDER BY time_start DESC LIMIT 1");
         $getTimeZone->execute([$this->country_code]);
         return $getTimeZone->fetch(PDO::FETCH_ASSOC);
     }
