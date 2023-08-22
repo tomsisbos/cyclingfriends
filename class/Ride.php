@@ -53,7 +53,7 @@ class Ride extends Model {
         $this->roadbike                                = $data['roadbike'];
         $this->mountainbike                            = $data['mountainbike'];
         $this->gravelcxbike                            = $data['gravelcxbike'];
-        $this->description                             = $data['description'];
+        $this->description                             = $this->getFormattedDescription($data['description']);
         $this->meeting_place                           = $data['meeting_place'];
         $this->distance_about                          = $data['distance_about'];
         $this->distance                                = $data['distance'];
@@ -661,18 +661,19 @@ class Ride extends Model {
      * Outputs description with adding specific style for specific characters
      * @return string
      */
-    public function getFormattedDescription () {
-        $output = $this->description;
+    public function getFormattedDescription ($description = null) {
+        if (!isset($description)) $description = $this->description;
 
         // Change japanese brackets to strong text
-        $output = str_replace('【', '<strong>', $output);
-        $output = str_replace('】', '</strong>', $output);
-        $output = str_replace('\n', '', $output);
+        $description = str_replace('【', '<strong>', $description);
+        $description = str_replace('】', '</strong>', $description);
+        $description = str_replace('\n', '', $description);
+        $description = str_replace('\r', '', $description);
 
         // Add anchor to urls
-        $output = preg_replace('<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>', '<a href="$0" target="_blank">$0</a>', $output);
+        $description = preg_replace('<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>', '<a href="$0" target="_blank">$0</a>', $description);
 
-        return $output;
+        return $description;
     }
 
     /**

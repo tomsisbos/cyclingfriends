@@ -34,7 +34,7 @@ function isAjax () {
 }
 
 // Function for replacing <br /> tags with new lines
-function br2nl($input){
+function br2nl ($input) {
 	    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));
 }
 

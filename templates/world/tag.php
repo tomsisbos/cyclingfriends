@@ -17,7 +17,7 @@ include '../includes/head.php'; ?>
 	<div class="main"> <?php
 
         // Get id from URL
-        $tag = new Tag(basename($_SERVER['HTTP_REFERER']));
+        $tag = new Tag(basename($_SERVER['REQUEST_URI']));
         if ($tag->exists()) {
 
             // Space for general error messages
