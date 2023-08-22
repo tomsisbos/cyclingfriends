@@ -35,8 +35,8 @@
                         }
                         echo ') ';
                     } ?>
-                </span>
-                <?= ' - ' . $checkpoint->name ?>
+                </span> <?php
+                if (!empty($checkpoint->name)) echo ' - ' . $checkpoint->name ?>
             </div>
             <div class="pg-ac-checkpoint-story">
                 <?= $checkpoint->story ?>

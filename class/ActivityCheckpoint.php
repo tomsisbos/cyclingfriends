@@ -57,7 +57,7 @@ class ActivityCheckpoint extends Model {
 
         // Insert checkpoints in 'activity_checkpoints' table
         $insert_checkpoints = $this->getPdo()->prepare("INSERT INTO {$this->table}(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, special, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
-        $insert_checkpoints->execute(array($data['activity_id'], $data['number'], $data['name'], $data['type'], $data['story'], $data['datetime']->format('Y-m-d H:i:s'), $data['city'], $data['prefecture'], $data['elevation'], $data['distance'], $data['temperature'], $data['special'], $point_wkt));
+        $insert_checkpoints->execute(array($data['activity_id'], $data['number'], $data['name'], $data['type'], $data['story'], $data['datetime']->format('Y-m-d H:i:s'), $data['city'], $data['prefecture'], intval($data['elevation']), $data['distance'], $data['temperature'], $data['special'], $point_wkt));
     }
 
     public function getIcon ($width = 24) {

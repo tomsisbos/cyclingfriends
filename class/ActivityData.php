@@ -236,8 +236,7 @@ class ActivityData extends Model {
                     $checkpoint['city'] = $checkpoint['geolocation']['city'];
                     $checkpoint['prefecture'] = $checkpoint['geolocation']['prefecture'];
                 } else { // If geolocation was not set previously, try to set it again
-                    if ($checkpoint['type'] == 'Start') $geolocation = $this->linestring->coordinates[0]->queryGeolocation();
-                    else if ($checkpoint['type'] == 'Goal') $geolocation = $this->linestring->coordinates[$this->linestring->length - 1]->queryGeolocation();
+                    $geolocation = (new LngLat($checkpoint['lng'], $checkpoint['lat']))->queryGeolocation();
                     $checkpoint['city'] = $geolocation->city;
                     $checkpoint['prefecture'] = $geolocation->prefecture;
                 }
