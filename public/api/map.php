@@ -73,7 +73,8 @@ if (isAjax()) {
                 'name' => $scenery_data['name'],
                 'popularity' => $scenery_data['popularity'],
                 'rating' => null,
-                'user_id' => $scenery_data['user_id']
+                'user_id' => $scenery_data['user_id'],
+                'thumbnail' => $scenery->getThumbnail()
             ];
             echo json_encode($scenery_response);
         
@@ -470,12 +471,8 @@ if (isAjax()) {
         $getCurrentGrade = $db->prepare("SELECT grade FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");
         $getCurrentGrade->execute(array($object->id, getConnectedUser()->id));
         $grade_infos = $getCurrentGrade->fetch(PDO::FETCH_NUM);
-        if ($getCurrentGrade->rowCount() > 0){
-            $current_grade = $grade_infos[0];
-        } else {
-            echo 'CURRENT GRADE NOT FOUND';
-            return false;
-        }
+        if ($getCurrentGrade->rowCount() > 0) $current_grade = $grade_infos[0];
+        else throw new Exception('CURRENT GRADE NOT FOUND');
 
         // Remove grade entry from grade table
         $removeGrade = $db->prepare("DELETE FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");

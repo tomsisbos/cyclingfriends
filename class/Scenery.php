@@ -60,7 +60,7 @@ class Scenery extends Model {
 
         // Insert scenery data
         $scenery_data['id'] = getNextAutoIncrement($this->table); // Get id for referring photos
-        $insertSceneryData = $this->getPdo()->prepare("INSERT INTO sceneries (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, publication_date, popularity, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
+        $insertSceneryData = $this->getPdo()->prepare("INSERT INTO sceneries (user_id, user_login, category, name, city, prefecture, elevation, date, month, description, publication_date, popularity, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
         $insertSceneryData->execute(array($scenery_data['user_id'], $scenery_data['user_login'], $scenery_data['category'], $scenery_data['name'], $scenery_data['city'], $scenery_data['prefecture'], $scenery_data['elevation'], $scenery_data['date']->format('Y-m-d H:i:s'), $scenery_data['month'], $scenery_data['description'], $scenery_data['publication_date']->format('Y-m-d H:i:s'), $scenery_data['popularity'], $point_wkt));
 
         // Connect to blob storage
@@ -96,6 +96,25 @@ class Scenery extends Model {
                 $insertTag->execute(array('scenery', $scenery_data['id'], $tag));
             }
         }
+
+        $this->id = $scenery_data['id'];
+        $data = $this->getData($this->table);
+        $this->user_id          = $data['user_id'];
+        $this->category         = $data['category'];
+        $this->name             = $data['name'];
+        $this->city             = $data['city'];
+        $this->prefecture       = $data['prefecture'];
+        $this->elevation        = $data['elevation'];
+        $this->date             = $data['date'];
+        $this->period           = $this->getPeriod();
+        $this->month            = $data['month'];
+        $this->description      = $data['description'];
+        $this->lngLat           = $this->getLngLat();
+        $this->publication_date = new Datetime($data['publication_date']);
+        $this->rating           = $data['rating'];
+        $this->grades_number    = $data['grades_number'];
+        $this->popularity       = $data['popularity'];
+        $this->likes            = $data['likes'];
     }
 
     public function delete () {
@@ -169,6 +188,14 @@ class Scenery extends Model {
             $insertReview->execute(array($this->id, $user->id, $user->login, $content, $time));
             $this->notify($this->user_id, 'scenery_review_posting');
         }
+    }
+
+    public function getThumbnail () {
+        $getThumbnailPhotoUrl = $this->getPdo()->prepare("SELECT filename FROM scenery_photos WHERE scenery_id = ? ORDER BY likes DESC");
+        $getThumbnailPhotoUrl->execute([$this->id]);
+        $filename = $getThumbnailPhotoUrl->fetch(PDO::FETCH_COLUMN);
+        require substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT']))) . '/actions/blobStorage.php';
+        return $blobClient->getBlobUrl('scenery-photos', $filename);
     }
 
     public function getTags () {

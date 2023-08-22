@@ -468,7 +468,7 @@ function getNextAutoIncrement ($table_name) {
 	require root(). '/actions/database.php';
     $getTableStatus = $db->prepare("SELECT last_value + 1 FROM id_serial_{$table_name}");
     $getTableStatus->execute();
-    return $getTableStatus->fetchAll(PDO::FETCH_COLUMN);
+    return $getTableStatus->fetch(PDO::FETCH_COLUMN);
 }
 
 function exists ($table, $id) {
