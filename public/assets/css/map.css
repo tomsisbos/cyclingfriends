@@ -261,9 +261,10 @@ form#sceneryForm input[type="file" i] {
 .scenery-img-meta {
     min-width: 50%;
     position: absolute;
+    gap: 8px;
     right: 0px;
     top: 0px;
-    margin: 0px 10px;
+    margin: 0px 20px;
     display: flex;
     align-items: center;
     flex-direction: row-reverse;
