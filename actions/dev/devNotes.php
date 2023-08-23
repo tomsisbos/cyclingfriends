@@ -10,7 +10,7 @@ if (empty($_POST['filter_date_max'])) $_POST['filter_date_max'] = date('2099-12-
 
 if (!isset($_POST['filter_type'])) $_POST['filter_type'] = 'all';
 
-if (!isset($_POST['filter_search'])) $_POST['filter_search'] = '';
+if (!isset($_POST['filter_search'])) $_POST['filter_search'] = '%';
 
 $query = "SELECT id FROM dev_notes WHERE
 time BETWEEN :datemin AND :datemax
@@ -19,9 +19,9 @@ time BETWEEN :datemin AND :datemax
             WHEN :type = 'all' THEN :type = :type
             ELSE type = :type
         END)
-    AND title LIKE '%' :search '%'
+    AND title LIKE :search
     ORDER BY time DESC";
-$params = [':datemin' => $_POST['filter_date_min'], 'datemax' => $_POST['filter_date_max'], ':type' => $_POST['filter_type'], ':search' => $_POST['filter_search']];
+$params = [':datemin' => $_POST['filter_date_min'], 'datemax' => $_POST['filter_date_max'], ':type' => $_POST['filter_type'], ':search' => '%' .$_POST['filter_search']. '%'];
 
 $getDevNotes = $db->prepare($query. " LIMIT " .$limit. " OFFSET " .$offset);
 $getDevNotes->execute($params);

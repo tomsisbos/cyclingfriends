@@ -219,20 +219,6 @@ function addBike ($bike_number, $user_id) {
 	}
 }
 
-// Get the gender of an user and return it as an icon
-function getGenderAsIcon($user_id){
-	require '../actions/database.php';
-	$getGender = $db->prepare('SELECT gender FROM users WHERE id = ?');
-	$getGender->execute(array($user_id));
-	$gender = $getGender->fetch();
-	if($gender = 'Man'){
-		return '<span class="iconify" style="color: #00adff;" data-icon="el:male" data-width="20" data-height="20"></span>';
-	}else if($gender = 'Woman'){
-		return '<span class="iconify" style="color: #ff6666;" data-icon="el:female" data-width="20" data-height="20"></span>';
-	}
-	
-}
-
 // Function for calculating the number of remaining days to a certain date
 function nbDaysLeftToDate($date) {
 	$currentdate = time();

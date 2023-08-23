@@ -311,6 +311,11 @@ class User extends Model {
         }
     }
 
+    public function getGenderIcon () {
+        if ($this->gender = 'Man') return '<span class="iconify" style="color: #00adff;" data-icon="el:male" data-width="20" data-height="20"></span>';
+        else if ($this->gender = 'Woman') return '<span class="iconify" style="color: #ff6666;" data-icon="el:female" data-width="20" data-height="20"></span>';	
+    }
+
     // Register a friend request
     public function sendFriendRequest ($friend) {
         

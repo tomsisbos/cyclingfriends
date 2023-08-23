@@ -17,7 +17,7 @@
                             <div class="rdr-login-section"> <?php 
                                 if (!empty($rider->gender)) { ?>
                                     <div class="rdr-gender">	<?php
-                                        echo getGenderAsIcon($rider->gender); ?>
+                                        echo $rider->getGenderIcon(); ?>
                                     </div> <?php
                                     } ?>
                                 <div class="rdr-login js-login"><?= $rider->login; ?></div>
