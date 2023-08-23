@@ -18,7 +18,7 @@
 	// Get user data of each scout id from the database according to filter queries
 	$query = 
 		"SELECT * FROM users WHERE
-				login LIKE '%' :query '%'
+				login LIKE :query
 			AND
 				id IN ('".implode("','",$scouts)."')
 		ORDER BY
@@ -41,10 +41,10 @@
 		";
 	// Get results total number (without limit)
 	$getResultsNumber = $db->prepare($query);
-	$getResultsNumber->execute(array(":query" => $_POST['scout_search'], ":index" => $_POST['scout_orderby']));
+	$getResultsNumber->execute(array(":query" => '%' .$_POST['scout_search']. '%', ":index" => $_POST['scout_orderby']));
 	// Get paginated results
 	$result_query = $query .= " LIMIT {$limit} OFFSET {$offset}";
 	$getScoutsData = $db->prepare($result_query);
-	$getScoutsData->execute(array(":query" => $_POST['scout_search'], ":index" => $_POST['scout_orderby']));
+	$getScoutsData->execute(array(":query" => '%' .$_POST['scout_search']. '%', ":index" => $_POST['scout_orderby']));
 	
 ?>
