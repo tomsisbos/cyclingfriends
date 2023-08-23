@@ -253,9 +253,10 @@ class Manual extends Model {
                 // If user is connected, return a route among his routes if exists, else return a random public route
                 if (isSessionActive()) {
                     $query_string = "SELECT id FROM routes WHERE
-                    IF (EXISTS (SELECT id FROM routes WHERE author_id = {$_SESSION['id']}), 
-                    author_id = {$_SESSION['id']},
-                    privacy = 'public')
+                    CASE 
+                        WHEN EXISTS (SELECT id FROM routes WHERE author_id = {$_SESSION['id']}) THEN author_id = {$_SESSION['id']}
+                        ELSE privacy = 'public'
+                    END
                     ORDER BY RANDOM() LIMIT 1";
                 // Else return a random public route
                 } else $query_string = "SELECT id FROM routes WHERE privacy = 'public' ORDER BY RANDOM() LIMIT 1";
