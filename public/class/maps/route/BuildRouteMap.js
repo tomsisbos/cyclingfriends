@@ -182,7 +182,13 @@ export default class BuildRouteMap extends Map {
                     canvas.toBlob( async (blob) => {
                         answer.thumbnail = await blobToBase64(blob)
                         // When treatment is done, redirect to my routes page
-                        this.saveRoute(answer)
+                        var response = await this.saveRoute(answer)
+                        if (response) {
+                            loader.setText('完了✓')
+                            if (response.category == 'segment') window.location.replace('/world')
+                            else if (this.routeData.id) window.location.replace('/route/' + this.routeData.id)
+                            else window.location.replace('/routes')
+                        }
                     }, 'image/jpeg', 0.7)
                 } )            
             } else {
@@ -1622,38 +1628,39 @@ export default class BuildRouteMap extends Map {
 
     // Save current route
     async saveRoute (details) {
-        // Reduce coordinates number for performance purpose
-        /*if (this.map.getSource('route')._data.geometry.coordinates.length > 600) var routeData = turf.simplify(this.map.getSource('route')._data, {tolerance: 0.0001, highQuality: true, mutate: false})
-        else */var routeData = this.map.getSource('route')._data
-        var route = {
-            id: 'new',
-            type: 'route-save',
-            coordinates: routeData.geometry.coordinates,
-            tunnels: routeData.properties.tunnels,
-            category: details.category,
-            name: details.name,
-            description: details.description,
-            distance: turf.length(routeData),
-            elevation: await this.profile.calculateElevation(routeData),
-            startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
-            goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
-            thumbnail: details.thumbnail
-        }
-        if (details.category == 'segment') {
-            route = {
-                ...route,
-                rank: details.rank,
-                advised: details.advised,
-                seasons: details.seasons,
-                advice: details.advice,
-                specs: details.specs,
-                tags: details.tags
+        return new Promise(async (resolve, reject) => {
+            // Reduce coordinates number for performance purpose
+            /*if (this.map.getSource('route')._data.geometry.coordinates.length > 600) var routeData = turf.simplify(this.map.getSource('route')._data, {tolerance: 0.0001, highQuality: true, mutate: false})
+            else */var routeData = this.map.getSource('route')._data
+            var route = {
+                id: 'new',
+                type: 'route-save',
+                coordinates: routeData.geometry.coordinates,
+                tunnels: routeData.properties.tunnels,
+                category: details.category,
+                name: details.name,
+                description: details.description,
+                distance: turf.length(routeData),
+                elevation: await this.profile.calculateElevation(routeData),
+                startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
+                goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
+                thumbnail: details.thumbnail
             }
-        }
-        ajaxJsonPostRequest(this.apiUrl, route, (response) => {
-            if (route.category == 'segment') window.location.replace('/world')
-            else window.location.replace('/routes')
-        } )
+            if (details.category == 'segment') {
+                route = {
+                    ...route,
+                    rank: details.rank,
+                    advised: details.advised,
+                    seasons: details.seasons,
+                    advice: details.advice,
+                    specs: details.specs,
+                    tags: details.tags
+                }
+            }
+            ajaxJsonPostRequest(this.apiUrl, route, (response) => {
+                resolve(response)
+            } )
+        })
     }
     
     updateMapData () {

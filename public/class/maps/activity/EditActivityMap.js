@@ -114,10 +114,13 @@ export default class EditActivityMap extends NewActivityMap {
             } ) ().then(
                 () => {
                     // Send data to server
+                    var loader = new FadeLoader('保存中...')
+                    loader.start()
                     ajaxJsonPostRequest (this.apiUrl, cleanData, (response) => {
+                        loader.setText('完了✓')
                         resolve(response)
                         window.location.replace('/activity/' + this.data.id)
-                    }, new FadeLoader('保存中...'))
+                    })
                 }
             )
 

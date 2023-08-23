@@ -1033,9 +1033,12 @@ export default class NewActivityMap extends ActivityMap {
             // If error, display error message
             if (response.error) showResponseMessage(response)
             // Else, redirect to newly created activity page
-            else if (response.success) window.location.replace('/activity/' + response.success)
+            else if (response.success) {
+                loader.setText('完了✓')
+                window.location.replace('/activity/' + response.success)
+            }
 
-        }, loader)
+        })
 
         function ajaxSaveActivity (url, jsonData, callback, loader = null) {
             var xhr = getHttpRequest()

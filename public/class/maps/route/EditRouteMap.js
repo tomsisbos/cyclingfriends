@@ -67,24 +67,26 @@ export default class EditRouteMap extends BuildRouteMap {
 
     // Save current route
     async saveRoute (details) {
-        var routeData = this.map.getSource('route')._data
-        var route = {
-            id: parseInt(this.routeId),
-            type: 'route-edit',
-            coordinates: routeData.geometry.coordinates,
-            tunnels: routeData.properties.tunnels,
-            category: details.category,
-            name: details.name,
-            description: details.description,
-            distance: turf.length(routeData),
-            elevation: await this.profile.calculateElevation(routeData),
-            startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
-            goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
-            thumbnail: details.thumbnail
-        }
-        ajaxJsonPostRequest(this.apiUrl, route, (response) => {
-            window.location.replace('/route/' + this.routeData.id)
-        } )
+        return new Promise(async (resolve, reject) => {
+            var routeData = this.map.getSource('route')._data
+            var route = {
+                id: parseInt(this.routeId),
+                type: 'route-edit',
+                coordinates: routeData.geometry.coordinates,
+                tunnels: routeData.properties.tunnels,
+                category: details.category,
+                name: details.name,
+                description: details.description,
+                distance: turf.length(routeData),
+                elevation: await this.profile.calculateElevation(routeData),
+                startplace: await this.getCourseGeolocation(routeData.geometry.coordinates[0]),
+                goalplace: await this.getCourseGeolocation(routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1]),
+                thumbnail: details.thumbnail
+            }
+            ajaxJsonPostRequest(this.apiUrl, route, (response) => {
+                resolve(response)
+            } )
+        })
     }
 
 }
