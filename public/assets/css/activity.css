@@ -876,3 +876,12 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+.mp-button.twitter-button svg {
+    height: 100%;
+    margin: auto;
+}
+.mp-button.twitter-button {
+    background-color: #1d9bf0;
+    color: #fff;
+}
