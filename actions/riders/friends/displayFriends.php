@@ -25,9 +25,9 @@
 			CASE
 				WHEN :index = 'level' THEN 
 					(CASE 
-						WHEN level = 'Athlete' THEN 0
-						WHEN level = 'Intermediate' THEN 1
-						WHEN level = 'Beginner' THEN 2
+						WHEN level = 3 THEN 0
+						WHEN level = 2 THEN 1
+						WHEN level = 1 THEN 2
 						ELSE 3
 					END)
 				END ASC,
@@ -35,7 +35,7 @@
 				WHEN :index = 'login' THEN login
 				WHEN :index = 'last_name' THEN last_name
 				WHEN :index = 'first_name' THEN first_name
-				WHEN :index = 'birthdate' THEN birthdate
+				WHEN :index = 'birthdate' THEN birthdate::text
 				ELSE (SELECT NULL)
 			END DESC";
 	// Get results total number (without limit)
