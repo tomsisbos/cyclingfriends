@@ -26,7 +26,7 @@ class ActivityCheckpoint extends Model {
             $this->number      = intval($data['number']);
             $this->name        = $data['name'];
             $this->type        = $data['type'];
-            $this->story       = $data['story'];
+            $this->story       = nl2br($data['story']);
             $this->datetime    = new DateTime($data['datetime']);
             $this->geolocation = new Geolocation($data['city'], $data['prefecture']);
             $this->elevation   = intval($data['elevation']);

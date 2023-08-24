@@ -11,6 +11,12 @@
         "/public/react/runtime.js",
         "/public/react/journal.js"
       ]
+    },
+    "dashboard": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/dashboard.js"
+      ]
     }
   }
 }

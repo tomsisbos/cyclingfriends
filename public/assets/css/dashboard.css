@@ -1,137 +1,102 @@
-@media only screen and (max-width: 992px) {
-    .sidebar-left {
-        display: none;
-    }
-}
 
-.sidebar-main {
-    overflow: hidden;
-    flex-grow: 1;
-}
-.sidebar-left {
-    min-width: 300px;
-    width: 300px;
-}
 
-.dashboard-container {
-    overflow: hidden;
-}
-
-.dashboard-title {
-    font-weight: bold;
-    display: inline-block;
-    margin-bottom: 4px;
-}
-.dashboard-title-block {
-    color: #fff;
-    padding: 15px;
-    background-color: #bbbbbb;
+#dashboard {
     display: flex;
-    column-gap: 6px;
-    flex-wrap: wrap;
 }
 
-.dashboard-block {
-    background-color: #fff;
-    padding: 10px;
-}
-.dashboard-block::-webkit-scrollbar {
-    height: 5px;
-    width: 5px;
-}
-.dashboard-block::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: #f0f0f0;
-}
-.dashboard-block::-webkit-scrollbar-thumb {
-    background: #bbbbbb;
-    border-radius: 10px;
-}
-.dashboard-block::-webkit-scrollbar-thumb:hover {
-    background: #c1c1c1; 
-}
-
-.dashboard-thread-container {
-    gap: 10px;
-    margin: 0px 50px;
+.dashboard-rides {
+    position: relative;
+    width: 50%;
+    height: 300px;
     display: grid;
-    grid-auto-flow: dense;
-    justify-content: space-around;
-    grid-template-columns: 30% 30% 30%;
-}
-.dashboard-cards {
-    gap: 4px;
-    display: flex;
-    flex-direction: column;
-}
-.dashboard-card {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-.dashboard-card.activity {
-    grid-column: 1 / span 2;
-}
-
-.dashboard-card .mk-card, .dashboard-card .ac-card {
-    flex-grow: 1;
-}
-
-@media only screen and (max-width: 992px) {
-    .dashboard-thread-container {
-        grid-template-columns: 50% 50%;
-        margin: 0px 20px;
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    .dashboard-thread-container {
-        grid-template-columns: 100%;
-        margin: 0px 10px;
-    }
-    .dashboard-card.activity {
-        grid-column: 1;
-    }
-}
-
-.rd-card {
-    background-color: #fff;
-}
-.rd-header {
+    align-items: end;
     background-size: cover;
-    background-position: center;
+    grid-template-rows: 50% 50%;
+    grid-template-columns: 33.33% 33.33% 33.33%;
+    grid-template-areas:
+        'thumbnail card card'
+        'thumbnail card card';
+}
+
+.dashboard-ride-card {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
     width: 100%;
-    height: 80px;
-    padding: 10px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    align-items: end;
+    background-size: cover;
+    grid-area: card;
     cursor: pointer;
+    transition: 0.5s height, 0.5s width;
+    z-index: 1;
 }
-.rd-header:hover {
-    opacity: 0.8;
+
+.dashboard-ride-card-block {
+    height: 160px;
+    font-size: 12px;
+    padding: 12px 30px;
+    overflow: hidden;
+    text-shadow: 0 0 4px #000000;
+    background: linear-gradient(0deg, #00000088, transparent);
 }
-.rd-title {
-    color: white;
-    text-shadow: 1px 1px 3px black;
+
+.dashboard-ride-title {
     font-family: Yu Mincho;
     font-weight: bold;
+    font-size: 22px;
+    line-height: 1em;
+    margin-bottom: 10px;
 }
-.rd-date {
-    color: white;
-    text-align: right;
+
+.dashboard-ride-thumbnail {
+    width: 100%;
+    height: 100%;
+    grid-area: thumbnail;
+    background-size: cover;
+    grid-row-start: auto;
 }
-.rd-details {
-    padding: 10px;
+
+.dashboard-ride-card:hover {
+    height: 105%;
+    width: 140%;
+    overflow: visible;
+    transition: 0.5s height, 0.5s width;
 }
-.rd-course {
-    padding: 5px 0px;
+
+.dashboard-ride-thumbnail:hover {
+    opacity: 0.8;
 }
-.rd-course img {
-    object-fit: cover;
-    height: 1em;
-    width: 40px;
-    border: 1px dashed;
-    vertical-align: middle;
-    margin: 0px 5px;
+
+.dashboard-ride-text {
+    height: 6em;
+    display: -webkit-box;
+    text-align: justify;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.dashboard-ride-card:hover .dashboard-ride-text {
+    -webkit-line-clamp: 6;
+    height: 9em;
+}
+
+.dashboard-ride-card:hover .dashboard-ride-card-block {
+    height: 200px;
+}
+
+.dashboard-news {
+    background-color: #0d8360;
+    width: 50%;
+    max-height: 300px;
+    font-size: 12px;
+    padding: 12px 30px;
+}
+
+.dashboard-news-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
 }
