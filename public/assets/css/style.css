@@ -1088,6 +1088,14 @@ li.nav-item {
     border-radius: 5px;
     margin: 0px 2px;
 }
+.tag-darkgreen {
+	display: inline-block;
+    width: fit-content;
+    background-color: #00e06e;
+    padding: 0px 8px;
+    border-radius: 5px;
+    margin: 0px 2px;
+}
 
 .tag-blue {
 	display: inline-block;
@@ -1104,6 +1112,14 @@ li.nav-item {
 	display: inline-block;
     width: fit-content;
     background-color: #ffbbbb;
+    padding: 0px 8px;
+    border-radius: 5px;
+    margin: 0px 2px;
+}
+.tag-darkred {
+	display: inline-block;
+    width: fit-content;
+    background-color: #ff5555;
     padding: 0px 8px;
     border-radius: 5px;
     margin: 0px 2px;

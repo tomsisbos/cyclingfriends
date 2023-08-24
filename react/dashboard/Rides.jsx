@@ -14,6 +14,8 @@ export default function Rides () {
     const [rides, setRides] = useState([])
     const [highlightRide, setHighlightRide] = useState(null)
 
+    var number = 0
+
     const initialize = async () => {
         return new Promise((resolve, reject) => {
             setLoading(true)
@@ -39,10 +41,15 @@ export default function Rides () {
     if (loading) return <Loader />
     else return (
         <div className="dashboard-rides">
-            {rides.map((ride) => {
-                if (ride.id == highlightRide) return <RideCard key={ride.id} id={ride.id} name={ride.name} date={ride.date} text={ride.description} src={storageUrl + containerName + '/' + ride.featured_image} />
-                else return <RideThumbnail key={ride.id} id={ride.id} src={storageUrl + containerName + '/' + ride.featured_image} onClick={handleClick} />
-            })}
+            {
+                rides.map((ride) => {
+                    if (ride.id == highlightRide) return <RideCard key={ride.id} id={ride.id} name={ride.name} date={ride.date} text={ride.description} entry_start={ride.entry_start} entry_end={ride.entry_end} src={storageUrl + containerName + '/' + ride.featured_image} />
+                    else {
+                        number++
+                        return <RideThumbnail key={ride.id} number={number} id={ride.id} src={storageUrl + containerName + '/' + ride.featured_image} onClick={handleClick} />
+                    }
+                })
+            }
         </div>
     )
 

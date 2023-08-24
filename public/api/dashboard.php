@@ -10,14 +10,14 @@ if (isset($_GET)) {
 
         $getRides = $db->prepare("
             SELECT DISTINCT
-                r.id, r.name, r.date, r.description, c.filename as featured_image
+                r.id, r.name, r.date, r.description, c.filename as featured_image, r.entry_start, r.entry_end
             FROM rides as r
             JOIN ride_checkpoints as c
             ON r.id = c.ride_id AND c.featured = 1
             WHERE
                 r.author_id = 2 AND
                 r.privacy = 'public' AND
-                (r.entry_start < NOW() AND r.entry_end > NOW())
+                r.entry_end > NOW()
             ORDER BY r.date ASC
             LIMIT {$limit}
         ");
