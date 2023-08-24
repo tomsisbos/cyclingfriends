@@ -17,6 +17,7 @@ export default function ActivityCard ({data}) {
     return (
         <div className="dashboard-activity-card">
             <ActivityCardHeader
+                id={data.id}
                 title={data.title}
                 author_id={data.author_id}
                 author_login={data.author_login}
