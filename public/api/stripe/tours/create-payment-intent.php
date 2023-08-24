@@ -4,6 +4,7 @@
 require_once '../../../../includes/api-head.php';
 
 $stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
+///$stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST'); ///TEST MODE
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 \Stripe\Stripe::setApiVersion('2022-11-15');

@@ -6,13 +6,13 @@ require_once $base_directory . '/class/CFAutoloader.php';
 CFAutoloader::register();
 
 $stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
-///$stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST'); TEST MODE
+///$stripeSecretKey = getEnv('STRIPE_SECRET_KEY_TEST'); ///TEST MODE
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 \Stripe\Stripe::setApiVersion('2022-11-15');
 
-///$endpoint_secret = 'whsec_t8rwAo8dFjsV1XHdSW1sDCnYpNi9bYwK'; TEST MODE
-$endpoint_secret = 'we_1Nfd39IjJ2ELyWfBk51w3Q29';
+$endpoint_secret = 'whsec_t8rwAo8dFjsV1XHdSW1sDCnYpNi9bYwK'; ///TEST MODE
+///$endpoint_secret = 'we_1Nfd39IjJ2ELyWfBk51w3Q29';
 
 $payload = @file_get_contents('php://input');
 $event = null;

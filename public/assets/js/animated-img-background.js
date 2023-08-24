@@ -27,7 +27,6 @@ ajaxGetRequest(request, (imgs) => {
 	function changeImg () {
 		var number = Math.floor(Math.random() * imgs.length) // Randomly define an integer among imgsNumber
 		background.style.setProperty('--bgImage', 'url(' + imgs[number].url + ')') // Change background image
-		console.log(imgs[number])
 		if (text) text.innerHTML = '<a href="/scenery/' + imgs[number].scenery_id + '">' + imgs[number].name + '</a>' + ' (' + imgs[number].month + '月)<br>' + imgs[number].city + ', ' + imgs[number].prefecture // Change meta information
 	}
 

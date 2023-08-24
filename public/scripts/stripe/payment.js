@@ -1,5 +1,5 @@
 // This is your test publishable API key.
-/// TEST MODE const stripe = Stripe("pk_test_51NchR1IjJ2ELyWfBNtY0qlpT8tfIly7jajA6YJBCGNDIw8Ym0BHCy64eju21ohxiDkZRWDGNmtr3xu1rfJtmjSZL00GrFe1HIl")
+/*TEST MODE*/ ///const stripe = Stripe("pk_test_51NchR1IjJ2ELyWfBNtY0qlpT8tfIly7jajA6YJBCGNDIw8Ym0BHCy64eju21ohxiDkZRWDGNmtr3xu1rfJtmjSZL00GrFe1HIl")
 const stripe = Stripe("pk_live_51NchR1IjJ2ELyWfBjQTMz8XdY8gbkPkZ6HuqnrmdolfM7WaXPFiKGEQBl3xYp7mdIUu8hiWvyAs58Gjaz1WSRZ7X00m9n1lOFr")
 
 const form = document.querySelector("#payment-form")
@@ -42,7 +42,7 @@ async function handleSubmit(e) {
     const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-            return_url: "https://cyclingfriends-preprod.azurewebsites.net/ride/" + ride_id + "/checkout",
+            return_url: "https://www.cyclingfriends.co/ride/" + ride_id + "/checkout",
             payment_method_data: {
                 billing_details: {
                     email: emailAddress,

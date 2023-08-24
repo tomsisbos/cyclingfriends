@@ -149,7 +149,6 @@
     display: flex;
     gap: 10px;
     flex-direction: column;
-    max-height: 200px;
     width: 45%;
 }
 
@@ -296,7 +295,7 @@
     }
     
     .activity-card-title {
-        display: inline-block;
+        display: inline;
         padding-left: 8px;
     }
     
