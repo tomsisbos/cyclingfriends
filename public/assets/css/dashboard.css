@@ -100,3 +100,17 @@
     gap: 10px;
     margin-bottom: 12px;
 }
+
+.dashboard-news .post-content {
+    height: 16.5em;
+    overflow: hidden;
+    display: -webkit-box;
+    text-align: justify;
+    -webkit-line-clamp: 11;
+    -webkit-box-orient: vertical;
+}
+
+.dashboard-news-link {
+    margin: 12px 0;
+    text-align: right;
+}

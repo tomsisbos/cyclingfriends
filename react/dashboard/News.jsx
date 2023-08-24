@@ -32,10 +32,11 @@ export default function Rides () {
         <div className="dashboard-news">
             <div className="dashboard-news-header">
                 <div className="post-datetime">{post.date}</div>
-                <div className="post-type"><div className={post.type}>{post.typeString}</div></div>
+                <div className="post-type"><div className={post.type}>{post.typestring}</div></div>
                 <div className="post-title">{post.title}</div>
             </div>
             <div className="post-content" dangerouslySetInnerHTML={{__html: post.content}}></div>
+            <div className="dashboard-news-link">詳細は<a href="/news">こちら</a></div>
         </div>
     )
 

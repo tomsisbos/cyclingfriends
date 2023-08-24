@@ -34,7 +34,7 @@ if (isset($_GET)) {
                     WHEN type = 'dev' THEN '開発'
                     WHEN type = 'general' THEN '一般'
                     ELSE '一般'
-                END) as typeString,
+                END) as typestring,
             datetime::date as date
             FROM posts
             ORDER BY datetime DESC

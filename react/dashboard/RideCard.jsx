@@ -3,7 +3,7 @@ import React from 'react'
 export default function RideCard ({id, name, date, text, src}) {
     
     return (
-        <a href={"/rides/" + id}>
+        <a href={"/ride/" + id}>
             <div className="dashboard-ride-card" style={{ 
                 backgroundImage: `url(${src})`
             }}>
