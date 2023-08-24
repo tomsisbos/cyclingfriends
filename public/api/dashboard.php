@@ -65,7 +65,7 @@ if (isset($_GET)) {
                 activities as a
             JOIN
                 users as u ON a.user_id = u.id
-            JOIN
+            FULL OUTER JOIN
                 activity_photos as p ON a.id = p.activity_id
             JOIN
                 activity_checkpoints as c ON a.id = c.activity_id
