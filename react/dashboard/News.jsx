@@ -11,7 +11,6 @@ export default function Rides () {
         return new Promise((resolve, reject) => {
             setLoading(true)
             axios('/api/dashboard.php?task=news').then(response => {
-                console.log(response)
                 setPost(response.data)
                 setLoading(false)
                 resolve(response.data)
@@ -22,8 +21,6 @@ export default function Rides () {
     // Get user activities data at component loading
     useEffect(() => {
         initialize().then((data) => {
-            console.log(data)
-            console.log(post)
         })
     }, [])
   

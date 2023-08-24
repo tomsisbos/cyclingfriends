@@ -19,7 +19,7 @@ if (isset($_GET)) {
                 r.privacy = 'public' AND
                 (r.entry_start < NOW() AND r.entry_end > NOW())
             ORDER BY r.date ASC
-            LIMIT 3
+            LIMIT {$limit}
         ");
         $getRides->execute();
         $rides = $getRides->fetchAll(PDO::FETCH_ASSOC);
@@ -44,6 +44,57 @@ if (isset($_GET)) {
         $news = $getNews->fetch(PDO::FETCH_ASSOC);
 
         echo json_encode($news);
+
+    } else if ($_GET['task'] == 'activities') {
+
+        $limit = $_GET['activities_number'];
+        $photos_number = $_GET['photos_number'];
+
+        // Get activity data
+        $getActivities = $db->prepare("
+            SELECT DISTINCT
+                a.id,
+                a.title,
+                a.user_id as author_id,
+                u.login as author_login,
+                pp.filename as author_propic,
+                a.datetime::date as date,
+                c.city,
+                c.prefecture
+            FROM
+                activities as a
+            JOIN
+                users as u ON a.user_id = u.id
+            JOIN
+                activity_photos as p ON a.id = p.activity_id
+            JOIN
+                activity_checkpoints as c ON a.id = c.activity_id
+            JOIN
+                profile_pictures as pp ON a.user_id = pp.user_id
+            WHERE c.number = 0
+            ORDER BY a.datetime DESC
+            LIMIT {$limit}
+        ");
+        $getActivities->execute();
+        $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
+
+        // Append necessary data
+        $activities = array_map(function ($activity) use ($db, $photos_number) {
+
+            // Checkpoints
+            $getCheckpoints = $db->prepare("SELECT id, name, distance, story FROM activity_checkpoints WHERE activity_id = ?");
+            $getCheckpoints->execute([$activity['id']]);
+            $activity['checkpoints'] = $getCheckpoints->fetchAll(PDO::FETCH_ASSOC);
+
+            // Photos
+            $getPhotos = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
+            $getPhotos->execute([$activity['id']]);
+            $activity['photos'] = $getPhotos->fetchAll(PDO::FETCH_COLUMN);
+
+            return $activity;
+        }, $activities);
+
+        echo json_encode($activities);
 
     }
 }

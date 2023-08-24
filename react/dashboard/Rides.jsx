@@ -8,6 +8,7 @@ export default function Rides () {
 
     const ridesNumber = 3
     const storageUrl = document.querySelector('#dashboard').dataset.storageurl
+    const containerName = 'checkpoint-images'
     
     const [loading, setLoading] = useState(false)
     const [rides, setRides] = useState([])
@@ -17,7 +18,6 @@ export default function Rides () {
         return new Promise((resolve, reject) => {
             setLoading(true)
             axios('/api/dashboard.php?task=rides&number=' + ridesNumber).then(response => {
-                console.log(response)
                 setRides(response.data)
                 setHighlightRide(response.data[0].id)
                 setLoading(false)
@@ -33,8 +33,6 @@ export default function Rides () {
     // Get user activities data at component loading
     useEffect(() => {
         initialize().then((data) => {
-            console.log(data)
-            console.log(rides)
         })
     }, [])
   
@@ -42,8 +40,8 @@ export default function Rides () {
     else return (
         <div className="dashboard-rides">
             {rides.map((ride) => {
-                if (ride.id == highlightRide) return <RideCard key={ride.id} id={ride.id} name={ride.name} date={ride.date} text={ride.description} src={storageUrl + ride.featured_image} />
-                else return <RideThumbnail key={ride.id} id={ride.id} src={storageUrl + ride.featured_image} onClick={handleClick} />
+                if (ride.id == highlightRide) return <RideCard key={ride.id} id={ride.id} name={ride.name} date={ride.date} text={ride.description} src={storageUrl + containerName + '/' + ride.featured_image} />
+                else return <RideThumbnail key={ride.id} id={ride.id} src={storageUrl + containerName + '/' + ride.featured_image} onClick={handleClick} />
             })}
         </div>
     )

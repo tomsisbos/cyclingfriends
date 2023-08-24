@@ -24,9 +24,9 @@ echo '<script src="/scripts/helpers/beta/default-guidance.js"></script>';
 // Start guidance if poor user info is set
 if (getConnectedUser()->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>'; ?>
 
-<div class="main bg-container">
+<div class="bg-container end">
 
-	<div id="dashboard" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString(). 'checkpoint-images/' ?>"></div>
+	<div id="dashboard" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>"></div>
 
 </div>
 
