@@ -56,6 +56,7 @@ if (isset($_GET)) {
                 a.id,
                 a.title,
                 a.user_id as author_id,
+                r.distance,
                 u.login as author_login,
                 pp.filename as author_propic,
                 a.datetime::date as date,
@@ -63,6 +64,8 @@ if (isset($_GET)) {
                 c.prefecture
             FROM
                 activities as a
+            JOIN
+                routes as r ON a.route_id = r.id
             JOIN
                 users as u ON a.user_id = u.id
             FULL OUTER JOIN

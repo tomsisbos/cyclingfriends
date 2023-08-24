@@ -23,6 +23,7 @@ export default function ActivityCard ({data}) {
                 author_login={data.author_login}
                 author_propic={data.author_propic}
                 date={data.date}
+                distance={data.distance}
                 city={data.city}
                 prefecture={data.prefecture}
             />

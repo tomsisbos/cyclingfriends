@@ -311,4 +311,8 @@
             'featured featured featured'
             'sub1 sub2 sub3';
     }
+    
+    .activity-card-tileline-line {
+        font-size: 10px;
+    }
 }

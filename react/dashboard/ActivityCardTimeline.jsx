@@ -12,7 +12,7 @@ export default function ActivityCardTimeline ({checkpoints}) {
                     return (
                         <div className={"activity-card-tileline-line" + lastDot} key={checkpoint.id}>
                             <div className="activity-card-timeline-dot"></div>
-                            <div className="dashboard-activity-card-tldist">{Math.round(checkpoint.distance * 10) / 10}</div>
+                            <div className="dashboard-activity-card-tldist">{Math.round(checkpoint.distance)}</div>
                             <div className="dashboard-activity-card-tlname">{checkpoint.name}</div>
                         </div>
                     )
