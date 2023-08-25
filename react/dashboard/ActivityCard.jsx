@@ -7,7 +7,7 @@ import ActivityCardTimeline from '/react/dashboard/ActivityCardTimeline.jsx'
 export default function ActivityCard ({activity}) {
 
     console.log(activity)
-    
+
     const storageUrl = document.querySelector('#dashboard').dataset.storageurl
     const containerName = 'user-profile-pictures'
 
@@ -27,6 +27,18 @@ export default function ActivityCard ({activity}) {
         newData.photos.push(data.thumbnail)
         setData(newData)
     }
+
+    // Only append text and timeline if there is data to display
+    if (data.checkpoints.length > 2 || data.checkpoints[0].story != '' || data.sceneries.length > 0) var textAndTimeline = (
+        <>
+            <ActivityCardText
+                checkpoints={data.checkpoints}
+                sceneries={data.sceneries}
+            />
+            {timeline}
+        </>
+    )
+    else var textAndTimeline = ''
 
     // If comment exists, append it
     if (data.comments.length > 0) {
@@ -70,11 +82,7 @@ export default function ActivityCard ({activity}) {
                     id={data.id}
                     photos={data.photos}
                 />
-                <ActivityCardText
-                    checkpoints={data.checkpoints}
-                    sceneries={data.sceneries}
-                />
-                {timeline}
+                {textAndTimeline}
             </div>
             {comments}
         </div>

@@ -176,7 +176,7 @@
 }
 
 .activity-card-media {
-    max-width: 45%;
+    width: 45%;
     min-width: 45%;
     display: grid;
     grid-template-rows: 33% 33% 33%;
@@ -185,6 +185,7 @@
         'sub1 featured featured'
         'sub2 featured featured'
         'sub3 featured featured';
+    flex-grow: 1;
 }
 
 .activity-card-media-sub {
