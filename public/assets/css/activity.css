@@ -838,6 +838,11 @@
     display: flex;
     column-gap: 6px;
 }
+
+.acsm-propic {
+    display: inline;
+    vertical-align: middle;
+}
 .acsm-line > div {
     width: 50%;
     flex-wrap: wrap;

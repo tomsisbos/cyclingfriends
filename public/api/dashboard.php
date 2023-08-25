@@ -48,6 +48,7 @@ if (isset($_GET)) {
     } else if ($_GET['task'] == 'activities') {
 
         $limit = $_GET['activities_number'];
+        $offset = $_GET['offset'];
         $photos_number = $_GET['photos_number'];
 
         // Get activity data
@@ -60,6 +61,7 @@ if (isset($_GET)) {
                 r.distance,
                 r.thumbnail_filename as thumbnail,
                 u.login as author_login,
+                u.default_profilepicture_id as default_propic_id,
                 pp.filename as author_propic,
                 a.datetime::date as date,
                 c.city,
@@ -74,13 +76,13 @@ if (isset($_GET)) {
                 activity_photos as p ON a.id = p.activity_id
             JOIN
                 activity_checkpoints as c ON a.id = c.activity_id
-            JOIN
+            FULL OUTER JOIN
                 profile_pictures as pp ON a.user_id = pp.user_id
             WHERE
                 c.number = 0 AND 
                 r.distance > 20
             ORDER BY a.datetime DESC
-            LIMIT {$limit}
+            LIMIT {$limit} OFFSET {$offset}
         ");
         $getActivities->execute();
         $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);

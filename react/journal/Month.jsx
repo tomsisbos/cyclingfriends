@@ -7,7 +7,7 @@ export default function Month ({data, load, activities, yearNumber, monthNumber,
     
     // Define constants
     const ref = useRef()
-    const isVisible = useIntersection(ref, '0px')
+    const isVisible = useIntersection(ref.current, '0px')
     
     // Display a loader if activities have not finished loading
     const [loading, setLoading] = useState(false)

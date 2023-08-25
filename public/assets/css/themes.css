@@ -17,6 +17,10 @@ body.black-theme {
     background-color: #002828;
 }
 
+.black-theme .bg-darkercontainer {
+    background-color: #003939;
+}
+
 .black-theme button {
     background-color: #005f5f;
 }

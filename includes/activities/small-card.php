@@ -10,7 +10,9 @@ $featured_image = $activity->getFeaturedImage() ?>
         } ?>
     </div>
     <div class="acsm-infos">
-        <div class="acsm-title"><?= $activity->title ?></div> - <div class="acsm-datetime"><?= $activity->datetime->format('Y/m/d') ?></div>
+        <div class="acsm-title">
+            <div class="acsm-propic"><?= $activity->getAuthor()->getPropicElement(30, 30, 0) ?></div>
+            <?= $activity->title ?></div> - <div class="acsm-datetime"><?= $activity->datetime->format('Y/m/d') ?></div>
         <div class="acsm-line">
             <div class="acsm-distance">距離 : <?= round($activity->route->distance, 1) ?>km</div>
             <div class="acsm-duration">時間 : <?php

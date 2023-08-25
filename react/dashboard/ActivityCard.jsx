@@ -27,12 +27,13 @@ export default function ActivityCard ({activity}) {
     }
     
     return (
-        <div className="dashboard-activity-card">
+        <div className="dashboard-activity-card bg-container">
             <ActivityCardHeader
                 id={data.id}
                 title={data.title}
                 author_id={data.author_id}
                 author_login={data.author_login}
+                default_propic_id={data.default_propic_id}
                 author_propic={data.author_propic}
                 date={data.date}
                 distance={data.distance}

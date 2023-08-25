@@ -408,8 +408,11 @@ input[type="checkbox"] {
 	margin: 0px 10px;
 }
 
-.bg-lightgrey {
-	background-color: #f9f9f9 !important;
+.bg-container {
+	background-color: #f9f9f9;
+}
+.bg-darkercontainer {
+	background-color: #eee;
 }
 
 .bg-button {

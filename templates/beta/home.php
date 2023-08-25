@@ -53,7 +53,7 @@ include '../includes/navbar.php'; ?>
 </div>
 
 <!-- Bottom container -->
-<div class="bg-lightgrey">
+<div class="bg-container">
 
     <div class="container home-slide text-center js-fade-on-scroll" data-overlay-color="#f8b2c6" data-overlay-color2="#b2e0e5">
         <h2>事業構想</h2>

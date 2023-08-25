@@ -10,7 +10,7 @@ include '../includes/head.php'; ?>
 <link rel="stylesheet" href="/assets/css/dashboard.css" />
 <link rel="stylesheet" href="/assets/css/posts.css" />
 
-<body class="black-theme"> <?php
+<body> <?php // Compatible with class="black-theme"
 
 include '../includes/navbar.php';
 include '../includes/result-message.php';
@@ -24,7 +24,7 @@ echo '<script src="/scripts/helpers/beta/default-guidance.js"></script>';
 // Start guidance if poor user info is set
 if (getConnectedUser()->userInfoQuantitySet() < 20) echo '<script src="/scripts/helpers/dashboard/on-empty-profile.js"></script>'; ?>
 
-<div class="bg-container end">
+<div class="bg-darkercontainer end">
 
 	<div id="dashboard" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>"></div>
 
