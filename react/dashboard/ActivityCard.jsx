@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ActivityCardHeader from '/react/dashboard/ActivityCardHeader.jsx'
 import ActivityCardMedia from '/react/dashboard/ActivityCardMedia.jsx'
 import ActivityCardText from '/react/dashboard/ActivityCardText.jsx'
 import ActivityCardTimeline from '/react/dashboard/ActivityCardTimeline.jsx'
 
-export default function ActivityCard ({data}) {
+export default function ActivityCard ({activity}) {
+
+    console.log(activity)
+
+    const [data, setData] = useState(activity)
 
     // Only display timeline if populated
     if (data.checkpoints.length == 2 && data.checkpoints[0].story == '') var timeline = ''
@@ -13,6 +17,14 @@ export default function ActivityCard ({data}) {
             checkpoints={data.checkpoints}
         />
     )
+    
+    // If no photos data, add static map to it
+    if (data.photos.length == 0) {
+        var newData = { ...data }
+        newData.photos.push(data.thumbnail)
+        setData(newData)
+
+    }
     
     return (
         <div className="dashboard-activity-card">
@@ -29,10 +41,12 @@ export default function ActivityCard ({data}) {
             />
             <div className="dashboard-activity-card-body">
                 <ActivityCardMedia
+                    id={data.id}
                     photos={data.photos}
                 />
                 <ActivityCardText
                     checkpoints={data.checkpoints}
+                    sceneries={data.sceneries}
                 />
                 {timeline}
             </div>

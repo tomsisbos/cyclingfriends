@@ -32,7 +32,7 @@ export default function Activities () {
     else return (
         <div className="dashboard-activities">
             {activities.map((activity) => {
-                return <ActivityCard key={activity.id} data={activity} />
+                return <ActivityCard key={activity.id} activity={activity} />
             })}
         </div>
     )

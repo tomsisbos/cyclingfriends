@@ -164,32 +164,33 @@
 }
 
 .activity-card-media {
-    width: 35%;
+    max-width: 45%;
+    min-width: 45%;
     display: grid;
-    grid-template-rows: 33.33% 33.33% 33.33%;
-    grid-template-columns: 33.33% 33.33% 33.33%;
+    grid-template-rows: 33% 33% 33%;
+    grid-template-columns: fit-content(100);
     grid-template-areas:
         'sub1 featured featured'
         'sub2 featured featured'
         'sub3 featured featured';
 }
 
-.activity-card-media-sub-1 {
+.activity-card-media-sub {
+    height: 100%;
+    width: 100%;
+    max-height: 80px;
+}
+
+.activity-card-media-sub .n-1 {
     grid-area: sub1;
-    height: 100%;
-    width: 100%;
 }
 
-.activity-card-media-sub-2 {
+.activity-card-media-sub .n-2 {
     grid-area: sub2;
-    height: 100%;
-    width: 100%;
 }
 
-.activity-card-media-sub-3 {
+.activity-card-media-sub .n-3 {
     grid-area: sub3;
-    height: 100%;
-    width: 100%;
 }
 
 .dashboard-activity-card-body {
@@ -199,14 +200,25 @@
 }
 
 .activity-card-text {
-    width: 42%;
-    max-height: -webkit-fill-available;
+    width: 33%;
     font-size: 11px;
+    display: -webkit-box;
+    text-align: justify;
+    -webkit-line-clamp: 9;
+    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
+.activity-card-text p, .activity-card-text li {
+    margin: 0px;
+    line-height: 1.6em;
+}
+.activity-card-text p {
+    text-indent: 12px;
+}
+
 .activity-card-timeline {
-    width: 25%;
+    width: 120px;
 }
 
 .activity-card-timeline {
@@ -278,6 +290,11 @@
         width:-webkit-fill-available;
         margin: 15px 0px;
     }
+    
+    .activity-card-header {
+        text-align: center;
+        align-self: center;
+    }
 }
 
 @media only screen and (max-width: 800px) {
@@ -309,6 +326,8 @@
             'featured featured featured'
             'featured featured featured'
             'sub1 sub2 sub3';
+        grid-template-rows: minmax(100px, 1fr) 3fr;
+        grid-template-columns: 33.33% 33.33% 33.33%;
     }
     
     .activity-card-tileline-line {

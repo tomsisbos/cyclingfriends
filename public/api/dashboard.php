@@ -56,7 +56,9 @@ if (isset($_GET)) {
                 a.id,
                 a.title,
                 a.user_id as author_id,
+                r.id as route_id,
                 r.distance,
+                r.thumbnail_filename as thumbnail,
                 u.login as author_login,
                 pp.filename as author_propic,
                 a.datetime::date as date,
@@ -74,7 +76,9 @@ if (isset($_GET)) {
                 activity_checkpoints as c ON a.id = c.activity_id
             JOIN
                 profile_pictures as pp ON a.user_id = pp.user_id
-            WHERE c.number = 0
+            WHERE
+                c.number = 0 AND 
+                r.distance > 20
             ORDER BY a.datetime DESC
             LIMIT {$limit}
         ");
@@ -93,6 +97,27 @@ if (isset($_GET)) {
             $getPhotos = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
             $getPhotos->execute([$activity['id']]);
             $activity['photos'] = $getPhotos->fetchAll(PDO::FETCH_COLUMN);
+
+            // Sceneries
+            $getSceneries = $db->prepare("
+                SELECT
+                    id,
+                    name,
+                    ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']})) as remoteness
+                FROM
+                    sceneries
+                WHERE
+                    ST_DWithin(
+                        (
+                            SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']}),
+                            point,
+                            300
+                        )
+                ORDER BY 
+                    remoteness DESC
+            ");
+            $getSceneries->execute();
+            $activity['sceneries'] = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
 
             return $activity;
         }, $activities);

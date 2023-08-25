@@ -1,17 +1,20 @@
 import React from 'react'
 
-export default function ActivityCardMedia ({photos}) {
+export default function ActivityCardMedia ({id, photos}) {
 
     const storageUrl = document.querySelector('#dashboard').dataset.storageurl
-    const containerName = 'activity-photos'
+    const photosContainerName = 'activity-photos'
+    const routesContainerName = 'route-thumbnails'
     
     return (
-        <div className="activity-card-media">
+        <a href={"/activity/" + id} className="activity-card-media">
             {photos.map((photo, index) => {
-                if (index == 0) return <img key={index} className="activity-card-media-featured" src={storageUrl + containerName + '/' + photo}></img>
-                else return <img key={index} className={"activity-card-media-sub-" + index} src={storageUrl + containerName + '/' + photo}></img>
+                if (photo.includes('img')) var url = storageUrl + photosContainerName + '/' + photo
+                else var url = storageUrl + routesContainerName + '/' + photo
+                if (index == 0) return <img key={index} className="activity-card-media-featured" src={url}></img>
+                else return <img key={index} className={"activity-card-media-sub n-" + index} src={url}></img>
             })}
-        </div>
+        </a>
     )
 
 }

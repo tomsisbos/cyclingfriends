@@ -1185,6 +1185,7 @@ a .strava:hover {
 
 .popup {
     background-color: white;
+    color: #000;
     max-width: 450px;
     padding: 20px;
     position: relative;
@@ -1205,6 +1206,12 @@ a .strava:hover {
     .popup {
         font-size: 14px;
     }
+}
+.popup a {
+    color: #00e06e;
+}
+.popup p, .popup strong {
+    color: #000;
 }
 
 .popup-contract {
