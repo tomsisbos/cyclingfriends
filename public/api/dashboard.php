@@ -74,14 +74,14 @@ if (isset($_GET)) {
             JOIN
                 users as u ON a.user_id = u.id
             FULL OUTER JOIN
+                profile_pictures as pp ON a.user_id = pp.user_id
+            FULL OUTER JOIN
                 activity_photos as p ON a.id = p.activity_id
             JOIN
                 activity_checkpoints as c ON a.id = c.activity_id
-            FULL OUTER JOIN
-                profile_pictures as pp ON a.user_id = pp.user_id
             WHERE
-                c.number = 0 AND 
-                r.distance > {$activity_min_distance}
+                r.distance > {$activity_min_distance} AND
+                c.number = 0
             ORDER BY a.datetime DESC
             LIMIT {$limit} OFFSET {$offset}
         ");
@@ -100,6 +100,11 @@ if (isset($_GET)) {
             $getPhotos = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
             $getPhotos->execute([$activity['id']]);
             $activity['photos'] = $getPhotos->fetchAll(PDO::FETCH_COLUMN);
+
+            // Comments
+            $getComments = $db->prepare("SELECT c.user_id, c.content, u.default_profilepicture_id as default_propic_id, pp.filename as propic FROM activity_comments as c JOIN users as u ON c.user_id = u.id JOIN profile_pictures as pp ON c.user_id = pp.user_id WHERE c.entry_id = ? ORDER BY c.time DESC");
+            $getComments->execute([$activity['id']]);
+            $activity['comments'] = $getComments->fetchAll(PDO::FETCH_ASSOC);
 
             // Sceneries
             $getSceneries = $db->prepare("

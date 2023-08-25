@@ -12,6 +12,7 @@
 
 .dashboard-rides {
     position: relative;
+    color: #fff;
     width: 50%;
     height: 100%;
     display: grid;
@@ -22,6 +23,11 @@
     grid-template-areas:
         'thumb1 card card'
         'thumb2 card card';
+}
+
+.dashboard-rides a {
+    color: #fff;
+    cursor: pointer;
 }
 
 .dashboard-ride-thumbnail.ride-thumb-1 {
@@ -41,7 +47,6 @@
     align-items: end;
     background-size: cover;
     grid-area: card;
-    cursor: pointer;
     transition: 0.5s height, 0.5s width;
     z-index: 1;
 }
@@ -133,6 +138,7 @@
     width: 24px;
     height: 24px;
     object-fit: cover;
+    border-radius: 99px;
 }
 
 .activity-card-header {
@@ -154,6 +160,7 @@
     gap: 10px;
     flex-direction: column;
     width: 45%;
+    height: fit-content;
     flex-grow: 1;
 }
 
@@ -183,7 +190,7 @@
 .activity-card-media-sub {
     height: 100%;
     width: 100%;
-    max-height: 80px;
+    max-height: 60px;
 }
 
 .activity-card-media-sub .n-1 {
@@ -287,6 +294,19 @@
     padding-left: 20px;
 }
 
+.dashboard-activity-card-comment {
+    display: flex;
+    gap: 10px;
+    padding-left: 15px;
+}
+
+.dashboard-activity-card-comments {
+    font-size: 10px;
+}
+
+.dashboard-activity-card-other-comments {
+    text-align: right;
+}
 
 
 @media only screen and (max-width: 1000px) {
@@ -340,10 +360,6 @@
     .activity-card-tileline-line {
         font-size: 10px;
     }
-}
-
-.dashboard-rides a {
-    color: #fff;
 }
 
 .infinite-loader {

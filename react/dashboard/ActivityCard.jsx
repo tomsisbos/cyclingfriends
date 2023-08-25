@@ -7,6 +7,9 @@ import ActivityCardTimeline from '/react/dashboard/ActivityCardTimeline.jsx'
 export default function ActivityCard ({activity}) {
 
     console.log(activity)
+    
+    const storageUrl = document.querySelector('#dashboard').dataset.storageurl
+    const containerName = 'user-profile-pictures'
 
     const [data, setData] = useState(activity)
 
@@ -23,8 +26,30 @@ export default function ActivityCard ({activity}) {
         var newData = { ...data }
         newData.photos.push(data.thumbnail)
         setData(newData)
-
     }
+
+    // If comment exists, append it
+    if (data.comments.length > 0) {
+    
+        var firstComment = data.comments[0]
+        // Define propic src
+        if (firstComment.propic) var propicSrc = storageUrl + containerName + '/' + firstComment.propic
+        else var propicSrc = '/media/default-profile-' + firstComment.default_propic_id + '.jpg'
+        // Define other comments number
+        if (data.comments.length > 1) var otherComments = '他' + (data.comments.length - 1) + '件のコメント'
+        else var otherComments = ''
+        var comments = (
+            <div className="dashboard-activity-card-comments">
+                <div className="dashboard-activity-card-comment">
+                    <a href={"/rider/" + firstComment.user_id}>
+                        <img className="activity-card-propic" src={propicSrc}></img>
+                    </a>
+                    <p dangerouslySetInnerHTML={{__html: firstComment.content}}></p>
+                </div>
+                {otherComments}
+            </div>
+        )
+    } else var comments = ''
     
     return (
         <div className="dashboard-activity-card bg-container">
@@ -51,6 +76,7 @@ export default function ActivityCard ({activity}) {
                 />
                 {timeline}
             </div>
+            {comments}
         </div>
     )
 

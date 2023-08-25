@@ -13,18 +13,18 @@ export default function RideCard ({id, name, date, text, src, entry_start, entry
     }
     
     return (
-        <a href={"/ride/" + id}>
             <div className="dashboard-ride-card" style={{ 
                 backgroundImage: `url(${src})`
             }}>
                 <div className="dashboard-ride-card-block">
                     {getEntryWarning(entry_start, entry_end)}
                     <div className="dashboard-ride-date">{date}</div>
-                    <div className="dashboard-ride-title">{name}</div>
+                    <a href={"/ride/" + id}>
+                        <div className="dashboard-ride-title">{name}</div>
+                    </a>
                     <div className="dashboard-ride-text" dangerouslySetInnerHTML={{__html: text}}></div>
                 </div>
             </div>
-        </a>
     )
 
 }
