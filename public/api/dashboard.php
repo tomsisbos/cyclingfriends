@@ -50,7 +50,7 @@ if (isset($_GET)) {
         $limit = $_GET['activities_number'];
         $offset = $_GET['offset'];
         $photos_number = $_GET['photos_number'];
-        $activity_min_distance = 20;
+        $activity_min_distance = 14;
 
         // Get activity data
         $getActivities = $db->prepare("
