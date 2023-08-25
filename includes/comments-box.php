@@ -2,7 +2,7 @@
 
 foreach ($object->getComments() as $comment) { ?>
     <div class="chat-line<?php if ($comment->user->id == $object->user_id) echo ' py-2 bg-admin'?>">
-        <?= $comment->user->getPropicElement() ?>
+        <?= $comment->user->getPropicElement(40, 40) ?>
         <div class="chat-message-block" style="margin-left: 10px;">
             <a href="/rider/<?= $comment->user->id ?>" target="_blank">
                 <div class="chat-login"><?= $comment->user->login ?></div>

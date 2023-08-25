@@ -50,6 +50,7 @@ if (isset($_GET)) {
         $limit = $_GET['activities_number'];
         $offset = $_GET['offset'];
         $photos_number = $_GET['photos_number'];
+        $activity_min_distance = 20;
 
         // Get activity data
         $getActivities = $db->prepare("
@@ -80,7 +81,7 @@ if (isset($_GET)) {
                 profile_pictures as pp ON a.user_id = pp.user_id
             WHERE
                 c.number = 0 AND 
-                r.distance > 20
+                r.distance > {$activity_min_distance}
             ORDER BY a.datetime DESC
             LIMIT {$limit} OFFSET {$offset}
         ");
