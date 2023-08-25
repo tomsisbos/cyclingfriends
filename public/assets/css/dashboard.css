@@ -57,7 +57,7 @@
     padding: 12px 30px;
     overflow: hidden;
     text-shadow: 0 0 4px #000000;
-    background: linear-gradient(0deg, #00000088, transparent);
+    background: linear-gradient(0deg, #00000044, transparent)
 }
 
 .dashboard-ride-title {
@@ -111,7 +111,7 @@
     width: 50%;
     height: 100%;
     font-size: 12px;
-    padding: 12px 30px;
+    padding: 15px 30px;
 }
 
 .dashboard-news-header {

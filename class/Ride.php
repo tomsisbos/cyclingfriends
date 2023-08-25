@@ -662,6 +662,9 @@ class Ride extends Model {
      * @return string
      */
     public function getFormattedDescription ($description = null) {
+
+        require_once '../includes/functions.php';
+
         if (!isset($description)) $description = $this->description;
 
         // Change japanese brackets to strong text
@@ -671,7 +674,7 @@ class Ride extends Model {
         $description = str_replace('\r', '', $description);
 
         // Add anchor to urls
-        $description = preg_replace('<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>', '<a href="$0" target="_blank">$0</a>', $description);
+        $description = urlToLinks($description);
 
         return $description;
     }
