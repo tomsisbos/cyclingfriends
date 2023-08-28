@@ -252,7 +252,7 @@ export default class Map extends Model {
                 this.map.setPitch(this.defaultPitch)
             } else {
                 this.map.setTerrain({'source': 'mapbox-dem', 'exaggeration': 0})
-                this.map.setPitch()
+                this.map.setPitch(0)
             }
         } )
         // Line 5

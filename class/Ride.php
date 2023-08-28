@@ -663,7 +663,7 @@ class Ride extends Model {
      */
     public function getFormattedDescription ($description = null) {
 
-        require_once '../includes/functions.php';
+        require_once Ride::$root_folder . '/includes/functions.php';
 
         if (!isset($description)) $description = $this->description;
 
