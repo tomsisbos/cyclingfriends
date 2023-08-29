@@ -11,9 +11,9 @@ export default function useIntersection (element, rootMargin) {
             }, { rootMargin }
         )
 
-        element && observer.observe(element)
+        element.current && observer.observe(element.current)
         
-        return () => observer.unobserve(element)
+        return () => observer.unobserve(element.current)
     }, [])
 
     return isVisible
