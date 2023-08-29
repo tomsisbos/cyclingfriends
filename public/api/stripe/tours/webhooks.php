@@ -11,8 +11,8 @@ $stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 \Stripe\Stripe::setApiVersion('2022-11-15');
 
-$endpoint_secret = 'whsec_t8rwAo8dFjsV1XHdSW1sDCnYpNi9bYwK'; ///TEST MODE
-///$endpoint_secret = 'we_1Nfd39IjJ2ELyWfBk51w3Q29';
+///$endpoint_secret = 'whsec_t8rwAo8dFjsV1XHdSW1sDCnYpNi9bYwK'; ///TEST MODE
+$endpoint_secret = 'whsec_v9aNHTb7pS1dtoVf9XOJToD6UyOcToCm';
 
 $payload = @file_get_contents('php://input');
 $event = null;

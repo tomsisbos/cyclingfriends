@@ -298,7 +298,7 @@ class Ride extends Model {
                     .$additional_fields_li.
                 '<br><p>ツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a></p>
                 <p>ツアー規約は<a href="' .$origin. '/ride/contract">こちら</a></p><br>'
-                .file_get_contents('../public/api/rides/guidance.html')
+                .file_get_contents(Ride::$root_folder . '/public/api/rides/guidance.html')
             );
             $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
             $response = $sendgrid->send($email);
