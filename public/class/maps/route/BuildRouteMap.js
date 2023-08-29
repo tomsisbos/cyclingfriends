@@ -186,7 +186,7 @@ export default class BuildRouteMap extends Map {
                         if (response) {
                             loader.setText('完了✓')
                             if (response.category == 'segment') window.location.replace('/world')
-                            else if (this.routeData.id) window.location.replace('/route/' + this.routeData.id)
+                            else if (this.routeData && this.routeData.id) window.location.replace('/route/' + this.routeData.id)
                             else window.location.replace('/routes')
                         }
                     }, 'image/jpeg', 0.7)
