@@ -42,7 +42,7 @@ if (isset($_POST['validate'])) {
 			$nb_riders_max = $ride_infos['nb-riders-max'];
 			include '../actions/rides/new/defineLevelFromFormValues.php'; // $beginner, $intermediate, $athlete
 			include '../actions/rides/new/defineAcceptedBikesFromFormValues.php'; // $city_bike, $road_bike, $mountain_bike, $gravel_cx_bike
-			$ride_description = nl2br(htmlspecialchars($ride_infos['ride-description']));
+			$ride_description = nl2br($ride_infos['ride-description']);
 			$meeting_place = $course_infos['meetingplace']['geolocation']['city']. '（' .$course_infos['meetingplace']['geolocation']['prefecture']. '）';
 			$distance_about = $course_infos['distance-about'];
 			$distance = htmlspecialchars($course_infos['distance']);
