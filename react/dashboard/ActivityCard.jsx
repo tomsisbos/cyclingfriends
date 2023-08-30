@@ -6,8 +6,6 @@ import ActivityCardTimeline from '/react/dashboard/ActivityCardTimeline.jsx'
 
 export default function ActivityCard ({activity}) {
 
-    console.log(activity)
-
     const storageUrl = document.querySelector('#dashboard').dataset.storageurl
     const containerName = 'user-profile-pictures'
 
