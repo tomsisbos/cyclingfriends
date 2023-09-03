@@ -16,12 +16,9 @@ export default class NeighbourPopup extends Popup {
 
     load () {
 
-        this.popup.setLngLat(this.data.lngLat)
+        this.popup.setLngLat([this.data.lng, this.data.lat])
 
         ajaxGetRequest (this.apiUrl + "?get-rider-data=" + this.data.id, (data) => {
-
-            // Prepare variables
-            data.distance = parseFloat(document.querySelector('#card' + data.id).querySelector('.nbr-distance').innerText)
 
             // Prepare elements
             if (data.level == 'Beginner') var tag = `<span class="tag-green">初心者</span>`

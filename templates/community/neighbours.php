@@ -8,17 +8,20 @@ include '../includes/head.php'; ?>
 
 <body>
 
-	<?php include '../includes/navbar.php'; ?>
+	<?php include '../includes/navbar.php';
+		
+	$folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+	require $folder . '/actions/blobStorage.php'; ?>
 
 	<div class="main overflow-auto">
 
 		<div id="neighboursMapContainer" style="height: 40vh">
-			<div class="cf-map" id="neighboursMap"></div>
+			<div class="cf-map" id="neighboursMap" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>"></div>
 			<div class="grabber"></div>
 		</div> <?php 
 		
 		// Select riders from database according to filter queries
-		$limit = 5;
+		$limit = 3;
 		include '../actions/riders/displayNeighbours.php';
 		
 		// Get an array of users

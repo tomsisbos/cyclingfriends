@@ -4,7 +4,7 @@ $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUM
 require $folder . '/actions/database.php';
 	
 // Get data from database
-$getRiders = $db->prepare("
+$query = "
 	SELECT
 		u.id,
 		ROUND((ST_DistanceSphere(
@@ -22,8 +22,9 @@ $getRiders = $db->prepare("
 		u.id NOT IN (SELECT id FROM settings WHERE hide_on_neighbours = 1) AND
 		NOT u.id = :connected_user_id
 	ORDER BY distance ASC
-	LIMIT {$limit}
-");
+";
+if (isset($limit)) $query .= "LIMIT {$limit}";
+$getRiders = $db->prepare($query);
 $getRiders->execute(array(':connected_user_id' => getConnectedUser()->id));
 $riders_data = $getRiders->fetchAll(PDO::FETCH_ASSOC);
 $riders = [];

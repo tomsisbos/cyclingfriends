@@ -34,7 +34,7 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
     neighbours.forEach( (neighbour) => {
         var $marker = neighboursMap.buildMarkerElement(neighbour)
         const marker = new mapboxgl.Marker($marker)
-        marker.setLngLat(neighbour.lngLat)
+        marker.setLngLat([neighbour.lng, neighbour.lat])
         marker.addTo(map)
         var neighbourPopup = new NeighbourPopup(neighbour)
         marker.setPopup(neighbourPopup.popup)

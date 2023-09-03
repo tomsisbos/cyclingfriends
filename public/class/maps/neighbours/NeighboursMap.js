@@ -11,6 +11,8 @@ export default class NeighboursMap extends Map {
     $map = document.querySelector('#neighboursMap')
     defaultZoom = 8
     data = {}
+    storageUrl = document.querySelector('#neighboursMap').dataset.storageurl
+    containerName = 'user-profile-pictures'
     
     async centerOnUserLocation () {
         if (this.map) this.map.setCenter(await this.getUserLocation())
@@ -21,7 +23,7 @@ export default class NeighboursMap extends Map {
         $marker.id = 'marker' + neighbour.id
         $marker.classList = 'nbr-marker'
         const $markerImg = document.createElement('img')
-        $markerImg.src = neighbour.propic
+        $markerImg.src = this.storageUrl + this.containerName + neighbour.propic
         $marker.appendChild($markerImg)
         return $marker
     }
@@ -35,7 +37,7 @@ export default class NeighboursMap extends Map {
     }
 
     async displayHoverLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], await this.getUserLocation()])
+        var link = turf.lineString([[neighbour.lng, neighbour.lat], await this.getUserLocation()])
         this.map.addLayer( {
             id: 'hoverLink' + neighbour.id,
             type: 'line',
@@ -54,7 +56,7 @@ export default class NeighboursMap extends Map {
     }
 
     async displaySelectedLink (neighbour) {
-        var link = turf.lineString([[neighbour.lngLat.lng, neighbour.lngLat.lat], await this.getUserLocation()])
+        var link = turf.lineString([[neighbour.lng, neighbour.lat], await this.getUserLocation()])
         this.map.addLayer( {
             id: 'selectedLink' + neighbour.id,
             type: 'line',
