@@ -1,6 +1,6 @@
 # Ignore map source files (such as Geojson) : heavy data
 .htaccess
-vendor
+/vendor
 webpack.config.js
 node_modules
 bin
