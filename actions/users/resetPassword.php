@@ -4,7 +4,7 @@ require '../actions/database.php';
 
 // Get user infos
 $token = basename($_SERVER['REQUEST_URI']);
-$getUserIdFromToken = $db->prepare("SELECT user_id FROM user_resetpassword_token WHERE token = ? AND expiration_date < (NOW() + INTERVAL 1 DAY)");
+$getUserIdFromToken = $db->prepare("SELECT user_id FROM user_resetpassword_token WHERE token = ? AND expiration_date < (NOW() + INTERVAL '1' DAY)");
 $getUserIdFromToken->execute([$token]);
 
 // If token exists and is not expired

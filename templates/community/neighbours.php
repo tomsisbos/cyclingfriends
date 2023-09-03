@@ -11,8 +11,6 @@ include '../includes/head.php'; ?>
 	<?php include '../includes/navbar.php'; ?>
 
 	<div class="main overflow-auto">
-		
-		<h2 class="top-title">お隣さん</h2>
 
 		<div id="neighboursMapContainer" style="height: 40vh">
 			<div class="cf-map" id="neighboursMap"></div>
@@ -20,11 +18,16 @@ include '../includes/head.php'; ?>
 		</div> <?php 
 		
 		// Select riders from database according to filter queries
+		$limit = 5;
 		include '../actions/riders/displayNeighbours.php';
 		
-		// Define offset (limit is defined in the action script)
-		if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
-		else $offset = 0; ?>
+		// Get an array of users
+		$i = 0;
+		for ($i = 0; $i < $limit; $i++) {
+			$rider = new User($riders_data[$i]['id']);
+			$rider->distance = $riders_data[$i]['distance'];
+			array_push($riders, $rider);
+		} ?>
 			
 		<div class="nbr-container container bg-white"> <?php
 

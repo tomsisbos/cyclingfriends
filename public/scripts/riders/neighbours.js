@@ -7,6 +7,8 @@ var neighboursMap = new NeighboursMap()
 
 ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours) => {
 
+    console.log(neighbours)
+
     neighboursMap.data.neighbours = neighbours
 
     neighboursMap.setGrabber()
@@ -39,71 +41,73 @@ ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours
 
         // Add hovering event listeners
         const $card = document.querySelector('#card' + neighbour.id)
-        $marker.addEventListener('mouseenter', () => {
-            $marker.classList.add('hover')
-            $card.classList.add('hover')
-            neighboursMap.displayHoverLink(neighbour)
-        } )
-        $marker.addEventListener('mouseleave', () => {
-            $marker.classList.remove('hover')
-            $card.classList.remove('hover')
-            neighboursMap.hideHoverLink(neighbour)
-        } )
-        $card.addEventListener('mouseenter', () => {
-            $marker.classList.add('hover')
-            $card.classList.add('hover')
-            neighboursMap.displayHoverLink(neighbour)
-        } )
-        $card.addEventListener('mouseleave', () => {
-            $marker.classList.remove('hover')
-            $card.classList.remove('hover')
-            neighboursMap.hideHoverLink(neighbour)
-        } )
-        // Add click event listeners
-        $card.addEventListener('click', async () => {
-            if (!$card.classList.contains('selected-marker')) {
-                document.querySelectorAll('.selected-marker').forEach(element => element.classList.remove('selected-marker'))
-                $card.classList.add('selected-marker')
-                $marker.querySelector('img').classList.add('selected-marker')
-                map._markers.forEach(marker => {
-                    if (marker.getPopup() && marker.getPopup().isOpen()) marker.togglePopup()
-                } )
-                neighbours.forEach(nbr => {
-                    if (map.getLayer('selectedLink' + nbr.id)) {
-                        neighboursMap.hideSelectedLink(nbr)
-                    }
-                } )
-                marker.togglePopup()
-                neighboursMap.displaySelectedLink(neighbour)
-                var userLocation = await neighboursMap.getUserLocation()
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 2))
-                document.querySelector('.main').scrollIntoView()///neighboursMap.$map.scrollIntoView()
-            } else {
-                $marker.querySelector('img').classList.remove('selected-marker')
-                $card.classList.remove('selected-marker')
-                neighboursMap.hideSelectedLink(neighbour)
-            }
-        } )
-        $marker.addEventListener('click', async () => {
-            if (!$marker.querySelector('img').classList.contains('selected-marker')) {
-                document.querySelectorAll('.selected-marker').forEach(element => element.classList.remove('selected-marker'))
-                $card.classList.add('selected-marker')
-                $marker.querySelector('img').classList.add('selected-marker')
-                neighbours.forEach(nbr => {
-                    if (map.getLayer('selectedLink' + nbr.id)) {
-                        neighboursMap.hideSelectedLink(nbr)
-                    }
-                } )
-                neighboursMap.displaySelectedLink(neighbour)
-                var userLocation = await neighboursMap.getUserLocation()
-                map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 4))
-            } else {
-                marker.togglePopup()
-                $marker.querySelector('img').classList.remove('selected-marker')
-                $card.classList.remove('selected-marker')
-                neighboursMap.hideSelectedLink(neighbour)
-            }
-        } )
+        if ($card) {
+            $marker.addEventListener('mouseenter', () => {
+                $marker.classList.add('hover')
+                $card.classList.add('hover')
+                neighboursMap.displayHoverLink(neighbour)
+            } )
+            $marker.addEventListener('mouseleave', () => {
+                $marker.classList.remove('hover')
+                $card.classList.remove('hover')
+                neighboursMap.hideHoverLink(neighbour)
+            } )
+            $card.addEventListener('mouseenter', () => {
+                $marker.classList.add('hover')
+                $card.classList.add('hover')
+                neighboursMap.displayHoverLink(neighbour)
+            } )
+            $card.addEventListener('mouseleave', () => {
+                $marker.classList.remove('hover')
+                $card.classList.remove('hover')
+                neighboursMap.hideHoverLink(neighbour)
+            } )
+            // Add click event listeners
+            $card.addEventListener('click', async () => {
+                if (!$card.classList.contains('selected-marker')) {
+                    document.querySelectorAll('.selected-marker').forEach(element => element.classList.remove('selected-marker'))
+                    $card.classList.add('selected-marker')
+                    $marker.querySelector('img').classList.add('selected-marker')
+                    map._markers.forEach(marker => {
+                        if (marker.getPopup() && marker.getPopup().isOpen()) marker.togglePopup()
+                    } )
+                    neighbours.forEach(nbr => {
+                        if (map.getLayer('selectedLink' + nbr.id)) {
+                            neighboursMap.hideSelectedLink(nbr)
+                        }
+                    } )
+                    marker.togglePopup()
+                    neighboursMap.displaySelectedLink(neighbour)
+                    var userLocation = await neighboursMap.getUserLocation()
+                    map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 2))
+                    document.querySelector('.main').scrollIntoView()///neighboursMap.$map.scrollIntoView()
+                } else {
+                    $marker.querySelector('img').classList.remove('selected-marker')
+                    $card.classList.remove('selected-marker')
+                    neighboursMap.hideSelectedLink(neighbour)
+                }
+            } )
+            $marker.addEventListener('click', async () => {
+                if (!$marker.querySelector('img').classList.contains('selected-marker')) {
+                    document.querySelectorAll('.selected-marker').forEach(element => element.classList.remove('selected-marker'))
+                    $card.classList.add('selected-marker')
+                    $marker.querySelector('img').classList.add('selected-marker')
+                    neighbours.forEach(nbr => {
+                        if (map.getLayer('selectedLink' + nbr.id)) {
+                            neighboursMap.hideSelectedLink(nbr)
+                        }
+                    } )
+                    neighboursMap.displaySelectedLink(neighbour)
+                    var userLocation = await neighboursMap.getUserLocation()
+                    map.fitBounds(CFUtils.getWiderBounds([marker.getLngLat(), {lng: userLocation[0], lat: userLocation[1]}], 4))
+                } else {
+                    marker.togglePopup()
+                    $marker.querySelector('img').classList.remove('selected-marker')
+                    $card.classList.remove('selected-marker')
+                    neighboursMap.hideSelectedLink(neighbour)
+                }
+            } )
+        }
 
         // Add map interaction
         map.on('dragend', () => document.querySelectorAll('.nbr-marker').forEach(($mkr) => neighboursMap.scaleMarkerAccordingToZoom($mkr)) )

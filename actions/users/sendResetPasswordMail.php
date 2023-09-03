@@ -31,7 +31,7 @@ if (isset($_POST['validate'])) {
                 $token = rand(0, TOKEN_LIMIT);
                 $expiration_date = new DateTime('tomorrow');
                 $today = new DateTime();
-                $checkIfTokenHasBeenIssued = $db->prepare("SELECT user_id FROM user_resetpassword_token WHERE user_id = ? AND expiration_date < (NOW() + INTERVAL 1 DAY)");
+                $checkIfTokenHasBeenIssued = $db->prepare("SELECT user_id FROM user_resetpassword_token WHERE user_id = ? AND expiration_date < (NOW() + INTERVAL '1' DAY)");
                 $checkIfTokenHasBeenIssued->execute([$user->id]);
                 if ($checkIfTokenHasBeenIssued->rowCount() > 0) {
                     $updateToken = $db->prepare("UPDATE user_resetpassword_token SET token = ?, expiration_date = ? WHERE user_id = ?");

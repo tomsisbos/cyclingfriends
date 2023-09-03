@@ -9,8 +9,7 @@ if (isAjax()) {
 
     if (isset($_GET['get-neighbours'])) {
         include '../../../actions/riders/displayNeighbours.php';
-        foreach ($riders as $rider) $rider->propic = $rider->getPropicUrl();
-        echo json_encode($riders);
+        echo json_encode($riders_data);
     }
 
     if (isset($_GET['get-rider-data'])) {
