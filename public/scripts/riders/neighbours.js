@@ -7,8 +7,6 @@ var neighboursMap = new NeighboursMap()
 
 ajaxGetRequest (neighboursMap.apiUrl + "?get-neighbours=true", async (neighbours) => {
 
-    console.log(neighbours)
-
     neighboursMap.data.neighbours = neighbours
 
     neighboursMap.setGrabber()

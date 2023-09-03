@@ -6,10 +6,8 @@ export default function InfiniteLoader ({onReach}) {
     // Define constants
     const ref = useRef()
     var isVisible = useIntersection(ref, '0px')
-    console.log(isVisible)
 
     const handleClick = () => {
-        console.log(ref)
         onReach()
     }
     

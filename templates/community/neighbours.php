@@ -15,13 +15,13 @@ include '../includes/head.php'; ?>
 
 	<div class="main overflow-auto">
 
-		<div id="neighboursMapContainer" style="height: 40vh">
+		<div id="neighboursMapContainer" style="height: 60vh">
 			<div class="cf-map" id="neighboursMap" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>"></div>
 			<div class="grabber"></div>
 		</div> <?php 
 		
 		// Select riders from database according to filter queries
-		$limit = 20;
+		$limit = 6;
 		include '../actions/riders/displayNeighbours.php';
 		
 		// Get an array of users

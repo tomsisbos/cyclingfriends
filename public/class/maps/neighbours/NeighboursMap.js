@@ -23,7 +23,9 @@ export default class NeighboursMap extends Map {
         $marker.id = 'marker' + neighbour.id
         $marker.classList = 'nbr-marker'
         const $markerImg = document.createElement('img')
-        $markerImg.src = this.storageUrl + this.containerName + '/' + neighbour.propic
+        if (neighbour.propic.slice(0, 4) == 'http') $markerImg.src = neighbour.propic
+        else if (neighbour.propic) $markerImg.src = this.storageUrl + this.containerName + '/' + neighbour.propic
+        else $markerImg.src = '/media/default-profile-' + neighbour.default_propic_id + '.jpg';
         $marker.appendChild($markerImg)
         return $marker
     }

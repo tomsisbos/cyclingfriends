@@ -120,7 +120,6 @@ function updateOptionsNumber (form, type) {
 // Function for updating select options numbers
 function updateOptionBlocks (form, type) {
     var blocks = form.querySelectorAll('#' + type + ' .rd-ad-options-block')
-    console.log(blocks)
     for (let i = 2; i < blocks.length; i++) {
         blocks[i].querySelector('.rd-ad-options-label').innerText = (i + 1) + '. '
         blocks[i].querySelector('.rd-ad-options-input').name = 'select_option_' + (i + 1)

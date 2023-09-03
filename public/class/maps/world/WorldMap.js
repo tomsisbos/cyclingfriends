@@ -826,7 +826,6 @@ export default class WorldMap extends Map {
             } )
             // Save data on submit and display new data
             var scenery = await tempPopup.save()
-            console.log(scenery)
             this.addScenery(scenery)
         } )
         
@@ -919,7 +918,6 @@ export default class WorldMap extends Map {
 
     addScenery (scenery) {
         this.mapdata.sceneries.push(scenery)
-        console.log(this.mapdata.sceneries)
         this.updateSceneries()
     }
 

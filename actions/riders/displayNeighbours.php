@@ -13,7 +13,8 @@ $query = "
 		) / 1000)::numeric, 1) as distance,
 		ST_X(u.point::geometry) as lng,
 		ST_Y(u.point::geometry) as lat,
-		p.filename as propic
+		p.filename as propic,
+		u.default_profilepicture_id
 	FROM users as u
 	JOIN profile_pictures as p ON u.id = p.user_id
 	WHERE
