@@ -189,5 +189,4 @@ $previous_page = intval($stage_slug) - 1; ?>
 	
 </form>
 
-<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/rides/edit/summary.js"></script>

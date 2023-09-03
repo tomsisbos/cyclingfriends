@@ -2,6 +2,7 @@
 
 include '../actions/users/initSession.php';
 include '../includes/head.php';
+include '../includes/head-map.php';
 
 // Redirect to routes if connected user is not author
 $url_fragments = explode('/', $_SERVER['REQUEST_URI']);
@@ -32,7 +33,6 @@ if (getConnectedUser()->id != $route->author->id) header('location: /routes') ?>
 	
 </body>
 
-<script src="/scripts/vendor.js"></script>
 <script type="module" src="/class/utils/CFUtils.js"></script>
 <script type="module" src="/scripts/routes/edit.js"></script>
 

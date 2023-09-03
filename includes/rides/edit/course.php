@@ -107,5 +107,4 @@ $previous_page = intval($stage_slug) - 1; ?>
 	</form>
 </div>
 
-<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/rides/edit/course.js"></script>

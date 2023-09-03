@@ -183,5 +183,4 @@ $previous_page = intval($slug) - 1; ?>
 	
 </form>
 
-<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/rides/new/summary.js"></script>

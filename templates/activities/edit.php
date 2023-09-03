@@ -2,6 +2,7 @@
 
 include '../actions/users/initSession.php';
 include '../includes/head.php';
+include '../includes/head-map.php';
 include '../actions/activities/getActivity.php';
 
 if (getConnectedUser()->id != $activity->user_id) header('location: /' .getConnectedUser()->login. '/activities') ?>
@@ -104,6 +105,5 @@ if (getConnectedUser()->id != $activity->user_id) header('location: /' .getConne
 </body>
 </html>
 
-<script src="/scripts/vendor.js"></script>
 <script src="/node_modules/exif-js/exif.js"></script>
 <script type="module" src="/scripts/activities/edit.js"></script>

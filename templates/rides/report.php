@@ -3,7 +3,8 @@
 include '../actions/users/initPublicSession.php';
 include '../actions/rides/ride.php';
 include '../actions/rides/edit/adminPanel.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

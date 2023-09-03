@@ -1,7 +1,8 @@
 <?php
 
 require '../actions/users/registerMail.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

@@ -1,7 +1,8 @@
 <?php
 
 include '../actions/users/initSession.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

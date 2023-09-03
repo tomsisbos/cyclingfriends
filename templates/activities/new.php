@@ -3,7 +3,8 @@
 include '../actions/users/initSession.php';
 include '../actions/garmin/disconnection.php';
 include '../actions/garmin/authentification.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -160,7 +161,6 @@ include '../includes/head.php'; ?>
 </body>
 </html>
 
-<script src="/scripts/vendor.js"></script>
 <script src="/node_modules/exif-js/exif.js"></script>
 <script type="module" src="/scripts/activities/new.js"></script>
 <script src="/scripts/helpers/activities/new.js"></script>

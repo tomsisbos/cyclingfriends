@@ -2,7 +2,8 @@
 
 include '../actions/users/initPublicSession.php';
 include '../actions/segments/segment.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -225,5 +226,4 @@ include '../includes/head.php'; ?>
 </html>
 
 <script src="/scripts/user/favorites.js"></script>
-<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/segments/segment.js"></script>

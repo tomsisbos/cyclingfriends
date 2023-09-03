@@ -2,6 +2,7 @@
 
 include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
+include '../includes/head-map.php';
 include '../actions/activities/activity.php';
 $object = $activity;
 include '../actions/postComment.php'; ?>
@@ -153,6 +154,5 @@ include '../actions/postComment.php'; ?>
 </body>
 </html>
 
-<script src="/scripts/vendor.js"></script>
 <script src="/node_modules/exif-js/exif.js"></script>
 <script type="module" src="/scripts/activities/activity.js"></script>

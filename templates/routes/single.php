@@ -2,6 +2,7 @@
 
 include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
+include '../includes/head-map.php';
 include '../actions/routes/route.php'; ?>
 
 <!DOCTYPE html>
@@ -85,7 +86,6 @@ include '../actions/routes/route.php'; ?>
         ?>
     </div>
 
-<script src="/scripts/vendor.js"></script>
 <script type="module" src="/scripts/routes/route.js"></script>
 <script src="/scripts/routes/delete.js"></script>
 
