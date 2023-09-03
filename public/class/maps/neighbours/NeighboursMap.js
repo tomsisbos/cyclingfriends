@@ -23,7 +23,7 @@ export default class NeighboursMap extends Map {
         $marker.id = 'marker' + neighbour.id
         $marker.classList = 'nbr-marker'
         const $markerImg = document.createElement('img')
-        $markerImg.src = this.storageUrl + this.containerName + neighbour.propic
+        $markerImg.src = this.storageUrl + this.containerName + '/' + neighbour.propic
         $marker.appendChild($markerImg)
         return $marker
     }

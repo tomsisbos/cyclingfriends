@@ -21,7 +21,7 @@ include '../includes/head.php'; ?>
 		</div> <?php 
 		
 		// Select riders from database according to filter queries
-		$limit = 3;
+		$limit = 20;
 		include '../actions/riders/displayNeighbours.php';
 		
 		// Get an array of users
@@ -48,7 +48,7 @@ include '../includes/head.php'; ?>
 						</div> <?php
 					}
 					
-					if ($getRiders->rowCount() > $limit) echo '...and others';
+					echo '活動拠点がもっとも近いユーザーのみ表示しています。';
 
 				} else {
 					
