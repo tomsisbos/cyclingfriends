@@ -146,6 +146,11 @@
     border-radius: 99px;
 }
 
+.activity-card-header-container {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
 .activity-card-header {
     display: flex;
     gap: 12px;

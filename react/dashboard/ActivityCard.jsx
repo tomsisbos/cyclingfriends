@@ -74,6 +74,7 @@ export default function ActivityCard ({activity}) {
                 distance={data.distance}
                 city={data.city}
                 prefecture={data.prefecture}
+                likes={data.likes}
             />
             <div className="dashboard-activity-card-body">
                 <ActivityCardMedia

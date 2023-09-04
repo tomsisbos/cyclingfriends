@@ -1278,6 +1278,16 @@ a .strava:hover {
     height: auto;
 }
 
+.like-button-container {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+.like-button {
+    cursor: pointer;
+}
+
 /* 
 --- Containers ---
 */

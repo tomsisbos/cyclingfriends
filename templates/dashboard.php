@@ -26,7 +26,7 @@ if (getConnectedUser()->userInfoQuantitySet() < 20) echo '<script src="/scripts/
 
 <div class="bg-darkercontainer end">
 
-	<div id="dashboard" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>"></div>
+	<div id="dashboard" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>" data-connected-user-id="<?= getConnectedUser()->id ?>"></div>
 
 </div>
 

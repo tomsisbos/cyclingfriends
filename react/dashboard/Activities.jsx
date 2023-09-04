@@ -17,6 +17,7 @@ export default function Activities () {
             setLoading(true)
             axios('/api/dashboard.php?task=activities&activities_number=' + activitiesNumber + '&photos_number=' + photosNumber + '&offset=' + activities.length).then(response => {
                 var newActivities = activities.slice()
+                console.log(response.data)
                 response.data.forEach(activity => newActivities.push(activity))
                 setActivities(newActivities)
                 setLoading(false)

@@ -284,6 +284,39 @@ class Activity extends Model {
     }
 
     /**
+     * Check whether a user already likes this activity or not
+     */
+    public function isLike ($user_id) {
+        $isLike = $this->getPdo()->prepare("SELECT id FROM {$this->subtable}_likes WHERE user_id = ? AND activity_id = ?");
+        $isLike->execute([$user_id, $this->id]);
+        if ($isLike->rowCount() > 0) return true;
+        else return false;
+    }
+
+    /**
+     * If $user_id doesn't already like this activity, insert a new like, else remove it
+     * @param int $user_id
+     */
+    public function toggleLike ($user_id) {
+        if (!$this->isLike($user_id)) {
+            $addLike = $this->getPdo()->prepare("INSERT INTO {$this->subtable}_likes (user_id, activity_id) VALUES (?, ?)");
+            $addLike->execute([$user_id, $this->id]);
+        } else {
+            $removeLike = $this->getPdo()->prepare("DELETE FROM {$this->subtable}_likes WHERE user_id = ? AND activity_id = ?");
+            $removeLike->execute([$user_id, $this->id]);
+        }
+    }
+
+    /**
+     * Get all likes from this activity
+     */
+    public function getLikes () {
+        $getLikes = $this->getPdo()->prepare("SELECT user_id FROM {$this->subtable}_likes WHERE activity_id = ?");
+        $getLikes->execute([$this->id]);
+        return $getLikes->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
      * Create a new activity
      * @param ActivityData An activity data instance
      * @return int Id of created activity
@@ -323,7 +356,7 @@ class Activity extends Model {
         $deleteCheckpoints->execute(array($this->id));
         $deletePhotos = $this->getPdo()->prepare('DELETE FROM activity_photos WHERE activity_id = ?');
         $deletePhotos->execute(array($this->id));
-        $deleteLikeData = $this->getPdo()->prepare('DELETE FROM activity_islike WHERE activity_id = ?');
+        $deleteLikeData = $this->getPdo()->prepare('DELETE FROM activity_likes WHERE activity_id = ?');
         $deleteLikeData->execute(array($this->id));
         $deleteActivity = $this->getPdo()->prepare('DELETE FROM activities WHERE id = ?');
         $deleteActivity->execute(array($this->id));

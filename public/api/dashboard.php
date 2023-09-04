@@ -54,8 +54,8 @@ if (isset($_GET)) {
 
         // Get activity data
         $getActivities = $db->prepare("
-            SELECT DISTINCT
-                a.id,
+            SELECT
+                DISTINCT a.id,
                 a.title,
                 a.user_id as author_id,
                 r.id as route_id,
@@ -106,6 +106,11 @@ if (isset($_GET)) {
             $getComments->execute([$activity['id']]);
             $activity['comments'] = $getComments->fetchAll(PDO::FETCH_ASSOC);
 
+            // Likes 
+            $getLikes = $db->prepare("SELECT user_id FROM activity_likes WHERE activity_id = ?");
+            $getLikes->execute([$activity['id']]);
+            $activity['likes'] = $getLikes->fetchAll(PDO::FETCH_COLUMN);
+
             // Sceneries
             $getSceneries = $db->prepare("
                 SELECT
@@ -132,5 +137,12 @@ if (isset($_GET)) {
 
         echo json_encode($activities);
 
+    } else if ($_GET['task'] == 'activity-like') {
+
+        $activity = new Activity($_GET['activity_id']);
+
+        $activity->toggleLike(getConnectedUser()->id);
+
+        echo json_encode($activity->getLikes());
     }
 }

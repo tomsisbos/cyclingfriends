@@ -8,7 +8,7 @@ export default function ActivityCardText ({checkpoints, sceneries}) {
             return <li key={scenery.id}><a href={"/scenery/" + scenery.id}>{scenery.name}</a></li>
         })}</ul>
         else return checkpoints.map((checkpoint) => {
-            return <p key={checkpoint.id}>{checkpoint.story}</p>
+            return <p key={checkpoint.id} dangerouslySetInnerHTML={{__html: checkpoint.story}}></p>
         })
     }
     
