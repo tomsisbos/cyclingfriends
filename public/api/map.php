@@ -275,11 +275,14 @@ if (isAjax()) {
     }
 
     if (isset($_GET['islike-img'])) {
-        $img_id = $_GET['islike-img'];
-        $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
-        $checkIfUserHasAlreadyGivenALike->execute(array($_SESSION['id'], $img_id));
-        if ($checkIfUserHasAlreadyGivenALike->rowcount() > 0) $islike = true;
-        else $islike = false;
+        if (!isset($_SESSION['id'])) $islike = false;
+        else {
+            $img_id = $_GET['islike-img'];
+            $checkIfUserHasAlreadyGivenALike = $db->prepare('SELECT * FROM scenery_photos_likes WHERE user_id = ? AND img_id = ?');
+            $checkIfUserHasAlreadyGivenALike->execute(array($_SESSION['id'], $img_id));
+            if ($checkIfUserHasAlreadyGivenALike->rowcount() > 0) $islike = true;
+            else $islike = false;
+        }
         echo json_encode($islike);
     }
 

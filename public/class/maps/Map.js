@@ -2020,6 +2020,7 @@ export default class Map extends Model {
 
     addSceneries (sceneries) {
         sceneries.forEach( async (scenery) => {
+            console.log(sceneries)
 
             // Build element
             let element = document.createElement('div')

@@ -266,7 +266,7 @@ class Ride extends Model {
             $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
             $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
 
-            // Prepare additional fields data*/
+            // Prepare additional fields data
             $additional_fields = $this->getAdditionalFields();
             $additional_fields_li = '';
             foreach ($additional_fields as $additional_field) {

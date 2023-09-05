@@ -1,4 +1,8 @@
-<?php // Set up previous page variable for the back button
+<?php
+
+include '../includes/head-map.php';
+
+// Set up previous page variable for the back button
 $previous_page = intval($slug) - 1; ?>
 
 <div class="container smaller page">

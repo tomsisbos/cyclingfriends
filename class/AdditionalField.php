@@ -36,11 +36,11 @@ class AdditionalField extends Model {
     }
 
     public function getAnswer ($user_id) {
-        $answers = $this->getAnswers();
-        foreach ($answers as $answer) {
-            if ($answer->user_id == $user_id) return $answer;
-        }
-        return false;
+        $getAnswer = $this->getPdo()->prepare('SELECT id FROM ride_additional_field_answers WHERE field_id = ? AND user_id = ?');
+        $getAnswer->execute([$this->id, $user_id]);
+        $answer_id = $getAnswer->fetch(PDO::FETCH_COLUMN);
+        if ($getAnswer->rowCount() > 0) return new AdditionalFieldAnswer($answer_id);
+        else return false;
     }
 
     /**

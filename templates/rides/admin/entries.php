@@ -64,7 +64,29 @@ include '../includes/rides/admin/head.php'; ?>
                                         } ?>
                                     </tr> <?php
                                 }
-                            } else echo '<tr><td colspan="99" class="text-center">参加者はまだいません。</td></tr>' ?>
+                            } else echo '<tr><td colspan="99" class="text-center">参加者はまだいません。</td></tr>';
+                            foreach ($ride->getGuides() as $guide) { ?>
+                                <tr>
+                                    <th class="sticky-th-column text-center">ガイド</td>
+                                    <td><?= $guide->login ?></td>
+                                    <td><?= $guide->last_name ?></td>
+                                    <td><?= $guide->first_name ?></td>
+                                    <td><?= $guide->email ?></td>
+                                    <td class="text-center"><?= $guide->getGenderString() ?></td>
+                                    <td class="text-center"><?= $guide->calculateAge() ?></td>
+                                    <td><?php
+                                        if (!empty($guide->location->city)) echo $guide->location->toString();
+                                        else echo '-' ?>
+                                    </td>
+                                    <td class="text-center"><?= $guide->emergency_number ?></td> <?php
+                                    foreach ($additional_fields as $additional_field) { ?>
+                                        <td> <?php
+                                            if ($additional_field->getAnswer($guide->id)) echo $additional_field->getAnswer($guide->id)->content; ?>
+                                        </td> <?php
+                                    } ?>
+                                </tr> <?php
+
+                            } ?>
                         </tbody>
                     </table>
                 </div>

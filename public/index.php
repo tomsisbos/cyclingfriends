@@ -100,6 +100,7 @@ $router->map('GET', '/rides/calendar', 'rides/calendar', 'rides-calendar');
 $router->map('GET|POST', '/ride/[i:ride_id]/entry', 'rides/entry/entry', 'ride-entry');
 $router->map('GET|POST', '/ride/[i:ride_id]/payment', 'rides/entry/payment', 'ride-payment');
 $router->map('GET', '/ride/[i:ride_id]/checkout', 'rides/entry/checkout', 'ride-checkout');
+$router->map('GET|POST', '/ride/[i:ride_id]/guide-entry/[i:guide_id]', 'rides/entry/guide-entry', 'ride-guide-entry');
 $router->map('GET', '/ride/contract', 'rides/contract', 'ride-contract');
 
 // Community
