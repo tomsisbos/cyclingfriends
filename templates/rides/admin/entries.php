@@ -67,7 +67,7 @@ include '../includes/rides/admin/head.php'; ?>
                             } else echo '<tr><td colspan="99" class="text-center">参加者はまだいません。</td></tr>';
                             foreach ($ride->getGuides() as $guide) { ?>
                                 <tr>
-                                    <th class="sticky-th-column text-center">ガイド</td>
+                                    <th class="sticky-th-column text-center">ガ）</td>
                                     <td><?= $guide->login ?></td>
                                     <td><?= $guide->last_name ?></td>
                                     <td><?= $guide->first_name ?></td>
