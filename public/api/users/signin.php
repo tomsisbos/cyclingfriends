@@ -7,14 +7,12 @@ require_once $base_directory . '/class/CFAutoloader.php';
 CFAutoloader::register(); 
 require $base_directory . '/includes/functions.php';
 require $base_directory . '/actions/database.php';
- 
-require '../actions/database.php';
 
 // In case a Json request have been detected
 $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
 
-if ($data) {
+if (!empty($data)) {
 	 
 	// Check if user completed all fields
 	if (!empty($data['email']) AND !empty($data['password'])) {

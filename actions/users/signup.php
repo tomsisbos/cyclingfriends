@@ -5,7 +5,7 @@ require '../actions/database.php';
 // Signup form validation
 if (isset($_POST['validate'])) {
 	 
-	 // Check if user completed all fields
+	// Check if user completed all fields
 	if (!empty($_POST['email']) AND !empty($_POST['login']) AND !empty($_POST['password'])) {
 		
 		// Check if email address is valid
