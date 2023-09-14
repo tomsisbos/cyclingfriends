@@ -149,6 +149,43 @@ class User extends Model {
     }
 
     /**
+     * Send email verification mail using a 4 digits token
+     */
+    public function send4DigitsVerificationMail () {
+        
+        // Generate 4 digits token and store it the in database
+        $token = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+        $checkIfTokenExists = $this->getPdo()->prepare("SELECT id FROM tokens WHERE task = 'email_verification' AND user_id = ?");
+        $checkIfTokenExists->execute([$this->id]);
+        if ($checkIfTokenExists->rowCount() > 0) {
+            $updateToken = $this->getPdo()->prepare("UPDATE tokens SET token = ? WHERE task = 'email_verification' AND user_id = ?");
+            $updateToken->execute([$token, $this->id]);
+        } else {
+            $createToken = $this->getPdo()->prepare("INSERT INTO tokens (token, task, user_id) VALUES (?, ?, ?)");
+            $createToken->execute([$token, 'email_verification', $this->id]);
+        }
+
+        // Send verification mail
+        $email = new Mail();
+        $email->setFrom(
+            'contact@cyclingfriends.co',
+            'CyclingFriends'
+        );
+        $email->setSubject('アカウントのメールアドレス確認');
+        $email->addTo($this->email);
+        $email->addContent(
+            'text/html',
+            '<span style="text-align: center;"><p>' .$this->login. 'さん、CyclingFriendsへようこそ！</p>
+            <p>アカウントの作成は無事に終了しましたが、ログインするにはまだメールアドレスの確認を行う必要があります。</p>
+            <p>アプリ内の確認画面にて下記のコードをご記入ください：</p>
+            <p style="text-align: center; font-size: large; font-weight: bold; font-family: monospace">' .$token. '</p>
+            <p>本件に関して見覚えがない場合は、そのまま本件を無視して頂ければ大丈夫です。</span></p>'
+        );
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $response = $sendgrid->send($email);
+    }
+
+    /**
      * Check whether user has verified his email or not
      */
     public function isVerified () {

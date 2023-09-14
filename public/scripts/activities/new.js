@@ -53,6 +53,7 @@ $upload.addEventListener('change', async (e) => {
 
                     // Instantiate and populate activity map
                     var newActivityMap = new NewActivityMap()
+                    console.log(response.activityData)
                     newActivityMap.loadActivityData(response.activityData)
 
                     // Clear data and elements if necessary

@@ -15,14 +15,14 @@ $data = json_decode($json, true);
 if (!empty($data)) {
 	 
 	// Check if user completed all fields
-	if (!empty($data['email']) AND !empty($data['login']) AND !empty($data['password'])) {
+	if (!empty($data['email']) AND !empty($data['username']) AND !empty($data['password'])) {
 		
 		// Check if email address is valid
 		if (filter_var(htmlspecialchars($data['email']), FILTER_VALIDATE_EMAIL)) {
 		 
 			// User data
 			$email    = htmlspecialchars($data['email']);
-			$login    = htmlspecialchars($data['login']);
+			$login    = htmlspecialchars($data['username']);
 			$password = password_hash($data['password'], PASSWORD_DEFAULT);
 
 			// Create a new user
@@ -38,14 +38,13 @@ if (!empty($data)) {
 				
 				else {
 					
-					if ($user->checkPasswordStrength($_POST['password'])) {
+					if ($user->checkPasswordStrength($data['password'])) {
 				
 						$user->register($email, $login, $password);
 
-						if (!isset($redirect)) $redirect = false;
-						$user->sendVerificationMail(['redirect' => $redirect]);
+						$user->send4DigitsVerificationMail();
 
-						echo json_encode(['success' => '登録のメールアドレスに確認用のメールを送信しました。アカウント作成を完了するためには、そのメール内にある確認用URLをクリックしてください。']);	
+						echo json_encode(['success' => '登録のメールアドレスに確認用のメールを送信しました。次の画面にて、メール内に記載されている4桁の番号をご記入ください。']);	
 
 					} else  echo json_encode(['error' => 'パスワードは8文字以上利用してください。']);
 				}

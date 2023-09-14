@@ -802,6 +802,9 @@ class Ride extends Model {
         $amount = new Amount();
         $amount->addProduct($this->name. ' 参加費', $this->price);
 
+        // If user is less than 20 years old, add a 30% discount
+        if (intval($user->calculateAge()) < 20) $amount->addDiscount($this->price * 30 / 100, '未成年割引');
+
         // If products is not specified, get products from registered ride additional fields answers
         foreach ($this->getAdditionalFields() as $a_field) {
             $answer = $a_field->getAnswer($user_id);

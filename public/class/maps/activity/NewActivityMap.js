@@ -433,9 +433,9 @@ export default class NewActivityMap extends ActivityMap {
      * @param {Object} thisPhoto activity photo data object
      */
     switchPrivacy (thisPhoto) {
-        if (thisPhoto.privacy == 'public') thisPhoto.privacy = 'private'
-        else if (thisPhoto.privacy == 'private') thisPhoto.privacy = 'limited'
-        else if (thisPhoto.privacy == 'limited') thisPhoto.privacy = 'public'
+        if (thisPhoto.privacy == 'public') thisPhoto.privacy = 'limited'
+        else if (thisPhoto.privacy == 'limited') thisPhoto.privacy = 'private'
+        else if (thisPhoto.privacy == 'private') thisPhoto.privacy = 'public'
         this.updatePrivacyButton(thisPhoto)
     }
 
@@ -1026,6 +1026,9 @@ export default class NewActivityMap extends ActivityMap {
         
         // If sceneries need to be created, append data
         if (sceneriesToCreate) cleanData.sceneriesToCreate = sceneriesToCreate
+
+        console.log(cleanData)
+        debugger
         
         // Send data to server and redirect user
         ajaxSaveActivity(this.apiUrl, cleanData, (response) => {

@@ -102,7 +102,7 @@ include '../includes/head-map.php'; ?>
 				</div>
 				<div class="row">
 					<div class="col-sm"> <?php
-						if ($ride->price > 0) echo '<p><strong>料金 :</strong> ¥' .$ride->price;
+						if ($ride->price > 0) echo '<p><strong>料金 :</strong> ¥' .$ride->price. '（未成年30%割引）';
 						else echo '<p><strong>無料 </strong>' ?>
 					</div>
 				</div>
