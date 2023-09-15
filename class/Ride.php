@@ -312,7 +312,7 @@ class Ride extends Model {
             foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
             foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【新規エントリー】',
                 '<p>' .$this->date. ' 開催予定の「' .$this->name. '」に下記の通り新規エントリーがありましたので、お知らせします。</p>
-                <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名になりました。</p>
+                <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名（最低催行人数' .$this->nb_riders_min. '名）になりました。</p>
                 <p>---</p>
                 <p>【エントリー情報】</p>
                 ユーザーネーム：' .$participant->login. '<br>
@@ -376,7 +376,7 @@ class Ride extends Model {
         foreach ($admin_ids as $id) if (!in_array(new User($id), $to_email)) array_push($to_email, new User($id));
         foreach ($to_email as $user) $this->mail($user, $this->date. ' ' .$this->name. '【キャンセル】',
             '<p>' .$participant->last_name. ' ' .$participant->first_name. 'さんが ' .$this->date. ' 開催予定の「' .$this->name. '」への参加を取り下げました。</p>
-            <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名になりました。</p>
+            <p>これで合計エントリー人数が' .(count($this->getParticipants())). '名（最低催行人数' .$this->nb_riders_min. '名）になりました。</p>
             <p>---</p>
             <p>【キャンセル情報】</p>
             ユーザーネーム：' .$participant->login. '<br>
