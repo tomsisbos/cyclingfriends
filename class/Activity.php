@@ -133,7 +133,8 @@ class Activity extends Model {
         $hours = intval($this->duration_running->h);
         $minutes = intval($this->duration_running->i) / 60;
         $duration_running_value = $hours + $minutes; 
-        return round($this->route->distance / $duration_running_value, 1);
+        if ($duration_running_value > 0) return round($this->route->distance / $duration_running_value, 1);
+        else return 0;
     }
 
     public function getBreakTime() {

@@ -237,7 +237,7 @@ class User extends Model {
         $checkIfSettingsExist->execute([$this->id]);
         // If settings data don't exist yet for this user, create it
         if ($checkIfSettingsExist->rowCount() == 0) {
-            $insertSetting = $this->getPdo()->prepare("INSERT settings (id) VALUES (?)");
+            $insertSetting = $this->getPdo()->prepare("INSERT INTO settings (id) VALUES (?)");
             $insertSetting->execute([$this->id]);
         }
         // Set values according to $settings content
@@ -996,9 +996,8 @@ class User extends Model {
      * @param int $points
      */
     public function removeCFPoints ($points) {
-        $getCFPoints = $this->getPdo()->prepare("UPDATE users SET cf_points = cf_points - ? WHERE id = ?");
-        $getCFPoints->execute([$points, $this->id]);
-        return intval($getCFPoints->fetch(PDO::FETCH_COLUMN));
+        $removeCFPoints = $this->getPdo()->prepare("UPDATE users SET cf_points = GREATEST(cf_points - ?, 0) WHERE id = ?");
+        $removeCFPoints->execute([intval($points), $this->id]);
     }
 
     /**

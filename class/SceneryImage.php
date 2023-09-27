@@ -17,16 +17,18 @@ class SceneryImage extends Model {
     function __construct ($id = NULL) {
         parent::__construct();
         $this->id = $id;
-        $data = $this->getData($this->table);
-        $this->scenery_id = intval($data['scenery_id']);
-        $this->user_id    = intval($data['user_id']);
-        $this->date       = $data['date'];
-        $datetime = new DateTime($data['date']);
-        $this->month      = intval($datetime->format('m'));
-        $this->period     = $this->getPeriod();
-        $this->likes      = intval($data['likes']);
-        $this->filename   = $data['filename'];
-        $this->url        = $this->getUrl();
+        if ($id != NULL) {
+            $data = $this->getData($this->table);
+            $this->scenery_id = intval($data['scenery_id']);
+            $this->user_id    = intval($data['user_id']);
+            $this->date       = $data['date'];
+            $datetime = new DateTime($data['date']);
+            $this->month      = intval($datetime->format('m'));
+            $this->period     = $this->getPeriod();
+            $this->likes      = intval($data['likes']);
+            $this->filename   = $data['filename'];
+            $this->url        = $this->getUrl();
+        }
     }
 
     private function getUrl () {

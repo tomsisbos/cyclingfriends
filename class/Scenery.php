@@ -117,6 +117,33 @@ class Scenery extends Model {
         $this->likes            = $data['likes'];
     }
 
+    /**
+     * Insert a new photo for this scenery
+     * @param array $photo Photo data
+     */
+    public function insertPhoto ($photo) {
+
+        // Insert table data
+        $photo['filename'] = setFilename('img');
+        $insertImgScenery = $db->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+        $insertImgScenery->execute(array($this->id, $photo['user_id'], $photo['date'], 0, $photo['filename']));
+
+        // Send file to blob storage
+        $containername = 'scenery-photos';
+        $blobClient->createBlockBlob($containername, $photo['filename'], $photo['blob']);
+        $metadata = [
+            'file_name' => $photo['name'],
+            'file_type' => $photo['type'],
+            'file_size' => $photo['size'],
+            'scenery_id' => $this->id,
+            'author_id' => $photo['user_id'],
+            'date' => $photo['date'],
+            'lat' => $this->lngLat->lat,
+            'lng' => $this->lngLat->lng
+        ];
+        $blobClient->setBlobMetadata($containername, $photo['filename'], $metadata);
+    }
+
     public function delete () {
         // Connect to blob storage and delete relevant blobs
         require Scenery::$root_folder . '/actions/blobStorage.php';

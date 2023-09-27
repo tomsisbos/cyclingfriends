@@ -1,6 +1,11 @@
 <?php
 
-require '../../../includes/api-head.php';
+$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/vendor/autoload.php';
+require_once $base_directory . '/class/CFAutoloader.php'; 
+CFAutoloader::register(); 
+require $base_directory . '/includes/functions.php';
+require $base_directory . '/actions/database.php';
 
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', '700');
@@ -16,6 +21,9 @@ require $folder . '/actions/blobStorage.php';
 if (is_array($data)) {
 
     try {
+
+        if (getConnectedUser()->id !== NULL) $author_id = getConnectedUser()->id;
+        else $author_id = $data['author_id'];
 
         // Prepare data structure
         $summary = $data['activityData']['summary'];
@@ -40,7 +48,7 @@ if (is_array($data)) {
             'bike_id' => $data['bike_id'],
             'checkpoints' => $data['checkpoints']
         ];
-        $activity_id = $activity_data->createActivity(getConnectedUser()->id, $editable_data);
+        $activity_id = $activity_data->createActivity($author_id, $editable_data);
 
         $activity = new Activity($activity_id);
         
@@ -52,7 +60,7 @@ if (is_array($data)) {
             $activity_photo_data['blob'] = $temp_image->treatBase64($photo['blob']);
 
             // Build photo data
-            $activity_photo_data['user_id'] = getConnectedUser()->id;
+            $activity_photo_data['user_id'] = $author_id;
             $activity_photo_data['activity_id'] = $activity_id;
             $activity_photo_data['size'] = $photo['size'];
             $activity_photo_data['name'] = $photo['name'];
@@ -165,7 +173,7 @@ if (is_array($data)) {
                     'file_type' => $entry['type'],
                     'file_size' => $entry['size'],
                     'scenery_id' => $entry['scenery_id'],
-                    'author_id' => getConnectedUser()->id,
+                    'author_id' => $author_id,
                     'date' => $summary['start_time']['date'],
                     'lat' => $entry['lat'],
                     'lng' => $entry['lng']
