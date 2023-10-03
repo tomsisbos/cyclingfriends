@@ -1,13 +1,14 @@
-import Map from "/class/maps/Map.js"
-import Popup from "/class/maps/Popup.js"
-import CFUtils from "/class/utils/CFUtils.js"
-import CFSession from "/class/utils/CFSession.js"
+import Map from "../../maps/Map.js"
+import Popup from "../../maps/Popup.js"
+import CFUtils from "../../utils/CFUtils.js"
+import CFSession from "../../utils/CFSession.js"
 
 export default class ActivityMap extends Map {
 
-    constructor () {
+    constructor (activityId = null) {
         super()
-        this.activityId = parseInt(document.querySelector('#activityMap').dataset.id)
+        if (activityId) this.activityId = activityId
+        else this.activityId = parseInt(document.querySelector('#activityMap').dataset.id)
     }
     
     defaultPitch = 40

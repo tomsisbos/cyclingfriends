@@ -65,14 +65,7 @@ class Route extends Model {
         $result = $getTime->fetch(PDO::FETCH_COLUMN);
         if ($result) {
             $time_array = json_decode($result);
-            $time = [];
-            foreach ($time_array as $timestamp) {
-                $datetime = new DateTime();
-                $datetime->setTimestamp($timestamp);
-                $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
-                array_push($time, $datetime);
-            }
-            return $time;
+            return $time_array;
         } else return NULL;
     }
 

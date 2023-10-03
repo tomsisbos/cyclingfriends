@@ -2,6 +2,7 @@
 
 include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
+include '../includes/head-map.php';
 include '../actions/activities/activity.php'; ?>
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@ include '../actions/activities/activity.php'; ?>
 <body>
 
 	<?php // Navbar
-	include '../includes/navbar.php'; ?>
+	///include '../includes/navbar.php'; ?>
 
 	<div class="main"> <?php
 

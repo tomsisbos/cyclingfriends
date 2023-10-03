@@ -6,9 +6,6 @@ export default function LikeButton ({id, likes}) {
 
     const connectedUserId = parseInt(document.querySelector('#dashboard').dataset.connectedUserId)
 
-    console.log(likes)
-    console.log(connectedUserId)
-
     if (likes.includes(connectedUserId)) var isLike = true
     else isLike = false
 

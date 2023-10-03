@@ -22,7 +22,7 @@
             <div class="pg-ac-checkpoint-topline">
                 <?= $checkpoint->getIcon() . ' km ' . round($checkpoint->distance, 1); ?>
                 <span class="pg-ac-checkpoint-time"> <?php
-                    $time = $checkpoint->datetime->diff($activity->getCheckpoints()[0]->datetime);
+                    $time = (new DateTime())->setTimestamp($checkpoint->datetime)->diff((new DateTime())->setTimestamp($activity->getCheckpoints()[0]->datetime));
                     if ($time->h != 0 AND $time->i != 0) {
                         echo ' (';
                         if ($time->h > 0) {

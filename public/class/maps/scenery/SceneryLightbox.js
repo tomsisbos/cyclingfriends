@@ -1,5 +1,5 @@
-import Popup from '/class/maps/Popup.js'
-import CFSession from '/class/utils/CFSession.js'
+import Popup from '../../maps/Popup.js'
+import CFSession from '../../utils/CFSession.js'
 
 export default class SceneryLightbox extends Popup {
 

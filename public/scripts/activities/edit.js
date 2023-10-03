@@ -37,12 +37,12 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
             time: activityData.route.time,
         },
         type: 'Feature'
-    }
+    }/*
     editActivityMap.data.checkpoints.forEach( (checkpoint) => {
         checkpoint.datetime = new Date(checkpoint.datetime.date).getTime() / 1000
-    } )
+    } )*/
     editActivityMap.data.photos.forEach( (photo) => {
-        photo.datetime = new Date(photo.datetime.date).getTime() / 1000
+        photo.datetime = photo.datetime / 1000
     } )
     editActivityMap.mapdata.sceneries = await editActivityMap.loadCloseSceneries(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
 

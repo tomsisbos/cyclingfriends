@@ -27,7 +27,7 @@ selectGuide.addEventListener('change', () => {
         activityData.forEach(activity => {
             var option = document.createElement('option')
             option.value = activity.id
-            var optionText = (new Date(activity.datetime.date)).toLocaleDateString() + ' - ' + activity.title
+            var optionText = (new Date(activity.datetime)).toLocaleDateString() + ' - ' + activity.title
             if (optionText.length > 30) option.innerText = optionText.slice(0, 27) + '...'
             else option.innerText = optionText
             selectActivity.appendChild(option)

@@ -1026,9 +1026,6 @@ export default class NewActivityMap extends ActivityMap {
         
         // If sceneries need to be created, append data
         if (sceneriesToCreate) cleanData.sceneriesToCreate = sceneriesToCreate
-
-        console.log(cleanData)
-        debugger
         
         // Send data to server and redirect user
         ajaxSaveActivity(this.apiUrl, cleanData, (response) => {

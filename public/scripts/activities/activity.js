@@ -27,9 +27,6 @@ var activityMap = new ActivityMap()
 ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (activityData) => {
 
     // Clean route data architecture to match geojson format
-    for (let i = 0; i < activityData.route.time.length; i++) {
-        activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime()
-    }
     activityMap.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
@@ -40,11 +37,7 @@ ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (a
         },
         type: 'Feature'
     }
-    activityData.checkpoints.forEach( (checkpoint) => {
-        checkpoint.datetime = new Date(checkpoint.datetime.date).getTime()
-    } )
     activityData.photos.forEach( (photo) => {
-        photo.datetime = new Date(photo.datetime.date).getTime()
         photo.distance = activityMap.getPhotoDistance(photo, activityData.routeData)
         document.querySelectorAll('.pg-ac-photo').forEach($photo => { // Add distance to timeline photo elements
             if (parseInt($photo.dataset.id) == photo.id) $photo.parentElement.querySelector('.pg-ac-photo-distance').innerText = 'km ' + (Math.round(photo.distance * 10) / 10)

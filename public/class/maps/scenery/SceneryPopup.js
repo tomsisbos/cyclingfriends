@@ -1,8 +1,8 @@
-import CFUtils from "/class/utils/CFUtils.js"
-import CFSession from "/class/utils/CFSession.js"
-import Popup from "/class/maps/Popup.js"
-import SceneryLightbox from "/class/maps/scenery/SceneryLightbox.js"
-import FadeLoader from "/class/loaders/FadeLoader.js"
+import CFUtils from "../../utils/CFUtils.js"
+import CFSession from "../../utils/CFSession.js"
+import Popup from "../../maps/Popup.js"
+import SceneryLightbox from "../../maps/scenery/SceneryLightbox.js"
+import FadeLoader from "../../loaders/FadeLoader.js"
 
 export default class SceneryPopup extends Popup {
 

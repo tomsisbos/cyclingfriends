@@ -75,7 +75,7 @@ class Activity extends Model {
             $closest_checkpoint_number   = 0;
             $closest_checkpoint_datetime = new DateTime;
             $closest_checkpoint_datetime->setTimestamp(0);
-            $photo_datetime = new DateTime($photo_ids[$i]['datetime']);
+            $photo_datetime = (new DateTime($photo_ids[$i]['datetime']))->getTimestamp();
             foreach ($this->getCheckpoints() as $checkpoint) {
                 if ($checkpoint->datetime > $closest_checkpoint_datetime AND $checkpoint->datetime < $photo_datetime) {
                     if ($checkpoint->number + 1 > count($this->getCheckpoints()) - 1) $closest_checkpoint_number = $checkpoint->number;

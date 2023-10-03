@@ -55,7 +55,7 @@ class Model {
         
         // Get part of the month from the day
         if (isset($this->date)) $date = $this->date;
-        else if (isset($this->datetime)) $date = $this->datetime->format('Y-m-d H:i:s');
+        else if (isset($this->datetime)) $date = (new DateTime())->setTimestamp($this->datetime)->format('Y-m-d H:i:s');
         $day = date("d", strtotime($date));
         if ($day < 10) $third = "上旬";
         else if (($day >= 10) AND ($day <= 20)) $third = "中旬";

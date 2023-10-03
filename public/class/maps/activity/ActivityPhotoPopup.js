@@ -1,6 +1,6 @@
 
-import Popup from "/class/maps/Popup.js"
-import ActivityPhotoLightbox from "/class/maps/activity/ActivityPhotoLightbox.js"
+import Popup from "../../maps/Popup.js"
+import ActivityPhotoLightbox from "../../maps/activity/ActivityPhotoLightbox.js"
 
 export default class ActivityPhotoPopup extends Popup {
 
@@ -35,7 +35,7 @@ export default class ActivityPhotoPopup extends Popup {
                 </div>
             </div>
             <img class="popup-activity-photo" src="` + activityPhoto.url + `">
-            <div class="photo-period ` + setPeriodClass((new Date(activityPhoto.datetime.date)).getMonth() + 1) + `" style="display: inline-block;">` + activityPhoto.period + `</div>
+            <div class="photo-period ` + setPeriodClass((new Date(activityPhoto.datetime)).getMonth() + 1) + `" style="display: inline-block;">` + activityPhoto.period + `</div>
         </div>
         
         <div id="popup-content" class="popup-content">
@@ -56,7 +56,7 @@ export default class ActivityPhotoPopup extends Popup {
                             + activity_string + 
                         `</div>
                         <div class="popup-properties-name">`
-                            + (new Date(activityPhoto.datetime.date)).toLocaleDateString() + 
+                            + (new Date(activityPhoto.datetime)).toLocaleDateString() + 
                         `</div>
                     </div>
                 </div>

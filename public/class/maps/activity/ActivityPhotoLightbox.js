@@ -1,4 +1,4 @@
-import Popup from '/class/maps/Popup.js'
+import Popup from '../../maps/Popup.js'
 
 export default class ActivityPhotoLightbox extends Popup {
 

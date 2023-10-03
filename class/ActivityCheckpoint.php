@@ -27,7 +27,7 @@ class ActivityCheckpoint extends Model {
             $this->name        = $data['name'];
             $this->type        = $data['type'];
             $this->story       = nl2br($data['story']);
-            $this->datetime    = new DateTime($data['datetime']);
+            $this->datetime    = (new DateTime($data['datetime'], new DateTimeZone('Asia/Tokyo')))->getTimestamp();
             $this->geolocation = new Geolocation($data['city'], $data['prefecture']);
             $this->elevation   = intval($data['elevation']);
             $this->distance    = floatval($data['distance']);
@@ -105,7 +105,7 @@ class ActivityCheckpoint extends Model {
         $getPhotos->execute([
             ':activity_id' => $this->activity_id,
             ':previous_number' => $this->number - 1,
-            ':this_datetime' => $this->datetime->format('Y-m-d H:i:s')
+            ':this_datetime' => (new DateTime())->setTimestamp($this->datetime)->format('Y-m-d H:i:s')
         ]);
         $photo_ids = $getPhotos->fetchAll(PDO::FETCH_ASSOC);
         

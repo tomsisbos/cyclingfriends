@@ -1,10 +1,10 @@
 ///import MapboxGeocoder from '/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js'
-import CFUtils from "/class/utils/CFUtils.js"
-import CFSession from "/class/utils/CFSession.js"
-import Profile from "/class/Profile.js"
-import Model from "/class/Model.js"
-import SceneryPopup from "/class/maps/scenery/SceneryPopup.js"
-import ActivityPhotoPopup from "/class/maps/activity/ActivityPhotoPopup.js"
+import CFUtils from "../utils/CFUtils.js"
+import CFSession from "../utils/CFSession.js"
+import Profile from "../Profile.js"
+import Model from "../Model.js"
+import SceneryPopup from "../maps/scenery/SceneryPopup.js"
+import ActivityPhotoPopup from "../maps/activity/ActivityPhotoPopup.js"
 
 // Global class initialization
 export default class Map extends Model {
@@ -329,7 +329,7 @@ export default class Map extends Model {
      * Add a search control to the map
      */
     addSearchControl () {
-        require(["/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js"], (MapboxGeocoder) => {
+        require(["../../node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js"], (MapboxGeocoder) => {
             this.map.addControl(
                 new MapboxGeocoder({
                     accessToken: this.apiKey,
@@ -2020,7 +2020,6 @@ export default class Map extends Model {
 
     addSceneries (sceneries) {
         sceneries.forEach( async (scenery) => {
-            console.log(sceneries)
 
             // Build element
             let element = document.createElement('div')

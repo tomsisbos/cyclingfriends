@@ -1,4 +1,4 @@
-import CircleLoader from "/class/loaders/CircleLoader.js"
+import CircleLoader from "../loaders/CircleLoader.js"
 
 export default class Twitter {
 

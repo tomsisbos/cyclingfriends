@@ -1,7 +1,7 @@
-import CFUtils from '/class/utils/CFUtils.js'
-import cover from '/node_modules/@mapbox/tile-cover/index.js'
-import Model from '/class/Model.js'
-import CircleLoader from '/class/loaders/CircleLoader.js'
+import CFUtils from '../class/utils/CFUtils.js'
+import cover from '../node_modules/@mapbox/tile-cover/index.js'
+import Model from '../class/Model.js'
+import CircleLoader from '../class/loaders/CircleLoader.js'
 
 export default class Profile extends Model {
 
