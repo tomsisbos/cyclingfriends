@@ -12,7 +12,11 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
         <>
             {
                 isLoading ?
-                <div className="header bg-container" style={{height: 250}}><Loader /></div> :
+
+                <div className="header bg-container" style={{height: 30 + 'vh'}}>
+                    <Loader type="placeholder" />
+                </div> :
+
                 <div className="header" style={{backgroundImage: `url(` + featuredImage.url + `)`, backgroundSize: 'cover', height: 250}}>
                     <div className="header-block" style={{marginLeft: 30, marginRight: 30, marginBottom: 20}}>
                         <div className="header-row">
@@ -23,7 +27,7 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
                         </div>
                         <div className="header-row">
                             <div className="header-column">
-                                <p>by 
+                                <p>{'by '}
                                 <a href={"/rider/" + author.id}>{author.login}</a></p>
                             </div>
                             <div className="header-column">

@@ -47,14 +47,20 @@ function App () {
             setIsLoading(false)
             setActivityData(response.data)
             setPhotos(response.data.photos)
+            console.log(activityData)
         })
     }, [])
+
+    const getFeaturedImage = () => {
+        if (activityData.photos.some(e => e.featured)) return activityData.photos.filter(photo => photo.featured)[0]
+        else return activityData.photos[0]
+    }
   
     return (
         <>
             <Header
                 isLoading={isLoading}
-                featuredImage={activityData.photos.filter(photo => photo.featured)[0]}
+                featuredImage={getFeaturedImage()}
                 title={activityData.title}
                 date={(new Date(activityData.datetime.date)).toLocaleDateString()}
                 author={activityData.author}
@@ -65,7 +71,6 @@ function App () {
                 photos={photos}
                 setPhotos={setPhotos}
                 setMap={setMap}
-                activityMap={activityMap}
                 setActivityMap={setActivityMap}
             />
             <Timeline

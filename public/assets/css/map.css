@@ -716,12 +716,10 @@ form#sceneryForm input[type="file" i] {
     position: absolute;
     width: auto;
     min-width: max-content;
-    background-color: #ffffffbb;
     font-size: 12px;
-    box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
-    border: 3px solid #ffffff00;
+    box-shadow: 1px 1px 0 1px rgb(0 0 0 / 5%);
     padding: 4px 10px;
-    border-radius: 4px;
+    border: 1px solid #222;
     z-index: 3;
 }
 

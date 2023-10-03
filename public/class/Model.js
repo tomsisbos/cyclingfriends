@@ -100,11 +100,13 @@ export default class Model {
             // Clear previous tooltip if displayed
             this.clearTooltip()
             // Prepare information to display
+            this.map.getCanvas().classList.add('cursor-pointer')
             this.drawTooltip(this.map.getSource('route')._data, e.lngLat.lng, e.lngLat.lat, e.point.x, e.point.y)
         } )
         this.map.on('mouseout', 'route', () => {
             // Clear tooltip
             this.clearTooltip()
+            this.map.getCanvas().classList.remove('cursor-pointer')
         } )
     }
 

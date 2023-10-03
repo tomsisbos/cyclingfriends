@@ -63,21 +63,21 @@ class ActivityCheckpoint extends Model {
     public function getIcon ($width = 24) {
         switch ($this->type) {
             case 'Start':
-                return '<span class="iconify" data-icon="material-symbols:play-circle" style="color: #00e06e" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="material-symbols:play-circle" style="color: #00e06e" data-inline="true" data-width="' . $width . '"></span>';
             case 'Landscape':
-                return '<span class="iconify" data-icon="bxs:landscape" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="bxs:landscape" data-inline="true" data-width="' . $width . '"></span>';
             case 'Break':
-                return '<span class="iconify" data-icon="ic:round-pause-circle" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="ic:round-pause-circle" data-inline="true" data-width="' . $width . '"></span>';
             case 'Restaurant':
-                return '<span class="iconify" data-icon="ion:restaurant" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="ion:restaurant" data-inline="true" data-width="' . $width . '"></span>';
             case 'Cafe':
-                return '<span class="iconify" data-icon="medical-icon:i-coffee-shop" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="medical-icon:i-coffee-shop" data-inline="true" data-width="' . $width . '"></span>';
             case 'Attraction':
-                return '<span class="iconify" data-icon="gis:layer-poi" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="gis:layer-poi" data-inline="true" data-width="' . $width . '"></span>';
             case 'Event':
-                return '<span class="iconify" data-icon="entypo:info-with-circle" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="entypo:info-with-circle" data-inline="true" data-width="' . $width . '"></span>';
             case 'Goal':
-                return '<span class="iconify" data-icon="material-symbols:stop-circle" style="color: #ff5555" data-inline="true" data-width="' . $width . '"></span>';
+                return '<span class="iconify" iconname="material-symbols:stop-circle" style="color: #ff5555" data-inline="true" data-width="' . $width . '"></span>';
         }
     }
 

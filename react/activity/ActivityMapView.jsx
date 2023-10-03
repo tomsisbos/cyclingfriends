@@ -3,7 +3,7 @@ import Loader from "/react/components/Loader.jsx"
 import ActivityMap from "/public/class/maps/activity/ActivityMap.js"
 import Twitter from '/public/class/social/Twitter.js'
 
-export default function ActivityMapView ({ isLoading, activityData, photos, setPhotos, setMap, activityMap, setActivityMap }) {
+export default function ActivityMapView ({ isLoading, activityData, photos, setPhotos, setMap, setActivityMap }) {
 
     const [isMapLoading, setIsMapLoading] = useState(false)
 
@@ -81,21 +81,6 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
                 newActivityMap.displayCheckpointMarkers()
                 await newActivityMap.displayPhotoMarkers()
 
-                // Focus on checkpoint on icon or checkpoint topline click
-                document.querySelectorAll('.pg-ac-checkpoint-topline').forEach( (icon) => {
-                    icon.addEventListener('click', (e) => {
-                        var checkpoint = newActivityMap.data.checkpoints[e.target.closest('.pg-ac-checkpoint-container').dataset.number]
-                        window.scrollTo(0, $map.offsetTop)
-                        mapInstance.flyTo( {
-                            center: checkpoint.lngLat,
-                            zoom: 12,
-                            pitch: 0,
-                            bearing: 0
-                        } )
-                        checkpoint.marker.togglePopup()
-                    } )
-                } )
-
                 // On click on a photo on the map, grow the photo
                 document.querySelectorAll('.pg-ac-map-img').forEach( (img) => {
                     img.addEventListener('click', (e) => {
@@ -132,14 +117,15 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
         <>
             {
                 isLoading ?
+
                 <>
                     <div id="activityMapContainer">
-                        <Loader />
                     </div>
                     <div id="profileBox" className="p-0 bg-white" style={{height: 22 + 'vh'}}>
                         <canvas id="elevationProfile"></canvas>
                     </div>
                 </> :
+
                 <>
                     <div id="activityMapContainer">
                         <div className="cf-map" id="activityMap" loading="lazy"></div>

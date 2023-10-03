@@ -410,14 +410,15 @@ export default class Profile extends Model {
             const uptwo = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 6 ? value : undefined
             const upsix = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y - 10 ? value : undefined
             const upten = (ctx, value) => ctx.p0.parsed.y > 0 ? value : undefined
+            const gradientBg = ctx.createLinearGradient(0, 0, 0, 200)
+            gradientBg.addColorStop(0, '#fffdcbaa')
+            gradientBg.addColorStop(1, '#fff97e')
             const data = {
                 labels: this.data.labels,
                 datasets: [ {
                     data: this.data.pointData,
-                    fill: {
-                        target: 'origin',
-                        above: '#fffa9ccc'
-                    },
+                    fill: true,
+                    backgroundColor: gradientBg,
                     borderColor: '#bbbbff',
                     tension: 0.1
                 } ],
@@ -474,7 +475,7 @@ export default class Profile extends Model {
                             else if (type == 'activityCheckpoint') {
                                 var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
                                 var img = new Image()
-                                img.src = 'https://api.iconify.design/' + svgElement.dataset.icon.replace(':', '/') + '.svg'
+                                img.src = 'https://api.iconify.design/' + svgElement.getAttribute('iconname').replace(':', '/') + '.svg'
                                 img.height = 24
                                 img.width = 24
                             }
@@ -514,6 +515,7 @@ export default class Profile extends Model {
                                     abstract.offscreenCanvas.style.display = 'none'
                                     abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
                                     document.body.appendChild(abstract.offscreenCanvas)
+                                    console.log(abstract.offscreenCanvas)
             
                                     // Draw icon
                                     ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)

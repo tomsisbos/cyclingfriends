@@ -27,6 +27,7 @@ export default class ActivityMap extends Map {
         Event: 'entypo/info-with-circle',
         Goal: 'material-symbols/stop-circle'
     }
+    routeColor = '#257f62'
 
     calculateElevation (trackpoints) {
         var elevation = 0
@@ -203,7 +204,7 @@ export default class ActivityMap extends Map {
             setStyle(`
             .pg-ac-map-img-container.grown {
                 max-height: ` + (this.$map.offsetHeight - 80) + `px !important;
-                max-width: ` + (this.$map.offsetWidth - 80) + `px !important;
+                max-width: ` + (this.$map.offsetWidth - 20) + `px !important;
                 top: ` + (18 - (this.$map.offsetHeight / 2)) + `px !important;
             }`)
             var isGrown = false

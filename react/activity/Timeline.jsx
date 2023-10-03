@@ -6,8 +6,10 @@ import PhotoThumbnail from "/react/activity/PhotoThumbnail.jsx"
 export default function Timeline ({ isLoading, photos, checkpoints, map, activityMap }) {
 
     var checkpointIndex = 0
-    
-    console.log(photos)
+
+    const getTimeFromStart = (checkpoint) => {
+        return new Date((checkpoint.datetime - checkpoints[0].datetime) * 1000)
+    }
 
     const getCheckpointElements = (photos) => checkpoints.map(checkpoint => {
 
@@ -22,11 +24,15 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
         return (
             <div
                 className='pg-ac-checkpoint-container'
+                id={'checkpoint' + checkpoint.number}
+                datanumber={checkpoint.number}
                 key={checkpoint.number}
             >
                 <Checkpoint
                     key={checkpoint.number}
                     data={checkpoint}
+                    map={map}
+                    getTimeFromStart={getTimeFromStart}
                 />
                 <div className="pg-ac-photos-container">
                     {photosToAppend.map(photoToAppend => {
@@ -34,7 +40,6 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
                         return (
                             <div className="pg-ac-photo-container" key={photoNumber}>
                                 <div className="pg-ac-photo-specs">
-                                    <div className="pg-ac-photo-number">{photoNumber}</div>
                                     <div className="pg-ac-photo-distance">km {Math.round(photoToAppend.distance * 10) / 10}</div>
                                 </div>
                                 <PhotoThumbnail
@@ -52,11 +57,11 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
     })
 
     return (
-        <div className="bg-container p-4">
+        <div className="bg-container">
             {
                 isLoading ?
-                <Loader /> :
-                <div className='pg-ac-summary-container'>
+                <Loader type="placeholder" /> :
+                <div className='pg-ac-summary-container p-4'>
                     <div className='pg-ac-timeline'></div>
                     <div className="pg-ac-checkpoints-container">
                         {getCheckpointElements(photos)}
