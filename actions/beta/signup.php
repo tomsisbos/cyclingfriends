@@ -5,7 +5,7 @@ require '../actions/database.php';
 // Get token
 $last_parameter = basename($_SERVER['REQUEST_URI']);
 if (is_numeric($last_parameter)) $token = $last_parameter;
-else header('location: /');
+else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/');
 
 // Check if token corresponds to a privatebeta member entry (if user has already registered)
 $checkIfTokenIsValid = $db->prepare("SELECT id FROM privatebeta_members WHERE token = ?");
@@ -19,6 +19,6 @@ if ($checkIfTokenIsValid->rowCount() > 0) {
 
         $member = new PrivateBetaMember($token);
 
-    } else header('location: /signin');
+    } else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/signin');
 
-} else header('location: /privatebeta/registration/' .$token);
+} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/privatebeta/registration/' .$token);

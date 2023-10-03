@@ -19,13 +19,13 @@ require '../actions/database.php';
 		} else {
 			
 			// If id doesn't exist, redirect to dashboard.php
-			header('location: /');
+			header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/');
 		
 		}
 	
 	} else {
 		
 		// If id is not set, redirect to dashboard.php
-		header('location: /');
+		header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/');
 		
 	} ?>

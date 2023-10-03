@@ -7,7 +7,7 @@ if (is_numeric($last_parameter)) {
     $slug = intval($last_parameter);
     $dev_note = new DevNote($slug);
 
-} else header('location: /dev/board');
+} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/dev/board');
 
 // Post new message
 if (!empty($_POST) && isset($_POST['message'])) {

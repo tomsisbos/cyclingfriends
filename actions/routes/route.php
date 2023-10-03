@@ -13,6 +13,6 @@ if (is_numeric($last_parameter) || $last_parameter === 'route') {
         if (exists('rides', $slug)) {
             $ride = new Ride($slug);
             $route = $ride->getRoute();
-        } else header('location: /' . getConnectedUser()->login . '/routes'); // If route doesn't exist, redirect to user routes page
+        } else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/' . getConnectedUser()->login . '/routes'); // If route doesn't exist, redirect to user routes page
     }
 }

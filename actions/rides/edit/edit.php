@@ -165,7 +165,7 @@ if (isset($_POST['validate'])) {
 			if ($ride->getParticipants() != null) foreach ($ride->getParticipants() as $participant_id) $ride->notify($participant_id, 'ride_edited');
 
 			// Redirect to ride page
-			header('location: /ride/' . $ride_id);
+			header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/ride/' . $ride_id);
 
 		}
 				

@@ -5,7 +5,7 @@ require '../actions/database.php';
 // Get token
 $last_parameter = basename($_SERVER['REQUEST_URI']);
 if (is_numeric($last_parameter)) $token = $last_parameter;
-else header('location: /');
+else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/');
 
 // Check if token corresponds to a mailing list entry
 $checkIfTokenIsValid = $db->prepare("SELECT id FROM mailing_list WHERE token = ?");
@@ -61,7 +61,7 @@ if ($checkIfTokenIsValid->rowCount() > 0) {
 
                     $_POST = [];
 
-                    header('location: /privatebeta/signup/' .$token);
+                    header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/privatebeta/signup/' .$token);
                 }
 
             } else $errormessage = '全ての情報をご記入ください。';
@@ -70,4 +70,4 @@ if ($checkIfTokenIsValid->rowCount() > 0) {
 
     }
 
-} else header('location: /');
+} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/');

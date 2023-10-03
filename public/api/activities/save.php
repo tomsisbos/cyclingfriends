@@ -22,7 +22,7 @@ if (is_array($data)) {
 
     try {
 
-        if (getConnectedUser()->id !== NULL) $author_id = getConnectedUser()->id;
+        if (getConnectedUser()) $author_id = getConnectedUser()->id;
         else $author_id = $data['author_id'];
 
         // Prepare data structure
@@ -39,6 +39,7 @@ if (is_array($data)) {
         $summary['goalplace'] = new Geolocation($summary['goalplace']['city'], $summary['goalplace']['prefecture']);
         $summary['duration'] = new DateInterval('PT' .$summary['duration']['h']. 'H' .$summary['duration']['i']. 'M' .$summary['duration']['s']. 'S');
         $summary['duration_running'] = new DateInterval('PT' .$summary['duration_running']['h']. 'H' .$summary['duration_running']['i']. 'M' .$summary['duration_running']['s']. 'S');
+        if (!isset($summary['title'])) $summary['title'] = $data['activityData']['title'];
     
         // Prepare activity data
         $activity_data = new ActivityData($summary, $coordinates, $trackpoints);

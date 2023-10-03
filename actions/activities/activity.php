@@ -13,13 +13,13 @@
 			
 			$activity = new Activity($slug);
 
-			// If id doesn't exist, redirect to myactivities.php
-			if (!$activity->hasAccess(getConnectedUser())) header('location: /' . getConnectedUser()->login . '/activities');       
+			// If access is not allowed, redirect to activities.php
+			if (!$activity->hasAccess(getConnectedUser())) header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/activities');       
 
 		// If id doesn't exist, redirect to myactivities.php
-		} else header('location: /activities');
+		} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/activities');
 	
 	// If id is not set, redirect to myactivities.php
-	} else header('location: /activities');
+	} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/activities');
 	
 ?>

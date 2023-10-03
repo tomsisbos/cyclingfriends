@@ -1,6 +1,7 @@
 {
   "public/settings.js": "/public/react/settings.js",
   "public/journal.js": "/public/react/journal.js",
+  "public/activity.js": "/public/react/activity.js",
   "public/dashboard.js": "/public/react/dashboard.js",
   "public/runtime.js": "/public/react/runtime.js"
 }

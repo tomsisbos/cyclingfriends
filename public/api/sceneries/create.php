@@ -14,52 +14,50 @@ ini_set('max_execution_time', '700');
 $json = file_get_contents('php://input'); // Get json file from xhr request
 $data = json_decode($json, true);
 
-// Connect to blob storage
-$folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-require $folder . '/actions/blobStorage.php';
-
 if (is_array($data)) {
 
     try {
 
-        forEach($data as $entry) {
+        // Prepare 
+        $scenery_data['user_id']          = $data['user_id'];
+        $scenery_data['user_login']       = (new User($scenery_data['user_id']))->login;
+        $scenery_data['category']         = 'marker';
+        $scenery_data['name']             = htmlspecialchars($data['name']);
+        $scenery_data['description']      = htmlspecialchars($data['description']);
+        $scenery_data['lng']              = $data['lng'];
+        $scenery_data['lat']              = $data['lat'];
+        $scenery_data['city']             = (new LngLat($data['lng'], $data['lat']))->queryGeolocation()->city;
+        $scenery_data['prefecture']       = (new LngLat($data['lng'], $data['lat']))->queryGeolocation()->prefecture;
+        $scenery_data['elevation']        = $data['elevation'];
+        $scenery_data['date']             = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
+        $scenery_data['month']            = date("n");
+        $scenery_data['publication_date'] = $scenery_data['date'];
+        $scenery_data['popularity']       = 30;
+        $scenery_data['tags']             = $data['tags'];
 
-            // Prepare 
-            $scenery['user_id']          = $entry['user_id'];
-            $scenery['user_login']       = (new User($scenery['user_id']))->login;
-            $scenery['category']         = 'marker';
-            $scenery['name']             = htmlspecialchars($entry['name']);
-            $scenery['description']      = htmlspecialchars($entry['description']);
-            $scenery['lng']              = $entry['lng'];
-            $scenery['lat']              = $entry['lat'];
-            $scenery['city']             = (new LngLat($entry['lng'], $entry['lat']))->queryGeolocation()->city;
-            $scenery['prefecture']       = (new LngLat($entry['lng'], $entry['lat']))->queryGeolocation()->prefecture;
-            $scenery['elevation']        = $entry['elevation'];
-            $scenery['date']             = new DateTime();
-            $scenery['date']->setTimestamp($entry['date']);
-            $scenery['date']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-            $scenery['month']            = date("n");
-            $scenery['publication_date'] = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
-            $scenery['popularity']       = 30;
-            $scenery['tags']             = $entry['tags'];
+        // Prepare photos
+        $scenery_data['photos'] = [];
+        foreach ($data['scenery_photos'] as $photo) {
+            $photo['filename'] = setFilename('img');
+            $photo['user_id'] = $scenery_data['user_id'];
+            $photo['date'] = $scenery_data['date'];
 
-            // Prepare photos
-            $scenery['photos'] = [];
-            foreach ($entry['photos'] as $entry_photo) {
-                $photo['filename'] = setFilename('img');
-                $photo['blob'] = (new TempImage($entry['name']. '_' .$photo['filename']))->treatBase64($activity_photo['blob']);
-                $photo['user_id'] = $scenery['user_id'];
-                $photo['date'] = $scenery['date'];
-                array_push($scenery['photos'], $photo);
-            }
+            // Prepare blob for upload to blob storage
+            $ext = strtolower(substr($photo['name'], -3));
+            $img_name = 'temp_' .$photo['filename']. '.'.$ext;
+            $temp = $_SERVER["DOCUMENT_ROOT"]. '/media/activities/temp/' .$img_name; // Set temp path
+            // Temporary upload raw file on the server
+            base64_to_jpeg($photo['blob'], $temp);
+            $photo['blob'] = fopen($temp, 'r');
 
-            // Create scenery
-            $scenery = new Scenery();
-            $scenery->create($scenery);
-
-            // Insert photos
-            foreach ($scenery['photos'] as $photo_data) $scenery->insertPhoto($photo_data);
+            array_push($scenery_data['photos'], $photo);
         }
+
+        // Create scenery
+        $scenery = new Scenery();
+        $scenery->create($scenery_data);
+
+        echo json_encode(['success' => $scenery->id]);
 
     // If any error have been catched, response error info
     } catch (Error $e) {

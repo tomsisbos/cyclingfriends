@@ -53,6 +53,7 @@ $router->map('GET', '/tag/[a:tagcategory]-[a:tagname]', 'world/tag', 'tag');
 
 // Activities
 $router->map('GET|POST', '/activity/[i:activity_id]', 'activities/single', 'activity-single');
+$router->map('GET|POST', '/activity/v2/[i:activity_id]', 'activities/single-v2');
 $router->map('GET|POST', '/activity/new', 'activities/new', 'activity-new');
 $router->map('GET', '/activity/[i:activity_id]/edit', 'activities/edit', 'activity-edit');
 $router->map('GET', '/activities', 'activities/publicboard', 'activity-publicboard');
@@ -68,7 +69,7 @@ $router->map('GET', '/[*:user_login]/routes', 'routes/userboard', 'route-userboa
 $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" when typing "/routes"
     require_once '../actions/users/initSession.php';
     require_once '../includes/functions.php';
-    header('location: /' .getConnectedUser()->login. '/routes');
+    header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/' .getConnectedUser()->login. '/routes');
 });
 
 // Rides

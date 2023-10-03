@@ -125,10 +125,13 @@ class Scenery extends Model {
 
         // Insert table data
         $photo['filename'] = setFilename('img');
-        $insertImgScenery = $db->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-        $insertImgScenery->execute(array($this->id, $photo['user_id'], $photo['date'], 0, $photo['filename']));
+        $insertImgScenery = $this->getPdo()->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
+        $insertImgScenery->execute(array($this->id, $photo['user_id'], $photo['date']->format('Y-m-d H:i:s'), 0, $photo['filename']));
 
         // Send file to blob storage
+        $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+        require $folder . '/actions/blobStorage.php';
+        
         $containername = 'scenery-photos';
         $blobClient->createBlockBlob($containername, $photo['filename'], $photo['blob']);
         $metadata = [
@@ -137,7 +140,7 @@ class Scenery extends Model {
             'file_size' => $photo['size'],
             'scenery_id' => $this->id,
             'author_id' => $photo['user_id'],
-            'date' => $photo['date'],
+            'date' => $photo['date']->format('Y-m-d H:i:s'),
             'lat' => $this->lngLat->lat,
             'lng' => $this->lngLat->lng
         ];

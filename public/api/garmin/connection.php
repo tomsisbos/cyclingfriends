@@ -12,7 +12,7 @@ use Stoufa\GarminApi\GarminApi;
 
 // 
 if (!isSessionActive()) {
-    header('location: /signin');
+    header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/signin');
 }
 
 // If connection has been authorized
@@ -33,7 +33,7 @@ if (isset($_GET['oauth_token'])) {
             $uri = $_SESSION['redirect_uri'];
             unset($_SESSION['redirect_uri']);
             header('location: ' .$uri);
-        } else header('location: /settings');
+        } else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/settings');
         
     /*} catch (\Throwable $th) {
         echo 'ERROR2';

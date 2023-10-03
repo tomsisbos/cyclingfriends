@@ -136,35 +136,38 @@ class Manual extends Model {
     public static $chapters = [
         'world' => [
             'title' => 'サイクリングマップ',
-            'subtitle' => 'World'
+            'subtitle' => 'World',
+            'id' => 'worldTitle'
         ],
         'activities' => [
             'title' => 'アクティビティ',
-            'subtitle' => 'Activities'
+            'subtitle' => 'Activities',
+            'id' => 'activitiesTitle'
         ],
         'routes' => [
             'title' => 'ルート',
-            'subtitle' => 'Routes'
-        ],/*
-        'rides' => [
-            'title' => 'ツアー',
-            'subtitle' => 'Rides'
-        ],*/
+            'subtitle' => 'Routes',
+            'id' => 'routesTitle'
+        ],
         'community' => [
             'title' => 'コミュニティ',
-            'subtitle' => 'Community'
+            'subtitle' => 'Community',
+            'id' => 'communityTitle'
         ],
         'user' => [
             'title' => 'ユーザー情報＆設定',
-            'subtitle' => 'User information & settings'
+            'subtitle' => 'User information & settings',
+            'id' => 'userSettingsTitle'
         ],
         'sceneryguidelines' => [
             'title' => '絶景スポットの作成ガイドライン',
-            'subtitle' => 'Scenery spots creation guidelines'
+            'subtitle' => 'Scenery spots creation guidelines',
+            'id' => 'sceneryGuidelinesTitle'
         ],
         'privacypolicy' => [
             'title' => 'プライバシーポリシー',
-            'subtitle' => 'Privacy policy'
+            'subtitle' => 'Privacy policy',
+            'id' => 'privacyPolicyTitle'
         ],
     ];
 
@@ -197,7 +200,7 @@ class Manual extends Model {
     public static function chapterTitle ($chapter_name) {
         if (isset(self::$chapters[$chapter_name])) {
             self::title(1, self::$chapters[$chapter_name]['title']);
-            echo '<div class="m-subtitle">' .self::$chapters[$chapter_name]['subtitle']. '</div>';
+            echo '<div class="m-subtitle" id="' .self::$chapters[$chapter_name]['id']. '">' .self::$chapters[$chapter_name]['subtitle']. '</div>';
         }
     }
     
