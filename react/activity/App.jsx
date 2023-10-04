@@ -72,18 +72,18 @@ function App () {
   
     return (
         <>
+            <Header
+                isLoading={isLoading}
+                featuredImage={getFeaturedImage()}
+                activityData={activityData}
+                session={session}
+            />
             <Timeline
                 isLoading={isLoading}
                 checkpoints={activityData.checkpoints}
                 photos={photos}
                 map={map}
                 activityMap={activityMap}
-            />
-            <Header
-                isLoading={isLoading}
-                featuredImage={getFeaturedImage()}
-                activityData={activityData}
-                session={session}
             />
             <ActivityMapView
                 isLoading={isLoading}
