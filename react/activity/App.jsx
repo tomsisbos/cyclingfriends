@@ -64,7 +64,8 @@ function App () {
                 title={activityData.title}
                 date={(new Date(activityData.datetime.date)).toLocaleDateString()}
                 author={activityData.author}
-                privacy={activityData.privacy} />
+                privacy={activityData.privacy}
+                id={activityData.id} />
             <ActivityMapView
                 isLoading={isLoading}
                 activityData={activityData}

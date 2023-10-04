@@ -1,7 +1,8 @@
 import React from 'react'
 import Loader from "/react/components/Loader.jsx"
+import HeaderActivityButtons from "/react/activity/HeaderActivityButtons.jsx"
 
-export default function Header ({ isLoading, featuredImage, title, date, author, privacy }) {
+export default function Header ({ isLoading, featuredImage, title, date, author, privacy, id }) {
 
     const getPrivacyTag = (privacy) => {
         if (privacy == 'private') return <p style="background-color: #ff5555" className="tag-light text-light">非公開</p>
@@ -51,7 +52,7 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
                             </div>
                         </div>
                         <div className="header-row mt-2">
-                            [ActivityButtons]
+                            <HeaderActivityButtons id={id} /> 
                         </div>
                     </div>
                 </div>
