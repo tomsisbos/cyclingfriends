@@ -57,7 +57,7 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
     })
 
     return (
-        <div className="bg-container">
+        <div className="bg-white">
             {
                 isLoading ?
                 <Loader /> :

@@ -8,7 +8,7 @@
 
 		// Check if activity exists and access is allowed
 		if (getConnectedUser()) {
-			$query = "SELECT a.title FROM activities as A JOIN friends AS fr ON a.user_id = fr.receiver_id JOIN friends as fi ON a.user_id = fi.inviter_id WHERE a.id = :activity_id AND a.privacy != 'private' AND (a.privacy = 'friends_only' AND ((:connected_user_id = fi.receiver_id AND fi.accepted = 1) OR (:connected_user_id = fr.inviter_id AND fr.accepted = 1))) != true";
+			$query = "SELECT a.title FROM activities as a FULL OUTER JOIN friends AS fr ON a.user_id = fr.receiver_id FULL OUTER JOIN friends as fi ON a.user_id = fi.inviter_id WHERE a.id = :activity_id AND (a.privacy = 'public' OR (a.privacy = 'private' AND a.user_id = :connected_user_id) OR (a.privacy = 'friends_only' AND ((:connected_user_id = fi.receiver_id AND fi.accepted = 1) OR (:connected_user_id = fr.inviter_id AND fr.accepted = 1))))";
 			$params = [':activity_id' => $slug, ':connected_user_id' => getConnectedUser()->id];
 		} else {
 			$query = "SELECT title FROM activities WHERE id = :activity_id AND privacy != 'private' AND privacy != 'friends_only'";
@@ -24,7 +24,7 @@
 			// Get featured image url
 			$getFeaturedImageFilename = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ? AND featured = 1");
 			$getFeaturedImageFilename->execute([$activity_id]);
-			if ($getFeaturedImageFilename->rowCount() > 0) $activity_featured_image_filename = $getFeaturedImageUrl->fetch(PDO::FETCH_COLUMN);
+			if ($getFeaturedImageFilename->rowCount() > 0) $activity_featured_image_filename = $getFeaturedImageFilename->fetch(PDO::FETCH_COLUMN);
 			else {
 				$getFirstImageFilename = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ?");
 				$getFirstImageFilename->execute([$activity_id]);

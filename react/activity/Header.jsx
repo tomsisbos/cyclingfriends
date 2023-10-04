@@ -21,8 +21,8 @@ export default function Header ({ isLoading, featuredImage, activityData, sessio
     }
 
     const getBackgroundImageStyle = () => {
-        if (featuredImage) return {backgroundImage: `url(` + featuredImage + `)`, backgroundSize: 'cover'}
-        else return {}
+        if (featuredImage) return {backgroundImage: `url(` + featuredImage + `)`, backgroundSize: 'cover', height: 'calc(100vh - 80px)'}
+        else return {height: 30 + 'vh'}
     }
 
     return (
@@ -30,17 +30,17 @@ export default function Header ({ isLoading, featuredImage, activityData, sessio
             {
                 isLoading ?
 
-                <div className="header bg-container" style={{...getBackgroundImageStyle(), height: 30 + 'vh'}}>
+                <div className="header bg-container" style={{...getBackgroundImageStyle()}}>
                     <div className="header-block" style={{marginLeft: 30, marginRight: 30, marginBottom: 20}}>
-                        <div className="d-flex gap-20">
-                            <div className="round-propic-container" style={{borderRadius: 60, overflow: 'hidden'}}>
+                        <div className="d-block">
+                            <div className="d-block round-propic-container" style={{borderRadius: 60, overflow: 'hidden', float: 'left', marginRight: 12}}>
                                 { profilePicture ?
-                                    <img className="round-propic-img" src={profilePicture} /> :
+                                    <img className="round-propic-img mr-2" src={profilePicture} /> :
                                     <Loader type="placeholder" />
                                 }
                             </div>
                             <div>
-                                <div className="header-row">
+                                <div className="header-row d-inline">
                                     <h2>{tempTitle}</h2>
                                 </div>
                                 <div className="header-row">
@@ -57,19 +57,17 @@ export default function Header ({ isLoading, featuredImage, activityData, sessio
                     </div>
                 </div> :
 
-                <div className="header" style={{...getBackgroundImageStyle(), height: 30 + 'vh'}}>
+                <div className="header" style={{...getBackgroundImageStyle()}}>
                     <div className="header-block" style={{marginLeft: 30, marginRight: 30, marginBottom: 20}}>
-                        <div className="d-flex gap-20">
-                            <a href={"/rider/" + activityData.author.id}>
-                                <div className="round-propic-container">
-                                    { profilePicture ?
-                                        <img className="round-propic-img" src={profilePicture} /> :
-                                        <Loader type="placeholder" />
-                                    }
-                                </div>
-                            </a>
+                        <div className="d-block">
+                            <div href={"/rider/" + activityData.author.id} className="d-block round-propic-container" style={{float: 'left', marginRight: 12}}>
+                                { profilePicture ?
+                                    <img className="round-propic-img mr-2" src={profilePicture} /> :
+                                    <Loader type="placeholder" />
+                                }
+                            </div>
                             <div>
-                                <div className="header-row">
+                                <div className="header-row d-inline">
                                     <h2>{activityData.title}</h2>
                                 </div>
                                 <div className="header-row">

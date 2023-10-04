@@ -43,25 +43,18 @@ function App () {
     const [activityMap, setActivityMap] = useState(null)
     const [session, setSession] = useState({})
 
-    console.log(session)
-
     // Load activity data on first component rendering
     useEffect(() => {
         axios.get('/api/activity.php?load=' + activity_id).then(response => {
             setIsLoading(false)
             setActivityData(response.data)
             setPhotos(response.data.photos)
-            console.log(response.data)
-            console.log(activityData)
         })
     }, [])
 
     // Load session data on first component rendering
     useEffect(() => {
-        CFSession.getSession().then(session => {
-            console.log(session)
-            setSession(session)
-        })
+        CFSession.getSession().then(session => setSession(session))
     }, [])
 
     const getFeaturedImage = () => {
