@@ -72,6 +72,13 @@ function App () {
   
     return (
         <>
+            <Timeline
+                isLoading={isLoading}
+                checkpoints={activityData.checkpoints}
+                photos={photos}
+                map={map}
+                activityMap={activityMap}
+            />
             <Header
                 isLoading={isLoading}
                 featuredImage={getFeaturedImage()}
@@ -85,13 +92,6 @@ function App () {
                 setPhotos={setPhotos}
                 setMap={setMap}
                 setActivityMap={setActivityMap}
-            />
-            <Timeline
-                isLoading={isLoading}
-                checkpoints={activityData.checkpoints}
-                photos={photos}
-                map={map}
-                activityMap={activityMap}
             />
         </>
     )
