@@ -42,13 +42,6 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
             newActivityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
             newActivityMap.setSeason()
 
-            // If user is connected to twitter
-            var buttonTwitter = document.querySelector('#buttonTwitter')
-            if (buttonTwitter && buttonTwitter.dataset.username) {
-                var twitter = new Twitter(activityData)
-                buttonTwitter.addEventListener('click', () => twitter.openTwitterModal())
-            }
-
             setActivityMap(newActivityMap)
             
             // Set default layer according to current season

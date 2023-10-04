@@ -2,7 +2,7 @@ import React from 'react'
 import Loader from "/react/components/Loader.jsx"
 import HeaderActivityButtons from "/react/activity/HeaderActivityButtons.jsx"
 
-export default function Header ({ isLoading, featuredImage, title, date, author, privacy, id }) {
+export default function Header ({ isLoading, featuredImage, activityData, session }) {
 
     const getPrivacyTag = (privacy) => {
         if (privacy == 'private') return <p style="background-color: #ff5555" className="tag-light text-light">非公開</p>
@@ -36,7 +36,7 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
                             <Loader type="text-placeholder" />
                         </div>
                         <div className="header-row mt-2">
-                            <HeaderActivityButtons id={id} /> 
+                            <HeaderActivityButtons activityData={activityData} session={session} /> 
                         </div>
                     </div>
                 </div> :
@@ -44,22 +44,22 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
                 <div className="header" style={{...getBackgroundImageStyle(), height: 30 + 'vh'}}>
                     <div className="header-block" style={{marginLeft: 30, marginRight: 30, marginBottom: 20}}>
                         <div className="header-row">
-                            <h2>{title}</h2>
+                            <h2>{activityData.title}</h2>
                         </div>
                         <div className="header-row">
-                            <p>{date}</p>
+                            <p>{activityData.date}</p>
                         </div>
                         <div className="header-row">
                             <div className="header-column">
-                                <p>{'by '}
-                                <a href={"/rider/" + author.id}>{author.login}</a></p>
+                                <p>{activityData.route.startplace.city + ', ' + (Math.round(activityData.route.distance * 10) / 10) + ' km - ' + 'by '}
+                                <a href={"/rider/" + activityData.author.id}>{activityData.author.login}</a></p>
                             </div>
                             <div className="header-column">
-                                {getPrivacyTag(privacy)}
+                                {getPrivacyTag(activityData.privacy)}
                             </div>
                         </div>
                         <div className="header-row mt-2">
-                            <HeaderActivityButtons id={id} /> 
+                            <HeaderActivityButtons activityData={activityData} session={session} /> 
                         </div>
                     </div>
                 </div>

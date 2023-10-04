@@ -2,8 +2,11 @@ import CircleLoader from "../loaders/CircleLoader.js"
 
 export default class Twitter {
 
-    constructor (activity) {
+    constructor (activity, name, username, profileImage) {
         this.activity = activity
+        this.name = name
+        this.username = username
+        this.profileImage = profileImage
         this.defaultText = '「' + activity.title + '」のツアーレポートはこちら：'
     }
 
@@ -41,9 +44,6 @@ export default class Twitter {
         
         dataLoader.stop()
 
-        var name = buttonTwitter.dataset.username
-        var username = buttonTwitter.dataset.username
-        var profileImage = buttonTwitter.dataset.profileImage
         var date = new Date()
         var text = this.activity.checkpoints.map(checkpoint => checkpoint.story).join('\r\n\r\n')
         if (this.lengthInUtf8Bytes(text) > this.charsLimit - this.urlLength - 3) text = this.sliceInUtf8Bytes(text, this.charsLimit - this.urlLength - 3) + '...'
@@ -52,12 +52,12 @@ export default class Twitter {
         var content = `
             <div class="tw-container">
                 <div class="tw-profile">
-                    <img src="` + profileImage +  `">
+                    <img src="` + this.profileImage +  `">
                 </div>
                 <div class="tw-body">
                     <div class="tw-top">
-                        <div class="tw-name">` + name + `</div>
-                        <div class="tw-username">@` + username + `</div>
+                        <div class="tw-name">` + this.name + `</div>
+                        <div class="tw-username">@` + this.username + `</div>
                         <div class="tw-date">・` + date.toLocaleTimeString('ja-JP') + `</div>
                     </div>
                     <textarea class="tw-content">` + text + `</textarea>

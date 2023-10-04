@@ -2344,7 +2344,6 @@ export default class Map extends Model {
                         const displayStory = (checkpoint) => {
                             // Make sure story is not already displayed
                             if (!this.$map.querySelector('.lightbox-caption') || (this.$map.querySelector('.lightbox-caption') && this.$map.querySelector('.lightbox-caption') && parseInt(this.$map.querySelector('.story-number').innerText) != checkpoint.number)) {
-                                var checkpointTime = new Date(checkpoint.datetime)
                                 // Remove previous caption element
                                 if (this.$map.querySelector('.lightbox-caption')) this.$map.querySelector('.lightbox-caption').remove()
                                 // Build caption element
@@ -2360,7 +2359,7 @@ export default class Map extends Model {
                                 $storyName.innerText = checkpoint.name
                                 var $storyData = document.createElement('div')
                                 $storyData.className = 'lightbox-location'
-                                $storyData.innerText = checkpoint.distance + 'km - ' + checkpointTime.getHours() + 'h' + checkpointTime.getMinutes()
+                                $storyData.innerText = checkpoint.distance + 'km - ' + getFormattedDurationFromTimestamp(checkpoint.datetime * 1000)
                                 var $story = document.createElement('div')
                                 $story.className = 'lightbox-story'
                                 $story.innerText = checkpoint.story

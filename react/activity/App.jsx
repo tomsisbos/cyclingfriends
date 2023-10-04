@@ -41,8 +41,9 @@ function App () {
     const [photos, setPhotos] = useState(activityData.photos)
     const [map, setMap] = useState(null)
     const [activityMap, setActivityMap] = useState(null)
+    const [session, setSession] = useState({})
 
-    const [userId, setUserId] = useState(null)
+    console.log(session)
 
     // Load activity data on first component rendering
     useEffect(() => {
@@ -59,6 +60,7 @@ function App () {
     useEffect(() => {
         CFSession.getSession().then(session => {
             console.log(session)
+            setSession(session)
         })
     }, [])
 
@@ -73,11 +75,9 @@ function App () {
             <Header
                 isLoading={isLoading}
                 featuredImage={getFeaturedImage()}
-                title={activityData.title}
-                date={(new Date(activityData.datetime.date)).toLocaleDateString()}
-                author={activityData.author}
-                privacy={activityData.privacy}
-                id={activityData.id} />
+                activityData={activityData}
+                session={session}
+            />
             <ActivityMapView
                 isLoading={isLoading}
                 activityData={activityData}

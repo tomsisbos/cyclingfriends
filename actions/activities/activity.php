@@ -7,8 +7,15 @@
 	if (is_numeric($slug)) {
 
 		// Check if activity exists and access is allowed
-		$checkIfActivityExists = $db->prepare("SELECT a.title FROM activities as A JOIN friends AS fr ON a.user_id = fr.receiver_id JOIN friends as fi ON a.user_id = fi.inviter_id WHERE a.id = :activity_id AND a.privacy != 'private' AND (a.privacy = 'friends_only' AND ((:connected_user_id = fi.receiver_id AND fi.accepted = 1) OR (:connected_user_id = fr.inviter_id AND fr.accepted = 1))) != true");
-		$checkIfActivityExists->execute([':activity_id' => $slug, ':connected_user_id' => getConnectedUser()->id]);
+		if (getConnectedUser()) {
+			$query = "SELECT a.title FROM activities as A JOIN friends AS fr ON a.user_id = fr.receiver_id JOIN friends as fi ON a.user_id = fi.inviter_id WHERE a.id = :activity_id AND a.privacy != 'private' AND (a.privacy = 'friends_only' AND ((:connected_user_id = fi.receiver_id AND fi.accepted = 1) OR (:connected_user_id = fr.inviter_id AND fr.accepted = 1))) != true";
+			$params = [':activity_id' => $slug, ':connected_user_id' => getConnectedUser()->id];
+		} else {
+			$query = "SELECT title FROM activities WHERE id = :activity_id AND privacy != 'private' AND privacy != 'friends_only'";
+			$params = [':activity_id' => $slug];
+		}
+		$checkIfActivityExists = $db->prepare($query);
+		$checkIfActivityExists->execute($params);
 		if ($checkIfActivityExists->rowCount() > 0) {
 			
 			$activity_id = $slug;

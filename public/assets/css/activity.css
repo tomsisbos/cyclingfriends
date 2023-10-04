@@ -902,11 +902,11 @@
     overflow: hidden;
 }
 
-.mp-button.twitter-button svg {
+.mp-button.twitter svg {
     height: 100%;
     margin: auto;
 }
-.mp-button.twitter-button {
+.mp-button.twitter {
     background-color: #1d9bf0;
     color: #fff;
 }
