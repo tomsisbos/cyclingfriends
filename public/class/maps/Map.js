@@ -1630,8 +1630,7 @@ export default class Map extends Model {
                     } )
                 }
                 // Set distance markers color property
-                if (this.routeColor == 'blue') var color = 'blue'
-                else var color = 'black'
+                var color = this.routeColor
                 // Add to map
                 if (this.map.getSource('distanceMarkers')) {
                     this.hideDistanceMarkers()

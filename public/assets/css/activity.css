@@ -771,6 +771,20 @@
     bottom: 6px !important;
 }
 
+
+.checkpoint-marker-ff5555, .checkpoint-marker.checkpoint-marker-ff5555::after {
+    border-color: #ff5555;
+    color: #ff5555;
+}
+.checkpoint-marker-00e06e, .checkpoint-marker.checkpoint-marker-00e06e::after {
+    border-color: #00e06e;
+    color: #00e06e;
+}
+.checkpoint-marker-000000, .checkpoint-marker.checkpoint-marker-000000::after {
+    border-color: #000000;
+    color: #000000;
+}
+
 .pg-ac-checkpoint-popup {
     z-index: 3;
     padding: 10px;

@@ -21,11 +21,15 @@
 			else {
 				$getFirstImageFilename = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ?");
 				$getFirstImageFilename->execute([$activity_id]);
-				$activity_featured_image_filename = $getFirstImageFilename->fetch(PDO::FETCH_COLUMN);
+				if ($getFirstImageFilename->rowCount() > 0) $activity_featured_image_filename = $getFirstImageFilename->fetch(PDO::FETCH_COLUMN);
 			}
-            $root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-            require $root_folder . '/actions/blobStorage.php';
-            $activity_featured_image_url = $blobClient->getBlobUrl('activity-photos', $activity_featured_image_filename);
+
+			// If an image to feature could have been found
+            if (isset($activity_featured_image_filename)) {
+				$root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+				require $root_folder . '/actions/blobStorage.php';
+				$activity_featured_image_url = $blobClient->getBlobUrl('activity-photos', $activity_featured_image_filename);
+			}
 
 
 		// If id doesn't exist, redirect to myactivities.php

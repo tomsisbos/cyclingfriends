@@ -155,18 +155,23 @@ export default class ActivityMap extends Map {
             element.className = 'checkpoint-marker logo-checkpoint-marker'
             element.id = i
             var img = document.createElement('img')
-            img.src = 'https://api.iconify.design/' + this.icons[type] + '.svg'
+            console.log(type)
+            if (type == 'Start') var color = '00e06e'
+            else if (type == 'Goal') var color = 'ff5555'
+            else var color = '000000'
+            element.classList.add('checkpoint-marker-' + color)
+            img.src = 'https://api.iconify.design/' + this.icons[type] + '.svg?color=%23' + color
             element.appendChild(img)
         }
         return element
     }
 
     setCheckpointPopupContent (checkpoint) {
-        var checkpointTime = checkpoint.datetime / 1000
-        var startTime = this.data.checkpoints[0].datetime / 1000
+        var checkpointTime = checkpoint.datetime
+        var startTime = this.data.checkpoints[0].datetime
         return `
             <div class="pg-ac-checkpoint-topline">
-                <div>km ` + checkpoint.distance + `</div>
+                <div>km ` + (Math.round(checkpoint.distance * 10) / 10) + `</div>
                 <div class="pg-ac-checkpoint-time">(` + getFormattedDurationFromTimestamp(checkpointTime - startTime) + `)</div> - 
                 <div>` + checkpoint.name + `</div>
             </div>
@@ -245,8 +250,6 @@ export default class ActivityMap extends Map {
         const routeCoordinates = routeData.geometry.coordinates
         const routeTime = routeData.properties.time
         var smallestGap = routeTime[0]
-        console.log(photo.datetime)
-        console.log(smallestGap)
         var closestCoordinate
         // Get closest route coordinate by looping through them
         for (let i = 0; i < routeCoordinates.length; i++) {

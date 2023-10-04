@@ -474,8 +474,11 @@ export default class Profile extends Model {
                             }
                             else if (type == 'activityCheckpoint') {
                                 var svgElement = document.querySelector('#' + 'checkpoint' + poi.number + ' svg')
+                                if (poi.type == 'Start') var color = '00e06e'
+                                else if (poi.type == 'Goal') var color = 'ff5555'
+                                else var color = '000000'
                                 var img = new Image()
-                                img.src = 'https://api.iconify.design/' + svgElement.getAttribute('iconname').replace(':', '/') + '.svg'
+                                img.src = 'https://api.iconify.design/' + svgElement.getAttribute('iconname').replace(':', '/') + '.svg' + '?color=%23' + color
                                 img.height = 24
                                 img.width = 24
                             }
@@ -515,7 +518,6 @@ export default class Profile extends Model {
                                     abstract.offscreenCanvas.style.display = 'none'
                                     abstract.offscreenCanvas.id = 'offscreenCanvas' + poi.number
                                     document.body.appendChild(abstract.offscreenCanvas)
-                                    console.log(abstract.offscreenCanvas)
             
                                     // Draw icon
                                     ctx.drawImage(abstract.offscreenCanvas, positionX, positionY)
@@ -686,6 +688,7 @@ export default class Profile extends Model {
                                 unit: 'meter'
                             },
                             autoSkipPadding: 20,
+                            autoSkip: true,
                             padding: 8
                         }
                     }
@@ -710,6 +713,9 @@ export default class Profile extends Model {
                         enabled: false
                     },
                 },
+                layout: {
+                    padding: 10
+                }
             }
             const chartSettings = {
                 type: 'line',

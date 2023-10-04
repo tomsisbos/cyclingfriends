@@ -50,10 +50,12 @@ export default function Checkpoint ({ data, getTimeFromStart, map }) {
                 <div>
                     {getIcon(data.type)} km {' ' + (Math.round(data.distance * 10) / 10) + ' '}
                 </div>
-                <div className="pg-ac-checkpoint-time">
-                    {'(' + getTimeString(getTimeFromStart(data)) + ')'}
-                </div>
-                
+                {
+                    getTimeFromStart(data).getUTCMinutes() > 0 &&
+                    <div className="pg-ac-checkpoint-time">
+                        {'(' + getTimeString(getTimeFromStart(data)) + ')'}
+                    </div>
+                }
                 {data.name && ' - ' + data.name}
             </div>
             {data.story}

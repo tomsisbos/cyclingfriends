@@ -12,12 +12,19 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
     const tempTitle = document.querySelector('#activity').dataset.title
     const tempFeaturedImageUrl = document.querySelector('#activity').dataset.featuredImageUrl
 
+    if (!featuredImage) featuredImage = tempFeaturedImageUrl
+
+    const getBackgroundImageStyle = () => {
+        if (featuredImage) return {backgroundImage: `url(` + featuredImage + `)`, backgroundSize: 'cover'}
+        else return {}
+    }
+
     return (
         <>
             {
                 isLoading ?
 
-                <div className="header bg-container" style={{height: 30 + 'vh', backgroundImage: `url(` + tempFeaturedImageUrl + `)`, backgroundSize: 'cover', height: 250}}>
+                <div className="header bg-container" style={{...getBackgroundImageStyle(), height: 30 + 'vh'}}>
                     <div className="header-block" style={{marginLeft: 30, marginRight: 30, marginBottom: 20}}>
                         <div className="header-row">
                             <h2>{tempTitle}</h2>
@@ -29,12 +36,12 @@ export default function Header ({ isLoading, featuredImage, title, date, author,
                             <Loader type="text-placeholder" />
                         </div>
                         <div className="header-row mt-2">
-                            <Loader type="text-placeholder" />
+                            <HeaderActivityButtons id={id} /> 
                         </div>
                     </div>
                 </div> :
 
-                <div className="header" style={{backgroundImage: `url(` + featuredImage.url + `)`, backgroundSize: 'cover', height: 250}}>
+                <div className="header" style={{...getBackgroundImageStyle(), height: 30 + 'vh'}}>
                     <div className="header-block" style={{marginLeft: 30, marginRight: 30, marginBottom: 20}}>
                         <div className="header-row">
                             <h2>{title}</h2>

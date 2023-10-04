@@ -2,15 +2,14 @@ import React from 'react'
 import axios from 'axios' 
 import Button from "/react/components/Button.jsx"
 
-export default function HeaderActivityButtons ({ id }) {
+export default function HeaderActivityButtons ({ userId, id }) {
 
     const handleDelete = async (setIsLoading) => {
         var answer = await openConfirmationPopup('このアクティビティを削除します。宜しいですか？')
         if (answer) {
             setIsLoading(true)
-            axios.get('/api/activity.php' + "?delete=" + id, async (login) => {
-                setIsLoading(false)
-                window.location.replace('/' + login + '/activities')
+            axios.get('/api/activity.php' + "?delete=" + id).then(login => {
+                window.location.href = '/' + login + '/activities'
             } )
         }
     }

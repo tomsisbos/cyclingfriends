@@ -20,7 +20,11 @@ include '../actions/activities/activity.php'; ?>
 		// Space for error messages
 		include '../includes/result-message.php'; ?>
 		
-		<div id="activity" data-activity="<?= $activity_id ?>" data-title="<?= $activity_title ?>" data-featured-image-url="<?= $activity_featured_image_url ?>"></div>
+		<div id="activity"
+			data-activity="<?= $activity_id ?>"
+			data-title="<?= $activity_title ?>" <?php
+			if (isset($activity_featured_image_url))  echo 'data-featured-image-url="' .$activity_featured_image_url. '"' ?>
+		></div>
 	
 	</div>
 

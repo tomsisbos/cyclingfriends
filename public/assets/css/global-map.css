@@ -21,7 +21,7 @@
     position: absolute;
     z-index: -1;
     text-shadow: 0px 6px 6px #00000099;
-    color: #000 !important;
+    color: #000;
 }
 .checkpoint-marker-start {
     background-color: #008d15 !important;

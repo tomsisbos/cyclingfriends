@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
+import CFSession from '../../public/class/utils/CFSession'
 import Header from "/react/activity/Header.jsx"
 import ActivityMapView from "/react/activity/ActivityMapView.jsx"
 import Timeline from "/react/activity/Timeline.jsx"
@@ -41,19 +42,30 @@ function App () {
     const [map, setMap] = useState(null)
     const [activityMap, setActivityMap] = useState(null)
 
+    const [userId, setUserId] = useState(null)
+
     // Load activity data on first component rendering
     useEffect(() => {
         axios.get('/api/activity.php?load=' + activity_id).then(response => {
             setIsLoading(false)
             setActivityData(response.data)
             setPhotos(response.data.photos)
+            console.log(response.data)
             console.log(activityData)
+        })
+    }, [])
+
+    // Load session data on first component rendering
+    useEffect(() => {
+        CFSession.getSession().then(session => {
+            console.log(session)
         })
     }, [])
 
     const getFeaturedImage = () => {
         if (activityData.photos.some(e => e.featured)) return activityData.photos.filter(photo => photo.featured)[0]
-        else return activityData.photos[0]
+        else if (activityData.photos.length > 0) return activityData.photos[0]
+        else return null
     }
   
     return (

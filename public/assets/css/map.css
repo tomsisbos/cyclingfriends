@@ -721,6 +721,7 @@ form#sceneryForm input[type="file" i] {
     padding: 4px 10px;
     border: 1px solid #222;
     z-index: 3;
+    background-color: #fff;
 }
 
 .map-slope {
