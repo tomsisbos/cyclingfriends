@@ -242,8 +242,8 @@ class Activity extends Model {
         foreach ($photos as $photo) {
             if ($photo->featured) return $photo;
         }
-        // If no featured photo, return the last one
-        if ($photos) return $photos[count($photos) - 1];
+        // If no featured photo, return the first one
+        if ($photos) return $photos[0];
         // If no photo, return false
         else return false;
     }

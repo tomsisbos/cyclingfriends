@@ -57,11 +57,20 @@
 :root {
     --placeholder-primary: #eeeeee;
     --placeholder-secondary: #cccccc;
+    --placeholder-tertiary: #aaaaaa;
+    --placeholder-quaternary: #888888;
 }
 .loading-placeholder {
     animation: placeholder ease-in-out 2s infinite;
     height: 100%;
     width: 100%;
+}
+.loading-text-placeholder {
+    animation: placeholder ease-in-out 2s infinite;
+    width: 100%;
+    height: 1em;
+    margin: 2px;
+    opacity: 25%;
 }
 @keyframes placeholder {
     0% {

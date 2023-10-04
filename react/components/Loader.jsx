@@ -6,6 +6,7 @@ export default function Loader ({ type = 'spinner' }) {
         switch (type) {
             case 'spinner': return 'loader-center'
             case 'placeholder': return 'loading-placeholder'
+            case 'text-placeholder': return 'loading-text-placeholder'
         }
     }
 

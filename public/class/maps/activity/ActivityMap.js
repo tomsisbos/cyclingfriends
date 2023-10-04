@@ -245,6 +245,8 @@ export default class ActivityMap extends Map {
         const routeCoordinates = routeData.geometry.coordinates
         const routeTime = routeData.properties.time
         var smallestGap = routeTime[0]
+        console.log(photo.datetime)
+        console.log(smallestGap)
         var closestCoordinate
         // Get closest route coordinate by looping through them
         for (let i = 0; i < routeCoordinates.length; i++) {

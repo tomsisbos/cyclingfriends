@@ -7,6 +7,8 @@ export default class ActivityPhotoPopup extends Popup {
     constructor (options, data, instanceOptions) {
         super(options, {}, instanceOptions)
         this.data = data
+
+        console.log(this.data)
         
         // Set popup element
         var content = this.setContent(data.activityPhoto)
@@ -35,7 +37,7 @@ export default class ActivityPhotoPopup extends Popup {
                 </div>
             </div>
             <img class="popup-activity-photo" src="` + activityPhoto.url + `">
-            <div class="photo-period ` + setPeriodClass((new Date(activityPhoto.datetime)).getMonth() + 1) + `" style="display: inline-block;">` + activityPhoto.period + `</div>
+            <div class="photo-period ` + setPeriodClass((new Date(activityPhoto.datetime * 1000)).getMonth() + 1) + `" style="display: inline-block;">` + activityPhoto.period + `</div>
         </div>
         
         <div id="popup-content" class="popup-content">
@@ -56,7 +58,7 @@ export default class ActivityPhotoPopup extends Popup {
                             + activity_string + 
                         `</div>
                         <div class="popup-properties-name">`
-                            + (new Date(activityPhoto.datetime)).toLocaleDateString() + 
+                            + (new Date(activityPhoto.datetime * 1000)).toLocaleDateString() + 
                         `</div>
                     </div>
                 </div>

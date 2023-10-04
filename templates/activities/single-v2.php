@@ -13,14 +13,14 @@ include '../actions/activities/activity.php'; ?>
 <body>
 
 	<?php // Navbar
-	///include '../includes/navbar.php'; ?>
+	include '../includes/navbar.php'; ?>
 
 	<div class="main"> <?php
 
 		// Space for error messages
 		include '../includes/result-message.php'; ?>
 		
-		<div id="activity" data-activity="<?= $activity->id ?>"></div>
+		<div id="activity" data-activity="<?= $activity_id ?>" data-title="<?= $activity_title ?>" data-featured-image-url="<?= $activity_featured_image_url ?>"></div>
 	
 	</div>
 

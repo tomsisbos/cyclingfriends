@@ -38,7 +38,7 @@ export default function Rides () {
         })
     }, [])
   
-    if (loading) return <Loader />
+    if (loading) return <Loader type="placeholder" />
     else return (
         <div className="dashboard-rides">
             {

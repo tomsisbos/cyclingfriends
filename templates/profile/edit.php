@@ -2,6 +2,7 @@
 
 include '../actions/users/initSession.php';
 include '../includes/head.php';
+include '../includes/head-map.php';
 include '../actions/riders/profile/propic.php';
 include '../actions/riders/profile/profileInfos.php';
 include "../actions/riders/profile/bikeImage.php";

@@ -1,6 +1,6 @@
 
 <div id="activityMapContainer">
-    <div class="cf-map" id="activityMap" loading="lazy"<?php if (isset($activity)) echo 'data-id="' .$activity->id. '"'; /*if (isSessionActive() && getConnectedUser()->isPremium())*/ echo 'interactive="true"' ?>> <?php 
+    <div class="cf-map loading-placeholder" id="activityMap" loading="lazy"<?php if (isset($activity)) echo 'data-id="' .$activity->id. '"'; /*if (isSessionActive() && getConnectedUser()->isPremium())*/ echo 'interactive="true"' ?>> <?php 
         /*if (!isSessionActive() || !getConnectedUser()->isPremium()) { ?>
             <a class="staticmap" href="<?= $_SERVER['REQUEST_URI']. '/signin'?>"><img /></a> <?php
         } */?>

@@ -25,9 +25,6 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
     document.querySelector('#changePhotosPrivacy').addEventListener('click', () => editActivityMap.changePhotosPrivacy())
 
     // Clean data architecture to match instance data format
-    for (let i = 0; i < activityData.route.time.length; i++) {
-        activityData.route.time[i] = new Date(activityData.route.time[i].date).getTime() / 1000
-    }
     editActivityMap.routeData = {
         geometry: {
             coordinates: activityData.route.coordinates,
@@ -37,13 +34,7 @@ ajaxGetRequest ("/api/activity.php" + "?load=" + editActivityMap.activityId, asy
             time: activityData.route.time,
         },
         type: 'Feature'
-    }/*
-    editActivityMap.data.checkpoints.forEach( (checkpoint) => {
-        checkpoint.datetime = new Date(checkpoint.datetime.date).getTime() / 1000
-    } )*/
-    editActivityMap.data.photos.forEach( (photo) => {
-        photo.datetime = photo.datetime / 1000
-    } )
+    }
     editActivityMap.mapdata.sceneries = await editActivityMap.loadCloseSceneries(1, {displayOnMap: false, generateProfile: false, getFileBlob: false}),
 
     // Display and prefill form

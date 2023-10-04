@@ -120,6 +120,7 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
 
                 <>
                     <div id="activityMapContainer">
+                        <Loader type="placeholder" />
                     </div>
                     <div id="profileBox" className="p-0 bg-white" style={{height: 22 + 'vh'}}>
                         <canvas id="elevationProfile"></canvas>

@@ -60,7 +60,7 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
         <div className="bg-container">
             {
                 isLoading ?
-                <Loader type="placeholder" /> :
+                <Loader /> :
                 <div className='pg-ac-summary-container p-4'>
                     <div className='pg-ac-timeline'></div>
                     <div className="pg-ac-checkpoints-container">
