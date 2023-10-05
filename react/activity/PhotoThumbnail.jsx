@@ -4,7 +4,6 @@ export default function PhotoThumbnail ({ data, map, mapInstance }) {
 
     if (map && map.getContainer()) var growMarker = () => {
         window.scrollTo(0, map.getContainer().offsetTop)
-        console.log(data)
         map.easeTo( {
             offset: [0, map.getContainer().offsetHeight / 2 - 40],
             center: mapInstance.getPhotoLocation(data),

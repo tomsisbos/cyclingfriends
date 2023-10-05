@@ -11,8 +11,6 @@ const twitterAuthUrl = document.querySelector('#activity').dataset.twitterAuthUr
 
 export default function HeaderActivityButtons ({ activityData, session }) {
 
-    console.log(session)
-
     const handleDelete = async (setIsLoading) => {
         var answer = await openConfirmationPopup('このアクティビティを削除します。宜しいですか？')
         if (answer) {

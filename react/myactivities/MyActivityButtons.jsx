@@ -8,12 +8,9 @@ export default function MyActivityButtons ({ activityId, setActivities }) {
         var answer = await openConfirmationPopup('このアクティビティを削除します。宜しいですか？')
         if (answer) {
             setIsLoading(true)
-            console.log(activityId)
             axios.get('/api/activity.php' + "?delete=" + activityId).then(() => {
                 setIsLoading(false)
                 setActivities(previousActivities => previousActivities.filter(activity => {
-                    console.log(activity.id)
-                    console.log(activityId)
                     if (activity.id != activityId) return activity
                 }))
             })

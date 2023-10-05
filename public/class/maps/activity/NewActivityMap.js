@@ -984,8 +984,6 @@ export default class NewActivityMap extends ActivityMap {
             activityData: this.activityData,
             author_id: this.activityData.author_id
         }
-
-        console.log(cleanData)
         
         // Remove photos data
         for (var key in this.data) {

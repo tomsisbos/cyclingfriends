@@ -7,8 +7,6 @@ export default class ActivityPhotoPopup extends Popup {
     constructor (options, data, instanceOptions) {
         super(options, {}, instanceOptions)
         this.data = data
-
-        console.log(this.data)
         
         // Set popup element
         var content = this.setContent(data.activityPhoto)
