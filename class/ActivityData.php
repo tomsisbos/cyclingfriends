@@ -218,7 +218,7 @@ class ActivityData extends Model {
             'name'        => $this->summary['title'],
             'description' => '',
             'distance'    => $this->summary['distance'],
-            'elevation'   => $this->summary['positive_elevation'],
+            'elevation'   => intval($this->summary['positive_elevation']),
             'startplace'  => $this->summary['startplace'],
             'goalplace'   => $this->summary['goalplace'],
             'tunnels'     => [],
