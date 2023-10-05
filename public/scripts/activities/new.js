@@ -53,7 +53,6 @@ $upload.addEventListener('change', async (e) => {
 
                     // Instantiate and populate activity map
                     var newActivityMap = new NewActivityMap()
-                    console.log(response.activityData)
                     newActivityMap.loadActivityData(response.activityData)
 
                     // Clear data and elements if necessary
@@ -100,6 +99,7 @@ $upload.addEventListener('change', async (e) => {
 
                     // Save activity treatment
                     document.querySelector('#saveActivity').addEventListener('click', async () => {
+                        console.log(newActivityMap.activityData)
                         var photosToShare = await newActivityMap.checkForCloseSceneries()
                         if (newActivityMap.data.sceneriesToCreate && newActivityMap.data.sceneriesToCreate.length > 0) var sceneriesToCreate = await newActivityMap.createSceneries()
                         else var sceneriesToCreate = null

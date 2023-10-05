@@ -155,7 +155,6 @@ export default class ActivityMap extends Map {
             element.className = 'checkpoint-marker logo-checkpoint-marker'
             element.id = i
             var img = document.createElement('img')
-            console.log(type)
             if (type == 'Start') var color = '00e06e'
             else if (type == 'Goal') var color = 'ff5555'
             else var color = '000000'

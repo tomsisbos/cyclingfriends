@@ -91,3 +91,16 @@
         opacity: 100%;
     }
 }
+
+
+.infinite-loader {
+    height: 80px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #5c9999;
+    color: #fff;
+    margin: 20px 0;
+}

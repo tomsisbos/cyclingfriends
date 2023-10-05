@@ -7,7 +7,7 @@ import RideThumbnail from '/react/dashboard/RideThumbnail.jsx'
 export default function Rides () {
 
     const ridesNumber = 3
-    const storageUrl = document.querySelector('#dashboard').dataset.storageurl
+    const storageUrl = document.querySelector('#root').dataset.storageurl
     const containerName = 'checkpoint-images'
     
     const [loading, setLoading] = useState(false)

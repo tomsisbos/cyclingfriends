@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Loader ({ type = 'spinner' }) {
+export default function Loader ({ height = null, type = 'spinner' }) {
 
     const getClass = () => {
         switch (type) {
@@ -10,5 +10,16 @@ export default function Loader ({ type = 'spinner' }) {
         }
     }
 
-    return <div className={getClass()}></div>
+    const getHeightStyle = () => {
+        if (height) return {height: height}
+        else return {}
+    }
+
+    return (
+        <div
+            className={getClass()}
+            style={{...getHeightStyle()}}
+        >
+        </div>
+    )
 }

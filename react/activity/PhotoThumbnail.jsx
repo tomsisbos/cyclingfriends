@@ -1,14 +1,13 @@
 import React from 'react'
 
-export default function PhotoThumbnail ({ data, map, activityMap }) {
-    
-    var $map = document.querySelector('#activityMap')
+export default function PhotoThumbnail ({ data, map, mapInstance }) {
 
-    if ($map) var growMarker = () => {
-        window.scrollTo(0, $map.offsetTop)
+    if (map && map.getContainer()) var growMarker = () => {
+        window.scrollTo(0, map.getContainer().offsetTop)
+        console.log(data)
         map.easeTo( {
-            offset: [0, $map.offsetHeight / 2 - 40],
-            center: activityMap.getPhotoLocation(data),
+            offset: [0, map.getContainer().offsetHeight / 2 - 40],
+            center: mapInstance.getPhotoLocation(data),
             zoom: 12
         } )
         data.marker.grow()

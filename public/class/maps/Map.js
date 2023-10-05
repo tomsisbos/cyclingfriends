@@ -256,6 +256,7 @@ export default class Map extends Model {
             }
         } )
         // Line 5
+        /*
         if (options.displaySceneries) {
             let line5 = document.createElement('div')
             line5.className = 'map-controller-line hide-on-mobiles'
@@ -284,7 +285,7 @@ export default class Map extends Model {
                     this.profile.generate()
                 }
             } )
-        }
+        }*/
         // Camera buttons
         let line6 = document.createElement('div')
         line6.className = 'map-controller-line hide-on-mobiles'

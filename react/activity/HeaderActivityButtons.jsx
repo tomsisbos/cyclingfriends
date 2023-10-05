@@ -57,7 +57,7 @@ export default function HeaderActivityButtons ({ activityData, session }) {
                         />
                     </a> :
                     <Button
-                        text={<Icon icon='mdi:twitter' />}
+                        text={<Icon icon='mdi:twitter' height={18} />}
                         type="twitter"
                         onClick={postTweet}
                     />)

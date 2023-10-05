@@ -52,11 +52,11 @@ $router->map('GET|POST', '/scenery/[i:scenery_id]', 'sceneries/single', 'scenery
 $router->map('GET', '/tag/[a:tagcategory]-[a:tagname]', 'world/tag', 'tag');
 
 // Activities
-$router->map('GET|POST', '/activity/[i:activity_id]', 'activities/single-v2', 'activity-single');
-$router->map('GET|POST', '/activity/legacy/[i:activity_id]', 'activities/single');
+$router->map('GET|POST', '/activity/[i:activity_id]', 'activities/single', 'activity-single');
 $router->map('GET|POST', '/activity/new', 'activities/new', 'activity-new');
 $router->map('GET', '/activity/[i:activity_id]/edit', 'activities/edit', 'activity-edit');
-$router->map('GET', '/activities', 'activities/publicboard', 'activity-publicboard');
+$router->map('GET', '/activities', 'activities/publicboard-v2', 'activity-publicboard');
+$router->map('GET', '/activities/legacy', 'activities/publicboard');
 $router->map('GET', '/[*:user_login]/activities', 'activities/userboard', 'activity-userboard');
 $router->map('GET', '/[*:user_login]/journal', 'activities/journal', 'activity-journal');
 $router->map('GET', '/journal/[i:user_id]', 'activities/journal');

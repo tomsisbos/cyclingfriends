@@ -229,7 +229,8 @@ class ActivityData extends Model {
         if (isset($editable_data['checkpoints'])) {
             $checkpoints_data = array_map(function ($checkpoint) {
                 if ($checkpoint['type'] == 'Start') $checkpoint['special'] = 'start';
-                if ($checkpoint['type'] == 'Goal') $checkpoint['special'] = 'goal';
+                else if ($checkpoint['type'] == 'Goal') $checkpoint['special'] = 'goal';
+                else $checkpoint['special'] = null;
                 $checkpoint['lng'] = $checkpoint['lngLat']['lng'];
                 $checkpoint['lat'] = $checkpoint['lngLat']['lat'];
                 if (isset($checkpoint['geolocation'])) {

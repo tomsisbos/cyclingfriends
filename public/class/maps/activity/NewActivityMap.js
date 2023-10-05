@@ -981,8 +981,11 @@ export default class NewActivityMap extends ActivityMap {
 
         // Add activity data
         var cleanData = {
-            activityData: this.activityData
+            activityData: this.activityData,
+            author_id: this.activityData.author_id
         }
+
+        console.log(cleanData)
         
         // Remove photos data
         for (var key in this.data) {

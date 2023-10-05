@@ -3,7 +3,7 @@ import Loader from "/react/components/Loader.jsx"
 import Checkpoint from "/react/activity/Checkpoint.jsx"
 import PhotoThumbnail from "/react/activity/PhotoThumbnail.jsx"
 
-export default function Timeline ({ isLoading, photos, checkpoints, map, activityMap }) {
+export default function Timeline ({ isLoading, photos, checkpoints, map, mapInstance }) {
 
     var checkpointIndex = 0
 
@@ -46,7 +46,7 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
                                     key={photoToAppend.url}
                                     data={photoToAppend}
                                     map={map}
-                                    activityMap={activityMap}
+                                    mapInstance={mapInstance}
                                 />
                             </div>
                         )
@@ -60,7 +60,7 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, activit
         <div className="bg-white">
             {
                 isLoading ?
-                <Loader /> :
+                <Loader height={100} /> :
                 <div className='pg-ac-summary-container p-4'>
                     <div className='pg-ac-timeline'></div>
                     <div className="pg-ac-checkpoints-container">

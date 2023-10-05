@@ -16,8 +16,8 @@ export default function Header ({ isLoading, featuredImage, activityData, sessio
     }, [activityData])
 
     const getPrivacyTag = (privacy) => {
-        if (privacy == 'private') return <p style="background-color: #ff5555" className="tag-light text-light">非公開</p>
-        else if (privacy == 'friends_only') return <p style="background-color: #ff5555" className="tag-light text-light">友達のみ</p>
+        if (privacy == 'private') return <p style={{backgroundColor: '#ff5555'}} className="tag-light text-light">非公開</p>
+        else if (privacy == 'friends_only') return <p style={{backgroundColor: '#ff5555'}} className="tag-light text-light">友達のみ</p>
     }
 
     const getBackgroundImageStyle = () => {

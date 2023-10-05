@@ -18,6 +18,12 @@
         "/public/react/activity.js"
       ]
     },
+    "activities": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/activities.js"
+      ]
+    },
     "dashboard": {
       "js": [
         "/public/react/runtime.js",

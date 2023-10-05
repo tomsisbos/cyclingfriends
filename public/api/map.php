@@ -257,12 +257,6 @@ if (isAjax()) {
         echo json_encode($photos);
     }
 
-    if (isset($_GET['get-close-sceneries'])) {
-        $route = new Route($_GET['get-close-sceneries']);
-        $close_sceneries = $route->getLinestring()->getCloseSceneries();
-        echo json_encode($close_sceneries);
-    }
-
     if (isset($_GET['scenery-dragged'])) {
         if (isset($_GET['lng']) && isset($_GET['lat'])) {
             $id  = $_GET['scenery-dragged'];

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Loader from "/react/components/Loader.jsx"
 import ActivityMap from "/public/class/maps/activity/ActivityMap.js"
-import Twitter from '/public/class/social/Twitter.js'
+import MapView from '/react/components/MapView.jsx'
 
-export default function ActivityMapView ({ isLoading, activityData, photos, setPhotos, setMap, setActivityMap }) {
+export default function ActivityMapView ({ isLoading, activityData, photos, setPhotos, setMap }) {
 
     const [isMapLoading, setIsMapLoading] = useState(false)
 
@@ -15,10 +15,10 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
             var $map = document.querySelector('#activityMap')
 
             // Instantiate activity map
-            var newActivityMap = new ActivityMap(activityData.id)
+            var activityMap = new ActivityMap(activityData.id)
 
             // Clean route data architecture to match geojson format
-            newActivityMap.routeData = {
+            activityMap.routeData = {
                 geometry: {
                     coordinates: activityData.route.coordinates,
                     type: 'LineString'
@@ -31,48 +31,46 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
 
             // Add distance to photos
             setPhotos(photos.sort((a, b) => a.datetime > b.datetime ? 1 : -1).map(ph => {
-                ph.distance = newActivityMap.getPhotoDistance(ph, newActivityMap.routeData)
+                ph.distance = activityMap.getPhotoDistance(ph, activityMap.routeData)
                 return ph
             }))
 
             // Load activity data into map instance
-            newActivityMap.data = activityData
+            activityMap.data = activityData
 
             // Set month property to activity month
-            newActivityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
-            newActivityMap.setSeason()
-
-            setActivityMap(newActivityMap)
+            activityMap.month = new Date(activityData.route.time[0]).getMonth() + 1
+            activityMap.setSeason()
             
             // Set default layer according to current season
-            newActivityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', newActivityMap.routeData.geometry.coordinates[0]).then(async mapInstance => {
+            activityMap.load($map, 'mapbox://styles/sisbos/cl07xga7c002616qcbxymnn5z', activityMap.routeData.geometry.coordinates[0]).then(async map => {
 
-                setMap(mapInstance)
+                setMap(map)
 
-                mapInstance.setPitch(40)
+                map.setPitch(40)
 
                 // Build controls
-                newActivityMap.addStyleControl()
-                newActivityMap.addOptionsControl()
-                newActivityMap.addRouteControl()
+                activityMap.addStyleControl()
+                activityMap.addOptionsControl()
+                activityMap.addRouteControl()
 
                 // Add route layer and paint route properties
-                newActivityMap.setGrabber()
-                newActivityMap.addSources()
-                newActivityMap.addLayers()
-                newActivityMap.addRouteLayer(newActivityMap.routeData)
-                newActivityMap.profile.generate()
-                ///newActivityMap.displayStartGoalMarkers(activityMap.routeData)
-                newActivityMap.updateDistanceMarkers()
-                newActivityMap.focus(newActivityMap.routeData).then(() => {
-                    newActivityMap.profile.generate({
+                activityMap.setGrabber()
+                activityMap.addSources()
+                activityMap.addLayers()
+                activityMap.addRouteLayer(activityMap.routeData)
+                activityMap.profile.generate()
+                ///activityMap.displayStartGoalMarkers(activityMap.routeData)
+                activityMap.updateDistanceMarkers()
+                activityMap.focus(activityMap.routeData).then(() => {
+                    activityMap.profile.generate({
                         poiData: {
-                            activityCheckpoints: newActivityMap.data.checkpoints
+                            activityCheckpoints: activityMap.data.checkpoints
                         }
                     })
                 })
-                newActivityMap.displayCheckpointMarkers()
-                await newActivityMap.displayPhotoMarkers()
+                activityMap.displayCheckpointMarkers()
+                await activityMap.displayPhotoMarkers()
 
                 // On click on a photo on the map, grow the photo
                 document.querySelectorAll('.pg-ac-map-img').forEach( (img) => {
@@ -82,9 +80,9 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
                         photos.forEach( (photoData) => {
                             if (photoData.id == photoId) photo = photoData
                         } )
-                        mapInstance.easeTo( {
+                        map.easeTo( {
                             offset: [0, $map.offsetHeight / 2 - 40],
-                            center: newActivityMap.getPhotoLocation(photo),
+                            center: activityMap.getPhotoLocation(photo),
                             zoom: 12
                         } )
                         photo.marker.grow()
@@ -92,13 +90,13 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
                 } )
 
                 // On click on the map, elsewhere than on a photo, reset default marker size
-                mapInstance.on('click', (e) => {
+                map.on('click', (e) => {
                     var isImageOnPath
                     e.originalEvent.composedPath().forEach(entry => {
                         if (entry.className == 'pg-ac-map-img') isImageOnPath = true
                     } )
                     if (!isImageOnPath) {
-                        newActivityMap.unselectPhotos()
+                        activityMap.unselectPhotos()
                     }
                 } )
             })
@@ -122,7 +120,7 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
 
                 <>
                     <div id="activityMapContainer">
-                        <div className="cf-map" id="activityMap" loading="lazy"></div>
+                        <MapView id="activityMap" />
                         <div className="grabber"></div>
                     </div>
                     <div id="profileBox" className="p-0 bg-white" style={{height: 22 + 'vh'}}>

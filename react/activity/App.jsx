@@ -40,7 +40,6 @@ function App () {
     const [activityData, setActivityData] = useState(defaultActivityData)
     const [photos, setPhotos] = useState(activityData.photos)
     const [map, setMap] = useState(null)
-    const [activityMap, setActivityMap] = useState(null)
     const [session, setSession] = useState({})
 
     // Load activity data on first component rendering
@@ -76,7 +75,6 @@ function App () {
                 checkpoints={activityData.checkpoints}
                 photos={photos}
                 map={map}
-                activityMap={activityMap}
             />
             <ActivityMapView
                 isLoading={isLoading}
@@ -84,7 +82,6 @@ function App () {
                 photos={photos}
                 setPhotos={setPhotos}
                 setMap={setMap}
-                setActivityMap={setActivityMap}
             />
         </>
     )

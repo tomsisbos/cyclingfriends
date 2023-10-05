@@ -1,0 +1,235 @@
+
+
+.activity-card-propic {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border-radius: 99px;
+}
+
+.activity-card-header-container {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+.activity-card-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.activity-card-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.dashboard-activity-card {
+    background-color: #fff;
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 45%;
+    height: fit-content;
+    flex-grow: 1;
+}
+
+.activity-card-header-details {
+    font-size: 11px;
+    line-height: 1em;
+}
+
+.activity-card-media-featured {
+    grid-area: featured;
+    height: 100%;
+    width: 100%;
+}
+
+.activity-card-media {
+    width: 45%;
+    min-width: 45%;
+    display: grid;
+    grid-template-rows: 33% 33% 33%;
+    grid-template-columns: fit-content(100);
+    grid-template-areas:
+        'sub1 featured featured'
+        'sub2 featured featured'
+        'sub3 featured featured';
+    flex-grow: 1;
+}
+
+.activity-card-media-sub {
+    height: 100%;
+    width: 100%;
+    max-height: 60px;
+}
+
+.activity-card-media-sub .n-1 {
+    grid-area: sub1;
+}
+
+.activity-card-media-sub .n-2 {
+    grid-area: sub2;
+}
+
+.activity-card-media-sub .n-3 {
+    grid-area: sub3;
+}
+
+.dashboard-activity-card-body {
+    display: flex;
+    max-height: 160px;
+    gap: 8px;
+}
+
+.activity-card-text {
+    width: 33%;
+    font-size: 11px;
+    display: -webkit-box;
+    text-align: justify;
+    -webkit-line-clamp: 9;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.activity-card-text p, .activity-card-text li {
+    margin: 0px;
+    line-height: 1.6em;
+}
+.activity-card-text p {
+    text-indent: 12px;
+}
+
+.activity-card-timeline {
+    width: 120px;
+}
+
+.activity-card-timeline {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+.activity-card-tileline-line {
+    display: flex;
+    font-size: 11px;
+}
+
+.activity-card-timeline-stroke {
+    width: 2px;
+    border: 2px solid;
+    border-radius: 10px;
+    margin: 9.5px;
+    position: absolute;
+    height: calc(100% - 20px);
+}
+
+.activity-card-timeline-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 100%;
+    height: -webkit-fill-available;
+}
+
+.activity-card-timeline-dot {
+    position: absolute;
+    margin: 4 7px;
+    border: 5px solid;
+    border-radius: 9px;
+}
+
+.dashboard-activity-card-tlname {
+    padding-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-card-media img {
+    object-fit: cover;
+}
+.activity-card-media img:hover {
+    opacity: 0.8;
+}
+
+.dashboard-activities {
+    margin: 10px 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dashboard-activity-card-tldist {
+    padding-left: 20px;
+}
+
+.dashboard-activity-card-comment {
+    display: flex;
+    gap: 10px;
+    padding-left: 15px;
+}
+
+.dashboard-activity-card-comments {
+    font-size: 10px;
+}
+
+.dashboard-activity-card-other-comments {
+    text-align: right;
+}
+
+
+@media only screen and (max-width: 1000px) {
+
+    .dashboard-activity-card {
+        width:-webkit-fill-available;
+        margin: 15px 0px;
+    }
+    
+    .activity-card-header {
+        text-align: center;
+        align-self: center;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+
+    .dashboard-header {
+        flex-direction: column;
+        height: 440px;
+    }
+
+    .dashboard-header > * {
+        width: 100%;
+        height: 50%;
+    }
+
+    .activity-card-header {
+        display: inline-block;
+    }
+    
+    .activity-card-title {
+        display: inline;
+        padding-left: 8px;
+    }
+    
+    .activity-card-header-details > * {
+        display: inline;
+        padding-right: 6px;
+    }
+    
+    .activity-card-media {
+        grid-template-areas:
+            'featured featured featured'
+            'featured featured featured'
+            'sub1 sub2 sub3';
+        grid-template-rows: minmax(100px, 1fr) 3fr;
+        grid-template-columns: 33.33% 33.33% 33.33%;
+    }
+    
+    .activity-card-tileline-line {
+        font-size: 10px;
+    }
+}

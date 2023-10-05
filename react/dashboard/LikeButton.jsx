@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react'
 
 export default function LikeButton ({id, likes}) {
 
-    const connectedUserId = parseInt(document.querySelector('#dashboard').dataset.connectedUserId)
+    const connectedUserId = parseInt(document.querySelector('#root').dataset.connectedUserId)
 
     if (likes.includes(connectedUserId)) var isLike = true
     else isLike = false

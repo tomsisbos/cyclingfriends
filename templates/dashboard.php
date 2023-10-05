@@ -8,7 +8,9 @@ include '../includes/head.php'; ?>
 <html lang="en">
 	
 <link rel="stylesheet" href="/assets/css/dashboard.css" />
+<link rel="stylesheet" href="/assets/css/activities.css" />
 <link rel="stylesheet" href="/assets/css/posts.css" />
+<link rel="stylesheet" href="/assets/css/loaders.css" />
 
 <body> <?php // Compatible with class="black-theme"
 
@@ -26,7 +28,7 @@ if (getConnectedUser()->userInfoQuantitySet() < 20) echo '<script src="/scripts/
 
 <div class="bg-darkercontainer end">
 
-	<div id="dashboard" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>" data-connected-user-id="<?= getConnectedUser()->id ?>"></div>
+	<div id="root" data-storageurl="<?= $blobClient->getPsrPrimaryUri()->__toString() ?>" data-connected-user-id="<?= getConnectedUser()->id ?>"></div>
 
 </div>
 
