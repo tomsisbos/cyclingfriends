@@ -5,7 +5,7 @@ include '../includes/head.php';
 include '../includes/head-map.php';
 include '../actions/activities/getActivity.php';
 
-if (getConnectedUser()->id != $activity->user_id) header('location: /' .getConnectedUser()->login. '/activities') ?>
+if (getConnectedUser()->id != $activity->user_id) header('location: /myactivities') ?>
 
 <!DOCTYPE html>
 <html lang="en">

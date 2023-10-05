@@ -32,7 +32,7 @@
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div></a>
 						<a class="dropdown-item interactive" href="<?= $router->generate('activity-journal', ['user_login' => getConnectedUser()->login]) ?>"><div class="mainitem">活動日記</div></a>
-						<a class="dropdown-item interactive" href="/<?= getConnectedUser()->login ?>/activities"><div class="mainitem">マイアクティビティ</div></a>
+						<a class="dropdown-item interactive" href="/myactivities"><div class="mainitem">マイアクティビティ</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">

@@ -17,8 +17,8 @@ export default function HeaderActivityButtons ({ activityData, session }) {
         var answer = await openConfirmationPopup('このアクティビティを削除します。宜しいですか？')
         if (answer) {
             setIsLoading(true)
-            axios.get('/api/activity.php' + "?delete=" + activityData.id).then(login => {
-                window.location.href = '/' + login + '/activities'
+            axios.get('/api/activity.php' + "?delete=" + activityData.id).then(response => {
+                window.location.href = '/myactivities'
             } )
         }
     }

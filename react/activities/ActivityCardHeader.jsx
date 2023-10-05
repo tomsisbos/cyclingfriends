@@ -1,5 +1,7 @@
 import React from 'react'
-import LikeButton from '/react/dashboard/LikeButton.jsx'
+import LikeButton from '/react/components/LikeButton.jsx'
+
+const connectedUserId = parseInt(document.querySelector('#root').dataset.connectedUserId)
 
 export default function ActivityCardHeader ({id, title, author_id, author_login, default_propic_id, author_propic, date, distance, city, prefecture, likes}) {
 
@@ -22,7 +24,9 @@ export default function ActivityCardHeader ({id, title, author_id, author_login,
                     <div className="activity-card-login">{Math.round(distance * 10) / 10}km by <a href={"/rider/" + author_id}>{author_login}</a></div>
                 </div>
             </div>
-            <LikeButton id={id} likes={likes} />
+            { connectedUserId != author_id &&
+                <LikeButton id={id} likes={likes} />
+            }
         </div>
     )
 

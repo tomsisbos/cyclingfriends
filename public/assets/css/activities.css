@@ -180,10 +180,25 @@
     text-align: right;
 }
 
+.myactivities-wrapper {
+    width: 45%;
+    flex-grow: 1;
+    background-color: #fff;
+    margin: 10px;
+}
+.myactivities-wrapper .dashboard-activity-card {
+    width: 100%;
+    margin: 0;
+}
+.myactivities-wrapper .append-buttons {
+    margin: 0 20px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+}
 
 @media only screen and (max-width: 1000px) {
 
-    .dashboard-activity-card {
+    .dashboard-activity-card, .myactivities-wrapper {
         width:-webkit-fill-available;
         margin: 15px 0px;
     }

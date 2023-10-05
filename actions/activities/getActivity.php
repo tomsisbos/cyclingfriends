@@ -13,6 +13,6 @@ if (is_numeric($slug)) {
 
         $activity = new Activity($slug);
 
-	} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/' . getConnectedUser()->login . '/activities');
+	} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/myactivities');
 
-} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/' . getConnectedUser()->login . '/activities'); ?>
+} else header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/myactivities'); ?>

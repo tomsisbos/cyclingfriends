@@ -57,7 +57,8 @@ $router->map('GET|POST', '/activity/new', 'activities/new', 'activity-new');
 $router->map('GET', '/activity/[i:activity_id]/edit', 'activities/edit', 'activity-edit');
 $router->map('GET', '/activities', 'activities/publicboard-v2', 'activity-publicboard');
 $router->map('GET', '/activities/legacy', 'activities/publicboard');
-$router->map('GET', '/[*:user_login]/activities', 'activities/userboard', 'activity-userboard');
+$router->map('GET', '/myactivities', 'activities/userboard-v2', 'activity-userboard');
+$router->map('GET', '/myactivities/legacy', 'activities/userboard');
 $router->map('GET', '/[*:user_login]/journal', 'activities/journal', 'activity-journal');
 $router->map('GET', '/journal/[i:user_id]', 'activities/journal');
 
