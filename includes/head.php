@@ -23,6 +23,7 @@
 	
 	<!-- php -->
 		<?php
+			require_once 'session-handlers.php';
 			require_once 'functions.php';
 			require_once '../actions/treatCookieMessages.php'; ?>
 	

@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react'
 
 const connectedUserId = parseInt(document.querySelector('#root').dataset.connectedUserId)
 
-export default function LikeButton ({id, likes}) {
+export default function LikeButton ({id, likes, canLike}) {
 
     if (likes.includes(connectedUserId)) var isLike = true
     else isLike = false
@@ -30,9 +30,16 @@ export default function LikeButton ({id, likes}) {
     
     return (
         <div className="like-button-container">
-            <div className={"like-button " + likeClass} onClick={toggleLike}>
-                <Icon icon="icon-park-solid:like" />
-            </div>
+            {
+                canLike ?
+                <div className={"like-button " + likeClass} onClick={toggleLike}>
+                    <Icon icon="icon-park-solid:like" />
+                </div> :
+                <div className={"like-button"} onClick={() => <></>}>
+                    <Icon icon="icon-park-solid:like" />
+                </div>
+            }
+            
             <div className={"like-counter"}>
                 {likesNumber}
             </div>

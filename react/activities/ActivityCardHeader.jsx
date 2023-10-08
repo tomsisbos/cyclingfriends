@@ -24,9 +24,7 @@ export default function ActivityCardHeader ({id, title, author_id, author_login,
                     <div className="activity-card-login">{Math.round(distance * 10) / 10}km by <a href={"/rider/" + author_id}>{author_login}</a></div>
                 </div>
             </div>
-            { connectedUserId != author_id &&
-                <LikeButton id={id} likes={likes} />
-            }
+            <LikeButton id={id} likes={likes} canLike={connectedUserId != author_id} />
         </div>
     )
 
