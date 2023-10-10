@@ -1,10 +1,5 @@
 <?php
 
-$ssl_options = array(
-	PDO::MYSQL_ATTR_SSL_CA => '/bin/DigiCertGlobalRootG2.crt.pem',
-	PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-);
-
 if (!isset($db_name) OR $db_name == null) $db_name = getenv('DB_NAME');
 
 try {

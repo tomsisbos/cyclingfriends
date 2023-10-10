@@ -1,55 +1,84 @@
 <?php
 
-$session_db = pg_pconnect("host=" .getEnv('DB_POSTGRESQL_HOST'). " port=5432 dbname=" .getenv('DB_NAME'). " user=" .getenv('DB_USER'). " password=" .getenv('DB_PASSWORD'));
-$session_duration = '1 day';
+$session_duration = '7 DAY';
+
+// Initialize the PostgreSQL connection
+$session_connection = pg_connect('host=' .getenv('DB_POSTGRESQL_HOST'). ' port=5432 dbname=' .getenv('DB_NAME'). ' user=' .getEnv('DB_USER'). ' password=' .getEnv('DB_PASSWORD'));
 
 function on_session_start ($save_path, $session_name) {
-    error_log("on_session_start: " . $session_name . " ". session_id());
+    ///var_dump("on_session_start: " . $session_name . " " . session_id());
+    return true;
 }
 
 function on_session_end () {
-    global $session_db;
-    pg_close($session_db);
+    // Note: Since we're not using PDO anymore, you may need to use the global $db here.
+    global $session_connection;
+    return true;
 }
 
-function on_session_read ($key) {
-    global $session_db;
-    #error_log("on_session_read: " . $key);
-    $getData = $session_db->prepare("SELECT data FROM sessions WHERE id = ? AND CURRENT_TIMESTAMP < expiry");
-    $getData->execute([$key]);
+function on_session_read($key) {
+    global $session_connection;
+    try {
+        $query = "SELECT data FROM sessions WHERE session_id = $1 AND expiry > NOW()";
+        $result = pg_query_params($session_connection, $query, [$key]);
 
-    if ($getData->rowCount() > 0) return $getData->fetchAll(PDO::FETCH_ASSOC);
-    else return false;
-}
+        if (pg_num_rows($result) > 0) {
+            $row = pg_fetch_assoc($result);
+            $dataResource = $row['data'];
 
-function on_session_write ($key, $val) {
-    global $session_db;
-    global $session_duration;
-    #error_log("on_session_write $key = $val");
-    $val = pg_escape_string($val);
-    $isSessionSet = $session_db->prepare("SELECT session_id FROM sessions WHERE id = ?");
-    $isSessionSet->execute([$key]);
-    if ($isSessionSet->rowCount() > 0) {
-        $updateSession = $session_db->prepare("UPDATE sessions SET last_updated = CURRENT_TIMESTAMP, expiry = CURRENT_TIMESTAMP + interval {$session_duration}, data = ? WHERE id = ?");
-        $updateSession->execute([$value, $key]);
-    } else {
-        $setSession = $session_db->prepare("INSERT INTO sessions VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval {$session_duration}, ?)");
-        $updateSession->execute([$key, $value]);
+            // Unescape the binary data to a string
+            $unescapedData = pg_unescape_bytea($dataResource);
+
+            return $unescapedData;
+        }
+    } catch (Exception $e) {
+        error_log("on_session_read error: " . $e->getMessage());
     }
+
+    return '';
+}
+
+function on_session_write ($key, $value) {
+    global $session_connection;
+    global $session_duration;
+    try {
+        $isSessionSet = pg_query_params($session_connection, "SELECT id FROM sessions WHERE session_id = $1", [$key]);
+
+        $escaped_value = pg_escape_bytea($session_connection, $value);
+
+        if (pg_num_rows($isSessionSet) > 0) {
+            $updateSession = pg_query_params($session_connection, "UPDATE sessions SET last_updated = NOW(), expiry = NOW() + INTERVAL '{$session_duration}', data = $1 WHERE session_id = $2", [$escaped_value, $key]);
+            $result = ($updateSession !== false);
+        } else {
+            $setSession = pg_query_params($session_connection, "INSERT INTO sessions (session_id, last_updated, expiry, data) VALUES ($1, NOW(), NOW() + INTERVAL '{$session_duration}', $2)", [$key, $escaped_value]);
+            $result = ($setSession !== false);
+        }
+        return $result;
+    } catch (Exception $e) {
+        error_log("on_session_write error: " . $e->getMessage());
+    }
+
+    return true;
 }
 
 function on_session_destroy ($key) {
-    global $session_db;
-    $destroySession = $session_db->prepare("DELETE FROM sessions WHERE id = ?");
-    $session_destroy->execute([$key]);
+    global $session_connection;
+    try {
+        $destroySession = pg_query_params($session_connection, "DELETE FROM sessions WHERE session_id = $1", [$key]);
+    } catch (Exception $e) {
+        error_log("on_session_destroy error: " . $e->getMessage());
+    }
+    return true;
 }
 
 function on_session_gc ($max_lifetime) {
-    global $session_db;
-    $cleanSession = $session_db->prepare($session_db, "DELETE FROM sessions WHERE expiry > CURRENT_TIMESTAMP");
-    $cleanSession->execute();
+    global $session_connection;
+    try {
+        $cleanSession = pg_query($session_connection, "DELETE FROM sessions WHERE expiry <= NOW()");
+    } catch (Exception $e) {
+        error_log("on_session_gc error: " . $e->getMessage());
+    }
 }
 
-
-# Set the save handlers
+// Set the save handlers
 session_set_save_handler("on_session_start", "on_session_end", "on_session_read", "on_session_write", "on_session_destroy", "on_session_gc");

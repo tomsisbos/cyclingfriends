@@ -271,10 +271,10 @@ function scaleImageFileToBlob($file, $max_width, $max_height) {
     $x_ratio = $max_width / $width;
     $y_ratio = $max_height / $height;
 
-    if( ($width <= $max_width) && ($height <= $max_height) ){
+    if(($width <= $max_width) && ($height <= $max_height)){
         $tn_width = $width;
         $tn_height = $height;
-        }elseif (($x_ratio * $height) < $max_height){
+        }else if (($x_ratio * $height) < $max_height){
             $tn_height = ceil($x_ratio * $height);
             $tn_width = $max_width;
         }else{
@@ -397,7 +397,7 @@ function base64_to_jpeg ($base64_string, $output_file) {
     if (strpos($base64_string, ',')) $data = explode(',', $base64_string)[1];
 	else $data = $base64_string;
 
-    // We could add validation here with ensuring count( $data ) > 1
+    // We could add validation here with ensuring count($data) > 1
     fwrite($ifp, base64_decode($data));
 
     // Clean up the file resource
@@ -430,16 +430,16 @@ function getMainColor ($image) {
 }
 
 function luminanceLight($hexcolor, $percent) {
-	if ( strlen( $hexcolor ) < 6 ) {
+	if (strlen($hexcolor) < 6) {
 		$hexcolor = $hexcolor[0] . $hexcolor[0] . $hexcolor[1] . $hexcolor[1] . $hexcolor[2] . $hexcolor[2];
 	}
-	$hexcolor = array_map('hexdec', str_split( str_pad( str_replace('#', '', $hexcolor), 6, '0' ), 2 ) );
+	$hexcolor = array_map('hexdec', str_split(str_pad(str_replace('#', '', $hexcolor), 6, '0'), 2));
 
 	foreach ($hexcolor as $i => $color) {
 		$from = $percent < 0 ? 0 : $color;
 		$to = $percent < 0 ? $color : 255;
-		$pvalue = ceil( ($to - $from) * $percent );
-		$hexcolor[$i] = str_pad( dechex($color + $pvalue), 2, '0', STR_PAD_LEFT);
+		$pvalue = ceil(($to - $from) * $percent);
+		$hexcolor[$i] = str_pad(dechex($color + $pvalue), 2, '0', STR_PAD_LEFT);
 	}
 
 	return '#' . implode($hexcolor);
@@ -499,7 +499,7 @@ function avg ($array) {
 	if (count($array)) return array_sum($array) / count($array);
 }
 
-function urlToLinks ( $text ) {    
+function urlToLinks ($text) {    
 	$text = preg_replace('#(script|about|applet|activex|chrome):#is', "\\1:", $text);
 
 	$ret = ' ' . $text;
@@ -515,5 +515,64 @@ function urlToLinks ( $text ) {
 	$ret = substr($ret, 1);
 	
 	return $ret;
+}
+
+function is_serialized ($data, $strict = true) {
+	// If it isn't a string, it isn't serialized.
+	if (! is_string($data)) {
+		return false;
+	}
+	$data = trim($data);
+	if ('N;' === $data) {
+		return true;
+	}
+	if (strlen($data) < 4) {
+		return false;
+	}
+	if (':' !== $data[1]) {
+		return false;
+	}
+	if ($strict) {
+		$lastc = substr($data, -1);
+		if (';' !== $lastc && '}' !== $lastc) {
+			return false;
+		}
+	} else {
+		$semicolon = strpos($data, ';');
+		$brace     = strpos($data, '}');
+		// Either ; or } must exist.
+		if (false === $semicolon && false === $brace) {
+			return false;
+		}
+		// But neither must be in the first X characters.
+		if (false !== $semicolon && $semicolon < 3) {
+			return false;
+		}
+		if (false !== $brace && $brace < 4) {
+			return false;
+		}
+	}
+	$token = $data[0];
+	switch ($token) {
+		case 's':
+			if ($strict) {
+				if ('"' !== substr($data, -2, 1)) {
+					return false;
+				}
+			} else if (! str_contains($data, '"')) {
+				return false;
+			}
+			// Or else fall through.
+		case 'a':
+		case 'O':
+		case 'E':
+			return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
+		case 'b':
+		case 'i':
+		case 'd':
+			$end = $strict ? '$' : '';
+			return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
+	}
+	return false;
 }
 ?>

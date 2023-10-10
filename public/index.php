@@ -1,4 +1,5 @@
 <?php
+require_once '../includes/session-handlers.php';
 require_once '../vendor/autoload.php';
 require_once '../class/CFAutoloader.php';
 CFAutoloader::register();

@@ -32,7 +32,7 @@ if (isset($_POST['validate'])) {
 				if ($user->isVerified()) {
 
 					session_start();
-
+					
 					$user->setSession();
 
 					// Redirect authentified user to the Dashboard

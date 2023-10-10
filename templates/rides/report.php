@@ -37,63 +37,43 @@ include '../includes/head-map.php'; ?>
 	<div class="main container-shrink"> <?php
 
 		// Space for general error messages
-		include '../includes/result-message.php'; ?>
-        
-        <div class="with-background-img full-header fullwidth js-fade-on-scroll" data-parameter="activity-imgs" data-value="<?= $ride->getReport()->activity_id ?>" data-interval="6" data-overlay-color="#000"></div>
-
-            <div class="full-header with-background-flash" style="position: relative">
-                <div class="header-block">
-                    <div class="header-row mb-2">
-                        <div class="rd-status">
-                            <p class="tag-dark text-light">ツアーレポート</p> <?php
-                            // Only add substatus if there is one
-                            if ($ride->privacy == 'friends_only') { ?>
-                                <p style="background-color: #ff5555" class="tag-light text-light"><?= $ride->getAuthor()->login; ?>の友達に限定</p> <?php
-                            } ?>
-                        </div>
-                    </div>
-                    <div class="header-row">
-                        <h2><?= $ride->name ?></h2>
-                    </div>
-                    <div class="header-row">
-                        <a href="/rider/<?= $ride->author_id ?>"><?php $ride->getAuthor()->getPropicElement(30, 30, 30); ?></a>
-                        <p>by <strong><?= $ride->getAuthor()->login ?></strong></p>
-                    </div>
-                    <div class="header-row mt-2"> <?php
-                        // Include admin buttons if the user has admin rights on this ride
-                        if (isSessionActive() && $ride->author_id == getConnectedUser()->id) include '../includes/rides/admin-buttons.php';
-                        if (isset($ride->getReport()->photoalbum_url)) echo '<a href="' .$ride->getReport()->photoalbum_url. '" target="_blank"><button class="mp-button success">フォトアルバム</div></a>' ?>
-                    </div>
-                </div>
-            </div>
-        </div> <?php
-
-        // Participants
-        include '../includes/rides/participants.php';
-
-        // Video if set
-        if (isset($ride->getReport()->video_url)) { ?>
-            <div class="container px-0 text-center">
-                <?= $ride->getReport()->getVideoIframe() ?>
-            </div> <?php
-        }
+		include '../includes/result-message.php'; 
     
         // Report timeline and map
         $activity = new Activity($ride->getReport()->activity_id); ?>
-        
-        <div class="container pg-ac-summary-container"> <?php
-            include '../includes/activities/timeline.php' ?>
-        </div>
+		
+		<div id="activity"
 
-        <div class="container p-0"> <?php
-            include '../includes/activities/map.php' ?>
-        </div>
+            data-activity="<?= $activity->id ?>"
+            data-title="<?= $activity->title ?>" <?php
+            if (isset($activity->getFeaturedImage()->url)) echo 'data-featured-image-url="' .$activity->getFeaturedImage()->url. '"';
+
+            // Twitter data
+            if (getConnectedUser()) {
+                $twitter = getConnectedUser()->getTwitter();
+                if (!$twitter->isUserConnected()) {
+                    $_SESSION['redirect_uri'] = $_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                    echo 'data-twitter-auth-url="' .$twitter_auth_url. '"';
+                }
+                if ($twitter->isUserConnected()) echo 'data-twitter-username="' .$twitter->username. '" data-twitter-name="' .$twitter->name. '" data-twitter-profile-image="' .$twitter->profile_image. '"';
+            } ?>
+        >
+        </div> <?php
+        
+        // Video if set
+        if (isset($ride->getReport()->video_url)) { ?>
+            <div class="bg-white text-center">
+                <?= $ride->getReport()->getVideoIframe() ?>
+            </div> <?php
+        } ?>
 
 	</div>
 
 </body>
 </html>
 
-<script src="/assets/js/animated-img-background.js"></script>
-<script src="/assets/js/fade-on-scroll.js"></script>
-<script type="module" src="/scripts/activities/activity.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- Load React component -->
+<script type="module" src="/react/runtime.js"></script>
+<script type="module" src="/react/activity.js"></script>
