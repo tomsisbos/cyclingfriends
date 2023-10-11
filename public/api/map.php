@@ -467,9 +467,8 @@ if (isAjax()) {
         // Get current grade
         $getCurrentGrade = $db->prepare("SELECT grade FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");
         $getCurrentGrade->execute(array($object->id, getConnectedUser()->id));
-        $grade_infos = $getCurrentGrade->fetch(PDO::FETCH_NUM);
-        if ($getCurrentGrade->rowCount() > 0) $current_grade = $grade_infos[0];
-        else throw new Exception('CURRENT GRADE NOT FOUND');
+        $current_grade = $getCurrentGrade->fetch(PDO::FETCH_NUM);
+        if ($getCurrentGrade->rowCount() == 0) throw new Exception('CURRENT GRADE NOT FOUND');
 
         // Remove grade entry from grade table
         $removeGrade = $db->prepare("DELETE FROM {$grades_table} WHERE {$id_entry} = ? AND user_id = ?");

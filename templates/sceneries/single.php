@@ -3,7 +3,8 @@
 include '../actions/users/initPublicSession.php';
 include '../actions/sceneries/scenery.php';
 include '../actions/sceneries/postReview.php';
-include '../includes/head.php'; ?>
+include '../includes/head.php';
+include '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

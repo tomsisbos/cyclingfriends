@@ -6,17 +6,20 @@ $session_duration = '7 DAY';
 $session_connection = pg_connect('host=' .getenv('DB_POSTGRESQL_HOST'). ' port=5432 dbname=' .getenv('DB_NAME'). ' user=' .getEnv('DB_USER'). ' password=' .getEnv('DB_PASSWORD'));
 
 function on_session_start ($save_path, $session_name) {
+    ///var_dump('start');
     ///var_dump("on_session_start: " . $session_name . " " . session_id());
     return true;
 }
 
 function on_session_end () {
+    ///var_dump('end');
     // Note: Since we're not using PDO anymore, you may need to use the global $db here.
     global $session_connection;
     return true;
 }
 
 function on_session_read($key) {
+    ///var_dump('read');
     global $session_connection;
     try {
         $query = "SELECT data FROM sessions WHERE session_id = $1 AND expiry > NOW()";
@@ -39,6 +42,7 @@ function on_session_read($key) {
 }
 
 function on_session_write ($key, $value) {
+    ///var_dump('write');
     global $session_connection;
     global $session_duration;
     try {
@@ -62,6 +66,7 @@ function on_session_write ($key, $value) {
 }
 
 function on_session_destroy ($key) {
+    ///var_dump('destroy');
     global $session_connection;
     try {
         $destroySession = pg_query_params($session_connection, "DELETE FROM sessions WHERE session_id = $1", [$key]);
@@ -72,6 +77,7 @@ function on_session_destroy ($key) {
 }
 
 function on_session_gc ($max_lifetime) {
+    ///var_dump('gc');
     global $session_connection;
     try {
         $cleanSession = pg_query($session_connection, "DELETE FROM sessions WHERE expiry <= NOW()");

@@ -221,6 +221,10 @@
         height: 50%;
     }
 
+    .dashboard-activities {
+        margin: 10px 5px;
+    }
+
     .activity-card-header {
         display: inline-block;
     }
