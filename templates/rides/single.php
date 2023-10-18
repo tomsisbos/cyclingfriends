@@ -203,7 +203,10 @@ include '../includes/head-map.php'; ?>
 
 			</div>
 			
-		</div>
+		</div> <?php
+
+		include '../includes/foot.php'; ?>
+
 	</div>
 
 </body>

@@ -32,8 +32,6 @@ $router->map('GET|POST', '/unsubscribe', 'user/unsubscribe', 'user-unsubscribe')
 $router->map('GET', '/rider/[i:user_id]', 'profile/single', 'profile-single');
 $router->map('GET|POST', '/profile/edit', 'profile/edit', 'profile-edit');
 $router->map('GET', '/settings', 'user/settings', 'user-settings');
-$router->map('GET', '/favorites/sceneries', 'user/favorites/sceneries', 'user-favorites-sceneries');
-$router->map('GET', '/favorites/segments', 'user/favorites/segments', 'user-favorites-segment');
 $router->map('GET|POST', '/account/verification/guidance', 'user/verification-guidance', 'user-verification-guidance');
 $router->map('GET', '/account/verification/[i:user_slug]-[*:email]', function ($user_slug, $email) {
     require_once '../actions/users/verification.php';

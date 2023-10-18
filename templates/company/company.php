@@ -1,5 +1,6 @@
 <?php
 
+include '../actions/users/initPublicSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>

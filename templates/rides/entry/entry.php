@@ -100,7 +100,9 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
 
             } ?>            
 
-        </form>
+        </form> <?php
+
+        include '../includes/foot.php'; ?>
 
 	</div>
 

@@ -71,7 +71,9 @@ include '../actions/rides/entry/payment.php'; ?>
 
             </div>
 
-        </form>
+        </form> <?php
+
+        include '../includes/foot.php'; ?>
 
 	</div>
 

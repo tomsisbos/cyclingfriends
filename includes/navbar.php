@@ -1,5 +1,5 @@
 <!--Displays the navbar-->
-<nav class="main-navbar navbar navbar-expand-lg navbar-light bg-white"> <?php
+<nav class="main-navbar navbar menu-link navbar-expand-lg navbar-light bg-white"> <?php
 
 	if (isSessionActive()) $default_url = '/dashboard';
 	else $default_url = '/' ?>
@@ -18,21 +18,16 @@
 		</button>
 		<div class="collapse navbar-collapse" id="collapsedMenu">
 			<ul class="navbar-nav cf-navbar">
-				<li class="nav-item dropdown">
+				<li class="nav-item">
 					<a class="nav-link interactive" href="/world"><div class="mainitem">サイクリングマップ</div></a>
-					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/favorites/sceneries"><div class="mainitem">お気に入り絶景スポット</div></a>
-						<a class="dropdown-item interactive" href="/favorites/segments"><div class="mainitem">お気に入りセグメント</div></a>
-					</div>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link nav-dropdown-link interactive" href="/activities"><div class="mainitem">アクティビティ</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div></a>
 						<a class="dropdown-item interactive" href="<?= $router->generate('activity-journal', ['user_login' => getConnectedUser()->login]) ?>"><div class="mainitem">活動日記</div></a>
 						<a class="dropdown-item interactive" href="/myactivities"><div class="mainitem">マイアクティビティ</div></a>
+						<a class="dropdown-item interactive" href="/activity/new"><div class="mainitem">新規作成</div></a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">

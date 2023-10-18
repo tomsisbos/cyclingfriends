@@ -37,7 +37,9 @@ include '../includes/head.php'; ?>
 
 			</div>
 		</div>
-	</div>
+	</div> <?php
+
+	include '../includes/foot.php'; ?>
 	
 </body>
 </html>

@@ -59,7 +59,7 @@ include '../includes/head.php'; ?>
 
     </div> <?php
 
-include '../includes/foot.php'; ?>
+    include '../includes/foot.php'; ?>
 
 </body>
 </html>

@@ -86,9 +86,10 @@ include '../includes/head.php'; ?>
                         } ?>
                         </div> <?php
                     }
-                } else include '../includes/manual/404.php'; 
-            
-            ?>
+                } else include '../includes/manual/404.php';
+
+                include '../includes/foot.php'; ?>
+                
             </div>
 		</div>
 	

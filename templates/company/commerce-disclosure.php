@@ -1,6 +1,7 @@
 
 <?php
 
+include '../actions/users/initPublicSession.php';
 include '../includes/head.php'; ?>
 
 <!DOCTYPE html>
@@ -8,7 +9,7 @@ include '../includes/head.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/home.css" />
 
-<body> <?php
+<body class="black-theme"> <?php
 
     include '../includes/navbar.php'; ?>
 

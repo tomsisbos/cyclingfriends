@@ -583,11 +583,6 @@ nav .navbar-brand.f {
     font-size: xx-large;
 }
 
-.navbar a, .navbar a:target, .navbar a:active {
-    text-decoration: none;
-    color: #777777;
-}
-
 li.nav-item {
     padding: 0px 20px;
 }
@@ -655,6 +650,11 @@ li.nav-item {
 .main-navbar .subitem {
     font-size: 8px;
     margin-top: -3;
+}
+
+.menu-link a, .menu-link a:target, .menu-link a:active {
+    text-decoration: none !important;
+    color: #777777 !important;
 }
 
 /* Button */
