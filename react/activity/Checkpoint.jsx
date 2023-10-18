@@ -17,6 +17,7 @@ export default function Checkpoint ({ data, getTimeFromStart, map }) {
     }
 
     const getIcon = (type) => {
+        console.log(type)
         switch (type) {
             case 'Start':
                 return <Icon className="iconify" icon="material-symbols:play-circle" iconname="material-symbols:play-circle" style={{color: '#00e06e'}} />

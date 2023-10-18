@@ -3,7 +3,7 @@ import Loader from "/react/components/Loader.jsx"
 import ActivityMap from "/public/class/maps/activity/ActivityMap.js"
 import MapView from '/react/components/MapView.jsx'
 
-export default function ActivityMapView ({ isLoading, activityData, photos, setPhotos, setMap }) {
+export default function ActivityMapView ({ isLoading, activityData, photos, setPhotos, setMap, setMapInstance }) {
 
     const [isMapLoading, setIsMapLoading] = useState(false)
 
@@ -99,6 +99,8 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
                         activityMap.unselectPhotos()
                     }
                 } )
+
+                setMapInstance(activityMap)
             })
         }
     }, [isLoading])

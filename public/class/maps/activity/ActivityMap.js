@@ -27,7 +27,7 @@ export default class ActivityMap extends Map {
         Event: 'entypo/info-with-circle',
         Goal: 'material-symbols/stop-circle'
     }
-    routeColor = '#257f62'
+    routeColor = '#0000c8'
 
     calculateElevation (trackpoints) {
         var elevation = 0

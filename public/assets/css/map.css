@@ -76,6 +76,10 @@
     opacity: 0.2;
 }
 
+.mapboxgl-ctrl-top-left, .mapboxgl-ctrl-top-right, .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
+    z-index: 5!important;
+}
+
 /* -- Markers -- */
 
 .scenery-marker {
