@@ -49,31 +49,38 @@ include '../includes/navbar.php';?>
 
                 <h3>新規投稿</h3>
 
-                <form class="adm-posts-form" method="POST">
+                <form class="d-flex flex-column gap" method="POST">
                     
-                    <div class="adm-posts-details">
-                        <div class="col-md">
-                            <div class="form-floating">
-                                <input type="text" id="title" class="form-control" placeholder="タイトル" name="title">
-                                <label for="title">タイトル</label>
+                    <div class="adm-posts-form">
+                        <div class="adm-posts-details">
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input type="text" id="title" class="form-control" placeholder="タイトル" name="title">
+                                    <label for="title">タイトル</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <select class="form-control" id="type" name="type">
+                                        <option value="dev">開発</option>
+                                        <option value="general">一般</option>
+                                    </select>
+                                    <label for="type">タイプ</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md">
+
+                        <div class="adm-posts-content">
                             <div class="form-floating">
-                                <select class="form-control" id="type" name="type">
-                                    <option value="dev">開発</option>
-                                    <option value="general">一般</option>
-                                </select>
-                                <label for="type">タイプ</label>
+                                <textarea id="content" placeholder="内容" class="form-control fullheight" name="content"></textarea>
+                                <label for="content">内容</label>
                             </div>
                         </div>
                     </div>
 
-                    <div class="adm-posts-content">
-                        <div class="form-floating">
-                            <textarea id="content" placeholder="内容" class="form-control fullheight" name="content"></textarea>
-                            <label for="content">内容</label>
-                        </div>
+                    <div>
+                        <input type="checkbox" name="twitter" id="twitter">
+                        <label for="twitter">Twitterで自動投稿する</label>
                     </div>
                     
                     <button type="submit" class="btn button adm-posts-button" name="send">投稿</button>
