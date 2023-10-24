@@ -124,5 +124,16 @@ if (is_array($settings)) {
                 } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
             } else echo json_encode(['error' => 'パスワードが空欄になっています。6文字以上のパスワードを入力してください。']);
         }
+    } else if ($settings['type'] === 'deleteAccount') {
+        $posted_password = htmlspecialchars($settings['password']);
+        // Check if filled password matches connected user registered password
+        if (password_verify($posted_password, getConnectedUser()->getPassword())) {
+            $deleteAccount = $db->prepare('DELETE FROM users WHERE id = ?');
+            $deleteAccount->execute(array(getConnectedUser()->id));
+            session_destroy();
+
+            echo json_encode(['success' => 'アカウントとアカウントに付随されているデータは全て削除されました。']);
+        } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
     }
+
 }

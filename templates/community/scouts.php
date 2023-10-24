@@ -24,7 +24,7 @@ include '../includes/head.php'; ?>
 			include '../includes/riders/scouts/filter-options.php'; 
 		
 			// Define offset and number of scouts to query
-			$limit = 20;
+			$limit = 10;
 			if (isset($_GET['p'])) $offset = ($_GET['p'] - 1) * $limit;
 			else $offset = 0;
 			

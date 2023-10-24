@@ -1,8 +1,9 @@
-import React, { useState, createContext } from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import ChangeLogin from "/react/settings/ChangeLogin.jsx"
 import ChangeEmail from "/react/settings/ChangeEmail.jsx"
 import ChangePassword from "/react/settings/ChangePassword.jsx"
+import DeleteAccount from "/react/settings/DeleteAccount.jsx"
 import Privacy from "/react/settings/Privacy.jsx"
 import Connections from "/react/settings/Connections.jsx"
 import Sidebar from "/react/settings/Sidebar.jsx"
@@ -21,6 +22,7 @@ function App () {
             case 'changeLogin': var component = <ChangeLogin />; break;
             case 'changeEmail': var component = <ChangeEmail />; break;
             case 'changePassword': var component = <ChangePassword />; break;
+            case 'deleteAccount': var component = <DeleteAccount />; break;
             case 'privacy': var component = <Privacy />; break;
             case 'connections': var component = <Connections />; break;
         }

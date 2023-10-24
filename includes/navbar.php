@@ -91,7 +91,9 @@
 					// If the user is connected, displays the sign out button 
 					if (isSessionActive()) { ?>
 						<hr class="dropdown-divider">
-						<a class="dropdown-item interactive" href="<?= $_SERVER['REQUEST_URI'] ?>/signout">
+						<a class="dropdown-item interactive" href="<?php
+							if (strlen($_SERVER['REQUEST_URI']) > 1) echo $_SERVER['REQUEST_URI']
+						?>/signout">
 							<div class="mainitem">サインアウト</div>
 						</a> <?php
 					} ?>
