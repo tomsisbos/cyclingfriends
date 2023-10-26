@@ -95,6 +95,36 @@ include '../actions/company/brands/poli/contact.php'; ?>
                 </div>
             </div>
 
+            <h2>人気商品の紹介</h2>
+
+            <div class="poli-catalog">
+                <div class="poli-item">
+                    <img src="https://www.poli-teamwear.com/59561-large_default/aksel-short-sleeve-jersey.jpg">
+                    <div class="catalog-text">
+                        <p>半袖ジャージ</p>
+                        <h3>AKSEL（アクセル）</h3>
+                        <p>¥8,819</p>
+                    </div>
+                </div>
+                <div class="poli-item">
+                    <img src="https://www.poli-teamwear.com/38142-large_default/maillot-roch-ml.jpg">
+                    <div class="catalog-text">
+                        <p>長袖ジャージ</p>
+                        <h3>ROCH（ロック）</h3>
+                        <p>¥10,989</p>
+                    </div>
+                </div>
+                <div class="poli-item">
+                    <img src="https://www.poli-teamwear.com/59875-large_default/kyle-bib-short.jpg">
+                    <div class="catalog-text">
+                        <p>ビブショーツ</p>
+                        <h3>KYLE（カイル）</h3>
+                        <p>¥9,179</p>
+                    </div>
+                </div>
+            </div>
+            <p>※商品グループ合計20枚を想定した参考価格です。詳細は下記を参照。</p>
+
             <h2>価格の計算について</h2>
             <p>注文内容（商品の枚数、商品グルーブの合計枚数、オプションなど）によって、価格が変動する仕組みとなっております。</p>
             <p>注文をする前に、注文書をご確認頂きます。最終的な価格はあくまでも注文書に記載されている内容となりますので、参考程度に思って頂ければ幸いです。</p>

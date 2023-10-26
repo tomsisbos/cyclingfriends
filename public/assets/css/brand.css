@@ -1,8 +1,10 @@
 .brand h3 {
+    font-family: monospace;
     margin-top: 20px;
     font-size: 18;
 }
 .brand h2 {
+    font-family: monospace;
     margin-top: 40px;
     font-size: 22px;
 }
@@ -27,6 +29,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    justify-content: space-around;
 }
 .poli-catalog-block {
     width: calc(50% - 10px);
@@ -35,20 +38,41 @@
     background-color: #fff;
     padding: 20px;
 }
-.poli-catalog-block img {
+.poli-catalog-block img, .poli-item img {
     position: absolute;
     top: 0;
     left: 0;
     height: inherit;
     object-fit: contain;
-    opacity: 0.5;
     width: -webkit-fill-available;
+}
+.poli-catalog-block img {
+    opacity: 0.5;
 }
 .catalog-text {
     position: relative;
 }
 .catalog-text a {
     font-weight: bold;
+}
+.poli-item .catalog-text {
+    background-color: #ffffffaa;
+    padding: 10px;
+}
+
+.poli-item {
+    width: 250px;
+    text-align: center;
+    display: flex;
+    align-items: self-end;
+    justify-content: center;
+    height: 300px;
+    position: relative;
+    background-color: #fff;
+    padding: 20px;
+}
+.catalog-text h3, .catalog-text p {
+    margin: 0;
 }
 
 @media only screen and (max-width: 992px) {
