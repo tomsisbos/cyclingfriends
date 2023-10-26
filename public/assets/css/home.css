@@ -365,3 +365,11 @@
         font-size: x-large;
     }
 }
+
+.brand-logo {
+    max-width: 100%;
+    width: 300px;
+    margin: 20px auto;
+    display: flex;
+    mix-blend-mode: multiply;
+}

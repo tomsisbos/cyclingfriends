@@ -116,6 +116,7 @@ $router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
 $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
 $router->map('GET', '/company/commerce-disclosure', 'company/commerce-disclosure', 'company-commerce-disclosure');
+$router->map('GET|POST', '/brands/poli', 'company/brands/poli', 'brands-poli');
 
 // Admin
 $router->map('GET|POST', '/admin/autoposting/sceneries', '/admin/autoposting/sceneries', 'admin-autoposting-sceneries');
