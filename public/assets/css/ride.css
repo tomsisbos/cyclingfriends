@@ -789,32 +789,17 @@ h3 {
 
 .rd-calendar {
     margin-top: 50px;
-    display: grid;
-    grid-template-columns: auto 50px 28px 70px repeat(5, auto);
+    justify-content: space-around;
+    display: flex;
+    flex-wrap: wrap;
     text-align: center;
-    grid-gap: 16px 0px;
-}
-.rd-cd-hr {
-    grid-column-start: 1;
-    grid-column-end: 10;
-    display: grid;
-    height: 1px;
-}
-.rd-cd-th {
-    font-weight: bold;
-}
-.rd-cd-th-double {
-    grid-area: auto / span 2;
-}
-.rd-cd-td {
-    display: grid;
-    align-items: center;
-}
-.rd-cd-td img {
-    place-self: center;
+    gap: 10px;
 }
 .cd-status {
-    border-radius: 3px;
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
 }
 .cd-year {
     text-align: right;
@@ -825,19 +810,17 @@ h3 {
 .cd-title {
     color: #fff !important;
     font-weight: bold;
+    text-shadow: 0 0 4px #000;
     background-color: #001c1c;
     padding: 10px;
 }
 .cd-title:hover {
     background-color: #000;
 }
-.cd-guides {
-    display: inline;
-    font-size: 12px;
-}
-.cd-guides-label {
-    display: none;
-    font-size: 12px;
+.rd-calendar .with-img {
+    position: relative;
+    height: 200px;
+    background-size: cover;
 }
 
 @media only screen and (max-width: 992px) {
@@ -918,4 +901,58 @@ h3 {
         z-index: 1;
         align-self: start;
     }
+}
+
+.rd-cd-card {
+    display: flex;
+    position: relative;
+    width: 300px;
+    flex-grow: 1;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #ffffff22;
+}
+
+.rd-cd-card .first {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.rd-cd-card .third {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.cd-place {
+    width: 100%;
+}
+
+.cd-status .inner {
+    border-radius: 3px;
+    width: fit-content;
+    padding: 0 18px;
+}
+
+.cd-map-thumbnail {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.cd-map-thumbnail:hover {
+    opacity: 1;
+    transition: opacity 1s;
+}
+.cd-title-text {
+    position: relative;
 }

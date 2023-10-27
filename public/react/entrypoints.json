@@ -35,6 +35,12 @@
         "/public/react/runtime.js",
         "/public/react/dashboard.js"
       ]
+    },
+    "tours": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/tours.js"
+      ]
     }
   }
 }

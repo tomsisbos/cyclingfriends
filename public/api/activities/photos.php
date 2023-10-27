@@ -1,11 +1,23 @@
 <?php
 
+$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/vendor/autoload.php';
+require_once $base_directory . '/class/CFAutoloader.php'; 
+CFAutoloader::register(); 
+require $base_directory . '/includes/functions.php';
+require $base_directory . '/actions/database.php';
+
 // Check if the request is a POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $photos = $_FILES;
+    $variable_name = 'photo';
+    $photos = [];
 
-    echo json_encode(['$_POST' => $_POST, '$_FILES' => $_FILES]);
+    foreach ($_POST as $key => $value) {
+        preg_match('!\d+!', $key, $match);
+        $index = intval($match[0]);
+        $photos[$index][substr($key, strlen($variable_name) + strlen($match[0]) + 1)] = $value;
+    }
 
     try {
 

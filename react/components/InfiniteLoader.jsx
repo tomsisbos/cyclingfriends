@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import useIntersection from '/react/hooks/useIntersection.jsx'
 
-export default function InfiniteLoader ({onReach}) {
+export default function InfiniteLoader ({ onReach }) {
     
     // Define constants
     const ref = useRef()
