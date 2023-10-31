@@ -22,7 +22,7 @@ require $folder . '/actions/blobStorage.php'; ?>
     // Space for error messages
     include '../includes/result-message.php'; ?>
 		
-	<div id="root end"></div> <?php
+	<div id="root" class="end"></div> <?php
 
     include '../includes/foot.php'; ?>
 

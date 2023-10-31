@@ -24,11 +24,11 @@ include '../actions/company/brands/poli/contact.php'; ?>
     <h1 class="text-center">カスタムウェアメーカー</h1>
     
     <div class="poli-slider" data-simple-slider>
-        <img src="https://www.poli.fr/img/cms/HOME%20EN/Cycling-1.jpg"/>
-        <img src="https://www.poli.fr/img/cms/HOME%20EN/Cycling-2.jpg"/>
-        <img src="https://www.poli.fr/img/cms/HOME%20EN/Cycling-3.jpg"/>
-        <img src="https://www.poli-teamwear.com/img/cms/HOME%20EN/Triathlon-1.jpg"/>
-        <img src="https://www.poli-teamwear.com/img/cms/HOME EN/Trail-1.jpg"/>
+        <img src="/media/brands/poli/header-cycling-1.jpg"/>
+        <img src="/media/brands/poli/header-cycling-2.jpg"/>
+        <img src="/media/brands/poli/header-cycling-3.jpg"/>
+        <img src="/media/brands/poli/header-triathlon.jpg"/>
+        <img src="/media/brands/poli/header-trail.jpg"/>
     </div>
     
     <div class="brand container">
