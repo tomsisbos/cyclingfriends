@@ -42,6 +42,16 @@ include '../actions/company/brands/poli/contact.php'; ?>
 
         </div>
 
+        <div class="container" style="
+            background-color: #d93025;
+            color: #fff;
+            text-align: center;
+        ">
+            <p>現在、POLI JAPANの新設に伴い、ご注文を頂いたクラブ／団体等の方に<strong>10％引きキャンペーン</strong>を実施しております！</p>
+            <p>対象になるのは<strong>最初の3件のみ</strong>ですので、来年のウェアをご検討中の方はお早めにご相談ください！</p>
+            <p>※10%引きが適応されるのは、ご注文いただきました商品の単価になります（下記の表を参照）。</p>
+        </div>
+
         <div class="container">
 
             <h2>公式ホームページ</h2>
@@ -137,8 +147,20 @@ include '../actions/company/brands/poli/contact.php'; ?>
             <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTEsVSMVQruYzV1wbfyMwLtGiCcu6cFZhYgo008wbmrMa1yyUGXD9QDgqOqjlJgBqxKUwfX9e68mvI7/pubhtml?widget=true&amp;headers=false"></iframe>
             <p>※その他の競技の価格表は、順次更新していきます。</p>
 
+            <h2>納品までの流れ</h2>
+            <div class="process-blocks">
+                <div class="process-block"><div class="inr"><div class="ttl">１．ご相談</div></div></div>
+                <div class="process-block"><div class="inr"><div class="ttl">２．お見積り</div></div></div>
+                <div class="process-block"><div class="inr"><div class="ttl">３．ご希望デザインの提出</div>（手書きでもOK）</div></div>
+                <div class="process-block"><div class="inr"><div class="ttl">４．3Dビジュアルの提示</div></div></div>
+                <div class="process-block half"><div class="inr">※修正がある場合、（３）に戻ります。修正依頼は3回まで可</div></div>
+                <div class="process-block"><div class="inr"><div class="ttl">５．印刷許可書の交付</div>：サインを頂いた時点でデザインと見積もりが決定し、印刷作業に入ります。</div></div>
+                <div class="process-block"><div class="inr"><div class="ttl">６．納品！</div></div></div>
+            </div>
+
             <h2>納期</h2>
-            <p>ご注文から商品着手まで2ヶ月が目安です。</p>
+            <p>注文確定時から納品までの目安は約2ヶ月です。</p>
+            
             
             <form method="POST" class="container smaller">
 

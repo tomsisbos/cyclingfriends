@@ -5,7 +5,7 @@ import Tours from '/react/tours/Tours.jsx'
 function App () {
   
     return (
-        <div className="container home-container end">
+        <div className="container home-container">
 
             <div className="company-quote">日帰りツアーカレンダー</div>
 

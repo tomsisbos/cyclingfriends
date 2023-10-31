@@ -31,7 +31,7 @@ export default function TourCard ({ data }) {
             <div className="first">
                 <div className="cd-status"><div className={'inner ' + data.status_class}>{data.status}</div></div>
                 <div className="cd-year">{date.getFullYear()}.</div>
-                <div className="cd-month">{date.getMonth()}.</div>
+                <div className="cd-month">{date.getMonth() + 1}.</div>
                 <div className="cd-day">{date.getDate() + '（' + getWeekDay(date.getDay()) + '）' }</div>
             </div>
 

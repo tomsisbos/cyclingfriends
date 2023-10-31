@@ -201,11 +201,11 @@ include '../includes/head-map.php'; ?>
 				
 				include '../includes/rides/chat.php' ?>
 
-			</div>
-			
-		</div> <?php
+			</div> <?php
 
-		include '../includes/foot.php'; ?>
+			include '../includes/foot.php'; ?>
+			
+		</div>
 
 	</div>
 
