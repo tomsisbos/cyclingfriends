@@ -1823,3 +1823,7 @@ input[type="range"]::-webkit-slider-thumb {
 	content: '';
 	animation: 10s linear infinite originalBackground
 }
+
+.kiyaku {
+    padding: 20px;
+}

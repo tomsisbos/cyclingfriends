@@ -10,5 +10,10 @@ if (isset($_GET['ride'])) {
         $a_field->setAnswer(getConnectedUser()->id, 'product', $_GET['optionId']);
     }
 
+    if (isset($_GET['rentalBikeId'])) {
+        if ($_GET['rentalBikeId'] == 'none') $ride->removeRentalBikeEntry(getConnectedUser()->id);
+        else $ride->setRentalBikeEntry(getConnectedUser()->id, $_GET['rentalBikeId']);
+    }
+
     echo json_encode($ride->calculateAmount(getConnectedUser()->id));
 }

@@ -24,7 +24,7 @@ if (getConnectedUser()->getCustomerId()) {
 
 header('Content-Type: application/json');
 
-try {
+///try {
     
     // Retrieve ride id from POST body
     $json = file_get_contents('php://input');
@@ -68,7 +68,7 @@ try {
     ];
 
     echo json_encode($output);
-} catch (Error $e) {
+/*} catch (Error $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
-}
+}*/

@@ -31,6 +31,20 @@
         <label class="form-label" for="floatingEmergencyNumber">緊急時連絡先</label>
     </div> <?php
 
+    // Bike rental
+    include '../actions/rides/getRentalBikes.php'; ?>
+    <div class="form-floating mt-3">
+        <select name="rental_bike" id="rentalBike" class="form-select js-field js-br-field">
+            <option value="none" <?php if (!isset($entry_data['rental_bike'])) echo 'selected ' ?>>希望しません（自車で参加）</option> <?php
+            foreach ($rental_bikes as $rental_bike) {
+                $ebike = $rental_bike->ebike ? '（電動アシスト付き）' : ''  ?>
+                <option value="<?= $rental_bike->id ?>" <?php if ((isset($entry_data['rental_bike']) AND $entry_data['rental_bike'] == $rental_bike->id) || ($ride->getRentalBikeEntry(getConnectedUser()->id) !== null && $ride->getRentalBikeEntry(getConnectedUser()->id)->id == $rental_bike->id)) echo ' selected'?>><?= $rental_bike->name . $ebike . ' - ¥' .$rental_bike->price_ride ?></option> <?php
+            } ?>
+        </select>
+        <label class="form-label" for="rentalBike">バイクレンタル</label>
+    </div>
+    <div class="rental-bikes-preview"></div> <?php
+
     // Additional fields
     include '../includes/rides/entry/additional-fields.php'; ?>
 </div>

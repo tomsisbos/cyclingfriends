@@ -18,6 +18,7 @@
             <a class="f-head interactive" href="<?= $router->generate('rides-calendar') ?>"><div>ツアー</div></a>
             <a class="interactive" href="<?= $router->generate('rides-calendar') ?>"><div>スケジュール</div></a>
             <a class="interactive" href="<?= $router->generate('ride-contract') ?>"><div>ツアー規約</div></a>
+            <a class="interactive" href="<?= $router->generate('bike-rental-contract') ?>"><div>バイクレンタル規約</div></a>
         </div>
         <div class="cf-footer-block">
             <a class="f-head interactive" href="/brands/poli"><div>取り扱いブランド</div></a>

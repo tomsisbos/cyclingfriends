@@ -3,17 +3,21 @@ import CircleLoader from '/class/loaders/CircleLoader.js'
 const $amount = document.querySelector("#amount")
 const $amountDetails = document.querySelector("#amount-details")
 const $additionalFields = document.querySelectorAll(".js-a-field")
+const $bikeRentalField = document.querySelector(".js-br-field")
 const rideId = (new URL(window.location).pathname.match(/[^\/]+/g)).find(part => !isNaN(parseFloat(part)))
 
 // Set amount on first display
-updateAmount().then((amount) => updateAmountElement(amount))
+additionalFieldsAmountUpdate().then((amount) => updateAmountElement(amount))
 
 // Recalculate amount on every additional field change
 $additionalFields.forEach($aField => {
     $aField.addEventListener('change', async () => {
-        if ($aField.dataset.type == 'product') updateAmountElement(await updateAmount($aField.dataset.fieldId, $aField.value))
+        if ($aField.dataset.type == 'product') updateAmountElement(await additionalFieldsAmountUpdate($aField.dataset.fieldId, $aField.value))
     })
 })
+
+// Recalculate amount on bike rental field change
+if ($bikeRentalField) $bikeRentalField.addEventListener('change', async () => updateAmountElement(await bikeRentalAmountUpdate($bikeRentalField.value)))
 
 /**
  * Update products if necessary and query current provisional amount for this ride & user
@@ -21,10 +25,30 @@ $additionalFields.forEach($aField => {
  * @param {Number} optionId 
  * @returns {any} Amount object
  */
-async function updateAmount (fieldId = null, optionId = null) {
+async function additionalFieldsAmountUpdate (fieldId = null, optionId = null) {
     return new Promise((resolve, reject) => {
         let queryString = '/api/rides/amount.php' + "?ride=" + rideId
         if (fieldId) queryString += '&fieldId=' + fieldId + '&optionId=' + optionId
+        
+        var loader = new CircleLoader($amount, {compact: true})
+        loader.start()
+        ajaxGetRequest(queryString, async (amount) => {
+            loader.stop()
+            resolve(amount)
+        })
+    })
+}
+
+/**
+ * Update products if necessary and query current provisional amount for this ride & user
+ * @param {Number} bikeId 
+ * @returns {any} Amount object
+ */
+async function bikeRentalAmountUpdate (rentalBikeId) {
+    return new Promise((resolve, reject) => {
+        let queryString = '/api/rides/amount.php' + "?ride=" + rideId
+        if (rentalBikeId) queryString += '&rentalBikeId=' + rentalBikeId
+        else queryString += '&rentalBikeId=none' 
         
         var loader = new CircleLoader($amount, {compact: true})
         loader.start()

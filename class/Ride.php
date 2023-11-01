@@ -262,6 +262,7 @@ class Ride extends Model {
      */
     public function join ($participant) {
         if (!$this->isParticipating($participant)) {
+            
             // Add a line into participation database
             $joinRide = $this->getPdo()->prepare('INSERT INTO ride_participants(user_id, ride_id, entry_date) VALUES (?, ?, ?)');
             $joinRide->execute(array($participant->id, $this->id, (new DateTime('now'))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')));
@@ -272,6 +273,7 @@ class Ride extends Model {
             foreach ($additional_fields as $additional_field) {
                 if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= '<strong>' .$additional_field->question. '：</strong>' .$additional_field->getAnswer($participant->id)->content. '<br>';
             }
+            if ($this->getRentalBikeEntry($participant->id)) $additional_fields_li .= '<strong>レンタルバイク：</strong>' .$this->getRentalBikeEntry($participant->id)->name. '<br>';
 
             // Get origin
             if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
@@ -297,7 +299,8 @@ class Ride extends Model {
                 <strong>緊急時連絡先：</strong>' .$participant->emergency_number. '<br>'
                     .$additional_fields_li.
                 '<br><p>ツアーの情報は<a href="' .$origin. '/ride/participations">こちら</a></p>
-                <p>ツアー規約は<a href="' .$origin. '/ride/contract">こちら</a></p><br>'
+                <p>ツアー規約は<a href="' .$origin. '/ride/contract">こちら</a></p>
+                <p>バイクレンタル規約は<a href="' .$origin. '/ride/bike-rental-contract">こちら</a></p><br>'
                 .file_get_contents(Ride::$root_folder . '/public/api/rides/guidance.html')
             );
             $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
@@ -336,10 +339,6 @@ class Ride extends Model {
      */
     public function quit ($participant) {
 
-        // Remove participation data
-		$quitRide = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE user_id = ? AND ride_id = ?');
-		$quitRide->execute(array($_SESSION['id'], $this->id));
-
         // Get origin
         if (array_key_exists('HTTP_ORIGIN', $_SERVER)) $origin = $_SERVER['HTTP_ORIGIN'];
         else $origin = parse_url($_SERVER['HTTP_REFERER'])['scheme'] . '://' . parse_url($_SERVER['HTTP_REFERER'])['host'];
@@ -350,6 +349,14 @@ class Ride extends Model {
         foreach ($additional_fields as $additional_field) {
             if ($additional_field->getAnswer($participant->id)) $additional_fields_li .= $additional_field->question. '：' .$additional_field->getAnswer($participant->id)->content. '<br>';
         }
+        if ($this->getRentalBikeEntry($participant->id)) $additional_fields_li .= '<strong>レンタルバイク：</strong>' .$this->getRentalBikeEntry($participant->id)->name. '（ヘルメット／フラットペダル付き）<br>';
+
+        // Remove participation data
+		$quitRide = $this->getPdo()->prepare('DELETE FROM ride_participants WHERE user_id = ? AND ride_id = ?');
+		$quitRide->execute(array($participant->id, $this->id));
+
+        // Remove any rental bike reservation
+        $this->removeRentalBikeEntry($participant->id);
 
         // Send confirmation email
         $email = new Mail();
@@ -811,9 +818,52 @@ class Ride extends Model {
             if ($answer AND $answer->type == 'product') $amount->add($answer->option->product);
         }
 
+        if ($this->getRentalBikeEntry($user_id)) $amount->add($this->getRentalBikeEntry($user_id)->getProduct());
+
         if ($user->getCFPoints() > 0) $amount->useCFPoints($user_id);
     
         return $amount;
+    }
+
+    /**
+     * Insert a new entry or update rental_entries table
+     * @param int $user_id
+     * @param int $rental_bike_id
+     */
+    public function setRentalBikeEntry ($user_id, $rental_bike_id) {
+        $checkIfEntryExists = $this->getPdo()->prepare("SELECT id FROM rental_entries WHERE user_id = ? AND ride_id = ?");
+        $checkIfEntryExists->execute([$user_id, $this->id]);
+        if ($checkIfEntryExists->rowCount() > 0) {
+            $updateRentalBikeEntry = $this->getPdo()->prepare("UPDATE rental_entries SET rental_bike_id = ? WHERE user_id = ? AND ride_id = ?");
+            $updateRentalBikeEntry->execute([$rental_bike_id, $user_id, $this->id]);
+        } else {
+            $setRentalBikeEntry = $this->getPdo()->prepare("INSERT INTO rental_entries (user_id, rental_bike_id, ride_id, date_start, date_end) values (?, ?, ?, ?, ?)");
+            $setRentalBikeEntry->execute([$user_id, $rental_bike_id, $this->id, (new DateTime($this->date))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s'), (new DateTime($this->date))->setTimezone(new DateTimeZone('Asia/Tokyo'))->modify('+1 day')->format('Y-m-d H:i:s')]);
+        }
+    }
+
+    public function removeRentalBikeEntry ($user_id) {
+        $removeRentalBikeEntry = $this->getPdo()->prepare("DELETE FROM rental_entries WHERE user_id = ? AND ride_id = ?");
+        $removeRentalBikeEntry->execute([$user_id, $this->id]);
+    }
+
+    /**
+     * Get rental bike instance corresponding to a specific user
+     * @param int $user_id
+     * @return RentalBike|null
+     */
+    public function getRentalBikeEntry ($user_id) {
+        $getRentalBikeEntry = $this->getPdo()->prepare("SELECT rental_bike_id FROM rental_entries WHERE user_id = ? AND ride_id = ?");
+        $getRentalBikeEntry->execute([$user_id, $this->id]);
+        if ($getRentalBikeEntry->rowCount() > 0) return new RentalBike($getRentalBikeEntry->fetch(PDO::FETCH_COLUMN));
+    }
+    
+    /**
+     * Set the rental entry as finalized
+     */
+    public function finalizeRentalBikeEntry ($user_id) {
+        $finalize = $this->getPdo()->prepare("UPDATE rental_entries SET finalized = true WHERE user_id = ? AND ride_id = ?");
+        $finalize->execute([$user_id, $this->id]);
     }
 
 }

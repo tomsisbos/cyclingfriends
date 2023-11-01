@@ -29,3 +29,7 @@ foreach ($a_fields as $a_field) {
     $entry_data['a_field_' .$a_field->id] = $_POST['a_field_' .$a_field->id];
     $entry_data['a_field_' .$a_field->id. '_type'] = $_POST['a_field_' .$a_field->id. '_type'];
 }
+
+// Rental bike
+if ($ride->getRentalBikeEntry(getConnectedUser()->id)) $entry_data['rental_bike'] = $ride->getRentalBikeEntry(getConnectedUser()->id)->id;
+else $entry_data['rental_bike'] = $_POST['rental_bike'];

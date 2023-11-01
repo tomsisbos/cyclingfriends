@@ -103,6 +103,7 @@ $router->map('GET|POST', '/ride/[i:ride_id]/payment', 'rides/entry/payment', 'ri
 $router->map('GET', '/ride/[i:ride_id]/checkout', 'rides/entry/checkout', 'ride-checkout');
 $router->map('GET|POST', '/ride/[i:ride_id]/guide-entry/[i:guide_id]', 'rides/entry/guide-entry', 'ride-guide-entry');
 $router->map('GET', '/ride/contract', 'rides/contract', 'ride-contract');
+$router->map('GET', '/ride/bike-rental-contract', 'rides/bike-rental-contract', 'bike-rental-contract');
 
 // Community
 $router->map('GET', '/community', 'community/community', 'community');

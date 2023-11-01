@@ -1,6 +1,6 @@
 <?php
  
-	require '../actions/database.php';
+	require_once '../actions/database.php';
 					
 	// If min date filter is empty, set it as current date
 	if (empty($_POST['filter_date_min'])) $_POST['filter_date_min'] = date('1970-01-01');

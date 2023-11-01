@@ -68,13 +68,14 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
                 // Tours contract
                 if (getConnectedUser()) { ?>
                     <div class="container mt-3">
-                        <h3>ツアー規約</h3>
+                        <h3>規約</h3>
                         <div class="popup-contract"><?php
-                            include '../public/api/rides/contract.html'; ?>
+                            include '../public/api/rides/contract.html';
+                            include '../public/api/rides/rental_contract.html'; ?>
                         </div>
                         <div class="justify-center d-flex gap mb-3">
                             <input type="checkbox" name="agreement" id="agreement" class="js-field">
-                            <label class="required" for="agreement">ツアー規約をすべて読み、同意します</label>
+                            <label class="required" for="agreement">規約をすべて読み、同意します</label>
                         </div>
                     </div> <?php
                 }
@@ -110,3 +111,4 @@ if (!getConnectedUser()) include '../actions/rides/rideSignup.php'; ?>
 </html>
 
 <script src="\scripts\rides\entry.js"></script>
+<script type="module" src="\scripts\rides\rental-bikes.js"></script>

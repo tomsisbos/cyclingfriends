@@ -11,8 +11,8 @@ $stripeSecretKey = getEnv('STRIPE_SECRET_KEY');
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 \Stripe\Stripe::setApiVersion('2022-11-15');
 
-///$endpoint_secret = 'whsec_t8rwAo8dFjsV1XHdSW1sDCnYpNi9bYwK'; ///TEST MODE
 $endpoint_secret = 'whsec_v9aNHTb7pS1dtoVf9XOJToD6UyOcToCm';
+///$endpoint_secret = 'whsec_t8rwAo8dFjsV1XHdSW1sDCnYpNi9bYwK'; ///TEST MODE
 
 $payload = @file_get_contents('php://input');
 $event = null;
@@ -77,6 +77,7 @@ function handleSuccessfulPayment ($paymentIntent) {
         else if ($key == 'user_id') $user = new User($value);
         else if (substr($key, 0, 8) === 'a_field_') $additional_fields[$key] = $value;
         else if ($key == 'use_cf_points') (new User($metadata['user_id']))->removeCFPoints($value);
+        else if ($key == 'rental_bike') $ride->finalizeRentalBikeEntry($user->id);
         else $user_data[$key] = $value;
     }
 

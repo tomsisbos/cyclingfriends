@@ -133,6 +133,7 @@
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="<?= $router->generate('rides-calendar') ?>"><div class="mainitem">スケジュール</div></a>
 						<a class="dropdown-item interactive" href="<?= $router->generate('ride-contract') ?>"><div class="mainitem">ツアー規約</div></a>
+						<a class="dropdown-item interactive" href="<?= $router->generate('bike-rental-contract') ?>"><div class="mainitem">バイクレンタル規約</div></a>
 					</div>
 				</li>
 			</ul>

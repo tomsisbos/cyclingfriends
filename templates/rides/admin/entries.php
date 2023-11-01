@@ -34,7 +34,8 @@ include '../includes/rides/admin/head.php'; ?>
                                 <th class="sticky-th-row text-center">性別</th>
                                 <th class="sticky-th-row text-center">年齢</th>
                                 <th class="sticky-th-row">場所</th>
-                                <th class="sticky-th-row">緊急時連絡先</th> <?php
+                                <th class="sticky-th-row">緊急時連絡先</th>
+                                <th class="sticky-th-row">レンタルバイク</th> <?php
                                 foreach ($additional_fields as $additional_field) { ?>
                                     <th class="sticky-th-row"><?= $additional_field->question ?></th> <?php
                                 } ?>
@@ -56,7 +57,11 @@ include '../includes/rides/admin/head.php'; ?>
                                             if (!empty($participant->location->city)) echo $participant->location->toString();
                                             else echo '-' ?>
                                         </td>
-                                        <td class="text-center"><?= $participant->emergency_number ?></td> <?php
+                                        <td class="text-center"><?= $participant->emergency_number ?></td>
+                                        <td> <?php
+                                            if ($ride->getRentalBikeEntry($participant->id)) echo $ride->getRentalBikeEntry($participant->id)->name;
+                                            else echo '-'; ?>
+                                        </td> <?php
                                         foreach ($additional_fields as $additional_field) { ?>
                                             <td> <?php
                                                 if ($additional_field->getAnswer($participant->id)) echo $additional_field->getAnswer($participant->id)->content; ?>
@@ -78,7 +83,8 @@ include '../includes/rides/admin/head.php'; ?>
                                         if (!empty($guide->location->city)) echo $guide->location->toString();
                                         else echo '-' ?>
                                     </td>
-                                    <td class="text-center"><?= $guide->emergency_number ?></td> <?php
+                                    <td class="text-center"><?= $guide->emergency_number ?></td>
+                                    <td></td> <?php
                                     foreach ($additional_fields as $additional_field) { ?>
                                         <td> <?php
                                             if ($additional_field->getAnswer($guide->id)) echo $additional_field->getAnswer($guide->id)->content; ?>
