@@ -20,18 +20,17 @@ export default class RideMap extends Map {
 
     async updateSession (variable) {
         return new Promise ((resolve, reject) => {
-            // Remove marker data from variable checkpoints
-            var cleanVariable = JSON.parse(JSON.stringify(variable,
-                (key, value) => {
-                    if (key === 'marker') return undefined
-                    return value
-                } )
-            ) // Create a deep copy
-            if (variable.data.checkpoints) {
-                cleanVariable.data.checkpoints.forEach(checkpoint => {
-                    delete checkpoint.marker
-                } )
+            if (variable.data.checkpoints) var cleanVariable = {
+                ...variable,
+                data: {
+                    ...variable.data,
+                    checkpoints: variable.data.checkpoints.map(checkpoint => {
+                        const { marker, ...checkpointWithoutMarker } = checkpoint
+                        return checkpointWithoutMarker
+                    })
+                }
             }
+            else var cleanVariable = { ...variable }
             // If edit property has been set to true, ask API to use 'edit-course' array name rather than default 'course'
             if (this.edit == true) cleanVariable.edit = true
             // Send data to server
@@ -43,6 +42,8 @@ export default class RideMap extends Map {
                         ...response
                     }
                 }
+                console.log(response)
+                debugger
                 resolve(response)
             } )
         } )
@@ -59,6 +60,7 @@ export default class RideMap extends Map {
             ajaxJsonPostRequest (this.apiUrl, clear, (response) => {
                 if (this.session) this.session.course = response
                 resolve(response)
+                console.log('SESSION CLEARED')
             } )
         } )
     }
@@ -93,6 +95,7 @@ export default class RideMap extends Map {
                     'options': this.options
                 }
             })
+            console.log(1)
             this.setToSF()
         } )
     }
@@ -165,6 +168,7 @@ export default class RideMap extends Map {
                     checkpoints: this.data.checkpoints
                 }
             } )
+            console.log(2)
         }
 
         var onUpload = (e) => {
@@ -190,6 +194,7 @@ export default class RideMap extends Map {
                                 checkpoints: this.data.checkpoints
                             }
                         })
+                        console.log(3)
                         // In case of error
                         var $popup = popup.getElement()
                         if ('error' in response) {
@@ -280,6 +285,7 @@ export default class RideMap extends Map {
             method: this.method,
             data: this.data.checkpoints
         } )
+        console.log(4)
     }
 
     // Update checkpoints inner HTML if same start & finish option is on

@@ -387,6 +387,7 @@ if (isAjax()) {
     }
 
     if (isset($_GET['set-rating'])) {
+
         if ($_GET['type'] == 'scenery') {
             $object       = new Scenery($_GET['id']);
             $table        = "sceneries";
@@ -421,11 +422,8 @@ if (isAjax()) {
 
         if ($operation_type == 'update') {
             // Substract previous grade from current rating
-            if ($rating_infos['grades_number'] == 1) {
-                $rating_without_grade = 0;
-            } else {
-                $rating_without_grade = ($rating_infos['grades_number'] * $rating_infos['rating'] - $current_grade) / ($rating_infos['grades_number'] - 1);
-            }
+            if ($rating_infos['grades_number'] == 1) $rating_without_grade = 0;
+            else $rating_without_grade = ($rating_infos['grades_number'] * $rating_infos['rating'] - $current_grade) / ($rating_infos['grades_number'] - 1);
             // Add new grade instead
             $new_rating = (($rating_infos['grades_number'] - 1) * $rating_without_grade + $grade) / $rating_infos['grades_number'];
             // Calculate new popularity

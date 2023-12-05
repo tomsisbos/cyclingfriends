@@ -32,6 +32,7 @@ if (isset($ride_slug) AND !empty($ride_slug)) {
 			$_SESSION['edit-forms'][2]['finishplace'] = $ride->finish_place;
 			$_SESSION['edit-forms'][2]['terrain'] = $ride->terrain;
 			$_SESSION['edit-forms'][2]['course-description'] = $ride->course_description;
+			$_SESSION['edit-forms'][2]['featuredImage'] = $ride->getFeaturedImageCheckpointNumber();
 			$checkpoints = $ride->getCheckpoints();
 			if (round($checkpoints[0]->lngLat->lng, 2) == round($checkpoints[count($checkpoints) - 1]->lngLat->lng, 2) && round($checkpoints[0]->lngLat->lat, 2) == round($checkpoints[count($checkpoints) - 1]->lngLat->lat, 2)) {
 				$_SESSION['edit-forms'][2]['options'] = ['sf' => true]; } // If coordinates rounded to 0,02 of the first and of the last road waypoint are equal, then set options SF to true

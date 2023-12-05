@@ -1,5 +1,6 @@
 <?php
 
+use Firebase\JWT\JWT;
 
 $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
 require_once $base_directory . '/vendor/autoload.php';
@@ -31,9 +32,19 @@ if (!empty($data)) {
 
             $user_id = $checkToken->fetch(PDO::FETCH_COLUMN);
             $user = new User($user_id);
-            $user->verify();
 
-            echo json_encode($user);
+            $user_data = [
+                'id' => $user->id,
+                'login' => $user->login,
+                'propicUrl' => $user->getPropicFilename(),
+                'defaultPropicNumber' => $user->default_profilepicture_id
+            ];
+
+            $token = JWT::encode($user_data, getEnv('JWT_SECRET_KEY'), 'HS256');
+
+            $user_data['token'] = $token;
+
+            echo json_encode($user_data);
 
         } else echo json_encode(['error' => 'ご記入頂いた番号が一致しません。お手数ですが、ご確認の上、再度お試しください。']);
 		

@@ -1,22 +1,23 @@
 <?php
 
-require '../../includes/api-head.php';
+$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/includes/api-authentication.php';
 
 if (isset($_GET)) {
 
-    if (isset($_GET['email'])) echo json_encode(getConnectedUser()->email);
+    if (isset($_GET['email'])) echo json_encode($user->email);
     
-    if (isset($_GET['login'])) echo json_encode(getConnectedUser()->login);
+    if (isset($_GET['login'])) echo json_encode($user->login);
 
     if (isset($_GET['privacy-settings'])) {
-        $settings = getConnectedUser()->getSettings();
+        $settings = $user->getSettings();
         unset($settings->id);
         echo json_encode($settings);
     }
 
     if (isset($_GET['connection-settings'])) {
         // Twitter
-        $twitter = getConnectedUser()->getTwitter();
+        $twitter = $user->getTwitter();
         if ($twitter->isUserConnected()) {
             $twitter_data = [
                 'authenticateUrl' => '/api/settings.php',
@@ -29,7 +30,7 @@ if (isset($_GET)) {
             ];
         }
         // Garmin
-        $garmin = getConnectedUser()->getGarmin();
+        $garmin = $user->getGarmin();
         if ($garmin->isUserConnected()) {
             $garmin_data = [
                 'authenticateUrl' => '/api/settings.php',
@@ -37,7 +38,7 @@ if (isset($_GET)) {
             ];
         } else {
             $garmin_data = [
-                'authenticateUrl' => $garmin->getAuthenticateUrl(),
+                'authenticateUrl' => $garmin->getAuthenticateUrl($user->id),
                 'connected' => false
             ];
         }
@@ -58,17 +59,17 @@ if (is_array($settings)) {
 
     if ($settings['type'] === 'settings') {
         unset($settings['type']);
-        $response = getConnectedUser()->updateSettings($settings);
+        $response = $user->updateSettings($settings);
         if ($response === true) echo json_encode(['success' => '変更が保存されました。']);
         else echo json_encode(['error' => '保存中にエラーが発生しました。']);
 
     } else if ($settings['type'] === 'disconnections') {
         if ($settings['api'] === 'Twitter') {
-            $twitter = getConnectedUser()->getTwitter();
+            $twitter = $user->getTwitter();
             $twitter->disconnect();
             echo json_encode(['success' => 'Twitterとの接続が解除されました。']);
         } else if ($settings['api'] == 'Garmin Connect') {
-            $garmin = getConnectedUser()->getGarmin();
+            $garmin = $user->getGarmin();
             $garmin->deregister();
             echo json_encode(['success' => 'Garmin Connectとの接続が解除されました。']);
         }
@@ -80,13 +81,13 @@ if (is_array($settings)) {
         // Check if posted email corresponds to posted verification email
         if ($posted_email == $posted_verification_email) {
             // Check if filled password matches connected user registered password
-            if (password_verify($posted_password, getConnectedUser()->getPassword())) {    
+            if (password_verify($posted_password, $user->getPassword())) {    
                 // Check if filled email format is valid
                 if (filter_var($posted_email, FILTER_VALIDATE_EMAIL)) {
                     // Update user data
                     $updateEmail = $db->prepare('UPDATE users SET slug = FLOOR(RANDOM() * 1000000000), email = ?, verified = 0 WHERE id = ?');
-                    $updateEmail->execute(array($posted_email, getConnectedUser()->id));
-                    getConnectedUser()->sendVerificationMail(['redirect' => false]);
+                    $updateEmail->execute(array($posted_email, $user->id));
+                    $user->sendVerificationMail(['redirect' => false]);
                     echo json_encode(['success' => '登録の新メールアドレス宛に確認用のメールを送信しました。新メールアドレスでご利用頂くために、そのメール内にある確認用URLをクリックしてください。']);
                 } else echo json_encode(['error' => 'この形式のメールアドレスをご利用頂けません。メールアドレスの記載に誤字がないか、再度ご確認ください。']);
             } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
@@ -96,9 +97,9 @@ if (is_array($settings)) {
         $posted_login = htmlspecialchars($settings['login']);
         $posted_password = htmlspecialchars($settings['password']);
         // Check if filled password matches connected user registered password
-        if (password_verify($posted_password, getConnectedUser()->getPassword())) {
+        if (password_verify($posted_password, $user->getPassword())) {
             $updateLogin = $db->prepare('UPDATE users SET login = ? WHERE id = ?');
-            $updateLogin->execute(array($posted_login, getConnectedUser()->id));
+            $updateLogin->execute(array($posted_login, $user->id));
             echo json_encode(['success' => 'ユーザーネームが更新されました！']);
         } else echo json_encode(['error' => 'パスワードが一致していません。再度お試しください。']);
     
@@ -109,11 +110,11 @@ if (is_array($settings)) {
                 $new_password = htmlspecialchars($settings['newPassword']);
                 
                 // Check if filled password matches registered password
-                if (password_verify($current_password, getConnectedUser()->getPassword())) {
+                if (password_verify($current_password, $user->getPassword())) {
                     // Check if the new passport is different as the former one
                     if ($current_password != $new_password) {
                         // Check if password format is valid
-                        if (getConnectedUser()->checkPasswordStrength($new_password)) {
+                        if ($user->checkPasswordStrength($new_password)) {
                             // Hash new password
                             $encrypted_password = password_hash($new_password, PASSWORD_DEFAULT);
                             $updatePassword = $db->prepare('UPDATE users SET password = ? WHERE id = ?');
@@ -127,9 +128,9 @@ if (is_array($settings)) {
     } else if ($settings['type'] === 'deleteAccount') {
         $posted_password = htmlspecialchars($settings['password']);
         // Check if filled password matches connected user registered password
-        if (password_verify($posted_password, getConnectedUser()->getPassword())) {
+        if (password_verify($posted_password, $user->getPassword())) {
             $deleteAccount = $db->prepare('DELETE FROM users WHERE id = ?');
-            $deleteAccount->execute(array(getConnectedUser()->id));
+            $deleteAccount->execute(array($user->id));
             session_destroy();
 
             echo json_encode(['success' => 'アカウントとアカウントに付随されているデータは全て削除されました。']);

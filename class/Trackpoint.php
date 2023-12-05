@@ -8,7 +8,7 @@ class Trackpoint {
     public $lngLat;
     
     /**
-     * @var DateTime
+     * @var DateTime|int
      */
     public $time;
     

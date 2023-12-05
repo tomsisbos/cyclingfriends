@@ -13,6 +13,7 @@ include '../includes/head-map.php'; ?>
 <link rel="stylesheet" href="/assets/css/map.css" />
 <link rel="stylesheet" href="/assets/css/youtube.css" />
 <link rel="stylesheet" href="/assets/css/activity.css" />
+<link rel="stylesheet" href="/assets/css/twitter.css" />
 
 <style>
 	.with-background-img::before {
@@ -56,16 +57,15 @@ include '../includes/head-map.php'; ?>
                     echo 'data-twitter-auth-url="' .$twitter_auth_url. '"';
                 }
                 if ($twitter->isUserConnected()) echo 'data-twitter-username="' .$twitter->username. '" data-twitter-name="' .$twitter->name. '" data-twitter-profile-image="' .$twitter->profile_image. '"';
-            } ?>
-        >
-        </div> <?php
+            }
         
-        // Video if set
-        if (isset($ride->getReport()->video_url)) { ?>
-            <div class="bg-white text-center">
-                <?= $ride->getReport()->getVideoIframe() ?>
-            </div> <?php
-        } ?>
+            // Video if set
+            if (isset($ride->getReport()->video_url)) echo 'data-youtube-element="' .$ride->getReport()->getVideoId(). '"';
+        
+            // Photo album if set
+            if (isset($ride->getReport()->photoalbum_url)) echo 'data-photo-album-url="' .$ride->getReport()->photoalbum_url. '"'; ?>
+        >
+        </div>
 
 	</div>
 

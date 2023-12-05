@@ -6,6 +6,7 @@
   "public/myactivities.js": "/public/react/myactivities.js",
   "public/dashboard.js": "/public/react/dashboard.js",
   "public/tours.js": "/public/react/tours.js",
+  "public/world.js": "/public/react/world.js",
   "public/runtime.js": "/public/react/runtime.js",
   "public/vendors-public_node_modules_mapbox_mapbox-gl-geocoder_dist_mapbox-gl-geocoder_min_js.js": "/public/react/vendors-public_node_modules_mapbox_mapbox-gl-geocoder_dist_mapbox-gl-geocoder_min_js.js"
 }

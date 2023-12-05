@@ -47,7 +47,7 @@ include '../includes/rides/admin/head.php'; ?>
                                     $number++ ?>
                                     <tr>
                                         <th class="sticky-th-column text-center"><?= $number ?></td>
-                                        <td><?= $participant->login ?></td>
+                                        <td><a target="_blank" href=<?= $router->generate('profile-single', ['user_id' => $participant->id]) ?>><?= $participant->login ?></a></td>
                                         <td><?= $participant->last_name ?></td>
                                         <td><?= $participant->first_name ?></td>
                                         <td><?= $participant->email ?></td>

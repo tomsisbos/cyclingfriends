@@ -22,7 +22,11 @@ export default function Privacy () {
 
     // Fetch current settings data from database once at component loading
     useEffect( () => {
-        axios('/api/settings.php' + '?privacy-settings=true').then(response => {
+        axios.get('/api/settings.php', {
+            params: {
+                'privacy-settings': true
+            }
+        }).then(response => {
             setSettings({ ...response.data })
         } )
     }, [])

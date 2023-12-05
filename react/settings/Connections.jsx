@@ -21,7 +21,11 @@ export default function Connections () {
     const displayResponseMessage = useContext(AppContext)
 
     function updateSettings () {
-        axios('/api/settings.php' + '?connection-settings=true').then(response => {
+        axios.get('/api/settings.php', {
+            params: {
+                'connection-settings': true
+            },
+        }).then(response => {
             setSettings({ ...response.data })
         } )
     }
@@ -33,11 +37,10 @@ export default function Connections () {
 
     // On click on disconnect button, send a disconnection request for this connection type
     const handleDisconnect = (type) => {
-        var data = {
+        axios.post('/api/settings.php', {
             type: 'disconnections',
             api: type
-        }
-        axios.post('/api/settings.php', data).then(response => {
+        }).then(response => {
             displayResponseMessage(response.data)
             updateSettings()
         })

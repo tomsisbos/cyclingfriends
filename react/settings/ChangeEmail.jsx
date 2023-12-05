@@ -26,7 +26,11 @@ export default function ChangeEmail () {
 
     // Get current email data from database once at component loading
     useEffect( () => {
-        axios('/api/settings.php' + '?email=true').then(response => {
+        axios.get('/api/settings.php', {
+            params: {
+                email: true
+            }
+        }).then(response => {
             setEmail(response.data)
         } )
     }, [])

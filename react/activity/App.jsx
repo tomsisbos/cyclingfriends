@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
 import CFSession from '../../public/class/utils/CFSession'
-import Header from "/react/activity/Header.jsx"
-import ActivityMapView from "/react/activity/ActivityMapView.jsx"
-import Timeline from "/react/activity/Timeline.jsx"
+import Header from "./Header.jsx"
+import ActivityMapView from "./ActivityMapView.jsx"
+import Timeline from "./Timeline.jsx"
 
 const activity_id = document.querySelector('#activity').dataset.activity
 
@@ -62,6 +62,15 @@ function App () {
         else if (activityData.photos.length > 0) return activityData.photos[0]
         else return null
     }
+
+    var youtubeId = document.querySelector("#activity").dataset.youtubeElement
+    console.log(youtubeId)
+
+    const getVideoIframe = () => {
+        var width = 720
+        var height = 405
+        return `<iframe class="responsive-iframe" id="ytplayer" type="text/html" width="` + width + `" height="` + height + `" src="https://www.youtube.com/embed/` + youtubeId + `?autoplay=1&list=PLh5FHR57HS40VebyT_ZD5acIwlcJto-b4&listType=playlist&loop=1&modestbranding=1&color=white" frameborder="0" allowfullscreen></iframe>`
+    }
   
     return (
         <>
@@ -71,6 +80,8 @@ function App () {
                 activityData={activityData}
                 session={session}
             />
+            { // Load youtube video if there is one
+            youtubeId && <div className="bg-white text-center pt-1" dangerouslySetInnerHTML={{ __html: getVideoIframe() }}></div>}
             <Timeline
                 isLoading={isLoading}
                 checkpoints={activityData.checkpoints}

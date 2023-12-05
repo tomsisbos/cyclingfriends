@@ -195,8 +195,8 @@ class ActivityData extends Model {
      * @return boolean
      */
     public function alreadyExists ($user_id) {
-        $checkIfExists = $this->getPdo()->prepare("SELECT id FROM activities WHERE user_id = ? AND datetime = ?");
-        $checkIfExists->execute([$user_id, (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s')]);
+        $checkIfExists = $this->getPdo()->prepare("SELECT a.id FROM activities AS a JOIN routes AS r ON a.route_id = r.id WHERE a.user_id = ? AND a.datetime = ? AND r.distance = ?");
+        $checkIfExists->execute([$user_id, (new DateTime('@' .$this->linestring->trackpoints[0]->time, new DateTimeZone('Asia/Tokyo')))->setTimezone(new DateTimeZone('Asia/Tokyo'))->format('Y-m-d H:i:s'), $this->summary['distance']]);
         if ($checkIfExists->rowCount() > 0) return $checkIfExists->fetch(PDO::FETCH_COLUMN);
         else return false;
     }   
@@ -231,8 +231,10 @@ class ActivityData extends Model {
                 if ($checkpoint['type'] == 'Start') $checkpoint['special'] = 'start';
                 else if ($checkpoint['type'] == 'Goal') $checkpoint['special'] = 'goal';
                 else $checkpoint['special'] = null;
-                $checkpoint['lng'] = $checkpoint['lngLat']['lng'];
-                $checkpoint['lat'] = $checkpoint['lngLat']['lat'];
+                if (isset($checkpoint['lngLat'])) { // In case coordinates are stored with lngLat format
+                    $checkpoint['lng'] = $checkpoint['lngLat']['lng'];
+                    $checkpoint['lat'] = $checkpoint['lngLat']['lat'];
+                }
                 if (isset($checkpoint['geolocation'])) {
                     $checkpoint['city'] = $checkpoint['geolocation']['city'];
                     $checkpoint['prefecture'] = $checkpoint['geolocation']['prefecture'];
@@ -241,7 +243,7 @@ class ActivityData extends Model {
                     $checkpoint['city'] = $geolocation->city;
                     $checkpoint['prefecture'] = $geolocation->prefecture;
                 }
-                $checkpoint['datetime'] = (new DateTime('@' .$checkpoint['datetime']))->setTimezone(new DateTimeZone('Asia/Tokyo')); // Change timestamp to datetime instance
+                ///$checkpoint['datetime'] = (new DateTime('@' .$checkpoint['datetime']))->setTimezone(new DateTimeZone('Asia/Tokyo')); // Change timestamp to datetime instance
                 return $checkpoint;
             }, $editable_data['checkpoints']);
         
@@ -253,7 +255,7 @@ class ActivityData extends Model {
                     'name' => 'Start',
                     'type' => 'Start',
                     'story' => '',
-                    'datetime' => (new DateTime('@' .$this->linestring->trackpoints[0]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
+                    'datetime' => $this->linestring->trackpoints[0]->time,
                     'city' => $this->summary['startplace']->city,
                     'prefecture' => $this->summary['startplace']->prefecture,
                     'elevation' => $this->linestring->trackpoints[0]->elevation,
@@ -268,7 +270,7 @@ class ActivityData extends Model {
                     'name' => 'Goal',
                     'type' => 'Goal',
                     'story' => '',
-                    'datetime' => (new DateTime('@' .$this->linestring->trackpoints[$this->linestring->length - 1]->time))->setTimezone(new DateTimeZone('Asia/Tokyo')),
+                    'datetime' => $this->linestring->trackpoints[$this->linestring->length - 1]->time,
                     'city' => $this->summary['goalplace']->city,
                     'prefecture' => $this->summary['goalplace']->prefecture,
                     'elevation' => $this->linestring->trackpoints[$this->linestring->length - 1]->elevation,

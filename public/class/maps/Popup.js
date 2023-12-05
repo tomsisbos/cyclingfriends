@@ -348,15 +348,13 @@ export default class Popup extends Model {
                         if (numIsPair(click)) {
                             // On click, send clicked number to API and update rating display
                             var vote = e.target.getAttribute('number')
-                            ajaxGetRequest (this.apiUrl + "?set-rating=true&type=" + this.type + "&id=" + object.id + "&grade=" + vote, (response) => {
-                                ratingInfos = response
-                                setRating(ratingInfos)
+                            ajaxGetRequest (this.apiUrl + "?set-rating=true&type=" + this.type + "&id=" + object.id + "&grade=" + vote, (ratingInfos) => {
+                                if (ratingInfos) setRating(ratingInfos)
                             } )
                         } else {
                             // On click, ask API to cancel current vote and update rating display
-                            ajaxGetRequest (this.apiUrl + "?cancel-rating=true&type=" + this.type + "&id=" + object.id, (response) => {
-                                ratingInfos = response
-                                setRating(ratingInfos)
+                            ajaxGetRequest (this.apiUrl + "?cancel-rating=true&type=" + this.type + "&id=" + object.id, (ratingInfos) => {
+                                if (ratingInfos) setRating(ratingInfos)
                             } )
                         }
                         click++

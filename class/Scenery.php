@@ -69,6 +69,7 @@ class Scenery extends Model {
 
         // Insert photos data
         foreach ($scenery_data['photos'] as $photo) {
+
             $insertPhotos = $this->getPdo()->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
             $insertPhotos->execute(array($scenery_data['id'], $scenery_data['user_id'], $scenery_data['date']->format('Y-m-d H:i:s'), 0, $photo['filename']));
             
@@ -123,28 +124,50 @@ class Scenery extends Model {
      */
     public function insertPhoto ($photo) {
 
-        // Insert table data
-        $photo['filename'] = setFilename('img');
-        $insertImgScenery = $this->getPdo()->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-        $insertImgScenery->execute(array($this->id, $photo['user_id'], $photo['date']->format('Y-m-d H:i:s'), 0, $photo['filename']));
-
         // Send file to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
         require $folder . '/actions/blobStorage.php';
-        
-        $containername = 'scenery-photos';
-        $blobClient->createBlockBlob($containername, $photo['filename'], $photo['blob']);
-        $metadata = [
-            'file_name' => $photo['name'],
-            'file_type' => $photo['type'],
-            'file_size' => $photo['size'],
-            'scenery_id' => $this->id,
-            'author_id' => $photo['user_id'],
-            'date' => $photo['date']->format('Y-m-d H:i:s'),
-            'lat' => $this->lngLat->lat,
-            'lng' => $this->lngLat->lng
-        ];
-        $blobClient->setBlobMetadata($containername, $photo['filename'], $metadata);
+
+        // Check if an entry exists for this filename
+        $getPhotoId = $this->getPdo()->prepare("SELECT p.id AS id, s.name FROM scenery_photos AS p JOIN sceneries AS s ON p.scenery_id = s.id WHERE filename = ?");
+        $getPhotoId->execute([$photo['filename']]);
+
+        // If it does, get its id
+        if ($getPhotoId->rowCount() > 0) {
+            $result = $getPhotoId->fetch(PDO::FETCH_ASSOC);
+            $response = [
+                'error' => 'この写真は既に「' .$result['name']. '」追加されています。',
+                'id' => $result['id']
+            ];
+
+        // Else, upload blob and add it to this scenery
+        } else {
+            
+            $containername = 'scenery-photos';
+            $blobClient->createBlockBlob($containername, $photo['filename'], $photo['blob']);
+            $metadata = [
+                'file_name' => $photo['name'],
+                'file_type' => $photo['type'],
+                'file_size' => $photo['size'],
+                'scenery_id' => $this->id,
+                'author_id' => $photo['user_id'],
+                'date' => $photo['date']->format('Y-m-d H:i:s'),
+                'lat' => $this->lngLat->lat,
+                'lng' => $this->lngLat->lng
+            ];
+            $blobClient->setBlobMetadata($containername, $photo['filename'], $metadata);
+
+            if (!isset($photo['filename'])) $photo['filename'] = setFilename('img');
+            $insertImgScenery = $this->getPdo()->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?) RETURNING id');
+            $insertImgScenery->execute(array($this->id, $photo['user_id'], $photo['date']->format('Y-m-d H:i:s'), 0, $photo['filename']));
+            $response = [
+                'success' => '写真が「' .$this->name. '」に追加されました！',
+                'id' => $insertImgScenery->fetchColumn()
+            ];
+
+        }
+
+        return $response;
     }
 
     public function delete () {

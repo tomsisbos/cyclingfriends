@@ -22,6 +22,7 @@ formMethodSelect.addEventListener('change', () => {
     var rideMap = new RideMap()
     rideMap.clearSession()
     // Update method
+    console.log(17)
     rideMap.updateSession( {
         method: formMethodSelect.value,
         data: {}
@@ -102,7 +103,7 @@ async function displayForm () {
             // If raw server data, build meetingplace and finishplace geolocation data
             if (typeof course.meetingplace !== 'object') {
                 var meetingplace = {
-                    geolocation: CFUtils.buildGeolocationFromString(course.meetingplace),
+                    ...CFUtils.buildGeolocationFromString(course.meetingplace),
                     lngLat: course.checkpoints[0].lngLat
                 }
                 if (course.options.sf == false) var finishplace = {
@@ -114,6 +115,7 @@ async function displayForm () {
                 data.finishplace = finishplace
             }
             // Update session variable
+            console.log(14)
             ridePickMap.updateSession( {
                 method: ridePickMap.method,
                 data: data
@@ -183,6 +185,7 @@ async function displayForm () {
                 await rideDrawMap.loadRoute(selectRoute.value, {loader: 'ルート読込中...'})
                 await rideDrawMap.sortCheckpoints()
                 rideDrawMap.treatRouteChange()
+                console.log(16)
                 rideDrawMap.updateSession( {
                     method: rideDrawMap.method,
                     data: {

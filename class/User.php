@@ -305,7 +305,7 @@ class User extends Model {
     public function getPassword () {
         $getUserInfos = $this->getPdo()->prepare('SELECT password FROM users WHERE id = ?');
         $getUserInfos->execute(array($this->id));
-        return $password = $getUserInfos->fetch(PDO::FETCH_NUM)[0];
+        return $password = $getUserInfos->fetch(PDO::FETCH_COLUMN);
     }
     
     public function getInscriptionDate ($user) {
@@ -582,6 +582,13 @@ class User extends Model {
         $getDefaultPropicId = $this->getPdo()->prepare('SELECT default_profilepicture_id FROM users WHERE id = ?');
         $getDefaultPropicId->execute(array($this->id));
         return $getDefaultPropicId->fetch(PDO::FETCH_COLUMN);
+    }
+
+    public function getPropicFilename () {
+        $getImage = $this->getPdo()->prepare('SELECT filename FROM profile_pictures WHERE user_id = ?');
+        $getImage->execute(array($this->id));
+        if ($getImage->rowCount() > 0) return $getImage->fetch(PDO::FETCH_COLUMN);
+        else return '';
     }
 
     // Function for downloading users's profile picture

@@ -1,5 +1,6 @@
 <?php
 
+use Firebase\JWT\JWT;
 
 $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
 require_once $base_directory . '/vendor/autoload.php';
@@ -37,10 +38,21 @@ if (!empty($data)) {
 
 				$user = new User($result['id']);
 
+				$user_data = [
+					'id' => $user->id,
+					'login' => $user->login,
+					'propicUrl' => $user->getPropicFilename(),
+					'defaultPropicNumber' => $user->default_profilepicture_id
+				];
+
+				$token = JWT::encode($user_data, getEnv('JWT_SECRET_KEY'), 'HS256');
+
+				$user_data['token'] = $token;
+
 				// Check if account has been verified
 				if ($user->isVerified()) {
 
-					echo json_encode($user);
+					echo json_encode($user_data);
 
 				} else echo json_encode(['error' => 'こちらのアカウントに登録されているメールアドレスがまだ確認されていないため、アカウント作成が完了していません。登録時（' .$user->inscription_date. '）にお送りした確認用の自動メール内に掲載しているURLをクリックして、アカウント作成を完了させてください。<br>自動メールが確認できていない場合は、<a href="' .$router->generate('user-verification-guidance'). '">こちら</a>をご確認ください。']);
 			} else echo json_encode(['error' => "ご記入頂いたパスワードは一致していません。"]);

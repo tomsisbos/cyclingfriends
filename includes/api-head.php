@@ -4,10 +4,10 @@ $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVE
 require_once $base_directory . '/vendor/autoload.php';
 require_once $base_directory . '/class/CFAutoloader.php'; 
 CFAutoloader::register();
-require $base_directory . '/includes/functions.php';
-require $base_directory . '/includes/session-handlers.php';
-require $base_directory . '/actions/users/initPublicSession.php';
-require $base_directory . '/actions/database.php';
+require_once $base_directory . '/includes/functions.php';
+require_once $base_directory . '/includes/session-handlers.php';
+require_once $base_directory . '/actions/users/initPublicSession.php';
+require_once $base_directory . '/actions/database.php';
 
 
 // Only allow request coming from $allowed_hosts

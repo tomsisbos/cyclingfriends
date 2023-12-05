@@ -15,7 +15,14 @@ export default function Activities () {
     const loadData = async () => {
         return new Promise((resolve, reject) => {
             setLoading(true)
-            axios('/api/dashboard.php?task=activities&activities_number=' + activitiesNumber + '&photos_number=' + photosNumber + '&offset=' + activities.length).then(response => {
+            axios('/api/activitiess', {
+                params: {
+                    activities_number: activitiesNumber,
+                    photos_number: photosNumber,
+                    offset: activities.length,
+                    activity_min_distance: 15
+                }
+            }).then(response => {
                 var newActivities = activities.slice()
                 response.data.forEach(activity => newActivities.push(activity))
                 setActivities(newActivities)

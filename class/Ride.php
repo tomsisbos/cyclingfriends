@@ -88,13 +88,9 @@ class Ride extends Model {
 
     public function getFeaturedImage () {
         // Select image if exists for checkpoint set as featured
-        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = 1 AND filename IS NOT NULL');
-        $getFeaturedImage->execute(array($this->id));
-        if ($getFeaturedImage->rowCount() > 0) {
-            $checkpoint_image_id = $getFeaturedImage->fetch(PDO::FETCH_COLUMN);
-            return new CheckpointImage($checkpoint_image_id);
+        if ($this->hasFeaturedImage()) return new CheckpointImage($this->getFeaturedImageCheckpointNumber());
         // Else, select first checkpoint having an image set
-        } else {
+        else {
             $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND filename IS NOT NULL');
             $getFeaturedImage->execute(array($this->id));
             if ($getFeaturedImage->rowCount() > 0) {
@@ -109,7 +105,13 @@ class Ride extends Model {
         }
     }
 
-    function getAcceptedLevels () {
+    public function getFeaturedImageCheckpointNumber () {
+        $getFeaturedImage = $this->getPdo()->prepare('SELECT id FROM ride_checkpoints WHERE ride_id = ? AND featured = 1 AND filename IS NOT NULL');
+        $getFeaturedImage->execute(array($this->id));
+        if ($getFeaturedImage->rowCount() > 0) return intval($getFeaturedImage->fetch(PDO::FETCH_COLUMN));
+    }
+
+    public function getAcceptedLevels () {
         $getAcceptedLevels = $this->getPdo()->prepare('SELECT level_beginner, level_intermediate, level_athlete FROM rides WHERE id = ?');
         $getAcceptedLevels->execute(array($this->id));
         $accepted_levels = $getAcceptedLevels->fetch(PDO::FETCH_NUM);

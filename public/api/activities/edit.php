@@ -1,19 +1,11 @@
 <?php
 
-require '../../../includes/api-head.php';
+$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/includes/api-public-head.php';
 
 // Connect to blob storage
 $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
 require $folder . '/actions/blobStorage.php';
-
-// In case an Ajax request have been detected
-if (isAjax()) {
-
-    if (isset($_GET)) {
-
-    }
-
-}
 
 // In case a Json request have been detected
 $json = file_get_contents('php://input'); // Get json file from xhr request
@@ -22,11 +14,11 @@ $data = json_decode($json, true);
 if (is_array($data)) {
 
     // Build activity data
-    $activity_id = $data['id'];
-    $title       = $data['title'];
+    $activity_id  = $data['id'];
+    $title        = $data['title'];
     if (isset($data['bike'])) $bike_id = $data['bike'];
     else $bike_id = null;
-    $privacy     = $data['privacy'];
+    $privacy      = $data['privacy'];
 
     // Update data in 'activities' table
     $update_activity = $db->prepare('UPDATE activities SET title = ?, bike_id = ?, privacy = ? WHERE id = ?');
@@ -43,12 +35,13 @@ if (is_array($data)) {
         $checkpoint_data['name'] = $checkpoint['name'];
         $checkpoint_data['type'] = $checkpoint['type'];
         $checkpoint_data['story'] = $checkpoint['story'];
-        $checkpoint_data['datetime'] = new DateTime();
-        $checkpoint_data['datetime']->setTimestamp($checkpoint['datetime']);
-        $checkpoint_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-        if (isset($checkpoint['geolocation'])) {
+        $checkpoint_data['datetime'] = intval($checkpoint['datetime']);
+        if (isset($checkpoint['geolocation'])) { // Handle both Geolocation object and city and prefecture property cases
             $checkpoint_data['city'] = $checkpoint['geolocation']['city'];
             $checkpoint_data['prefecture'] = $checkpoint['geolocation']['prefecture'];
+        } else if (isset($checkpoint['city'])) {
+            $checkpoint_data['city'] = $checkpoint['city'];
+            $checkpoint_data['prefecture'] = $checkpoint['prefecture'];
         } else {
             $checkpoint_data['city'] = NULL;
             $checkpoint_data['prefecture'] = NULL;
@@ -56,8 +49,13 @@ if (is_array($data)) {
         $checkpoint_data['elevation'] = $checkpoint['elevation'];
         $checkpoint_data['distance'] = ceil($checkpoint['distance'] * 10) / 10;
         $checkpoint_data['temperature'] = $checkpoint['temperature'];
-        $checkpoint_data['lng'] = $checkpoint['lngLat']['lng'];
-        $checkpoint_data['lat'] = $checkpoint['lngLat']['lat'];
+        if (isset($checkpoint['lngLat'])) { // Handle both lngLat object and lng and lat property cases
+            $checkpoint_data['lng'] = $checkpoint['lngLat']['lng'];
+            $checkpoint_data['lat'] = $checkpoint['lngLat']['lat'];
+        } else {
+            $checkpoint_data['lng'] = $checkpoint['lng'];
+            $checkpoint_data['lat'] = $checkpoint['lat'];
+        }
         if ($checkpoint['number'] == 0) $checkpoint_data['special'] = 'start';
         else if ($checkpoint['number'] == count($data['checkpoints']) - 1) $checkpoint_data['special'] = 'goal';
         else $checkpoint_data['special'] = NULL;
@@ -87,9 +85,7 @@ if (is_array($data)) {
             $activity_photo_data['type'] = $photo['type'];
             $activity_photo_data['lng'] = $photo['lng'];
             $activity_photo_data['lat'] = $photo['lat'];
-            $activity_photo_data['datetime'] = new DateTime();
-            $activity_photo_data['datetime']->setTimestamp($photo['datetime']);
-            $activity_photo_data['datetime']->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+            $activity_photo_data['datetime'] = intval($photo['datetime']);
             if ($photo['featured'] == true) $activity_photo_data['featured'] = 1;
             else $activity_photo_data['featured'] = 0;
             $activity_photo_data['privacy'] = $photo['privacy'];

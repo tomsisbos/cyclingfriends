@@ -26,6 +26,8 @@ var activityMap = new ActivityMap()
 // Get activity data from server
 ajaxGetRequest (activityMap.apiUrl + "?load=" + activityMap.activityId, async (activityData) => {
 
+    console.log(activityData)
+
     // Clean route data architecture to match geojson format
     activityMap.routeData = {
         geometry: {

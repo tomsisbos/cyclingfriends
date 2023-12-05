@@ -26,8 +26,8 @@ class ActivityCheckpoint extends Model {
             $this->number      = intval($data['number']);
             $this->name        = $data['name'];
             $this->type        = $data['type'];
-            $this->story       = nl2br($data['story']);
-            $this->datetime    = (new DateTime($data['datetime'], new DateTimeZone('Asia/Tokyo')))->getTimestamp();
+            $this->story       = $data['story'];
+            $this->datetime    = (new DateTime($data['datetime']))->getTimestamp();
             $this->geolocation = new Geolocation($data['city'], $data['prefecture']);
             $this->elevation   = intval($data['elevation']);
             $this->distance    = floatval($data['distance']);
@@ -56,8 +56,8 @@ class ActivityCheckpoint extends Model {
         $point_wkt = $lngLat->toWKT();
 
         // Insert checkpoints in 'activity_checkpoints' table
-        $insert_checkpoints = $this->getPdo()->prepare("INSERT INTO {$this->table}(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, special, point) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
-        $insert_checkpoints->execute(array($data['activity_id'], $data['number'], $data['name'], $data['type'], $data['story'], $data['datetime']->format('Y-m-d H:i:s'), $data['city'], $data['prefecture'], intval($data['elevation']), $data['distance'], $data['temperature'], $data['special'], $point_wkt));
+        $insert_checkpoints = $this->getPdo()->prepare("INSERT INTO {$this->table}(activity_id, number, name, type, story, datetime, city, prefecture, elevation, distance, temperature, special, point) VALUES (?, ?, ?, ?, ?, to_timestamp(?), ?, ?, ?, ?, ?, ?, ST_GeomFromText(?))");
+        $insert_checkpoints->execute(array($data['activity_id'], $data['number'], $data['name'], $data['type'], $data['story'], $data['datetime'], $data['city'], $data['prefecture'], intval($data['elevation']), $data['distance'], $data['temperature'], $data['special'], $point_wkt));
     }
 
     public function getIcon ($width = 24) {

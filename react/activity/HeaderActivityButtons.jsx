@@ -26,6 +26,8 @@ export default function HeaderActivityButtons ({ activityData, session }) {
         twitter.openTwitterModal()
     }
 
+    const photoAlbumUrl = document.querySelector("#activity").dataset.photoAlbumUrl
+
     return (
         <>
             { activityData.author && session.id == activityData.author.id &&
@@ -60,6 +62,8 @@ export default function HeaderActivityButtons ({ activityData, session }) {
                         onClick={postTweet}
                     />)
             }
+
+            { photoAlbumUrl && <a href={photoAlbumUrl}><Button text={'フォトアルバム'} onClick={() => {return <></>}} /></a>}
         </>
     )
 

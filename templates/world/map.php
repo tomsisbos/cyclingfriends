@@ -1,6 +1,6 @@
 <?php
 
-include '../actions/users/initSession.php';
+include '../actions/users/initPublicSession.php';
 include '../includes/head.php';
 include '../includes/head-map.php'; ?>
 

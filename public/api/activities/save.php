@@ -1,11 +1,7 @@
 <?php
 
 $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-require_once $base_directory . '/vendor/autoload.php';
-require_once $base_directory . '/class/CFAutoloader.php'; 
-CFAutoloader::register(); 
-require $base_directory . '/includes/functions.php';
-require $base_directory . '/actions/database.php';
+require_once $base_directory . '/includes/api-public-head.php';
 
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', '700');
@@ -94,8 +90,8 @@ if (is_array($data)) {
                 }
 
                 // Prepare variables
-                $scenery_data['user_id']          = $_SESSION['id'];
-                $scenery_data['user_login']       = $_SESSION['login'];
+                $scenery_data['user_id']          = getConnectedUser()->id;
+                $scenery_data['user_login']       = getConnectedUser()->login;
                 $scenery_data['category']         = 'marker';
                 $scenery_data['name']             = htmlspecialchars($entry['name']);
                 $scenery_data['city']             = $entry['city'];
@@ -125,7 +121,7 @@ if (is_array($data)) {
                 // Insert table data
                 $entry['filename'] = setFilename('img');
                 $insertImgScenery = $db->prepare('INSERT INTO scenery_photos (scenery_id, user_id, date, likes, filename) VALUES (?, ?, ?, ?, ?)');
-                $insertImgScenery->execute(array($entry['scenery_id'], $_SESSION['id'], $summary['start_time']['date'], 0, $entry['filename']));
+                $insertImgScenery->execute(array($entry['scenery_id'], getConnectedUser()->id, $summary['start_time']['date'], 0, $entry['filename']));
 
                 // Get scenery lngLat data
                 $current_scenery = new Scenery($entry['scenery_id']);

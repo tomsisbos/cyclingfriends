@@ -20,7 +20,11 @@ export default function ChangeLogin () {
 
     // Get current login data from database once at component loading
     useEffect( () => {
-        axios('/api/settings.php' + '?login=true').then(response => {
+        axios.get('/api/settings.php', {
+            params: {
+                login: true
+            }
+        }).then(response => {
             setLogin(response.data)
         } )
     }, [])

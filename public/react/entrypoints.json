@@ -41,6 +41,12 @@
         "/public/react/runtime.js",
         "/public/react/tours.js"
       ]
+    },
+    "world": {
+      "js": [
+        "/public/react/runtime.js",
+        "/public/react/world.js"
+      ]
     }
   }
 }

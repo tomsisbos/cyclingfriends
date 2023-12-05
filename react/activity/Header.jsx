@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Loader from "/react/components/Loader.jsx"
-import HeaderActivityButtons from "/react/activity/HeaderActivityButtons.jsx"
+import HeaderActivityButtons from "./HeaderActivityButtons.jsx"
 
 export default function Header ({ isLoading, featuredImage, activityData, session }) {
 

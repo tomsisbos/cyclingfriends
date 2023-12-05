@@ -19,6 +19,7 @@ formMethodSelect.addEventListener('change', () => {
     var rideMap = new RideMap()
     rideMap.clearSession()
     // Update method
+    console.log(13)
     rideMap.updateSession( {
         method: formMethodSelect.value,
         data: {}
@@ -117,7 +118,8 @@ async function displayForm () {
             rideDrawMap.clearMarkers()
             rideDrawMap.hideSceneries()
             await rideDrawMap.loadRoute(selectRoute.value, {loader: 'ルート読込中...'})
-            rideDrawMap.updateSession( {
+            console.log(12)
+            rideDrawMap.updateSession( { /// This call seem to cause a problem, as it erases previously set data.
                 method: rideDrawMap.method,
                 data: {
                     'route-id': selectRoute.value

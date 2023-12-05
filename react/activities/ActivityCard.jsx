@@ -22,7 +22,9 @@ export default function ActivityCard ({activity}) {
     // If no photos data, add static map to it
     if (data.photos.length == 0) {
         var newData = { ...data }
-        newData.photos.push(data.thumbnail)
+        newData.photos.push({
+            filename: data.thumbnail
+        })
         setData(newData)
     }
 
@@ -75,6 +77,7 @@ export default function ActivityCard ({activity}) {
                 city={data.city}
                 prefecture={data.prefecture}
                 likes={data.likes}
+                privacy={data.privacy}
             />
             <div className="dashboard-activity-card-body">
                 <ActivityCardMedia

@@ -77,7 +77,7 @@ function handleSuccessfulPayment ($paymentIntent) {
         else if ($key == 'user_id') $user = new User($value);
         else if (substr($key, 0, 8) === 'a_field_') $additional_fields[$key] = $value;
         else if ($key == 'use_cf_points') (new User($metadata['user_id']))->removeCFPoints($value);
-        else if ($key == 'rental_bike') $ride->finalizeRentalBikeEntry($user->id);
+        else if ($key == 'rental_bike') $ride->finalizeRentalBikeEntry((new User($metadata['user_id']))->id);
         else $user_data[$key] = $value;
     }
 

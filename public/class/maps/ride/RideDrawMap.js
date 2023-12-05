@@ -181,6 +181,7 @@ export default class RideDrawMap extends RideMap {
                                         'checkpoints': this.data.checkpoints
                                     }
                                 } )
+                                console.log(5)
                                 // Style checkpoint element created after markers updating
                                 marker.getElement().className = 'checkpoint-marker mapboxgl-marker mapboxgl-marker-anchor-center'
                                 marker.getElement().id = number
@@ -210,6 +211,7 @@ export default class RideDrawMap extends RideMap {
                                         'checkpoints': this.data.checkpoints
                                     }
                                 })
+                                console.log(6)
                                 this.cursor--
                             }
                             this.profile.generate({
@@ -290,6 +292,7 @@ export default class RideDrawMap extends RideMap {
             method: this.method,
             data: this.data
         })
+        console.log(7)
 
         // Generate popup
         this.generateMarkerPopup(marker, number)
@@ -349,19 +352,17 @@ export default class RideDrawMap extends RideMap {
         }
         // Update course data
         var data = {
-            meetingplace: {
-                geolocation: CFUtils.buildGeolocationFromString(this.route.startplace.city + ' (' + this.route.startplace.prefecture + ')')
-            },
-            finishplace: {
-                geolocation: CFUtils.buildGeolocationFromString(this.route.goalplace.city + ' (' + this.route.goalplace.prefecture + ')')
-            },
+            meetingplace: this.route.startplace,
+            finishplace: this.route.goalplace,
             checkpoints: this.data.checkpoints,
             options
         }
+        console.log(data)
         this.updateSession( {
             method: this.method,
             data
         } )
+        console.log(8)
     }
 
     createCheckpointElement (i) {
@@ -397,6 +398,7 @@ export default class RideDrawMap extends RideMap {
                 checkpoints: this.data.checkpoints
             }
         })
+        console.log(9)
 
         this.cursor--
 
@@ -430,6 +432,7 @@ export default class RideDrawMap extends RideMap {
                 checkpoints: this.data.checkpoints
             }
         } )
+        console.log(10)
         this.profile.generate({
             poiData: {
                 rideCheckpoints: this.data.checkpoints,
@@ -442,7 +445,7 @@ export default class RideDrawMap extends RideMap {
         e.preventDefault()
 
         // Only submit if enough data is set (to prevent from submitting before session have been updated asynchronously)
-        if (this.session.course['options'] && this.session.course['route-id']) {
+        if (this.session.course['options']) {
 
             // If no route have been selected, display an error message
             if (this.route == undefined) showResponseMessage({error: 'ルートが選択されていません。下記のリストからルートを選択してください。'})
@@ -451,12 +454,17 @@ export default class RideDrawMap extends RideMap {
                 // Update meeting place and finish place information (only if not set or having changed)
                 const coursedata = {
                     'myRoutes': this.route.id,
+                    'route-id': this.route.id,
                     'terrain': terrainDiv.innerText,
                     'distance': parseFloat(distanceDiv.innerText.substring(0, distanceDiv.innerText.length - 2)),
-                    'meetingplace': this.route.meetingplace,
-                    'finishplace': this.route.finishplace,
+                    'meetingplace': this.route.startplace,
+                    'finishplace': this.route.goalplace,
+                    'checkpoints': this.data.checkpoints,
+                    'options': this.options,
                     'course-description': document.querySelector('#courseDescriptionTextarea').value
                 }
+                console.log(11)
+                console.log('FINAL SESSION CALL', coursedata)
                 this.updateSession( {
                     method: 'draw',
                     data: coursedata

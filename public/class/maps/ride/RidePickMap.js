@@ -202,7 +202,7 @@ export default class RidePickMap extends RideMap {
     }
 
     // Update meeting place and finish place information (only if not set or having changed)
-    async updateMeetingFinishPlace () {
+    async queryMeetingFinishPlace () {
         return new Promise (async (resolve, reject) => {
             // Check whether meeting place has already been set
             if (this.session.course) var course = this.session.course
@@ -213,54 +213,35 @@ export default class RidePickMap extends RideMap {
                 if (course.meetingplace.lngLat.lng != this.data.checkpoints[0].lngLat.lng || (this.options.sf === true && course.finishplace.lngLat.lng != this.data.checkpoints[0].lngLat.lng)) { // If meeting place have changed
                     var meetingplacelngLat = this.data.checkpoints[0].lngLat
                     var meetingplacegeolocation = await this.getCourseGeolocation(meetingplacelngLat)
-                    var meetingplace = {'geolocation': meetingplacegeolocation, 'lngLat': meetingplacelngLat}
+                    var meetingplace = {...meetingplacegeolocation, lngLat: meetingplacelngLat}
                     if (this.options.sf === true) {
                         var finishplace = meetingplace
-                        var geolocationdata = {'meetingplace': meetingplace, 'finishplace': finishplace}
-                        this.updateSession( {
-                            method: this.method,
-                            data: geolocationdata
-                        } )
-                    } else {
-                        var geolocationdata = {'meetingplace': meetingplace}
-                        this.updateSession( {
-                            method: this.method,
-                            data: geolocationdata
-                        } )
-                    }
+                        resolve({meetingplace, finishplace})
+                    } else resolve({meetingplace})
                 }
                 // If finish place has been changed
                 if (this.options.sf === false) {
                     if (course.finishplace.lngLat.lng != this.data.checkpoints[this.cursor-1].lngLat.lng) {
                         var finishplacegeolocation = await this.getCourseGeolocation(this.data.checkpoints[this.cursor-1].lngLat)
                         var finishplacelngLat = this.data.checkpoints[this.cursor-1].lngLat
-                        var finishplace = {'geolocation': finishplacegeolocation, 'lngLat': finishplacelngLat}
-                        var geolocationdata = {'finishplace': finishplace}
-                        this.updateSession( {
-                            method: this.method,
-                            data: geolocationdata
-                        } )
+                        var finishplace = {...finishplacegeolocation, lngLat: finishplacelngLat}
+                        resolve({finishplace})
                     }
                 }
             // If meeting place is undefined
             } else {
                 var meetingplacelngLat = this.data.checkpoints[0].lngLat
                 var meetingplacegeolocation = await this.getCourseGeolocation(meetingplacelngLat)
-                var meetingplace = {'geolocation': meetingplacegeolocation, 'lngLat': meetingplacelngLat}
+                var meetingplace = {...meetingplacegeolocation, 'lngLat': meetingplacelngLat}
                 if (this.options.sf === false) {
                     var finishplacegeolocation = await this.getCourseGeolocation(this.data.checkpoints[this.cursor-1].lngLat)
                     var finishplacelngLat = this.data.checkpoints[this.cursor-1].lngLat
-                    var finishplace = {'geolocation': finishplacegeolocation, 'lngLat': finishplacelngLat}
+                    var finishplace = {...finishplacegeolocation, 'lngLat': finishplacelngLat}
                 } else if (this.options.sf === true) {
                     var finishplace = meetingplace
                 }
-                var geolocationdata = {'meetingplace': meetingplace, 'finishplace': finishplace}
-                this.updateSession( {
-                    method: this.method,
-                    data: geolocationdata
-                } )
+                resolve({meetingplace, finishplace})
             }
-            resolve()
         } )
     }
 
@@ -272,12 +253,21 @@ export default class RidePickMap extends RideMap {
         if (!$firstMarker || (this.data.checkpoints.length === 1 && $firstMarker.innerText == 'S')) showResponseMessage({error: '少なくとも、ツアーのスタート地点とゴール地点（又はスタート＆ゴール地点）を設定しなければなりません。'})
         // Else, validate, send data to API and go to next page
         else {
-            await this.updateMeetingFinishPlace()
+            var geolocation = await this.queryMeetingFinishPlace()
+            // Update meeting place and finish place information (only if not set or having changed)
+            const coursedata = {
+                'distance': parseFloat(distanceDiv.innerText.substring(0, distanceDiv.innerText.length - 2)),
+                ...geolocation,
+                'checkpoints': this.data.checkpoints,
+                'options': this.options,
+                'terrain': document.querySelector('#distance').value,
+                'course-description': document.querySelector('#courseDescriptionTextarea').value
+            }
+            console.log(11)
+            console.log('FINAL SESSION CALL', coursedata)
             this.updateSession( {
                 method: 'pick',
-                data: {
-                    'options': this.options
-                }
+                data: coursedata
             }).then( () => document.getElementById('form').submit())
         }
 

@@ -17,8 +17,6 @@ if (getConnectedUser()->id != $activity->user_id) header('location: /myactivitie
 
 	<?php include '../includes/navbar.php'; ?>
 
-    <h2 class="top-title">Edit activity</h2>
-
     <div class="main" id="activityForm">
 
         <div class="container new-ac-container">

@@ -1,6 +1,7 @@
 <?php
 
-require '../../includes/api-head.php';
+$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/includes/api-public-head.php';
 
 if (isset($_GET['user']) || isset($_GET['my-activities'])) {
 
@@ -9,6 +10,8 @@ if (isset($_GET['user']) || isset($_GET['my-activities'])) {
     $photos_number = $_GET['photos_number'];
     if (isset($_GET['user'])) $user_id = $_GET['user'];
     else if (isset($_GET['my-activities'])) $user_id = getConnectedUser()->id;
+    $restrict_to_public = " AND a.privacy = 'public'";
+    if (isset($_GET['my-activities'])) $restrict_to_public = "";
 
     // Get activity data
     $getActivities = $db->prepare("
@@ -16,6 +19,7 @@ if (isset($_GET['user']) || isset($_GET['my-activities'])) {
             DISTINCT a.id,
             a.title,
             a.user_id as author_id,
+            a.privacy,
             r.id as route_id,
             r.distance,
             r.thumbnail_filename as thumbnail,
@@ -39,7 +43,7 @@ if (isset($_GET['user']) || isset($_GET['my-activities'])) {
             activity_checkpoints as c ON a.id = c.activity_id
         WHERE
             a.user_id = ? AND
-            c.number = 0
+            c.number = 0 {$restrict_to_public}
         ORDER BY a.datetime DESC
         LIMIT {$limit} OFFSET {$offset}
     ");
@@ -55,9 +59,9 @@ if (isset($_GET['user']) || isset($_GET['my-activities'])) {
         $activity['checkpoints'] = $getCheckpoints->fetchAll(PDO::FETCH_ASSOC);
 
         // Photos
-        $getPhotos = $db->prepare("SELECT filename FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
+        $getPhotos = $db->prepare("SELECT filename, datetime, featured, ST_X(point::geometry)::double precision as lng, ST_Y(point::geometry)::double precision as lat FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
         $getPhotos->execute([$activity['id']]);
-        $activity['photos'] = $getPhotos->fetchAll(PDO::FETCH_COLUMN);
+        $activity['photos'] = $getPhotos->fetchAll(PDO::FETCH_ASSOC);
 
         // Comments
         $getComments = $db->prepare("SELECT c.user_id, c.content, u.default_profilepicture_id as default_propic_id, pp.filename as propic FROM activity_comments as c JOIN users as u ON c.user_id = u.id JOIN profile_pictures as pp ON c.user_id = pp.user_id WHERE c.entry_id = ? ORDER BY c.time DESC");

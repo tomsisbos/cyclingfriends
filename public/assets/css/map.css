@@ -28,7 +28,7 @@
 }
 
 .cf-map {
-    height: 100%;
+    height: 100% !important;
     background-color: #eeeeee;
 }
 
@@ -82,26 +82,34 @@
 
 /* -- Markers -- */
 
-.scenery-marker {
+.mapboxgl-marker {
+    max-width: 30px;
+    max-height: 30px;
+}
+.scenery-marker img {
     position: absolute;
-    display: flex;
-    flex-direction: column;
+    bottom: 20px;
+    max-height: inherit;
+    max-width: inherit;
+    height: 100%;
+    width: 100%;
+    border-radius: 1000px;
+    border: 1px solid #fff;
+    transition: width 1s, height 1s;
+    left: 50%;
+    transform: translate(-50%, 0%);
     cursor: pointer;
-    top: -15px !important;
-    left: 0;
-    will-change: transform;
-    opacity: 1;
-    transition: opacity .2s;
-    border-radius: 99px;
 }
 .scenery-marker img:hover {
-    height: 30px !important;
-    width: 30px !important;
+    height: 150%;
+    width: 150%;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 .scenery-marker::after {
     content: '\25BC';
     height: 0px;
-    bottom: 12px;
+    bottom: 30px;
     left: 50%;
     transform: translate(-50%,-50%);
     font-size: 18px;
@@ -110,14 +118,11 @@
     text-shadow: 0px 10px 4px #00000033;
     color: #ffffff;
 }
-.scenery-marker::before {
-    content: attr(data-before);
-    display: none;
-    display: var(--scenery-hover-display);
+.scenery-marker-before {
     position: absolute;
     height: 0px;
     width: max-content;
-    top: -20px;
+    top: -50px;
     left: 50%;
     transform: translate(-50%,-50%);
     font-family: Yu Mincho;
@@ -127,13 +132,7 @@
     color: #000;
     z-index: 6;
     pointer-events: none;
-}
-
-.scenery-icon {
-    border-radius: 1000px;
-    border: 2px solid #ffffff;
-    background-color: #fff;
-    transition: height 1s, width 1s;
+    transition: opacity 0.5s;
 }
 
 .liked-marker {
@@ -170,7 +169,7 @@
 
 .marker-popup {
     width: 220px;
-    border-radius: 10px !important;
+    border-radius: 3px !important;
     -webkit-transition: all .1s;
     -moz-transition: all .1s;
     transition: all .1s;
@@ -182,7 +181,7 @@
 }
 
 .marker-popup .mapboxgl-popup-content {
-    box-shadow: 2px 4px 2px rgb(0 0 0 / 20%) !important;
+    box-shadow: 1px 2px 2px rgb(0 0 0 / 10%) !important
 }
 
 form#sceneryForm {

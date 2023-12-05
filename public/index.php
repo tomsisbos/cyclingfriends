@@ -39,6 +39,7 @@ $router->map('GET', '/account/verification/[i:user_slug]-[*:email]', function ($
 $router->map('GET', '[*:url]/account/verification/[i:user_slug]-[*:email]', function ($url, $user_slug, $email) {
     require_once '../actions/users/verification.php';
 });
+$router->map('GET', '/garmin/success', 'user/garmin-success', 'garmin-success');
 
 // Manual
 $router->map('GET', '/manual', 'manual/home', 'manual');
@@ -46,6 +47,7 @@ $router->map('GET', '/manual/[a:chapter]', 'manual/single', 'manual-single');
 
 // World
 $router->map('GET', '/world', 'world/map');
+$router->map('GET', '/world-v2', 'world/world');
 $router->map('GET', '/segment/[i:segment_id]', 'segments/single', 'segment-single');
 $router->map('GET|POST', '/scenery/[i:scenery_id]', 'sceneries/single', 'scenery-single');
 $router->map('GET', '/tag/[a:tagcategory]-[a:tagname]', 'world/tag', 'tag');
@@ -73,15 +75,7 @@ $router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" wh
 });
 
 // Rides
-$router->map('GET|POST', '/ride/[i:ride_id]', function ($ride_id) {
-    global $router;
-    $ride = new Ride($ride_id);
-    // If ride date is past, or if report activity id has been set, show report page
-    if (isset($ride->getReport()->activity_id)) {
-        include '../templates/rides/report.php';
-    // Else, show ride page
-    } else include '../templates/rides/single.php';
-}, 'ride-single');
+$router->map('GET|POST', '/ride/[i:ride_id]', 'rides/single', 'ride-single');
 $router->map('GET', '/ride/new', 'rides/new', 'ride-new');
 $router->map('GET|POST', '/ride/new/[i:stage]', 'rides/new');
 $router->map('GET', '/ride/[i:ride_id]/edit', 'rides/edit', 'ride-edit');
@@ -123,6 +117,12 @@ $router->map('GET|POST', '/brands/poli', 'company/brands/poli', 'brands-poli');
 $router->map('GET|POST', '/admin/autoposting/sceneries', '/admin/autoposting/sceneries', 'admin-autoposting-sceneries');
 $router->map('GET', '/admin/garmin', '/admin/garmin', 'admin-garmin');
 
+// Api
+$router->map('GET|POST|DELETE', '/api/[*:slug]', 'api-v2');
+
+// Deep linking
+$router->map('GET', '/m/[*:slug]', 'm');
+
 
 // Treatment of results
 $match = $router->match();
@@ -130,10 +130,18 @@ if (is_array($match)) {
     // If target is a function, call it with relevant params
     if (is_callable($match['target'])) {
         call_user_func_array($match['target'], $match['params']);
-    // If target is a string,
+    // If target is a string
     } else {
         $params = $match['params'];
         $target = $match['target'];
-        require '../templates/' . $target . '.php';
+        // If $target equals 'api-v2', get file from the $target folder
+        if ($target == 'api-v2') {
+            require '../' . $target . '/' . $params['slug'] . '.php';
+        // If $target equals 'm', redirect user to relevant deep link
+        } else if ($target == 'm') {
+            header('Location: cfds://' . $params['slug']);
+        }
+        // Else, get file from templates folder
+        else require '../templates/' . $target . '.php';
     }
 } else require '../templates/404.php';

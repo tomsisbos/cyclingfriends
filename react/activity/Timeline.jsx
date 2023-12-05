@@ -16,7 +16,7 @@ export default function Timeline ({ isLoading, photos, checkpoints, map, mapInst
         // Filter photos to append to this checkpoint
         var photoNumber = 0
         var photosToAppend = photos.filter(photo => {
-            return photo.datetime > checkpoint.datetime && photo.datetime < checkpoints[checkpointIndex + 1].datetime
+            return checkpoints[checkpointIndex + 1] && photo.datetime > checkpoint.datetime && photo.datetime < checkpoints[checkpointIndex + 1].datetime
         })
 
         checkpointIndex++

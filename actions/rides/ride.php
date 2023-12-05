@@ -2,47 +2,19 @@
  
 	require '../actions/database.php';
 	
-	// Get id from URL
-	$slug = basename($_SERVER['REQUEST_URI']);
+    $checkIfExists = $db->prepare('SELECT id FROM rides WHERE id = ?');
+    $checkIfExists->execute([$params['ride_id']]);
 
-	if ($slug === 'signup' || $slug === 'entry' || $slug === 'payment' || isset($_GET['payment_intent'])) {
+	// Redirect to calendar if ride doesn't exist
+    if ($checkIfExists->rowCount() > 0) $ride = new Ride($params['ride_id']);
+	else header('location: ' .$router->generate('rides-calendar'));
 
-		$url_fragments = explode('/', $_SERVER['REQUEST_URI']);
-		$slug = array_slice($url_fragments, -2)[0];
-
-	}
-	
-	// Check if ride exists
-	if (is_numeric($slug)) {
-		
-        $checkIfExists = $db->prepare('SELECT id FROM rides WHERE id = ?');
-        $checkIfExists->execute([$slug]);
-
-		// If exists, get ride data
-        if ($checkIfExists->rowCount() > 0) {
-
-			include '../actions/rides/edit/adminPanel.php';
-
-			$ride = new Ride($slug);
+	$basename = basename($_SERVER['REQUEST_URI']);
 			
-			// If ride admin have submitted data, then replace existing data by submitted one
-			if (isset($_POST['save'])) {
-				$ride->privacy     = $_POST['privacy'];
-				$ride->entry_start = $_POST['entry_start'];
-				$ride->entry_end   = $_POST['entry_end'];
-			}
-		
-		} else {
-			
-		// If id doesn't exist, redirect to rides page
-		header('location: ' .$router->generate('rides-publicboard'));
-		
-		}
-	
-	} else {
-		
-		// If id is not set, redirect to rides page
-		header('location: ' .$router->generate('rides-publicboard'));
-		
+	// If ride admin have submitted data, then replace existing data by submitted one
+	if (isset($_POST['save'])) {
+		$ride->privacy     = $_POST['privacy'];
+		$ride->entry_start = $_POST['entry_start'];
+		$ride->entry_end   = $_POST['entry_end'];
 	}
 ?>

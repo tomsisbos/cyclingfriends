@@ -14,6 +14,8 @@ var loader = new CircleLoader(header, {absolute: true})
 loader.start()
 CFSession.getSession().then(session => {
     loader.stop()
+    console.log(session)
+    debugger
     rideMap.session = session
     rideMap.method = session['edit-course'].method
 

@@ -44,7 +44,6 @@ class Route extends Model {
 
     /**
      * Retrieve coordinates data from database
-     * @param boolean $lngLatFormat whether retrieve coordinates as a Linestring instance or as a simple array of coordinates
      */
     public function getLinestring () {
         $getCoords = $this->getPdo()->prepare('SELECT ST_AsEWKT(linestring) FROM linestrings WHERE segment_id = ?');
@@ -54,6 +53,45 @@ class Route extends Model {
         $coordinates->fromWKT($linestring_wkt);
         if ($this->lngLatFormat) return $coordinates;
         else return $coordinates->getArray();
+    }
+
+    /**
+     * Retrieve coordinates and trackpoints data from database
+     */
+    public function getLinestringWithTrackpoints () {
+        $getCoords = $this->getPdo()->prepare('SELECT ST_AsEWKT(linestring) as linestring, time_array, elevation_array, cadence_array, heart_rate_array, power_array FROM linestrings WHERE segment_id = ?');
+        $getCoords->execute(array($this->id));
+        $data = $getCoords->fetch(PDO::FETCH_ASSOC);
+        $linestring_wkt = $data['linestring'];
+        $linestring = new CFLinestring();
+        $linestring->fromWKT($linestring_wkt);
+        
+        // Build trackpoints array
+        $keys = array_keys($data);
+        $trackpoints_array = [];
+
+        $decoded_data = [];
+        foreach ($keys as $key) { // Decode json formatted data
+            if (isset($data[$key]) && $key !== 'linestring') {
+                $decoded_data[$key] = json_decode($data[$key], true);
+            }
+        }
+
+        for ($i = 0; $i < $linestring->length; $i++) {
+            $trackpoint_data = [];
+            foreach ($keys as $key) {
+                if (isset($decoded_data[$key])) {
+                    $value = $decoded_data[$key][$i];
+                    $name = substr($key, 0, strlen($key) - 6); // Extract name from column names (ex: time_array = time)
+                    if ($value !== null) $trackpoint_data[$name] = $value; // Skip null values
+                }
+            }
+            array_push($trackpoints_array, new Trackpoint($trackpoint_data));
+        }
+
+        $linestring_with_trackpoints = new CFLinestringWithTrackpoints($linestring->getArray(), $trackpoints_array);
+        if (!$this->lngLatFormat) $linestring_with_trackpoints->coordinates = $linestring_with_trackpoints->getArray();
+        return $linestring_with_trackpoints;
     }
 
     /**

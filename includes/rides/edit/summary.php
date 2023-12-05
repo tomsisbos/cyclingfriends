@@ -31,8 +31,8 @@ $previous_page = intval($stage_slug) - 1; ?>
 				<p id="meeting-time"><strong>集合時間 :</strong> <?= $_SESSION['edit-forms']['1']['meeting-time'];?></p>
 			</div>
 			<div class="col">
-				<p id="meetingplace"><strong>集合場所 :</strong> <?= $_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['prefecture']. ')';?></p>
-				<p id="finishplace"><strong>解散場所 :</strong> <?= $_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' (' .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['prefecture']. ')';?></p>
+				<p id="meetingplace"><strong>集合場所 :</strong> <?= $_SESSION['edit-forms']['2']['meetingplace']['city']. ' (' .$_SESSION['edit-forms']['2']['meetingplace']['prefecture']. ')';?></p>
+				<p id="finishplace"><strong>解散場所 :</strong> <?= $_SESSION['edit-forms']['2']['finishplace']['city']. ' (' .$_SESSION['edit-forms']['2']['finishplace']['prefecture']. ')';?></p>
 			</div>
 		</div>
 		<div class="row">
@@ -160,7 +160,7 @@ $previous_page = intval($stage_slug) - 1; ?>
 				if (!empty($_SESSION['edit-forms']['2']['distance'])) { ?>
 					<strong>距離 :</strong> <?php 
 					if ($_SESSION['edit-forms']['2']['distance-about'] == 'about') echo '約';
-					echo $_SESSION['edit-forms']['2']['distance']. "km - " .$_SESSION['edit-forms']['2']['meetingplace']['geolocation']['city']. " から " .$_SESSION['edit-forms']['2']['finishplace']['geolocation']['city']. ' まで';
+					echo $_SESSION['edit-forms']['2']['distance']. "km - " .$_SESSION['edit-forms']['2']['meetingplace']['city']. " から " .$_SESSION['edit-forms']['2']['finishplace']['city']. ' まで';
 				} ?>
 			</div>
 			<div id="terrain" class="col">

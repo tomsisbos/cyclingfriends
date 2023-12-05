@@ -16,7 +16,15 @@ export default function MyActivities () {
     const loadData = async () => {
         return new Promise((resolve, reject) => {
             setLoading(true)
-            axios('/api/activities.php?my-activities=true&activities_number=' + activitiesNumber + '&photos_number=' + photosNumber + '&offset=' + activities.length).then(response => {
+            axios('/api/activitiess', {
+                params: {
+                    user_id: true,
+                    activities_number: activitiesNumber,
+                    photos_number: photosNumber,
+                    offset: activities.length,
+                    include_private: true
+                }
+            }).then(response => {
                 var newActivities = activities.slice()
                 response.data.forEach(activity => newActivities.push(activity))
                 setActivities(newActivities)
