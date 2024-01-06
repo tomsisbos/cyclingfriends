@@ -8,6 +8,7 @@ class ActivityPhoto extends Model {
     public $activity_id;
     public $user_id;
     public $datetime;
+    public $elevation;
     public $period;
     public $featured;
     public $lngLat;
@@ -23,6 +24,7 @@ class ActivityPhoto extends Model {
             $this->activity_id = $data['activity_id'];
             $this->user_id     = $data['user_id'];
             $this->datetime    = (new DateTime($data['datetime']))->getTimestamp();
+            $this->elevation   = $data['elevation'];
             $this->period      = $this->getPeriod();
             if (intval($data['featured']) == 1) $this->featured = true;
             else $this->featured = false;
@@ -65,8 +67,8 @@ class ActivityPhoto extends Model {
 
         // Insert photo in 'activity_photos' table
         $filename = setFilename('img');
-        $insert_photos = $this->getPdo()->prepare("INSERT INTO activity_photos(activity_id, user_id, datetime, featured, filename, privacy, point) VALUES (?, ?, to_timestamp(?), ?, ?, ?, ST_GeomFromText(?))");
-        $insert_photos->execute(array($data['activity_id'], $data['user_id'], $data['datetime'], $data['featured'], $filename, $data['privacy'], $point_wkt));
+        $insert_photos = $this->getPdo()->prepare("INSERT INTO activity_photos(activity_id, user_id, datetime, featured, filename, privacy, point, elevation) VALUES (?, ?, to_timestamp(?), ?, ?, ?, ST_GeomFromText(?), ?)");
+        $insert_photos->execute(array($data['activity_id'], $data['user_id'], $data['datetime'], $data['featured'], $filename, $data['privacy'], $point_wkt, $data['elevation']));
 
         // Connect to blob storage
         $folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));

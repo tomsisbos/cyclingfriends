@@ -302,6 +302,7 @@ class Activity extends Model {
         if (!$this->isLike($user_id)) {
             $addLike = $this->getPdo()->prepare("INSERT INTO {$this->subtable}_likes (user_id, activity_id) VALUES (?, ?)");
             $addLike->execute([$user_id, $this->id]);
+            $this->notify($this->user_id, 'activity_new_like', $user_id);
         } else {
             $removeLike = $this->getPdo()->prepare("DELETE FROM {$this->subtable}_likes WHERE user_id = ? AND activity_id = ?");
             $removeLike->execute([$user_id, $this->id]);

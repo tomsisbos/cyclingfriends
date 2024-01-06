@@ -59,7 +59,7 @@ if (isset($_GET['user']) || isset($_GET['my-activities'])) {
         $activity['checkpoints'] = $getCheckpoints->fetchAll(PDO::FETCH_ASSOC);
 
         // Photos
-        $getPhotos = $db->prepare("SELECT filename, datetime, featured, ST_X(point::geometry)::double precision as lng, ST_Y(point::geometry)::double precision as lat FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
+        $getPhotos = $db->prepare("SELECT filename, datetime, featured, elevation, ST_X(point::geometry)::double precision as lng, ST_Y(point::geometry)::double precision as lat FROM activity_photos WHERE activity_id = ? ORDER BY featured::int DESC, RANDOM() LIMIT {$photos_number}");
         $getPhotos->execute([$activity['id']]);
         $activity['photos'] = $getPhotos->fetchAll(PDO::FETCH_ASSOC);
 

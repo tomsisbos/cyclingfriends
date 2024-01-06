@@ -33,6 +33,8 @@ if (!empty($data)) {
             $user_id = $checkToken->fetch(PDO::FETCH_COLUMN);
             $user = new User($user_id);
 
+            $user->verify();
+
             $user_data = [
                 'id' => $user->id,
                 'login' => $user->login,

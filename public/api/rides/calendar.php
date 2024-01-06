@@ -18,7 +18,8 @@ if (isset($_GET['task'])) {
             $ride = new Ride($id);
             $ride->status = $ride->getStatus()['status'];
             $ride->status_class = $ride->getStatusClass();
-            $ride->map_thumbnail = $ride->getMapThumbnail();
+            $ride->participants_number = count($ride->getParticipants());
+            if (isset($ride->route_id)) $ride->map_thumbnail = $ride->getMapThumbnail();
             if ($ride->hasFeaturedImage()) $ride->featured_image = $ride->getFeaturedImage()->url;
             return $ride;
         }, $getOfficialRides->fetchAll(PDO::FETCH_COLUMN));

@@ -7,7 +7,7 @@ export default function Connections () {
 
     // Settings default state
     // If false, data has not been loaded yet. If true, user is already connected. If string, user is not connected and needs to access the authenticate url provided.
-    const [settings, setSettings] = useState( {
+    const [settings, setSettings] = useState({
         twitter: {
             connected: false,
             authenticateUrl: null
@@ -16,7 +16,7 @@ export default function Connections () {
             connected: false,
             authenticateUrl: null
         }
-    } )
+    })
 
     const displayResponseMessage = useContext(AppContext)
 
@@ -26,6 +26,7 @@ export default function Connections () {
                 'connection-settings': true
             },
         }).then(response => {
+            console.log(response.data)
             setSettings({ ...response.data })
         } )
     }

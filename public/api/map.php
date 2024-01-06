@@ -619,7 +619,7 @@ if (isAjax()) {
         $ne = new LngLat(explode(',', $_GET['ne'])[0], explode(',', $_GET['ne'])[1]);
         $sw = new LngLat(explode(',', $_GET['sw'])[0], explode(',', $_GET['sw'])[1]);
 
-        $getFittingActivityPhotos = $db->prepare("SELECT p.id, a.id as activity_id, a.title, a.privacy as activity_privacy, u.login as user_login FROM activity_photos as p JOIN activities as a ON p.activity_id = a.id JOIN users as u ON u.id = p.user_id WHERE p.point IS NOT NULL AND p.privacy = 'public' AND p.point::geometry @ ST_MakeEnvelope({$ne->lng}, {$ne->lat},{$sw->lng}, {$sw->lat}, 4326) LIMIT {$limit}");
+        $getFittingActivityPhotos = $db->prepare("SELECT p.id, a.id as activity_id, a.title, p.elevation, a.privacy as activity_privacy, u.login as user_login FROM activity_photos as p JOIN activities as a ON p.activity_id = a.id JOIN users as u ON u.id = p.user_id WHERE p.point IS NOT NULL AND p.privacy = 'public' AND p.point::geometry @ ST_MakeEnvelope({$ne->lng}, {$ne->lat},{$sw->lng}, {$sw->lat}, 4326) LIMIT {$limit}");
         $getFittingActivityPhotos->execute();
         $photo_ids = $getFittingActivityPhotos->fetchAll(PDO::FETCH_ASSOC);
 

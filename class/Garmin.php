@@ -8,6 +8,7 @@ class Garmin extends Model {
     private $api_types = ['activity', 'course'];
     private $callback_uri;
     private $consumer_key;
+    private $consumer_secret;
     private $garmin_user_id;
     private $oauth_token;
     private $oauth_token_secret;
@@ -105,7 +106,7 @@ class Garmin extends Model {
             $insertAccessTokens = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, garmin_user_id, oauth_token, oauth_token_secret, permission_activity, permission_course) VALUES (?, ?, ?, ?, 1, 1)");
             $insertAccessTokens->execute([$user_id, $user_data['garmin_user_id'], $user_data['oauth_token'], $user_data['oauth_token_secret']]);
         } else {
-            $updateAccessTokens = $this->getPdo()->prepare("UPDATE {$this->table} SET oauth_token = ?, oauth_token_secret = ?, garmin_user_id = ?, temporary_credentials = NULL WHERE user_id = ?");
+            $updateAccessTokens = $this->getPdo()->prepare("UPDATE {$this->table} SET oauth_token = ?, oauth_token_secret = ?, garmin_user_id = ? WHERE user_id = ?");
             $updateAccessTokens->execute([$user_data['garmin_user_id'], $user_data['oauth_token'], $user_data['oauth_token_secret'], $user_id]);
         }
     }

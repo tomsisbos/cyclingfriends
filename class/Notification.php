@@ -1,5 +1,8 @@
 <?php
 
+use ExpoSDK\Expo;
+use ExpoSDK\ExpoMessage;
+
 class Notification extends Model {
     
     protected $table = 'notifications';
@@ -32,6 +35,7 @@ class Notification extends Model {
     }
 
     public function register ($user_id, $type, $entry_table, $entry_id, $actor_id = NULL) {
+
         $datetime = new Datetime('now', new DateTimeZone('Asia/Tokyo'));
         $base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
         require_once $base_directory. 'includes/functions.php';
@@ -39,25 +43,29 @@ class Notification extends Model {
         else $query = "SELECT id FROM {$this->table} WHERE user_id = ? AND type = ? AND entry_table = ? AND entry_id = ?";
         $checkIfExists = $this->getPdo()->prepare($query);
         $checkIfExists->execute([$user_id, $type, $entry_table, $entry_id]);
+
         // If similar entry exists, reset checked and datetime values
         if ($checkIfExists->rowCount() > 0) {
-            $current_notification_id = $checkIfExists->fetch(PDO::FETCH_COLUMN);
+            $id = $checkIfExists->fetch(PDO::FETCH_COLUMN);
             $updateNotification = $this->getPdo()->prepare("UPDATE {$this->table} SET checked = 0, datetime = ? WHERE id = ?");
-            $updateNotification->execute([$datetime->format('Y-m-d H:i:s'), $current_notification_id]);
+            $updateNotification->execute([$datetime->format('Y-m-d H:i:s'), $id]);
+        
         // Else, insert it
         } else {
-            $id = getNextAutoIncrement($this->table);
-            $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, actor_id, entry_table, entry_id, datetime) VALUES (?, ?, ?, ?, ?, ?)");
+            $createNotification = $this->getPdo()->prepare("INSERT INTO {$this->table} (user_id, type, actor_id, entry_table, entry_id, datetime) VALUES (?, ?, ?, ?, ?, ?) RETURNING id");
             $createNotification->execute([$user_id, $type, $actor_id, $entry_table, $entry_id, $datetime->format('Y-m-d H:i:s')]);
-            $this->id          = $id;
-            $this->user_id     = $user_id;
-            $this->type        = $type;
-            $this->actor_id    = $actor_id;
-            $this->entry_table = $entry_table;
-            $this->entry_id    = $entry_id;
-            $this->checked     = false;
-            $this->datetime    = $datetime;
+            $id = $createNotification->fetchColumn();
         }
+
+        // Set instance properties
+        $this->id          = $id;
+        $this->user_id     = $user_id;
+        $this->type        = $type;
+        $this->actor_id    = $actor_id;
+        $this->entry_table = $entry_table;
+        $this->entry_id    = $entry_id;
+        $this->checked     = false;
+        $this->datetime    = $datetime;
     }
 
     /**
@@ -106,7 +114,7 @@ class Notification extends Model {
                 $this->ref = 'rider/' .$entry->id;
                 break;
             case 'follow':
-                $this->text = $entry->login. 'がフォローしてくれました。';
+                $this->text = $entry->login. 'がフォローしてくれました！';
                 $this->ref = 'rider/' .$entry->id;
                 break;
             // Activities
@@ -115,8 +123,13 @@ class Notification extends Model {
                 $this->text = $actor->login. 'が「' .$entry->title. '」にコメントしました。';
                 $this->ref = 'activity/' .$entry->id;
                 break;
+            case 'activity_new_like':
+                $actor = new User($this->actor_id);
+                $this->text = $actor->login. 'が「' .$entry->title. '」にいいねしました。';
+                $this->ref = 'activity/' .$entry->id;
+                break;
             case 'new_synced_activity':
-                $this->text = '新規アクティビティ「' .$entry->title. '」が同期されました。こちらにクリックして、ストーリーを完成させましょう！';
+                $this->text = '新規アクティビティ「' .$entry->title. '」が同期されました。ストーリーを完成させましょう！';
                 $this->ref = 'activity/' .$entry->id. '/edit';
                 break;
             case 'new_synced_activity_error_missing_coordinates':
@@ -187,5 +200,30 @@ class Notification extends Model {
     public function check () {
         $checkNotification = $this->getPdo()->prepare("UPDATE {$this->table} SET checked = 1, datetime = NOW() WHERE id = ?");
         $checkNotification->execute([$this->id]);
+    }
+
+    /**
+     * Send a push notification to Expo Push API
+     */
+    public function sendPushNotification () {
+
+        $user = new User($this->user_id);
+
+        $this->getText();
+
+        $message = (new ExpoMessage([
+            'title' => 'CyclingFriends',
+            'body' => $this->text,
+        ]));
+
+        $data = ['id' => $this->id];
+        if ($this->entry_table && $this->entry_id) {
+            $data['entryTable'] = $this->entry_table;
+            $data['entryId'] = $this->entry_id;
+        }
+        $message->setData($data);
+
+        // Only send a push notification if a push token has been registered for this user
+        if ($user->push_token) (new Expo)->send($message)->to($user->push_token)->push();
     }
 }

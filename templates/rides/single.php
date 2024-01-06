@@ -5,7 +5,12 @@ include '../actions/rides/ride.php';
 include '../actions/rides/edit/adminPanel.php';
 include '../actions/rides/edit/gallery.php';
 include '../includes/head.php';
-include '../includes/head-map.php'; ?>
+include '../includes/head-map.php';
+
+if ($ride->getReport()->id) {
+	include '../templates/rides/report.php';
+	die();
+} ?>
 
 <!DOCTYPE html>
 <html lang="en">

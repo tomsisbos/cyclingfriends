@@ -87,3 +87,7 @@ body.black-theme {
 .black-theme input, .black-theme label {
     color: #000 !important;
 }
+
+.text-black * {
+    color: #000;
+}

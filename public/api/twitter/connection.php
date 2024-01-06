@@ -1,24 +1,14 @@
 <?php
 
-$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-require_once $base_directory . '/vendor/autoload.php';
-require_once $base_directory . '/class/CFAutoloader.php'; 
-CFAutoloader::register();
-require $base_directory . '/includes/functions.php';
-require $base_directory . '/actions/users/initSession.php';
-require $base_directory . '/actions/database.php';
-
 use Abraham\TwitterOAuth\TwitterOAuth;
 
-// 
-if (!isSessionActive()) {
-    header('location: /signin');
-}
+$base_directory = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+require_once $base_directory . '/includes/api-public-head.php';
 
 // If connection has been authorized
 if (isset($_GET['oauth_token'])) {
     $twitter = new Twitter();
-    $user_data = $twitter->getAccessToken($_GET['oauth_token'], $_GET['oauth_verifier']);
+    $user_data = $twitter->getAccessToken($_SESSION['twitter']['request_token'], $_GET['oauth_token'], $_GET['oauth_verifier']);
     $twitter->saveUserData(getConnectedUser()->id, $user_data);
     $twitter_user_info = $twitter->verifyCredentials($user_data['oauth_token'], $user_data['oauth_token_secret']);
     if ($twitter_user_info) {

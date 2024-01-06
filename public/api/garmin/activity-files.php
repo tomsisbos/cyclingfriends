@@ -52,7 +52,7 @@ foreach ($data['activityFiles'] as $activity_files) {
         if (!$activity_data->alreadyExists($user_id)) {
 
             // Create activity
-            $activity_id = $activity_data->createActivity($user_id, ['title' => $activity_files['activityName']]);
+            $activity_id = $activity_data->createActivity($user_id, ['title' => isset($activity_files['activityName']) ? $activity_files['activityName'] : 'activity']);
 
             // Send a notification
             $activity = new Activity($activity_id);

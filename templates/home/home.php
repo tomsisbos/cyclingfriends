@@ -33,16 +33,38 @@ include '../includes/head.php'; ?>
     <div class="main js-fade-on-scroll js-overlay-top" data-overlay-color="#000000">
         <div class="home-video">
             <video autoplay muted loop>
-                <source src="/media/overall.mp4" type="video/mp4">
+                <source src="/media/videos/overall.mp4" type="video/mp4">
             </video>
         </div>
     </div>
 
     <!-- Main container -->
     <div class="container smaller home-main-container js-fade-on-scroll">
-        <h1 class="home-brand">cyclingfriends</h1>
-        <div class="home-version">v0.8 (Public beta release)</div>
+        
+        <div class="home-overlay" style="z-index: 2">
+            <h1 class="home-brand">cyclingfriends</h1>
+            <div class="home-version">v0.8 (Public beta release)</div>
+            <div class="home-appeal home-version text-center">
+                <p style="font-size: 30;color: #ff0000;" class="home-appeal">残り<?php echo round(abs((1705305600 - time()) / 3600 / 24)) ?>日</p>
+                <p class="home-appeal">モバイルアプリ1月15日公開！</p>
+            </div>
+        </div>
+
+        <div class="home-catchcopy" style="z-index: 1">
+            <p class="first">みんなで作る</p><p class="second">サイクリングマップ。</p>
+        </div>
+
+        <div class="home-overlay" style="z-index: 0">
+            <div class="mobile-demo">
+                <img class="mobile-demo-image" src="/media/mobile_frame.png" />
+                <video class="mobile-demo-video" autoplay muted loop>
+                    <source src="/media/videos/mobile_demo.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
     </div>
+
             
     <div class="home-top-container home-slide px-0 pt-5">
         <h2 class="home-main-title text-center">
@@ -58,18 +80,18 @@ include '../includes/head.php'; ?>
             <svg height="60" width="10">
                 <polygon points="0,00 10,30 0,60" />
             </svg>
-            <div class="home-schedule-block" style="border-color: #ff5555;">
+            <div class="home-schedule-block" style="border-color: #00e06e;">
                 <div class="home-schedule-subtitle">Stage 2</div>
-                <div class="home-schedule-title" style="color: #ff5555;">ベータ公開</div>
-                <p>開始しました！</p>
+                <div class="home-schedule-title" style="color: #00e06e;">ベータ公開</div>
+                <p>実施中</p>
             </div>
             <svg height="60" width="10">
                 <polygon points="0,00 10,30 0,60" />
             </svg>
-            <div class="home-schedule-block">
+            <div class="home-schedule-block" style="border-color: #ff5555;">
                 <div class="home-schedule-subtitle">Stage 3</div>
-                <div class="home-schedule-title">v.1.0 公開</div>
-                <p>2024年以降</p>
+                <div class="home-schedule-title" style="color: #ff5555;">v.1.0 公開</div>
+                <p>2024年1月予定！</p>
             </div>
         </div>
     </div>

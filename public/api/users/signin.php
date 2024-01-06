@@ -54,7 +54,7 @@ if (!empty($data)) {
 
 					echo json_encode($user_data);
 
-				} else echo json_encode(['error' => 'こちらのアカウントに登録されているメールアドレスがまだ確認されていないため、アカウント作成が完了していません。登録時（' .$user->inscription_date. '）にお送りした確認用の自動メール内に掲載しているURLをクリックして、アカウント作成を完了させてください。<br>自動メールが確認できていない場合は、<a href="' .$router->generate('user-verification-guidance'). '">こちら</a>をご確認ください。']);
+				} else echo json_encode(['error' => 'こちらのアカウントに登録されているメールアドレスがまだ確認されていないため、アカウント作成が完了していません。登録時（' .$user->inscription_date. '）にお送りした確認用の自動メール内に掲載しているURLをクリックして、アカウント作成を完了させてください。<br>自動メールが確認できていない場合は、https://cyclingfriends.co/account/verification/guidanceをご確認ください。', 'unverified' => true ]);
 			} else echo json_encode(['error' => "ご記入頂いたパスワードは一致していません。"]);
 		} else echo json_encode(['error' => "ご記入頂いたメールアドレスは登録されていません。"]);
 	} else echo json_encode(['error' => "全ての情報をご記入の上、再度お試しください。"]);

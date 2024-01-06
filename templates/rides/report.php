@@ -1,10 +1,10 @@
 <?php
 
-include '../actions/users/initPublicSession.php';
-include '../actions/rides/ride.php';
-include '../actions/rides/edit/adminPanel.php';
-include '../includes/head.php';
-include '../includes/head-map.php'; ?>
+require_once '../actions/users/initPublicSession.php';
+require_once '../actions/rides/ride.php';
+require_once '../actions/rides/edit/adminPanel.php';
+require_once '../includes/head.php';
+require_once '../includes/head-map.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">

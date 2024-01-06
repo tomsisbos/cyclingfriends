@@ -15,6 +15,8 @@ $is_allowed = false;
 $allowed_hosts = [
     'cyclingfriends.co',
     'www.cyclingfriends.co',
+    'cyclingfriends-local.co',
+    'www.cyclingfriends-local.co',
     'cyclingfriends.azurewebsites.net',
     'cyclingfriends-preprod.azurewebsites.net'
 ];

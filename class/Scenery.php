@@ -8,6 +8,25 @@ use Location\Utility\PointToLineDistance;
 class Scenery extends Model {
     
     protected $table = 'sceneries';
+
+    public $id;
+    
+    public $user_id;
+    public $category;
+    public $name;
+    public $city;
+    public $prefecture;
+    public $elevation;
+    public $date;
+    public $period;
+    public $month;
+    public $description;
+    public $lngLat;
+    public $publication_date;
+    public $rating;
+    public $grades_number;
+    public $popularity;
+    public $likes;
     
     function __construct($id = NULL) {
         parent::__construct();

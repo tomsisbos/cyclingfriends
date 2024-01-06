@@ -56,8 +56,8 @@ async function openNotePopup () {
                 <label><strong>報告内容</strong></label>
                 <textarea class="mb-2" id="noteContent" placeholder="こちらに詳細をご記入ください。"></textarea>
             </form>
-            <div><strong>URL</strong> : ` + window.location.href + `</div>
-            <div><strong>Client</strong> : ` + getClientBrowserName() + `</div>
+            <p><strong>URL</strong> : ` + window.location.href + `</p>
+            <p><strong>Client</strong> : ` + getClientBrowserName() + `</p>
             <div class="d-flex justify-content-between">
                 <div id="back" class="mp-button bg-darkred text-white">
                     戻る

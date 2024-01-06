@@ -6,6 +6,7 @@ class Ride extends Model {
     
     protected $table = 'rides';
 
+    public $id;
     public $name;
     public $date;
     public $meeting_time;

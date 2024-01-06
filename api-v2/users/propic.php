@@ -42,4 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insertImage->execute(array($user->id, $filename));
     }
 
+    echo json_encode($filename);
+
 }

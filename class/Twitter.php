@@ -9,6 +9,27 @@ class Twitter extends Model {
     private $oauth_token;
     private $oauth_token_secret;
     private $callback_uri;
+    public $id;
+    public $name;
+    public $screen_name;
+    public $description;
+    public $profile_image_url_https;
+    public $profile_background_image_url_https;
+    public $url;
+    public $username;
+    public $tweets_count;
+    public $followers_count;
+    public $following_count;
+    public $friends_count;
+    public $statuses_count;
+    public $created_at;
+    public $verified;
+    public $status;
+    public $site;
+    public $background_image;
+    public $profile_image;
+    public $last_tweet;
+    public $style;
     protected $table = 'user_twitter';
 
     /**
@@ -73,12 +94,12 @@ class Twitter extends Model {
 
     /**
      * Get user's twitter account access tokens from the oauth verifier
+     * @param String $request_token
      * @param String $oauth_token
      * @param String $oauth_verifier
      * @return Array Access tokens
      */
-    public function getAccessToken ($oauth_token, $oauth_verifier) {
-        $request_token = $_SESSION['twitter']['request_token'];
+    public function getAccessToken ($request_token, $oauth_token, $oauth_verifier) {
         if ($oauth_token != $request_token['oauth_token']) throw new Exception('Oauth token mismatch');
         else {
             $oauth = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $request_token['oauth_token'], $request_token['oauth_token_secret']);

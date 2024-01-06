@@ -2,6 +2,8 @@
 
 class Tag extends Model {
 
+    public $name;
+
     function __construct($name) {
         $this->name = $name;
     }

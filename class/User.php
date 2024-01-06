@@ -20,6 +20,7 @@ class User extends Model {
     public $gender;
     public $birthdate;
     public $emergency_number;
+    public $location;
     public $place;
     public $lngLat;
     public $level;
@@ -29,6 +30,8 @@ class User extends Model {
     public $instagram;
     public $strava;
     public $rights;
+    public $customer_id;
+    public $push_token;
     
     function __construct($id = NULL) {
         parent::__construct();
@@ -60,6 +63,8 @@ class User extends Model {
         $this->instagram                 = $data['instagram'];
         $this->strava                    = $data['strava'];
         $this->rights                    = new Role($data['rights']);
+        $this->customer_id               = $data['customer_id'];
+        $this->push_token                = $data['push_token'];
     }
 
     private function getLngLat () {
@@ -237,7 +242,7 @@ class User extends Model {
         $checkIfSettingsExist->execute([$this->id]);
         // If settings data don't exist yet for this user, create it
         if ($checkIfSettingsExist->rowCount() == 0) {
-            $insertSetting = $this->getPdo()->prepare("INSERT INTO settings (id) VALUES (?)");
+            $insertSetting = $this->getPdo()->prepare("INSERT INTO settings (id) VALUES (?) ON CONFLICT (id) DO NOTHING");
             $insertSetting->execute([$this->id]);
         }
         // Set values according to $settings content

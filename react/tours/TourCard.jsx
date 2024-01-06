@@ -4,6 +4,8 @@ export default function TourCard ({ data }) {
 
     const date = new Date(data.date)
 
+    console.log(data)
+
     const getWeekDay = (number) => {
         switch (number) {
             case 0: return '日'
@@ -29,7 +31,12 @@ export default function TourCard ({ data }) {
         <div className="rd-cd-card">
 
             <div className="first">
-                <div className="cd-status"><div className={'inner ' + data.status_class}>{data.status}</div></div>
+                <div className="cd-status">
+                    <div className={'inner ' + data.status_class}>
+                        {data.status}
+                        {(new Date(data.entry_start).getTime() < Date.now() && new Date(data.entry_end).getTime() > Date.now()) && <div className="cd-participants">{'現在' + data.participants_number + '名'}</div>}
+                    </div>
+                </div>
                 <div className="cd-year">{date.getFullYear()}.</div>
                 <div className="cd-month">{date.getMonth() + 1}.</div>
                 <div className="cd-day">{date.getDate() + '（' + getWeekDay(date.getDay()) + '）' }</div>
@@ -40,13 +47,9 @@ export default function TourCard ({ data }) {
                 "cd-title with-img" :
                 "cd-title"
             } 
-            style={ data.featured_image &&
-                {
-                    backgroundImage: "url(" + data.featured_image + ")"
-                }
-            }
+            style={ data.featured_image && { backgroundImage: "url(" + data.featured_image + ")"} }
                 href={"/ride/" + data.id}>
-                <img className="cd-map-thumbnail" src={data.map_thumbnail}/>
+                { data.map_thumbnail && <img className="cd-map-thumbnail" src={data.map_thumbnail}/> }
                 <div className="cd-title-text">{data.name}</div>
             </a>
 

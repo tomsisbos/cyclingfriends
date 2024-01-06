@@ -29,9 +29,9 @@ if (is_array($data)) {
         $scenery_data['city']             = (new LngLat($data['lng'], $data['lat']))->queryGeolocation()->city;
         $scenery_data['prefecture']       = (new LngLat($data['lng'], $data['lat']))->queryGeolocation()->prefecture;
         $scenery_data['elevation']        = $data['elevation'];
-        $scenery_data['date']             = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
-        $scenery_data['month']            = date("n");
-        $scenery_data['publication_date'] = $scenery_data['date'];
+        $scenery_data['date']             = $data['date'] ? (new DateTime())->setTimestamp($data['date']) : (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
+        $scenery_data['month']            = $scenery_data['date']->format('n');
+        $scenery_data['publication_date'] = (new DateTime(date('Y-m-d H:i:s'), new DateTimezone('Asia/Tokyo')));
         $scenery_data['popularity']       = 30;
         $scenery_data['tags']             = $data['tags'];
 

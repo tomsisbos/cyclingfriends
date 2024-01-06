@@ -1011,6 +1011,7 @@ export default class NewActivityMap extends ActivityMap {
                         lng: this.getPhotoLocation(photo)[0],
                         lat: this.getPhotoLocation(photo)[1],
                         datetime: photo.datetime,
+                        elevation: Math.floor(this.map.queryTerrainElevation(this.getPhotoLocation(photo))),
                         featured: photo.featured,
                         privacy: photo.privacy
                     } )

@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $getUserData = $db->prepare("SELECT
         u.id,
         u.login,
-        u.default_profilepicture_id,
+        u.default_profilepicture_id as default_propic_id,
         u.inscription_date,
         u.first_name,
         u.last_name,

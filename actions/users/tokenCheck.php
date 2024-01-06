@@ -16,7 +16,7 @@ if (empty($token)) {
 try {
     $user_data = JWT::decode($token, new Key($key, 'HS256'));
     $user = new User($user_data->id);
-    // JWT token is valid, you can access $decoded for user information
+    // JWT token is valid, you can access $user for user information
     
 } catch (Exception $e) {
     // Token is invalid, return an error response

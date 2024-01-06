@@ -113,6 +113,7 @@ class Model {
     public function notify ($user_id, $type, $actor_id = NULL) {
         $notification = new Notification();
         $notification->register($user_id, $type, $this->table, $this->id, $actor_id);
+        $notification->sendPushNotification();
     }
 
     /**

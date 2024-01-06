@@ -30,6 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
     $blobClient->setBlobMetadata($containername, $filename, $metadata);
 
+    // If value is 'new', create a new entry in bikes table and return the corresponding bike id
+    if ($bike_id == 'new') {
+        $bike = new Bike();
+        $bike->create($user->id);
+        $bike_id = $bike->id;
+    }
+
     $updateImage = $db->prepare('UPDATE bikes SET filename = ? WHERE id = ?');
     $updateImage->execute([$filename, $bike_id]);
 
