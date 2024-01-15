@@ -10,6 +10,7 @@ include '../includes/head.php'; ?>
 <link rel="stylesheet" href="/assets/css/dashboard.css" />
 <link rel="stylesheet" href="/assets/css/activities.css" />
 <link rel="stylesheet" href="/assets/css/posts.css" />
+<link rel="stylesheet" href="/assets/css/scenery.css" />
 <link rel="stylesheet" href="/assets/css/loaders.css" />
 
 <body> <?php // Compatible with class="black-theme"

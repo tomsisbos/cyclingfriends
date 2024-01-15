@@ -45,13 +45,12 @@ include '../includes/head.php'; ?>
             <h1 class="home-brand">cyclingfriends</h1>
             <div class="home-version">v0.8 (Public beta release)</div>
             <div class="home-appeal home-version text-center">
-                <p style="font-size: 30;color: #ff0000;" class="home-appeal">残り<?php echo round(abs((1705305600 - time()) / 3600 / 24)) ?>日</p>
-                <p class="home-appeal">モバイルアプリ1月15日公開！</p>
+                <p class="home-appeal" style="padding: 5px">モバイルアプリが公開されました！</p>
+                <div class="mobile-download-buttons">
+                    <a href="https://play.google.com/store/apps/details?id=com.cyclingfriends.cyclingfriendsmobile&fbclid=IwAR2FHHsOj2SyRgNR0mnPOoiiZ-MZT_r8cpNAxbuxfUCoFP-S7hQhUZ1N0gE&pli=1"><img class="mobile-download-app-image" src="/media/google_play.png" /></a>
+                    <a href="https://apps.apple.com/us/app/cyclingfriends/id6469093820"><img class="mobile-download-app-image" src="/media/app_store.png" /></a>
+                </div>
             </div>
-        </div>
-
-        <div class="home-catchcopy" style="z-index: 1">
-            <p class="first">みんなで作る</p><p class="second">サイクリングマップ。</p>
         </div>
 
         <div class="home-overlay" style="z-index: 0">
@@ -68,31 +67,12 @@ include '../includes/head.php'; ?>
             
     <div class="home-top-container home-slide px-0 pt-5">
         <h2 class="home-main-title text-center">
-            サイクルツーリズムを支える新プラットフォーム。
-        </h2> <?php
-        include "../includes/home/carousel.php"; ?>
-        <div class="home-schedule-container">
-            <div class="home-schedule-block" style="border-color: #00e06e;">
-                <div class="home-schedule-subtitle">Stage 1</div>
-                <div class="home-schedule-title" style="color: #00e06e;">プライベートベータ公開</div>
-                <p>終了</p>
+            <div class="home-catchcopy" style="z-index: 1">
+                <p class="first">みんなで作る</p><p class="second">サイクリングマップ！</p>
             </div>
-            <svg height="60" width="10">
-                <polygon points="0,00 10,30 0,60" />
-            </svg>
-            <div class="home-schedule-block" style="border-color: #00e06e;">
-                <div class="home-schedule-subtitle">Stage 2</div>
-                <div class="home-schedule-title" style="color: #00e06e;">ベータ公開</div>
-                <p>実施中</p>
-            </div>
-            <svg height="60" width="10">
-                <polygon points="0,00 10,30 0,60" />
-            </svg>
-            <div class="home-schedule-block" style="border-color: #ff5555;">
-                <div class="home-schedule-subtitle">Stage 3</div>
-                <div class="home-schedule-title" style="color: #ff5555;">v.1.0 公開</div>
-                <p>2024年1月予定！</p>
-            </div>
+        </h2>
+        <div class="home-video-container">
+            <iframe width="560" height="400" src="https://www.youtube-nocookie.com/embed/qydGgXVx4Cw?si=asonk6u_4TGJhBwT" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
     </div>
 

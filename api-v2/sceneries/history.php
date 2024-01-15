@@ -37,7 +37,8 @@ WHERE
     AND ST_DWithin(
 		l.linestring::geography,
         sp.point::geography,
-		{$max_distance}
+		{$max_distance},
+        false
     )
 ORDER BY
     date DESC");

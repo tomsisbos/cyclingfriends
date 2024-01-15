@@ -15,8 +15,10 @@ if (is_array($data)) {
 
     // Build activity data
     $activity_id  = $data['id'];
+    $user_id      = $data['author_id'];
     $title        = $data['title'];
     if (isset($data['bike'])) $bike_id = $data['bike'];
+    else if ($user_id) $bike_id = (new User($user_id))->getBikes()[0]; // If no bike data, set default bike
     else $bike_id = null;
     $privacy      = $data['privacy'];
 

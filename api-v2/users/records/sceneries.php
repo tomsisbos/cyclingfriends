@@ -34,7 +34,7 @@ INNER JOIN
 CROSS JOIN 
     user_activities ua
 WHERE 
-    ST_DWithin(ua.linestrings, s.point, {$distance_tolerance})
+    ST_DWithin(ua.linestrings, s.point, {$distance_tolerance}, false)
 GROUP BY
     s.id, s.name
 ORDER BY

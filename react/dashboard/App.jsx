@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import Rides from '/react/dashboard/Rides.jsx'
 import News from '/react/dashboard/News.jsx'
 import Activities from '/react/activities/Activities.jsx'
+import AdvisedSceneries from './AdvisedSceneries'
 
 function App () {
   
@@ -12,6 +13,7 @@ function App () {
                 <Rides />
                 <News />
             </div>
+            <AdvisedSceneries />
             <Activities />
         </div>
     )

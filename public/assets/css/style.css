@@ -30,7 +30,7 @@ body {
     position: relative;
     width: 100%;
     min-height: calc(100% - 80px);
-    height: calc(100vh - 80px);
+    height: calc(100% - 80px);
 }
 
 p, h3, h4, h5, h6, li {

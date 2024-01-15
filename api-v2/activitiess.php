@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         a.title,
         a.user_id as author_id,
         a.privacy,
+        a.bike_id,
         r.id as route_id,
         r.distance,
         r.thumbnail_filename as thumbnail,
