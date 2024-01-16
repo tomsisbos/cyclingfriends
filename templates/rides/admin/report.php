@@ -68,9 +68,8 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
                             Google PhotosアルバムのURLを記入してください。<?php
                             if (isset($ride->getReport()->photoalbum_url)) echo '<a href="' .$ride->getReport()->photoalbum_url. '" target="_blank"><div class="btn smallbutton">フォトアルバムはこちら</div></a>' ?>
                             <form method="POST" id="photoReport" class="d-flex gap">
-                                <input type="text" name="url" class="form-control" value="<?php
-                                    if (isset($ride->getReport()->photoalbum_url)) echo $ride->getReport()->photoalbum_url;
-                                    else echo 'https://photos.app.goo.gl/' ?>
+                                <input type="text" name="url" class="form-control" placeholder="https://photos.app.goo.gl/" value="<?php
+                                    if (isset($ride->getReport()->photoalbum_url)) echo $ride->getReport()->photoalbum_url; ?>
                                 "></input>
                                 <input type="submit" name="photoReport" class="btn smallbutton" value="確定"/>
                             </form>
@@ -88,10 +87,8 @@ if (!$ride->getAuthor()->isGuide()) header('location: ' .$router->generate('ride
                                 echo $ride->getReport()->getVideoIframe();
                             } ?>
                             <form method="POST" id="videoReport" class="d-flex gap">
-                                <input type="text" name="url" class="form-control" id="floatingVideoInput" value="<?php
-                                    if (isset($ride->getReport()->video_url)) echo $ride->getReport()->video_url;
-                                    else echo 'https://www.youtube.com/' ?>
-                                "></input>
+                                <input type="text" name="url" class="form-control" id="floatingVideoInput" placeholder="https://www.youtube.com/" value="<?php
+                                    if (isset($ride->getReport()->video_url)) echo $ride->getReport()->video_url ?>"></input>
                                 <input type="submit" name="videoReport" class="btn smallbutton" value="確定"/>
                             </form>
                         </div>

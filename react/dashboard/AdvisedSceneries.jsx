@@ -9,11 +9,7 @@ export default function AdvisedSceneries () {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        axios.get('/api/sceneries/advised', {
-            params: {
-                user_id: 1
-            }
-        }).then(response => {
+        axios.get('/api/sceneries/advised').then(response => {
             setSceneries(response.data)
             setLoading(false)
         })
@@ -24,7 +20,7 @@ export default function AdvisedSceneries () {
     }, [sceneries])
     
     return (
-        <div class="advised-sceneries">
+        <div className="advised-sceneries">
             { loading ?
                 <Loader /> :
                 sceneries.map((scenery, index) => index < 6 && <SceneryCard key={scenery.id} data={scenery} />)

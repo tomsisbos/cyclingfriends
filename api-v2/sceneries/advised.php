@@ -2,7 +2,7 @@
 
 header('Content-Type: application/json, charset=UTF-8');
 
-require_once '../includes/api-public-head.php';
+require_once '../includes/api-head.php';
 
 $simplification_tolerance = 0.004;
 $distance_tolerance_in_meters = 300;
@@ -10,17 +10,20 @@ $field_scope_in_kilometers = 50;
 $distance_in_meters_to_be_considered_as_nearby = 5000;
 $number_of_latest_activities_to_include_in_computation = 14;
 
+if ($_GET['user_id']) $user = new User($_GET['user_id']);
+else if (!$user) $user = getConnectedUser();
+
 $getAdvisedSceneries = $db->prepare("WITH user_activities AS (
     SELECT ST_Collect(ST_SnapToGrid(linestring::geometry, {$simplification_tolerance})::geometry) AS linestrings
     FROM activities a
     JOIN linestrings l ON a.route_id = l.segment_id
-    WHERE a.user_id = ?
+    WHERE a.user_id = :user_id
 ),
 
 latest_user_activities AS (
     SELECT id
     FROM activities
-    WHERE user_id = 1
+    WHERE user_id = :user_id
     ORDER BY datetime DESC
     LIMIT {$number_of_latest_activities_to_include_in_computation}
 ),
@@ -69,7 +72,7 @@ SELECT
 FROM filtered_sceneries fs
 CROSS JOIN user_activities ua
 WHERE NOT ST_DWithin(ua.linestrings, fs.point, {$distance_tolerance_in_meters}, false)");
-$getAdvisedSceneries->execute([$_GET['user_id']]);
+$getAdvisedSceneries->execute([':user_id' => $_GET['user_id']]);
 $sceneries = $getAdvisedSceneries->fetchAll(PDO::FETCH_ASSOC);
 
 echo json_encode($sceneries);
