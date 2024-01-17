@@ -64,7 +64,6 @@ function App () {
     }
 
     var youtubeId = document.querySelector("#activity").dataset.youtubeElement
-    console.log(youtubeId)
 
     const getVideoIframe = () => {
         var width = 720

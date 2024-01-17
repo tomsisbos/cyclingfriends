@@ -1,13 +1,21 @@
-<?php
+<!DOCTYPE html>
+<html lang="jp"> <?php
 
+require_once '../includes/functions.php';
 include '../actions/users/initPublicSession.php';
+include '../actions/activities/activity.php';
+
+$activity = new Activity($activity_id);
+$ogp = [
+	'title' => $activity->title,
+	'description' => !empty($activity->getCheckpoints()[0]->story) ? $activity->getCheckpoints()[0]->story : 'アクティビティの詳細を確認しましょう！',
+	'image' => $activity->getFeaturedImage() ? $activity->getFeaturedImage()->url : $activity->route->getThumbnail(),
+	'twitter_site' => $activity->getAuthor()->getTwitter()->username
+];
+
 include '../includes/head.php';
 include '../includes/head-map.php';
-include '../actions/twitter/authentification.php';
-include '../actions/activities/activity.php'; ?>
-
-<!DOCTYPE html>
-<html lang="en">
+include '../actions/twitter/authentification.php'; ?>
 
 <link rel="stylesheet" href="/assets/css/activity.css" />
 <link rel="stylesheet" href="/assets/css/twitter.css">

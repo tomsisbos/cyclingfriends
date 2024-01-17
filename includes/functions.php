@@ -575,4 +575,13 @@ function is_serialized ($data, $strict = true) {
 	}
 	return false;
 }
-?>
+
+function truncateString ($string, $length, $ellipsis = '...') {
+    // Check if the string needs truncation
+    if (mb_strlen($string, 'UTF-8') > $length) {
+        // Truncate the string and append the ellipsis
+        $string = mb_strimwidth($string, 0, $length - mb_strlen($ellipsis, 'UTF-8'), '', 'UTF-8') . $ellipsis;
+    }
+
+    return $string;
+} ?>

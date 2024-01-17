@@ -9,6 +9,7 @@ class CheckpointImage extends Model {
     public $size;
     public $name;
     public $type;
+    public $url;
 
     function __construct ($id = NULL) {
         parent::__construct();

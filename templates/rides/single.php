@@ -4,6 +4,13 @@ include '../actions/users/initPublicSession.php';
 include '../actions/rides/ride.php';
 include '../actions/rides/edit/adminPanel.php';
 include '../actions/rides/edit/gallery.php';
+
+$ogp = [
+	'title' => $ride->name,
+	'description' => $ride->description,
+	'image' => $ride->getFeaturedImage()->url
+];
+
 include '../includes/head.php';
 include '../includes/head-map.php';
 
