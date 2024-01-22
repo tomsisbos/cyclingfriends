@@ -31,11 +31,17 @@
 				if ($getFirstImageFilename->rowCount() > 0) $activity_featured_image_filename = $getFirstImageFilename->fetch(PDO::FETCH_COLUMN);
 			}
 
+			$root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
+			require $root_folder . '/actions/blobStorage.php';
 			// If an image to feature could have been found
             if (isset($activity_featured_image_filename)) {
-				$root_folder = substr($_SERVER['DOCUMENT_ROOT'], 0, - strlen(basename($_SERVER['DOCUMENT_ROOT'])));
-				require $root_folder . '/actions/blobStorage.php';
 				$activity_featured_image_url = $blobClient->getBlobUrl('activity-photos', $activity_featured_image_filename);
+			}
+			// Else, set route thumnbail as default
+			else {
+				$getRouteThumbnailFilename = $db->prepare("SELECT thumbnail_filename FROM routes AS r JOIN activities AS a ON a.route_id = r.id WHERE a.id = ?");
+				$getRouteThumbnailFilename->execute([$activity_id]);
+				$activity_route_thumbnail_url = $blobClient->getBlobUrl('route-thumbnails', $getRouteThumbnailFilename->fetch(PDO::FETCH_COLUMN));
 			}
 
 

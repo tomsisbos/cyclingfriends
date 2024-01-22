@@ -561,6 +561,9 @@ nav .navbar-brand {
     font-size: x-large;
     text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
+nav .navbar-brand * {
+    height: inherit;
+}
 nav .site-logo {
     position: relative;
     height: 100%;

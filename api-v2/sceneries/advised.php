@@ -10,8 +10,8 @@ $field_scope_in_kilometers = 50;
 $distance_in_meters_to_be_considered_as_nearby = 5000;
 $number_of_latest_activities_to_include_in_computation = 14;
 
-if ($_GET['user_id']) $user = new User($_GET['user_id']);
-else if (!$user) $user = getConnectedUser();
+if (isset($_GET['user_id'])) $user = new User($_GET['user_id']);
+else if (!isset($user)) $user = getConnectedUser();
 
 $getAdvisedSceneries = $db->prepare("WITH user_activities AS (
     SELECT ST_Collect(ST_SnapToGrid(linestring::geometry, {$simplification_tolerance})::geometry) AS linestrings
@@ -72,7 +72,7 @@ SELECT
 FROM filtered_sceneries fs
 CROSS JOIN user_activities ua
 WHERE NOT ST_DWithin(ua.linestrings, fs.point, {$distance_tolerance_in_meters}, false)");
-$getAdvisedSceneries->execute([':user_id' => $_GET['user_id']]);
+$getAdvisedSceneries->execute([':user_id' => 44]);
 $sceneries = $getAdvisedSceneries->fetchAll(PDO::FETCH_ASSOC);
 
 echo json_encode($sceneries);

@@ -28,33 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     else $restrict_to_public = " AND a.privacy = 'public'";
     
     // Get activity data
-    $getActivities = $db->prepare("SELECT *
-    FROM (
+    $getActivities = $db->prepare("WITH Activities AS (
         SELECT
-            DISTINCT a.id,
+            a.id,
             a.title,
             a.user_id as author_id,
             a.privacy,
             a.bike_id,
-            a.datetime::date as date,
-            a.posting_date,
             r.id as route_id,
             r.distance,
             r.thumbnail_filename as thumbnail,
             u.login as author_login,
             u.default_profilepicture_id as default_propic_id,
             pp.filename as author_propic,
+            a.datetime::date as date,
             c.city,
             c.prefecture,
-            c.story,
-            (SELECT
-                    COUNT(id)
-                FROM followers
-                WHERE following_id = {$user->id} AND followed_id = a.user_id) > 0 as following,
-            ROW_NUMBER() OVER (ORDER BY (SELECT
-                COUNT(id)
-            FROM followers
-            WHERE following_id = {$user->id} AND followed_id = a.user_id OR a.user_id = {$user->id}) > 0 DESC, a.posting_date DESC) AS subquery_row_number
+            COUNT(p.id) as photos_number,
+            LENGTH(c.story) as story_length
         FROM
             activities as a
         JOIN
@@ -67,20 +58,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             activity_photos as p ON a.id = p.activity_id
         JOIN
             activity_checkpoints as c ON a.id = c.activity_id
-        JOIN
-            followers as f ON a.user_id = f.following_id
         WHERE
             r.distance > {$activity_min_distance} AND
             c.number = 0 {$restrict_to_user_id_query} {$restrict_to_public}
-        GROUP BY a.id, r.id, u.login, u.default_profilepicture_id, pp.filename, c.city, c.prefecture, c.story, a.posting_date
-        HAVING COUNT(p.id) > 0 OR LENGTH(c.story) > 0 OR r.distance > 80
-    ) AS subquery
-    ORDER BY 
-        CASE
-            WHEN subquery.subquery_row_number <= 5 THEN subquery.subquery_row_number
-        END
-        ASC, subquery.posting_date DESC
-    LIMIT {$limit} OFFSET {$offset}");
+        GROUP BY
+            a.id, a.title, a.user_id, a.privacy, a.bike_id, r.id, r.distance,
+            r.thumbnail_filename, u.login, u.default_profilepicture_id, pp.filename,
+            a.datetime::date, c.city, c.prefecture, c.story
+    )
+
+    SELECT *
+    FROM Activities
+    ORDER BY
+        date DESC, 
+        CASE 
+            WHEN photos_number > 0 THEN 1 
+            WHEN story_length > 0 THEN 2 
+            ELSE 3 
+        END ASC,
+        distance DESC
+    LIMIT
+        {$limit} OFFSET {$offset}");
     $getActivities->execute();
     $activities = $getActivities->fetchAll(PDO::FETCH_ASSOC);
 

@@ -5,12 +5,10 @@ require_once '../includes/functions.php';
 include '../actions/users/initPublicSession.php';
 include '../actions/activities/activity.php';
 
-$activity = new Activity($activity_id);
 $ogp = [
-	'title' => $activity->title,
-	'description' => !empty($activity->getCheckpoints()[0]->story) ? $activity->getCheckpoints()[0]->story : 'アクティビティの詳細を確認しましょう！',
-	'image' => $activity->getFeaturedImage() ? $activity->getFeaturedImage()->url : $activity->route->getThumbnail(),
-	'twitter_site' => $activity->getAuthor()->getTwitter()->username
+	'title' => $activity_title,
+	'description' => $activity_title,
+	'image' => isset($activity_featured_image_url) ? $activity_featured_image_url : $activity_route_thumbnail_url
 ];
 
 include '../includes/head.php';
