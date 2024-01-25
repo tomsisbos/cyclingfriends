@@ -37,13 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         pp.filename as author_propic,
         a.datetime::date as date,
         c.city,
-        c.prefecture
+        c.prefecture,
+        CASE WHEN s.private_zone = 1 THEN true ELSE false END AS private_zone
     FROM
         activities as a
     JOIN
         routes as r ON a.route_id = r.id
     JOIN
         users as u ON a.user_id = u.id
+    JOIN
+        settings as s ON a.user_id = s.id
     FULL OUTER JOIN
         profile_pictures as pp ON a.user_id = pp.user_id
     FULL OUTER JOIN

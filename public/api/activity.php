@@ -13,6 +13,7 @@ if (isset($_GET)) {
         $activity->route->coordinates = $activity->route->getLinestring();
         $activity->route->time = $activity->route->getTime();
         $activity->author = new User($activity->user_id);
+        $activity->private_zone = $activity->author->getSettings()->private_zone;
         echo json_encode($activity);
     }
 

@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             a.datetime::date as date,
             c.city,
             c.prefecture,
+            CASE WHEN s.private_zone = 1 THEN true ELSE false END AS private_zone,
             COUNT(p.id) as photos_number,
             LENGTH(c.story) as story_length
         FROM
@@ -52,6 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             routes as r ON a.route_id = r.id
         JOIN
             users as u ON a.user_id = u.id
+        JOIN
+            settings as s ON a.user_id = s.id
         FULL OUTER JOIN
             profile_pictures as pp ON a.user_id = pp.user_id
         FULL OUTER JOIN
@@ -64,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         GROUP BY
             a.id, a.title, a.user_id, a.privacy, a.bike_id, r.id, r.distance,
             r.thumbnail_filename, u.login, u.default_profilepicture_id, pp.filename,
-            a.datetime::date, c.city, c.prefecture, c.story
+            a.datetime::date, c.city, c.prefecture, c.story, s.private_zone
     )
 
     SELECT *

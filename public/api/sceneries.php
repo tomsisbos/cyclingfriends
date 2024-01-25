@@ -9,7 +9,7 @@ if (isset($_GET['route'])) {
 }
 
 if (isset($_GET['prefecture'])) {
-    $getSceneriesFromPrefecture = $db->prepare('SELECT id FROM sceneries WHERE prefecture = ? ORDER BY rating DESC');
+    $getSceneriesFromPrefecture = $db->prepare('SELECT id FROM sceneries WHERE prefecture = ? ORDER BY publication_date DESC');
     $getSceneriesFromPrefecture->execute([$_GET['prefecture']]);
     $scenery_ids = $getSceneriesFromPrefecture->fetchAll(PDO::FETCH_COLUMN);
     $sceneries = array_map(function ($id) {

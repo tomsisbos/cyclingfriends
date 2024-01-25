@@ -1576,14 +1576,24 @@ export default class Map extends Model {
         } )
     }
 
-    addRouteLayer (geojson) {
+    cutPrivateZone = (line) => {
+        const distanceToCutInMeters = 300
+        const centerPoint = line.geometry.coordinates[0]
+        const circle = turf.circle(centerPoint, distanceToCutInMeters, { units: 'meters' })
+    
+        // Split the line with the circle and keep the section outside
+        const splitLine = turf.lineSplit(line, circle)
+        return splitLine.features[1]
+    }
+
+    addRouteLayer (geojson, privateZone = false) {
         this.map.addLayer( {
             id: 'route',
             type: 'line',
             source: {
                 type: 'geojson',
                 lineMetrics: true,
-                data: geojson
+                data: privateZone ? this.cutPrivateZone(geojson) : geojson
             },
             layout: {
                 'line-join': 'round',

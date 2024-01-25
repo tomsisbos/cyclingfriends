@@ -39,7 +39,8 @@ if (!empty($data)) {
                 'id' => $user->id,
                 'login' => $user->login,
                 'propicUrl' => $user->getPropicFilename(),
-                'defaultPropicNumber' => $user->default_profilepicture_id
+                'defaultPropicNumber' => $user->default_profilepicture_id,
+                'settings' => $user->getSettings()
             ];
 
             $token = JWT::encode($user_data, getEnv('JWT_SECRET_KEY'), 'HS256');

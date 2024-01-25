@@ -287,8 +287,19 @@ export default class ActivityMap extends Map {
     }
 
     displayCheckpointMarkers () {
-        this.data.checkpoints.forEach( (checkpoint) => {
-            checkpoint.marker = this.addMarker(checkpoint.lngLat, checkpoint.type)
+        this.data.checkpoints.forEach((checkpoint) => {
+            if (this.data.private_zone) {
+                if (checkpoint.type === 'Start') checkpoint.marker = this.addMarker({
+                    lng: this.cutPrivateZone(turf.lineString(this.data.route.coordinates)).geometry.coordinates[0][0],
+                    lat: this.cutPrivateZone(turf.lineString(this.data.route.coordinates)).geometry.coordinates[0][1]
+                }, checkpoint.type)
+                else if (checkpoint.type === 'Goal') checkpoint.marker = this.addMarker({
+                    lng: this.cutPrivateZone(turf.lineString(this.data.route.coordinates)).geometry.coordinates[this.cutPrivateZone(turf.lineString(this.data.route.coordinates)).geometry.coordinates.length - 1][0],
+                    lat: this.cutPrivateZone(turf.lineString(this.data.route.coordinates)).geometry.coordinates[this.cutPrivateZone(turf.lineString(this.data.route.coordinates)).geometry.coordinates.length - 1][1]
+                }, checkpoint.type)
+                else checkpoint.marker = this.addMarker(checkpoint.lngLat, checkpoint.type)
+            }
+            else checkpoint.marker = this.addMarker(checkpoint.lngLat, checkpoint.type)
         } )
     }
 }

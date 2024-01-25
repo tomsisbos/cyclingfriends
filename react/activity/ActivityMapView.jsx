@@ -58,7 +58,7 @@ export default function ActivityMapView ({ isLoading, activityData, photos, setP
                 activityMap.setGrabber()
                 activityMap.addSources()
                 activityMap.addLayers()
-                activityMap.addRouteLayer(activityMap.routeData)
+                activityMap.addRouteLayer(activityMap.routeData, activityData.private_zone)
                 activityMap.profile.generate()
                 ///activityMap.displayStartGoalMarkers(activityMap.routeData)
                 activityMap.updateDistanceMarkers()
