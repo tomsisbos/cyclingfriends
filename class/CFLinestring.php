@@ -147,10 +147,10 @@ class CFLinestring extends Model {
     }
 
     // Create a segment (and a route) from these coordinates
-    public function createSegment ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename, $tunnels, $rank, $advised, $seasons, $advice, $specs, $tags) {
+    public function createSegment ($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $tunnels, $rank, $advised, $seasons, $advice, $specs, $tags) {
         
         // Create route
-        $route_id = $this->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $thumbnail_filename, $tunnels);
+        $route_id = $this->createRoute($author_id, $route_id, $category, $name, $description, $distance, $elevation, $startplace, $goalplace, $tunnels);
 
         // Prepare variables
         if ($advised == 'on') $advised = 1;

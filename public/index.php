@@ -67,12 +67,7 @@ $router->map('GET', '/journal/[i:user_id]', 'activities/journal');
 $router->map('GET', '/route/[i:route_id]', 'routes/single', 'route-single');
 $router->map('GET', '/route/new', 'routes/new', 'route-new');
 $router->map('GET', '/route/[i:route_id]/edit', 'routes/edit', 'route-edit');
-$router->map('GET', '/[*:user_login]/routes', 'routes/userboard', 'route-userboard');
-$router->map('GET', '/routes', function () { // Redirect to "/[login]/routes" when typing "/routes"
-    require_once '../actions/users/initSession.php';
-    require_once '../includes/functions.php';
-    header('location: ' .$_SERVER['REQUEST_SCHEME']. '://' .$_SERVER['HTTP_HOST']. '/' .getConnectedUser()->login. '/routes');
-});
+$router->map('GET', '/routes', 'routes/userboard', 'route-userboard');
 
 // Rides
 $router->map('GET|POST', '/ride/[i:ride_id]', 'rides/single', 'ride-single');

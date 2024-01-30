@@ -31,7 +31,7 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/<?= getConnectedUser()->login ?>/routes"><div class="mainitem">ルート</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/routes"><div class="mainitem">ルート</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item interactive" href="/route/new"><div class="mainitem">新規作成</div></a>

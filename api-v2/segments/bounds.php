@@ -4,6 +4,9 @@ header('Content-Type: application/json, charset=UTF-8');
 
 require_once '../includes/api-public-head.php';
 
+$maximum_distance_to_sceneries_in_meters = 300;
+$maximum_distance_to_photos_in_meters = 100;
+
 // Bounds are expected to be set as an array like [Xlng, Xlat, Ylng, Ylat]
 $getSegmentsFromBoundingBox = $db->prepare("WITH segments_ranked AS (
     SELECT
@@ -46,7 +49,21 @@ sceneries_within_distance AS (
         sc.popularity AS scenery_popularity,
         sc.point AS point
     FROM segments_ranked s
-    JOIN sceneries sc ON ST_DWithin(s.linestring::geometry, sc.point, 300)  -- Replace '?' with your desired distance
+    JOIN sceneries sc ON ST_DWithin(s.linestring::geometry, sc.point, {$maximum_distance_to_sceneries_in_meters})  -- Replace '?' with your desired distance
+),
+
+photos_within_distance AS (
+    SELECT
+        s.id AS segment_id,
+        ap.id AS id,
+        ap.activity_id AS activity_id,
+		ap.user_id AS user_id,
+		ap.privacy AS privacy,
+		ap.datetime AS datetime,
+        ap.filename AS filename,
+        ap.point AS point
+    FROM segments_ranked s
+    JOIN activity_photos ap ON ST_DWithin(s.linestring::geometry, ap.point, {$maximum_distance_to_photos_in_meters})  -- Replace '?' with your desired distance
 )
 
 SELECT
@@ -94,11 +111,24 @@ SELECT
             'lng', ST_X(swd.point::geometry)::double precision,
             'lat', ST_Y(swd.point::geometry)::double precision
         )
-    ) AS scenery_photos
+    ) AS scenery_photos,
+    jsonb_agg(
+        jsonb_build_object(
+            'photo_id', pwd.id,
+            'activity_id', pwd.activity_id,
+			'user_id', pwd.user_id,
+			'privacy', pwd.privacy,
+			'datetime', pwd.datetime,
+            'filename', pwd.filename,
+            'lng', ST_X(pwd.point::geometry)::double precision,
+            'lat', ST_Y(pwd.point::geometry)::double precision
+        )
+    ) AS photos
 FROM segments_ranked sr
 LEFT JOIN segment_seasons ss ON sr.id = ss.segment_id
 LEFT JOIN sceneries_within_distance swd ON sr.id = swd.segment_id
 LEFT JOIN scenery_photos scp ON swd.scenery_id = scp.scenery_id
+LEFT JOIN photos_within_distance pwd ON sr.id = pwd.segment_id
 GROUP BY
     sr.id,
     sr.route_id,
@@ -133,6 +163,7 @@ foreach ($segments as &$segment) {
     $segment['linestring'] = parseLinestring($segment['linestring']);
     $segment['seasons'] = json_decode($segment['seasons'], true);
     $segment['scenery_photos'] = json_decode($segment['scenery_photos'], true);
+    $segment['photos'] = json_decode($segment['photos'], true);
 }
 
 echo json_encode($segments);
