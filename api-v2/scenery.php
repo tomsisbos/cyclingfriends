@@ -40,7 +40,7 @@ LEFT JOIN
     tags AS t ON t.object_type = 'scenery' AND t.object_id = s.id
 INNER JOIN
     users AS u ON s.user_id = u.id
-INNER JOIN
+FULL OUTER JOIN
     profile_pictures AS pp ON s.user_id = pp.user_id
 LEFT JOIN
     scenery_grades_counts AS c ON s.id = c.scenery_id

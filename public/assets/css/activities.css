@@ -80,6 +80,7 @@
 .dashboard-activity-card-body {
     display: flex;
     max-height: 160px;
+    height: 160px;
     gap: 8px;
 }
 

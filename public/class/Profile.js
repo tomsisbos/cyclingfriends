@@ -68,8 +68,8 @@ export default class Profile extends Model {
         return profileData
 
         function getPointsToCheck (lineString, distancesToCheck) {     
-            let points = [] 
-            distancesToCheck.forEach( (distance) => {
+            let points = []
+            distancesToCheck.forEach(distance => {
                 let feature = turf.along(lineString, distance, {units: "kilometers"} )
                 feature.properties.distanceAlongLine = distance * 1000
                 points.push(feature)
@@ -729,7 +729,7 @@ export default class Profile extends Model {
             // Bound chart to canvas
             this.canvas = new Chart(ctx, chartSettings)
         }
-    }    
+    }
 
     /**
      * Pregenerate checkpoint elements to display on profile

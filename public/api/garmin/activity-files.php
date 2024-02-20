@@ -17,7 +17,11 @@ $data = json_decode($json, true);
 foreach ($data['activityFiles'] as $activity_files) {
 
     $garmin = new Garmin($activity_files['userId']);
-    $garmin->populateUserTokens();
+    $result = $garmin->populateUserTokens();
+
+    if (!$result) {
+        throw new Exception('User tokens could not be retrieved for this userId : ' .$activity_files['userId']);
+    }
 
     // Save all ping calls logs in a json file
     $temp_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/temp';
@@ -31,7 +35,6 @@ foreach ($data['activityFiles'] as $activity_files) {
     $id = $params['id'];
     $token = $params['token'];
     $ext = strtolower($activity_files['fileType']);
-    
 
     // Retrieve corresponding activity details
     $activity_file = $garmin->retrieveActivityFile($id, $token, [
@@ -39,7 +42,7 @@ foreach ($data['activityFiles'] as $activity_files) {
         'garmin_activity_id' => intval($activity_files['activityId']), 
         'garmin_user_id' => $activity_files['userId']
     ]);
-
+    
     // Parse file
 
     $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
@@ -65,7 +68,7 @@ foreach ($data['activityFiles'] as $activity_files) {
 
         $errors_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/errors';
         if (!file_exists($errors_directory)) mkdir($errors_directory, 0777, true); // Create user directory if necessary
-        $temp_url = $errors_directory. '/' .'error-' . $user_id . '-' . $activity_files['activityId'] . '.log';
+        $temp_url = $errors_directory. '/' .'error-userid-' . $user_id . '-garminactivityid-' . $activity_files['activityId'] . '.log';
         file_put_contents($temp_url, 'Garmin Connectよりアクティビティ「' .$activity_files['activityId']. '」を同期しようとしたところ、次の通りエラーが発生しました：' .$e->getMessage(). ', id: ' .$e->getCode());
 
         $user = new User($user_id);

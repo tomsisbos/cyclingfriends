@@ -158,7 +158,7 @@ class ActivityData extends Model {
         }
 
         // Build trackpoints
-        if (!isset($record['position_long']) || $record['position_long'] == null) throw new Exception('missing_coordinates');
+        if (!isset($record['position_long']) || !is_array($record['position_long'])) throw new Exception('missing_coordinates');
         $coordinates = [];
         $trackpoints = [];
         for ($i = 0; $i < count($record['position_long']) - 1; $i++) {

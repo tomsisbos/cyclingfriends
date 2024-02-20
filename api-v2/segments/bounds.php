@@ -161,9 +161,9 @@ $segments = $getSegmentsFromBoundingBox->fetchAll(PDO::FETCH_ASSOC);
 // Convert linestring to array of coordinates
 foreach ($segments as &$segment) {
     $segment['linestring'] = parseLinestring($segment['linestring']);
-    $segment['seasons'] = json_decode($segment['seasons'], true);
-    $segment['scenery_photos'] = json_decode($segment['scenery_photos'], true);
-    $segment['photos'] = json_decode($segment['photos'], true);
+    $segment['seasons'] = json_decode($segment['seasons'], true)[0]['number'] !== null ? json_decode($segment['seasons'], true) : [];
+    $segment['scenery_photos'] = json_decode($segment['scenery_photos'], true)[0]['scenery_id'] !== null ? json_decode($segment['scenery_photos'], true) : [];
+    $segment['photos'] = json_decode($segment['photos'], true)[0]['photo_id'] !== null ? json_decode($segment['photos'], true) : [];
 }
 
 echo json_encode($segments);

@@ -13,7 +13,7 @@ $data = json_decode($json, true);
 foreach ($data['deregistrations'] as $deregistration) {
     $garmin = new Garmin($deregistration['userId']);
     $garmin->populateUserTokens();
-    $garmin->disconnect();
+    $garmin->removeUserEntry();
 }
 
 // Retrieve a 200 response code

@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Get activity data
     $getRoutes = $db->prepare("SELECT
-    SELECT
         r.id,
         r.author_id as user_id,
         r.posting_date,

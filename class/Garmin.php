@@ -217,22 +217,36 @@ class Garmin extends Model {
      */
     public function deregister () {
 
+        // Prepare deregistration log folder
+        $user_id = $this->getUserIdFromGarminId($this->garmin_user_id);
+        $deregistration_time = time();
+        $deregistrations_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/deregistrations';
+        if (!file_exists($deregistrations_directory)) mkdir($deregistrations_directory, 0777, true); // Create user directory if necessary
+        $temp_url = $deregistrations_directory. '/' .'deregistration-userid-' . $user_id . '-deregistration-time-' .$deregistration_time. '.log';
+
+        // Send a deregistration request
         $server = new GarminApi($this->getConfig());
         $token_credentials = $this->getTokenCredentials();
-        
-        // Send a deregistration request
-        $result = $server->deleteUserAccessToken($token_credentials);
+        try {
+            $result = $server->deleteUserAccessToken($token_credentials);
+        } catch (Exception $e) {
+            file_put_contents($temp_url, 'An error has occurred when following user tried to deregister from Garmin Connect. User ID : ' . $user_id . ', Deregistration time : ' .$deregistration_time. ', Garmin user ID : ' .$this->garmin_user_id. ', Oauth token : ' .$this->oauth_token. ', Oauth token secret : ' .$this->oauth_token_secret. ', Error content : ' .$e->getMessage());
+        }
 
+        // Write a deregistration log
+        file_put_contents($temp_url, 'Following user has deregistered from Garmin Connect. User ID : ' . $user_id . ', Deregistration time : ' .$deregistration_time. ', Garmin user ID : ' .$this->garmin_user_id. ', Oauth token : ' .$this->oauth_token. ', Oauth token secret : ' .$this->oauth_token_secret);
+        
         // Remove entry from user_garmin database
-        $this->disconnect();
+        $this->removeUserEntry();
     }
 
     /**
      * Remove user twitter tokens from the database and unpopulate instance
      */
-    public function disconnect () {
-        if ($this->isUserConnected()) {
+    public function removeUserEntry () {
 
+        if ($this->isUserConnected()) {
+            
             // Delete entry
             $removeUserTokens = $this->getPdo()->prepare("DELETE FROM user_garmin WHERE garmin_user_id = ?");
             $removeUserTokens->execute([$this->garmin_user_id]);
@@ -243,6 +257,17 @@ class Garmin extends Model {
             unset($this->oauth_token_secret);
             unset($this->permissions);
         }
+    }
+
+    /**
+     * Retrieve user id from garmin user id
+     * @param int $garmin_user_id
+     * @return int User id
+     */
+    public function getUserIdFromGarminId ($garmin_user_id) {
+        $getUserId = $this->getPdo()->prepare("SELECT user_id FROM user_garmin WHERE garmin_user_id = ?");
+        $getUserId->execute([$garmin_user_id]);
+        return intval($getUserId->fetch(PDO::FETCH_COLUMN));
     }
 
     public function backfill () {
