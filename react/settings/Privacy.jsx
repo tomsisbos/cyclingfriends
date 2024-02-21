@@ -7,7 +7,6 @@ export default function Privacy () {
 
     // Settings default state
     const [settings, setSettings] = useState( {
-        hide_on_neighbours: null,
         hide_realname: null,
         hide_age: null,
         hide_garmin_activities: null,
@@ -32,14 +31,6 @@ export default function Privacy () {
 		
 		<h2 className="mb-4">プライバシー設定</h2>
 
-			<div className="tr-row gap-20 mb-3">
-                <Checkbox
-                    label="お隣さんページでアカウント情報を表示しない"
-                    value={settings.hide_on_neighbours}
-                    id={'hide_on_neighbours'}
-                    onChange={handleChange}
-                />
-			</div>
 			<div className="tr-row gap-20 mb-3">
                 <Checkbox
                     label="実名を公開しない"

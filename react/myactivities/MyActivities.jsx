@@ -12,33 +12,40 @@ export default function MyActivities () {
     
     const [loading, setLoading] = useState(false)
     const [activities, setActivities] = useState([])
+    const [noActivity, setNoActivity] = useState(false)
 
     const loadData = async () => {
         return new Promise((resolve, reject) => {
-            setLoading(true)
-            axios('/api/activitiess', {
-                params: {
-                    user_id: true,
-                    activities_number: activitiesNumber,
-                    photos_number: photosNumber,
-                    offset: activities.length,
-                    include_private: true
-                }
-            }).then(response => {
-                var newActivities = activities.slice()
-                response.data.forEach(activity => newActivities.push(activity))
-                setActivities(newActivities)
-                setLoading(false)
-                resolve(response.data)
-            })
+            if (!noActivity) {
+                setLoading(true)
+                axios('/api/activitiess', {
+                    params: {
+                        user_id: true,
+                        activities_number: activitiesNumber,
+                        photos_number: photosNumber,
+                        offset: activities.length,
+                        include_private: true
+                    }
+                }).then(response => {
+                    var newActivities = activities.slice()
+                    response.data.forEach(activity => newActivities.push(activity))
+                    setActivities(newActivities)
+                    setLoading(false)
+                    if (newActivities.length === 0) setNoActivity(true)
+                    resolve(response.data)
+                })
+            }
         })
     }
 
     // Get user activities data at component loading
     useEffect(() => {
-        loadData().then((data) => {
-        })
+        loadData()
     }, [])
+
+    useEffect(() => {
+        loadData()
+    }, [noActivity])
   
     if (loading) var loader = <Loader />
     else var loader = ''
@@ -46,7 +53,7 @@ export default function MyActivities () {
     return (
         <>
             <div className="dashboard-activities">
-                {activities.map((activity) => {
+                { activities.map((activity) => {
                     return (
                         <div
                             className='myactivities-wrapper'
@@ -57,9 +64,25 @@ export default function MyActivities () {
                         </div>
                     )
                 })}
+                { noActivity &&
+                    <div
+                        style={{
+                            height: 'calc(80vh - 80px)',
+                            width: '100%',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        該当するデータがありません。
+                    </div>
+                }
             </div>
             {loader}
-            <InfiniteLoader onReach={loadData} />
+            <InfiniteLoader onReach={loadData} onClick={() => {
+                setNoActivity(false)
+                loadData()
+            }} />
         </>
     )
 

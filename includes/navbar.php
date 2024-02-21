@@ -51,12 +51,9 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link nav-dropdown-link interactive" href="/neighbours"><div class="mainitem">コミュニティ</div></a>
+					<a class="nav-link nav-dropdown-link interactive" href="/news"><div class="mainitem">コミュニティ</div></a>
 					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" data-bs-toggle="dropdown"></a>
-					<div class="dropdown-menu"> <?php
-						if (getConnectedUser()->hasAdministratorRights()) { ?>
-							<a class="dropdown-item bg-admin interactive" href="/community"><div class="mainitem text-dark">ユーザー一覧</div></a> <?php
-						} ?>
+					<div class="dropdown-menu">
 						<a class="dropdown-item bg-admin interactive" href="/dev/board"><div class="mainitem text-dark">開発ボード</div></a>
 						<a class="dropdown-item interactive" href="/news"><div class="mainitem">ニュース</div></a>
 						<a class="dropdown-item interactive" href="/friends"><div class="mainitem">お友達</div></a>

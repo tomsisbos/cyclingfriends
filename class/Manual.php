@@ -84,10 +84,6 @@ class Manual extends Model {
             'chapter' => 'rides',
             'id' => 'adminpanel'
         ],
-        'community-neighbours' => [
-            'chapter' => 'community',
-            'id' => 'neighbours'
-        ],
         'user-level' => [
             'chapter' => 'user',
             'id' => 'level'
@@ -103,10 +99,6 @@ class Manual extends Model {
         'user-settings' => [
             'chapter' => 'user',
             'id' => 'settings'
-        ],
-        'user-settings-neighbours' => [
-            'chapter' => 'user',
-            'id' => 'settingneighbours'
         ],
         'user-settings-realname' => [
             'chapter' => 'user',

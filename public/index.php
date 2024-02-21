@@ -98,11 +98,9 @@ $router->map('GET', '/ride/bike-rental-contract', 'rides/bike-rental-contract', 
 $router->map('GET', '/community', 'community/community', 'community');
 $router->map('GET|POST', '/friends', 'community/friends', 'friends');
 $router->map('GET|POST', '/scouts', 'community/scouts', 'scouts');
-$router->map('GET', '/neighbours', 'community/neighbours', 'neighbours');
 $router->map('GET|POST', '/news', 'community/news', 'community/news');
 
 // Company
-$router->map('GET', '/company', 'company/company', 'company');
 $router->map('GET', '/company/business', 'company/business', 'company-business');
 $router->map('GET|POST', '/company/contact', 'company/contact', 'company-contact');
 $router->map('GET', '/company/commerce-disclosure', 'company/commerce-disclosure', 'company-commerce-disclosure');
