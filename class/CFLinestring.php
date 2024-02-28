@@ -288,8 +288,6 @@ class CFLinestring extends Model {
         $padding = 280;
         $pitch = 30;
 
-        echo json_encode([$geojson_string_encoded, $start_icon, $start_lng, $start_lat, $goal_icon, $goal_lng, $goal_lat, $bbox_string, $width, $height, $padding, $api_key]); die();
-
         // Make request
         $uri = "https://api.mapbox.com/styles/v1/sisbos/cl07xga7c002616qcbxymnn5z/static/geojson({$geojson_string_encoded}),url-{$start_icon}({$start_lng},{$start_lat}),url-{$goal_icon}({$goal_lng},{$goal_lat})/{$bbox_string}/{$width}x{$height}?padding={$padding}&before_layer=road-label&access_token={$api_key}";
         $curl = curl_init($uri);

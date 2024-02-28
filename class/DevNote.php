@@ -60,6 +60,12 @@ class DevNote extends Model {
         $postDevChatMessage->execute(array($this->id, count($this->chat) + 1, $_SESSION['id'], $message));
         $this->notify($this->user_id, 'dev_message_post');
         $this->chat = $this->getMessages(); // Update chat content
+        
+        // Notify administrators
+        $getAdmins = $this->getPdo()->prepare("SELECT id FROM users WHERE rights = 'administrator'");
+        $getAdmins->execute();
+        $ids = $getAdmins->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($ids as $id) $this->notify($id, 'dev_message_post');
     }
 
 } ?>

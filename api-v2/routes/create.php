@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startplace = (new LngLat($data->coordinates[0][0], $data->coordinates[0][1]))->queryGeolocation();
     $goalplace = (new LngLat($data->coordinates[count($data->coordinates) - 1][0], $data->coordinates[count($data->coordinates) - 1][1]))->queryGeolocation();
     $distance = $data->distance;
-    $elevation = 0;
+    $elevation = $data->elevation;
     $name = empty($data->name) ? $startplace->city . 'から' . round($distance, 1) . 'kmのルート' : $data->name;
     $description = $data->description;
     $tunnels = [];
