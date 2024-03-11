@@ -11,7 +11,7 @@ if (is_numeric($last_parameter)) {
 
 // Post new message
 if (!empty($_POST) && isset($_POST['message'])) {
-    $dev_note->post(nl2br(htmlspecialchars($_POST['message'])));
+    $dev_note->post(nl2br(htmlspecialchars($_POST['message'])), $_SESSION['id']);
     $successmessage = 'メッセージが追加されました！';
     // Reset post variable
     $_POST = [];

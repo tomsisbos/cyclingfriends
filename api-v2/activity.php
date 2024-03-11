@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         routes as r ON a.route_id = r.id
     JOIN
         users as u ON a.user_id = u.id
-    JOIN
+    FULL OUTER JOIN
         settings as s ON a.user_id = s.id
     FULL OUTER JOIN
         profile_pictures as pp ON a.user_id = pp.user_id

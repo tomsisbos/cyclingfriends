@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="dvnt-board-specs">
-            <?= $dev_note->time .' - '. $dev_note->type; ?>
+            <?= $dev_note->time .' - '. $dev_note->type_string; ?>
         </div>
         <div class="dvnt-board-title">
             <?= $dev_note->title; ?>

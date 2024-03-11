@@ -10,6 +10,7 @@ if (isAjax()) {
         if (isset($_GET['route-load'])) {
             $route = new Route($_GET['route-load']);
             $route->coordinates = $route->getLinestring()->coordinates;
+            $route->author->removePrivateData();
             echo json_encode($route);
         }
 
@@ -18,6 +19,7 @@ if (isAjax()) {
             $ride->checkpoints = $ride->getCheckpoints();
             $route = $ride->getRoute();
             if ($route) $route->coordinates = $route->getLinestring()->coordinates;
+            $route->author->removePrivateData();
             echo json_encode($route);
         }
 
@@ -71,6 +73,8 @@ if (is_array($var)) {
 
     if (isset($var['route-load'])) {
         $route = new Route($var['route-load']);
+        // Remove user data
+        $route->author->removePrivateData();
         echo json_encode($route);
     }
 

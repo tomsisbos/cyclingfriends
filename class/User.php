@@ -237,6 +237,17 @@ class User extends Model {
         return new Settings($this->id);
     }
 
+    /**
+     * Ensure that no private data is included in the user object.
+     */
+    public function removePrivateData() {
+        unset($this->birthdate);
+        unset($this->customer_id);
+        unset($this->email);
+        unset($this->emergency_number);
+        unset($this->gender);
+    }
+
     public function updateSettings ($settings) {
         $checkIfSettingsExist = $this->getPdo()->prepare("SELECT id FROM settings WHERE id = ?");
         $checkIfSettingsExist->execute([$this->id]);

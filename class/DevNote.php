@@ -15,16 +15,17 @@ class DevNote extends Model {
     
     function __construct($id = NULL) {
         parent::__construct();
-        $this->id      = $id;
+        $this->id          = $id;
         $data = $this->getData($this->table);
-        $this->user_id = $data['user_id'];
-        $this->time    = $data['time'];
-        $this->type    = $this->getTypeString($data['type']);
-        $this->title   = $data['title'];
-        $this->content = $data['content'];
-        $this->url     = $data['url'];
-        $this->browser = $data['browser'];
-        $this->chat    = $this->getMessages();
+        $this->user_id     = $data['user_id'];
+        $this->time        = $data['time'];
+        $this->type        = $data['type'];
+        $this->type_string = $this->getTypeString($data['type']);
+        $this->title       = $data['title'];
+        $this->content     = $data['content'];
+        $this->url         = $data['url'];
+        $this->browser     = $data['browser'];
+        $this->chat        = $this->getMessages();
     }
 
     private function getMessages () {
@@ -55,9 +56,9 @@ class DevNote extends Model {
         }
     }
 
-    public function post ($message) {
+    public function post ($message, $user_id) {
         $postDevChatMessage = $this->getPdo()->prepare("INSERT INTO dev_chat (note_id, number, user_id, content) VALUES (?, ?, ?, ?)");
-        $postDevChatMessage->execute(array($this->id, count($this->chat) + 1, $_SESSION['id'], $message));
+        $postDevChatMessage->execute(array($this->id, count($this->chat) + 1, $user_id, $message));
         $this->notify($this->user_id, 'dev_message_post');
         $this->chat = $this->getMessages(); // Update chat content
         

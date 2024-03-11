@@ -30,7 +30,7 @@ include '../includes/head.php'; ?>
             <div class="dvnt-column">
                 <div class="dvnt-url"><strong>URL : </strong> <?= $dev_note->url ?></div>
                 <div class="dvnt-browser"><strong>ブラウザー : </strong> <?= $dev_note->browser ?></div>
-                <div class="dvnt-type"><strong>タイプ : </strong> <?= $dev_note->type ?></div>
+                <div class="dvnt-type"><strong>タイプ : </strong> <?= $dev_note->type_string ?></div>
             </div>
             <div class="dvnt-title"><?= $dev_note->title ?></div>
             <div class="dvnt-content"><?= $dev_note->content ?></div>

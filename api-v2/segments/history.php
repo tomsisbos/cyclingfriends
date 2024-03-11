@@ -27,7 +27,6 @@ FROM (
         END AS filename,
         ST_Length(ST_Intersection(
             sll.linestring::geography,
-            --ST_Buffer(l.linestring, {$buffer_width})
             ST_Buffer(ST_SimplifyPreserveTopology(l.linestring::geometry, {$simplification_tolerance})::geography, {$buffer_width_meters})
         )) / ST_Length(sll.linestring::geography) * 100 AS achievement_percentage
     FROM
