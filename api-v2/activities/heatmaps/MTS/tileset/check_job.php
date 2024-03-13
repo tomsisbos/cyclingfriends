@@ -3,7 +3,7 @@
 $access_token = getenv('MAPBOX_MTS_TOKEN');
 $name = 'global_heatmap';
 $tileset_id = 'sisbos.' .$name;
-$job_id = 'clrprkyfw002908l9fn6k2tzl';
+$job_id = 'cltoclyzw001408l79v4ed1jo';
 
 $url = "https://api.mapbox.com/tilesets/v1/{$tileset_id}/jobs/{$job_id}?access_token={$access_token}";
 

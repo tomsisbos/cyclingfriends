@@ -19,65 +19,65 @@ foreach ($data['activityFiles'] as $activity_files) {
     $garmin = new Garmin($activity_files['userId']);
     $result = $garmin->populateUserTokens();
 
-    if (!$result) {
-        throw new Exception('User tokens could not be retrieved for this userId : ' .$activity_files['userId']);
-    }
+    // Condition to ensure that no matching of userId would not stop all activity syncs
+    if ($result) {
 
-    // Save all ping calls logs in a json file
-    $temp_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/temp';
-    if (!file_exists($temp_directory)) mkdir($temp_directory, 0777, true); // Create user directory if necessary
-    $temp_url = $temp_directory. '/' .$activity_files['summaryId']. '.json';
-    file_put_contents($temp_url, $json);
+        // Save all ping calls logs in a json file
+        $temp_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/temp';
+        if (!file_exists($temp_directory)) mkdir($temp_directory, 0777, true); // Create user directory if necessary
+        $temp_url = $temp_directory. '/' .$activity_files['summaryId']. '.json';
+        file_put_contents($temp_url, $json);
 
-    // Prepare parameters
-    $parsed = parse_url($activity_files['callbackURL']);
-    parse_str($parsed['query'], $params);
-    $id = $params['id'];
-    $token = $params['token'];
-    $ext = strtolower($activity_files['fileType']);
+        // Prepare parameters
+        $parsed = parse_url($activity_files['callbackURL']);
+        parse_str($parsed['query'], $params);
+        $id = $params['id'];
+        $token = $params['token'];
+        $ext = strtolower($activity_files['fileType']);
 
-    // Retrieve corresponding activity details
-    $activity_file = $garmin->retrieveActivityFile($id, $token, [
-        'ext' => $ext,
-        'garmin_activity_id' => intval($activity_files['activityId']), 
-        'garmin_user_id' => $activity_files['userId']
-    ]);
-    
-    // Parse file
-
-    $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
-
-    try {
-
-        $activity_data = $activity_file->parse();
+        // Retrieve corresponding activity details
+        $activity_file = $garmin->retrieveActivityFile($id, $token, [
+            'ext' => $ext,
+            'garmin_activity_id' => intval($activity_files['activityId']), 
+            'garmin_user_id' => $activity_files['userId']
+        ]);
         
-        // Only continue if activity doesn't already exist
-        if (!$activity_data->alreadyExists($user_id)) {
+        // Parse file
 
-            // Create activity
-            $activity_id = $activity_data->createActivity($user_id, ['title' => isset($activity_files['activityName']) ? $activity_files['activityName'] : 'activity']);
+        $user_id = $activity_file->getUserIdFromGarminId($activity_files['userId']);
 
-            // Send a notification
-            $activity = new Activity($activity_id);
-            $activity->notify($user_id, 'new_synced_activity');
+        try {
 
-        } else throw new Exception('already_exists', $activity_data->alreadyExists($user_id));
+            $activity_data = $activity_file->parse();
+            
+            // Only continue if activity doesn't already exist
+            if (!$activity_data->alreadyExists($user_id)) {
 
-    // If error has occured during parsing, abort and send a notification
-    } catch (Exception $e) {
+                // Create activity
+                $activity_id = $activity_data->createActivity($user_id, ['title' => isset($activity_files['activityName']) ? $activity_files['activityName'] : 'activity']);
 
-        $errors_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/errors';
-        if (!file_exists($errors_directory)) mkdir($errors_directory, 0777, true); // Create user directory if necessary
-        $temp_url = $errors_directory. '/' .'error-userid-' . $user_id . '-garminactivityid-' . $activity_files['activityId'] . '.log';
-        file_put_contents($temp_url, 'Garmin Connectよりアクティビティ「' .$activity_files['activityId']. '」を同期しようとしたところ、次の通りエラーが発生しました：' .$e->getMessage(). ', id: ' .$e->getCode());
+                // Send a notification
+                $activity = new Activity($activity_id);
+                $activity->notify($user_id, 'new_synced_activity');
 
-        $user = new User($user_id);
-        if ($e->getMessage() == 'missing_coordinates') $user->notify($user_id, 'new_synced_activity_error_missing_coordinates');
-        else if ($e->getMessage() == 'file_not_found') $user->notify($user_id, 'new_synced_activity_file_not_found');
-        else if ($e->getMessage() == 'no_record_data') $user->notify($user_id, 'new_synced_activity_error_missing_record');
-        else if ($e->getMessage() == 'already_exists') return;
-        else {
-            $user->notify($user_id, 'new_synced_activity_othererror_' . $e->getMessage());
+            } else throw new Exception('already_exists', $activity_data->alreadyExists($user_id));
+
+        // If error has occured during parsing, abort and send a notification
+        } catch (Exception $e) {
+
+            $errors_directory = $_SERVER["DOCUMENT_ROOT"]. '/api/garmin/errors';
+            if (!file_exists($errors_directory)) mkdir($errors_directory, 0777, true); // Create user directory if necessary
+            $temp_url = $errors_directory. '/' .'error-userid-' . $user_id . '-garminactivityid-' . $activity_files['activityId'] . '.log';
+            file_put_contents($temp_url, 'Garmin Connectよりアクティビティ「' .$activity_files['activityId']. '」を同期しようとしたところ、次の通りエラーが発生しました：' .$e->getMessage(). ', id: ' .$e->getCode());
+
+            $user = new User($user_id);
+            if ($e->getMessage() == 'missing_coordinates') $user->notify($user_id, 'new_synced_activity_error_missing_coordinates');
+            else if ($e->getMessage() == 'file_not_found') $user->notify($user_id, 'new_synced_activity_file_not_found');
+            else if ($e->getMessage() == 'no_record_data') $user->notify($user_id, 'new_synced_activity_error_missing_record');
+            else if ($e->getMessage() == 'already_exists') return;
+            else {
+                $user->notify($user_id, 'new_synced_activity_othererror_' . $e->getMessage());
+            }
         }
     }
 

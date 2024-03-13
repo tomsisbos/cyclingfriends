@@ -120,27 +120,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         // Sceneries
         $getSceneries = $db->prepare("SELECT DISTINCT ON (s.id, remoteness)
-        s.id,
-        s.name,
-        s.city,
-        s.prefecture,
-        COUNT(g.grade)::numeric as grades_number,
-        AVG(g.grade)::double precision as rating,
-        {$get_user_grade}
-        ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']})) as remoteness,
-        p.filename,
-        ST_X(point::geometry)::double precision as lng,
-        ST_Y(point::geometry)::double precision as lat
-    FROM sceneries as s
-    INNER JOIN scenery_photos as p ON s.id = p.scenery_id
-    FULL OUTER JOIN scenery_grades as g ON s.id = g.scenery_id
-    WHERE ST_DWithin(
-        (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']}),
-        point,
-        300
-    )
-    GROUP BY s.id, p.filename
-    ORDER BY s.id, remoteness DESC");
+            s.id,
+            s.name,
+            s.city,
+            s.prefecture,
+            COUNT(g.grade)::numeric as grades_number,
+            AVG(g.grade)::double precision as rating,
+            {$get_user_grade}
+            ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']})) as remoteness,
+            p.filename,
+            ST_X(point::geometry)::double precision as lng,
+            ST_Y(point::geometry)::double precision as lat
+        FROM sceneries as s
+        INNER JOIN scenery_photos as p ON s.id = p.scenery_id
+        FULL OUTER JOIN scenery_grades as g ON s.id = g.scenery_id
+        WHERE ST_DWithin(
+            (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']} LIMIT 1),
+            point,
+            300
+        )
+        GROUP BY s.id, p.filename
+        ORDER BY s.id, remoteness DESC");
         $getSceneries->execute();
         $activity['sceneries'] = $getSceneries->fetchAll(PDO::FETCH_ASSOC);
 

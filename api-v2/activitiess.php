@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         COUNT(g.grade)::numeric as grades_number,
         AVG(g.grade)::double precision as rating,
         {$get_user_grade}
-        ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']})) as remoteness,
+        ST_Distance(point, (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']} LIMIT 1)) as remoteness,
         p.filename,
         ST_X(point::geometry)::double precision as lng,
         ST_Y(point::geometry)::double precision as lat
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     INNER JOIN scenery_photos as p ON s.id = p.scenery_id
     FULL OUTER JOIN scenery_grades as g ON s.id = g.scenery_id
     WHERE ST_DWithin(
-        (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']}),
+        (SELECT linestring FROM linestrings WHERE segment_id = {$activity['route_id']} LIMIT 1),
         point,
         300
     )
